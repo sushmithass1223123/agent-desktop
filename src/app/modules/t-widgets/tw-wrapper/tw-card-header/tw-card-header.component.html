@@ -1,0 +1,20 @@
+<!-- We are using material card header -->
+<mat-card-header class="card-header"
+    [ngClass]="fuseConfig.layout.widget.customBackgroundColor === true ? fuseConfig.layout.widget.headerBackground : ''">
+
+    <!-- We add a material icon from config of default a widget icon -->
+    <div mat-card-avatar>
+        <mat-icon>{{data.Config.Icon ? data.Config.Icon : 'widgets' }}</mat-icon>
+    </div>
+
+    <!-- Add titile if provided in config or add widget by default -->
+    <mat-card-title>{{ data.Name ? data.Name : 'Widget' }}</mat-card-title>
+
+    <span class="spacer"></span>
+
+    <!-- All the action buttons goes here -->
+    <button mat-icon-button>
+        <mat-icon>open_in_new</mat-icon>
+    </button>
+
+</mat-card-header>

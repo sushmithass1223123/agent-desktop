@@ -1,0 +1,24 @@
+<tw-card class="tw-card tw-bg-header tw-bg-body tw-box-header tw-box-body">
+
+    <!-- We are writing a wrapper over material card -->
+    <mat-card class="widget-card"
+        [ngClass]="fuseConfig.layout.widget.customBackgroundColor === true ? fuseConfig.layout.widget.bodyBackground : ''">
+
+        <!-- Wrapper to wrap header and body -->
+        <div class="card-wrapper">
+
+            <!-- Enabled header if enabled in config -->
+            <tw-card-header [data]="data" [fuseConfig]=fuseConfig *ngIf="data.Config.Header"></tw-card-header>
+
+            <mat-card-content class="{{ !data.Config.Header ? 'no-header' : '' }}">
+
+                <!-- All the card content goes here -->
+                <ng-content></ng-content>
+
+            </mat-card-content>
+
+        </div>
+
+    </mat-card>
+
+</tw-card>

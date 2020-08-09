@@ -1,0 +1,264 @@
+// -----------------------------------------------------------------------------------------------------
+// @ Custom color maps for Fuse
+// -----------------------------------------------------------------------------------------------------
+$fuse-white: (
+    500: white,
+    contrast: (
+        500: $dark-primary-text,
+    ),
+);
+
+$fuse-black: (
+    500: black,
+    contrast: (
+        500: $light-primary-text,
+    ),
+);
+
+$fuse-navy: (
+    50: #ececee,
+    100: #c5c6cb,
+    200: #9ea1a9,
+    300: #7d818c,
+    400: #5c616f,
+    500: #3c4252,
+    600: #353a48,
+    700: #2d323e,
+    800: #262933,
+    900: #1e2129,
+    A100: #c5c6cb,
+    A200: #9ea1a9,
+    A400: #5c616f,
+    A700: #2d323e,
+    contrast: (
+        50: $dark-primary-text,
+        100: $dark-primary-text,
+        200: $dark-primary-text,
+        300: $light-primary-text,
+        400: $light-primary-text,
+        500: $light-primary-text,
+        600: $light-primary-text,
+        700: $light-primary-text,
+        800: $light-primary-text,
+        900: $light-primary-text,
+        A100: $dark-primary-text,
+        A200: $light-primary-text,
+        A400: $light-primary-text,
+        A700: $light-primary-text,
+    ),
+);
+
+$purple: (
+    50: #f1e5f3,
+    100: #ddbfe2,
+    200: #c895cf,
+    300: #b26cbc,
+    400: #a24fad,
+    500: #91359f,
+    600: #853199,
+    700: #732b90,
+    800: #642687,
+    900: #481e76,
+    A100: #c5c6cb,
+    A200: #9ea1a9,
+    A400: #5c616f,
+    A700: #2d323e,
+    contrast: (
+        50: $dark-primary-text,
+        100: $dark-primary-text,
+        200: $dark-primary-text,
+        300: $light-primary-text,
+        400: $light-primary-text,
+        500: $light-primary-text,
+        600: $light-primary-text,
+        700: $light-primary-text,
+        800: $light-primary-text,
+        900: $light-primary-text,
+        A100: $dark-primary-text,
+        A200: $light-primary-text,
+        A400: $light-primary-text,
+        A700: $light-primary-text,
+    ),
+);
+
+$tw-secondary: (
+    50: #ffebf0,
+    100: #ffcdd7,
+    200: #f699a2,
+    300: #f0707e,
+    400: #fd4a5d,
+    500: #ff2f44,
+    600: #f62543,
+    700: #e3173c,
+    800: #d60835,
+    900: #c80028,
+    A100: #c5c6cb,
+    A200: #9ea1a9,
+    A400: #5c616f,
+    A700: #2d323e,
+    contrast: (
+        50: $dark-primary-text,
+        100: $dark-primary-text,
+        200: $dark-primary-text,
+        300: $dark-primary-text,
+        400: $light-primary-text,
+        500: $light-primary-text,
+        600: $light-primary-text,
+        700: $light-primary-text,
+        800: $light-primary-text,
+        900: $light-primary-text,
+        A100: $dark-primary-text,
+        A200: $light-primary-text,
+        A400: $light-primary-text,
+        A700: $light-primary-text,
+    ),
+);
+
+// Generate Fuse color classes for custom palettes
+$custom_palettes: (
+    fuse-white: $fuse-white,
+    fuse-black: $fuse-black,
+    fuse-navy: $fuse-navy,
+    tw-primary: $purple,
+    purple: $purple,
+    tw-secondary: $tw-secondary,
+);
+
+@include fuse-color-classes($custom_palettes);
+
+// -----------------------------------------------------------------------------------------------------
+// @ Typography
+// -----------------------------------------------------------------------------------------------------
+
+// Angular Material typography
+$typography: mat-typography-config(
+    $font-family: "Muli, Helvetica Neue, Arial, sans-serif",
+    $title: mat-typography-level(20px, 32px, 600),
+    $body-2: mat-typography-level(14px, 24px, 600),
+    $button: mat-typography-level(14px, 14px, 600),
+    $input: mat-typography-level(16px, 1.125, 400)
+        // line-height must be unitless !!!,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+);
+
+// Setup the typography
+@include angular-material-typography($typography);
+
+// -----------------------------------------------------------------------------------------------------
+// @ Component theming
+// -----------------------------------------------------------------------------------------------------
+
+// Import app and page component themes here to enable theming for them
+@import "src/app/layout/components/chat-panel/chat-panel.theme";
+@import "src/app/layout/components/toolbar/toolbar.theme";
+
+@import "src/app/layout/components/navbar/navbar.theme";
+@import "src/app/layout/components/theme-options/theme-options.theme";
+
+@import "src/app/modules/core/login/login.theme";
+@import "src/app/modules/t-widgets/tw-wrapper/tw-wrapper.theme";
+
+// Define a mixin for easier access
+@mixin components-theme($theme) {
+    $is-dark: map-get($theme, is-dark);
+    $background: map-get($theme, background);
+    $foreground: map-get($theme, foreground);
+
+    // Base colors
+    & {
+        color: map-get($foreground, text);
+
+        // If it's a light theme, use a darker background
+        // color other than the default #fafafa
+        @if ($is-dark) {
+            background: map-get($background, background);
+        } @else {
+            background: #f5f5f5;
+        }
+    }
+
+    // Layout components
+    @include chat-panel-theme($theme);
+    @include toolbar-theme($theme);
+
+    @include login-theme($theme);
+    @include navbar-theme($theme);
+    @include app-theme-options-theme($theme);
+
+    @include tw-wrapper-theme($theme);
+}
+
+// -----------------------------------------------------------------------------------------------------
+// @ Define the default theme
+// -----------------------------------------------------------------------------------------------------
+
+// Define the primary, accent and warn palettes
+$default-primary-palette: mat-palette($purple);
+$default-accent-palette: mat-palette($tw-secondary);
+$default-warn-palette: mat-palette($mat-red);
+
+// Create the Material theme object
+$theme: mat-light-theme(
+    $default-primary-palette,
+    $default-accent-palette,
+    $default-warn-palette
+);
+
+// Add ".theme-default" class to the body to activate this theme.
+// Class name must start with "theme-" !!!
+body.theme-default {
+    // Create an Angular Material theme from the $theme map
+    @include angular-material-theme($theme);
+
+    // Apply the theme to the Fuse Core
+    @include fuse-core-theme($theme);
+
+    // Apply the theme to the user components
+    @include components-theme($theme);
+
+    // Generate Fuse color classes for primary, accent and warn colors
+    $palettes: (
+        primary: $default-primary-palette,
+        accent: $default-accent-palette,
+        warn: $default-warn-palette,
+    );
+
+    @include fuse-color-classes($palettes);
+}
+
+// -----------------------------------------------------------------------------------------------------
+// @ Define a gray dark theme
+// -----------------------------------------------------------------------------------------------------
+
+// Define the primary, accent and warn palettes
+$gray-dark-theme-primary-palette: mat-palette($purple);
+$gray-dark-theme-accent-palette: mat-palette($tw-secondary);
+$gray-dark-theme-warn-palette: mat-palette($mat-red);
+
+// Create the Material theme object
+$gray-dark-theme: mat-dark-theme(
+    $gray-dark-theme-primary-palette,
+    $gray-dark-theme-accent-palette,
+    $gray-dark-theme-warn-palette
+);
+
+// Add ".theme-gray-dark" class to the body to activate this theme.
+// Class name must start with "theme-" !!!
+body.theme-dark {
+    // Generate the Angular Material theme
+    @include angular-material-theme($gray-dark-theme);
+
+    // Apply the theme to the Fuse Core
+    @include fuse-core-theme($gray-dark-theme);
+
+    // Apply the theme to the user components
+    @include components-theme($gray-dark-theme);
+
+    // Generate Fuse color classes for primary, accent and warn colors
+    $palettes: (
+        primary: $gray-dark-theme-primary-palette,
+        accent: $gray-dark-theme-accent-palette,
+        warn: $gray-dark-theme-warn-palette,
+    );
+
+    @include fuse-color-classes($palettes);
+}

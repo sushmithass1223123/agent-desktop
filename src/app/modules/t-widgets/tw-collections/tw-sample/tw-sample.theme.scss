@@ -1,0 +1,52 @@
+@mixin tw-sample-theme($theme) {
+    $background: map-get($theme, background);
+    $foreground: map-get($theme, foreground);
+    $accent: map-get($theme, accent);
+    $is-dark: map-get($theme, is-dark);
+
+    @debug "theme";
+
+    tw-sample {
+        &.tw-bg-header {
+            .mat-card {
+                color: map-get($foreground, text);
+
+                // If it's a light theme, use a darker background
+                // color other than the default #dadada
+                @if ($is-dark) {
+                    background: #424242;
+                } @else {
+                    background: #dadada;
+                }
+
+                .card-header {
+                    color: map-get($foreground, text);
+
+                    // If it's a light theme, use a darker background
+                    // color other than the default #fafafa
+                    @if ($is-dark) {
+                        background: map-get($background, background);
+                    } @else {
+                        background: #fafafa;
+                    }
+                }
+            }
+        }
+
+        &.tw-bg-body {
+            .mat-card {
+                .mat-card-content {
+                    color: map-get($foreground, text);
+
+                    // If it's a light theme, use a darker background
+                    // color other than the default #fafafa
+                    @if ($is-dark) {
+                        background: map-get($background, background);
+                    } @else {
+                        background: #fafafa;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,28 @@
+@mixin navbar-theme($theme) {
+    $background: map-get($theme, background);
+    $foreground: map-get($theme, foreground);
+    $accent: map-get($theme, accent);
+    $is-dark: map-get($theme, is-dark);
+
+    navbar {
+        .navbar-content {
+            mat-selection-list {
+                .mat-list-single-selected-option,
+                .mat-list-single-selected-option:hover,
+                .mat-list-single-selected-option:focus {
+                    animation: apply 1s;
+                    background: mat-color($tw-secondary, 700) !important;
+
+                    @keyframes apply {
+                        from {
+                            background-color: rgba(0, 0, 0, 0.12);
+                        }
+                        to {
+                            background: mat-color($tw-secondary, 700);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

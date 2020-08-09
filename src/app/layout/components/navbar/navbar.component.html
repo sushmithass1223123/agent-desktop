@@ -1,0 +1,48 @@
+<div class="navbar-header" [ngClass]="fuseConfig.layout.navbar.background">
+
+    <!-- <div class="logo">
+        <img class="logo-icon" src="assets/images/logos/fuse.svg">
+        <span class="logo-text">TMAC</span>
+    </div> -->
+
+</div>
+
+<div class="navbar-content" fusePerfectScrollbar [fusePerfectScrollbarOptions]="{suppressScrollX: true}"
+    [ngClass]="fuseConfig.layout.navbar.background">
+
+    <div class="twn-list">
+        <mat-selection-list #sidebarList [multiple]="false">
+
+            <div class="top">
+
+                <mat-list-option *ngFor="let item of topWidgets" [value]="item" (click)="selectTab(item)"
+                    [selected]="item.Data.Active" matTooltip="{{ item.Name }}" matTooltipPosition="after"
+                    matTooltipClass="tooltip">
+
+                    <mat-icon class="icon" mat-list-icon>{{item.Data.Icon}}</mat-icon>
+
+                </mat-list-option>
+
+                <mat-divider *ngIf="topWidgets.length > 0"></mat-divider>
+            </div>
+
+            <div class="bottom">
+
+                <mat-divider *ngIf="bottomWidgets.length > 0"></mat-divider>
+
+                <mat-list-option *ngFor="let item of bottomWidgets" [value]="item" (click)="selectTab(item)"
+                    [selected]="item.Data.Active" matTooltip="{{ item.Name }}" matTooltipPosition="after"
+                    matTooltipClass="tooltip">
+
+                    <mat-icon class="icon" mat-list-icon>{{item.Data.Icon}}</mat-icon>
+
+                </mat-list-option>
+            </div>
+
+        </mat-selection-list>
+
+        <img class="brand-logo" *ngIf="brandLogo" [src]='brandLogo.Src' alt="{{ brandLogo.Alt }}"
+            width="{{ brandLogo.Width }}" height="{{ brandLogo.Height }}" />
+    </div>
+
+</div>

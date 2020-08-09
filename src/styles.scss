@@ -1,0 +1,74 @@
+// Import Fuse core library
+@import "@fuse/scss/core";
+
+// Import app.theme.scss
+@import "app/app.theme";
+
+.tooltip {
+    font-size: 1.5rem;
+}
+
+.spacer {
+    flex: 1 1 auto;
+}
+
+///***************************************************************************************************************///
+///                                         WIDGET STYLES - DO NOT MODIFY
+///***************************************************************************************************************///
+
+.widget-grid {
+    width: 100%;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: none;
+    grid-auto-rows: calc(29.5vh);
+    // overflow: auto;
+    // height: calc(100% - 34px);
+}
+
+@media screen and (max-width: 768px) {
+    .tw-card {
+        grid-column: auto !important;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .widget-grid {
+        grid-template-columns: repeat(auto-fit, minmax(calc(100% / 5), 1fr));
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    .widget-grid {
+        grid-template-columns: repeat(auto-fit, minmax(calc(100% / 7), 1fr));
+    }
+}
+
+.tw-full {
+    height: 100%;
+    width: 100%;
+}
+
+.tw-center {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    height: 100% !important;
+    width: 100% !important;
+}
+
+.tw-d-none {
+    display: none !important;
+}
+
+.tw-d-block {
+    display: block !important;
+}
+
+.tw-d-flex {
+    display: flex !important;
+}
+
+///***************************************************************************************************************///
+///                                         WIDGET STYLES - DO NOT MODIFY
+///***************************************************************************************************************///

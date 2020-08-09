@@ -1,0 +1,200 @@
+@import "src/@fuse/scss/fuse";
+
+login {
+    width: 100%;
+
+    #login {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: url("/assets/images/backgrounds/dark-material-bg.jpg")
+            no-repeat;
+        background-size: cover;
+
+        #login-intro {
+            padding: 128px;
+
+            @include media-breakpoint("sm") {
+                padding: 128px 64px;
+            }
+
+            .logo {
+                width: 128px;
+                margin-bottom: 32px;
+            }
+
+            .title {
+                font-size: 42px;
+                font-weight: 300;
+                line-height: 1;
+            }
+
+            .description {
+                padding-top: 16px;
+                font-size: 14px;
+                max-width: 600px;
+            }
+        }
+
+        #login-form-wrapper {
+            width: 600px;
+            min-width: 600px;
+            max-width: 600px;
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+            border-top-left-radius: 3rem;
+            border-bottom-left-radius: 3rem;
+
+            @include mat-elevation(16);
+
+            @include media-breakpoint("sm") {
+                width: 400px;
+                min-width: 400px;
+                max-width: 400px;
+            }
+
+            @include media-breakpoint("xs") {
+                width: 100%;
+                min-width: 100%;
+                max-width: 100%;
+                border-radius: 0;
+            }
+
+            .spinner {
+                position: absolute;
+                z-index: 1;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-top-left-radius: 3rem;
+                border-bottom-left-radius: 3rem;
+                background: rgb(0 0 0 / 0.25);
+            }
+
+            #login-form {
+                height: 100%;
+                width: 100%;
+                padding: 0rem 12rem;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+
+                &.blur {
+                    -webkit-filter: blur(3px);
+                    -moz-filter: blur(3px);
+                    -o-filter: blur(3px);
+                    -ms-filter: blur(3px);
+                    filter: blur(3px);
+                    pointer-events: none;
+                }
+
+                @include media-breakpoint("sm") {
+                    padding: 0rem 4rem;
+                }
+
+                @include media-breakpoint("xs") {
+                    text-align: center;
+                    padding: 24px;
+                }
+
+                .logo {
+                    // width: 128px;
+                    // margin: 32px auto;
+                    text-align: center;
+                }
+
+                .title {
+                    font-size: 21px;
+                }
+
+                .description {
+                    padding-top: 8px;
+                }
+
+                form {
+                    width: 100%;
+                    padding-top: 32px;
+
+                    mat-form-field {
+                        width: 100%;
+
+                        @include media-breakpoint("xs") {
+                            width: 80%;
+                        }
+                    }
+
+                    mat-checkbox {
+                        margin: 0;
+                    }
+
+                    .remember-forgot-password {
+                        font-size: 13px;
+                        margin-top: 8px;
+
+                        .remember-me {
+                            margin-bottom: 16px;
+                        }
+
+                        .forgot-password {
+                            font-size: 13px;
+                            font-weight: 600;
+                            margin-bottom: 16px;
+                        }
+                    }
+
+                    .submit-button {
+                        width: 100%;
+                        margin: 16px auto;
+                        display: block;
+
+                        @include media-breakpoint("xs") {
+                            width: 80%;
+                        }
+                    }
+                }
+
+                .mat-slide-toggle-content {
+                    flex: 1;
+                }
+
+                .separator {
+                    font-size: 15px;
+                    font-weight: 600;
+                    margin: 24px auto;
+                    position: relative;
+                    overflow: hidden;
+                    width: 100px;
+                    text-align: center;
+
+                    .text {
+                        display: inline-flex;
+                        position: relative;
+                        padding: 0 8px;
+                        z-index: 9999;
+
+                        &:before,
+                        &:after {
+                            content: "";
+                            display: block;
+                            width: 30px;
+                            position: absolute;
+                            top: 10px;
+                            border-top: 1px solid;
+                        }
+
+                        &:before {
+                            right: 100%;
+                        }
+
+                        &:after {
+                            left: 100%;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,37 @@
+<mat-toolbar class="p-0">
+
+    <div fxFlex fxFill fxLayout="row" fxLayoutAlign="start center">
+
+        <div fxFlex="1 0 auto" fxLayout="row" fxLayoutAlign="start center">
+
+            <button mat-icon-button class="navbar-toggle-button" *ngIf="!hiddenNavbar && !rightNavbar"
+                (click)="toggleSidebarOpen('navbar')" fxHide.gt-xs>
+                <mat-icon class="primary-text">menu</mat-icon>
+            </button>
+
+            <tw-active-interactions [data]="activeInteractionWidget" *ngIf="activeInteractionWidget">
+            </tw-active-interactions>
+
+        </div>
+
+        <div class="" fxFlex="0 1 auto" fxLayout="row" fxLayoutAlign="start center">
+
+            <tw-toolbar-menu [data]="toolbarMenuWidget" *ngIf="toolbarMenuWidget"></tw-toolbar-menu>
+
+            <button mat-icon-button class="quick-panel-toggle-button" (click)="toggleSidebarOpen('quickPanel')"
+                aria-label="Toggle quick panel">
+                <mat-icon class="primary-text">format_list_bulleted</mat-icon>
+            </button>
+
+            <div class="toolbar-separator" *ngIf="!hiddenNavbar && rightNavbar" fxHide fxShow.gt-xs></div>
+
+            <button mat-icon-button class="navbar-toggle-button" *ngIf="!hiddenNavbar && rightNavbar"
+                (click)="toggleSidebarOpen('navbar')" fxHide.gt-md>
+                <mat-icon class="primary-text">menu</mat-icon>
+            </button>
+
+        </div>
+
+    </div>
+
+</mat-toolbar>

@@ -1,0 +1,21 @@
+tw-aux-timer {
+    .wrap {
+        margin: 0px 16px;
+    }
+
+    .time {
+        line-height: 1;
+    }
+
+    .partial {
+        display: inline-block;
+        margin: 1px;
+        padding: 7px 5px;
+        font-size: 12px;
+        text-shadow: 0 0 7px #eee;
+        border-radius: 6px;
+        line-height: 1;
+        width: 18px;
+        text-align: center;
+    }
+}

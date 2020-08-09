@@ -1,0 +1,19 @@
+import { NgModule } from '@angular/core';
+import { AppThemeOptionsModule } from 'app/layout/components/theme-options/theme-options.module';
+import { HorizontalLayout1Module } from 'app/layout/horizontal/layout-1/layout-1.module';
+import { VerticalLayout1Module } from 'app/layout/vertical/layout-1/layout-1.module';
+
+@NgModule({
+    imports: [
+        VerticalLayout1Module,
+        HorizontalLayout1Module,
+        AppThemeOptionsModule
+    ],
+    exports: [
+        VerticalLayout1Module,
+        HorizontalLayout1Module,
+        AppThemeOptionsModule
+    ]
+})
+export class LayoutModule {
+}

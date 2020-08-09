@@ -1,0 +1,24 @@
+@import "src/@fuse/scss/fuse";
+
+content {
+    position: relative;
+    display: flex;
+    z-index: 1;
+    flex: 1 0 auto;
+    border-bottom-left-radius: 3rem;
+
+    .tw-content {
+        padding: 0rem 3.4rem;
+    }
+
+    @include media-breakpoint("xs") {
+        border-radius: 0px;
+    }
+
+    > *:not(router-outlet) {
+        display: flex;
+        flex: 1 0 auto;
+        width: 100%;
+        min-width: 100%;
+    }
+}
