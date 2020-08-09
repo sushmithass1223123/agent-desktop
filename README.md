@@ -2,12 +2,6 @@
 
 Descrption
 
-## The Community
-
-Share your ideas, discuss Fuse and help each other.
-
-[Click here](https://tetherfi.com/).
-
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
