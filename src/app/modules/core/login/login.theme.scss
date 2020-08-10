@@ -12,7 +12,7 @@
 
             #login-form-wrapper {
                 @if ($is-dark) {
-                    background: mat-color($purple, 700);
+                    background: mat-color($tw-primary, 700);
                 } @else {
                     background: map-get($background, card);
                 }

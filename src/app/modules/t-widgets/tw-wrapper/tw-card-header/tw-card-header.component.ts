@@ -18,4 +18,12 @@ export class TwCardHeaderComponent implements OnInit {
 
     }
 
+    maximize(event: any): void {
+        event.preventDefault();
+        event.stopPropagation();
+
+        console.log('##### MAXIMIZE #####');
+
+    }
+
 }

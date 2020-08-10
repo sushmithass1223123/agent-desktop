@@ -48,7 +48,7 @@ $fuse-navy: (
     ),
 );
 
-$purple: (
+$tw-primary: (
     50: #f1e5f3,
     100: #ddbfe2,
     200: #c895cf,
@@ -116,12 +116,12 @@ $tw-secondary: (
 
 // Generate Fuse color classes for custom palettes
 $custom_palettes: (
-    fuse-white: $fuse-white,
-    fuse-black: $fuse-black,
-    fuse-navy: $fuse-navy,
-    tw-primary: $purple,
-    purple: $purple,
-    tw-secondary: $tw-secondary,
+    "fuse-white": $fuse-white,
+    "fuse-black": $fuse-black,
+    "fuse-navy": $fuse-navy,
+    "tw-primary": $tw-primary,
+    "purple": $tw-primary,
+    "tw-secondary": $tw-secondary,
 );
 
 @include fuse-color-classes($custom_palettes);
@@ -137,7 +137,7 @@ $typography: mat-typography-config(
     $body-2: mat-typography-level(14px, 24px, 600),
     $button: mat-typography-level(14px, 14px, 600),
     $input: mat-typography-level(16px, 1.125, 400)
-        // line-height must be unitless !!!,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+        // line-height must be unitless !!!,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 );
 
 // Setup the typography
@@ -192,7 +192,7 @@ $typography: mat-typography-config(
 // -----------------------------------------------------------------------------------------------------
 
 // Define the primary, accent and warn palettes
-$default-primary-palette: mat-palette($purple);
+$default-primary-palette: mat-palette($tw-primary);
 $default-accent-palette: mat-palette($tw-secondary);
 $default-warn-palette: mat-palette($mat-red);
 
@@ -230,7 +230,7 @@ body.theme-default {
 // -----------------------------------------------------------------------------------------------------
 
 // Define the primary, accent and warn palettes
-$gray-dark-theme-primary-palette: mat-palette($purple);
+$gray-dark-theme-primary-palette: mat-palette($tw-primary);
 $gray-dark-theme-accent-palette: mat-palette($tw-secondary);
 $gray-dark-theme-warn-palette: mat-palette($mat-red);
 
