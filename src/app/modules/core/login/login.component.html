@@ -9,7 +9,8 @@
         </div>
     </div>
 
-    <div id="login-form-wrapper" fusePerfectScrollbar [@animate]="{ value: '*', params: { delay: '300ms', x: '100%' } }">
+    <div id="login-form-wrapper" fusePerfectScrollbar
+        [@animate]="{ value: '*', params: { delay: '300ms', x: '100%' } }">
         <div class="spinner" *ngIf="loading">
             <mat-spinner></mat-spinner>
         </div>
@@ -21,7 +22,7 @@
 
             <form name="loginForm" [formGroup]="loginForm" novalidate>
                 <mat-form-field class="form-field" appearance="outline" *ngIf="domainListEnabled">
-                    <mat-select [(value)]="selectedDomain" placeholder="DOMAIN LIST" formControlName="domain">
+                    <mat-select placeholder="DOMAIN LIST" formControlName="domain">
                         <mat-option>None</mat-option>
                         <mat-option *ngFor="let item of domainList" value="item">{{ item }}</mat-option>
                     </mat-select>
@@ -32,8 +33,10 @@
 
                 <mat-form-field class="form-field" appearance="outline">
                     <mat-label>LAN ID</mat-label>
-                    <input class="login-input" matInput required placeholder="LAN ID" (keydown.enter)="login(false)" formControlName="lanId" #lanId />
-                    <button mat-button *ngIf="loginForm.get('lanId').value" matSuffix mat-icon-button aria-label="Clear" (click)="loginForm.reset('lanId')">
+                    <input class="login-input" matInput required placeholder="LAN ID" (keydown.enter)="login(false)"
+                        formControlName="lanId" #lanId />
+                    <button mat-button *ngIf="loginForm.get('lanId').value" matSuffix mat-icon-button aria-label="Clear"
+                        (click)="loginForm.reset('lanId')">
                         <mat-icon>close</mat-icon>
                     </button>
                     <mat-error>
@@ -43,15 +46,10 @@
 
                 <mat-form-field class="form-field" appearance="outline" *ngIf="agentIdEnabled">
                     <mat-label>AGENT ID</mat-label>
-                    <input class="login-input" matInput required placeholder="AGENT ID" (keydown.enter)="login(false)" formControlName="agentId" />
-                    <button
-                        mat-button
-                        *ngIf="loginForm.get('agentId').value"
-                        matSuffix
-                        mat-icon-button
-                        aria-label="Clear"
-                        (click)="loginForm.reset('agentId')"
-                    >
+                    <input class="login-input" matInput required placeholder="AGENT ID" (keydown.enter)="login(false)"
+                        formControlName="agentId" />
+                    <button mat-button *ngIf="loginForm.get('agentId').value" matSuffix mat-icon-button
+                        aria-label="Clear" (click)="loginForm.reset('agentId')">
                         <mat-icon>close</mat-icon>
                     </button>
                     <mat-error>
@@ -61,22 +59,10 @@
 
                 <mat-form-field class="form-field" appearance="outline" *ngIf="passwordEnabled">
                     <mat-label>PASSWORD</mat-label>
-                    <input
-                        class="login-input"
-                        matInput
-                        [type]="hidePassword ? 'password' : 'text'"
-                        required
-                        placeholder="PASSWORD"
-                        (keydown.enter)="login(false)"
-                        formControlName="password"
-                    />
-                    <button
-                        mat-icon-button
-                        matSuffix
-                        (click)="hidePassword = !hidePassword"
-                        [attr.aria-label]="'Hide password'"
-                        [attr.aria-pressed]="hidePassword"
-                    >
+                    <input class="login-input" matInput [type]="hidePassword ? 'password' : 'text'" required
+                        placeholder="PASSWORD" (keydown.enter)="login(false)" formControlName="password" />
+                    <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword"
+                        [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">
                         <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
                     </button>
                     <mat-error>
@@ -84,25 +70,13 @@
                     </mat-error>
                 </mat-form-field>
 
-                <mat-form-field class="form-field animate__animated animate__fast animate__flipInX" appearance="outline" *ngIf="stationEnabled">
+                <mat-form-field class="form-field animate__animated animate__fast animate__flipInX" appearance="outline"
+                    *ngIf="stationEnabled">
                     <mat-label>STATION</mat-label>
-                    <input
-                        class="login-input"
-                        matInput
-                        required
-                        placeholder="STATION"
-                        (keypress)="numberOnly($event)"
-                        (keydown.enter)="login(false)"
-                        formControlName="station"
-                    />
-                    <button
-                        mat-button
-                        *ngIf="loginForm.get('station').value"
-                        matSuffix
-                        mat-icon-button
-                        aria-label="Clear"
-                        (click)="loginForm.reset('station')"
-                    >
+                    <input class="login-input" matInput required placeholder="STATION" (keypress)="numberOnly($event)"
+                        (keydown.enter)="login(false)" formControlName="station" />
+                    <button mat-button *ngIf="loginForm.get('station').value" matSuffix mat-icon-button
+                        aria-label="Clear" (click)="loginForm.reset('station')">
                         <mat-icon>close</mat-icon>
                     </button>
                     <mat-error>
@@ -116,32 +90,22 @@
                     </h3>
 
                     <mat-list-item>
-                        <mat-slide-toggle
-                            fxFlex
-                            class="mat-primary"
-                            [checked]="pbxChecked"
-                            (change)="onPBXToggle($event)"
-                            aria-label="Notifications"
-                            labelPosition="before"
-                        >
+                        <mat-slide-toggle fxFlex class="mat-primary" [checked]="pbxChecked"
+                            (change)="onPBXToggle($event)" aria-label="Notifications" labelPosition="before">
                             <h3>Login to PBX?</h3>
                         </mat-slide-toggle>
                     </mat-list-item>
 
                     <mat-list-item>
-                        <mat-slide-toggle
-                            fxFlex
-                            class="mat-primary"
-                            [checked]="msChecked"
-                            (change)="msChecked = $event.checked"
-                            labelPosition="before"
-                        >
+                        <mat-slide-toggle fxFlex class="mat-primary" [checked]="msChecked"
+                            (change)="msChecked = $event.checked" labelPosition="before">
                             <h3>Login to MS?</h3>
                         </mat-slide-toggle>
                     </mat-list-item>
                 </mat-list>
 
-                <button mat-raised-button color="primary" class="submit-button" aria-label="LOGIN" (click)="login(false)">
+                <button mat-raised-button color="primary" class="submit-button" aria-label="LOGIN"
+                    (click)="login(false)">
                     LOGIN
                 </button>
             </form>
