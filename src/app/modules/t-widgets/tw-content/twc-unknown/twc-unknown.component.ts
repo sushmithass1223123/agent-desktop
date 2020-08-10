@@ -1,11 +1,12 @@
-import { Component, OnInit, OnDestroy, Input, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, ElementRef, ViewEncapsulation } from '@angular/core';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { ContentPageService } from 'app/services/content-page.service';
 
 @Component({
     selector: 'twc-unknown',
     templateUrl: './twc-unknown.component.html',
-    styleUrls: ['./twc-unknown.component.scss']
+    styleUrls: ['./twc-unknown.component.scss'],
+    encapsulation: ViewEncapsulation.None
 })
 export class TwcUnknownComponent extends TWContentWrapper implements OnInit, OnDestroy {
 

@@ -185,9 +185,9 @@
                         "Path": "/home",
                         "Widgets": [
                             {
-                                "Name": "Wallboard",
+                                "Name": "Dashboard-1",
                                 "Description": "",
-                                "Type": "tw-wallboard",
+                                "Type": "tw-sample",
                                 "Config": {
                                     "Position": {
                                         "X": 3,
@@ -235,7 +235,7 @@
                             {
                                 "Name": "Wallboard",
                                 "Description": "",
-                                "Type": "tw-wallboard",
+                                "Type": "tw-sample",
                                 "Config": {
                                     "Position": {
                                         "X": 1,
@@ -283,7 +283,7 @@
                             {
                                 "Name": "Wallboard",
                                 "Description": "",
-                                "Type": "tw-wallboard",
+                                "Type": "tw-sample",
                                 "Config": {
                                     "Position": {
                                         "X": 1,
@@ -331,7 +331,7 @@
                             {
                                 "Name": "Wallboard",
                                 "Description": "",
-                                "Type": "tw-wallboard",
+                                "Type": "tw-sample",
                                 "Config": {
                                     "Position": {
                                         "X": 1,
