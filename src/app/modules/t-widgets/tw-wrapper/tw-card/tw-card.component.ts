@@ -1,4 +1,5 @@
-import { Component, OnInit, ViewEncapsulation, Input } from '@angular/core';
+import { Component, ContentChildren, Input, OnInit, QueryList, ViewEncapsulation } from '@angular/core';
+import { TFlipDirective } from '@twidgets/utils/t-flip/t-flip.directive';
 
 @Component({
     selector: 'tw-card',
@@ -7,14 +8,14 @@ import { Component, OnInit, ViewEncapsulation, Input } from '@angular/core';
     encapsulation: ViewEncapsulation.None
 })
 export class TwCardComponent implements OnInit {
-
-    @Input() data: any;
+    @ContentChildren(TFlipDirective, { descendants: true })
+    toggleBtns: QueryList<TFlipDirective>;
+    @Input()
+    data: any;
 
     @Input() fuseConfig: any;
 
-    constructor() { }
+    constructor() {}
 
-    ngOnInit(): void {
-    }
-
+    ngOnInit(): void {}
 }

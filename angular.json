@@ -42,6 +42,7 @@
                             "crossvent",
                             "dom-plane",
                             "dom-set",
+                            "rxjs",
                             "@mattlewis92/dom-autoscroller"
                         ]
                     },

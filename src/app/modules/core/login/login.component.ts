@@ -9,7 +9,6 @@ import { FuseConfigService } from '@fuse/services/config.service';
 import { AppDataService } from 'app/services/app-data.service';
 import { CommandResultEvent, IResponse, SDKClient, Utils } from 'tmac-sdk';
 
-
 @Component({
     selector: 'login',
     templateUrl: './login.component.html',
@@ -38,15 +37,14 @@ export class LoginComponent implements OnInit {
     msChecked = false;
 
     domainList = [];
-    selectedDomain = '';
-    lanId = '';
-    agentId = '';
-    password = '';
-    station = '';
+    // selectedDomain = '';
+    // lanId = '';
+    // agentId = '';
+    // password = '';
+    // station = '';
     loading = false;
 
     // utility = CommonUtils;
-
 
     constructor(
         private _fuseConfigService: FuseConfigService,
@@ -54,7 +52,7 @@ export class LoginComponent implements OnInit {
         private _appDataService: AppDataService,
         private _router: Router,
         private _dialog: MatDialog,
-        private _snackBar: MatSnackBar,
+        private _snackBar: MatSnackBar
     ) {
         // Configure the layout
         this._fuseConfigService.config = {
@@ -126,25 +124,21 @@ export class LoginComponent implements OnInit {
                     // show station and check PBX
                     this.stationEnabled = true;
                     this.pbxChecked = true;
-                }
-                else if (config.Login.Modes.Type === 'ms') {
+                } else if (config.Login.Modes.Type === 'ms') {
                     // show hide station and check MS
                     this.stationEnabled = false;
                     this.msChecked = true;
-                }
-                else if (config.Login.Modes.Type === 'pbxms') {
+                } else if (config.Login.Modes.Type === 'pbxms') {
                     // show station and check PBX and MS
                     this.stationEnabled = true;
                     this.pbxChecked = true;
                     this.msChecked = true;
-                }
-                else {
+                } else {
                     // hide station
                     this.stationEnabled = false;
                 }
             }
-        }
-        else {
+        } else {
             // we will route to error page
             this._router.navigate(['error']);
         }
@@ -153,18 +147,16 @@ export class LoginComponent implements OnInit {
     // to get data from server
     private getData(): void {
         if (this.domainListEnabled) {
-            SDKClient.getUserDomainList(null)
-                .then((result: IResponse) => {
-                    this.domainList = result.response || [];
-                });
+            SDKClient.getUserDomainList(null).then((result: IResponse) => {
+                this.domainList = result.response || [];
+            });
         }
     }
 
     public onPBXToggle(event: any): void {
         if (event.checked) {
             this.stationEnabled = true;
-        }
-        else {
+        } else {
             this.stationEnabled = false;
         }
     }
@@ -173,28 +165,42 @@ export class LoginComponent implements OnInit {
         // set loading to true
         this.loading = true;
 
+        // domain: ['', [Validators.required]],
+        // lanId: ['', [Validators.required]],
+        // agentId: ['', [Validators.required]],
+        // password: ['', Validators.required],
+        // station: ['', Validators.required]
+
+        const selectedDomain = this.loginForm.get('domain').value;
+        const lanId = this.loginForm.get('lanId').value;
+        const agentId = this.loginForm.get('agentId').value;
+        const password = this.loginForm.get('password').value;
+        const station = this.loginForm.get('station').value;
+
         // call sdk and login
-        SDKClient.login({
-            lanId: this.domainListEnabled ? `${this.selectedDomain}\\${this.lanId}` : this.lanId,
-            agentId: this.agentId,
-            deviceId: this.stationEnabled ? this.station : this.lanId.toLowerCase(),
-            forceReload: force,
-            jsonData: JSON.stringify({
-                msLogin: this.msChecked,
-                pbxLogin: this.pbxChecked,
-                customAuthData: null
-            }),
-            password: this.password,
-            sessionKey: ''
-        }, null)
-            .then((result: IResponse) => {
-                setTimeout(() => {
-                    // set loading to true
-                    this.loading = false;
-                    // process the login response
-                    this.loginResponse(result);
-                }, 1000);
-            });
+        SDKClient.login(
+            {
+                lanId: this.domainListEnabled ? `${selectedDomain}\\${lanId}` : lanId,
+                agentId: agentId,
+                deviceId: this.stationEnabled ? station : lanId.toLowerCase(),
+                forceReload: force,
+                jsonData: JSON.stringify({
+                    msLogin: this.msChecked,
+                    pbxLogin: this.pbxChecked,
+                    customAuthData: null
+                }),
+                password: password,
+                sessionKey: ''
+            },
+            null
+        ).then((result: IResponse) => {
+            setTimeout(() => {
+                // set loading to true
+                this.loading = false;
+                // process the login response
+                this.loginResponse(result);
+            }, 1000);
+        });
     }
 
     private loginResponse(result: IResponse): void {
@@ -210,14 +216,13 @@ export class LoginComponent implements OnInit {
                             disableClose: false
                         });
                         this.confirmDialogRef.componentInstance.confirmMessage = 'Another session detected. Do you want to take it over?';
-                        this.confirmDialogRef.afterClosed().subscribe(dialogResult => {
+                        this.confirmDialogRef.afterClosed().subscribe((dialogResult) => {
                             if (dialogResult) {
                                 this.login(true);
                             }
                             this.confirmDialogRef = null;
                         });
-                    }
-                    else {
+                    } else {
                         // login success
                         // we will route to main page
                         this._router.navigate(['main'], {
@@ -228,24 +233,20 @@ export class LoginComponent implements OnInit {
                             }
                         });
                     }
-                }
-                else if (response.ResultCode === -3) {
+                } else if (response.ResultCode === -3) {
                     // invalid Lan id check whether to prompt agent Id
                     if (this.promptAgentIdOnInvalidLanId) {
                         this.showMessage('Invalid LAN ID detected. Please provide agent id');
                         this.agentIdEnabled = true;
-                    }
-                    else {
+                    } else {
                         // login failed, invalid lan Id
                         this.showMessage('Invalid LAN ID detected. Please contact administrator for TMAC access');
                     }
-                }
-                else {
+                } else {
                     // login failed
                     this.showMessage(response.ResultMessage ? response.ResultMessage : 'Login failed, Unknown response from server');
                 }
-            }
-            else {
+            } else {
                 // login error
                 this.showMessage('Login failed, Please contact the administrator');
             }
@@ -255,7 +256,7 @@ export class LoginComponent implements OnInit {
     }
 
     private showMessage(message: string, style?: string): void {
-        this._snackBar.open(message, ('x'), {
+        this._snackBar.open(message, 'x', {
             duration: 2000,
             verticalPosition: 'top', // 'top' | 'bottom'
             horizontalPosition: 'right', // 'start' | 'center' | 'end' | 'left' | 'right'
@@ -264,7 +265,7 @@ export class LoginComponent implements OnInit {
     }
 
     public numberOnly(event: any): boolean {
-        const charCode = (event.which) ? event.which : event.keyCode;
+        const charCode = event.which ? event.which : event.keyCode;
         if (charCode > 31 && (charCode < 48 || charCode > 57)) {
             return false;
         }
