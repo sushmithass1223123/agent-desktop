@@ -1,7 +1,7 @@
-import { Component, OnInit, Input, ViewEncapsulation, OnDestroy } from '@angular/core';
-import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs/internal/Subject';
+import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseConfigService } from '@fuse/services/config.service';
+import { Subject } from 'rxjs/internal/Subject';
+import { takeUntil } from 'rxjs/operators';
 @Component({
     selector: 'tw-wrapper',
     templateUrl: './tw-wrapper.component.html',
@@ -17,11 +17,19 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
     // Private
     _unsubscribeAll: Subject<any>;
 
+    /**
+     * Constructor
+     * @param {FuseConfigService} _fuseConfigService 
+     */
     constructor(
-        private _fuseConfigService: FuseConfigService
+        private _fuseConfigService: FuseConfigService,
     ) {
         this._unsubscribeAll = new Subject();
     }
+
+    // -----------------------------------------------------------------------------------------------------
+    // @ Lifecycle hooks
+    // -----------------------------------------------------------------------------------------------------
 
     ngOnInit(): void {
         // Subscribe to the config changes
@@ -37,5 +45,9 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
     }
+
+    // -----------------------------------------------------------------------------------------------------
+    // @ Public methods
+    // -----------------------------------------------------------------------------------------------------
 
 }

@@ -10,6 +10,7 @@
             <!-- Enabled header if enabled in config -->
             <tw-card-header [data]="data" [fuseConfig]=fuseConfig *ngIf="data.Config.Header"></tw-card-header>
 
+            <!-- Card content -->
             <mat-card-content class="{{ !data.Config.Header ? 'no-header' : '' }}">
 
                 <!-- All the card content goes here -->

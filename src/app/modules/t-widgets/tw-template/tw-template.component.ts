@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Input, ComponentFactoryResolver } from '@angular/core';
+import { Component, ViewChild, Input, ComponentFactoryResolver, AfterContentInit } from '@angular/core';
 import { TwTemplateDirective } from './tw-template.directive';
 import { TWidget } from '@twidgets/utils';
 
@@ -8,7 +8,7 @@ import { TWidget } from '@twidgets/utils';
     templateUrl: './tw-template.component.html',
     styleUrls: ['./tw-template.component.scss']
 })
-export class TwTemplateComponent implements OnInit {
+export class TwTemplateComponent implements AfterContentInit {
 
     @Input() widgets: TWidget[];
 
@@ -18,7 +18,7 @@ export class TwTemplateComponent implements OnInit {
         private _componentFactoryResolver: ComponentFactoryResolver
     ) { }
 
-    ngOnInit(): void {
+    ngAfterContentInit(): void {
         // load the components
         this.loadComponent();
     }
