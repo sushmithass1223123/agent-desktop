@@ -6,7 +6,7 @@ import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseSplashScreenService } from '@fuse/services/splash-screen.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient } from 'tmac-sdk';
+import { SDKClient, AgentForcedLogoffEvent } from 'tmac-sdk';
 
 @Component({
     selector: 'main',
@@ -14,6 +14,7 @@ import { SDKClient } from 'tmac-sdk';
     styleUrls: ['./main.component.scss']
 })
 export class MainComponent implements OnInit, OnDestroy {
+    
     fuseConfig: any;
     loaded = false;
 
@@ -93,7 +94,19 @@ export class MainComponent implements OnInit, OnDestroy {
     private pollForEvent(): void {
         // set the loaded to true
         this.loaded = true;
+
         // register for get events
         SDKClient.getEvents();
+
+        // listen to force log off event
+        SDKClient.events.on('AgentForcedLogoffEvent', (evt: AgentForcedLogoffEvent) => {
+            // TODO:: show an alert
+
+            // route back to login page
+            setTimeout(() => {
+                // we will route to login page
+                this._router.navigate(['login']);
+            }, 5000);
+        });
     }
 }

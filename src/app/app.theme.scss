@@ -4,15 +4,15 @@
 $fuse-white: (
     500: white,
     contrast: (
-        500: $dark-primary-text,
-    ),
+        500: $dark-primary-text
+    )
 );
 
 $fuse-black: (
     500: black,
     contrast: (
-        500: $light-primary-text,
-    ),
+        500: $light-primary-text
+    )
 );
 
 $fuse-navy: (
@@ -44,8 +44,8 @@ $fuse-navy: (
         A100: $dark-primary-text,
         A200: $light-primary-text,
         A400: $light-primary-text,
-        A700: $light-primary-text,
-    ),
+        A700: $light-primary-text
+    )
 );
 
 $tw-primary: (
@@ -77,8 +77,8 @@ $tw-primary: (
         A100: $dark-primary-text,
         A200: $light-primary-text,
         A400: $light-primary-text,
-        A700: $light-primary-text,
-    ),
+        A700: $light-primary-text
+    )
 );
 
 $tw-secondary: (
@@ -110,18 +110,18 @@ $tw-secondary: (
         A100: $dark-primary-text,
         A200: $light-primary-text,
         A400: $light-primary-text,
-        A700: $light-primary-text,
-    ),
+        A700: $light-primary-text
+    )
 );
 
 // Generate Fuse color classes for custom palettes
 $custom_palettes: (
-    "fuse-white": $fuse-white,
-    "fuse-black": $fuse-black,
-    "fuse-navy": $fuse-navy,
-    "tw-primary": $tw-primary,
-    "purple": $tw-primary,
-    "tw-secondary": $tw-secondary,
+    'fuse-white': $fuse-white,
+    'fuse-black': $fuse-black,
+    'fuse-navy': $fuse-navy,
+    'tw-primary': $tw-primary,
+    'purple': $tw-primary,
+    'tw-secondary': $tw-secondary
 );
 
 @include fuse-color-classes($custom_palettes);
@@ -132,12 +132,11 @@ $custom_palettes: (
 
 // Angular Material typography
 $typography: mat-typography-config(
-    $font-family: "Muli, Helvetica Neue, Arial, sans-serif",
+    $font-family: 'Muli, Helvetica Neue, Arial, sans-serif',
     $title: mat-typography-level(20px, 32px, 600),
     $body-2: mat-typography-level(14px, 24px, 600),
     $button: mat-typography-level(14px, 14px, 600),
-    $input: mat-typography-level(16px, 1.125, 400)
-        // line-height must be unitless !!!,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+    $input: mat-typography-level(16px, 1.125, 400) // line-height must be unitless !!!,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 );
 
 // Setup the typography
@@ -148,14 +147,15 @@ $typography: mat-typography-config(
 // -----------------------------------------------------------------------------------------------------
 
 // Import app and page component themes here to enable theming for them
-@import "src/app/layout/components/chat-panel/chat-panel.theme";
-@import "src/app/layout/components/toolbar/toolbar.theme";
+@import 'src/app/layout/components/chat-panel/chat-panel.theme';
+@import 'src/app/layout/components/toolbar/toolbar.theme';
+@import 'src/app/layout/components/navbar/navbar.theme';
+@import 'src/app/layout/components/theme-options/theme-options.theme';
 
-@import "src/app/layout/components/navbar/navbar.theme";
-@import "src/app/layout/components/theme-options/theme-options.theme";
+@import 'src/app/modules/core/login/login.theme';
 
-@import "src/app/modules/core/login/login.theme";
-@import "src/app/modules/t-widgets/tw-wrapper/tw-wrapper.theme";
+@import 'src/app/modules/t-widgets/tw-content/tw-content.theme';
+@import 'src/app/modules/t-widgets/tw-wrapper/tw-wrapper.theme';
 
 // Define a mixin for easier access
 @mixin components-theme($theme) {
@@ -179,11 +179,14 @@ $typography: mat-typography-config(
     // Layout components
     @include chat-panel-theme($theme);
     @include toolbar-theme($theme);
-
-    @include login-theme($theme);
     @include navbar-theme($theme);
     @include app-theme-options-theme($theme);
 
+    // Core components
+    @include login-theme($theme);
+
+    // T-Widgets components
+    @include tw-content-theme($theme);
     @include tw-wrapper-theme($theme);
 }
 
@@ -197,11 +200,7 @@ $default-accent-palette: mat-palette($tw-secondary);
 $default-warn-palette: mat-palette($mat-red);
 
 // Create the Material theme object
-$theme: mat-light-theme(
-    $default-primary-palette,
-    $default-accent-palette,
-    $default-warn-palette
-);
+$theme: mat-light-theme($default-primary-palette, $default-accent-palette, $default-warn-palette);
 
 // Add ".theme-default" class to the body to activate this theme.
 // Class name must start with "theme-" !!!
@@ -219,7 +218,7 @@ body.theme-default {
     $palettes: (
         primary: $default-primary-palette,
         accent: $default-accent-palette,
-        warn: $default-warn-palette,
+        warn: $default-warn-palette
     );
 
     @include fuse-color-classes($palettes);
@@ -235,11 +234,7 @@ $gray-dark-theme-accent-palette: mat-palette($tw-secondary);
 $gray-dark-theme-warn-palette: mat-palette($mat-red);
 
 // Create the Material theme object
-$gray-dark-theme: mat-dark-theme(
-    $gray-dark-theme-primary-palette,
-    $gray-dark-theme-accent-palette,
-    $gray-dark-theme-warn-palette
-);
+$gray-dark-theme: mat-dark-theme($gray-dark-theme-primary-palette, $gray-dark-theme-accent-palette, $gray-dark-theme-warn-palette);
 
 // Add ".theme-gray-dark" class to the body to activate this theme.
 // Class name must start with "theme-" !!!
@@ -257,7 +252,7 @@ body.theme-dark {
     $palettes: (
         primary: $gray-dark-theme-primary-palette,
         accent: $gray-dark-theme-accent-palette,
-        warn: $gray-dark-theme-warn-palette,
+        warn: $gray-dark-theme-warn-palette
     );
 
     @include fuse-color-classes($palettes);

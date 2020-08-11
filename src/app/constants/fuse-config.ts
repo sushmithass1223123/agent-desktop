@@ -25,17 +25,18 @@ export const fuseConfig: FuseConfig = {
         },
         toolbar: {
             customBackgroundColor: true,
-            background: 'grey-200',
+            background: 'grey-300',
             hidden: false,
             position: 'below-fixed'
         },
         content: {
             customBackgroundColor: true,
-            background: 'grey-200'
+            background: 'grey-300'
         },
         widget: {
             customBackgroundColor: false,
             headerBackground: 'purple-700',
+            anchorBodyBackground: 'grey-700',
             bodyBackground: 'grey-400',
         },
         footer: {

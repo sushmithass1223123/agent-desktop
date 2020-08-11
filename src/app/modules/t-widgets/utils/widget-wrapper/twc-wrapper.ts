@@ -29,6 +29,9 @@ export class TWContentWrapper {
             return;
         }
 
+        // add display none to the host element
+        this.hostElement.nativeElement.style.display = 'none';
+
         // set the data
         this.widgetData = data;
 
@@ -51,9 +54,13 @@ export class TWContentWrapper {
         }
 
         // subscribe to the viewModeObservable
-        this.contentPageService.viewModeObservable
+        this.contentPageService.mode
             .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(d => {
+            .subscribe((d: string) => {
+
+                console.log('###########', d);
+                
+                // get the path
                 const active = d === this.widgetData.Data.Path;
                 // set the style
                 this.hostElement.nativeElement.style.display = (active ? 'block' : 'none');

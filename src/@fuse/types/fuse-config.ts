@@ -25,6 +25,7 @@ export interface FuseConfig {
         widget: {
             customBackgroundColor: boolean,
             headerBackground: string,
+            anchorBodyBackground: string,
             bodyBackground: string,
         },
         footer: {

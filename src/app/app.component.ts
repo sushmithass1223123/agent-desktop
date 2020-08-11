@@ -218,7 +218,7 @@ export class AppComponent implements OnInit, OnDestroy {
             this.config = data;
             // set the config to service
             if (data) {
-                this._appDataService.setConfig(data);
+                this._appDataService.config = data;
             }
         } catch (error) {
             console.error(error);

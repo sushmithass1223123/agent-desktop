@@ -11,10 +11,10 @@
             }
 
             #login-form-wrapper {
-                @if ($is-dark) {
-                    background: mat-color($tw-primary, 700);
+                @if ($is-dark == true) {
+                    background-color: map-get($background, hover);
                 } @else {
-                    background: map-get($background, card);
+                    background-color: white;
                 }
 
                 #login-form {

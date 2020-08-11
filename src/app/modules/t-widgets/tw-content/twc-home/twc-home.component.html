@@ -1,11 +1,2 @@
-<div class="tw-full">
-
-    <tw-template class="widget-grid" [widgets]=homeWidgets></tw-template>
-
-    <div fxFlex fxFill fxLayout="row" fxLayoutAlign="center center" *ngIf="homeWidgets.length === 0">
-        <span class="mat-display-1 mb-0">
-            No home widgets found!
-        </span>
-    </div>
-
-</div>
+<tw-template class="widget-grid" *ngIf="homeWidgets.length > 0" [widgets]=homeWidgets></tw-template>
+<twc-no-widgets class="tw-card" *ngIf="homeWidgets.length === 0" type="home"></twc-no-widgets>

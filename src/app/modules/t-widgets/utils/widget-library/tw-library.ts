@@ -3,12 +3,14 @@ import { TWidget } from '../t-widget';
 import { TwUnknownComponent } from '@modules/t-widgets/tw-collections/tw-unknown/tw-unknown.component';
 import { TwCustomComponent } from '@modules/t-widgets/tw-collections/tw-custom/tw-custom.component';
 import { TwSampleComponent } from '@modules/t-widgets/tw-collections/tw-sample/tw-sample.component';
+import { TwWallboardComponent } from '@modules/t-widgets/tw-collections/tw-wallboard/tw-wallboard.component';
 
 export class TWLibrary {
 
     static widgetLibrary: Record<string, Type<any>> = {
         'tw-sample': TwSampleComponent,
         'tw-custom': TwCustomComponent,
+        'tw-wallbaord': TwWallboardComponent
     };
 
     public static getAllWidgets(): Record<string, Type<any>> {

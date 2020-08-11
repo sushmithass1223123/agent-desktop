@@ -1,8 +1,8 @@
 // Import Fuse core library
-@import "@fuse/scss/core";
+@import '@fuse/scss/core';
 
 // Import app.theme.scss
-@import "app/app.theme";
+@import 'app/app.theme';
 
 .tooltip {
     font-size: 1.5rem;
@@ -21,9 +21,7 @@
     display: grid;
     gap: 1rem;
     grid-template-columns: none;
-    grid-auto-rows: calc(29.5vh);
-    // overflow: auto;
-    // height: calc(100% - 34px);
+    grid-auto-rows: 29vh;
 }
 
 @media screen and (max-width: 768px) {

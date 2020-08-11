@@ -11,22 +11,22 @@
                     color: map-get($foreground, text);
 
                     // If it's a light theme, use a darker background
-                    // color other than the default #dadada
+                    // color other than the default #fafafa
                     @if ($is-dark) {
                         background: #424242;
                     } @else {
-                        background: #dadada;
+                        background: #fafafa;
                     }
 
                     .card-header {
                         color: map-get($foreground, text);
 
                         // If it's a light theme, use a darker background
-                        // color other than the default #fafafa
+                        // color other than the default #eaeaea
                         @if ($is-dark) {
                             background: map-get($background, background);
                         } @else {
-                            background: #fafafa;
+                            background: #eaeaea;
                         }
                     }
                 }
@@ -38,11 +38,11 @@
                         color: map-get($foreground, text);
 
                         // If it's a light theme, use a darker background
-                        // color other than the default #fafafa
+                        // color other than the default #eaeaea
                         @if ($is-dark) {
                             background: map-get($background, background);
                         } @else {
-                            background: #fafafa;
+                            background: #eaeaea;
                         }
                     }
                 }
