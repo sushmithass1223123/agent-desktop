@@ -1,22 +1,39 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+import * as _ from 'lodash';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class AppDataService {
 
-  private appConfig: any;
+    // Private
+    private _configSubject: BehaviorSubject<any>;
 
-  setConfig(data: any): void {
-    if (data) {
-      this.appConfig = data;
+    constructor() {
+        // Set the config from the default config
+        this._configSubject = new BehaviorSubject(new Object());
     }
-  }
 
-  getConfig(): any {
-    if (this.appConfig) {
-      return { ...this.appConfig };
+    // -----------------------------------------------------------------------------------------------------
+    // @ Accessors
+    // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * Set and get the config
+     */
+    set config(value) {
+        // Get the value from the behavior subject
+        let config = this._configSubject.getValue();
+
+        // Merge the new config
+        config = _.merge({}, config, value);
+
+        // Notify the observers
+        this._configSubject.next(config);
     }
-    return null;
-  }
+
+    get config(): any | Observable<any> {
+        return this._configSubject.asObservable();
+    }
 }

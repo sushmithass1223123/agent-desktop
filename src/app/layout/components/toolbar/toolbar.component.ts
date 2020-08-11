@@ -21,7 +21,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     rightNavbar: boolean;
     hiddenNavbar: boolean;
 
-    selectedLanguage: any; 
+    selectedLanguage: any;
 
     navbarWidgets = [];
 
@@ -36,12 +36,12 @@ export class ToolbarComponent implements OnInit, OnDestroy {
      *
      * @param {FuseConfigService} _fuseConfigService
      * @param {FuseSidebarService} _fuseSidebarService
-     * @param {TranslateService} _translateService
+     * @param {AppDataService} _appDataService
      */
     constructor(
         private _fuseConfigService: FuseConfigService,
         private _fuseSidebarService: FuseSidebarService,
-        private appDataService: AppDataService
+        private _appDataService: AppDataService
     ) {
 
         // Set the private defaults
@@ -65,23 +65,28 @@ export class ToolbarComponent implements OnInit, OnDestroy {
                 this.hiddenNavbar = settings.layout.navbar.hidden === true;
             });
 
-        // get the config
-        const config = this.appDataService.getConfig();
-        // check if the config is not null
-        if (config !== null) {
-            // get the content widgets
-            this.navbarWidgets = config.Main.Navbar.Widgets || [];
+        // Subscribe to config changes
+        this._appDataService.config
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe(
+                (config: any) => {
+                    // check if the config is not null
+                    if (config !== null) {
+                        // get the content widgets
+                        this.navbarWidgets = config.Main.Navbar.Widgets || [];
 
-            // loop and get the widgets
-            this.navbarWidgets.forEach((widget: IWidget) => {
-                if (widget.Type === 'tw-active-interaction') {
-                    this.activeInteractionWidget = widget;
+                        // loop and get the widgets
+                        this.navbarWidgets.forEach((widget: IWidget) => {
+                            if (widget.Type === 'tw-active-interaction') {
+                                this.activeInteractionWidget = widget;
+                            }
+                            else if (widget.Type === 'tw-toolbar-menu') {
+                                this.toolbarMenuWidget = widget;
+                            }
+                        });
+                    }
                 }
-                else if (widget.Type === 'tw-toolbar-menu') {
-                    this.toolbarMenuWidget = widget;
-                }
-            });
-        }
+            );
     }
 
     /**

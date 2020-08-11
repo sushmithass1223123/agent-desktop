@@ -1,4 +1,4 @@
-@import "src/@fuse/scss/fuse";
+@import 'src/@fuse/scss/fuse';
 
 content {
     position: relative;
@@ -8,17 +8,13 @@ content {
     border-bottom-left-radius: 3rem;
 
     .tw-content {
-        padding: 0rem 3.4rem;
-    }
-
-    @include media-breakpoint("xs") {
-        border-radius: 0px;
-    }
-
-    > *:not(router-outlet) {
         display: flex;
         flex: 1 0 auto;
-        width: 100%;
-        min-width: 100%;
+        padding: 2rem 3rem 0rem;
+        border-bottom-left-radius: 3rem;
+    }
+
+    @include media-breakpoint('xs') {
+        border-radius: 0px;
     }
 }

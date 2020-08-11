@@ -1,0 +1,22 @@
+@mixin tw-content-theme($theme) {
+    $background: map-get($theme, background);
+    $foreground: map-get($theme, foreground);
+    $accent: map-get($theme, accent);
+    $is-dark: map-get($theme, is-dark);
+
+    twc-unknown,
+    twc-custom,
+    twc-no-widgets {
+        &.tw-card {
+            .mat-card {
+                // If it's a light theme, use a darker background
+                // color other than the default #fafafa
+                @if ($is-dark) {
+                    background: #424242;
+                } @else {
+                    background: #fafafa;
+                }
+            }
+        }
+    }
+}

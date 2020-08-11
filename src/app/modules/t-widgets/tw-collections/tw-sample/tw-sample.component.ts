@@ -1,13 +1,14 @@
-import { Component, OnInit, Input, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { fuseAnimations } from '@fuse/animations';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { takeUntil } from 'rxjs/operators';
-import { FuseConfigService } from '@fuse/services/config.service';
+
 
 @Component({
     selector: 'tw-sample',
     templateUrl: './tw-sample.component.html',
     styleUrls: ['./tw-sample.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    animations: fuseAnimations
 })
 export class TwSampleComponent extends TWidgetWrapper implements OnInit, OnDestroy {
 

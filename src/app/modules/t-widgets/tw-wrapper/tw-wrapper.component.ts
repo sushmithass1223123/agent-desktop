@@ -1,12 +1,15 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { fuseAnimations } from '@fuse/animations';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { Subject } from 'rxjs/internal/Subject';
 import { takeUntil } from 'rxjs/operators';
+
 @Component({
     selector: 'tw-wrapper',
     templateUrl: './tw-wrapper.component.html',
     styleUrls: ['./tw-wrapper.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    animations: fuseAnimations
 })
 export class TwWrapperComponent implements OnInit, OnDestroy {
 

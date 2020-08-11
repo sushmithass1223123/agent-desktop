@@ -1,8 +1,9 @@
-<tw-card class="tw-card tw-bg-header tw-bg-body tw-box-header tw-box-body">
+<tw-card class="tw-card tw-bg-header tw-bg-body tw-box-header tw-box-body" [@animate]="{value:'*',params:{y:'100%'}}">
 
     <!-- We are writing a wrapper over material card -->
-    <mat-card class="widget-card"
-        [ngClass]="fuseConfig.layout.widget.customBackgroundColor === true ? fuseConfig.layout.widget.bodyBackground : ''">
+    <mat-card class="widget-card" [ngClass]="fuseConfig.layout.widget.customBackgroundColor === true ?
+        (this.data.Config.Anchor === true ? fuseConfig.layout.widget.anchorBodyBackground : fuseConfig.layout.widget.bodyBackground) :
+        ''">
 
         <!-- Wrapper to wrap header and body -->
         <div class="card-wrapper">

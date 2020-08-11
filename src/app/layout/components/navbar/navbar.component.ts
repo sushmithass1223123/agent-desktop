@@ -5,7 +5,6 @@ import { Subject } from 'rxjs';
 import { AppDataService } from 'app/services/app-data.service';
 import { ContentPageService } from 'app/services/content-page.service';
 import { IWidget } from 'app/interfaces/';
-import { ConfigService } from '@services/config.service';
 
 @Component({
     selector: 'navbar',
@@ -27,13 +26,16 @@ export class NavbarComponent implements OnInit, OnDestroy {
     // Private
     private _unsubscribeAll: Subject<any>;
 
-    navbarConf$ = this.configService.navbar$;
-
+    /**
+     * Constructor
+     * @param {FuseConfigService} _fuseConfigService 
+     * @param {AppDataService} _appDataService 
+     * @param {ContentPageService} _contentPageService 
+     */
     constructor(
         private _fuseConfigService: FuseConfigService,
-        private appDataService: AppDataService,
-        private contentPageService: ContentPageService,
-        private configService: ConfigService
+        private _appDataService: AppDataService,
+        private _contentPageService: ContentPageService
     ) {
         // Set the private defaults
         this._unsubscribeAll = new Subject();
@@ -55,42 +57,46 @@ export class NavbarComponent implements OnInit, OnDestroy {
                 this.fuseConfig = fuseConfig;
             });
 
-        // get the config
-        const config = this.appDataService.getConfig();
+        // Subscribe to config changes
+        this._appDataService.config
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe(
+                (config: any) => {
+                    // check if the config is not null
+                    if (config !== null) {
+                        // get the sidebar widgets
+                        const sidebarWidgets = config.Main.Sidebar.Widgets || {};
+                        // assign the brand logo
+                        this.brandLogo = sidebarWidgets.BrandLogo || null;
+                        // get the top widgets
+                        this.topWidgets = sidebarWidgets.Top || [];
+                        // get the bottom widgets
+                        this.bottomWidgets = sidebarWidgets.Bottom || [];
 
-        // check if the config is not null
-        if (config !== null) {
-            // get the sidebar widgets and app configs
-            const appConfigs = config.AppConfigs || {};
-            const sidebarWidgets = config.Main.Sidebar.Widgets || {};
-            // assign the brand logo
-            this.brandLogo = appConfigs.Images.Customer;
-            // get the top widgets
-            this.topWidgets = sidebarWidgets.Top || [];
-            // get the bottom widgets
-            this.bottomWidgets = sidebarWidgets.Bottom || [];
+                        // set a flag to check if selected
+                        let selected = false;
 
-            // set a flag to check if selected
-            let selected = false;
+                        // check if any item is set to active
+                        this.topWidgets.forEach((item: IWidget) => {
+                            if (item.Data.Active === true) {
+                                this.selectTab(item);
+                                selected = true;
+                                return;
+                            }
+                        });
 
-            // check if any item is set to active
-            this.topWidgets.forEach((item: IWidget) => {
-                if (item.Data.Active === true) {
-                    this.selectTab(item);
-                    selected = true;
-                    return;
-                }
-            });
-
-            if (!selected) {
-                this.bottomWidgets.forEach((item: IWidget) => {
-                    if (item.Data.Active === true) {
-                        this.selectTab(item);
-                        return;
+                        // if top is not selected, check for bottom items
+                        if (!selected) {
+                            this.bottomWidgets.forEach((item: IWidget) => {
+                                if (item.Data.Active === true) {
+                                    this.selectTab(item);
+                                    return;
+                                }
+                            });
+                        }
                     }
-                });
-            }
-        }
+                }
+            );
     }
 
     /**
@@ -103,6 +109,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
     }
 
     selectTab(item: any): any {
-        this.contentPageService.updateViewMode(item.Data.Path);
+        this._contentPageService.mode = item.Data.Path;
     }
 }

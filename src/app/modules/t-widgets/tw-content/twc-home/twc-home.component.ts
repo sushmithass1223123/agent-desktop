@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, ElementRef, ViewEncapsulation } from '@angular/core';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { TWLibrary } from '@twidgets/utils/widget-library/tw-library';
 import { ContentPageService } from 'app/services/content-page.service';
@@ -7,7 +7,8 @@ import { IWidget } from 'app/interfaces';
 @Component({
     selector: 'twc-home',
     templateUrl: './twc-home.component.html',
-    styleUrls: ['./twc-home.component.scss']
+    styleUrls: ['./twc-home.component.scss'],
+    encapsulation: ViewEncapsulation.None
 })
 export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDestroy {
 

@@ -88,6 +88,7 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
                 widget: this._formBuilder.group({
                     customBackgroundColor: new FormControl(),
                     headerBackground: new FormControl(),
+                    anchorBodyBackground: new FormControl(),
                     bodyBackground: new FormControl()
                 }),
                 footer: this._formBuilder.group({
@@ -198,17 +199,18 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
                             },
                             toolbar: {
                                 customBackgroundColor: true,
-                                background: 'grey-200',
+                                background: 'grey-300',
                                 hidden: false,
                                 position: 'below-static'
                             },
                             content: {
                                 customBackgroundColor: true,
-                                background: 'grey-200',
+                                background: 'grey-300',
                             },
                             widget: {
                                 customBackgroundColor: false,
                                 headerBackground: 'purple-700',
+                                anchorBodyBackground: 'grey-400',
                                 bodyBackground: 'grey-400'
                             },
                             footer: {
@@ -243,17 +245,18 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
                             },
                             toolbar: {
                                 customBackgroundColor: true,
-                                background: 'grey-200',
+                                background: 'grey-300',
                                 hidden: false,
-                                position: 'below-static'
+                                position: 'above'
                             },
                             content: {
                                 customBackgroundColor: true,
-                                background: 'grey-200',
+                                background: 'grey-300',
                             },
                             widget: {
                                 customBackgroundColor: false,
                                 headerBackground: 'purple-700',
+                                anchorBodyBackground: 'grey-400',
                                 bodyBackground: 'grey-400'
                             },
                             footer: {

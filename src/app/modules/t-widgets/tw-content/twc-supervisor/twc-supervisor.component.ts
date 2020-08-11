@@ -1,13 +1,14 @@
-import { Component, ElementRef, Input, OnDestroy, OnInit } from '@angular/core';
-import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
+import { Component, ElementRef, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TWLibrary } from '@twidgets/utils/widget-library/tw-library';
+import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { IWidget } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
 
 @Component({
     selector: 'twc-supervisor',
     templateUrl: './twc-supervisor.component.html',
-    styleUrls: ['./twc-supervisor.component.scss']
+    styleUrls: ['./twc-supervisor.component.scss'],
+    encapsulation: ViewEncapsulation.None
 })
 export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, OnDestroy {
 

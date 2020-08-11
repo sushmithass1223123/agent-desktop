@@ -70,8 +70,7 @@
                     </mat-error>
                 </mat-form-field>
 
-                <mat-form-field class="form-field animate__animated animate__fast animate__flipInX" appearance="outline"
-                    *ngIf="stationEnabled">
+                <mat-form-field class="form-field" appearance="outline" *ngIf="stationEnabled">
                     <mat-label>STATION</mat-label>
                     <input class="login-input" matInput required placeholder="STATION" (keypress)="numberOnly($event)"
                         (keydown.enter)="login(false)" formControlName="station" />

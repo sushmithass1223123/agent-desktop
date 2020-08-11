@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -7,6 +7,8 @@ import { fuseAnimations } from '@fuse/animations';
 import { FuseConfirmDialogComponent } from '@fuse/components/confirm-dialog/confirm-dialog.component';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { AppDataService } from 'app/services/app-data.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { CommandResultEvent, IResponse, SDKClient, Utils } from 'tmac-sdk';
 
 @Component({
@@ -16,7 +18,13 @@ import { CommandResultEvent, IResponse, SDKClient, Utils } from 'tmac-sdk';
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
+
+    // Private
+    private _unsubscribeAll: Subject<any>;
+
+    appConfig: any;
+
     loginForm: FormGroup;
     confirmDialogRef: MatDialogRef<FuseConfirmDialogComponent>;
 
@@ -37,14 +45,8 @@ export class LoginComponent implements OnInit {
     msChecked = false;
 
     domainList = [];
-    // selectedDomain = '';
-    // lanId = '';
-    // agentId = '';
-    // password = '';
-    // station = '';
-    loading = false;
 
-    // utility = CommonUtils;
+    loading = false;
 
     constructor(
         private _fuseConfigService: FuseConfigService,
@@ -71,6 +73,9 @@ export class LoginComponent implements OnInit {
                 }
             }
         };
+
+        // Set the private defaults
+        this._unsubscribeAll = new Subject();
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -94,22 +99,40 @@ export class LoginComponent implements OnInit {
         this.getData();
     }
 
+    /**
+     * On destroy
+     */
+    ngOnDestroy(): void {
+        // Unsubscribe from all subscriptions
+        this._unsubscribeAll.next();
+        this._unsubscribeAll.complete();
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @  Methods
     // -----------------------------------------------------------------------------------------------------
 
     // to load the config
     private loadConfig(): void {
-        // get the config
-        const config = this._appDataService.getConfig();
+        // Subscribe to config changes
+        this._appDataService.config
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe(
+                (config: any) => {
+                    this.appConfig = config;
+                    this.configLoaded(config);
+                }
+            );
+    }
 
+    private configLoaded(config: any): void {
         // check if the config is not null
         if (config !== null) {
             this.loginConfig = config.Login;
-            this.logoSrc = config.Login.Logo.Src;
-            this.logoAlt = config.Login.Logo.Alt;
-            this.logoWidth = config.Login.Logo.Width ? config.Login.Logo.Width : 100;
-            this.logoHeight = config.Login.Logo.Height ? config.Login.Logo.Height : 100;
+            this.logoSrc = config.AppConfigs.Images.Default.Logo.Large.Src;
+            this.logoAlt = config.AppConfigs.Images.Default.Logo.Large.Alt;
+            this.logoWidth = config.AppConfigs.Images.Default.Logo.Large.Width ? config.AppConfigs.Images.Default.Logo.Large.Width : 100;
+            this.logoHeight = config.AppConfigs.Images.Default.Logo.Large.Height ? config.AppConfigs.Images.Default.Logo.Large.Height : 100;
 
             this.domainListEnabled = config.Login.DomainListEnabled;
             this.passwordEnabled = config.Login.PasswordEnabled;
@@ -164,12 +187,6 @@ export class LoginComponent implements OnInit {
     public login(force: boolean): void {
         // set loading to true
         this.loading = true;
-
-        // domain: ['', [Validators.required]],
-        // lanId: ['', [Validators.required]],
-        // agentId: ['', [Validators.required]],
-        // password: ['', Validators.required],
-        // station: ['', Validators.required]
 
         const selectedDomain = this.loginForm.get('domain').value;
         const lanId = this.loginForm.get('lanId').value;

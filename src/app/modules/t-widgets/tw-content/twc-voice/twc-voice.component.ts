@@ -1,18 +1,22 @@
-import { Component, ElementRef, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { TWLibrary } from '@twidgets/utils/widget-library/tw-library';
 import { IWidget } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
+import { SDKClient, IncomingCallEvent } from 'tmac-sdk';
 
 @Component({
     selector: 'twc-voice',
     templateUrl: './twc-voice.component.html',
-    styleUrls: ['./twc-voice.component.scss']
+    styleUrls: ['./twc-voice.component.scss'],
+    encapsulation: ViewEncapsulation.None
 })
 export class TwcVoiceComponent extends TWContentWrapper implements OnInit, OnDestroy {
 
     @Input() data: any;
+
     voiceWidgets = [];
+    interactionList: IncomingCallEvent[] = [];
 
     constructor(
         public hostElement: ElementRef,
@@ -36,10 +40,19 @@ export class TwcVoiceComponent extends TWContentWrapper implements OnInit, OnDes
                 this.voiceWidgets.push(component);
             }
         });
+
+        // listen to TMAC events
+        this.listenToTMACEvents();
     }
 
     ngOnDestroy(): void {
         this.destroyWrapper();
     }
 
+    listenToTMACEvents(): void {
+        // listen to incoming call event
+        SDKClient.events.on('IncomingCallEvent', ((evt: IncomingCallEvent) => {
+            this.interactionList.push(evt);
+        }));
+    }
 }

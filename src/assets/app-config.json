@@ -69,7 +69,7 @@
                         "Data": {
                             "Icon": "home",
                             "Path": "/home",
-                            "Active": false
+                            "Active": true
                         }
                     },
                     {
@@ -79,7 +79,7 @@
                         "Data": {
                             "Icon": "supervised_user_circle",
                             "Path": "/supervisor",
-                            "Active": true
+                            "Active": false
                         }
                     },
                     {
@@ -164,279 +164,15 @@
                     "Description": "",
                     "Type": "twc-home",
                     "Config": {
+                        "Class": "",
                         "Position": {
                             "X": 3,
-                            "Y": 0
+                            "Y": 6
                         }
                     },
                     "Data": {
                         "Path": "/home",
-                        "Widgets": [
-                            {
-                                "Name": "Dashboard-1",
-                                "Description": "",
-                                "Type": "tw-sample",
-                                "Config": {
-                                    "Position": {
-                                        "X": 3,
-                                        "Y": 2
-                                    },
-                                    "Actions": [
-                                        "maximise",
-                                        "minimise",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
-                                },
-                                "Data": {}
-                            },
-                            {
-                                "Name": "Wallboard",
-                                "Description": "",
-                                "Type": "tw-wallboard",
-                                "Config": {
-                                    "Position": {
-                                        "X": 1,
-                                        "Y": 1
-                                    },
-                                    "Actions": [
-                                        "maximise",
-                                        "minimise",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
-                                },
-                                "Data": {}
-                            },
-                            {
-                                "Name": "Wallboard",
-                                "Description": "",
-                                "Type": "tw-sample",
-                                "Config": {
-                                    "Position": {
-                                        "X": 1,
-                                        "Y": 1
-                                    },
-                                    "Actions": [
-                                        "maximise",
-                                        "minimise",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
-                                },
-                                "Data": {}
-                            },
-                            {
-                                "Name": "Wallboard",
-                                "Description": "",
-                                "Type": "tw-wallboard",
-                                "Config": {
-                                    "Position": {
-                                        "X": 1,
-                                        "Y": 1
-                                    },
-                                    "Actions": [
-                                        "maximise",
-                                        "minimise",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
-                                },
-                                "Data": {}
-                            },
-                            {
-                                "Name": "Wallboard",
-                                "Description": "",
-                                "Type": "tw-sample",
-                                "Config": {
-                                    "Position": {
-                                        "X": 1,
-                                        "Y": 1
-                                    },
-                                    "Actions": [
-                                        "maximise",
-                                        "minimise",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
-                                },
-                                "Data": {}
-                            },
-                            {
-                                "Name": "Wallboard",
-                                "Description": "",
-                                "Type": "tw-wallboard",
-                                "Config": {
-                                    "Position": {
-                                        "X": 1,
-                                        "Y": 2
-                                    },
-                                    "Actions": [
-                                        "maximise",
-                                        "minimise",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
-                                },
-                                "Data": {}
-                            },
-                            {
-                                "Name": "Wallboard",
-                                "Description": "",
-                                "Type": "tw-sample",
-                                "Config": {
-                                    "Position": {
-                                        "X": 1,
-                                        "Y": 1
-                                    },
-                                    "Actions": [
-                                        "maximise",
-                                        "minimise",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
-                                },
-                                "Data": {}
-                            },
-                            {
-                                "Name": "Wallboard",
-                                "Description": "",
-                                "Type": "tw-wallboard",
-                                "Config": {
-                                    "Position": {
-                                        "X": 1,
-                                        "Y": 1
-                                    },
-                                    "Actions": [
-                                        "maximise",
-                                        "minimise",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
-                                },
-                                "Data": {}
-                            },
-                            {
-                                "Name": "Wallboard",
-                                "Description": "",
-                                "Type": "tw-wallboard",
-                                "Config": {
-                                    "Position": {
-                                        "X": 1,
-                                        "Y": 2
-                                    },
-                                    "Actions": [
-                                        "maximise",
-                                        "minimise",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
-                                },
-                                "Data": {}
-                            },
-                            {
-                                "Name": "Wallboard",
-                                "Description": "",
-                                "Type": "tw-wallboard",
-                                "Config": {
-                                    "Position": {
-                                        "X": 1,
-                                        "Y": 1
-                                    },
-                                    "Actions": [
-                                        "maximise",
-                                        "minimise",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
-                                },
-                                "Data": {}
-                            },
-                            {
-                                "Name": "Wallboard",
-                                "Description": "",
-                                "Type": "tw-wallboard",
-                                "Config": {
-                                    "Position": {
-                                        "X": 1,
-                                        "Y": 1
-                                    },
-                                    "Actions": [
-                                        "maximise",
-                                        "minimise",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
-                                },
-                                "Data": {}
-                            }
-                        ]
+                        "Widgets": []
                     }
                 },
                 {
@@ -444,9 +180,10 @@
                     "Description": "",
                     "Type": "twc-supervisor",
                     "Config": {
+                        "Class": "",
                         "Position": {
                             "X": 3,
-                            "Y": 0
+                            "Y": 6
                         }
                     },
                     "Data": {
@@ -457,6 +194,7 @@
                                 "Description": "",
                                 "Type": "tw-sample",
                                 "Config": {
+                                    "Anchor": true,
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
@@ -483,6 +221,7 @@
                                 "Description": "",
                                 "Type": "tw-sample",
                                 "Config": {
+                                    "Anchor": false,
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
@@ -509,6 +248,7 @@
                                 "Description": "",
                                 "Type": "tw-sample",
                                 "Config": {
+                                    "Anchor": false,
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
@@ -535,6 +275,7 @@
                                 "Description": "",
                                 "Type": "tw-sample",
                                 "Config": {
+                                    "Anchor": false,
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
@@ -561,6 +302,7 @@
                                 "Description": "",
                                 "Type": "tw-sample",
                                 "Config": {
+                                    "Anchor": false,
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
@@ -587,6 +329,7 @@
                                 "Description": "",
                                 "Type": "tw-sample",
                                 "Config": {
+                                    "Anchor": false,
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
@@ -613,6 +356,7 @@
                                 "Description": "",
                                 "Type": "tw-sample",
                                 "Config": {
+                                    "Anchor": false,
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
@@ -639,6 +383,7 @@
                                 "Description": "",
                                 "Type": "tw-sample",
                                 "Config": {
+                                    "Anchor": false,
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
@@ -668,19 +413,23 @@
                     "Description": "",
                     "Type": "twc-voice",
                     "Config": {
+                        "Class": "",
                         "Position": {
                             "X": 3,
-                            "Y": 0
+                            "Y": 6
                         }
                     },
                     "Data": {
                         "Path": "/voice",
                         "Widgets": [
                             {
-                                "Name": "ABC",
+                                "Name": "Voice-1",
                                 "Description": "",
-                                "Type": "tw-abc",
+                                "Type": "tw-sample",
                                 "Config": {
+                                    "Anchor": true,
+                                    "Icon": "",
+                                    "Class": "",
                                     "Position": {
                                         "X": 3,
                                         "Y": 2
@@ -695,18 +444,21 @@
                                     "PinState": false,
                                     "FloatState": false,
                                     "Resizable": false,
-                                    "Header": true,
+                                    "Header": false,
                                     "Disabled": false
                                 },
                                 "Data": {}
                             },
                             {
-                                "Name": "ABC",
+                                "Name": "Voice-2",
                                 "Description": "",
-                                "Type": "tw-abc",
+                                "Type": "tw-sample",
                                 "Config": {
+                                    "Anchor": true,
+                                    "Icon": "",
+                                    "Class": "",
                                     "Position": {
-                                        "X": 0,
+                                        "X": 1,
                                         "Y": 2
                                     },
                                     "Actions": [
@@ -725,12 +477,15 @@
                                 "Data": {}
                             },
                             {
-                                "Name": "ABC",
+                                "Name": "Voice-3",
                                 "Description": "",
-                                "Type": "tw-abc",
+                                "Type": "tw-sample",
                                 "Config": {
+                                    "Anchor": true,
+                                    "Icon": "",
+                                    "Class": "",
                                     "Position": {
-                                        "X": 0,
+                                        "X": 1,
                                         "Y": 2
                                     },
                                     "Actions": [
@@ -749,13 +504,43 @@
                                 "Data": {}
                             },
                             {
-                                "Name": "ABC",
+                                "Name": "Voice-4",
                                 "Description": "",
-                                "Type": "tw-abc",
+                                "Type": "tw-sample",
                                 "Config": {
+                                    "Anchor": true,
+                                    "Icon": "",
+                                    "Class": "",
                                     "Position": {
-                                        "X": 0,
-                                        "Y": 1
+                                        "X": 2,
+                                        "Y": 2
+                                    },
+                                    "Actions": [
+                                        "maximise",
+                                        "minimise",
+                                        "pin",
+                                        "float"
+                                    ],
+                                    "ViewState": "restore",
+                                    "PinState": false,
+                                    "FloatState": false,
+                                    "Resizable": false,
+                                    "Header": true,
+                                    "Disabled": false
+                                },
+                                "Data": {}
+                            },
+                            {
+                                "Name": "Voice-5",
+                                "Description": "",
+                                "Type": "tw-sample",
+                                "Config": {
+                                    "Anchor": true,
+                                    "Icon": "",
+                                    "Class": "",
+                                    "Position": {
+                                        "X": 2,
+                                        "Y": 2
                                     },
                                     "Actions": [
                                         "maximise",
@@ -780,9 +565,10 @@
                     "Description": "",
                     "Type": "twc-textchat",
                     "Config": {
+                        "Class": "",
                         "Position": {
                             "X": 3,
-                            "Y": 0
+                            "Y": 6
                         }
                     },
                     "Data": {
@@ -795,9 +581,10 @@
                     "Description": "",
                     "Type": "twc-email",
                     "Config": {
+                        "Class": "",
                         "Position": {
                             "X": 3,
-                            "Y": 0
+                            "Y": 6
                         }
                     },
                     "Data": {
@@ -810,14 +597,15 @@
                     "Description": "",
                     "Type": "twc-custom",
                     "Config": {
+                        "Class": "",
                         "Position": {
                             "X": 3,
-                            "Y": 0
+                            "Y": 6
                         }
                     },
                     "Data": {
                         "Path": "/custom1",
-                        "Url": "http://angular-material.fusetheme.com/apps/dashboards/analytics",
+                        "Url": "https://www.tetherfi.com",
                         "QueryParams": []
                     }
                 }
@@ -831,8 +619,9 @@
                 "Logo": {
                     "Large": {
                         "Src": "https://tmac.tetherfilabs.com/tcie-web-app/assets/img/main-logo.png",
-                        "Width": null,
-                        "Height": null
+                        "Alt": "Tetherfi",
+                        "Width": 180,
+                        "Height": 90
                     },
                     "Small": {
                         "Src": "https://tmac.tetherfilabs.com/tcie-web-app/favicon.ico",

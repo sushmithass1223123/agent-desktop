@@ -16,10 +16,16 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
     loaded = false;
     url: any;
 
+    /**
+     * Constructor
+     * @param {ElementRef} hostElement 
+     * @param {ContentPageService} contentPageService 
+     * @param {DomSanitizer} _sanitizer 
+     */
     constructor(
         public hostElement: ElementRef,
         public contentPageService: ContentPageService,
-        private sanitizer: DomSanitizer
+        private _sanitizer: DomSanitizer
     ) {
         super(hostElement, contentPageService);
     }
@@ -48,6 +54,6 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
     }
 
     private transform(url: string): any {
-        return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+        return this._sanitizer.bypassSecurityTrustResourceUrl(url);
     }
 }
