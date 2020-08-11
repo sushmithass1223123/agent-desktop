@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { AppDataService } from 'app/services/app-data.service';
 import { ContentPageService } from 'app/services/content-page.service';
 import { IWidget } from 'app/interfaces/';
+import { ConfigService } from '@services/config.service';
 
 @Component({
     selector: 'navbar',
@@ -26,10 +27,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
     // Private
     private _unsubscribeAll: Subject<any>;
 
+    navbarConf$ = this.configService.navbar$;
+
     constructor(
         private _fuseConfigService: FuseConfigService,
         private appDataService: AppDataService,
-        private contentPageService: ContentPageService
+        private contentPageService: ContentPageService,
+        private configService: ConfigService
     ) {
         // Set the private defaults
         this._unsubscribeAll = new Subject();
@@ -56,10 +60,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
         // check if the config is not null
         if (config !== null) {
-            // get the sidebar widgets
+            // get the sidebar widgets and app configs
+            const appConfigs = config.AppConfigs || {};
             const sidebarWidgets = config.Main.Sidebar.Widgets || {};
             // assign the brand logo
-            this.brandLogo = sidebarWidgets.BrandLogo || null;
+            this.brandLogo = appConfigs.Images.Customer;
             // get the top widgets
             this.topWidgets = sidebarWidgets.Top || [];
             // get the bottom widgets

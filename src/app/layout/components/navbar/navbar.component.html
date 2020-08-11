@@ -1,10 +1,8 @@
 <div class="navbar-header" [ngClass]="fuseConfig.layout.navbar.background">
-
-    <!-- <div class="logo">
-        <img class="logo-icon" src="assets/images/logos/fuse.svg">
-        <span class="logo-text">TMAC</span>
-    </div> -->
-
+    <div class="logo" *ngIf="brandLogo?.Logo?.Small.Src">
+        <img class="logo-icon" [src]="brandLogo?.Logo?.Small.Src" [alt]="brandLogo?.Alt" />
+        <!-- <span class="logo-text">TMAC</span> -->
+    </div>
 </div>
 
 <div class="navbar-content" fusePerfectScrollbar [fusePerfectScrollbarOptions]="{suppressScrollX: true}"
@@ -41,8 +39,7 @@
 
         </mat-selection-list>
 
-        <img class="brand-logo" *ngIf="brandLogo" [src]='brandLogo.Src' alt="{{ brandLogo.Alt }}"
-            width="{{ brandLogo.Width }}" height="{{ brandLogo.Height }}" />
+        <img class="brand-logo" src="assets/images/logos/tetherfi-logo-round.png" alt="Tetherfi" width="50" />
     </div>
 
 </div>

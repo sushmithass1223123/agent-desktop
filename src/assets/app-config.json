@@ -1,12 +1,6 @@
 {
     "Login": {
         "AuthType": "credential",
-        "Logo": {
-            "Src": "https://tmac.tetherfilabs.com/tcie-web-app/assets/img/main-logo.png",
-            "Alt": "Tetherfi",
-            "Width": 180,
-            "Height": 90
-        },
         "Modes": {
             "Enabled": true,
             "Type": "nonpbx"
@@ -67,12 +61,6 @@
         },
         "Sidebar": {
             "Widgets": {
-                "BrandLogo": {
-                    "Src": "https://tmac.tetherfilabs.com/t-meet-dev/logo-round.8cfab95c75bc4804f38d.png",
-                    "Alt": "Tetherfi",
-                    "Width": 48,
-                    "Height": 48
-                },
                 "Top": [
                     {
                         "Name": "Home",
@@ -838,7 +826,40 @@
     },
     "AppConfigs": {
         "TitleName": "TMAC",
-        "Favicon": "https://tmac.tetherfilabs.com/tcie-web-app/favicon.ico",
+        "Images": {
+            "Default": {
+                "Logo": {
+                    "Large": {
+                        "Src": "https://tmac.tetherfilabs.com/tcie-web-app/assets/img/main-logo.png",
+                        "Width": null,
+                        "Height": null
+                    },
+                    "Small": {
+                        "Src": "https://tmac.tetherfilabs.com/tcie-web-app/favicon.ico",
+                        "Width": null,
+                        "Height": null
+                    }
+                },
+                "Alt": "Tetherfi",
+                "Favicon": "https://tmac.tetherfilabs.com/tcie-web-app/favicon.ico"
+            },
+            "Customer": {
+                "Logo": {
+                    "Large": {
+                        "Src": "",
+                        "Width": null,
+                        "Height": null
+                    },
+                    "Small": {
+                        "Src": "https://tmac.tetherfilabs.com/tcie-web-app/favicon.ico",
+                        "Width": null,
+                        "Height": null
+                    }
+                },
+                "Alt": "Customer",
+                "Favicon": "https://tmac.tetherfilabs.com/tcie-web-app/favicon.ico"
+            }
+        },
         "WindowSettings": {
             "SizeInPixel": false,
             "Width": 40,
