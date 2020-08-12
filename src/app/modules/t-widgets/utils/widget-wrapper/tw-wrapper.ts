@@ -4,8 +4,7 @@ import { Subject } from 'rxjs';
 @Directive()
 // tslint:disable-next-line: directive-class-suffix
 export class TWidgetWrapper {
-
-    @HostBinding('class') class = 'tw-card tw-bg-header tw-bg-body tw-box-header tw-box-body';
+    @HostBinding('class') class = 'tw-card tw-bg-header tw-bg-body tw-box-header tw-box-body ';
     @HostBinding('style') style = '';
 
     // Private
@@ -56,5 +55,4 @@ export class TWidgetWrapper {
         const typeSplit = type.split('-');
         return typeSplit[0];
     }
-
 }

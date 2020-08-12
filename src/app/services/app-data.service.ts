@@ -6,7 +6,6 @@ import * as _ from 'lodash';
     providedIn: 'root'
 })
 export class AppDataService {
-
     // Private
     private _configSubject: BehaviorSubject<any>;
 

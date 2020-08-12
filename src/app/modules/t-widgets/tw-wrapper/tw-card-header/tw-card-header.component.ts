@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
 
 @Component({
     selector: 'tw-card-header',
@@ -7,23 +7,30 @@ import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
     encapsulation: ViewEncapsulation.None
 })
 export class TwCardHeaderComponent implements OnInit {
-
     @Input() data: any;
 
     @Input() fuseConfig: any;
 
-    constructor() { }
+    @Output() minimize = new EventEmitter();
+    @Output() float = new EventEmitter();
+    @Output() collapse = new EventEmitter();
 
-    ngOnInit(): void {
+    constructor() {}
 
-    }
+    ngOnInit(): void {}
 
-    maximize(event: any): void {
+    minimizeWidget(event: any): void {
         event.preventDefault();
         event.stopPropagation();
-
+        this.minimize.emit();
         console.log('##### MAXIMIZE #####');
-
     }
 
+    floatWidget(): void {
+        this.float.emit();
+    }
+
+    collapseWidget(): void {
+        this.collapse.emit();
+    }
 }
