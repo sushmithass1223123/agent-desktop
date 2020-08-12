@@ -94,3 +94,17 @@
     transform: rotate(180deg);
 }
 // material icons classes
+
+//material drag return to oriinal position on drag disable :: start
+.widget-card:not(.floating) {
+    animation-name: returnToOriginalPos;
+    animation-duration: 1s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes returnToOriginalPos {
+    100% {
+        transform: translate3d(0px, 0px, 0px);
+    }
+}
+//material drag return to oriinal position on drag disable :: start

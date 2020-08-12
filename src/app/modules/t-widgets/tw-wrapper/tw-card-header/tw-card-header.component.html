@@ -1,10 +1,11 @@
 <!-- We are using material card header -->
-<mat-card-header class="card-header"
-    [ngClass]="fuseConfig.layout.widget.customBackgroundColor === true ? fuseConfig.layout.widget.headerBackground : ''">
-
+<mat-card-header
+    class="card-header"
+    [ngClass]="fuseConfig.layout.widget.customBackgroundColor === true ? fuseConfig.layout.widget.headerBackground : ''"
+>
     <!-- We add a material icon from config of default a widget icon -->
     <div mat-card-avatar>
-        <mat-icon>{{data.Config.Icon ? data.Config.Icon : 'widgets' }}</mat-icon>
+        <mat-icon>{{ data.Config.Icon ? data.Config.Icon : 'widgets' }}</mat-icon>
     </div>
 
     <!-- Add titile if provided in config or add widget by default -->
@@ -13,8 +14,16 @@
     <span class="spacer"></span>
 
     <!-- All the action buttons goes here -->
-    <button mat-icon-button (click)="maximize($event)">
+
+    <button *ngIf="data.Config.Actions.includes('minimise')" mat-icon-button (click)="minimizeWidget($event)">
+        <mat-icon>minimize</mat-icon>
+    </button>
+
+    <button *ngIf="data.Config.Actions.includes('maximise')" mat-icon-button (click)="collapseWidget()" >
         <mat-icon>open_in_new</mat-icon>
     </button>
 
+    <button *ngIf="data.Config.Actions.includes('float')" mat-icon-button (click)="floatWidget()">
+        <mat-icon>picture_in_picture</mat-icon>
+    </button>
 </mat-card-header>

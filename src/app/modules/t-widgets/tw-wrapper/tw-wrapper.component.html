@@ -1,26 +1,45 @@
-<tw-card class="tw-card tw-bg-header tw-bg-body tw-box-header tw-box-body" [@animate]="{value:'*',params:{y:'100%'}}">
+<tw-card
+    class="tw-card tw-bg-header tw-bg-body tw-box-header tw-box-body"
+    [ngClass]="{ collapsed: collapsed }"
+    [@animate]="{ value: '*', params: { y: '100%' } }"
+>
+    <div *ngIf="floating" class="widget-placeholder">
+        {{ data.Name }}
+    </div>
 
     <!-- We are writing a wrapper over material card -->
-    <mat-card class="widget-card" [ngClass]="fuseConfig.layout.widget.customBackgroundColor === true ?
-        (this.data.Config.Anchor === true ? fuseConfig.layout.widget.anchorBodyBackground : fuseConfig.layout.widget.bodyBackground) :
-        ''">
-
+    <mat-card
+        cdkDrag
+        cdkDragBoundary=".widget-grid"
+        [cdkDragDisabled]="!floating"
+        class="widget-card"
+        [ngStyle]="{ 'z-index': floating ? 1 : 0 }"
+        [ngClass]="
+            (fuseConfig.layout.widget.customBackgroundColor === true
+                ? this.data.Config.Anchor === true
+                    ? fuseConfig.layout.widget.anchorBodyBackground
+                    : fuseConfig.layout.widget.bodyBackground
+                : '') + (!floating ? '' : 'floating')
+        "
+    >
         <!-- Wrapper to wrap header and body -->
         <div class="card-wrapper">
-
             <!-- Enabled header if enabled in config -->
-            <tw-card-header [data]="data" [fuseConfig]=fuseConfig *ngIf="data.Config.Header"></tw-card-header>
+            <tw-card-header
+                [data]="data"
+                [fuseConfig]="fuseConfig"
+                *ngIf="data.Config.Header"
+                (minimize)="minimize()"
+                (float)="float()"
+                (collapse)="collapse()"
+                cdkDragHandle
+            ></tw-card-header>
 
             <!-- Card content -->
             <mat-card-content class="{{ !data.Config.Header ? 'no-header' : '' }}">
-
                 <!-- All the card content goes here -->
                 <ng-content></ng-content>
-
             </mat-card-content>
-
         </div>
-
     </mat-card>
-
 </tw-card>
