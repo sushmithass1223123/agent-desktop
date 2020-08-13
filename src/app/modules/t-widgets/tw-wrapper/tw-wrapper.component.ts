@@ -1,4 +1,17 @@
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation, EventEmitter, Output } from '@angular/core';
+import {
+    Component,
+    EventEmitter,
+    Input,
+    OnDestroy,
+    OnInit,
+    Output,
+    TemplateRef,
+    ViewChild,
+    ViewEncapsulation,
+    ElementRef,
+    HostBinding
+} from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { Subject } from 'rxjs/internal/Subject';
@@ -14,13 +27,18 @@ import { takeUntil } from 'rxjs/operators';
 export class TwWrapperComponent implements OnInit, OnDestroy {
     @Input() data: any;
 
-    @Output() minimizeEvent = new EventEmitter();
+    @HostBinding('class.position-relative')
+    floating = false;
+
+    @ViewChild('widgetCard') widgetCard: ElementRef;
+    dragPosition = { x: 0, y: 0 };
+
+    @Output() maximizeEvent = new EventEmitter();
     @Output() floatEvent = new EventEmitter();
     @Output() collapseEvent = new EventEmitter();
 
     fuseConfig: any;
-    minimized = false;
-    floating = false;
+    maximised = false;
     collapsed = false;
 
     // Private
@@ -30,7 +48,7 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
      * Constructor
      * @param {FuseConfigService} _fuseConfigService
      */
-    constructor(private _fuseConfigService: FuseConfigService) {
+    constructor(private _fuseConfigService: FuseConfigService, private dialog: MatDialog) {
         this._unsubscribeAll = new Subject();
     }
 
@@ -51,15 +69,15 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
         this._unsubscribeAll.complete();
     }
 
-    minimize(): void {
-        console.log('Minimisen');
-        this.minimizeEvent.emit(this.minimized);
+    maximize(): void {
+        this.maximised = !this.maximised;
+        this.maximizeEvent.emit(this.maximised);
     }
 
     float(): void {
         this.floating = !this.floating;
-        if (!this.floating) {
-            // remove translate3d
+        if (this.floating) {
+            this.dragPosition = { x: 10, y: 10 };
         }
         this.floatEvent.emit(this.floating);
     }

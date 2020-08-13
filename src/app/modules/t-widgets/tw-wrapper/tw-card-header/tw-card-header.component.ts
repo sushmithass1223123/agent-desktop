@@ -11,7 +11,8 @@ export class TwCardHeaderComponent implements OnInit {
 
     @Input() fuseConfig: any;
 
-    @Output() minimize = new EventEmitter();
+    @Input() widgetState: Record<string, boolean>;
+    @Output() maximize = new EventEmitter();
     @Output() float = new EventEmitter();
     @Output() collapse = new EventEmitter();
 
@@ -19,10 +20,10 @@ export class TwCardHeaderComponent implements OnInit {
 
     ngOnInit(): void {}
 
-    minimizeWidget(event: any): void {
-        event.preventDefault();
-        event.stopPropagation();
-        this.minimize.emit();
+    maximizeWidget(): void {
+        // event.preventDefault();
+        // event.stopPropagation();
+        this.maximize.emit();
         console.log('##### MAXIMIZE #####');
     }
 

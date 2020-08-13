@@ -4,6 +4,7 @@ import { TwCollectionsModule } from './tw-collections/tw-collections.module';
 import { TwContentModule } from './tw-content/tw-content.module';
 import { TwTemplateModule } from './tw-template/tw-template.module';
 import { TwToolbarModule } from './tw-toolbar/tw-toolbar.module';
+import { TwMaximizeComponent } from './tw-maximize/tw-maximize.component';
 
 const widgetModules = [
     TwToolbarModule,
@@ -13,7 +14,7 @@ const widgetModules = [
 ];
 
 @NgModule({
-    declarations: [],
+    declarations: [TwMaximizeComponent],
     imports: [SharedModule, ...widgetModules],
     exports: [...widgetModules]
 })

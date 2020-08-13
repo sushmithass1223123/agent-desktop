@@ -1,5 +1,17 @@
 tw-wrapper {
-    position: relative;
+    &.position-relative {
+        position: relative;
+    }
+    .tw-card.maximised {
+        position: absolute;
+        width: 66.66%;
+        height: 100%;
+        z-index: 1;
+    }
+
+    .tw-card.floating {
+        position: relative;
+    }
 
     tw-card.collapsed {
         height: 6.1rem;
@@ -8,7 +20,9 @@ tw-wrapper {
         }
     }
     tw-card {
-        transition-property: transform, height, min-height, max-height;
+        top: 0;
+        right: 0;
+        transition-property: transform, height, min-height, max-height, width, height;
         transition-duration: 0.15s;
         transition-timing-function: ease-in-out;
     }
