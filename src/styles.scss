@@ -98,13 +98,18 @@
 //material drag return to oriinal position on drag disable :: start
 .widget-card:not(.floating) {
     animation-name: returnToOriginalPos;
-    animation-duration: 1s;
+    animation-duration: 0.5s;
     animation-fill-mode: forwards;
 }
 
 @keyframes returnToOriginalPos {
     100% {
         transform: translate3d(0px, 0px, 0px);
+        z-index: 0;
     }
 }
 //material drag return to oriinal position on drag disable :: start
+
+.widget-grid {
+    position: relative;
+}

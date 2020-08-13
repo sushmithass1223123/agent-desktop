@@ -1,25 +1,25 @@
+<div *ngIf="floating" class="widget-placeholder">
+    {{ data.Name }}
+</div>
 <tw-card
     class="tw-card tw-bg-header tw-bg-body tw-box-header tw-box-body"
-    [ngClass]="{ collapsed: collapsed }"
+    [ngClass]="{ collapsed: collapsed, maximised: maximised, floating: floating }"
     [@animate]="{ value: '*', params: { y: '100%' } }"
 >
-    <div *ngIf="floating" class="widget-placeholder">
-        {{ data.Name }}
-    </div>
-
     <!-- We are writing a wrapper over material card -->
     <mat-card
         cdkDrag
         cdkDragBoundary=".widget-grid"
         [cdkDragDisabled]="!floating"
+        [cdkDragFreeDragPosition]="!floating ? '' : dragPosition"
         class="widget-card"
-        [ngStyle]="{ 'z-index': floating ? 1 : 0 }"
+        [ngStyle]="{ 'z-index': 1 }"
         [ngClass]="
             (fuseConfig.layout.widget.customBackgroundColor === true
                 ? this.data.Config.Anchor === true
-                    ? fuseConfig.layout.widget.anchorBodyBackground
-                    : fuseConfig.layout.widget.bodyBackground
-                : '') + (!floating ? '' : 'floating')
+                    ? fuseConfig.layout.widget.anchorBodyBackground || ''
+                    : fuseConfig.layout.widget.bodyBackground || ''
+                : '') + (floating ? ' floating' : '')
         "
     >
         <!-- Wrapper to wrap header and body -->
@@ -29,7 +29,8 @@
                 [data]="data"
                 [fuseConfig]="fuseConfig"
                 *ngIf="data.Config.Header"
-                (minimize)="minimize()"
+                [widgetState]="{ maximised: maximised, floating: floating, collapsed: collapsed }"
+                (maximize)="maximize()"
                 (float)="float()"
                 (collapse)="collapse()"
                 cdkDragHandle

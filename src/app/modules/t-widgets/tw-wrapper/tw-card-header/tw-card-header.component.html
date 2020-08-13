@@ -15,15 +15,25 @@
 
     <!-- All the action buttons goes here -->
 
-    <button *ngIf="data.Config.Actions.includes('minimise')" mat-icon-button (click)="minimizeWidget($event)">
-        <mat-icon>minimize</mat-icon>
-    </button>
-
-    <button *ngIf="data.Config.Actions.includes('maximise')" mat-icon-button (click)="collapseWidget()" >
+    <button
+        *ngIf="data.Config.Actions.includes('maximise') && !widgetState.floating && !widgetState.maximised"
+        mat-icon-button
+        (click)="maximizeWidget()"
+    >
         <mat-icon>open_in_new</mat-icon>
     </button>
-
-    <button *ngIf="data.Config.Actions.includes('float')" mat-icon-button (click)="floatWidget()">
+    <button
+        *ngIf="data.Config.Actions.includes('minimise') && !widgetState.floating && !widgetState.maximised"
+        mat-icon-button
+        (click)="floatWidget()"
+    >
         <mat-icon>picture_in_picture</mat-icon>
+    </button>
+    <button *ngIf="data.Config.Actions.includes('float')" mat-icon-button (click)="collapseWidget()">
+        <mat-icon [ngClass]="{ 'rotate-180': !widgetState.collapsed }">expand_more</mat-icon>
+    </button>
+
+    <button *ngIf="widgetState.floating || widgetState.maximised" mat-icon-button (click)="widgetState.floating ? floatWidget() : maximizeWidget()">
+        <mat-icon> close</mat-icon>
     </button>
 </mat-card-header>
