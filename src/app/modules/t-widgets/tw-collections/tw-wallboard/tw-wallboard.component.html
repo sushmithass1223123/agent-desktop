@@ -1,1 +1,28 @@
-<p>tw-wallboard works!</p>
+<tw-wrapper [data]=data>
+
+    <table matSort (matSortChange)="sortData($event)" class="w-100-p">
+        <thead>
+            <tr>
+                <th mat-sort-header="name">Skill Name</th>
+                <th mat-sort-header="staffed">Agents Staffed</th>
+                <th mat-sort-header="available">Agents Available</th>
+                <th mat-sort-header="ciq">Calls in Queue</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr *ngIf="wallboardSkills.length === 0">
+                <td colspan="4" class="text-center">No data available</td>
+            </tr>
+
+            <tr *ngFor="let item of wallboardSkills" class="solid">
+                <td>{{item.SkillName}}</td>
+                <td>{{item.AgentsStaffed}}</td>
+                <td>{{item.AgentAvailable}}</td>
+                <td>{{item.CallsInQueue}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <img class="vector-image" src="assets/images/vectors/home.png" width="580" />
+</tw-wrapper>

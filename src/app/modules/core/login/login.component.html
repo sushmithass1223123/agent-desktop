@@ -1,7 +1,8 @@
 <div id="login" class="inner-scroll" fxLayout="row" fxLayoutAlign="start">
     <div id="login-intro" fxFlex fxHide fxShow.gt-xs>
         <div class="logo" [@animate]="{ value: '*', params: { delay: '500ms', scale: '0.2' } }">
-            <img [src]="logoSrc" [width]="logoWidth" [height]="logoHeight" alt="{{ logoAlt }}" />
+            <img [src]="logoSrc || 'assets/images/logos/tetherfi.png'" [width]="logoWidth || 180"
+                [height]="logoHeight || 90" alt="{{ logoAlt || 'Tetherfi' }}" />
         </div>
 
         <div class="title" [@animate]="{ value: '*', params: { delay: '50ms', y: '25px' } }">
@@ -17,7 +18,8 @@
 
         <div id="login-form" class="{{ loading ? 'blur' : null }}">
             <div class="logo" [@animate]="{ value: '*', params: { scale: '0.5' } }">
-                <img [src]="logoSrc" [width]="logoWidth" [height]="logoHeight" alt="{{ logoAlt }}" />
+                <img [src]="logoSrc || 'assets/images/logos/tetherfi.png'" [width]="logoWidth || 180"
+                    [height]="logoHeight || 90" alt="{{ logoAlt || 'Tetherfi' }}" />
             </div>
 
             <form name="loginForm" [formGroup]="loginForm" novalidate>

@@ -22,11 +22,17 @@ export interface FuseConfig {
             customBackgroundColor: boolean,
             background: string
         },
+        anchorWidget: {
+            customBackgroundColor: boolean,
+            bodyBackground: string,
+            headerBackground: string,
+            contentBackground: string,
+        },
         widget: {
             customBackgroundColor: boolean,
-            headerBackground: string,
-            anchorBodyBackground: string,
             bodyBackground: string,
+            headerBackground: string,
+            contentBackground: string,
         },
         footer: {
             customBackgroundColor: boolean,

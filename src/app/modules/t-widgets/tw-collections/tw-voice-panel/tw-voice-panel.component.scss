@@ -1,0 +1,17 @@
+tw-voice-panel {
+    display: grid;
+    .tw-voice-panel {
+        gap: 1rem;
+
+        .tw-voice-controls,
+        .tw-customer-details,
+        .tw-customer-journey {
+            flex: 1;
+            transition: all 0.3s ease-in-out;
+            height: 33%;
+            &.collapsed {
+                flex: 0;
+            }
+        }
+    }
+}

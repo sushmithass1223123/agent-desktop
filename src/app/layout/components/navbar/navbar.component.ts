@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { AppDataService } from 'app/services/app-data.service';
 import { ContentPageService } from 'app/services/content-page.service';
 import { IWidget } from 'app/interfaces/';
+import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 
 @Component({
     selector: 'navbar',
@@ -22,6 +23,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     bottomWidgets: any[];
     selected: any;
     brandLogo = null;
+    customerLogo = null;
 
     // Private
     private _unsubscribeAll: Subject<any>;
@@ -31,11 +33,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
      * @param {FuseConfigService} _fuseConfigService 
      * @param {AppDataService} _appDataService 
      * @param {ContentPageService} _contentPageService 
+     * @param {FuseSidebarService} _fuseSidebarService 
      */
     constructor(
         private _fuseConfigService: FuseConfigService,
         private _appDataService: AppDataService,
-        private _contentPageService: ContentPageService
+        private _contentPageService: ContentPageService,
+        private _fuseSidebarService: FuseSidebarService
     ) {
         // Set the private defaults
         this._unsubscribeAll = new Subject();
@@ -67,7 +71,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
                         // get the sidebar widgets
                         const sidebarWidgets = config.Main.Sidebar.Widgets || {};
                         // assign the brand logo
-                        this.brandLogo = sidebarWidgets.BrandLogo || null;
+                        this.brandLogo = config.AppConfigs.Logos.Default || null;
+                        // assign the customer logo
+                        this.customerLogo = config.AppConfigs.Logos.Customer || null;
                         // get the top widgets
                         this.topWidgets = sidebarWidgets.Top || [];
                         // get the bottom widgets
@@ -108,7 +114,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this._unsubscribeAll.complete();
     }
 
-    selectTab(item: any): any {
+    selectTab(item: any): void {
         this._contentPageService.mode = item.Data.Path;
+    }
+
+    toggleSidebarOpen(key: string): void {
+        this._fuseSidebarService.getSidebar(key).toggleOpen();
     }
 }

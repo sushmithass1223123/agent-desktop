@@ -1,17 +1,30 @@
 import {
     Component,
-    EventEmitter,
-    Input,
+
+
+
+
+
+
+
+
+    ElementRef, EventEmitter,
+
+
+
+
+
+
+
+
+    HostBinding, Input,
     OnDestroy,
     OnInit,
     Output,
-    TemplateRef,
+
     ViewChild,
-    ViewEncapsulation,
-    ElementRef,
-    HostBinding
+    ViewEncapsulation
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { Subject } from 'rxjs/internal/Subject';
@@ -48,7 +61,7 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
      * Constructor
      * @param {FuseConfigService} _fuseConfigService
      */
-    constructor(private _fuseConfigService: FuseConfigService, private dialog: MatDialog) {
+    constructor(private _fuseConfigService: FuseConfigService) {
         this._unsubscribeAll = new Subject();
     }
 
