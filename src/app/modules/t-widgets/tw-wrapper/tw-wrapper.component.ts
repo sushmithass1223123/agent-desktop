@@ -1,30 +1,4 @@
-import {
-    Component,
-
-
-
-
-
-
-
-
-    ElementRef, EventEmitter,
-
-
-
-
-
-
-
-
-    HostBinding, Input,
-    OnDestroy,
-    OnInit,
-    Output,
-
-    ViewChild,
-    ViewEncapsulation
-} from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostBinding, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { Subject } from 'rxjs/internal/Subject';
@@ -43,8 +17,7 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
     @HostBinding('class.position-relative')
     floating = false;
 
-    @ViewChild('widgetCard') widgetCard: ElementRef;
-    dragPosition = { x: 0, y: 0 };
+    dragPosition: any = '';
 
     @Output() maximizeEvent = new EventEmitter();
     @Output() floatEvent = new EventEmitter();
@@ -91,6 +64,8 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
         this.floating = !this.floating;
         if (this.floating) {
             this.dragPosition = { x: 10, y: 10 };
+        } else {
+            this.dragPosition = { x: 0, y: 0 };
         }
         this.floatEvent.emit(this.floating);
     }

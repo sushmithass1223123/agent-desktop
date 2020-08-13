@@ -26,6 +26,7 @@ tw-wrapper {
 
         &.floating {
             position: relative;
+            z-index: 1;
         }
 
         &.collapsed {
@@ -34,6 +35,10 @@ tw-wrapper {
                 opacity: 0;
             }
         }
+    }
+
+    .mat-card {
+        position: unset;
     }
 
     mat-card-content {
@@ -145,7 +150,7 @@ tw-wrapper {
                 padding: 0rem;
                 .tw-static-card-content {
                     background: inherit !important;
-                    overflow: hidden;
+                    // overflow: hidden;
                     padding: 0rem;
                 }
             }
