@@ -125,22 +125,12 @@
                 ],
                 "Bottom": [
                     {
-                        "Name": "Settings",
-                        "Description": "",
-                        "Type": "twn-settings",
-                        "Data": {
-                            "Icon": "settings",
-                            "Path": "/settings",
-                            "Active": false
-                        }
-                    },
-                    {
                         "Name": "Team",
                         "Description": "",
                         "Type": "twn-team",
                         "Data": {
                             "Icon": "groups",
-                            "Path": "/settings",
+                            "Path": "/groups",
                             "Active": false
                         }
                     },
@@ -172,7 +162,316 @@
                     },
                     "Data": {
                         "Path": "/home",
-                        "Widgets": []
+                        "Widgets": [
+                            {
+                                "Name": "Wallbaord",
+                                "Description": "",
+                                "Type": "tw-wallbaord",
+                                "Config": {
+                                    "Static": false,
+                                    "Anchor": true,
+                                    "Icon": "dvr",
+                                    "Class": "",
+                                    "Position": {
+                                        "X": 3,
+                                        "Y": 2
+                                    },
+                                    "Actions": [
+                                        "maximise",
+                                        "minimise",
+                                        "pin",
+                                        "float"
+                                    ],
+                                    "ViewState": "restore",
+                                    "PinState": false,
+                                    "FloatState": false,
+                                    "Resizable": false,
+                                    "Header": true,
+                                    "Disabled": false
+                                },
+                                "Data": {}
+                            },
+                            {
+                                "Name": "Call",
+                                "Description": "",
+                                "Type": "tw-sample",
+                                "Config": {
+                                    "Static": false,
+                                    "Anchor": false,
+                                    "Icon": "phone",
+                                    "Class": "",
+                                    "Position": {
+                                        "X": 0,
+                                        "Y": 1
+                                    },
+                                    "Actions": [
+                                        "maximise",
+                                        "minimise",
+                                        "pin",
+                                        "float"
+                                    ],
+                                    "ViewState": "restore",
+                                    "PinState": false,
+                                    "FloatState": false,
+                                    "Resizable": false,
+                                    "Header": true,
+                                    "Disabled": false
+                                },
+                                "Data": {}
+                            },
+                            {
+                                "Name": "Chat",
+                                "Description": "",
+                                "Type": "tw-sample",
+                                "Config": {
+                                    "Static": false,
+                                    "Anchor": false,
+                                    "Icon": "chat",
+                                    "Class": "",
+                                    "Position": {
+                                        "X": 0,
+                                        "Y": 1
+                                    },
+                                    "Actions": [
+                                        "maximise",
+                                        "minimise",
+                                        "pin",
+                                        "float"
+                                    ],
+                                    "ViewState": "restore",
+                                    "PinState": false,
+                                    "FloatState": false,
+                                    "Resizable": false,
+                                    "Header": true,
+                                    "Disabled": false
+                                },
+                                "Data": {}
+                            },
+                            {
+                                "Name": "Video",
+                                "Description": "",
+                                "Type": "tw-sample",
+                                "Config": {
+                                    "Static": false,
+                                    "Anchor": false,
+                                    "Icon": "",
+                                    "Class": "duo",
+                                    "Position": {
+                                        "X": 0,
+                                        "Y": 1
+                                    },
+                                    "Actions": [
+                                        "maximise",
+                                        "minimise",
+                                        "pin",
+                                        "float"
+                                    ],
+                                    "ViewState": "restore",
+                                    "PinState": false,
+                                    "FloatState": false,
+                                    "Resizable": false,
+                                    "Header": true,
+                                    "Disabled": false
+                                },
+                                "Data": {}
+                            },
+                            {
+                                "Name": "All Interactions",
+                                "Description": "",
+                                "Type": "tw-sample",
+                                "Config": {
+                                    "Static": false,
+                                    "Anchor": false,
+                                    "Icon": "dvr",
+                                    "Class": "",
+                                    "Position": {
+                                        "X": 0,
+                                        "Y": 1
+                                    },
+                                    "Actions": [
+                                        "maximise",
+                                        "minimise",
+                                        "pin",
+                                        "float"
+                                    ],
+                                    "ViewState": "restore",
+                                    "PinState": false,
+                                    "FloatState": false,
+                                    "Resizable": false,
+                                    "Header": true,
+                                    "Disabled": false
+                                },
+                                "Data": {}
+                            },
+                            {
+                                "Name": "Interaction Details",
+                                "Description": "",
+                                "Type": "tw-sample",
+                                "Config": {
+                                    "Static": false,
+                                    "Anchor": false,
+                                    "Icon": "format_list_bulleted",
+                                    "Class": "",
+                                    "Position": {
+                                        "X": 0,
+                                        "Y": 2
+                                    },
+                                    "Actions": [
+                                        "maximise",
+                                        "minimise",
+                                        "pin",
+                                        "float"
+                                    ],
+                                    "ViewState": "restore",
+                                    "PinState": false,
+                                    "FloatState": false,
+                                    "Resizable": false,
+                                    "Header": true,
+                                    "Disabled": false
+                                },
+                                "Data": {}
+                            },
+                            {
+                                "Name": "Performance",
+                                "Description": "",
+                                "Type": "tw-sample",
+                                "Config": {
+                                    "Static": false,
+                                    "Anchor": false,
+                                    "Icon": "pie_chart",
+                                    "Class": "",
+                                    "Position": {
+                                        "X": 0,
+                                        "Y": 1
+                                    },
+                                    "Actions": [
+                                        "maximise",
+                                        "minimise",
+                                        "pin",
+                                        "float"
+                                    ],
+                                    "ViewState": "restore",
+                                    "PinState": false,
+                                    "FloatState": false,
+                                    "Resizable": false,
+                                    "Header": true,
+                                    "Disabled": false
+                                },
+                                "Data": {}
+                            },
+                            {
+                                "Name": "Gamification",
+                                "Description": "",
+                                "Type": "tw-sample",
+                                "Config": {
+                                    "Static": false,
+                                    "Anchor": false,
+                                    "Icon": "extension",
+                                    "Class": "",
+                                    "Position": {
+                                        "X": 0,
+                                        "Y": 1
+                                    },
+                                    "Actions": [
+                                        "maximise",
+                                        "minimise",
+                                        "pin",
+                                        "float"
+                                    ],
+                                    "ViewState": "restore",
+                                    "PinState": false,
+                                    "FloatState": false,
+                                    "Resizable": false,
+                                    "Header": true,
+                                    "Disabled": false
+                                },
+                                "Data": {}
+                            },
+                            {
+                                "Name": "Call-backs",
+                                "Description": "phone_callback",
+                                "Type": "tw-sample",
+                                "Config": {
+                                    "Static": false,
+                                    "Anchor": false,
+                                    "Icon": "",
+                                    "Class": "",
+                                    "Position": {
+                                        "X": 0,
+                                        "Y": 2
+                                    },
+                                    "Actions": [
+                                        "maximise",
+                                        "minimise",
+                                        "pin",
+                                        "float"
+                                    ],
+                                    "ViewState": "restore",
+                                    "PinState": false,
+                                    "FloatState": false,
+                                    "Resizable": false,
+                                    "Header": true,
+                                    "Disabled": false
+                                },
+                                "Data": {}
+                            },
+                            {
+                                "Name": "Feedback",
+                                "Description": "",
+                                "Type": "tw-sample",
+                                "Config": {
+                                    "Static": false,
+                                    "Anchor": false,
+                                    "Icon": "feedback",
+                                    "Class": "",
+                                    "Position": {
+                                        "X": 0,
+                                        "Y": 1
+                                    },
+                                    "Actions": [
+                                        "maximise",
+                                        "minimise",
+                                        "pin",
+                                        "float"
+                                    ],
+                                    "ViewState": "restore",
+                                    "PinState": false,
+                                    "FloatState": false,
+                                    "Resizable": false,
+                                    "Header": true,
+                                    "Disabled": false
+                                },
+                                "Data": {}
+                            },
+                            {
+                                "Name": "Score",
+                                "Description": "",
+                                "Type": "tw-sample",
+                                "Config": {
+                                    "Static": false,
+                                    "Anchor": false,
+                                    "Icon": "score",
+                                    "Class": "",
+                                    "Position": {
+                                        "X": 0,
+                                        "Y": 1
+                                    },
+                                    "Actions": [
+                                        "maximise",
+                                        "minimise",
+                                        "pin",
+                                        "float"
+                                    ],
+                                    "ViewState": "restore",
+                                    "PinState": false,
+                                    "FloatState": false,
+                                    "Resizable": false,
+                                    "Header": true,
+                                    "Disabled": false
+                                },
+                                "Data": {}
+                            }
+                        ]
                     }
                 },
                 {
@@ -194,7 +493,8 @@
                                 "Description": "",
                                 "Type": "tw-sample",
                                 "Config": {
-                                    "Anchor": true,
+                                    "Static": true,
+                                    "Anchor": false,
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
@@ -221,6 +521,7 @@
                                 "Description": "",
                                 "Type": "tw-sample",
                                 "Config": {
+                                    "Static": false,
                                     "Anchor": false,
                                     "Icon": "",
                                     "Class": "",
@@ -248,6 +549,7 @@
                                 "Description": "",
                                 "Type": "tw-sample",
                                 "Config": {
+                                    "Static": false,
                                     "Anchor": false,
                                     "Icon": "",
                                     "Class": "",
@@ -302,6 +604,7 @@
                                 "Description": "",
                                 "Type": "tw-sample",
                                 "Config": {
+                                    "Static": false,
                                     "Anchor": false,
                                     "Icon": "",
                                     "Class": "",
@@ -356,6 +659,7 @@
                                 "Description": "",
                                 "Type": "tw-sample",
                                 "Config": {
+                                    "Static": false,
                                     "Anchor": false,
                                     "Icon": "",
                                     "Class": "",
@@ -423,11 +727,12 @@
                         "Path": "/voice",
                         "Widgets": [
                             {
-                                "Name": "Voice-1",
+                                "Name": "Voice-Panel",
                                 "Description": "",
-                                "Type": "tw-sample",
+                                "Type": "tw-voice-panel",
                                 "Config": {
-                                    "Anchor": true,
+                                    "Static": true,
+                                    "Anchor": false,
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
@@ -447,14 +752,102 @@
                                     "Header": false,
                                     "Disabled": false
                                 },
-                                "Data": {}
+                                "Data": {
+                                    "Widgets": [
+                                        {
+                                            "Name": "Voice Call",
+                                            "Description": "",
+                                            "Type": "tw-voice-controls",
+                                            "Config": {
+                                                "Static": false,
+                                                "Anchor": true,
+                                                "Icon": "phone",
+                                                "Class": "",
+                                                "Position": {
+                                                    "X": 1,
+                                                    "Y": 2
+                                                },
+                                                "Actions": [
+                                                    "maximise",
+                                                    "minimise",
+                                                    "pin",
+                                                    "float"
+                                                ],
+                                                "ViewState": "restore",
+                                                "PinState": false,
+                                                "FloatState": false,
+                                                "Resizable": false,
+                                                "Header": true,
+                                                "Disabled": false
+                                            },
+                                            "Data": {}
+                                        },
+                                        {
+                                            "Name": "Customer Details",
+                                            "Description": "",
+                                            "Type": "tw-customer-details",
+                                            "Config": {
+                                                "Static": false,
+                                                "Anchor": true,
+                                                "Icon": "person",
+                                                "Class": "",
+                                                "Position": {
+                                                    "X": 1,
+                                                    "Y": 2
+                                                },
+                                                "Actions": [
+                                                    "maximise",
+                                                    "minimise",
+                                                    "pin",
+                                                    "float"
+                                                ],
+                                                "ViewState": "restore",
+                                                "PinState": false,
+                                                "FloatState": false,
+                                                "Resizable": false,
+                                                "Header": true,
+                                                "Disabled": false
+                                            },
+                                            "Data": {}
+                                        },
+                                        {
+                                            "Name": "Customer Journey",
+                                            "Description": "",
+                                            "Type": "tw-customer-journey",
+                                            "Config": {
+                                                "Static": false,
+                                                "Anchor": true,
+                                                "Icon": "storage",
+                                                "Class": "",
+                                                "Position": {
+                                                    "X": 1,
+                                                    "Y": 2
+                                                },
+                                                "Actions": [
+                                                    "maximise",
+                                                    "minimise",
+                                                    "pin",
+                                                    "float"
+                                                ],
+                                                "ViewState": "restore",
+                                                "PinState": false,
+                                                "FloatState": false,
+                                                "Resizable": false,
+                                                "Header": true,
+                                                "Disabled": false
+                                            },
+                                            "Data": {}
+                                        }
+                                    ]
+                                }
                             },
                             {
                                 "Name": "Voice-2",
                                 "Description": "",
                                 "Type": "tw-sample",
                                 "Config": {
-                                    "Anchor": true,
+                                    "Static": false,
+                                    "Anchor": false,
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
@@ -481,7 +874,8 @@
                                 "Description": "",
                                 "Type": "tw-sample",
                                 "Config": {
-                                    "Anchor": true,
+                                    "Static": false,
+                                    "Anchor": false,
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
@@ -508,7 +902,8 @@
                                 "Description": "",
                                 "Type": "tw-sample",
                                 "Config": {
-                                    "Anchor": true,
+                                    "Static": false,
+                                    "Anchor": false,
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
@@ -535,7 +930,8 @@
                                 "Description": "",
                                 "Type": "tw-sample",
                                 "Config": {
-                                    "Anchor": true,
+                                    "Static": false,
+                                    "Anchor": false,
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
@@ -614,39 +1010,34 @@
     },
     "AppConfigs": {
         "TitleName": "TMAC",
-        "Images": {
+        "Logos": {
+            "Favicon": "",
             "Default": {
-                "Logo": {
-                    "Large": {
-                        "Src": "https://tmac.tetherfilabs.com/tcie-web-app/assets/img/main-logo.png",
-                        "Alt": "Tetherfi",
-                        "Width": 180,
-                        "Height": 90
-                    },
-                    "Small": {
-                        "Src": "https://tmac.tetherfilabs.com/tcie-web-app/favicon.ico",
-                        "Width": null,
-                        "Height": null
-                    }
+                "Large": {
+                    "Src": "https://tmac.tetherfilabs.com/tcie-web-app/assets/img/main-logo.png",
+                    "Alt": "Tetherfi",
+                    "Width": 180,
+                    "Height": 90
                 },
-                "Alt": "Tetherfi",
-                "Favicon": "https://tmac.tetherfilabs.com/tcie-web-app/favicon.ico"
+                "Small": {
+                    "Src": "",
+                    "Width": null,
+                    "Height": null
+                },
+                "Alt": "Tetherfi"
             },
             "Customer": {
-                "Logo": {
-                    "Large": {
-                        "Src": "",
-                        "Width": null,
-                        "Height": null
-                    },
-                    "Small": {
-                        "Src": "https://tmac.tetherfilabs.com/tcie-web-app/favicon.ico",
-                        "Width": null,
-                        "Height": null
-                    }
+                "Large": {
+                    "Src": "https://cdn1.singteldigital.com/content/dam/singtel/online-draft/singtel_logo_coloured.png",
+                    "Width": 160,
+                    "Height": 88
                 },
-                "Alt": "Customer",
-                "Favicon": "https://tmac.tetherfilabs.com/tcie-web-app/favicon.ico"
+                "Small": {
+                    "Src": "https://cdn1.singteldigital.com/content/dam/singtel/online-draft/singtel_logo_coloured.png",
+                    "Width": null,
+                    "Height": null
+                },
+                "Alt": "Customer"
             }
         },
         "WindowSettings": {

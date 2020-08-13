@@ -129,10 +129,10 @@ export class LoginComponent implements OnInit, OnDestroy {
         // check if the config is not null
         if (config !== null) {
             this.loginConfig = config.Login;
-            this.logoSrc = config.AppConfigs.Images.Default.Logo.Large.Src;
-            this.logoAlt = config.AppConfigs.Images.Default.Logo.Large.Alt;
-            this.logoWidth = config.AppConfigs.Images.Default.Logo.Large.Width ? config.AppConfigs.Images.Default.Logo.Large.Width : 100;
-            this.logoHeight = config.AppConfigs.Images.Default.Logo.Large.Height ? config.AppConfigs.Images.Default.Logo.Large.Height : 100;
+            this.logoSrc = config.AppConfigs.Logos.Customer.Large.Src;
+            this.logoAlt = config.AppConfigs.Logos.Customer.Alt;
+            this.logoWidth = config.AppConfigs.Logos.Customer.Large.Width;
+            this.logoHeight = config.AppConfigs.Logos.Customer.Large.Height;
 
             this.domainListEnabled = config.Login.DomainListEnabled;
             this.passwordEnabled = config.Login.PasswordEnabled;

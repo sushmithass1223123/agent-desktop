@@ -4,13 +4,15 @@ import { TwUnknownComponent } from '@modules/t-widgets/tw-collections/tw-unknown
 import { TwCustomComponent } from '@modules/t-widgets/tw-collections/tw-custom/tw-custom.component';
 import { TwSampleComponent } from '@modules/t-widgets/tw-collections/tw-sample/tw-sample.component';
 import { TwWallboardComponent } from '@modules/t-widgets/tw-collections/tw-wallboard/tw-wallboard.component';
+import { TwVoicePanelComponent } from '@modules/t-widgets/tw-collections/tw-voice-panel/tw-voice-panel.component';
 
 export class TWLibrary {
 
     static widgetLibrary: Record<string, Type<any>> = {
         'tw-sample': TwSampleComponent,
         'tw-custom': TwCustomComponent,
-        'tw-wallbaord': TwWallboardComponent
+        'tw-wallbaord': TwWallboardComponent,
+        'tw-voice-panel': TwVoicePanelComponent,
     };
 
     public static getAllWidgets(): Record<string, Type<any>> {

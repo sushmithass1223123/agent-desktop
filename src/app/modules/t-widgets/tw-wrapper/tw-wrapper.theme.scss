@@ -18,7 +18,8 @@
                         background: #fafafa;
                     }
 
-                    .card-header {
+                    .card-header,
+                    .mat-expansion-panel-header {
                         color: map-get($foreground, text);
 
                         // If it's a light theme, use a darker background
@@ -34,7 +35,8 @@
 
             &.tw-bg-body {
                 .mat-card {
-                    .mat-card-content {
+                    .mat-card-content,
+                    .mat-expansion-panel-content {
                         color: map-get($foreground, text);
 
                         // If it's a light theme, use a darker background

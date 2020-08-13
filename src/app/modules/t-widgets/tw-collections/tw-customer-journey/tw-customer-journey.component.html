@@ -1,7 +1,7 @@
-<tw-wrapper [data]="data">
+<tw-wrapper [data]=data (collapseEvent)="collapseEvent.emit($event)">
     <div fxFlex fxFill fxLayout="row" fxLayoutAlign="center center" class="tw-full" fusePerfectScrollbar>
         <span class="mat-headline mb-0">
-            Sample widget!
+            Customer journey widget!
         </span>
     </div>
 </tw-wrapper>

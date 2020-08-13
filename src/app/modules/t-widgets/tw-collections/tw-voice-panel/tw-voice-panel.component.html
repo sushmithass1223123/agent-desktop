@@ -1,0 +1,22 @@
+<tw-wrapper [data]=data>
+    <div fxFlex fxFill fxLayout="column" class="tw-voice-panel">
+
+        <ng-container *ngFor="let widget of voicePanelWidgets">
+
+            <tw-voice-controls [data]="widget" *ngIf="widget.Type === 'tw-voice-controls'"
+                class="{{ widget.Type + ' ' + (collapsed[widget.Type] ? 'collapsed' : '') }}"
+                (collapseEvent)="onCollapsed($event, widget.Type)">
+            </tw-voice-controls>
+
+            <tw-customer-details [data]="widget" *ngIf="widget.Type === 'tw-customer-details'"
+                class="{{ widget.Type + ' ' + (collapsed[widget.Type] ? 'collapsed' : '') }}"
+                (collapseEvent)="onCollapsed($event, widget.Type)"></tw-customer-details>
+
+            <tw-customer-journey [data]="widget" *ngIf="widget.Type === 'tw-customer-journey'"
+                class="{{ widget.Type + ' ' + (collapsed[widget.Type] ? 'collapsed' : '') }}"
+                (collapseEvent)="onCollapsed($event, widget.Type)"></tw-customer-journey>
+
+        </ng-container>
+
+    </div>
+</tw-wrapper>

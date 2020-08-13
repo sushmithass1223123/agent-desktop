@@ -1,11 +1,11 @@
-@import "src/@fuse/scss/fuse";
+@import 'src/@fuse/scss/fuse';
 
 fuse-sidebar {
     width: 72px;
     min-width: 72px;
     max-width: 72px;
 
-    @include media-breakpoint("xs") {
+    @include media-breakpoint('xs') {
         min-width: 0 !important;
         max-width: 72px !important;
         width: 72px !important;
@@ -14,33 +14,33 @@ fuse-sidebar {
     &.navbar-fuse-sidebar {
         overflow: hidden;
 
-        &.folded:not(.unfolded) {
-            navbar {
-                .navbar-header {
-                    padding: 0 13px;
+        // &.folded:not(.unfolded) {
+        //     navbar {
+        //         .navbar-header {
+        //             padding: 0 13px;
 
-                    .logo {
-                        .logo-text {
-                            opacity: 0;
-                            transition: opacity 200ms ease;
-                        }
-                    }
-                }
+        //             .logo {
+        //                 .logo-text {
+        //                     opacity: 0;
+        //                     transition: opacity 200ms ease;
+        //                 }
+        //             }
+        //         }
 
-                .navbar-content {
-                    // Material 2 specific style
-                    .material2 {
-                        .nav-item {
-                            .nav-link {
-                                border-radius: 20px;
-                                margin: 0 12px;
-                                padding: 0 12px;
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        //         .navbar-content {
+        //             // Material 2 specific style
+        //             .material2 {
+        //                 .nav-item {
+        //                     .nav-link {
+        //                         border-radius: 20px;
+        //                         margin: 0 12px;
+        //                         padding: 0 12px;
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
     }
 
     &.navbar {
@@ -71,25 +71,13 @@ fuse-sidebar {
             justify-content: space-between;
             height: 64px;
             min-height: 64px;
-            padding: 0 16px 0 24px;
+            padding: 1rem;
             transition: padding 200ms ease;
             @include mat-elevation(1);
 
             .logo {
                 display: flex;
                 align-items: center;
-
-                .logo-icon {
-                    width: 38px;
-                    height: 38px;
-                }
-
-                .logo-text {
-                    margin-left: 8px;
-                    font-size: 20px;
-                    font-weight: 300;
-                    letter-spacing: 0.4px;
-                }
             }
         }
 
@@ -116,13 +104,11 @@ fuse-sidebar {
                     flex-direction: column;
                     justify-content: space-between;
                     padding: 0;
+                    margin-top: 1rem;
+                    margin-bottom: 2rem;
 
-                    .top {
-                        margin-top: 2rem;
-                    }
-
-                    .bottom {
-                        margin-bottom: 4rem;
+                    .bottom .mat-list-option {
+                        margin-top: 12px;
                     }
 
                     .mat-list-option {
@@ -150,13 +136,31 @@ fuse-sidebar {
                     .mat-list-single-selected-option:focus {
                         border-top-right-radius: 2rem;
                         border-bottom-left-radius: 2rem;
-                        box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.2),
-                            0 6px 10px 0 rgba(0, 0, 0, 0.14),
-                            0 1px 18px 0 rgba(0, 0, 0, 0.12);
+                        box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.2), 0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12);
                     }
 
                     .mat-list-text {
                         padding: 0 !important;
+                    }
+                }
+
+                .button-settings {
+                    width: 70px !important;
+                    height: 48px !important;
+
+                    .mat-ripple:not(:empty) {
+                        border-top-right-radius: 2rem;
+                        border-bottom-left-radius: 2rem;
+                    }
+
+                    &:hover {
+                        border-top-right-radius: 2rem;
+                        border-bottom-left-radius: 2rem;
+                        background: rgba(0, 0, 0, 0.12);
+                    }
+
+                    .mat-icon {
+                        animation: rotating 3s linear infinite;
                     }
                 }
 
@@ -173,7 +177,11 @@ fuse-sidebar {
 }
 
 .top-navbar {
+    display: flex;
+    align-items: center;
+
     .navbar-content {
+        width: 100%;
         .twn-list {
             display: flex;
             justify-content: space-between;
@@ -225,9 +233,7 @@ fuse-sidebar {
                 .mat-list-single-selected-option:focus {
                     border-top-right-radius: 2rem;
                     border-bottom-left-radius: 2rem;
-                    box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.2),
-                        0 6px 10px 0 rgba(0, 0, 0, 0.14),
-                        0 1px 18px 0 rgba(0, 0, 0, 0.12);
+                    box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.2), 0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12);
                 }
 
                 .mat-list-text {

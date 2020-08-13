@@ -40,7 +40,7 @@
                 <!-- / TOOLBAR: Below static -->
 
                 <!-- CONTENT -->
-                <content
+                <content class="{{ 'navbar-' + fuseConfig.layout.navbar.position }}"
                     [ngClass]="fuseConfig.layout.content.customBackgroundColor === true ? fuseConfig.layout.content.background : ''">
                 </content>
                 <!-- / CONTENT -->
@@ -97,7 +97,7 @@
 
 <!-- TOOLBAR -->
 <ng-template #toolbar>
-    <toolbar *ngIf="!fuseConfig.layout.toolbar.hidden"
+    <toolbar *ngIf="!fuseConfig.layout.toolbar.hidden" class="{{ 'navbar-' + fuseConfig.layout.navbar.position }}"
         [ngClass]="fuseConfig.layout.toolbar.customBackgroundColor === true ? fuseConfig.layout.toolbar.position + ' ' + fuseConfig.layout.toolbar.background : fuseConfig.layout.toolbar.position">
     </toolbar>
 </ng-template>

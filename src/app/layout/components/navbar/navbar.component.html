@@ -1,7 +1,7 @@
 <div class="navbar-header" [ngClass]="fuseConfig.layout.navbar.background">
-    <div class="logo" *ngIf="brandLogo?.Logo?.Small.Src">
-        <img class="logo-icon" [src]="brandLogo?.Logo?.Small.Src" [alt]="brandLogo?.Alt" />
-        <!-- <span class="logo-text">TMAC</span> -->
+    <div class="logo" *ngIf="customerLogo?.Small.Src">
+        <img class="logo-icon" [src]="customerLogo?.Small.Src" [alt]="customerLogo?.Alt"
+            [width]="customerLogo?.Small.Width || 50" [height]="customerLogo?.Small.Height || 50" />
     </div>
 </div>
 
@@ -25,7 +25,6 @@
             </div>
 
             <div class="bottom">
-
                 <mat-divider *ngIf="bottomWidgets.length > 0"></mat-divider>
 
                 <mat-list-option *ngFor="let item of bottomWidgets" [value]="item" (click)="selectTab(item)"
@@ -37,9 +36,16 @@
                 </mat-list-option>
             </div>
 
+            <button mat-button class="button-settings" (click)="toggleSidebarOpen('themeOptionsPanel')">
+                <mat-icon class="icon">settings</mat-icon>
+            </button>
+
         </mat-selection-list>
 
-        <img class="brand-logo" src="assets/images/logos/tetherfi-logo-round.png" alt="Tetherfi" width="50" />
+        <img class="brand-logo" [src]="brandLogo?.Small.Src || 'assets/images/logos/tetherfi-logo-round.png'"
+            [alt]="brandLogo?.Alt || 'Tetherfi'" [width]="brandLogo?.Small.Width || 50"
+            [height]="brandLogo?.Small.Height || 50" />
+
     </div>
 
 </div>

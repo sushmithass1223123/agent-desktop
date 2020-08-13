@@ -5,13 +5,30 @@ content {
     display: flex;
     z-index: 1;
     flex: 1 0 auto;
-    border-bottom-left-radius: 3rem;
+
+    &.navbar-left {
+        border-bottom-left-radius: 3rem;
+        .tw-content {
+            border-bottom-left-radius: 3rem;
+        }
+    }
+
+    &.navbar-right {
+        border-bottom-right-radius: 3rem;
+        .tw-content {
+            border-bottom-right-radius: 3rem;
+        }
+    }
 
     .tw-content {
         display: flex;
         flex: 1 0 auto;
-        padding: 2rem 3rem 0rem;
-        border-bottom-left-radius: 3rem;
+        padding: 1rem 2rem 0rem;
+
+        @include media-breakpoint('xs') {
+            border-radius: 0px;
+            padding: 1rem 1rem 0rem;
+        }
     }
 
     @include media-breakpoint('xs') {

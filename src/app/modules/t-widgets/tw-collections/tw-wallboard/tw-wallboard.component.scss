@@ -1,0 +1,74 @@
+tw-wallboard {
+    tw-wrapper {
+        mat-card-content {
+            background: inherit !important;
+            box-shadow: none !important;
+
+            .vector-image {
+                position: absolute;
+                left: -0.5rem;
+                bottom: 4rem;
+                width: 100%;
+                z-index: 1;
+            }
+
+            table {
+                border-spacing: 0.5rem;
+                border-collapse: separate;
+
+                thead {
+                    tr {
+                        th {
+                            text-align: center;
+                        }
+                    }
+                }
+
+                tbody {
+                    tr {
+                        td {
+                            text-align: center;
+                        }
+                    }
+                }
+            }
+
+            // .ngx-datatable {
+            //     background: transparent !important;
+            //     box-shadow: none !important;
+
+            //     &.scroll-vertical .datatable-body {
+            //         overflow-x: hidden;
+            //     }
+
+            //     .datatable-header-cell {
+            //         background: transparent !important;
+            //     }
+
+            //     .datatable-body {
+            //         .datatable-row-wrapper {
+            //             border-radius: 3rem;
+            //             border: 1px solid rgba(0, 0, 0, 0.12);
+            //             margin: 0.5rem 0rem;
+            //             background: #e8e8e8;
+
+            //             .datatable-body-row:hover {
+            //                 border-radius: 3rem;
+            //             }
+
+            //             .datatable-row-group,
+            //             .datatable-row-center,
+            //             .datatable-body-cell {
+            //                 min-height: 4rem !important;
+            //             }
+            //         }
+            //     }
+
+            //     &.material:not(.cell-selection) .datatable-body .datatable-row-wrapper .datatable-body-row:hover .datatable-row-group,
+            //     .datatable-body-row:hover {
+            //         border-radius: 3rem;
+            //     }
+            // }
+        }
+    }
+}

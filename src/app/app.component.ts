@@ -237,8 +237,8 @@ export class AppComponent implements OnInit, OnDestroy {
                 this._titleService.setTitle(config.AppConfigs.TitleName);
             }
             // set the favicon
-            if (config.AppConfigs.Favicon) {
-                this.document.getElementById('appFavicon').setAttribute('href', config.AppConfigs.Favicon);
+            if (config.AppConfigs.Logos.Favicon) {
+                this.document.getElementById('appFavicon').setAttribute('href', config.AppConfigs.Logos.Favicon);
             }
 
             // set the SDK config

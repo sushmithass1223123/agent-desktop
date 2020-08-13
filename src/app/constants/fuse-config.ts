@@ -33,11 +33,17 @@ export const fuseConfig: FuseConfig = {
             customBackgroundColor: true,
             background: 'grey-300'
         },
+        anchorWidget: {
+            customBackgroundColor: false,
+            bodyBackground: 'grey-50',
+            headerBackground: 'purple-700',
+            contentBackground: 'purple-A100',
+        },
         widget: {
             customBackgroundColor: false,
+            bodyBackground: 'grey-100',
             headerBackground: 'purple-700',
-            anchorBodyBackground: 'grey-700',
-            bodyBackground: 'grey-400',
+            contentBackground: 'grey-300',
         },
         footer: {
             customBackgroundColor: false,

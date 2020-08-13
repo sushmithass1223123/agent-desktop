@@ -85,11 +85,17 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
                     background: new FormControl(),
                     customBackgroundColor: new FormControl()
                 }),
+                anchorWidget: this._formBuilder.group({
+                    customBackgroundColor: new FormControl(),
+                    bodyBackground: new FormControl(),
+                    headerBackground: new FormControl(),
+                    contentBackground: new FormControl()
+                }),
                 widget: this._formBuilder.group({
                     customBackgroundColor: new FormControl(),
+                    bodyBackground: new FormControl(),
                     headerBackground: new FormControl(),
-                    anchorBodyBackground: new FormControl(),
-                    bodyBackground: new FormControl()
+                    contentBackground: new FormControl()
                 }),
                 footer: this._formBuilder.group({
                     background: new FormControl(),
@@ -207,11 +213,17 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
                                 customBackgroundColor: true,
                                 background: 'grey-300',
                             },
+                            anchorWidget: {
+                                customBackgroundColor: false,
+                                bodyBackground: 'grey-50',
+                                headerBackground: 'purple-700',
+                                contentBackground: 'purple-A100',
+                            },
                             widget: {
                                 customBackgroundColor: false,
+                                bodyBackground: 'grey-100',
                                 headerBackground: 'purple-700',
-                                anchorBodyBackground: 'grey-400',
-                                bodyBackground: 'grey-400'
+                                contentBackground: 'grey-300',
                             },
                             footer: {
                                 customBackgroundColor: true,
@@ -253,11 +265,17 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
                                 customBackgroundColor: true,
                                 background: 'grey-300',
                             },
+                            anchorWidget: {
+                                customBackgroundColor: false,
+                                bodyBackground: 'grey-50',
+                                headerBackground: 'purple-700',
+                                contentBackground: 'purple-A100',
+                            },
                             widget: {
                                 customBackgroundColor: false,
+                                bodyBackground: 'grey-100',
                                 headerBackground: 'purple-700',
-                                anchorBodyBackground: 'grey-400',
-                                bodyBackground: 'grey-400'
+                                contentBackground: 'grey-300',
                             },
                             footer: {
                                 customBackgroundColor: true,
