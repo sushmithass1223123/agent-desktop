@@ -9,7 +9,7 @@ import { FuseConfigService } from '@fuse/services/config.service';
 import { AppDataService } from 'app/services/app-data.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { CommandResultEvent, IResponse, SDKClient, Utils } from 'tmac-sdk';
+import { CommandResultEvent, IResponse, SDKClient, TUtils } from 'tmac-sdk';
 
 @Component({
     selector: 'login',
@@ -271,7 +271,7 @@ export class LoginComponent implements OnInit, OnDestroy {
                 this.showMessage('Login failed, Please contact the administrator');
             }
         } catch (error) {
-            Utils.Logger.log('Exception in login', error);
+            TUtils.Logger.log('Exception in login', error);
         }
     }
 

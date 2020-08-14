@@ -207,14 +207,14 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
                                 customBackgroundColor: true,
                                 background: 'grey-200',
                                 hidden: false,
-                                position: 'below-static'
+                                position: 'below-fixed'
                             },
                             content: {
                                 customBackgroundColor: true,
                                 background: 'grey-200'
                             },
                             anchorWidget: {
-                                customBackgroundColor: true,
+                                customBackgroundColor: false,
                                 bodyBackground: 'grey-50',
                                 headerBackground: 'purple-700',
                                 contentBackground: 'purple-A100'
@@ -259,14 +259,14 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
                                 customBackgroundColor: true,
                                 background: 'grey-200',
                                 hidden: false,
-                                position: 'above'
+                                position: 'below-fixed'
                             },
                             content: {
                                 customBackgroundColor: true,
                                 background: 'grey-200'
                             },
                             anchorWidget: {
-                                customBackgroundColor: true,
+                                customBackgroundColor: false,
                                 bodyBackground: 'grey-50',
                                 headerBackground: 'purple-700',
                                 contentBackground: 'purple-A100'

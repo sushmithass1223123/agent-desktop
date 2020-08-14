@@ -34,7 +34,7 @@ export const fuseConfig: FuseConfig = {
             background: 'grey-200'
         },
         anchorWidget: {
-            customBackgroundColor: true,
+            customBackgroundColor: false,
             bodyBackground: 'grey-50',
             headerBackground: 'purple-700',
             contentBackground: 'purple-A100'
