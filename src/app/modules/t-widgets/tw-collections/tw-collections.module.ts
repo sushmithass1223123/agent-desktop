@@ -10,6 +10,8 @@ import { TwVoiceControlsComponent } from './tw-voice-controls/tw-voice-controls.
 import { TwVoicePanelComponent } from './tw-voice-panel/tw-voice-panel.component';
 import { TwWallboardComponent } from './tw-wallboard/tw-wallboard.component';
 
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+
 @NgModule({
     declarations: [
         TwCustomComponent,
@@ -18,12 +20,13 @@ import { TwWallboardComponent } from './tw-wallboard/tw-wallboard.component';
         TwWallboardComponent,
         TwVoicePanelComponent,
         TwCustomerDetailsComponent,
-        TwCustomerJourneyComponent, 
+        TwCustomerJourneyComponent,
         TwVoiceControlsComponent,
     ],
     imports: [
         SharedModule,
-        TwWrapperModule
+        TwWrapperModule,
+        NgxChartsModule
     ]
 })
 export class TwCollectionsModule { }

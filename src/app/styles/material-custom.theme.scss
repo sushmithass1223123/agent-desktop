@@ -7,7 +7,7 @@
     .mat-table {
         tr {
             td {
-                @if ($is-dark == true) {
+                @if ($is-dark) {
                     background-color: map-get($background, hover);
                 } @else {
                     color: #555555;

@@ -5,12 +5,12 @@
             "Enabled": true,
             "Type": "nonpbx"
         },
-        "DomainListEnabled": true,
-        "PasswordEnabled": true,
+        "DomainListEnabled": false,
+        "PasswordEnabled": false,
         "StationEnabled": false,
         "LanIdDisabled": false,
         "SinglePageEnabled": false,
-        "PromptAgentIdOnInvalidLanId": true
+        "PromptAgentIdOnInvalidLanId": false
     },
     "Main": {
         "Navbar": {

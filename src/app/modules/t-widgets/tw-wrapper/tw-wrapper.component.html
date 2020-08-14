@@ -4,16 +4,11 @@
 </div>
 
 <!-- Widget card -->
-<tw-card
-    class="tw-card tw-card tw-bg-header tw-bg-body {{ data.Config.Static ? 'tw-static-widget' : 'tw-box-header tw-box-body' }}"
+<tw-card class="tw-card {{ data.Config.Static ? 'tw-static-widget' : '' }} {{ data.Config.Class }}"
     [ngClass]="{ collapsed: collapsed, maximised: maximised, floating: floating }"
-    [@animate]="{ value: '*', params: { y: '100%' } }"
->
+    [@animate]="{ value: '*', params: { y: '100%' } }">
     <!-- We are writing a wrapper over material card -->
-    <mat-card
-        cdkDrag
-        cdkDragBoundary=".widget-grid"
-        [cdkDragDisabled]="!floating"
+    <mat-card cdkDrag cdkDragBoundary=".widget-grid" [cdkDragDisabled]="!floating"
         [cdkDragFreeDragPosition]="dragPosition"
         class="widget-card {{ data.Config.Static ? 'tw-static-card' : '' }} {{ !floating ? '' : 'floating' }}"
         [ngClass]="
@@ -22,33 +17,24 @@
                 : fuseConfig.layout.widget.customBackgroundColor === true
                 ? fuseConfig.layout.widget.bodyBackground
                 : ''
-        "
-    >
+        ">
         <!-- Wrapper to wrap header and body -->
         <div class="card-wrapper {{ data.Config.Static ? 'tw-static-card-wrapper' : '' }}">
             <!-- Enabled header if enabled in config -->
-            <tw-card-header
-                [data]="data"
-                [fuseConfig]="fuseConfig"
-                *ngIf="data.Config.Header"
+            <tw-card-header [data]="data" [fuseConfig]="fuseConfig" *ngIf="data.Config.Header"
                 [widgetState]="{ maximised: maximised, floating: floating, collapsed: collapsed }"
-                (maximize)="maximize()"
-                (float)="float()"
-                (collapse)="collapse()"
-                cdkDragHandle
-            ></tw-card-header>
+                (maximize)="maximize()" (float)="float()" (collapse)="collapse()" cdkDragHandle></tw-card-header>
 
             <!-- Card content -->
             <mat-card-content
-                class="{{ !data.Config.Header ? 'no-header' : '' }} {{ data.Config.Static ? 'tw-static-card-content' : '' }}"
+                class="mat-elevation-z1 {{ !data.Config.Header ? 'no-header' : '' }} {{ data.Config.Static ? 'tw-static-card-content' : '' }}"
                 [ngClass]="
                     fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
                         ? fuseConfig.layout.anchorWidget.contentBackground
                         : fuseConfig.layout.widget.customBackgroundColor === true
                         ? fuseConfig.layout.widget.contentBackground
                         : ''
-                "
-            >
+                ">
                 <!-- All the card content goes here -->
                 <ng-content></ng-content>
             </mat-card-content>

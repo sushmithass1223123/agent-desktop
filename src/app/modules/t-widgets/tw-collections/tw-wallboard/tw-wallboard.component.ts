@@ -39,17 +39,10 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
 
         this.eventListener = fromEvent(SDKClient.events, 'WallboardRefreshEvent').pipe(distinctUntilChanged());
         this.eventListener.subscribe((dt: WallboardRefreshEvent) => {
-            console.log(_.isEqual(dt, this.test));
             this.test = dt;
             this.dataSource = new MatTableDataSource(dt.Skills);
             this.dataSource.sort = this.sort;
         });
-
-        // SDKClient.events.on('WallboardRefreshEvent', (dt: WallboardRefreshEvent) => {
-        //     // console.log('$$$$$$$$$$$$$$4', dt);
-        //     this.dataSource = new MatTableDataSource(dt.Skills);
-        //     this.dataSource.sort = this.sort;
-        // });
     }
 
     ngOnDestroy(): void {

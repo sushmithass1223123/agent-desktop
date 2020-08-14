@@ -8,15 +8,31 @@ content {
 
     &.navbar-left {
         border-bottom-left-radius: 3rem;
+
+        @include media-breakpoint('xs') {
+            border-radius: 0px;
+        }
         .tw-content {
             border-bottom-left-radius: 3rem;
+
+            @include media-breakpoint('xs') {
+                border-radius: 0px;
+            }
         }
     }
 
     &.navbar-right {
         border-bottom-right-radius: 3rem;
+
+        @include media-breakpoint('xs') {
+            border-radius: 0px;
+        }
         .tw-content {
             border-bottom-right-radius: 3rem;
+
+            @include media-breakpoint('xs') {
+                border-radius: 0px;
+            }
         }
     }
 
