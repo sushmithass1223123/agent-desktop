@@ -58,5 +58,7 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
 
-    <img class="vector-image" src="assets/images/vectors/home.png" width="580" />
+    <p *ngIf="dataSource.data.length === 0" class="text-center m-0 font-size-16"> No data available </p>
+
+    <img class="vector-image" src="assets/images/vectors/home-illustration.svg" width="580" />
 </tw-wrapper>

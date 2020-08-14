@@ -33,9 +33,8 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
         // call the wrapper init method
         this.initWrapper(this.data);
 
-
         SDKClient.events.on('WallboardRefreshEvent', (dt: WallboardRefreshEvent) => {
-            this.dataSource = new MatTableDataSource(dt.Skills);
+            // this.dataSource = new MatTableDataSource(dt.Skills);
             this.dataSource.sort = this.sort;
         });
     }

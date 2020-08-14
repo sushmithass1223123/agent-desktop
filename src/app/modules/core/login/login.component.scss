@@ -3,15 +3,46 @@
 login {
     width: 100%;
 
+    .brand-logo {
+        position: absolute;
+        bottom: 3%;
+        left: 3%;
+    }
+
     #login {
         width: 100%;
         height: 100%;
         overflow: hidden;
-        background: url('/assets/images/backgrounds/dark-material-bg.jpg') no-repeat;
-        background-size: cover;
 
         #login-intro {
             padding: 128px;
+            background: url('/assets/images/vectors/login-illustration.svg') no-repeat;
+            background-size: 140%;
+            background-position: bottom left;
+            // position: relative;
+            opacity: 0;
+            animation-name: fade-in;
+            animation-fill-mode: forwards;
+            animation-duration: 1s;
+            &::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                background-color: rgba(#732b90, 0.8);
+                height: 100%;
+                width: 140%;
+                z-index: -1;
+            }
+
+            @keyframes fade-in {
+                0% {
+                    opacity: 0;
+                }
+                100% {
+                    opacity: 100%;
+                }
+            }
 
             @include media-breakpoint('sm') {
                 padding: 128px 64px;

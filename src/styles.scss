@@ -7,6 +7,10 @@
 // Import app theme styles
 @import 'app/app.theme';
 
+html {
+    font-family: 'Montserrat', 'Muli', 'Helvetica Neue', 'Arial', sans-serif;
+}
+
 .tooltip {
     font-size: 1.5rem;
 }
@@ -109,6 +113,6 @@
 //material drag return to oriinal position on drag disable :: start
 .widget-card {
     &:not(.floating) {
-        transition: all 0.5s !important;
+        transition: all 0.3s !important;
     }
 }

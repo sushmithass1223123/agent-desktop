@@ -205,25 +205,25 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
                             },
                             toolbar: {
                                 customBackgroundColor: true,
-                                background: 'grey-300',
+                                background: 'grey-200',
                                 hidden: false,
                                 position: 'below-static'
                             },
                             content: {
                                 customBackgroundColor: true,
-                                background: 'grey-300',
+                                background: 'grey-200'
                             },
                             anchorWidget: {
-                                customBackgroundColor: false,
+                                customBackgroundColor: true,
                                 bodyBackground: 'grey-50',
                                 headerBackground: 'purple-700',
-                                contentBackground: 'purple-A100',
+                                contentBackground: 'purple-A100'
                             },
                             widget: {
-                                customBackgroundColor: false,
-                                bodyBackground: 'grey-100',
+                                customBackgroundColor: true,
+                                bodyBackground: 'grey-50',
                                 headerBackground: 'purple-700',
-                                contentBackground: 'grey-300',
+                                contentBackground: 'grey-100'
                             },
                             footer: {
                                 customBackgroundColor: true,
@@ -257,25 +257,25 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
                             },
                             toolbar: {
                                 customBackgroundColor: true,
-                                background: 'grey-300',
+                                background: 'grey-200',
                                 hidden: false,
                                 position: 'above'
                             },
                             content: {
                                 customBackgroundColor: true,
-                                background: 'grey-300',
+                                background: 'grey-200'
                             },
                             anchorWidget: {
-                                customBackgroundColor: false,
+                                customBackgroundColor: true,
                                 bodyBackground: 'grey-50',
                                 headerBackground: 'purple-700',
-                                contentBackground: 'purple-A100',
+                                contentBackground: 'purple-A100'
                             },
                             widget: {
-                                customBackgroundColor: false,
-                                bodyBackground: 'grey-100',
+                                customBackgroundColor: true,
+                                bodyBackground: 'grey-50',
                                 headerBackground: 'purple-700',
-                                contentBackground: 'grey-300',
+                                contentBackground: 'grey-100'
                             },
                             footer: {
                                 customBackgroundColor: true,

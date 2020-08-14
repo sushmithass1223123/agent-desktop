@@ -1,25 +1,40 @@
 <div id="login" class="inner-scroll" fxLayout="row" fxLayoutAlign="start">
     <div id="login-intro" fxFlex fxHide fxShow.gt-xs>
         <div class="logo" [@animate]="{ value: '*', params: { delay: '500ms', scale: '0.2' } }">
-            <img [src]="logoSrc || 'assets/images/logos/tetherfi.png'" [width]="logoWidth || 180"
-                [height]="logoHeight || 90" alt="{{ logoAlt || 'Tetherfi' }}" />
+            <img
+                [src]="logoSrc || 'assets/images/logos/tetherfi.png'"
+                [width]="logoWidth || 180"
+                [height]="logoHeight || 90"
+                alt="{{ logoAlt || 'Tetherfi' }}"
+            />
         </div>
 
         <div class="title" [@animate]="{ value: '*', params: { delay: '50ms', y: '25px' } }">
             Welcome to the TMAC!
         </div>
+
+        <img
+            class="brand-logo"
+            [src]="brandLogo?.Small.Src || 'assets/images/logos/tetherfi-logo-round.png'"
+            [alt]="brandLogo?.Alt || 'Tetherfi'"
+            [width]="brandLogo?.Small.Width || 50"
+            [height]="brandLogo?.Small.Height || 50"
+        />
     </div>
 
-    <div id="login-form-wrapper" fusePerfectScrollbar
-        [@animate]="{ value: '*', params: { delay: '300ms', x: '100%' } }">
+    <div id="login-form-wrapper" fusePerfectScrollbar [@animate]="{ value: '*', params: { delay: '300ms', x: '100%' } }">
         <div class="spinner" *ngIf="loading">
             <mat-spinner></mat-spinner>
         </div>
 
         <div id="login-form" class="{{ loading ? 'blur' : null }}">
             <div class="logo" [@animate]="{ value: '*', params: { scale: '0.5' } }">
-                <img [src]="logoSrc || 'assets/images/logos/tetherfi.png'" [width]="logoWidth || 180"
-                    [height]="logoHeight || 90" alt="{{ logoAlt || 'Tetherfi' }}" />
+                <img
+                    [src]="logoSrc || 'assets/images/logos/tetherfi.png'"
+                    [width]="logoWidth || 180"
+                    [height]="logoHeight || 90"
+                    alt="{{ logoAlt || 'Tetherfi' }}"
+                />
             </div>
 
             <form name="loginForm" [formGroup]="loginForm" novalidate>
@@ -97,8 +112,7 @@
                     </mat-list-item>
                 </mat-list>
 
-                <button mat-raised-button color="primary" class="submit-button" aria-label="LOGIN"
-                    (click)="login(false)">
+                <button mat-raised-button color="primary" class="submit-button" aria-label="LOGIN" (click)="login(false)">
                     LOGIN
                 </button>
             </form>
