@@ -1,0 +1,13 @@
+<section id="notFound">
+    <div [ngStyle]="{ width: (isHandset$ | async) ? '90%' : '30%' }">
+        <img src="assets/images/logos/tetherfi.png" class="logo" [ngStyle]="{ width: (isHandset$ | async) ? '30%' : '20%' }" />
+        <div class="content">
+            <img src="assets/images/vectors/not-found.svg" />
+            <div class="desc">
+                <div class="subtitle">{{ subtitle || 'Oops !' }}</div>
+                <div class="title">{{ title || '404' }}</div>
+                <strong class="description"> {{ description || 'Page not found' }} </strong>
+            </div>
+        </div>
+    </div>
+</section>

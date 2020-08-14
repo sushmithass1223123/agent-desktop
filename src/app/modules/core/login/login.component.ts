@@ -24,6 +24,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     private _unsubscribeAll: Subject<any>;
 
     appConfig: any;
+    brandLogo = null;
 
     loginForm: FormGroup;
     confirmDialogRef: MatDialogRef<FuseConfirmDialogComponent>;
@@ -139,6 +140,8 @@ export class LoginComponent implements OnInit, OnDestroy {
             this.stationEnabled = config.Login.StationEnabled;
             this.loginModeEnabled = config.Login.Modes.Enabled;
             this.promptAgentIdOnInvalidLanId = config.Login.PromptAgentIdOnInvalidLanId;
+
+            this.brandLogo = config.AppConfigs.Logos.Default || null;
 
             // check if the login mode is enabled
             if (this.loginModeEnabled) {
