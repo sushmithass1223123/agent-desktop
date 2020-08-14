@@ -25,6 +25,7 @@ tw-wrapper {
         }
 
         &.floating {
+            z-index: 1;
             position: relative;
             z-index: 1;
         }
@@ -97,7 +98,7 @@ tw-wrapper {
             .mat-card-title {
                 margin: 0 !important;
                 font-size: 1.5rem;
-                font-weight: 500;
+                font-weight: 600;
             }
 
             .mat-card-header-text {
@@ -113,7 +114,7 @@ tw-wrapper {
 
             .mat-card-content {
                 border-radius: 2rem;
-                padding: 1rem;
+                padding: 1rem 1rem 0;
                 margin: 1rem 0rem;
                 height: calc(100% - 4.8rem);
 
@@ -123,6 +124,10 @@ tw-wrapper {
                 }
             }
         }
+    }
+
+    .mat-card {
+        position: unset;
     }
 
     .tw-box-header {
@@ -152,6 +157,7 @@ tw-wrapper {
                     background: inherit !important;
                     // overflow: hidden;
                     padding: 0rem;
+                    margin-bottom: 0rem;
                 }
             }
         }

@@ -23,11 +23,11 @@
                         color: map-get($foreground, text);
 
                         // If it's a light theme, use a darker background
-                        // color other than the default #eaeaea
+                        // color other than the default #eeeeee
                         @if ($is-dark) {
                             background: map-get($background, background);
                         } @else {
-                            background: #eaeaea;
+                            background: #eeeeee;
                         }
                     }
                 }
@@ -40,11 +40,11 @@
                         color: map-get($foreground, text);
 
                         // If it's a light theme, use a darker background
-                        // color other than the default #eaeaea
+                        // color other than the default #f5f5f5
                         @if ($is-dark) {
                             background: map-get($background, background);
                         } @else {
-                            background: #eaeaea;
+                            background: #f5f5f5;
                         }
                     }
                 }

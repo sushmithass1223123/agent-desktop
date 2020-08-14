@@ -13,7 +13,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
     @Input() data: any;
 
-    @Output() minimizeEvent = new EventEmitter();
+    @Output() maximizeEvent = new EventEmitter();
     @Output() floatEvent = new EventEmitter();
     @Output() collapseEvent = new EventEmitter();
 

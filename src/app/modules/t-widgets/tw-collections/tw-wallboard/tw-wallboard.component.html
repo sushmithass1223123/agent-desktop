@@ -1,6 +1,6 @@
-<tw-wrapper [data]=data>
+<tw-wrapper [data]="data">
 
-    <table matSort (matSortChange)="sortData($event)" class="w-100-p">
+    <!-- <table matSort (matSortChange)="sortData($event)" class="w-100-p">
         <thead>
             <tr>
                 <th mat-sort-header="name">Skill Name</th>
@@ -22,7 +22,43 @@
                 <td>{{item.CallsInQueue}}</td>
             </tr>
         </tbody>
+    </table> -->
+
+    <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z0" matSortActive="CallsInQueue"
+        matSortDirection="asc" matSortDisableClear>
+        <!--- Note that these columns can be defined in any order.
+              The actual rendered columns are set as a property on the row definition" -->
+
+        <!-- Position Column -->
+        <ng-container matColumnDef="SkillName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Skill Name</th>
+            <td mat-cell *matCellDef="let element">{{ element.SkillName }}</td>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="AgentsStaffed">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Agents Staffed</th>
+            <td mat-cell *matCellDef="let element">{{ element.AgentsStaffed }}</td>
+        </ng-container>
+
+        <!-- Weight Column -->
+        <ng-container matColumnDef="AgentAvailable">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Agents Available</th>
+            <td mat-cell *matCellDef="let element">{{ element.AgentAvailable }}</td>
+        </ng-container>
+
+        <!-- Symbol Column -->
+        <ng-container matColumnDef="CallsInQueue">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Calls in Queue
+            </th>
+            <td mat-cell *matCellDef="let element">{{ element.CallsInQueue }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
 
-    <img class="vector-image" src="assets/images/vectors/home.png" width="580" />
+    <p *ngIf="dataSource.data.length === 0" class="text-center m-0 font-size-16"> No data available </p>
+
+    <img class="vector-image" src="assets/images/vectors/home-illustration.svg" width="580" />
 </tw-wrapper>

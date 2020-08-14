@@ -1,8 +1,9 @@
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { Sort } from '@angular/material/sort';
+import { Component, Input, OnDestroy, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
+import { Sort, MatSort } from '@angular/material/sort';
 import { fuseAnimations } from '@fuse/animations';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { SDKClient, WallboardRefreshEvent, WallboardSkillModel } from 'tmac-sdk';
+import { MatTableDataSource } from '@angular/material/table';
 
 
 @Component({
@@ -16,8 +17,13 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
 
     @Input() data: any;
 
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
+
     wallboardSkills: WallboardSkillModel[] = [];
     sortedData: WallboardSkillModel[];
+
+    displayedColumns: string[] = ['SkillName', 'AgentsStaffed', 'AgentAvailable', 'CallsInQueue'];
+    dataSource = new MatTableDataSource([]);
 
     constructor() {
         super();
@@ -28,8 +34,8 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
         this.initWrapper(this.data);
 
         SDKClient.events.on('WallboardRefreshEvent', (dt: WallboardRefreshEvent) => {
-            this.wallboardSkills = dt.Skills;
-            this.sortedData = this.wallboardSkills.slice();
+            // this.dataSource = new MatTableDataSource(dt.Skills);
+            this.dataSource.sort = this.sort;
         });
     }
 
@@ -61,4 +67,3 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
         return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
     }
 }
-

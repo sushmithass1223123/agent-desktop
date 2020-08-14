@@ -1,10 +1,17 @@
+// @ All the component theme goes here
+// @ Mixin name should start with tw-<widget-name>-theme
+
+// NOTE:: This theme.scss should be added in app.theme.scss
+//        Import in @ Component theming section like @import 'src/app/modules/t-widgets/tw-collections/tw-sample.theme';
+//        and include the theme in @mixin components-theme($theme) section
+
 @mixin tw-sample-theme($theme) {
     $background: map-get($theme, background);
     $foreground: map-get($theme, foreground);
     $accent: map-get($theme, accent);
     $is-dark: map-get($theme, is-dark);
 
-    @debug "theme";
+    @debug 'theme';
 
     tw-sample {
         &.tw-bg-header {

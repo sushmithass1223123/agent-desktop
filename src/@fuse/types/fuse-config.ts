@@ -26,13 +26,13 @@ export interface FuseConfig {
             customBackgroundColor: boolean,
             bodyBackground: string,
             headerBackground: string,
-            contentBackground: string,
+            contentBackground: string
         },
         widget: {
             customBackgroundColor: boolean,
             bodyBackground: string,
             headerBackground: string,
-            contentBackground: string,
+            contentBackground: string
         },
         footer: {
             customBackgroundColor: boolean,
