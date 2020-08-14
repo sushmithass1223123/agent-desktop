@@ -7,7 +7,7 @@ import { ResourceNotFoundComponent } from '@modules/shared/resource-not-found/re
 const appRoutes: Routes = [
     {
         path: '',
-        redirectTo: 'not-found',
+        redirectTo: 'login',
         pathMatch: 'full'
     },
     {
@@ -28,4 +28,4 @@ const appRoutes: Routes = [
     imports: [RouterModule.forRoot(appRoutes)],
     exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

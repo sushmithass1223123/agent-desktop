@@ -5,9 +5,6 @@
             Welcome to the TMAC!
         </div>
 
-        <img class="brand-logo" [src]="brandLogo?.Small.Src || 'assets/images/logos/tetherfi-logo-round.png'"
-            [alt]="brandLogo?.Alt || 'Tetherfi'" [width]="brandLogo?.Small.Width || 50"
-            [height]="brandLogo?.Small.Height || 50" />
     </div>
 
     <div id="login-form-wrapper" fusePerfectScrollbar
@@ -37,7 +34,7 @@
                     <input class="login-input" matInput required placeholder="LAN ID" (keydown.enter)="login(false)"
                         formControlName="lanId" #lanId />
                     <button mat-button color="primary" *ngIf="loginForm.get('lanId').value" matSuffix mat-icon-button
-                        aria-label="Clear" (click)="loginForm.reset('lanId')">
+                        aria-label="Clear" (click)="resetField('lanId')">
                         <mat-icon>close</mat-icon>
                     </button>
                     <mat-error>
@@ -49,7 +46,7 @@
                     <input class="login-input" matInput required placeholder="AGENT ID" (keydown.enter)="login(false)"
                         formControlName="agentId" />
                     <button mat-button color="primary" *ngIf="loginForm.get('agentId').value" matSuffix mat-icon-button
-                        aria-label="Clear" (click)="loginForm.reset('agentId')">
+                        aria-label="Clear" (click)="resetField('agentId')">
                         <mat-icon>close</mat-icon>
                     </button>
                     <mat-error>
@@ -74,7 +71,7 @@
                     <input class="login-input" color="primary" matInput required placeholder="STATION"
                         (keypress)="numberOnly($event)" (keydown.enter)="login(false)" formControlName="station" />
                     <button *ngIf="loginForm.get('station').value" matSuffix mat-icon-button color="primary"
-                        aria-label="Clear" (click)="loginForm.reset('station')">
+                        aria-label="Clear" (click)="resetField('station')">
                         <mat-icon>close</mat-icon>
                     </button>
                     <mat-error>
@@ -105,4 +102,8 @@
             </form>
         </div>
     </div>
+
+    <img class="brand-logo" [src]="brandLogo?.Small.Src || 'assets/images/logos/tetherfi-logo-round.png'"
+        [alt]="brandLogo?.Alt || 'Tetherfi'" [width]="brandLogo?.Small.Width || 50"
+        [height]="brandLogo?.Small.Height || 50" />
 </div>
