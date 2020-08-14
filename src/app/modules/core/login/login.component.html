@@ -34,10 +34,9 @@
                 </mat-form-field>
 
                 <mat-form-field class="form-field" appearance="outline">
-                    <mat-label>LAN ID</mat-label>
                     <input class="login-input" matInput required placeholder="LAN ID" (keydown.enter)="login(false)"
                         formControlName="lanId" #lanId />
-                    <button mat-button *ngIf="loginForm.get('lanId').value" matSuffix mat-icon-button aria-label="Clear"
+                    <button mat-button color="primary" *ngIf="loginForm.get('lanId').value" matSuffix mat-icon-button aria-label="Clear"
                         (click)="loginForm.reset('lanId')">
                         <mat-icon>close</mat-icon>
                     </button>
@@ -47,10 +46,9 @@
                 </mat-form-field>
 
                 <mat-form-field class="form-field" appearance="outline" *ngIf="agentIdEnabled">
-                    <mat-label>AGENT ID</mat-label>
                     <input class="login-input" matInput required placeholder="AGENT ID" (keydown.enter)="login(false)"
                         formControlName="agentId" />
-                    <button mat-button *ngIf="loginForm.get('agentId').value" matSuffix mat-icon-button
+                    <button mat-button color="primary" *ngIf="loginForm.get('agentId').value" matSuffix mat-icon-button
                         aria-label="Clear" (click)="loginForm.reset('agentId')">
                         <mat-icon>close</mat-icon>
                     </button>
@@ -60,10 +58,9 @@
                 </mat-form-field>
 
                 <mat-form-field class="form-field" appearance="outline" *ngIf="passwordEnabled">
-                    <mat-label>PASSWORD</mat-label>
-                    <input class="login-input" matInput [type]="hidePassword ? 'password' : 'text'" required
+                    <input class="login-input" required matInput [type]="hidePassword ? 'password' : 'text'" required
                         placeholder="PASSWORD" (keydown.enter)="login(false)" formControlName="password" />
-                    <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword"
+                    <button mat-icon-button color="primary" color="primary" matSuffix (click)="hidePassword = !hidePassword"
                         [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">
                         <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
                     </button>
@@ -73,11 +70,10 @@
                 </mat-form-field>
 
                 <mat-form-field class="form-field" appearance="outline" *ngIf="stationEnabled">
-                    <mat-label>STATION</mat-label>
-                    <input class="login-input" matInput required placeholder="STATION" (keypress)="numberOnly($event)"
+                    <input class="login-input" color="primary" matInput required placeholder="STATION" (keypress)="numberOnly($event)"
                         (keydown.enter)="login(false)" formControlName="station" />
-                    <button mat-button *ngIf="loginForm.get('station').value" matSuffix mat-icon-button
-                        aria-label="Clear" (click)="loginForm.reset('station')">
+                    <button *ngIf="loginForm.get('station').value" matSuffix mat-icon-button color="primary" aria-label="Clear"
+                        (click)="loginForm.reset('station')">
                         <mat-icon>close</mat-icon>
                     </button>
                     <mat-error>
@@ -86,20 +82,16 @@
                 </mat-form-field>
 
                 <mat-list *ngIf="loginModeEnabled">
-                    <h3 matSubheader>
-                        <span>Login Modes</span>
-                    </h3>
-
                     <mat-list-item>
                         <mat-slide-toggle fxFlex class="mat-primary" [checked]="pbxChecked"
-                            (change)="onPBXToggle($event)" aria-label="Notifications" labelPosition="before">
+                            (change)="onPBXToggle($event)" aria-label="Notifications" labelPosition="after">
                             <h3>Login to PBX?</h3>
                         </mat-slide-toggle>
                     </mat-list-item>
 
                     <mat-list-item>
                         <mat-slide-toggle fxFlex class="mat-primary" [checked]="msChecked"
-                            (change)="msChecked = $event.checked" labelPosition="before">
+                            (change)="msChecked = $event.checked" labelPosition="after">
                             <h3>Login to MS?</h3>
                         </mat-slide-toggle>
                     </mat-list-item>

@@ -1,6 +1,6 @@
-import { Component, ViewChild, Input, ComponentFactoryResolver, AfterContentInit } from '@angular/core';
-import { TwTemplateDirective } from './tw-template.directive';
+import { AfterContentInit, Component, ComponentFactoryResolver, Input, ViewChild } from '@angular/core';
 import { TWidget } from '@twidgets/utils';
+import { TwTemplateDirective } from './tw-template.directive';
 
 
 @Component({

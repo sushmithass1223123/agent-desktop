@@ -4,11 +4,27 @@ Descrption
 
 ## Development server
 
+Run `npm install` to install all the dependancy packages
+
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
 ## Code scaffolding
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Create a branch out of existing branch `develop` to make start developement preferably `feature/<any-feature-name>`.
+
+Run `ng generate component component-name` or `ng g c component-name` to generate a new component. You can also use `ng generate directive (d) |pipe (p) |service (s) |class (c) |guard (g) |interface (i) |enum (e)|module (m)`.
+
+To create a collection widget Run `ng g c modules/t-widgets/tw-collections/tw-<widget-name>`.
+
+All the the collection widgets created to be added under `modules/t-widgets/utils/widget-library/tw-library` with the widget type defined in config.
+
+Please refer to `tw-sample` component under `modules/t-widgets/tw-collections/` to create a widget.
+
+TMAC SDK can accessed using `SDKClient` variable which is a property under `tmac-sdk` package. All the event names and interfaces are also available.
+
+Once the developement is completed please commit to your branch and raise a merge-request to the `develop` branch.
+
+Please do not make any changes or commit to `master` or `develop` branch.
 
 ## Build
 

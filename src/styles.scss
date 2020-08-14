@@ -1,7 +1,10 @@
 // Import Fuse core library
 @import '@fuse/scss/core';
 
-// Import app.theme.scss
+// import material custom styles
+@import 'app/styles/material-custom';
+
+// Import app theme styles
 @import 'app/app.theme';
 
 .tooltip {
@@ -17,6 +20,7 @@
 ///***************************************************************************************************************///
 
 .widget-grid {
+    position: relative;
     width: 100%;
     display: grid;
     gap: 1rem;
@@ -106,48 +110,5 @@
 .widget-card {
     &:not(.floating) {
         transition: all 0.5s !important;
-    }
-}
-
-//material drag return to oriinal position on drag disable :: start
-
-.widget-grid {
-    position: relative;
-}
-
-.mat-table {
-    width: 100%;
-    background: transparent !important;
-    padding: 10px;
-    border-collapse: separate;
-    border-spacing: 0px 5px;
-
-    th,
-    td {
-        position: relative;
-        text-align: center;
-        border: none;
-    }
-
-    td {
-        background: rgba(red, 0.1);
-        &:first-child {
-            border-top-left-radius: 20px;
-            border-bottom-left-radius: 20px;
-        }
-        &:last-child {
-            border-top-right-radius: 20px;
-            border-bottom-right-radius: 20px;
-        }
-    }
-
-    th:not(:last-child)::after {
-        content: '';
-        position: absolute;
-        width: 1px;
-        height: 40%;
-        top: 30%;
-        right: 0%;
-        background-color: purple;
     }
 }

@@ -2,15 +2,14 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FuseSharedModule } from '@fuse/shared.module';
 import { MaterialModule } from './material.module';
-import { TTableComponent } from './t-table/t-table.component';
 
 const sharedModules = [MaterialModule, FuseSharedModule];
 
-const sharedComponents = [TTableComponent];
+const sharedComponents = [];
 
 @NgModule({
     declarations: sharedComponents,
     imports: [CommonModule, ...sharedModules],
     exports: [...sharedModules, ...sharedComponents]
 })
-export class SharedModule {}
+export class SharedModule { }

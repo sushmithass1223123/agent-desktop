@@ -16,12 +16,11 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
 
     @HostBinding('class.position-relative')
     floating = false;
-
     dragPosition: any = '';
 
     @Output() maximizeEvent = new EventEmitter();
-    @Output() floatEvent = new EventEmitter();
     @Output() collapseEvent = new EventEmitter();
+    @Output() floatEvent = new EventEmitter();
 
     fuseConfig: any;
     maximised = false;

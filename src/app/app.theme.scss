@@ -60,9 +60,9 @@ $tw-primary: (
     800: #642687,
     900: #481e76,
     A100: #d2c8d9,
-    A200: #9ea1a9,
-    A400: #5c616f,
-    A700: #2d323e,
+    A200: #b59ed1,
+    A400: #835ab0,
+    A700: #512b8b,
     contrast: (
         50: $dark-primary-text,
         100: $dark-primary-text,
@@ -92,10 +92,10 @@ $tw-secondary: (
     700: #e3173c,
     800: #d60835,
     900: #c80028,
-    A100: #c5c6cb,
-    A200: #9ea1a9,
-    A400: #5c616f,
-    A700: #2d323e,
+    A100: #fff8c4,
+    A200: #fff39d,
+    A400: #ffe957,
+    A700: #f57e20,
     contrast: (
         50: $dark-primary-text,
         100: $dark-primary-text,
@@ -147,6 +147,8 @@ $typography: mat-typography-config(
 // -----------------------------------------------------------------------------------------------------
 
 // Import app and page component themes here to enable theming for them
+@import 'src/app/styles/material-custom.theme';
+
 @import 'src/app/layout/components/chat-panel/chat-panel.theme';
 @import 'src/app/layout/components/toolbar/toolbar.theme';
 @import 'src/app/layout/components/navbar/navbar.theme';
@@ -175,6 +177,9 @@ $typography: mat-typography-config(
             background: #f5f5f5;
         }
     }
+
+    // Material custom
+    @include matarial-custom-theme($theme);
 
     // Layout components
     @include chat-panel-theme($theme);

@@ -1,3 +1,13 @@
+<!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
 <tw-wrapper [data]="data">
-    <t-table></t-table>
+
+    <!-- your code goes here -->
+    <div fxFlex fxFill fxLayout="row" fxLayoutAlign="center center">
+        <span class="mat-headline mb-0">
+            <!-- inorder to access the class variable use angular expression {{ data }} -->
+            {{ data.Name }} widget!
+        </span>
+    </div>
+    <!-- your code goes here -->
+
 </tw-wrapper>

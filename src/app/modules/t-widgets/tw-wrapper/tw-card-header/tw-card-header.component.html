@@ -1,5 +1,5 @@
 <!-- We are using material card header -->
-<mat-card-header class="card-header" [ngClass]="(fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor ? 
+<mat-card-header class="card-header {{ widgetState.floating ? 'floating' : '' }}" [ngClass]="(fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor ? 
 fuseConfig.layout.anchorWidget.headerBackground : fuseConfig.layout.widget.customBackgroundColor === true ? 
 fuseConfig.layout.widget.headerBackground : '')">
     <!-- We add a material icon from config of default a widget icon -->
@@ -14,25 +14,23 @@ fuseConfig.layout.widget.headerBackground : '')">
 
     <!-- All the action buttons goes here -->
 
-    <button
-        *ngIf="data.Config.Actions.includes('maximise') && !widgetState.floating && !widgetState.maximised"
-        mat-icon-button
-        (click)="maximizeWidget()"
-    >
-        <mat-icon>open_in_new</mat-icon>
+    <button *ngIf="data.Config.Actions.includes('maximise') && !widgetState.floating && !widgetState.maximised"
+        mat-icon-button (click)="maximizeWidget()">
+        <mat-icon>fullscreen</mat-icon>
     </button>
-    <button
-        *ngIf="data.Config.Actions.includes('minimise') && !widgetState.floating && !widgetState.maximised"
-        mat-icon-button
-        (click)="floatWidget()"
-    >
+
+    <button *ngIf="data.Config.Actions.includes('float') && !widgetState.floating && !widgetState.maximised"
+        mat-icon-button (click)="floatWidget()">
         <mat-icon>picture_in_picture</mat-icon>
     </button>
-    <button *ngIf="data.Config.Actions.includes('float')" mat-icon-button (click)="collapseWidget()">
+
+    <button *ngIf="data.Config.Actions.includes('minimise') || widgetState.floating || widgetState.maximised"
+        mat-icon-button (click)="collapseWidget()">
         <mat-icon [ngClass]="{ 'rotate-180': !widgetState.collapsed }">expand_more</mat-icon>
     </button>
 
-    <button *ngIf="widgetState.floating || widgetState.maximised" mat-icon-button (click)="widgetState.floating ? floatWidget() : maximizeWidget()">
-        <mat-icon> close</mat-icon>
+    <button *ngIf="widgetState.floating || widgetState.maximised" mat-icon-button
+        (click)="widgetState.floating ? floatWidget() : maximizeWidget()">
+        <mat-icon>close</mat-icon>
     </button>
 </mat-card-header>

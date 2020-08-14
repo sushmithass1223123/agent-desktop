@@ -15,7 +15,23 @@ export class TwVoicePanelComponent extends TWidgetWrapper implements OnInit, OnD
 
     voicePanelWidgets = [];
 
+    maximized = [
+        {
+            'tw-voice-controls': false,
+            'tw-customer-details': false,
+            'tw-customer-journey': false,
+        }
+    ];
+
     collapsed = [
+        {
+            'tw-voice-controls': false,
+            'tw-customer-details': false,
+            'tw-customer-journey': false,
+        }
+    ];
+
+    floating = [
         {
             'tw-voice-controls': false,
             'tw-customer-details': false,
@@ -46,9 +62,18 @@ export class TwVoicePanelComponent extends TWidgetWrapper implements OnInit, OnD
         this.unsubscribeAll.complete();
     }
 
+    onMaximised(isMaximised: boolean, type: string): void {
+        console.log('onMaximised - ' + isMaximised + ' - ' + type);
+        this.maximized[type] = isMaximised;
+    }
+
     onCollapsed(isCollapsed: boolean, type: string): void {
         console.log('onCollapsed - ' + isCollapsed + ' - ' + type);
         this.collapsed[type] = isCollapsed;
     }
 
+    onFloating(isFloating: boolean, type: string): void {
+        console.log('onFloating - ' + isFloating + ' - ' + type);
+        this.floating[type] = isFloating;
+    }
 }
