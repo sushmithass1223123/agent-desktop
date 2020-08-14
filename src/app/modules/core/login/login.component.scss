@@ -1,20 +1,54 @@
-@import "src/@fuse/scss/fuse";
+@import 'src/@fuse/scss/fuse';
+// @import 'src/app/app.theme';
 
 login {
     width: 100%;
+
+    .brand-logo {
+        position: absolute;
+        bottom: 3%;
+        left: 3%;
+    }
 
     #login {
         width: 100%;
         height: 100%;
         overflow: hidden;
-        background: url("/assets/images/backgrounds/dark-material-bg.jpg")
-            no-repeat;
-        background-size: cover;
+        // background: url("/assets/images/backgrounds/dark-material-bg.jpg")
+        //     no-repeat;
+        // background-size: cover;
 
         #login-intro {
             padding: 128px;
+            background: url('/assets/images/vectors/login-illustration.svg') no-repeat;
+            background-size: 140%;
+            background-position: bottom left;
+            // position: relative;
+            opacity: 0;
+            animation-name: fade-in;
+            animation-fill-mode: forwards;
+            animation-duration: 1s;
+            &::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                background-color: rgba(#732b90, 0.8);
+                height: 100%;
+                width: 140%;
+                z-index: -1;
+            }
 
-            @include media-breakpoint("sm") {
+            @keyframes fade-in {
+                0% {
+                    opacity: 0;
+                }
+                100% {
+                    opacity: 100%;
+                }
+            }
+
+            @include media-breakpoint('sm') {
                 padding: 128px 64px;
             }
 
@@ -47,13 +81,13 @@ login {
 
             @include mat-elevation(16);
 
-            @include media-breakpoint("sm") {
+            @include media-breakpoint('sm') {
                 width: 400px;
                 min-width: 400px;
                 max-width: 400px;
             }
 
-            @include media-breakpoint("xs") {
+            @include media-breakpoint('xs') {
                 width: 100%;
                 min-width: 100%;
                 max-width: 100%;
@@ -91,11 +125,11 @@ login {
                     pointer-events: none;
                 }
 
-                @include media-breakpoint("sm") {
+                @include media-breakpoint('sm') {
                     padding: 0rem 4rem;
                 }
 
-                @include media-breakpoint("xs") {
+                @include media-breakpoint('xs') {
                     text-align: center;
                     padding: 24px;
                 }
@@ -121,7 +155,7 @@ login {
                     mat-form-field {
                         width: 100%;
 
-                        @include media-breakpoint("xs") {
+                        @include media-breakpoint('xs') {
                             width: 80%;
                         }
                     }
@@ -150,7 +184,7 @@ login {
                         margin: 16px auto;
                         display: block;
 
-                        @include media-breakpoint("xs") {
+                        @include media-breakpoint('xs') {
                             width: 80%;
                         }
                     }
@@ -177,7 +211,7 @@ login {
 
                         &:before,
                         &:after {
-                            content: "";
+                            content: '';
                             display: block;
                             width: 30px;
                             position: absolute;

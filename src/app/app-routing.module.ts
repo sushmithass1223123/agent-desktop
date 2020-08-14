@@ -2,11 +2,12 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { LoginComponent } from '@modules/core/login/login.component';
 import { MainComponent } from '@modules/core/main/main.component';
+import { ResourceNotFoundComponent } from '@modules/shared/resource-not-found/resource-not-found.component';
 
 const appRoutes: Routes = [
     {
         path: '',
-        redirectTo: 'login',
+        redirectTo: 'not-found',
         pathMatch: 'full'
     },
     {
@@ -16,6 +17,10 @@ const appRoutes: Routes = [
     {
         path: 'main',
         component: MainComponent
+    },
+    {
+        path: 'not-found',
+        component: ResourceNotFoundComponent
     }
 ];
 
@@ -23,4 +28,4 @@ const appRoutes: Routes = [
     imports: [RouterModule.forRoot(appRoutes)],
     exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

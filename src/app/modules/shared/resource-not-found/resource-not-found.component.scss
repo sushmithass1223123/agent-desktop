@@ -1,0 +1,40 @@
+section#notFound {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    & > *:first-child {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .logo {
+        margin-bottom: 25px;
+    }
+    .content {
+        width: 100%;
+        position: relative;
+        img {
+            width: 100%;
+        }
+        .desc {
+            position: absolute;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+            .subtitle {
+                font-size: 20px;
+            }
+            .title {
+                font-size: 50px;
+                font-weight: bold;
+            }
+            .description {
+            }
+        }
+    }
+}
