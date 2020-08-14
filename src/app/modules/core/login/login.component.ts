@@ -9,7 +9,7 @@ import { FuseConfigService } from '@fuse/services/config.service';
 import { AppDataService } from 'app/services/app-data.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { CommandResultEvent, IResponse, SDKClient, Utils } from 'tmac-sdk';
+import { CommandResultEvent, IResponse, SDKClient, TUtils } from 'tmac-sdk';
 
 @Component({
     selector: 'login',
@@ -19,7 +19,6 @@ import { CommandResultEvent, IResponse, SDKClient, Utils } from 'tmac-sdk';
     animations: fuseAnimations
 })
 export class LoginComponent implements OnInit, OnDestroy {
-
     // Private
     private _unsubscribeAll: Subject<any>;
 
@@ -116,14 +115,10 @@ export class LoginComponent implements OnInit, OnDestroy {
     // to load the config
     private loadConfig(): void {
         // Subscribe to config changes
-        this._appDataService.config
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe(
-                (config: any) => {
-                    this.appConfig = config;
-                    this.configLoaded(config);
-                }
-            );
+        this._appDataService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
+            this.appConfig = config;
+            this.configLoaded(config);
+        });
     }
 
     private configLoaded(config: any): void {
@@ -271,7 +266,7 @@ export class LoginComponent implements OnInit, OnDestroy {
                 this.showMessage('Login failed, Please contact the administrator');
             }
         } catch (error) {
-            Utils.Logger.log('Exception in login', error);
+            TUtils.Logger.log('Exception in login', error);
         }
     }
 
@@ -290,5 +285,9 @@ export class LoginComponent implements OnInit, OnDestroy {
             return false;
         }
         return true;
+    }
+
+    resetField(field: string): void {
+        this.loginForm.patchValue({ [field]: '' });
     }
 }

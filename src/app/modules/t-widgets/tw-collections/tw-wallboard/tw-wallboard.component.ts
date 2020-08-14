@@ -1,10 +1,12 @@
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
-import { Sort, MatSort } from '@angular/material/sort';
+import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { MatSort, Sort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { fuseAnimations } from '@fuse/animations';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
+import { fromEvent, Observable } from 'rxjs';
+import { distinctUntilChanged } from 'rxjs/operators';
 import { SDKClient, WallboardRefreshEvent, WallboardSkillModel } from 'tmac-sdk';
-import { MatTableDataSource } from '@angular/material/table';
-
+import * as _ from 'lodash';
 
 @Component({
     selector: 'tw-wallboard',
@@ -14,7 +16,6 @@ import { MatTableDataSource } from '@angular/material/table';
     animations: fuseAnimations
 })
 export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-
     @Input() data: any;
 
     @ViewChild(MatSort, { static: true }) sort: MatSort;
@@ -25,6 +26,9 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
     displayedColumns: string[] = ['SkillName', 'AgentsStaffed', 'AgentAvailable', 'CallsInQueue'];
     dataSource = new MatTableDataSource([]);
 
+    eventListener: Observable<any>;
+    test: any;
+
     constructor() {
         super();
     }
@@ -33,10 +37,19 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        SDKClient.events.on('WallboardRefreshEvent', (dt: WallboardRefreshEvent) => {
-            // this.dataSource = new MatTableDataSource(dt.Skills);
+        this.eventListener = fromEvent(SDKClient.events, 'WallboardRefreshEvent').pipe(distinctUntilChanged());
+        this.eventListener.subscribe((dt: WallboardRefreshEvent) => {
+            console.log(_.isEqual(dt, this.test));
+            this.test = dt;
+            this.dataSource = new MatTableDataSource(dt.Skills);
             this.dataSource.sort = this.sort;
         });
+
+        // SDKClient.events.on('WallboardRefreshEvent', (dt: WallboardRefreshEvent) => {
+        //     // console.log('$$$$$$$$$$$$$$4', dt);
+        //     this.dataSource = new MatTableDataSource(dt.Skills);
+        //     this.dataSource.sort = this.sort;
+        // });
     }
 
     ngOnDestroy(): void {
@@ -54,11 +67,16 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
         this.sortedData = data.sort((a, b) => {
             const isAsc = sort.direction === 'asc';
             switch (sort.active) {
-                case 'name': return this.compare(a.SkillName, b.SkillName, isAsc);
-                case 'staffed': return this.compare(a.AgentsStaffed, b.AgentsStaffed, isAsc);
-                case 'available': return this.compare(a.AgentAvailable, b.AgentAvailable, isAsc);
-                case 'ciq': return this.compare(a.CallsInQueue, b.CallsInQueue, isAsc);
-                default: return 0;
+                case 'name':
+                    return this.compare(a.SkillName, b.SkillName, isAsc);
+                case 'staffed':
+                    return this.compare(a.AgentsStaffed, b.AgentsStaffed, isAsc);
+                case 'available':
+                    return this.compare(a.AgentAvailable, b.AgentAvailable, isAsc);
+                case 'ciq':
+                    return this.compare(a.CallsInQueue, b.CallsInQueue, isAsc);
+                default:
+                    return 0;
             }
         });
     }
