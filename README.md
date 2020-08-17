@@ -4,11 +4,11 @@ Descrption
 
 ## Development server
 
-Run `npm install` to install all the dependancy packages
-
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
 ## Code scaffolding
+
+Run `npm install` to install all the dependancy packages
 
 Create a branch out of existing branch `develop` to make start developement preferably `feature/<any-feature-name>`.
 
@@ -16,8 +16,6 @@ Create a branch out of existing branch `develop` to make start developement pref
 To checkout develop - git checkout b develop
 To create new branch - git checkout -b "feature/<your-feature>"
 ```
-
-Run `ng generate component component-name` or `ng g c component-name` to generate a new component. You can also use `ng generate directive (d) |pipe (p) |service (s) |class (c) |guard (g) |interface (i) |enum (e)|module (m)`.
 
 To create a collection widget Run `ng g c modules/t-widgets/tw-collections/tw-<widget-name> --selector=tw-<widget-name> --viewEncapsulation=None`.
 
