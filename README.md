@@ -13,8 +13,11 @@ Run `npm install` to install all the dependancy packages
 Create a branch out of existing branch `develop` to make start developement preferably `feature/<any-feature-name>`.
 
 ```
-To checkout develop - git checkout b develop
-To create new branch - git checkout -b "feature/<your-feature>"
+# To checkout develop
+git checkout b develop
+
+# To create new branch
+git checkout -b feature/<your-feature>
 ```
 
 To create a collection widget Run `ng g c modules/t-widgets/tw-collections/tw-<widget-name> --selector=tw-<widget-name> --viewEncapsulation=None`.
@@ -29,22 +32,23 @@ Once the developement is completed please commit to your branch and raise a merg
 
 ```
 # To add and commit with message: 
-git commit -am  "<your-commit-message>"
+git commit -am "<your-commit-message>"
 
 or [preferably below]
 
 # If you want to add more change logs then 
-git add -> "press enter"
-git commit -> "press enter"
-press i
+git add
+git commit
+
+# press i
 # Add first line as commit message heading
 # Changeslogs from seconds line
-press "shift + :wq"
+# press "shift + :wq"
 
 git push origin "<your-branch>"
 
 # If you are pushing for the first time then:
-git push --set-upstream origin "<your-branch>"
+git push --set-upstream origin <your-branch>
 ```
 
 Please do not make any changes or commit to `master` or `develop` branch.
