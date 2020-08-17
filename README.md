@@ -19,7 +19,7 @@ To create new branch - git checkout -b "feature/<your-feature>"
 
 Run `ng generate component component-name` or `ng g c component-name` to generate a new component. You can also use `ng generate directive (d) |pipe (p) |service (s) |class (c) |guard (g) |interface (i) |enum (e)|module (m)`.
 
-To create a collection widget Run `ng g c modules/t-widgets/tw-collections/tw-<widget-name>`.
+To create a collection widget Run `ng g c modules/t-widgets/tw-collections/tw-<widget-name> --selector=tw-<widget-name> --viewEncapsulation=None`.
 
 All the the collection widgets created to be added under `modules/t-widgets/utils/widget-library/tw-library` with the widget type defined in config.
 
