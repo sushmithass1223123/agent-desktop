@@ -189,7 +189,7 @@
                             {
                                 "Name": "Call",
                                 "Description": "",
-                                "Type": "tw-sample",
+                                "Type": "tw-ad-total-calls",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
@@ -216,7 +216,7 @@
                             {
                                 "Name": "Chat",
                                 "Description": "",
-                                "Type": "tw-sample",
+                                "Type": "tw-ad-total-chats",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
@@ -243,7 +243,7 @@
                             {
                                 "Name": "Video",
                                 "Description": "",
-                                "Type": "tw-sample",
+                                "Type": "tw-ad-total-av",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
@@ -270,7 +270,7 @@
                             {
                                 "Name": "All Interactions",
                                 "Description": "",
-                                "Type": "tw-sample",
+                                "Type": "tw-ad-total-interactions",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
@@ -297,7 +297,7 @@
                             {
                                 "Name": "Interaction Details",
                                 "Description": "",
-                                "Type": "tw-sample",
+                                "Type": "tw-ad-interaction-details",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
@@ -378,7 +378,7 @@
                             {
                                 "Name": "Call-backs",
                                 "Description": "phone_callback",
-                                "Type": "tw-sample",
+                                "Type": "tw-ad-callbacks",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,

@@ -1,0 +1,26 @@
+tw-ad-callbacks {
+    .callbacks {
+        padding: 20px;
+    }
+    .callback-total {
+        & > * {
+            background-color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            margin: 20px 0px;
+            &:last-child {
+                margin-bottom: 0px;
+            }
+        }
+        .handled {
+            button {
+                background-color: #8bb768;
+            }
+        }
+        .missed {
+            button {
+                background-color: #d38a73;
+            }
+        }
+    }
+}

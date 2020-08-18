@@ -116,3 +116,16 @@ html {
         transition: all 0.3s !important;
     }
 }
+//material drag return to oriinal position on drag disable :: end
+
+// chart maximised :: start
+.maximised ngx-charts-chart {
+    svg {
+        overflow: visible !important;
+    }
+}
+// chart maximised :: end
+
+.bg-inherit {
+    background: inherit;
+}

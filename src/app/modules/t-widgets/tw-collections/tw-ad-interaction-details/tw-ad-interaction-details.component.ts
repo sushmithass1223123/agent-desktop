@@ -7,27 +7,32 @@ import { fromEvent, Observable } from 'rxjs';
 import { distinctUntilChanged } from 'rxjs/operators';
 import { SDKClient, WallboardRefreshEvent, WallboardSkillModel } from 'tmac-sdk';
 import * as _ from 'lodash';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
-    selector: 'tw-wallboard',
-    templateUrl: './tw-wallboard.component.html',
-    styleUrls: ['./tw-wallboard.component.scss'],
-    encapsulation: ViewEncapsulation.None,
-    animations: fuseAnimations
+    selector: 'tw-ad-interaction-details',
+    templateUrl: './tw-ad-interaction-details.component.html',
+    styleUrls: ['./tw-ad-interaction-details.component.scss'],
+    encapsulation: ViewEncapsulation.None
 })
-export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     @Input() data: any;
 
     @ViewChild(MatSort, { static: true }) sort: MatSort;
+    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
+    maximised = false;
     wallboardSkills: WallboardSkillModel[] = [];
     sortedData: WallboardSkillModel[];
 
-    displayedColumns: string[] = ['SkillName', 'AgentsStaffed', 'AgentAvailable', 'CallsInQueue'];
+    displayedColumns: string[] = ['Channel', 'Status', 'Created Time', 'Active Time'];
     dataSource = new MatTableDataSource([]);
 
     eventListener: Observable<any>;
     test: any;
+
+    availableChannels = ['phone', 'chat', 'email'];
+    availableStatuses = ['Active', 'OnHold', 'Closed'];
 
     constructor() {
         super();
@@ -40,9 +45,21 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
         this.eventListener = fromEvent(SDKClient.events, 'WallboardRefreshEvent').pipe(distinctUntilChanged());
         this.eventListener.subscribe((dt: WallboardRefreshEvent) => {
             this.test = dt;
-            this.dataSource = new MatTableDataSource([...dt.Skills, ...dt.Skills, ...dt.Skills, ...dt.Skills, ...dt.Skills, ...dt.Skills]);
+            this.dataSource = new MatTableDataSource(this.getDummyData());
             this.dataSource.sort = this.sort;
+            this.dataSource.paginator = this.paginator;
         });
+    }
+
+    getDummyData(): any[] {
+        return Array(50)
+            .fill(1)
+            .map(() => ({
+                Channel: this.availableChannels[Math.floor(Math.random() * this.availableChannels.length)],
+                Status: this.availableStatuses[Math.floor(Math.random() * this.availableStatuses.length)],
+                CreatedTime: Date.now(),
+                ActiveTime: '02:16:33'
+            }));
     }
 
     ngOnDestroy(): void {
@@ -76,5 +93,9 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
 
     compare(a: number | string, b: number | string, isAsc: boolean): any {
         return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+    }
+
+    maximizeEvent(state: boolean): void {
+        this.maximised = state;
     }
 }

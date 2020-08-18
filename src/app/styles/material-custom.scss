@@ -1,13 +1,18 @@
 .mat-table {
     width: 100%;
-    background: transparent !important;
+    background: inherit !important;
     padding: 10px;
+    padding-top: 0;
     border-collapse: separate;
     border-spacing: 0px 5px !important;
 
     .mat-sort-header-container,
     .mat-sort-header-content {
         justify-content: center;
+    }
+
+    tr.mat-header-row {
+        height: 30px;
     }
 
     th:not(:last-child)::after {
@@ -120,4 +125,8 @@ mat-form-field {
             color: #732b90 !important;
         }
     }
+}
+
+.mat-paginator {
+    background: transparent !important;
 }
