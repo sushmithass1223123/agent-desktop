@@ -2,7 +2,7 @@
 <!-- implement following events in your component to access widget wrapper action events -->
 <!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
 <tw-wrapper [data]="data" fxLayout fxLayoutAlign="center center" (maximizeEvent)="maximizeEvent($event)">
-    <div class="h-90-p w-100-p" fusePerfectScrollbar>
+    <div class="h-90-p w-100-p bg-inherit" fusePerfectScrollbar>
         <table
             mat-table
             [dataSource]="dataSource"
@@ -64,7 +64,7 @@
                 </td>
             </ng-container>
 
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
         </table>
         <p *ngIf="dataSource.data.length === 0" class="text-center m-0 font-size-16">No data available</p>

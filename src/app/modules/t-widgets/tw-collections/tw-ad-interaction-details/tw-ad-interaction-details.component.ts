@@ -45,11 +45,9 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         this.eventListener = fromEvent(SDKClient.events, 'WallboardRefreshEvent').pipe(distinctUntilChanged());
         this.eventListener.subscribe((dt: WallboardRefreshEvent) => {
             this.test = dt;
-            if (!this.dataSource.data.length) {
-                this.dataSource = new MatTableDataSource(this.getDummyData());
-                this.dataSource.sort = this.sort;
-                this.dataSource.paginator = this.paginator;
-            }
+            this.dataSource = new MatTableDataSource(this.getDummyData());
+            this.dataSource.sort = this.sort;
+            this.dataSource.paginator = this.paginator;
         });
     }
 
