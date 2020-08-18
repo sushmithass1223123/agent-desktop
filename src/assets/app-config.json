@@ -474,7 +474,7 @@
                         "Path": "/supervisor",
                         "Widgets": [
                             {
-                                "Name": "Sample-1",
+                                "Name": "Sample-2",
                                 "Description": "",
                                 "Type": "tw-sample",
                                 "Config": {
