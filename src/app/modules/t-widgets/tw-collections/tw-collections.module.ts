@@ -11,6 +11,12 @@ import { TwVoicePanelComponent } from './tw-voice-panel/tw-voice-panel.component
 import { TwWallboardComponent } from './tw-wallboard/tw-wallboard.component';
 
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { TwAdTotalCallsComponent } from './tw-ad-total-calls/tw-ad-total-calls.component';
+import { TwAdTotalChatsComponent } from './tw-ad-total-chats/tw-ad-total-chats.component';
+import { TwAdTotalAvComponent } from './tw-ad-total-av/tw-ad-total-av.component';
+import { TwAdTotalInteractionsComponent } from './tw-ad-total-interactions/tw-ad-total-interactions.component';
+import { TwAdInteractionDetailsComponent } from './tw-ad-interaction-details/tw-ad-interaction-details.component';
+import { TwAdCallbacksComponent } from './tw-ad-callbacks/tw-ad-callbacks.component';
 
 @NgModule({
     declarations: [
@@ -22,6 +28,12 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
         TwCustomerDetailsComponent,
         TwCustomerJourneyComponent,
         TwVoiceControlsComponent,
+        TwAdTotalCallsComponent,
+        TwAdTotalChatsComponent,
+        TwAdTotalAvComponent,
+        TwAdTotalInteractionsComponent,
+        TwAdInteractionDetailsComponent,
+        TwAdCallbacksComponent,
     ],
     imports: [
         SharedModule,
