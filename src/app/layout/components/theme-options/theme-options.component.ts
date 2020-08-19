@@ -197,7 +197,7 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
                             width: 'fullwidth',
                             navbar: {
                                 background: 'purple-700',
-                                customBackgroundColor: false,
+                                customBackgroundColor: true,
                                 folded: false,
                                 hidden: false,
                                 position: 'left',
@@ -214,15 +214,15 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
                                 background: 'grey-200'
                             },
                             anchorWidget: {
-                                customBackgroundColor: false,
-                                bodyBackground: 'grey-50',
-                                headerBackground: 'purple-700',
-                                contentBackground: 'purple-A100'
+                                customBackgroundColor: true,
+                                bodyBackground: 'purple-A100',
+                                headerBackground: 'grey-100',
+                                contentBackground: 'grey-100'
                             },
                             widget: {
                                 customBackgroundColor: true,
                                 bodyBackground: 'grey-50',
-                                headerBackground: 'purple-700',
+                                headerBackground: 'grey-100',
                                 contentBackground: 'grey-100'
                             },
                             footer: {
@@ -249,7 +249,7 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
                             width: 'fullwidth',
                             navbar: {
                                 background: 'purple-700',
-                                customBackgroundColor: false,
+                                customBackgroundColor: true,
                                 folded: false,
                                 hidden: false,
                                 position: 'left',
@@ -266,15 +266,15 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
                                 background: 'grey-200'
                             },
                             anchorWidget: {
-                                customBackgroundColor: false,
-                                bodyBackground: 'grey-50',
-                                headerBackground: 'purple-700',
-                                contentBackground: 'purple-A100'
+                                customBackgroundColor: true,
+                                bodyBackground: 'purple-A100',
+                                headerBackground: 'grey-100',
+                                contentBackground: 'grey-100'
                             },
                             widget: {
                                 customBackgroundColor: true,
                                 bodyBackground: 'grey-50',
-                                headerBackground: 'purple-700',
+                                headerBackground: 'grey-100',
                                 contentBackground: 'grey-100'
                             },
                             footer: {

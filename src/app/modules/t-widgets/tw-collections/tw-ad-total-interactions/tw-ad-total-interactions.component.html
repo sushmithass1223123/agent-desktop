@@ -3,28 +3,23 @@
 <!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
 <tw-wrapper [data]="data" (maximizeEvent)="maximizeEvent($event)">
     <!-- your code goes here -->
-    <div fxLayout="column" fxLayoutAlign="center center">
-        <div
-            [ngClass]="{
-                'w-200 h-200': !widget.state.maximised,
-                'w-700 h-700': widget.state.maximised
-            }"
-        >
+    <div fxLayout="column" fxLayoutAlign="center center" class="w-100-p h-100-p">
+        <div class="w-100-p h-100-p" #chartContainerRef>
             <ngx-charts-pie-chart
                 *fuseIfOnDom
+                [view]="widget.view.length === 0 ? [chartContainerRef.offsetWidth, chartContainerRef.offsetHeight] : widget.view"
                 [scheme]="widget.scheme"
                 [results]="widget.data"
                 [legend]="widget.legend"
-                [labels]="widget.state.maximised"
+                [labels]="widget.state.maximized"
                 [doughnut]="widget.doughnut"
-                [gradient]="widget.gradient"
             >
             </ngx-charts-pie-chart>
         </div>
         <!-- <div>
             <mat-button (click)="" ></mat-button>
         </div> -->
-        <div *ngIf="widget.state.maximised" class="details">
+        <div *ngIf="widget.state.maximized" class="details">
             Some data
         </div>
     </div>

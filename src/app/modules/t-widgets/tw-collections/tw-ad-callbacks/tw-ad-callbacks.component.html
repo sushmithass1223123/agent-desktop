@@ -21,7 +21,13 @@
                 </small>
             </div>
         </div>
-        <div class="callback-total" fxFlex="40">
+        <div
+            fxFlex="40"
+            fxLayout="column"
+            class="callback-total"
+            [ngClass]="{ maximized: maximized }"
+            fxLayoutAlign="{{ maximized ? 'start stretch' : 'center center' }}"
+        >
             <div class="handled p-10" fxLayout fxLayoutGap="15" fxLayoutAlign="space-between center">
                 <span fxFlex="20">
                     <button mat-flat-button mat-icon-button>
@@ -29,14 +35,14 @@
                     </button>
                 </span>
                 <strong fxFlex="50" class="ml-20">
-                    <small *ngIf="!maximised">
+                    <small *ngIf="!maximized">
                         Callbacks Handled
                     </small>
-                    <span *ngIf="maximised">
+                    <span *ngIf="maximized">
                         Callbacks Handled
                     </span>
                 </strong>
-                <strong fxFlex="30" style="text-align: right;">
+                <strong fxFlex="30" class="text-center">
                     03
                 </strong>
             </div>
@@ -47,14 +53,14 @@
                     </button>
                 </span>
                 <strong fxFlex="50" class="ml-20">
-                    <small *ngIf="!maximised">
+                    <small *ngIf="!maximized">
                         Callbacks Missed
                     </small>
-                    <span *ngIf="maximised">
+                    <span *ngIf="maximized">
                         Callbacks Missed
                     </span>
                 </strong>
-                <strong fxFlex="30" style="text-align: right;">
+                <strong fxFlex="30" class="text-center">
                     03
                 </strong>
             </div>

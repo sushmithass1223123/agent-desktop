@@ -16,7 +16,7 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
     @Input() data: any;
 
     sample = Array(20).fill(1);
-    maximised = false;
+    maximized = false;
     // -----------------------------------------------------------
     // @ [OPTIONAL] to store the fuse config for theme
     // -----------------------------------------------------------
@@ -84,7 +84,7 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
     maximizeEvent(state: boolean): void {
-        this.maximised = state;
+        this.maximized = state;
     }
 }
 

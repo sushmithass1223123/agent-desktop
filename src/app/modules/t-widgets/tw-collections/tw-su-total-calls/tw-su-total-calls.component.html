@@ -1,30 +1,36 @@
 <!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
 <!-- implement following events in your component to access widget wrapper action events -->
 <!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
-<tw-wrapper [data]="data">
-
+<tw-wrapper [data]="data" (maximizeEvent)="maximizeEvent($event)">
     <!-- your code goes here -->
-    <div fxFlex fxFill fxLayout="row" fxLayoutAlign="center center">
-        <span class="mat-headline mb-0 text-center tw-su-total-calls-relative">
-            <!-- inorder to access the class variable use angular expression {{ data }} -->
-          
+    <div fxFlex fxFill fxLayout="row" fxLayoutAlign="center center" class="w-100-p h-100-p position-relative">
+        <div class="w-100-p h-100-p" #chartContainerRef>
             <ngx-charts-pie-chart
-                [view]="view"
-                [scheme]="colorScheme"
-                [results]="single"
-                [gradient]="gradient"
-                [legend]="showLegend"
-                [legendPosition]="legendPosition"
+                [view]="widget.view.length === 0 ? [chartContainerRef.offsetWidth, chartContainerRef.offsetHeight] : widget.view"
+                [scheme]="widget.scheme"
+                [results]="widget.data"
+                [labels]="widget.state.maximized"
+                [gradient]="widget.gradient"
+                [legend]="widget.legend"
+                [legendPosition]="widget.legendPosition"
                 [labels]="showLabels"
-                [doughnut]="isDoughnut"
-                (select)="onSelect($event)"
-                (activate)="onActivate($event)"
-                (deactivate)="onDeactivate($event)"
-                >
-                </ngx-charts-pie-chart>
-                <div class="tw-su-total-calls-chart-value">76</div>
-        </span>
+                [doughnut]="widget.doughnut"
+                (select)="widget.onSelect($event)"
+                (activate)="widget.onActivate($event)"
+                (deactivate)="widget.onDeactivate($event)"
+            >
+            </ngx-charts-pie-chart>
+            <div
+                fxFlex
+                fxFill
+                fxLayout="row"
+                fxLayoutAlign="center center"
+                class="w-100-p h-100-p position-absolute m-0"
+                [ngClass]="widget.state.maximized ? 'mat-display-4' : 'mat-display-1'"
+            >
+                76
+            </div>
+        </div>
     </div>
     <!-- your code goes here -->
-
 </tw-wrapper>

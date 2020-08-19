@@ -1,13 +1,12 @@
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation, HostBinding } from '@angular/core';
-import { fuseAnimations } from '@fuse/animations';
+import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
+import { IWidget } from 'app/interfaces';
 
 @Component({
     selector: 'tw-voice-panel',
     templateUrl: './tw-voice-panel.component.html',
     styleUrls: ['./tw-voice-panel.component.scss'],
-    encapsulation: ViewEncapsulation.None,
-    animations: fuseAnimations
+    encapsulation: ViewEncapsulation.None
 })
 export class TwVoicePanelComponent extends TWidgetWrapper implements OnInit, OnDestroy {
 
@@ -52,6 +51,12 @@ export class TwVoicePanelComponent extends TWidgetWrapper implements OnInit, OnD
         this.initWrapper(this.data);
         // get the toolbar menu widgets
         this.voicePanelWidgets = this.data.Data.Widgets || [];
+        // get the interaction details
+        const interactionDetails = this.data.InteractionDetails;
+        // loop through the widgets and pass the interaction details
+        this.voicePanelWidgets.forEach((widget: IWidget) => {
+            widget.InteractionDetails = interactionDetails;
+        });
     }
 
     ngOnDestroy(): void {
@@ -62,18 +67,15 @@ export class TwVoicePanelComponent extends TWidgetWrapper implements OnInit, OnD
         this.unsubscribeAll.complete();
     }
 
-    onMaximised(isMaximised: boolean, type: string): void {
-        console.log('onMaximised - ' + isMaximised + ' - ' + type);
-        this.maximized[type] = isMaximised;
+    onmaximized(ismaximized: boolean, type: string): void {
+        this.maximized[type] = ismaximized;
     }
 
     onCollapsed(isCollapsed: boolean, type: string): void {
-        console.log('onCollapsed - ' + isCollapsed + ' - ' + type);
         this.collapsed[type] = isCollapsed;
     }
 
     onFloating(isFloating: boolean, type: string): void {
-        console.log('onFloating - ' + isFloating + ' - ' + type);
         this.floating[type] = isFloating;
     }
 }

@@ -21,9 +21,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
     @ViewChild(MatSort, { static: true }) sort: MatSort;
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
-    maximised = false;
-    wallboardSkills: WallboardSkillModel[] = [];
-    sortedData: WallboardSkillModel[];
+    maximized = false;
 
     displayedColumns: string[] = ['Channel', 'Status', 'Created Time', 'Active Time'];
     dataSource = new MatTableDataSource([]);
@@ -45,10 +43,12 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         this.eventListener = fromEvent(SDKClient.events, 'WallboardRefreshEvent').pipe(distinctUntilChanged());
         this.eventListener.subscribe((dt: WallboardRefreshEvent) => {
             this.test = dt;
-            this.dataSource = new MatTableDataSource(this.getDummyData());
+            // this.dataSource = new MatTableDataSource(this.getDummyData());
             this.dataSource.sort = this.sort;
             this.dataSource.paginator = this.paginator;
         });
+
+        this.dataSource = new MatTableDataSource(this.getDummyData());
     }
 
     getDummyData(): any[] {
@@ -67,35 +67,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         this.destroyWrapper();
     }
 
-    sortData(sort: Sort): any {
-        const data = this.wallboardSkills.slice();
-        if (!sort.active || sort.direction === '') {
-            this.sortedData = data;
-            return;
-        }
-
-        this.sortedData = data.sort((a, b) => {
-            const isAsc = sort.direction === 'asc';
-            switch (sort.active) {
-                case 'name':
-                    return this.compare(a.SkillName, b.SkillName, isAsc);
-                case 'staffed':
-                    return this.compare(a.AgentsStaffed, b.AgentsStaffed, isAsc);
-                case 'available':
-                    return this.compare(a.AgentAvailable, b.AgentAvailable, isAsc);
-                case 'ciq':
-                    return this.compare(a.CallsInQueue, b.CallsInQueue, isAsc);
-                default:
-                    return 0;
-            }
-        });
-    }
-
-    compare(a: number | string, b: number | string, isAsc: boolean): any {
-        return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
-    }
-
     maximizeEvent(state: boolean): void {
-        this.maximised = state;
+        this.maximized = state;
     }
 }

@@ -1,17 +1,18 @@
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation, Output, EventEmitter } from '@angular/core';
-import { fuseAnimations } from '@fuse/animations';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 
 @Component({
     selector: 'tw-customer-details',
     templateUrl: './tw-customer-details.component.html',
     styleUrls: ['./tw-customer-details.component.scss'],
-    encapsulation: ViewEncapsulation.None,
-    animations: fuseAnimations
+    encapsulation: ViewEncapsulation.None
 })
 export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
 
     @Input() data: any;
+
+    @Input() otherData: any;
+
 
     @Output() maximizeEvent = new EventEmitter();
     @Output() floatEvent = new EventEmitter();

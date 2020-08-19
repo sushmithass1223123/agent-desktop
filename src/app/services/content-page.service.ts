@@ -20,13 +20,16 @@ export class ContentPageService {
     // -----------------------------------------------------------------------------------------------------
 
     /**
-     * Set and get the mode
+     * Setter for mode
      */
     set mode(value) {
         // Notify the observers
         this._viewModeSubject.next(value);
     }
 
+    /**
+     * Getter for mode
+     */
     get mode(): any | Observable<any> {
         return this._viewModeSubject.asObservable();
     }

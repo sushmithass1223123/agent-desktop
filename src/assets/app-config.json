@@ -111,9 +111,11 @@
                             "Path": "/email",
                             "Active": false
                         }
-                    },
+                    }
+                ],
+                "Bottom": [
                     {
-                        "Name": "Custom-1",
+                        "Name": "Tetherfi",
                         "Description": "",
                         "Type": "twn-custom",
                         "Data": {
@@ -121,9 +123,17 @@
                             "Path": "/custom1",
                             "Active": false
                         }
-                    }
-                ],
-                "Bottom": [
+                    },
+                    {
+                        "Name": "Angular Material",
+                        "Description": "",
+                        "Type": "twn-custom",
+                        "Data": {
+                            "Icon": "pages",
+                            "Path": "/custom2",
+                            "Active": false
+                        }
+                    },
                     {
                         "Name": "Team",
                         "Description": "",
@@ -200,7 +210,7 @@
                                         "Y": 1
                                     },
                                     "Actions": [
-                                        "maximise",
+                                        "maximize",
                                         "pin",
                                         "float"
                                     ],
@@ -227,7 +237,7 @@
                                         "Y": 1
                                     },
                                     "Actions": [
-                                        "maximise",
+                                        "maximize",
                                         "pin",
                                         "float"
                                     ],
@@ -241,7 +251,7 @@
                                 "Data": {}
                             },
                             {
-                                "Name": "Video",
+                                "Name": "A/V",
                                 "Description": "",
                                 "Type": "tw-ad-total-av",
                                 "Config": {
@@ -254,7 +264,7 @@
                                         "Y": 1
                                     },
                                     "Actions": [
-                                        "maximise",
+                                        "maximize",
                                         "pin",
                                         "float"
                                     ],
@@ -281,7 +291,7 @@
                                         "Y": 1
                                     },
                                     "Actions": [
-                                        "maximise",
+                                        "maximize",
                                         "pin",
                                         "float"
                                     ],
@@ -308,7 +318,7 @@
                                         "Y": 2
                                     },
                                     "Actions": [
-                                        "maximise",
+                                        "maximize",
                                         "pin",
                                         "float"
                                     ],
@@ -324,7 +334,7 @@
                             {
                                 "Name": "Performance",
                                 "Description": "",
-                                "Type": "tw-sample",
+                                "Type": "tw-performance-dashboard",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
@@ -335,7 +345,7 @@
                                         "Y": 1
                                     },
                                     "Actions": [
-                                        "maximise",
+                                        "maximize",
                                         "pin",
                                         "float"
                                     ],
@@ -351,7 +361,7 @@
                             {
                                 "Name": "Gamification",
                                 "Description": "",
-                                "Type": "tw-sample",
+                                "Type": "tw-gamification-dashboard",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
@@ -362,7 +372,7 @@
                                         "Y": 1
                                     },
                                     "Actions": [
-                                        "maximise",
+                                        "maximize",
                                         "pin",
                                         "float"
                                     ],
@@ -389,7 +399,7 @@
                                         "Y": 2
                                     },
                                     "Actions": [
-                                        "maximise",
+                                        "maximize",
                                         "pin",
                                         "float"
                                     ],
@@ -416,7 +426,7 @@
                                         "Y": 1
                                     },
                                     "Actions": [
-                                        "maximise",
+                                        "maximize",
                                         "pin",
                                         "float"
                                     ],
@@ -443,7 +453,7 @@
                                         "Y": 1
                                     },
                                     "Actions": [
-                                        "maximise",
+                                        "maximize",
                                         "pin",
                                         "float"
                                     ],
@@ -478,7 +488,7 @@
                                 "Description": "",
                                 "Type": "tw-sample",
                                 "Config": {
-                                    "Static": true,
+                                    "Static": false,
                                     "Anchor": false,
                                     "Icon": "",
                                     "Class": "",
@@ -487,7 +497,7 @@
                                         "Y": 2
                                     },
                                     "Actions": [
-                                        "maximise",
+                                        "maximize",
                                         "pin",
                                         "float"
                                     ],
@@ -501,9 +511,9 @@
                                 "Data": {}
                             },
                             {
-                                "Name": "Sample-2",
+                                "Name": "Total Calls",
                                 "Description": "",
-                                "Type": "tw-sample",
+                                "Type": "tw-su-total-calls",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
@@ -514,7 +524,7 @@
                                         "Y": 1
                                     },
                                     "Actions": [
-                                        "maximise",
+                                        "maximize",
                                         "pin",
                                         "float"
                                     ],
@@ -528,9 +538,9 @@
                                 "Data": {}
                             },
                             {
-                                "Name": "Sample-3",
+                                "Name": "Avg. Handle Time",
                                 "Description": "",
-                                "Type": "tw-sample",
+                                "Type": "tw-su-average-handle-time",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
@@ -541,7 +551,7 @@
                                         "Y": 1
                                     },
                                     "Actions": [
-                                        "maximise",
+                                        "maximize",
                                         "pin",
                                         "float"
                                     ],
@@ -555,9 +565,9 @@
                                 "Data": {}
                             },
                             {
-                                "Name": "Sample-4",
+                                "Name": "Calls in Queue",
                                 "Description": "",
-                                "Type": "tw-sample",
+                                "Type": "tw-su-calls-in-queue",
                                 "Config": {
                                     "Anchor": false,
                                     "Icon": "",
@@ -567,7 +577,7 @@
                                         "Y": 1
                                     },
                                     "Actions": [
-                                        "maximise",
+                                        "maximize",
                                         "pin",
                                         "float"
                                     ],
@@ -581,9 +591,9 @@
                                 "Data": {}
                             },
                             {
-                                "Name": "Sample-5",
+                                "Name": "Transfer/Conf.",
                                 "Description": "",
-                                "Type": "tw-sample",
+                                "Type": "tw-su-transferred-conferenced-calls",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
@@ -594,7 +604,7 @@
                                         "Y": 1
                                     },
                                     "Actions": [
-                                        "maximise",
+                                        "maximize",
                                         "pin",
                                         "float"
                                     ],
@@ -608,7 +618,7 @@
                                 "Data": {}
                             },
                             {
-                                "Name": "Sample-6",
+                                "Name": "Skill Dashboard",
                                 "Description": "",
                                 "Type": "tw-sample",
                                 "Config": {
@@ -616,11 +626,11 @@
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
-                                        "X": 0,
-                                        "Y": 4
+                                        "X": 2,
+                                        "Y": 2
                                     },
                                     "Actions": [
-                                        "maximise",
+                                        "maximize",
                                         "pin",
                                         "float"
                                     ],
@@ -634,9 +644,9 @@
                                 "Data": {}
                             },
                             {
-                                "Name": "Sample-7",
+                                "Name": "Channels",
                                 "Description": "",
-                                "Type": "tw-sample",
+                                "Type": "tw-su-channels",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
@@ -647,7 +657,7 @@
                                         "Y": 2
                                     },
                                     "Actions": [
-                                        "maximise",
+                                        "maximize",
                                         "pin",
                                         "float"
                                     ],
@@ -661,9 +671,9 @@
                                 "Data": {}
                             },
                             {
-                                "Name": "Sample-8",
+                                "Name": "Status",
                                 "Description": "",
-                                "Type": "tw-sample",
+                                "Type": "tw-su-status",
                                 "Config": {
                                     "Anchor": false,
                                     "Icon": "",
@@ -673,7 +683,7 @@
                                         "Y": 2
                                     },
                                     "Actions": [
-                                        "maximise",
+                                        "maximize",
                                         "pin",
                                         "float"
                                     ],
@@ -740,8 +750,8 @@
                                                     "Y": 2
                                                 },
                                                 "Actions": [
-                                                    "maximise",
-                                                    "minimise",
+                                                    "maximize",
+                                                    "minimize",
                                                     "float"
                                                 ],
                                                 "ViewState": "restore",
@@ -767,8 +777,8 @@
                                                     "Y": 2
                                                 },
                                                 "Actions": [
-                                                    "maximise",
-                                                    "minimise"
+                                                    "maximize",
+                                                    "minimize"
                                                 ],
                                                 "ViewState": "restore",
                                                 "PinState": false,
@@ -793,8 +803,8 @@
                                                     "Y": 2
                                                 },
                                                 "Actions": [
-                                                    "maximise",
-                                                    "minimise"
+                                                    "maximize",
+                                                    "minimize"
                                                 ],
                                                 "ViewState": "restore",
                                                 "PinState": false,
@@ -822,7 +832,7 @@
                                         "Y": 2
                                     },
                                     "Actions": [
-                                        "maximise",
+                                        "maximize",
                                         "pin",
                                         "float"
                                     ],
@@ -849,7 +859,7 @@
                                         "Y": 2
                                     },
                                     "Actions": [
-                                        "maximise",
+                                        "maximize",
                                         "pin",
                                         "float"
                                     ],
@@ -876,7 +886,7 @@
                                         "Y": 2
                                     },
                                     "Actions": [
-                                        "maximise",
+                                        "maximize",
                                         "pin",
                                         "float"
                                     ],
@@ -903,7 +913,7 @@
                                         "Y": 2
                                     },
                                     "Actions": [
-                                        "maximise",
+                                        "maximize",
                                         "pin",
                                         "float"
                                     ],
@@ -932,7 +942,383 @@
                     },
                     "Data": {
                         "Path": "/textchat",
-                        "Widgets": []
+                        "Widgets": [
+                            {
+                                "Name": "Chat-Panel",
+                                "Description": "",
+                                "Type": "tw-chat-panel",
+                                "Config": {
+                                    "Static": true,
+                                    "Anchor": false,
+                                    "Icon": "",
+                                    "Class": "",
+                                    "Position": {
+                                        "X": 3,
+                                        "Y": 2
+                                    },
+                                    "Actions": [],
+                                    "ViewState": "restore",
+                                    "PinState": false,
+                                    "FloatState": false,
+                                    "Resizable": false,
+                                    "Header": false,
+                                    "Disabled": false
+                                },
+                                "Data": {
+                                    "Widgets": [
+                                        {
+                                            "Name": "Chat Controls",
+                                            "Description": "",
+                                            "Type": "tw-chat-controls",
+                                            "Config": {
+                                                "Static": false,
+                                                "Anchor": true,
+                                                "Icon": "chat",
+                                                "Class": "",
+                                                "Position": {
+                                                    "X": 1,
+                                                    "Y": 2
+                                                },
+                                                "Actions": [
+                                                    "maximize",
+                                                    "minimize",
+                                                    "float"
+                                                ],
+                                                "ViewState": "restore",
+                                                "PinState": false,
+                                                "FloatState": false,
+                                                "Resizable": false,
+                                                "Header": true,
+                                                "Disabled": false
+                                            },
+                                            "Data": {
+                                                "TransferAllowed": true,
+                                                "ConferenceAllowed": true,
+                                                "ImmediateCallbackAllowed": false,
+                                                "ScheduledCallbackAllowed": false,
+                                                "SignatureAllowed": false,
+                                                "EmojiAllowed": false,
+                                                "ReplyOnChatAllowed": false,
+                                                "CameraCaptureAllowed": false,
+                                                "VoiceNoteAllowed": false,
+                                                "AttachmentAllowed": true,
+                                                "ScreenShareAllowed": true,
+                                                "SnapshotAllowed": false,
+                                                "ShowUserLabel": false,
+                                                "ChatTemplate": {
+                                                    "ButtonEnabled": true,
+                                                    "Filter": "startswith",
+                                                    "FilterByTime": true,
+                                                    "UpdateThreshold": 0
+                                                },
+                                                "InteractionConversion": {
+                                                    "Allowed": true,
+                                                    "Channels": [
+                                                        {
+                                                            "Name": "Generic",
+                                                            "Label": "Generic"
+                                                        },
+                                                        {
+                                                            "Name": "AudioVideo",
+                                                            "Label": "Audio Video"
+                                                        }
+                                                    ],
+                                                    "On": [
+                                                        "oncall",
+                                                        "afterdisconnect"
+                                                    ]
+                                                },
+                                                "AV": {
+                                                    "Enabled": true,
+                                                    "Escalate": {
+                                                        "Audio": true,
+                                                        "Video": true
+                                                    },
+                                                    "Config": {
+                                                        "WebRTCConfig": {
+                                                            "iceServers": [
+                                                                {
+                                                                    "urls": "turn:tmac.tetherfilabs.com:3585",
+                                                                    "username": "tetherfi",
+                                                                    "credential": "nuwan"
+                                                                }
+                                                            ],
+                                                            "iceTransportPolicy": "all",
+                                                            "sdpSemantics": "plan-b"
+                                                        },
+                                                        "MediaConstraints": {
+                                                            "type": "",
+                                                            "video": {
+                                                                "width": 640,
+                                                                "height": 480
+                                                            }
+                                                        },
+                                                        "OfferOptions": {
+                                                            "offerToReceiveAudio": true,
+                                                            "offerToReceiveVideo": true,
+                                                            "iceRestart": true
+                                                        },
+                                                        "RecordingOptions": {
+                                                            "enabled": false,
+                                                            "recordLocal": false
+                                                        },
+                                                        "AudioLevelCheck": {
+                                                            "enabled": true,
+                                                            "threshold": 0.30
+                                                        },
+                                                        "ConnectionBandwidthUpperLimit": 1024,
+                                                        "AudioTrackBandwidthUpperLimit": 16,
+                                                        "VideoTrackBandwidthUpperLimit": 128,
+                                                        "AudioMixerEnabled": true
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "Name": "Customer Details",
+                                            "Description": "",
+                                            "Type": "tw-customer-details",
+                                            "Config": {
+                                                "Static": false,
+                                                "Anchor": true,
+                                                "Icon": "person",
+                                                "Class": "",
+                                                "Position": {
+                                                    "X": 1,
+                                                    "Y": 2
+                                                },
+                                                "Actions": [
+                                                    "maximize",
+                                                    "minimize"
+                                                ],
+                                                "ViewState": "restore",
+                                                "PinState": false,
+                                                "FloatState": false,
+                                                "Resizable": false,
+                                                "Header": true,
+                                                "Disabled": false
+                                            },
+                                            "Data": {}
+                                        },
+                                        {
+                                            "Name": "Customer Journey",
+                                            "Description": "",
+                                            "Type": "tw-customer-journey",
+                                            "Config": {
+                                                "Static": false,
+                                                "Anchor": true,
+                                                "Icon": "storage",
+                                                "Class": "",
+                                                "Position": {
+                                                    "X": 1,
+                                                    "Y": 2
+                                                },
+                                                "Actions": [
+                                                    "maximize",
+                                                    "minimize"
+                                                ],
+                                                "ViewState": "minimize",
+                                                "PinState": false,
+                                                "FloatState": false,
+                                                "Resizable": false,
+                                                "Header": true,
+                                                "Disabled": false
+                                            },
+                                            "Data": {}
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "Name": "Voice-bot Transcript",
+                                "Description": "",
+                                "Type": "tw-sample",
+                                "Config": {
+                                    "Static": false,
+                                    "Anchor": false,
+                                    "Icon": "",
+                                    "Class": "",
+                                    "Position": {
+                                        "X": 1,
+                                        "Y": 2
+                                    },
+                                    "Actions": [
+                                        "maximize",
+                                        "pin",
+                                        "float"
+                                    ],
+                                    "ViewState": "restore",
+                                    "PinState": false,
+                                    "FloatState": false,
+                                    "Resizable": false,
+                                    "Header": true,
+                                    "Disabled": false
+                                },
+                                "Data": {}
+                            },
+                            {
+                                "Name": "Account Information",
+                                "Description": "",
+                                "Type": "tw-sample",
+                                "Config": {
+                                    "Static": false,
+                                    "Anchor": false,
+                                    "Icon": "",
+                                    "Class": "",
+                                    "Position": {
+                                        "X": 1,
+                                        "Y": 2
+                                    },
+                                    "Actions": [
+                                        "maximize",
+                                        "pin",
+                                        "float"
+                                    ],
+                                    "ViewState": "restore",
+                                    "PinState": false,
+                                    "FloatState": false,
+                                    "Resizable": false,
+                                    "Header": true,
+                                    "Disabled": false
+                                },
+                                "Data": {}
+                            },
+                            {
+                                "Name": "AMDO-CRM",
+                                "Description": "",
+                                "Type": "tw-sample",
+                                "Config": {
+                                    "Static": false,
+                                    "Anchor": false,
+                                    "Icon": "",
+                                    "Class": "",
+                                    "Position": {
+                                        "X": 1,
+                                        "Y": 2
+                                    },
+                                    "Actions": [
+                                        "maximize",
+                                        "pin",
+                                        "float"
+                                    ],
+                                    "ViewState": "restore",
+                                    "PinState": false,
+                                    "FloatState": false,
+                                    "Resizable": false,
+                                    "Header": true,
+                                    "Disabled": false
+                                },
+                                "Data": {}
+                            },
+                            {
+                                "Name": "Feedback",
+                                "Description": "",
+                                "Type": "tw-sample",
+                                "Config": {
+                                    "Static": false,
+                                    "Anchor": false,
+                                    "Icon": "",
+                                    "Class": "",
+                                    "Position": {
+                                        "X": 1,
+                                        "Y": 1
+                                    },
+                                    "Actions": [
+                                        "maximize",
+                                        "pin",
+                                        "float"
+                                    ],
+                                    "ViewState": "restore",
+                                    "PinState": false,
+                                    "FloatState": false,
+                                    "Resizable": false,
+                                    "Header": true,
+                                    "Disabled": false
+                                },
+                                "Data": {}
+                            },
+                            {
+                                "Name": "Score",
+                                "Description": "",
+                                "Type": "tw-sample",
+                                "Config": {
+                                    "Static": false,
+                                    "Anchor": false,
+                                    "Icon": "",
+                                    "Class": "",
+                                    "Position": {
+                                        "X": 1,
+                                        "Y": 1
+                                    },
+                                    "Actions": [
+                                        "maximize",
+                                        "pin",
+                                        "float"
+                                    ],
+                                    "ViewState": "restore",
+                                    "PinState": false,
+                                    "FloatState": false,
+                                    "Resizable": false,
+                                    "Header": true,
+                                    "Disabled": false
+                                },
+                                "Data": {}
+                            },
+                            {
+                                "Name": "Speech To Text",
+                                "Description": "",
+                                "Type": "tw-sample",
+                                "Config": {
+                                    "Static": false,
+                                    "Anchor": false,
+                                    "Icon": "",
+                                    "Class": "",
+                                    "Position": {
+                                        "X": 1,
+                                        "Y": 2
+                                    },
+                                    "Actions": [
+                                        "maximize",
+                                        "pin",
+                                        "float"
+                                    ],
+                                    "ViewState": "restore",
+                                    "PinState": false,
+                                    "FloatState": false,
+                                    "Resizable": false,
+                                    "Header": true,
+                                    "Disabled": false
+                                },
+                                "Data": {}
+                            },
+                            {
+                                "Name": "Heat Map",
+                                "Description": "",
+                                "Type": "tw-heat-map",
+                                "Config": {
+                                    "Static": false,
+                                    "Anchor": false,
+                                    "Icon": "",
+                                    "Class": "",
+                                    "Position": {
+                                        "X": 1,
+                                        "Y": 2
+                                    },
+                                    "Actions": [
+                                        "maximize",
+                                        "pin",
+                                        "float"
+                                    ],
+                                    "ViewState": "restore",
+                                    "PinState": false,
+                                    "FloatState": false,
+                                    "Resizable": false,
+                                    "Header": true,
+                                    "Disabled": false
+                                },
+                                "Data": {}
+                            }
+                        ]
                     }
                 },
                 {
@@ -965,6 +1351,23 @@
                     "Data": {
                         "Path": "/custom1",
                         "Url": "https://www.tetherfi.com",
+                        "QueryParams": []
+                    }
+                },
+                {
+                    "Name": "Custom-2",
+                    "Description": "",
+                    "Type": "twc-custom",
+                    "Config": {
+                        "Class": "",
+                        "Position": {
+                            "X": 3,
+                            "Y": 6
+                        }
+                    },
+                    "Data": {
+                        "Path": "/custom2",
+                        "Url": "https://material.angular.io/",
                         "QueryParams": []
                     }
                 }
@@ -1025,7 +1428,7 @@
                 "Type": "soap"
             },
             "SignalRProxy": {
-                "Logging": false,
+                "Logging": true,
                 "Protocol": "webSockets",
                 "Timeout": 10
             },

@@ -6,7 +6,6 @@
 
     tw-wrapper {
         tw-card {
-            // &.tw-bg-header {
             .mat-card {
                 color: map-get($foreground, text);
 
@@ -18,8 +17,7 @@
                     background: #fafafa;
                 }
 
-                .card-header,
-                .mat-expansion-panel-header {
+                .card-header {
                     color: map-get($foreground, text);
 
                     // If it's a light theme, use a darker background
@@ -30,13 +28,8 @@
                         background: #eeeeee;
                     }
                 }
-            }
-            // }
 
-            // &.tw-bg-body {
-            .mat-card {
-                .mat-card-content,
-                .mat-expansion-panel-content {
+                .mat-card-content {
                     color: map-get($foreground, text);
 
                     // If it's a light theme, use a darker background
@@ -48,7 +41,6 @@
                     }
                 }
             }
-            // }
         }
     }
 }

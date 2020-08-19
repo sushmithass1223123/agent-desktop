@@ -3,21 +3,27 @@
 
         <ng-container *ngFor="let widget of voicePanelWidgets">
 
-            <tw-voice-controls [data]="widget" *ngIf="widget.Type === 'tw-voice-controls'"
-                class="{{ widget.Type + ' ' + (maximized[widget.Type] ? 'maximized' : '') + ' ' + (collapsed[widget.Type] ? 'collapsed' : '') + ' ' + (floating[widget.Type] ? 'floating' : '') }}"
-                (maximizeEvent)="onMaximised($event, widget.Type)" (collapseEvent)="onCollapsed($event, widget.Type)"
+            <tw-voice-controls [data]="widget" *ngIf="widget.Type === 'tw-voice-controls'" [ngClass]="widget.Type + ' ' + 
+            (maximized[widget.Type] || widget.Config.ViewState === 'maximize' ? 'maximized' : '') + ' ' + 
+            (collapsed[widget.Type] || widget.Config.ViewState === 'minimize' ? 'collapsed' : '') + ' ' + 
+            (floating[widget.Type] || widget.Config.ViewState === 'float' ? 'floating' : '')"
+                (maximizeEvent)="onmaximized($event, widget.Type)" (collapseEvent)="onCollapsed($event, widget.Type)"
                 (floatEvent)="onFloating($event, widget.Type)">
             </tw-voice-controls>
 
-            <tw-customer-details [data]="widget" *ngIf="widget.Type === 'tw-customer-details'"
-                class="{{ widget.Type + ' ' + (maximized[widget.Type] ? 'maximized' : '') + ' ' + (collapsed[widget.Type] ? 'collapsed' : '') + ' ' + (floating[widget.Type] ? 'floating' : '') }}"
-                (maximizeEvent)="onMaximised($event, widget.Type)" (collapseEvent)="onCollapsed($event, widget.Type)"
+            <tw-customer-details [data]="widget" *ngIf="widget.Type === 'tw-customer-details'" [ngClass]="widget.Type + ' ' + 
+            (maximized[widget.Type] || widget.Config.ViewState === 'maximize' ? 'maximized' : '') + ' ' + 
+            (collapsed[widget.Type] || widget.Config.ViewState === 'minimize' ? 'collapsed' : '') + ' ' + 
+            (floating[widget.Type] || widget.Config.ViewState === 'float' ? 'floating' : '')"
+                (maximizeEvent)="onmaximized($event, widget.Type)" (collapseEvent)="onCollapsed($event, widget.Type)"
                 (floatEvent)="onFloating($event, widget.Type)">
             </tw-customer-details>
 
-            <tw-customer-journey [data]="widget" *ngIf="widget.Type === 'tw-customer-journey'"
-                class="{{ widget.Type + ' ' + (maximized[widget.Type] ? 'maximized' : '') + ' ' + (collapsed[widget.Type] ? 'collapsed' : '') + ' ' + (floating[widget.Type] ? 'floating' : '') }}"
-                (maximizeEvent)="onMaximised($event, widget.Type)" (collapseEvent)="onCollapsed($event, widget.Type)"
+            <tw-customer-journey [data]="widget" *ngIf="widget.Type === 'tw-customer-journey'" [ngClass]="widget.Type + ' ' + 
+                (maximized[widget.Type] || widget.Config.ViewState === 'maximize' ? 'maximized' : '') + ' ' + 
+                (collapsed[widget.Type] || widget.Config.ViewState === 'minimize' ? 'collapsed' : '') + ' ' + 
+                (floating[widget.Type] || widget.Config.ViewState === 'float' ? 'floating' : '')"
+                (maximizeEvent)="onmaximized($event, widget.Type)" (collapseEvent)="onCollapsed($event, widget.Type)"
                 (floatEvent)="onFloating($event, widget.Type)">
             </tw-customer-journey>
 

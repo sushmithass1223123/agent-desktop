@@ -114,14 +114,48 @@ $tw-secondary: (
     )
 );
 
+$tw-grey: (
+    50: #f8f9fb,
+    100: #f1f2f4,
+    200: #e7e9eb,
+    300: #d7d9db,
+    400: #b4b5b7,
+    500: #949597,
+    600: #6b6d6f,
+    700: #58595b,
+    800: #3a3b3c,
+    900: #191a1c,
+    A100: #f5f7fa,
+    A200: #f0f2f5,
+    A400: #c5c7ca,
+    A700: #696b6d,
+    contrast: (
+        50: $dark-primary-text,
+        100: $dark-primary-text,
+        200: $dark-primary-text,
+        300: $dark-primary-text,
+        400: $dark-primary-text,
+        500: $light-primary-text,
+        600: $light-primary-text,
+        700: $light-primary-text,
+        800: $light-primary-text,
+        900: $light-primary-text,
+        A100: $dark-primary-text,
+        A200: $dark-primary-text,
+        A400: $dark-primary-text,
+        A700: $light-primary-text
+    )
+);
+
 // Generate Fuse color classes for custom palettes
 $custom_palettes: (
     'fuse-white': $fuse-white,
     'fuse-black': $fuse-black,
     'fuse-navy': $fuse-navy,
-    'tw-primary': $tw-primary,
     'purple': $tw-primary,
-    'tw-secondary': $tw-secondary
+    'tw-primary': $tw-primary,
+    'tw-secondary': $tw-secondary,
+    'tw-grey': $tw-grey
 );
 
 @include fuse-color-classes($custom_palettes);
@@ -132,7 +166,7 @@ $custom_palettes: (
 
 // Angular Material typography
 $typography: mat-typography-config(
-    $font-family: 'Montserrat, Muli, Helvetica Neue, Arial, sans-serif',
+    $font-family: 'Source Sans Pro, Montserrat, Muli, Helvetica Neue, Arial, sans-serif',
     $title: mat-typography-level(20px, 32px, 600),
     $body-2: mat-typography-level(14px, 24px, 600),
     $button: mat-typography-level(14px, 14px, 600),
@@ -151,13 +185,13 @@ $typography: mat-typography-config(
 
 @import 'src/app/layout/components/chat-panel/chat-panel.theme';
 @import 'src/app/layout/components/toolbar/toolbar.theme';
-@import 'src/app/layout/components/navbar/navbar.theme';
 @import 'src/app/layout/components/theme-options/theme-options.theme';
 
 @import 'src/app/modules/core/login/login.theme';
 
 @import 'src/app/modules/t-widgets/tw-content/tw-content.theme';
 @import 'src/app/modules/t-widgets/tw-wrapper/tw-wrapper.theme';
+@import 'src/app/modules/t-widgets/tw-collections/tw-chat-controls/tw-chat-controls.theme';
 
 // Define a mixin for easier access
 @mixin components-theme($theme) {
@@ -170,7 +204,7 @@ $typography: mat-typography-config(
         color: map-get($foreground, text);
 
         // If it's a light theme, use a darker background
-        // color other than the default #fafafa
+        // color other than the default #F5F5F5
         @if ($is-dark) {
             background: map-get($background, background);
         } @else {
@@ -184,7 +218,6 @@ $typography: mat-typography-config(
     // Layout components
     @include chat-panel-theme($theme);
     @include toolbar-theme($theme);
-    @include navbar-theme($theme);
     @include app-theme-options-theme($theme);
 
     // Core components
@@ -193,6 +226,7 @@ $typography: mat-typography-config(
     // T-Widgets components
     @include tw-content-theme($theme);
     @include tw-wrapper-theme($theme);
+    @include tw-chat-controls-theme($theme);
 }
 
 // -----------------------------------------------------------------------------------------------------
@@ -235,7 +269,7 @@ body.theme-default {
 
 // Define the primary, accent and warn palettes
 $gray-dark-theme-primary-palette: mat-palette($tw-primary);
-$gray-dark-theme-accent-palette: mat-palette($tw-secondary);
+$gray-dark-theme-accent-palette: mat-palette($tw-grey);
 $gray-dark-theme-warn-palette: mat-palette($mat-red);
 
 // Create the Material theme object

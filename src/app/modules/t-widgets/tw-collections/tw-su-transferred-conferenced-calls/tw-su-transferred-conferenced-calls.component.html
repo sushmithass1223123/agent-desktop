@@ -3,25 +3,25 @@
 <!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
 <tw-wrapper [data]="data">
     <!-- your code goes here -->
-    <div fxFlex fxFill fxLayout="row" fxLayoutAlign="center center">
-        <span class="mat-subheading-2 mb-0 text-center">
-            <!-- inorder to access the class variable use angular expression {{ data }} -->
+    <div fxFlex fxFill fxLayout="row" fxLayoutAlign="center center" class="w-100-p h-100-p">
+        <div class="w-100-p h-100-p" #chartContainerRef>
             <ngx-charts-bar-vertical-stacked
-                [view]="bar_chart.view"
-                [scheme]="bar_chart.colorScheme"
-                [results]="bar_chart.dataSource"
-                [gradient]="bar_chart.gradient"
-                [xAxis]="bar_chart.showXAxis"
-                [yAxis]="bar_chart.showYAxis"
-                [legend]="bar_chart.showLegend"
-                [showXAxisLabel]="bar_chart.showXAxisLabel"
-                [showYAxisLabel]="bar_chart.showYAxisLabel"
-                [xAxisLabel]="bar_chart.xAxisLabel"
-                [yAxisLabel]="bar_chart.yAxisLabel"
-                [animations]="bar_chart.animations"
+                [view]="widget.view.length === 0 ? [chartContainerRef.offsetWidth, chartContainerRef.offsetHeight] : widget.view"
+                [scheme]="widget.colorScheme"
+                [results]="widget.dataSource"
+                [gradient]="widget.gradient"
+                [xAxis]="widget.showXAxis"
+                [yAxis]="widget.showYAxis"
+                [legend]="widget.showLegend"
+                [showXAxisLabel]="widget.showXAxisLabel"
+                [showYAxisLabel]="widget.showYAxisLabel"
+                [xAxisLabel]="widget.xAxisLabel"
+                [yAxisLabel]="widget.yAxisLabel"
+                [animations]="widget.animations"
+                [barPadding]="30"
             >
             </ngx-charts-bar-vertical-stacked>
-        </span>
+        </div>
     </div>
     <!-- your code goes here -->
 </tw-wrapper>

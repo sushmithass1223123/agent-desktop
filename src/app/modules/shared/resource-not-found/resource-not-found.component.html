@@ -1,13 +1,12 @@
-<section id="notFound">
-    <div [ngStyle]="{ width: (isHandset$ | async) ? '90%' : '30%' }">
-        <img src="assets/images/logos/tetherfi.png" class="logo" [ngStyle]="{ width: (isHandset$ | async) ? '30%' : '20%' }" />
-        <div class="content">
-            <img src="assets/images/vectors/not-found.svg" />
-            <div class="desc">
-                <div class="subtitle">{{ subtitle || 'Oops !' }}</div>
-                <div class="title">{{ title || '404' }}</div>
-                <strong class="description"> {{ description || 'Page not found' }} </strong>
-            </div>
+<div class="not-found">
+    <img src="assets/images/logos/tetherfi.png" class="logo" width="180" />
+    <div class="content">
+        <img src="assets/images/vectors/not-found.svg" />
+        <div class="desc">
+            <div class="subtitle">{{ subtitle || 'Oops!' }}</div>
+            <div class="title">{{ title || '404' }}</div>
+            <div class="description"> {{ description || 'PAGE NOT FOUND' }} </div>
+            <button mat-raised-button color="primary" class="mt-12" (click)="routeToLogin()">Go to login page</button>
         </div>
     </div>
-</section>
+</div>

@@ -1,9 +1,10 @@
 import { Component, ElementRef, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
+import { TWidget } from '@modules/t-widgets/utils';
 import { TWLibrary } from '@twidgets/utils/widget-library/tw-library';
+import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { IWidget } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
-import { SDKClient, IncomingCallEvent } from 'tmac-sdk';
+import { IncomingCallEvent, InteractionClosedEvent, SDKClient } from 'tmac-sdk';
 
 @Component({
     selector: 'twc-voice',
@@ -15,8 +16,7 @@ export class TwcVoiceComponent extends TWContentWrapper implements OnInit, OnDes
 
     @Input() data: any;
 
-    voiceWidgets = [];
-    interactionList: IncomingCallEvent[] = [];
+    interactions: InteractionVoiceWidgets[] = [];
 
     constructor(
         public hostElement: ElementRef,
@@ -28,31 +28,47 @@ export class TwcVoiceComponent extends TWContentWrapper implements OnInit, OnDes
     ngOnInit(): void {
         this.initWrapper(this.data);
 
-        // get the content widgets
-        const widgets = this.data.Data.Widgets || [];
-        // loop and get the widgets
-        widgets.forEach((widget: IWidget) => {
-            // get the widget component by type
-            const component = TWLibrary.getWidget(widget.Type, widget);
-            // check if the component is proper
-            if (component) {
-                // append the widget component to the list
-                this.voiceWidgets.push(component);
-            }
-        });
-
         // listen to TMAC events
-        this.listenToTMACEvents();
+        this.registerToEvents();
     }
 
     ngOnDestroy(): void {
         this.destroyWrapper();
     }
 
-    listenToTMACEvents(): void {
+    private registerToEvents(): void {
         // listen to incoming call event
         SDKClient.events.on('IncomingCallEvent', ((evt: IncomingCallEvent) => {
-            this.interactionList.push(evt);
+            const voiceWidgets: TWidget[] = [];
+            // get the content widgets
+            const widgets = this.data.Data.Widgets || [];
+            // loop and get the widgets
+            widgets.forEach((widget: IWidget) => {
+                // add the interaction details
+                widget.InteractionDetails = evt;
+                // get the widget component by type
+                const component = TWLibrary.getWidget(widget.Type, widget);
+                // check if the component is proper
+                if (component) {
+                    // append the widget component to the list
+                    voiceWidgets.push(component);
+                }
+            });
+            // push the interaction details with widgets to the list
+            this.interactions.push({
+                interactionId: evt.InteractionID,
+                widgets: voiceWidgets
+            });
         }));
+
+        // listen to the interaction closed event and filter out the interaction
+        SDKClient.events.on('InteractionClosedEvent', (evt: InteractionClosedEvent) => {
+            this.interactions = this.interactions.filter((i: InteractionVoiceWidgets) => i.interactionId !== evt.InteractionID);
+        });
     }
+}
+
+interface InteractionVoiceWidgets {
+    interactionId: number;
+    widgets: TWidget[];
 }

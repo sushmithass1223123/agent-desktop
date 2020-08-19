@@ -1,5 +1,4 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { fuseAnimations } from '@fuse/animations';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AppDataService } from '@services/app-data.service';
 import { FuseConfigService } from '@fuse/services/config.service';
@@ -10,8 +9,7 @@ import { SDKClient } from 'tmac-sdk';
     selector: 'tw-sample', // make sure you set the selector starts with tw-<widget-name>
     templateUrl: './tw-sample.component.html',
     styleUrls: ['./tw-sample.component.scss'],
-    encapsulation: ViewEncapsulation.None,
-    animations: fuseAnimations
+    encapsulation: ViewEncapsulation.None
 })
 export class TwSampleComponent extends TWidgetWrapper implements OnInit, OnDestroy {
 
@@ -53,7 +51,6 @@ export class TwSampleComponent extends TWidgetWrapper implements OnInit, OnDestr
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-
         // -----------------------------------------------------------
         // @ [OPTIONAL] to get the fuse config
         // -----------------------------------------------------------

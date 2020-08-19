@@ -7,14 +7,14 @@
     twc-unknown,
     twc-custom,
     twc-no-widgets {
-        &.tw-card {
+        &.twc-card {
             .mat-card {
                 // If it's a light theme, use a darker background
-                // color other than the default #fafafa
+                // color other than the default #F5F5F5
                 @if ($is-dark) {
                     background: #424242;
                 } @else {
-                    background: #fafafa;
+                    background: #F5F5F5;
                 }
             }
         }

@@ -1,0 +1,44 @@
+tw-chat-panel {
+    display: grid;
+    .tw-chat-panel {
+        max-height: calc(100vh - 94px);
+        gap: 8px;
+        .tw-chat-controls,
+        .tw-customer-details,
+        .tw-customer-journey {
+            flex: 1;
+            transition: all 0.6s ease-in-out;
+            height: 32.5%;
+            &.maximized {
+                flex: 0;
+                &.collapsed {
+                    flex: 0;
+                }
+            }
+            &.collapsed {
+                flex: 0;
+            }
+            &.floating {
+                flex: 1;
+                &.collapsed {
+                    flex: inherit;
+                }
+            }
+        }
+        .tw-chat-controls {
+            flex: 2;
+        }
+    }
+
+    @media screen and (min-width: 768px) {
+        .tw-chat-panel {
+            max-height: calc(100vh - 78px);
+        }
+    }
+
+    @media screen and (min-width: 1200px) {
+        .tw-chat-panel {
+            max-height: calc(100vh - 94px);
+        }
+    }
+}

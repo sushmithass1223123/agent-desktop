@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewEncapsulation, ViewChild, ElementRef } from '@angular/core';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
 import { AppDataService } from '@services/app-data.service';
@@ -25,12 +25,21 @@ export class TwAdTotalCallsComponent extends TWidgetWrapper implements OnInit, O
     // -----------------------------------------------------------
     appConfig: any;
 
+    @ViewChild('chartContainerRef') chartContainerRef: ElementRef;
+
     widget = {
         legend: false,
         labels: true,
         doughnut: true,
+        view: [],
         scheme: {
-            domain: ['#a24fad', '#732b90']
+            domain: [
+                '#91359f',
+                '#a24fad',
+                '#b26cbc',
+                '#c895cf',
+                '#ddbfe2',
+            ]
         },
         data: [
             {
@@ -43,9 +52,9 @@ export class TwAdTotalCallsComponent extends TWidgetWrapper implements OnInit, O
             }
         ],
         state: {
-            maximised: false
+            maximized: false
         },
-        onSelect: (ev) => {
+        onSelect: (ev: any) => {
             console.log(ev);
         }
     };
@@ -107,8 +116,16 @@ export class TwAdTotalCallsComponent extends TWidgetWrapper implements OnInit, O
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
 
-    maximizeEvent(state: boolean): void {
-        this.widget.state.maximised = state;
+    maximizeEvent(isMaximized: boolean): void {
+        // set the maximized state
+        this.widget.state.maximized = isMaximized;
+        // set it first to avoid widget.view length 0
+        this.widget.view = [this.chartContainerRef.nativeElement.offsetWidth, this.chartContainerRef.nativeElement.offsetHeight];
+        // setttime is to make sure this event processing will be passed
+        setTimeout(() => {
+            // this is to avoid "Expression ___ has changed after it was checked" error
+            this.widget.view = [this.chartContainerRef.nativeElement.offsetWidth, this.chartContainerRef.nativeElement.offsetHeight];
+        }, 0);
     }
 }
 

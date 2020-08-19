@@ -1,23 +1,30 @@
 tw-wallboard {
     tw-wrapper {
         mat-card-content {
-            position: relative;
-            background: inherit !important;
-            box-shadow: none !important;
+            &.mat-card-content {
+                position: relative;
+                // background: inherit !important;
+                // box-shadow: none !important;
 
-            .vector-image {
-                position: absolute;
-                left: 0;
-                bottom: 4rem;
-                width: 100%;
-                z-index: 1;
-            }
+                .vector-image {
+                    position: absolute;
+                    left: 0;
+                    bottom: 4rem;
+                    width: 100%;
+                    z-index: 1;
+                    filter: drop-shadow(0px 10px 6px rgba(0, 0, 0, 0.2));
+                }
 
-            .mat-table {
-                max-height: 55%;
-                th {
-                    &.mat-header-cell:first-of-type {
-                        width: 40%;
+                .mat-table-container {
+                    max-height: 50%;
+                    overflow: auto;
+
+                    .mat-table {
+                        th {
+                            &.mat-header-cell:first-of-type {
+                                width: 40%;
+                            }
+                        }
                     }
                 }
             }

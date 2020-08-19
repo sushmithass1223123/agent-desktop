@@ -7,7 +7,7 @@ import { takeUntil } from 'rxjs/operators';
 // tslint:disable-next-line: directive-class-suffix
 export class TWContentWrapper {
 
-    @HostBinding('class') class = 'tw-card';
+    @HostBinding('class') class = 'twc-card';
     @HostBinding('style') style = '';
 
     widgetData: any;
@@ -58,8 +58,6 @@ export class TWContentWrapper {
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((d: string) => {
 
-                console.log('###########', d);
-                
                 // get the path
                 const active = d === this.widgetData.Data.Path;
                 // set the style
