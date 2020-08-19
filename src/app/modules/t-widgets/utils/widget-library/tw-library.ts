@@ -11,6 +11,13 @@ import { TwAdTotalAvComponent } from '@modules/t-widgets/tw-collections/tw-ad-to
 import { TwAdTotalInteractionsComponent } from '@modules/t-widgets/tw-collections/tw-ad-total-interactions/tw-ad-total-interactions.component';
 import { TwAdInteractionDetailsComponent } from '@modules/t-widgets/tw-collections/tw-ad-interaction-details/tw-ad-interaction-details.component';
 import { TwAdCallbacksComponent } from '@modules/t-widgets/tw-collections/tw-ad-callbacks/tw-ad-callbacks.component';
+import { TwSuTotalCallsComponent } from '@modules/t-widgets/tw-collections/tw-su-total-calls/tw-su-total-calls.component';
+import { TwSuCallsInQueueComponent } from '@modules/t-widgets/tw-collections/tw-su-calls-in-queue/tw-su-calls-in-queue.component';
+import { TwSuAverageHandleTimeComponent } from '@modules/t-widgets/tw-collections/tw-su-average-handle-time/tw-su-average-handle-time.component';
+import { TwSuTransferredConferencedCallsComponent } from '@modules/t-widgets/tw-collections/tw-su-transferred-conferenced-calls/tw-su-transferred-conferenced-calls.component';
+import { TwSuChannelsStatusComponent } from '@modules/t-widgets/tw-collections/tw-su-channels-status/tw-su-channels-status.component';
+import { TwSuChannelsComponent } from '@modules/t-widgets/tw-collections/tw-su-channels/tw-su-channels.component';
+import { TwSuStatusComponent } from '@modules/t-widgets/tw-collections/tw-su-status/tw-su-status.component';
 
 export class TWLibrary {
     static widgetLibrary: Record<string, Type<any>> = {
@@ -23,7 +30,14 @@ export class TWLibrary {
         'tw-ad-total-av': TwAdTotalAvComponent,
         'tw-ad-total-chats': TwAdTotalChatsComponent,
         'tw-ad-interaction-details': TwAdInteractionDetailsComponent,
-        'tw-ad-callbacks': TwAdCallbacksComponent
+        'tw-ad-callbacks': TwAdCallbacksComponent,
+        'tw-su-total-calls': TwSuTotalCallsComponent,
+        'tw-su-calls-in-queue': TwSuCallsInQueueComponent,
+        'tw-su-average-handle-time': TwSuAverageHandleTimeComponent,
+        'tw-su-transferred-conferenced-calls': TwSuTransferredConferencedCallsComponent,
+        'tw-su-channels-status': TwSuChannelsStatusComponent,
+        'tw-su-channels': TwSuChannelsComponent,
+        'tw-su-status': TwSuStatusComponent
     };
 
     public static getAllWidgets(): Record<string, Type<any>> {

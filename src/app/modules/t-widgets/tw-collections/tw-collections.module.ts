@@ -17,6 +17,13 @@ import { TwAdTotalAvComponent } from './tw-ad-total-av/tw-ad-total-av.component'
 import { TwAdTotalInteractionsComponent } from './tw-ad-total-interactions/tw-ad-total-interactions.component';
 import { TwAdInteractionDetailsComponent } from './tw-ad-interaction-details/tw-ad-interaction-details.component';
 import { TwAdCallbacksComponent } from './tw-ad-callbacks/tw-ad-callbacks.component';
+import { TwSuTotalCallsComponent } from './tw-su-total-calls/tw-su-total-calls.component';
+import { TwSuCallsInQueueComponent } from './tw-su-calls-in-queue/tw-su-calls-in-queue.component';
+import { TwSuAverageHandleTimeComponent } from './tw-su-average-handle-time/tw-su-average-handle-time.component';
+import { TwSuTransferredConferencedCallsComponent } from './tw-su-transferred-conferenced-calls/tw-su-transferred-conferenced-calls.component';
+import { TwSuChannelsStatusComponent } from './tw-su-channels-status/tw-su-channels-status.component';
+import { TwSuChannelsComponent } from './tw-su-channels/tw-su-channels.component';
+import { TwSuStatusComponent } from './tw-su-status/tw-su-status.component';
 
 @NgModule({
     declarations: [
@@ -34,6 +41,13 @@ import { TwAdCallbacksComponent } from './tw-ad-callbacks/tw-ad-callbacks.compon
         TwAdTotalInteractionsComponent,
         TwAdInteractionDetailsComponent,
         TwAdCallbacksComponent,
+		TwSuTotalCallsComponent,
+        TwSuCallsInQueueComponent,
+        TwSuAverageHandleTimeComponent,
+        TwSuTransferredConferencedCallsComponent,
+        TwSuChannelsStatusComponent,
+        TwSuChannelsComponent,
+        TwSuStatusComponent,
     ],
     imports: [
         SharedModule,
