@@ -1,13 +1,11 @@
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation, Output, EventEmitter } from '@angular/core';
-import { fuseAnimations } from '@fuse/animations';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 
 @Component({
     selector: 'tw-customer-journey',
     templateUrl: './tw-customer-journey.component.html',
     styleUrls: ['./tw-customer-journey.component.scss'],
-    encapsulation: ViewEncapsulation.None,
-    animations: fuseAnimations
+    encapsulation: ViewEncapsulation.None
 })
 export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit, OnDestroy {
 

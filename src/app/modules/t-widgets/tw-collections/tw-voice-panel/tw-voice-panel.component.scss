@@ -1,8 +1,8 @@
 tw-voice-panel {
     display: grid;
     .tw-voice-panel {
-        max-height: calc(100vh - 88px);
-        gap: 1rem;
+        max-height: calc(100vh - 94px);
+        gap: 8px;
         .tw-voice-controls,
         .tw-customer-details,
         .tw-customer-journey {
@@ -24,6 +24,18 @@ tw-voice-panel {
                     flex: inherit;
                 }
             }
+        }
+    }
+
+    @media screen and (min-width: 768px) {
+        .tw-voice-panel {
+            max-height: calc(100vh - 78px);
+        }
+    }
+
+    @media screen and (min-width: 1200px) {
+        .tw-voice-panel {
+            max-height: calc(100vh - 94px);
         }
     }
 }

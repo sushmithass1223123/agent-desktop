@@ -25,7 +25,12 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
         // get agent details
         this.agentData = SDKClient.getAgentData();
 
-        // listen for agent status change
+        // listen for agent status changing event
+        SDKClient.events.on('AgentStatusChangingEvent', () => {
+            this.agentData.agentStatus = 'Please wait...';
+        });
+
+        // listen for agent status change event
         SDKClient.events.on('AgentStatusChangeEvent', (evt: AgentStatusChangeEvent) => {
             this.agentData.agentStatus = evt.Status;
         });

@@ -1,12 +1,12 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { FuseConfigService } from '@fuse/services/config.service';
-import { FuseSplashScreenService } from '@fuse/services/splash-screen.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient, AgentForcedLogoffEvent } from 'tmac-sdk';
+import { AgentForcedLogoffEvent, SDKClient } from 'tmac-sdk';
 
 @Component({
     selector: 'main',
@@ -14,7 +14,7 @@ import { SDKClient, AgentForcedLogoffEvent } from 'tmac-sdk';
     styleUrls: ['./main.component.scss']
 })
 export class MainComponent implements OnInit, OnDestroy {
-    
+
     fuseConfig: any;
     loaded = false;
 
@@ -25,8 +25,8 @@ export class MainComponent implements OnInit, OnDestroy {
         @Inject(DOCUMENT) private document: any,
         private _fuseConfigService: FuseConfigService,
         private _fuseSidebarService: FuseSidebarService,
-        private _fuseSplashScreenService: FuseSplashScreenService,
-        private _router: Router
+        private _router: Router,
+        private _snackBar: MatSnackBar
     ) {
         // Set the private defaults
         this._unsubscribeAll = new Subject();
@@ -48,8 +48,6 @@ export class MainComponent implements OnInit, OnDestroy {
                 this.fuseConfig = config;
 
             });
-
-        console.log(history);
 
         // check if the main is routed from login
         if (!history.state.fromUrl || history.state.fromUrl !== 'login') {
@@ -92,6 +90,13 @@ export class MainComponent implements OnInit, OnDestroy {
     }
 
     private pollForEvent(): void {
+        this._snackBar.open('Hello, welcome to TMAC', 'x', {
+            duration: 3000,
+            verticalPosition: 'top', // 'top' | 'bottom'
+            horizontalPosition: 'center', // 'start' | 'center' | 'end' | 'left' | 'right'
+            panelClass: ['snackbar']
+        });
+
         // set the loaded to true
         this.loaded = true;
 
@@ -100,13 +105,36 @@ export class MainComponent implements OnInit, OnDestroy {
 
         // listen to force log off event
         SDKClient.events.on('AgentForcedLogoffEvent', (evt: AgentForcedLogoffEvent) => {
-            // TODO:: show an alert
-
-            // route back to login page
-            setTimeout(() => {
-                // we will route to login page
-                this._router.navigate(['login']);
-            }, 5000);
+            let description = '';
+            switch (evt.Type) {
+                case 'SupervisorInitiatedLogout':
+                    description = 'You are logged out by the supervisor!';
+                    break;
+                case 'SessionNotFound':
+                    description = 'There is no session found in server, pelase re-login!';
+                    break;
+                case 'SessionKeyExpired':
+                    description = 'Your existing session expired as you are logged in using another session!';
+                    break;
+                case 'NotLoggedIntoACD':
+                    description = '';
+                    break;
+                case 'AgentInfoNotFound':
+                    description = 'Agent information not found, please re-login!';
+                    break;
+                default:
+            }
+            // we will route to login page
+            this._router.navigate(['not-found'],
+                {
+                    queryParamsHandling: 'preserve',
+                    preserveFragment: true,
+                    state: {
+                        subtitle: 'Oops',
+                        title: '',
+                        description
+                    }
+                });
         });
     }
 }

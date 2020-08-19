@@ -1,14 +1,14 @@
 <div id="login" class="inner-scroll" fxLayout="row" fxLayoutAlign="start">
     <div id="login-intro" fxFlex fxHide fxShow.gt-xs>
 
-        <div class="title" [@animate]="{ value: '*', params: { delay: '50ms', y: '25px' } }">
+        <div class="title" [@animate]="{value:'*',params:{delay:'50ms',y:'25px'}}">
             Welcome to the TMAC!
         </div>
 
     </div>
 
     <div id="login-form-wrapper" fusePerfectScrollbar
-        [@animate]="{ value: '*', params: { delay: '300ms', x: '100%' } }">
+        [@animate]="{value: '*',params:{delay:'300ms',x:'100%'}}">
         <div class="spinner" *ngIf="loading">
             <mat-spinner></mat-spinner>
         </div>
@@ -67,7 +67,8 @@
                     </mat-error>
                 </mat-form-field>
 
-                <mat-form-field class="form-field" appearance="outline" *ngIf="stationEnabled">
+                <mat-form-field class="form-field animate__animated animate__flipInX animate__fast" appearance="outline"
+                    *ngIf="stationEnabled">
                     <input class="login-input" color="primary" matInput required placeholder="STATION"
                         (keypress)="numberOnly($event)" (keydown.enter)="login(false)" formControlName="station" />
                     <button *ngIf="loginForm.get('station').value" matSuffix mat-icon-button color="primary"
@@ -103,7 +104,7 @@
         </div>
     </div>
 
-    <img class="brand-logo" [src]="brandLogo?.Small.Src || 'assets/images/logos/tetherfi-logo-round.png'"
+    <img class="brand-logo" [@animate]="{value:'*',params:{scale:'0.2'}}" [src]="brandLogo?.Small.Src || 'assets/images/logos/tetherfi-logo-round.png'"
         [alt]="brandLogo?.Alt || 'Tetherfi'" [width]="brandLogo?.Small.Width || 50"
         [height]="brandLogo?.Small.Height || 50" />
 </div>

@@ -1,12 +1,11 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { fuseAnimations } from '@fuse/animations';
-import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AppDataService } from '@services/app-data.service';
-import { FuseConfigService } from '@fuse/services/config.service';
-import { takeUntil } from 'rxjs/operators';
-import { SDKClient } from 'tmac-sdk';
-import { MatSort, Sort } from '@angular/material/sort';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { fuseAnimations } from '@fuse/animations';
+import { FuseConfigService } from '@fuse/services/config.service';
+import { AppDataService } from '@services/app-data.service';
+import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
     selector: 'tw-su-average-handle-time',
@@ -18,20 +17,22 @@ import { MatTableDataSource } from '@angular/material/table';
 export class TwSuAverageHandleTimeComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     // holds all the data related to this widget from the config
     @Input() data: any;
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
     // -----------------------------------------------------------
     // @ [OPTIONAL] to store the fuse config for theme
     // -----------------------------------------------------------
     fuseConfig: any;
-    rawData;
-    datasource = new MatTableDataSource([]);
     // -----------------------------------------------------------
     // @ [OPTIONAL] to store entire app config and get update
     // -----------------------------------------------------------
     appConfig: any;
-    sortedData;
 
-    displayedColumns: string[] = ['Channel', 'aht'];
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
+
+    rawData: any;
+    datasource = new MatTableDataSource([]);
+    sortedData: any;
+    displayedColumns: string[] = ['Channel', 'AHT'];
+
     /**
      * Constructor
      * @param {FuseConfigService} _fuseConfigService
@@ -40,6 +41,7 @@ export class TwSuAverageHandleTimeComponent extends TWidgetWrapper implements On
     constructor(
         // @ [OPTIONAL]
         private _fuseConfigService: FuseConfigService,
+
         // @ [OPTIONAL]
         private _appDataService: AppDataService
     ) {
@@ -110,28 +112,7 @@ export class TwSuAverageHandleTimeComponent extends TWidgetWrapper implements On
     // -----------------------------------------------------------------------------------------------------
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
-    sortData(sort: Sort): any {
-        const data = this.rawData.slice();
-        if (!sort.active || sort.direction === '') {
-            this.sortedData = data;
-            return;
-        }
 
-        this.sortedData = data.sort((a, b) => {
-            const isAsc = sort.direction === 'asc';
-            switch (sort.active) {
-                case 'channel':
-                    return this.compare(a.channel, b.channel, isAsc);
-                case 'aht':
-                    return this.compare(a.aht, b.aht, isAsc);
-                default:
-                    return 0;
-            }
-        });
-    }
-    compare(a: number | string, b: number | string, isAsc: boolean): any {
-        return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
-    }
 
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods

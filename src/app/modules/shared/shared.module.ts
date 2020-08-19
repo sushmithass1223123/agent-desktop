@@ -11,6 +11,6 @@ const sharedComponents = [ResourceNotFoundComponent];
 @NgModule({
     declarations: sharedComponents,
     imports: [CommonModule, ...sharedModules],
-    exports: [...sharedModules, ...sharedComponents]
+    exports: [...sharedModules]
 })
 export class SharedModule { }

@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, Input, ViewEncapsulation } from '@angular/core';
 import { TWidgetWrapper } from '@twidgets/utils';
-import { IAUXCodes, SDKClient, IResponse, IAgentData } from 'tmac-sdk';
+import { IAUXCodes, SDKClient, IResponse, IAgentData, SDK } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-aux-codes',
@@ -50,6 +50,9 @@ export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDes
     }
 
     changeStatus(item: IAUXCodes): void {
+        // emit a custom event
+        SDKClient.events.emit('AgentStatusChangingEvent');
+        // change the status
         SDKClient.changeStatus({
             type: item.Code === 'available' ? 'available' : item.Code === 'acw' ? 'acw' : 'aux',
             code: item.Value.toString()
@@ -58,7 +61,6 @@ export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDes
             if (result.response) {
                 this.auxCodesList.forEach((aux: IAUXCodes) => {
                     if (aux.Name === result.response.Status) {
-                        aux.Display = 0;
                         this.currentAux = aux;
                     }
                 });

@@ -5,9 +5,9 @@
             <img class="avatar mr-0 mr-sm-16 mat-elevation-z3"
                 [style.backgroundImage]="'url(' + agentData.profilePicture + ')'"
                 *ngIf="data.Data.ProfilePicture && agentData.profilePicture">
-            <div fxLayout="column" fxLayoutAlign="center start">
+            <div fxLayout="column" fxLayoutAlign="center start" class="agent-details">
                 <span class="username mr-12 line-height-24" fxHide fxShow.gt-sm>{{ agentData.agentName }}</span>
-                <span class="font-size-14 mat-caption" fxHide fxShow.gt-sm
+                <span class="font-size-14 mat-caption agent-status" fxHide fxShow.gt-sm
                     *ngIf="data.Data.Status">{{ agentData.agentStatus }}</span>
             </div>
         </div>

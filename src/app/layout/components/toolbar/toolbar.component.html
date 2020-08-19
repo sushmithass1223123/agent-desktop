@@ -9,7 +9,8 @@
                 <mat-icon class="primary-text">menu</mat-icon>
             </button>
 
-            <tw-active-interactions [data]="activeInteractionWidget" *ngIf="activeInteractionWidget">
+            <tw-active-interactions fxHide fxShow.gt-md [data]="activeInteractionWidget"
+                *ngIf="activeInteractionWidget">
             </tw-active-interactions>
 
         </div>

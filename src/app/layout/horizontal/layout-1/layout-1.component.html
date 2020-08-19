@@ -6,7 +6,7 @@
 </ng-container>
 <!-- / SIDE PANEL -->
 
-<div id="main" [ngClass]="fuseConfig.layout.navbar.background">
+<div id="main" [ngClass]="fuseConfig.layout.navbar.customBackgroundColor === true ? fuseConfig.layout.navbar.background : ''">
 
     <!-- TOOLBAR: Above -->
     <ng-container *ngIf="fuseConfig.layout.toolbar.position === 'above'">

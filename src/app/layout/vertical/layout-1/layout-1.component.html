@@ -6,7 +6,7 @@
 </ng-container>
 <!-- / SIDE PANEL -->
 
-<div id="main" [ngClass]="fuseConfig.layout.navbar.background">
+<div id="main" [ngClass]="fuseConfig.layout.navbar.customBackgroundColor === true ? fuseConfig.layout.navbar.background : ''">
 
     <!-- TOOLBAR: Above -->
     <ng-container *ngIf="fuseConfig.layout.toolbar.position === 'above'">
@@ -31,7 +31,7 @@
             <!-- / TOOLBAR: Below fixed -->
 
             <div id="container-3" class="container" fusePerfectScrollbar
-                [fusePerfectScrollbarOptions]="{suppressScrollX: true, updateOnRouteChange : true}">
+                [fusePerfectScrollbarOptions]="{suppressScrollX: true}">
 
                 <!-- TOOLBAR: Below static -->
                 <ng-container *ngIf="fuseConfig.layout.toolbar.position === 'below-static'">
@@ -40,14 +40,15 @@
                 <!-- / TOOLBAR: Below static -->
 
                 <!-- CONTENT -->
-                <content class="{{ 'navbar-' + fuseConfig.layout.navbar.position }}"
-                    [ngClass]="fuseConfig.layout.content.customBackgroundColor === true ? fuseConfig.layout.content.background : ''">
+                <content
+                    [ngClass]="(fuseConfig.layout.content.customBackgroundColor === true ? fuseConfig.layout.content.background : '') + ' ' + ('navbar-' + fuseConfig.layout.navbar.position)">
                 </content>
                 <!-- / CONTENT -->
 
                 <!-- FOOTER: Below static -->
-                <ng-container *ngIf="fuseConfig.layout.footer.position === 'below-static'">
-                    <ng-container *ngTemplateOutlet="footer"></ng-container>
+                <ng-container *ngIf=" fuseConfig.layout.footer.position==='below-static'">
+                    <ng-container *ngTemplateOutlet=" footer">
+                    </ng-container>
                 </ng-container>
                 <!-- / FOOTER: Below static -->
 
@@ -97,8 +98,8 @@
 
 <!-- TOOLBAR -->
 <ng-template #toolbar>
-    <toolbar *ngIf="!fuseConfig.layout.toolbar.hidden" class="{{ 'navbar-' + fuseConfig.layout.navbar.position }}"
-        [ngClass]="fuseConfig.layout.toolbar.customBackgroundColor === true ? fuseConfig.layout.toolbar.position + ' ' + fuseConfig.layout.toolbar.background : fuseConfig.layout.toolbar.position">
+    <toolbar *ngIf="!fuseConfig.layout.toolbar.hidden"
+        [ngClass]="('navbar-' + fuseConfig.layout.navbar.position) + ' ' + (fuseConfig.layout.toolbar.customBackgroundColor === true ? fuseConfig.layout.toolbar.position + ' ' + fuseConfig.layout.toolbar.background : fuseConfig.layout.toolbar.position)">
     </toolbar>
 </ng-template>
 <!-- / TOOLBAR -->

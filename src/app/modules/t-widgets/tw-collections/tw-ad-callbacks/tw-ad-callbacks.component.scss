@@ -1,17 +1,25 @@
 tw-ad-callbacks {
     .callbacks {
-        padding: 20px;
+        padding: 10px;
     }
     .callback-total {
         & > * {
             background-color: white;
-            padding: 10px 15px;
+            padding: 8px 14px;
             border-radius: 20px;
-            margin: 20px 0px;
+            margin: 8px 0px;
             &:last-child {
                 margin-bottom: 0px;
             }
         }
+        &.maximized {
+            & > * {
+                font-size: 16px;
+                padding: 16px;
+                margin: 10px;
+            }
+        }
+
         .handled {
             button {
                 background-color: #8bb768;

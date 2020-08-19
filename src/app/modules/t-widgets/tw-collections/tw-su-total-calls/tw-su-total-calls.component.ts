@@ -1,15 +1,14 @@
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { fuseAnimations } from '@fuse/animations';
-import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AppDataService } from '@services/app-data.service';
 import { FuseConfigService } from '@fuse/services/config.service';
+import { AppDataService } from '@services/app-data.service';
+import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient } from 'tmac-sdk';
 
 @Component({
-  selector: 'tw-su-total-calls',
-  templateUrl: './tw-su-total-calls.component.html',
-  styleUrls: ['./tw-su-total-calls.component.scss'],
+    selector: 'tw-su-total-calls',
+    templateUrl: './tw-su-total-calls.component.html',
+    styleUrls: ['./tw-su-total-calls.component.scss'],
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations
 })
@@ -28,33 +27,57 @@ export class TwSuTotalCallsComponent extends TWidgetWrapper implements OnInit, O
     // -----------------------------------------------------------
     appConfig: any;
 
-    single: any[];
-    view: any[] = [150, 150];
-  
+    @ViewChild('chartContainerRef') chartContainerRef: ElementRef;
+
     // options
-    gradient: boolean = true;
-    showLegend: boolean = false;
-    showLabels: boolean = false;
-    isDoughnut: boolean = true;
-    legendPosition: string = 'below';
-  
-  
-    colorScheme = {
-      domain: ['#f1e5f3',
-      '#ddbfe2',
-      '#c895cf',
-      '#b26cbc',
-      '#a24fad',
-      '#91359f',
-      '#853199',
-      '#732b90',
-      '#642687',
-      '#481e76',
-      '#d2c8d9',
-      '#b59ed1',
-      '#835ab0',
-      '#512b8b']
+    widget = {
+        legend: false,
+        labels: true,
+        doughnut: true,
+        gradient: true,
+        legendPosition: 'below',
+        view: [],
+        scheme: {
+            domain: [
+                '#91359f',
+                '#a24fad',
+                '#b26cbc',
+                '#c895cf',
+                '#ddbfe2',
+            ]
+        },
+        data: [
+            {
+                'name': 'Voice',
+                'value': 10
+            },
+            {
+                'name': 'Chat',
+                'value': 20
+            },
+            {
+                'name': 'Email',
+                'value': 40
+            },
+            {
+                'name': 'SMS',
+                'value': 20
+            }
+        ],
+        state: {
+            maximized: false
+        },
+        onSelect: (ev: any) => {
+            console.log(ev);
+        },
+        onActivate: (ev: any) => {
+            console.log(ev);
+        },
+        onDeactivate: (ev: any) => {
+            console.log(ev);
+        }
     };
+
     /**
      * Constructor
      * @param {FuseConfigService} _fuseConfigService
@@ -63,28 +86,12 @@ export class TwSuTotalCallsComponent extends TWidgetWrapper implements OnInit, O
     constructor(
         // @ [OPTIONAL]
         private _fuseConfigService: FuseConfigService,
+
         // @ [OPTIONAL]
-        private _appDataService: AppDataService,        
+        private _appDataService: AppDataService,
     ) {
         super();
-        this.single = [
-            {
-              "name": "Voice",
-              "value": 10
-            },
-            {
-              "name": "Chat",
-              "value": 20
-            },
-            {
-              "name": "Email",
-              "value": 40
-            },
-              {
-              "name": "SMS",
-              "value": 20
-            }
-          ];
+
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -134,21 +141,22 @@ export class TwSuTotalCallsComponent extends TWidgetWrapper implements OnInit, O
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
 
-    onSelect(data): void {
-        console.log('Item clicked', JSON.parse(JSON.stringify(data)));
-      }
-    
-      onActivate(data): void {
-        console.log('Activate', JSON.parse(JSON.stringify(data)));
-      }
-    
-      onDeactivate(data): void {
-        console.log('Deactivate', JSON.parse(JSON.stringify(data)));
-      }
 
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
+
+    maximizeEvent(isMaximized: boolean): void {
+        // set the maximized state
+        this.widget.state.maximized = isMaximized;
+        // set it first to avoid widget.view length 0
+        this.widget.view = [this.chartContainerRef.nativeElement.offsetWidth, this.chartContainerRef.nativeElement.offsetHeight];
+        // setttime is to make sure this event processing will be passed
+        setTimeout(() => {
+            // this is to avoid "Expression ___ has changed after it was checked" error
+            this.widget.view = [this.chartContainerRef.nativeElement.offsetWidth, this.chartContainerRef.nativeElement.offsetHeight];
+        }, 0);
+    }
 
 }
 

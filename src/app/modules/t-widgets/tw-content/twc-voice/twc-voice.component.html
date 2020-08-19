@@ -1,2 +1,17 @@
-<tw-template class="widget-grid" *ngIf="voiceWidgets.length > 0" [widgets]=voiceWidgets></tw-template>
-<twc-no-widgets class="tw-card" *ngIf="voiceWidgets.length === 0" type="voice"></twc-no-widgets>
+<!-- No interaction template -->
+<twc-no-interaction class="animate__animated animate__fadeIn animate__faster" *ngIf="interactions.length === 0"
+    type="voice">
+</twc-no-interaction>
+
+<!-- Interaction template -->
+<ng-container *ngFor="let item of interactions; index as i;">
+
+    <!-- No widget for interaction -->
+    <twc-no-widgets *ngIf="item.widgets.length === 0"></twc-no-widgets>
+
+    <!-- widget template -->
+    <tw-template class="widget-grid animate__animated animate__fadeIn animate__faster" [hidden]="i !== 0"
+        *ngIf="item.widgets.length > 0" [widgets]="item.widgets">
+    </tw-template>
+
+</ng-container>

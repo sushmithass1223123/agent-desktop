@@ -6,6 +6,7 @@ import { TwcCustomComponent } from '@modules/t-widgets/tw-content/twc-custom/twc
 import { TwcHomeComponent } from '@modules/t-widgets/tw-content/twc-home/twc-home.component';
 import { TwcSupervisorComponent } from '@modules/t-widgets/tw-content/twc-supervisor/twc-supervisor.component';
 import { TwcVoiceComponent } from '@modules/t-widgets/tw-content/twc-voice/twc-voice.component';
+import { TwcTextchatComponent } from '@modules/t-widgets/tw-content/twc-textchat/twc-textchat.component';
 
 export class TWContentLibrary {
 
@@ -14,7 +15,7 @@ export class TWContentLibrary {
         'twc-home': TwcHomeComponent,
         'twc-voice': TwcVoiceComponent,
         'twc-supervisor': TwcSupervisorComponent,
-        // 'twc-textchat': TextchatComponent,
+        'twc-textchat': TwcTextchatComponent,
         // 'twc-email': EmailComponent,
         'twc-custom': TwcCustomComponent
     };

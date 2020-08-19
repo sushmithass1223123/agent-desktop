@@ -1,11 +1,12 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
     selector: 'tw-custom',
     templateUrl: './tw-custom.component.html',
-    styleUrls: ['./tw-custom.component.scss']
+    styleUrls: ['./tw-custom.component.scss'],
+    encapsulation: ViewEncapsulation.None
 })
 export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestroy {
 

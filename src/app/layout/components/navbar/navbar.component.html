@@ -1,4 +1,5 @@
-<div class="navbar-header" [ngClass]="fuseConfig.layout.navbar.background">
+<div class="navbar-header"
+    [ngClass]="fuseConfig.layout.navbar.customBackgroundColor === true ? fuseConfig.layout.navbar.background : ''">
     <div class="logo" *ngIf="customerLogo?.Small.Src">
         <img class="logo-icon" [src]="customerLogo?.Small.Src" [alt]="customerLogo?.Alt"
             [width]="customerLogo?.Small.Width || 50" [height]="customerLogo?.Small.Height || 50" />
@@ -6,7 +7,7 @@
 </div>
 
 <div class="navbar-content" fusePerfectScrollbar [fusePerfectScrollbarOptions]="{suppressScrollX: true}"
-    [ngClass]="fuseConfig.layout.navbar.background">
+    [ngClass]="fuseConfig.layout.navbar.customBackgroundColor === true ? fuseConfig.layout.navbar.background : ''">
 
     <div class="twn-list">
         <mat-selection-list #sidebarList [multiple]="false">

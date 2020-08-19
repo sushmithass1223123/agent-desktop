@@ -1,10 +1,8 @@
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { fuseAnimations } from '@fuse/animations';
-import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AppDataService } from '@services/app-data.service';
+import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FuseConfigService } from '@fuse/services/config.service';
+import { AppDataService } from '@services/app-data.service';
+import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-su-channels',
@@ -26,48 +24,30 @@ export class TwSuChannelsComponent extends TWidgetWrapper implements OnInit, OnD
     // -----------------------------------------------------------
     appConfig: any;
 
-    single: any[];
-    view: any[] = [150, 150];
+    @ViewChild('chartContainerRef') chartContainerRef: ElementRef;
 
-    // options
-    gradient: boolean = false;
-    showLegend: boolean = false;
-    showLabels: boolean = false;
-    isDoughnut: boolean = true;
-    legendPosition: string = 'below';
-
-    colorScheme = {
-        domain: [
-            '#f1e5f3',
-            '#ddbfe2',
-            '#c895cf',
-            '#b26cbc',
-            '#a24fad',
-            '#91359f',
-            '#853199',
-            '#732b90',
-            '#642687',
-            '#481e76',
-            '#d2c8d9',
-            '#b59ed1',
-            '#835ab0',
-            '#512b8b'
-        ]
+    widget = {
+        view: [],
+        state: {
+            maximized: false
+        }
     };
 
-    /**
-     * Constructor
-     * @param {FuseConfigService} _fuseConfigService
-     * @param {AppDataService} _appDataService
-     */
-    constructor(
-        // @ [OPTIONAL]
-        private _fuseConfigService: FuseConfigService,
-        // @ [OPTIONAL]
-        private _appDataService: AppDataService
-    ) {
-        super();
-        this.single = [
+    pieChat = {
+        legend: false,
+        doughnut: true,
+        gradient: true,
+        legendPosition: 'below',
+        scheme: {
+            domain: [
+                '#91359f',
+                '#a24fad',
+                '#b26cbc',
+                '#c895cf',
+                '#ddbfe2',
+            ]
+        },
+        data: [
             {
                 name: 'Voice',
                 value: 10
@@ -84,12 +64,19 @@ export class TwSuChannelsComponent extends TWidgetWrapper implements OnInit, OnD
                 name: 'SMS',
                 value: 20
             }
-        ];
-    }
-    bar_chart = {
-        view: [150, 150],
+        ],
+        onSelect: (ev: any) => {
+            console.log(ev);
+        },
+        onActivate: (ev: any) => {
+            console.log(ev);
+        },
+        onDeactivate: (ev: any) => {
+            console.log(ev);
+        }
+    };
 
-        // options
+    barChart = {
         showXAxis: true,
         showYAxis: true,
         gradient: false,
@@ -98,26 +85,13 @@ export class TwSuChannelsComponent extends TWidgetWrapper implements OnInit, OnD
         xAxisLabel: 'Country',
         showYAxisLabel: false,
         yAxisLabel: 'Population',
-        animations: true,
-
+        animations: false,
         colorScheme: {
             domain: [
-                '#b26cbc',
-                '#ddbfe2',
-                '#a24fad',
-                '#c895cf',
-                '#b26cbc',
-                '#853199',
-                '#732b90',
-                '#642687',
-                '#481e76',
-                '#d2c8d9',
-                '#b59ed1',
-                '#835ab0',
-                '#512b8b'
+                '#91359f',
+                '#ddbfe2'
             ]
         },
-
         dataSource: [
             {
                 name: 'Chat',
@@ -132,7 +106,6 @@ export class TwSuChannelsComponent extends TWidgetWrapper implements OnInit, OnD
                     }
                 ]
             },
-
             {
                 name: 'Voice',
                 series: [
@@ -146,7 +119,6 @@ export class TwSuChannelsComponent extends TWidgetWrapper implements OnInit, OnD
                     }
                 ]
             },
-
             {
                 name: 'EMAIL',
                 series: [
@@ -160,7 +132,6 @@ export class TwSuChannelsComponent extends TWidgetWrapper implements OnInit, OnD
                     }
                 ]
             },
-
             {
                 name: 'SMS',
                 series: [
@@ -176,6 +147,21 @@ export class TwSuChannelsComponent extends TWidgetWrapper implements OnInit, OnD
             }
         ]
     };
+
+    /**
+     * Constructor
+     * @param {FuseConfigService} _fuseConfigService
+     * @param {AppDataService} _appDataService
+     */
+    constructor(
+        // @ [OPTIONAL]
+        private _fuseConfigService: FuseConfigService,
+        // @ [OPTIONAL]
+        private _appDataService: AppDataService
+    ) {
+        super();
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @ Lifecycle hooks
     // -----------------------------------------------------------------------------------------------------
@@ -218,6 +204,18 @@ export class TwSuChannelsComponent extends TWidgetWrapper implements OnInit, OnD
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
+
+    maximizeEvent(isMaximized: boolean): void {
+        // set the maximized state
+        this.widget.state.maximized = isMaximized;
+        // set it first to avoid widget.view length 0
+        this.widget.view = [this.chartContainerRef.nativeElement.offsetWidth / 2, this.chartContainerRef.nativeElement.offsetHeight];
+        // setttime is to make sure this event processing will be passed
+        setTimeout(() => {
+            // this is to avoid "Expression ___ has changed after it was checked" error
+            this.widget.view = [this.chartContainerRef.nativeElement.offsetWidth / 2, this.chartContainerRef.nativeElement.offsetHeight];
+        }, 100);
+    }
 }
 
 // for more info visit - https://angular.io/api/core

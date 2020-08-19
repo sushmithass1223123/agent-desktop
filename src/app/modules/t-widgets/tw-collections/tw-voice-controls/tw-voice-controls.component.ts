@@ -1,17 +1,16 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewEncapsulation } from '@angular/core';
-import { fuseAnimations } from '@fuse/animations';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
+import { IWidget } from 'app/interfaces';
 
 @Component({
     selector: 'tw-voice-controls',
     templateUrl: './tw-voice-controls.component.html',
     styleUrls: ['./tw-voice-controls.component.scss'],
-    encapsulation: ViewEncapsulation.None,
-    animations: fuseAnimations
+    encapsulation: ViewEncapsulation.None
 })
 export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
 
-    @Input() data: any;
+    @Input() data: IWidget;
 
     @Output() maximizeEvent = new EventEmitter();
     @Output() floatEvent = new EventEmitter();
@@ -28,6 +27,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
+
+        console.log('TwVoiceControlsComponent', this.data.InteractionDetails);
+
     }
 
     ngOnDestroy(): void {

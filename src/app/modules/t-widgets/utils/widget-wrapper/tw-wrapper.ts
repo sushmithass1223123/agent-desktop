@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 @Directive()
 // tslint:disable-next-line: directive-class-suffix
 export class TWidgetWrapper {
-    @HostBinding('class') class = '';
+    @HostBinding('class') class = 'tw-card';
     @HostBinding('style') style = '';
 
     // Private

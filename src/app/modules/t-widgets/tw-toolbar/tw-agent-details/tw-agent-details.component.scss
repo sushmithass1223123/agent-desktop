@@ -1,7 +1,19 @@
 tw-agent-details {
+    .agent-details {
+        width: 100px;
+
+        .agent-status {
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: left;
+        }
+    }
     .avatar {
         background-size: cover;
-        border-radius: 8px;
+        border-radius: 1rem;
+        border: 2px solid #fafafa;
         height: 44px;
         width: 48px;
     }

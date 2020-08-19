@@ -5,6 +5,9 @@ import { TwCustomComponent } from '@modules/t-widgets/tw-collections/tw-custom/t
 import { TwSampleComponent } from '@modules/t-widgets/tw-collections/tw-sample/tw-sample.component';
 import { TwWallboardComponent } from '@modules/t-widgets/tw-collections/tw-wallboard/tw-wallboard.component';
 import { TwVoicePanelComponent } from '@modules/t-widgets/tw-collections/tw-voice-panel/tw-voice-panel.component';
+import { TwChatPanelComponent } from '@modules/t-widgets/tw-collections/tw-chat-panel/tw-chat-panel.component';
+import { TwChatControlsComponent } from '@modules/t-widgets/tw-collections/tw-chat-controls/tw-chat-controls.component';
+import { TwHeatMapComponent } from '@modules/t-widgets/tw-collections/tw-heat-map/tw-heat-map.component';
 import { TwAdTotalCallsComponent } from '@modules/t-widgets/tw-collections/tw-ad-total-calls/tw-ad-total-calls.component';
 import { TwAdTotalChatsComponent } from '@modules/t-widgets/tw-collections/tw-ad-total-chats/tw-ad-total-chats.component';
 import { TwAdTotalAvComponent } from '@modules/t-widgets/tw-collections/tw-ad-total-av/tw-ad-total-av.component';
@@ -25,6 +28,9 @@ export class TWLibrary {
         'tw-custom': TwCustomComponent,
         'tw-wallbaord': TwWallboardComponent,
         'tw-voice-panel': TwVoicePanelComponent,
+        'tw-chat-panel': TwChatPanelComponent,
+        'tw-chat-controls': TwChatControlsComponent,
+        'tw-heat-map': TwHeatMapComponent,
         'tw-ad-total-calls': TwAdTotalCallsComponent,
         'tw-ad-total-interactions': TwAdTotalInteractionsComponent,
         'tw-ad-total-av': TwAdTotalAvComponent,

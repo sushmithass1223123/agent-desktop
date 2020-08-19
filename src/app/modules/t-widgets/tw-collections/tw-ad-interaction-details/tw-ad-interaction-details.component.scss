@@ -1,27 +1,29 @@
 tw-ad-interaction-details {
+    mat-icon {
+        &.channel-icon {
+            line-height: 1.5;
+        }
+    }
+
     .status {
         display: block;
         background-size: 80%;
         background-position: center center;
-        margin: 5px auto;
+        margin: 4px auto;
+        border-radius: 20px;
         &.active {
             background-color: #8bb768;
-            padding: 5px 7px;
-            border-radius: 20px;
         }
         &.closed {
             background-color: #d38a73;
-            padding: 5px 7px;
-            border-radius: 20px;
         }
         &.on-hold {
             background-color: #f1c754;
-            padding: 5px 7px;
-            border-radius: 20px;
         }
 
         mat-icon {
             font-size: 18px;
+            line-height: 2;
         }
     }
 

@@ -4,16 +4,54 @@
     $accent: map-get($theme, accent);
     $is-dark: map-get($theme, is-dark);
 
+    mat-selection-list {
+        .mat-list-single-selected-option,
+        .mat-list-single-selected-option:hover,
+        .mat-list-single-selected-option:focus {
+            animation: apply 1s;
+
+            @if ($is-dark) {
+                background: mat-color($accent, 700) !important;
+            } @else {
+                background: mat-color($accent, 700) !important;
+            }
+
+            @keyframes apply {
+                from {
+                    background-color: rgba(0, 0, 0, 0.12);
+                }
+                to {
+                    @if ($is-dark) {
+                        background: mat-color($accent, 700) !important;
+                    } @else {
+                        background: mat-color($accent, 700) !important;
+                    }
+                }
+            }
+        }
+    }
+
     .mat-table {
         tr {
             td {
                 @if ($is-dark) {
-                    background-color: map-get($background, hover);
+                    color: #eaeaea;
+                    background-color: #303030;
                 } @else {
-                    color: #555555;
+                    color: #303030;
                     background-color: #eaeaea;
                 }
             }
+        }
+    }
+
+    .mat-paginator {
+        @if ($is-dark) {
+            color: #eaeaea;
+            background-color: #303030;
+        } @else {
+            color: #303030;
+            background-color: #eaeaea;
         }
     }
 }

@@ -4,4 +4,5 @@ export interface IWidget {
     Type: string;
     Config: any;
     Data: any;
+    InteractionDetails?: any;
 }

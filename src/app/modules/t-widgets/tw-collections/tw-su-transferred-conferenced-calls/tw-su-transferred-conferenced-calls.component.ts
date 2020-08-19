@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewEncapsulation, ViewChild, ElementRef } from '@angular/core';
 import { fuseAnimations } from '@fuse/animations';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AppDataService } from '@services/app-data.service';
@@ -27,10 +27,10 @@ export class TwSuTransferredConferencedCallsComponent extends TWidgetWrapper imp
     // -----------------------------------------------------------
     appConfig: any;
 
-    bar_chart = {
-        view: [150, 150],
+    @ViewChild('chartContainerRef') chartContainerRef: ElementRef;
 
-        // options
+    widget = {
+        view: [],
         showXAxis: true,
         showYAxis: true,
         gradient: false,
@@ -39,23 +39,14 @@ export class TwSuTransferredConferencedCallsComponent extends TWidgetWrapper imp
         xAxisLabel: 'Country',
         showYAxisLabel: false,
         yAxisLabel: 'Population',
-        animations: true,
-
+        animations: false,
+        state: {
+            maximized: false
+        },
         colorScheme: {
             domain: [
-                '#b26cbc',
-                '#ddbfe2',
-                '#a24fad',
-                '#c895cf',
-                '#b26cbc',
-                '#853199',
-                '#732b90',
-                '#642687',
-                '#481e76',
-                '#d2c8d9',
-                '#b59ed1',
-                '#835ab0',
-                '#512b8b'
+                '#91359f',
+                '#ddbfe2'
             ]
         },
         dataSource: [
@@ -72,7 +63,6 @@ export class TwSuTransferredConferencedCallsComponent extends TWidgetWrapper imp
                     }
                 ]
             },
-
             {
                 name: 'Voice',
                 series: [
@@ -86,7 +76,6 @@ export class TwSuTransferredConferencedCallsComponent extends TWidgetWrapper imp
                     }
                 ]
             },
-
             {
                 name: 'EMAIL',
                 series: [
@@ -100,7 +89,6 @@ export class TwSuTransferredConferencedCallsComponent extends TWidgetWrapper imp
                     }
                 ]
             },
-
             {
                 name: 'SMS',
                 series: [
@@ -173,6 +161,18 @@ export class TwSuTransferredConferencedCallsComponent extends TWidgetWrapper imp
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
+
+    maximizeEvent(isMaximized: boolean): void {
+        // set the maximized state
+        this.widget.state.maximized = isMaximized;
+        // set it first to avoid widget.view length 0
+        this.widget.view = [this.chartContainerRef.nativeElement.offsetWidth, this.chartContainerRef.nativeElement.offsetHeight];
+        // setttime is to make sure this event processing will be passed
+        setTimeout(() => {
+            // this is to avoid "Expression ___ has changed after it was checked" error
+            this.widget.view = [this.chartContainerRef.nativeElement.offsetWidth, this.chartContainerRef.nativeElement.offsetHeight];
+        }, 0);
+    }
 }
 
 // for more info visit - https://angular.io/api/core

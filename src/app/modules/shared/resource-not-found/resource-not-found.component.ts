@@ -1,20 +1,28 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { map } from 'rxjs/operators';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
-    selector: 'app-resource-not-found',
+    selector: 'resource-not-found',
     templateUrl: './resource-not-found.component.html',
     styleUrls: ['./resource-not-found.component.scss']
 })
 export class ResourceNotFoundComponent implements OnInit {
-    isHandset$ = this.breakPointObserver.observe(Breakpoints.Handset).pipe(map((r) => r.matches));
 
-    @Input() title: string;
-    @Input() subtitle: string;
-    @Input() description: string;
+    subtitle: string;
+    title: string;
+    description: string;
 
-    constructor(private breakPointObserver: BreakpointObserver) {}
+    constructor(private _router: Router) { }
 
-    ngOnInit(): void {}
+    ngOnInit(): void {
+        this.subtitle = history.state.subtitle || '';
+        this.title = history.state.title || '';
+        this.description = history.state.description || '';
+    }
+
+    routeToLogin(): void {
+        // we will route to login page
+        this._router.navigate(['login']);
+    }
+
 }
