@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, Input, ViewEncapsulation } from '@angular/core';
 import { TWidgetWrapper } from '@twidgets/utils';
-import { IAUXCodes, SDKClient, IResponse, IAgentData, SDK } from 'tmac-sdk';
+import { IAUXCodes, SDKClient, IResponse, IAgentData, SDK, AgentStatusChangeEvent } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-aux-codes',
@@ -14,7 +14,7 @@ export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDes
 
     opened = false;
     auxCodesList: IAUXCodes[] = [];
-    currentAux: IAUXCodes = null;
+    currentAux: string;
     agentName = '';
     agentStatus = '';
 
@@ -24,6 +24,11 @@ export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDes
 
     ngOnInit(): void {
         this.initWrapper(this.data);
+
+        // listen for agent status change event
+        SDKClient.events.on('AgentStatusChangeEvent', (evt: AgentStatusChangeEvent) => {
+            this.currentAux = evt.Status;
+        });
 
         // get agent aux codes
         SDKClient.loadAUXCodes(false, null)
@@ -56,15 +61,6 @@ export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDes
         SDKClient.changeStatus({
             type: item.Code === 'available' ? 'available' : item.Code === 'acw' ? 'acw' : 'aux',
             code: item.Value.toString()
-        }, null).then((result: IResponse) => {
-            // check the response
-            if (result.response) {
-                this.auxCodesList.forEach((aux: IAUXCodes) => {
-                    if (aux.Name === result.response.Status) {
-                        this.currentAux = aux;
-                    }
-                });
-            }
-        });
+        }, null);
     }
 }

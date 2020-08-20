@@ -27,7 +27,7 @@ export class TwTemplateComponent implements AfterContentInit {
         // loop throught input widgets
         this.widgets.forEach((widget) => {
 
-            console.log(`TwTemplateComponent: ${widget.data.Type}`, widget);
+            // console.log(`TwTemplateComponent: ${widget.data.Type}`, widget);
 
             // create the component factory
             const componentFactory = this._componentFactoryResolver.resolveComponentFactory(widget.component);

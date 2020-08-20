@@ -7,7 +7,7 @@ import { takeUntil } from 'rxjs/operators';
 // tslint:disable-next-line: directive-class-suffix
 export class TWContentWrapper {
 
-    @HostBinding('class') class = 'twc-card';
+    @HostBinding('class') class = 'twc-card animate__animated animate__zoomIn animate__faster';
     @HostBinding('style') style = '';
 
     widgetData: any;

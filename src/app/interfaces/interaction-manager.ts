@@ -4,5 +4,6 @@ export interface ActiveInteraction {
 }
 
 export interface InteractionRef extends ActiveInteraction {
+    isActive: boolean;
     status: string;
 }

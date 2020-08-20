@@ -2,11 +2,11 @@ import { Component, ElementRef, Input, OnDestroy, OnInit, ViewEncapsulation } fr
 import { TWidget } from '@modules/t-widgets/utils';
 import { TWLibrary } from '@twidgets/utils/widget-library/tw-library';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
-import { IWidget, ActiveInteraction } from 'app/interfaces';
+import { InteractionRef, InteractionWidgets, IWidget } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
 import { InteractionManagerService } from 'app/services/interaction-manager.service';
-import { InteractionClosedEvent, SDKClient, TextChatIncomingEvent } from 'tmac-sdk';
 import { takeUntil } from 'rxjs/operators';
+import { InteractionClosedEvent, SDKClient, TextChatIncomingEvent } from 'tmac-sdk';
 
 @Component({
     selector: 'twc-textchat',
@@ -18,7 +18,9 @@ export class TwcTextchatComponent extends TWContentWrapper implements OnInit, On
 
     @Input() data: any;
 
-    interactions: InteractionVoiceWidgets[] = [];
+    pageActive: boolean;
+
+    interactions: InteractionWidgets[] = [];
     activeInteraction: number;
 
     constructor(
@@ -34,99 +36,23 @@ export class TwcTextchatComponent extends TWContentWrapper implements OnInit, On
         this.initWrapper(this.data);
 
         // subscribe to active interaction observable
-        this._interactionManagerService.activeInteraction
+        this._interactionManagerService.interactions
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe(
-                (actInt: ActiveInteraction) => {
+                (interactions: InteractionRef[]) => {
                     // check if there are textchat interactions first
                     if (this.interactions.length > 0) {
+                        const textInteractions = interactions.filter(i => i.type === 'textchat');
                         // filter and get the active textchat interaction if any
-                        this.activeInteraction = actInt.type === 'textchat' ? actInt.interactionId : null;
+                        textInteractions.forEach((interaction: InteractionRef) => {
+                            this.activeInteraction = interaction.isActive ? interaction.interactionId : this.activeInteraction;
+                        });
                     }
                 }
             );
 
         // listen to TMAC events
         this.registerToEvents();
-
-        // setTimeout(() => {
-        //     SDKClient.events.emit('TextChatIncomingEvent',
-        //         {
-        //             'IsManualAnswer': false,
-        //             'UCID': 'dev200707220851_1035',
-        //             'PhoneNumber': '1035',
-        //             'VDNName': '49029',
-        //             'CalledDevice': '49029',
-        //             'Queue': '49029',
-        //             'QueueName': '49029',
-        //             'IsAgentTransferedChat': false,
-        //             'IsAgentConferenceChat': false,
-        //             'IsDeflected': false,
-        //             'RecoveryData': {},
-        //             'SourceAgentID': '',
-        //             'SourceAgentName': 'Mohamed Siraj',
-        //             'SourceTransferComment': null,
-        //             'SourceAgentInteractionId': '',
-        //             'ConferenceType': '',
-        //             'IsNonVoiceRouting': true,
-        //             'IsReCreate': false,
-        //             'ChatBotFlow': null,
-        //             'EventName': 'TextChatIncomingEvent',
-        //             'InteractionID': 1002,
-        //             'IsInteractionConstructEvent': false,
-        //             'IsInteractionDisposeEvent': false,
-        //             'CreatedTime': '2020-07-07T22:08:59.3023561+05:30',
-        //             'EventId': 'baa83e9d-0404-4a95-a7df-2e885bdbe148',
-        //             'RecoveryEvent': false,
-        //             'QueuedEvent': false,
-        //             'ACK': {
-        //                 'IsRequired': false,
-        //                 'Source': null,
-        //                 'Id': null,
-        //                 'Channel': null
-        //             }
-        //         });
-        // }, 2000);
-
-        // setTimeout(() => {
-        //     SDKClient.events.emit('TextChatIncomingEvent',
-        //         {
-        //             'IsManualAnswer': false,
-        //             'UCID': 'dev200707220851_1035',
-        //             'PhoneNumber': '1035',
-        //             'VDNName': '49029',
-        //             'CalledDevice': '49029',
-        //             'Queue': '49029',
-        //             'QueueName': '49029',
-        //             'IsAgentTransferedChat': false,
-        //             'IsAgentConferenceChat': false,
-        //             'IsDeflected': false,
-        //             'RecoveryData': {},
-        //             'SourceAgentID': '',
-        //             'SourceAgentName': 'Mohamed Siraj',
-        //             'SourceTransferComment': null,
-        //             'SourceAgentInteractionId': '',
-        //             'ConferenceType': '',
-        //             'IsNonVoiceRouting': true,
-        //             'IsReCreate': false,
-        //             'ChatBotFlow': null,
-        //             'EventName': 'TextChatIncomingEvent',
-        //             'InteractionID': 1003,
-        //             'IsInteractionConstructEvent': false,
-        //             'IsInteractionDisposeEvent': false,
-        //             'CreatedTime': '2020-07-07T22:08:59.3023561+05:30',
-        //             'EventId': 'baa83e9d-0404-4a95-a7df-2e885bdbe148',
-        //             'RecoveryEvent': false,
-        //             'QueuedEvent': false,
-        //             'ACK': {
-        //                 'IsRequired': false,
-        //                 'Source': null,
-        //                 'Id': null,
-        //                 'Channel': null
-        //             }
-        //         });
-        // }, 10000);
-
     }
 
     ngOnDestroy(): void {
@@ -137,7 +63,7 @@ export class TwcTextchatComponent extends TWContentWrapper implements OnInit, On
     private registerToEvents(): void {
         // listen to incoming texchat event
         SDKClient.events.on('TextChatIncomingEvent', ((evt: TextChatIncomingEvent) => {
-            const voiceWidgets: TWidget[] = [];
+            const textchatWidgets: TWidget[] = [];
             // get the content widgets
             const widgets = this.data.Data.Widgets || [];
             // loop and get the widgets
@@ -149,42 +75,41 @@ export class TwcTextchatComponent extends TWContentWrapper implements OnInit, On
                 // check if the component is proper
                 if (component) {
                     // append the widget component to the list
-                    voiceWidgets.push(component);
+                    textchatWidgets.push(component);
                 }
             });
             // push the interaction details with widgets to the list
             this.interactions.push({
                 interactionId: evt.InteractionID,
-                widgets: voiceWidgets
+                widgets: textchatWidgets,
+                status: 'incoming'
             });
-
-            // check if the first interaction then active it
-            if (this.interactions.length === 1) {
-                // set the active interaction
-                this._interactionManagerService.activeInteraction = {
-                    type: 'textchat',
-                    interactionId: evt.InteractionID
-                };
-
-                // check if the textchat page is opened if not open for the first interaction
-            }
 
             // add the construct event to the interaction manager
             this._interactionManagerService.addInteraction({
-                type: 'textchat',
                 interactionId: evt.InteractionID,
-                status: 'incoming'
+                type: 'textchat',
+                status: 'incoming',
+                isActive: this.interactions.length === 1
             });
+
+            // check if the page is active if not open it
+            if (!this.pageActive && this.interactions.length === 1) {
+                this.contentPageService.mode = this.data.Data.Path;
+            }
         }));
 
         // listen to the interaction closed event and filter out the interaction
         SDKClient.events.on('InteractionClosedEvent', (evt: InteractionClosedEvent) => {
-            this.interactions = this.interactions.filter((i: InteractionVoiceWidgets) => i.interactionId !== evt.InteractionID);
+            this.interactions = this.interactions.filter((i: InteractionWidgets) => i.interactionId !== evt.InteractionID);
+            // if there are other item in the list auto select fist chat after closing current
+            if (this.interactions.length > 0) {
+                this._interactionManagerService.updateInteraction(this.interactions[0].interactionId, 'isActive', true);
+            }
         });
     }
-}
 
-interface InteractionVoiceWidgets {
-    interactionId: number;
-    widgets: TWidget[];
+    onActive = () => {
+        this.pageActive = true;
+    }
 }

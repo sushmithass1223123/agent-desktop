@@ -23,12 +23,13 @@
             </div>
             <div fxLayout="row" fxLayoutAlign="space-between none">
                 <span>Interaction Duration: {{ interactionDuration }}</span>
+                <span>Interaction Status: {{ interactionStatus }}</span>
             </div>
         </div>
 
         <div fxLayout="row" fxLayoutAlign=" none" class="mt-4 chat-container">
             <div fxLayout="column" fxLayoutAlign=" center" class="pt-8 interaction-selector">
-                <button class="mat--z0 more-option-button" mat-mini-fab color="default">
+                <button [disabled]="!isConnected" class="mat--z0 more-option-button" mat-mini-fab color="default">
                     <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M17 34C13.6377 34 10.3509 33.003 7.55531 31.135C4.75968 29.267 2.58075 26.612 1.29406 23.5056C0.00736582 20.3993 -0.329291 16.9811 0.326658 13.6835C0.982607 10.3858 2.6017 7.35668 4.97919 4.97919C7.35668 2.6017 10.3858 0.982607 13.6835 0.326658C16.9811 -0.329291 20.3993 0.00736582 23.5056 1.29406C26.612 2.58075 29.267 4.75968 31.135 7.55531C33.003 10.3509 34 13.6377 34 17C33.995 21.5071 32.2023 25.8282 29.0153 29.0153C25.8282 32.2023 21.5071 33.995 17 34ZM10.2 15.3C9.74914 15.3 9.31674 15.4791 8.99793 15.7979C8.67911 16.1167 8.50001 16.5491 8.50001 17C8.50001 17.4509 8.67911 17.8833 8.99793 18.2021C9.31674 18.5209 9.74914 18.7 10.2 18.7H15.3V23.8C15.3 24.2509 15.4791 24.6833 15.7979 25.0021C16.1167 25.3209 16.5491 25.5 17 25.5C17.4509 25.5 17.8833 25.3209 18.2021 25.0021C18.5209 24.6833 18.7 24.2509 18.7 23.8V18.7H23.8C24.2509 18.7 24.6833 18.5209 25.0021 18.2021C25.3209 17.8833 25.5 17.4509 25.5 17C25.5 16.5491 25.3209 16.1167 25.0021 15.7979C24.6833 15.4791 24.2509 15.3 23.8 15.3H18.7V10.2C18.7 9.74914 18.5209 9.31674 18.2021 8.99793C17.8833 8.67911 17.4509 8.50001 17 8.50001C16.5491 8.50001 16.1167 8.67911 15.7979 8.99793C15.4791 9.31674 15.3 9.74914 15.3 10.2V15.3H10.2Z"
@@ -49,17 +50,23 @@
                     </button>
                 </mat-menu> -->
 
-                <div fxLayout="column" fxLayoutAlign=" center" class="w-100-p h-100-p mt-8 interactions" fusePerfectScrollbar>
+                <div
+                    fxLayout="column"
+                    fxLayoutAlign=" center"
+                    class="w-100-p h-100-p mt-8 interactions"
+                    fusePerfectScrollbar
+                    [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
+                >
                     <ngx-avatar
                         *ngFor="let item of interactionList"
                         class="mt-8 user-avatar"
-                        [ngClass]="item.InteractionID === interactionId ? 'active' : ''"
+                        [ngClass]="item.interactionId === interactionId ? 'active' : ''"
                         bgColor="#FFFFFF"
                         fgColor="#555555"
                         cornerRadius="15"
                         size="50"
                         [round]="false"
-                        name="{{ item.InteractionID }}"
+                        name="{{ item.interactionId }}"
                         [style]="{ cursor: 'pointer', height: '40px' }"
                         (click)="selectInteraction(item)"
                     >
@@ -81,7 +88,7 @@
                 <div fxLayout="row" fxLayoutAlign="end none" class="chat-actions">
                     <button
                         *ngIf="data.Data.TransferAllowed"
-                        disabled="data.Data.TransferAllowed && !isConnected"
+                        [disabled]="!isConnected"
                         class="mat-elevation-z2"
                         mat-mini-fab
                         color="default"
@@ -96,7 +103,7 @@
 
                     <button
                         *ngIf="data.Data.ConferenceAllowed"
-                        disabled="data.Data.ConferenceAllowed && !isConnected"
+                        [disabled]="!isConnected"
                         class="mat-elevation-z2"
                         mat-mini-fab
                         color="default"
@@ -111,7 +118,7 @@
 
                     <button
                         *ngIf="data.Data.AV.Escalate.Audio"
-                        disabled="data.Data.AV.Escalate.Audio && !isConnected"
+                        [disabled]="!isConnected"
                         class="mat-elevation-z2"
                         mat-mini-fab
                         color="default"
@@ -126,7 +133,7 @@
 
                     <button
                         *ngIf="data.Data.AV.Escalate.Video"
-                        disabled="data.Data.AV.Escalate.Video && !isConnected"
+                        [disabled]="!isConnected"
                         class="mat-elevation-z2"
                         mat-mini-fab
                         color="default"
@@ -139,37 +146,51 @@
                         <mat-icon>video_call</mat-icon>
                     </button>
 
-                    <button disabled="!isConnected" class="mat-elevation-z2" mat-mini-fab color="warn">
+                    <button [disabled]="!isConnected" class="mat-elevation-z2" mat-mini-fab color="warn" (click)="endChat()">
                         <mat-icon>close</mat-icon>
+                    </button>
+
+                    <button
+                        *ngIf="!isConnected"
+                        mat-raised-button
+                        class="animate__animated animate__slideInRight animate__faster"
+                        color="warn"
+                        (click)="closeInteraction()"
+                    >
+                        Close
                     </button>
                 </div>
 
                 <!-- CHAT CONTENT -->
-                <div class="chat-transcripts" fxFlex="1 1 auto" fusePerfectScrollbar>
+                <div class="chat-transcripts" fxFlex="1 1 auto" fusePerfectScrollbar [fusePerfectScrollbarOptions]="{ suppressScrollX: true }">
                     <!-- CHAT MESSAGES -->
                     <div class="chat-messages">
                         <!-- MESSAGE -->
                         <div
                             *ngFor="let message of chatTranscripts; let i = index"
-                            class="message-row"
+                            class="message-row animate__animated animate__slideInUp animate__faster"
                             [ngClass]="{
-                                me: message.who === user.id,
-                                contact: message.who !== user.id,
+                                me: message.who === user.agentName,
+                                contact: message.who !== user.agentName,
                                 'first-of-group': isFirstMessageOfGroup(message, i),
                                 'last-of-group': isLastMessageOfGroup(message, i)
                             }"
                         >
                             <div
+                                fxLayout="column"
+                                fxLayoutAlign="start start"
                                 class="bubble"
                                 [ngClass]="
-                                    message.who !== user.id && fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                                    message.who !== user.agentName &&
+                                    fuseConfig.layout.anchorWidget.customBackgroundColor === true &&
+                                    data.Config.Anchor
                                         ? fuseConfig.layout.anchorWidget.bodyBackground
                                         : ''
                                 "
                             >
+                                <div *ngIf="isFirstMessageOfGroup(message, i)" class="user-label font-size-16 text-bold">{{ message.who }}</div>
                                 <div class="message">{{ message.message }}</div>
-                                <!-- <div class="time secondary-text">{{message.time | date:'short'}}</div> -->
-                                <div class="time">{{ message.time | date: 'short' }}</div>
+                                <div class="time">{{ message.time | date: 'shortTime' }}</div>
                             </div>
                         </div>
                         <!-- / MESSAGE -->
@@ -182,13 +203,33 @@
                 <div class="chat-footer" fxFlex="0 0 auto" fxLayout="column">
                     <!-- REPLY FORM -->
                     <div class="reply-form" fxFlex="0 0 auto" fxLayout="row" fxLayoutAlign="center center">
-                        <form #replyForm="ngForm" fxFlex fxLayout="row" fxLayoutAlign="start center">
-                            <button class="emoji-button" mat-icon-button aria-label="Select Emoji">
+                        <form
+                            #replyForm="ngForm"
+                            (ngSubmit)="reply($event)"
+                            (keydown.enter)="reply($event)"
+                            fxFlex
+                            fxLayout="row"
+                            fxLayoutAlign="start center"
+                        >
+                            <button
+                                *ngIf="data.Data.EmojiAllowed"
+                                [disabled]="!isConnected"
+                                class="emoji-button"
+                                mat-icon-button
+                                aria-label="Select Emoji"
+                            >
                                 <mat-icon>emoji_emotions</mat-icon>
                             </button>
 
-                            <mat-form-field class="message-text" fxFlex floatLabel="never" appearance="standard">
+                            <mat-form-field
+                                class="message-text"
+                                [ngClass]="{ emoji: data.Data.EmojiAllowed }"
+                                fxFlex
+                                floatLabel="never"
+                                appearance="standard"
+                            >
                                 <textarea
+                                    [disabled]="!isConnected"
                                     matInput
                                     #replyInput
                                     placeholder="Type your message"
@@ -199,7 +240,7 @@
                                 ></textarea>
                             </mat-form-field>
 
-                            <button class="send-message-button" mat-icon-button type="submit" aria-label="Send message">
+                            <button [disabled]="!isConnected" class="send-message-button" mat-icon-button type="submit" aria-label="Send message">
                                 <mat-icon>send</mat-icon>
                             </button>
                         </form>

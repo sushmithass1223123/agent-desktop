@@ -4,9 +4,13 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { FuseConfigService } from '@fuse/services/config.service';
+import { AppDataService } from '@services/app-data.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AgentForcedLogoffEvent, SDKClient } from 'tmac-sdk';
+import { AgentForcedLogoffEvent, SDKClient, InteractionClosedEvent } from 'tmac-sdk';
+import { ILoginData } from 'app/interfaces';
+import { InteractionManagerService } from '@services/interaction-manager.service';
+import { InteractionEventsService } from '@services/interaction-events.service';
 
 @Component({
     selector: 'main',
@@ -26,7 +30,11 @@ export class MainComponent implements OnInit, OnDestroy {
         private _fuseConfigService: FuseConfigService,
         private _fuseSidebarService: FuseSidebarService,
         private _router: Router,
-        private _snackBar: MatSnackBar
+        private _snackBar: MatSnackBar,
+        private _appDataService: AppDataService,
+        private _interactionManagerService: InteractionManagerService,
+        // this service must not be removed, this will listen to some TMAC events
+        private _interactionEventsService: InteractionEventsService
     ) {
         // Set the private defaults
         this._unsubscribeAll = new Subject();
@@ -49,22 +57,8 @@ export class MainComponent implements OnInit, OnDestroy {
 
             });
 
-        // check if the main is routed from login
-        if (!history.state.fromUrl || history.state.fromUrl !== 'login') {
-            SDKClient.getLoginData().then((dt: any) => {
-                // check if the login data is available, if not route back to login page
-                if (dt === null || !dt.agentData.isLoggedIn) {
-                    // we will route to login page
-                    this._router.navigate(['login']);
-                }
-                else {
-                    this.pollForEvent();
-                }
-            });
-        }
-        else {
-            this.pollForEvent();
-        }
+        // check the login
+        this.checkLogin();
     }
 
     /**
@@ -77,19 +71,29 @@ export class MainComponent implements OnInit, OnDestroy {
     }
 
     // -----------------------------------------------------------------------------------------------------
-    // @ Public methods
+    // @ Private methods
     // -----------------------------------------------------------------------------------------------------
 
-    /**
-     * Toggle sidebar open
-     *
-     * @param key
-     */
-    toggleSidebarOpen(key: any): void {
-        this._fuseSidebarService.getSidebar(key).toggleOpen();
+    private async checkLogin(): Promise<any> {
+        // get the login data
+        const loginData = await SDKClient.getLoginData();
+        // check if the main is routed from login
+        if (!history.state.fromUrl || history.state.fromUrl !== 'login') {
+            // check if the login data is available, if not route back to login page
+            if (loginData === null || !loginData.agentData.isLoggedIn) {
+                // we will route to login page
+                this._router.navigate(['login']);
+            }
+            else {
+                this.pollForEvent(loginData);
+            }
+        }
+        else {
+            this.pollForEvent(loginData);
+        }
     }
 
-    private pollForEvent(): void {
+    private pollForEvent(loginData: ILoginData): void {
         this._snackBar.open('Hello, welcome to TMAC', 'x', {
             duration: 3000,
             verticalPosition: 'top', // 'top' | 'bottom'
@@ -97,11 +101,19 @@ export class MainComponent implements OnInit, OnDestroy {
             panelClass: ['snackbar']
         });
 
+        // set the login data
+        this._appDataService.setLoginData(loginData);
+
         // set the loaded to true
         this.loaded = true;
 
-        // register for get events
-        SDKClient.getEvents();
+        // listen to the interaction closed event and remove from service
+        SDKClient.events.on('InteractionClosedEvent', (evt: InteractionClosedEvent) => {
+            // remove interaction from service
+            this._interactionManagerService.removeInteraction(evt.InteractionID);
+            // remove the events from service
+            this._interactionEventsService.remove(evt.InteractionID);
+        });
 
         // listen to force log off event
         SDKClient.events.on('AgentForcedLogoffEvent', (evt: AgentForcedLogoffEvent) => {
@@ -136,5 +148,21 @@ export class MainComponent implements OnInit, OnDestroy {
                     }
                 });
         });
+
+        // register for get events
+        SDKClient.getEvents();
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+    // @ Public methods
+    // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * Toggle sidebar open
+     *
+     * @param key
+     */
+    toggleSidebarOpen(key: any): void {
+        this._fuseSidebarService.getSidebar(key).toggleOpen();
     }
 }

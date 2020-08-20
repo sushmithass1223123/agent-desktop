@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { ILoginData } from 'app/interfaces';
 import * as _ from 'lodash';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -8,6 +9,7 @@ import * as _ from 'lodash';
 export class AppDataService {
     // Private
     private _configSubject: BehaviorSubject<any>;
+    private _loginData: ILoginData;
 
     constructor() {
         // Set the config from the default config
@@ -34,5 +36,21 @@ export class AppDataService {
 
     get config(): any | Observable<any> {
         return this._configSubject.asObservable();
+    }
+
+    setLoginData(data: ILoginData): void {
+        // check if the data is privided
+        if (data) {
+            this._loginData = data;
+            console.log('Login data binded successfully', data);
+        }
+    }
+
+    getLoginData(): ILoginData {
+        // check if the data is there
+        if (this._loginData) {
+            return { ...this._loginData };
+        }
+        return null;
     }
 }

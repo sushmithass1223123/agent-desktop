@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, ViewEncapsulation, OnInit, OnDestroy, Input, ViewChildren, QueryList } from '@angular/core';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -6,6 +6,7 @@ import { AppDataService } from 'app/services/app-data.service';
 import { ContentPageService } from 'app/services/content-page.service';
 import { IWidget } from 'app/interfaces/';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
+import { MatListOption } from '@angular/material/list';
 
 @Component({
     selector: 'navbar',
@@ -16,6 +17,8 @@ import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 export class NavbarComponent implements OnInit, OnDestroy {
     @Input()
     layout = 'vertical';
+
+    @ViewChildren('sidebarListOption') sidebarListOptions: QueryList<MatListOption>;
 
     fuseConfig: any;
 
@@ -103,6 +106,16 @@ export class NavbarComponent implements OnInit, OnDestroy {
                     }
                 }
             );
+
+        this._contentPageService.mode
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((viewMode: string) => {
+                this.sidebarListOptions?.forEach((option: MatListOption) => {
+                    if (option.value === viewMode && !option.selected) {
+                        option.selected = true;
+                    }
+                });
+            });
     }
 
     /**

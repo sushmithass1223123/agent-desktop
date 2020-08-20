@@ -997,7 +997,7 @@
                                                 "ImmediateCallbackAllowed": false,
                                                 "ScheduledCallbackAllowed": false,
                                                 "SignatureAllowed": false,
-                                                "EmojiAllowed": false,
+                                                "EmojiAllowed": true,
                                                 "ReplyOnChatAllowed": false,
                                                 "CameraCaptureAllowed": false,
                                                 "VoiceNoteAllowed": false,

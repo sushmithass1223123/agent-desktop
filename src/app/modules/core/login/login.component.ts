@@ -26,7 +26,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     brandLogo = null;
 
     loginForm: FormGroup;
-    confirmDialogRef: MatDialogRef<FuseConfirmDialogComponent>;
 
     loginConfig = null;
     logoSrc = '';
@@ -227,15 +226,14 @@ export class LoginComponent implements OnInit, OnDestroy {
                 if (response.ResultCode > 0) {
                     if (response.ResultCode === 3) {
                         // config force login
-                        this.confirmDialogRef = this._dialog.open(FuseConfirmDialogComponent, {
+                        const confirmDialogRef = this._dialog.open(FuseConfirmDialogComponent, {
                             disableClose: false
                         });
-                        this.confirmDialogRef.componentInstance.confirmMessage = 'Another session detected. Do you want to take it over?';
-                        this.confirmDialogRef.afterClosed().subscribe((dialogResult) => {
+                        confirmDialogRef.componentInstance.confirmMessage = 'Another session detected. Do you want to take it over?';
+                        confirmDialogRef.afterClosed().subscribe((dialogResult) => {
                             if (dialogResult) {
                                 this.login(true);
                             }
-                            this.confirmDialogRef = null;
                         });
                     } else {
                         // login success

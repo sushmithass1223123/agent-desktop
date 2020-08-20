@@ -4,7 +4,7 @@
 </button>
 <mat-menu class="tw-aux-codes-list" #menu="matMenu" xPosition="before">
     <button mat-menu-item *ngFor="let item of auxCodesList" (click)="changeStatus(item)"
-        disabled="{{ item === currentAux }}">
+        disabled="{{ item.Name === currentAux }}">
         <mat-icon class="{{ item.Code.toLowerCase() }}">
             {{ item.Code.toLowerCase() === 'available' ? 'check_circle' : item.Code === 'logout' ? 'settings_power' : 'remove_circle' }}
         </mat-icon>
