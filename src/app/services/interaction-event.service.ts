@@ -39,7 +39,7 @@ export class InteractionEventService {
             // add all the interaction events to the array
             this._tmacEventArray.push(evt);
             // check for construct/dispose events
-            if (evt.IsInteractionConstructEvent || evt.IsInteractionDisposeEvent || evt.EventName === 'TextChatIncomingEvent') {
+            if (evt.IsInteractionConstructEvent || evt.IsInteractionDisposeEvent) {
                 // for dispose event remove the reference from array
                 if (evt.IsInteractionDisposeEvent) {
                     // remove the events for the ID

@@ -53,13 +53,17 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
 
     openInteraction(item: InteractionRef): void {
         // if the item is already active ignore
-        if (!item.isActive && item.path === this.currentViewMode) {
+        if (!item.isActive) {
             // set interaction active
             this._interactionManagerService.updateInteraction(item.interactionId, {
                 'isActive': true
             });
+        }
+        // if current mode item view mode then ignore
+        if (item.path !== this.currentViewMode) {
             // set the content page active
             this._contentPageService.mode = item.path;
         }
+
     }
 }

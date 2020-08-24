@@ -27,7 +27,7 @@ export class AppComponent implements OnInit, OnDestroy {
     navigation: any;
     config: any;
 
-    configPath = '/assets/app-config.json';
+    configPath = 'assets/app-config.json';
     loaded = false;
 
     // Private

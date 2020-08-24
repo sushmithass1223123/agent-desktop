@@ -1,5 +1,5 @@
 <tw-wrapper [data]="data">
-    <div class="h-50-p w-100-p bg-inherit mat-table-container" fusePerfectScrollbar>
+    <div class="w-100-p bg-inherit mat-table-container" [ngClass]="this.source === 'supervisor' ? 'h-100-p' : 'h-50-p'" fusePerfectScrollbar>
         <table
             mat-table
             [dataSource]="dataSource"

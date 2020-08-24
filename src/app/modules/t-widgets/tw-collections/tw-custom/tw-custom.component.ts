@@ -11,6 +11,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestroy {
 
     @Input() data: any;
+    
     loaded = false;
     url: any;
 

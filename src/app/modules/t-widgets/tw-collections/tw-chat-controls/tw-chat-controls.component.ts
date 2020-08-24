@@ -57,16 +57,15 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
     user: IAgentData;
     replyInput: any;
-    isConnected: boolean;
-    sessionID: string;
-    startTime: string;
-    interactionDuration: string;
+    isConnected = false;
+    sessionID = 'NA';
+    startTime = 'NA';
+    interactionDuration = 'NA';
     stopTimer = new Subject();
-    interactionStatus: string;
+    interactionStatus = 'NA';
     chatTranscripts: any[] = [];
-    customerName: string;
-
-    unreadChats: number;
+    customerName = 'Customer';
+    unreadChats = 0;
 
     @ViewChildren(FusePerfectScrollbarDirective) directiveScrolls: QueryList<FusePerfectScrollbarDirective>;
     @ViewChildren('replyInput') replyInputField: any;
@@ -81,14 +80,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         private _fuseProgressBarService: FuseProgressBarService
     ) {
         super();
-
-        this.isConnected = false;
-        this.sessionID = 'NA';
-        this.startTime = 'NA';
-        this.interactionDuration = 'NA';
-        this.interactionStatus = 'NA';
-        this.customerName = 'Customer';
-        this.unreadChats = 0;
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -197,7 +188,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.isConnected = true;
         this.interactionStatus = 'Connected';
         // get the customer name
-        this.customerName = evt.screenName;
+        this.customerName = evt.screenName || 'Customer';
         // update the interaction status and user
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
             'status': 'connected',

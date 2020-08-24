@@ -26,7 +26,7 @@ export class TWLibrary {
     static widgetLibrary: Record<string, Type<any>> = {
         'tw-sample': TwSampleComponent,
         'tw-custom': TwCustomComponent,
-        'tw-wallbaord': TwWallboardComponent,
+        'tw-wallboard': TwWallboardComponent,
         'tw-voice-panel': TwVoicePanelComponent,
         'tw-chat-panel': TwChatPanelComponent,
         'tw-chat-controls': TwChatControlsComponent,

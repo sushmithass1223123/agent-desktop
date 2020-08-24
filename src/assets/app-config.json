@@ -178,7 +178,7 @@
                             {
                                 "Name": "Wallbaord",
                                 "Description": "",
-                                "Type": "tw-wallbaord",
+                                "Type": "tw-wallboard",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": true,
@@ -338,7 +338,7 @@
                             {
                                 "Name": "Performance",
                                 "Description": "",
-                                "Type": "tw-performance-dashboard",
+                                "Type": "tw-custom",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
@@ -360,7 +360,9 @@
                                     "Header": true,
                                     "Disabled": false
                                 },
-                                "Data": {}
+                                "Data": {
+                                    "Url": "https://cdn.dribbble.com/users/13218/screenshots/14075817/media/c408c1056f04b16a886f1fd8593598c5.png"
+                                }
                             },
                             {
                                 "Name": "Gamification",
@@ -1552,7 +1554,7 @@
         "SDK": {
             "Proxy": {
                 "Urls": [
-                    "https://tmac.tetherfilabs.com/TMACHttpProxy/TmacProxy.asmx"
+                    "https://dice.tetherfi.cloud/TMACHttpProxy/TmacProxy.asmx"
                 ],
                 "Type": "soap"
             },
