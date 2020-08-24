@@ -1,0 +1,36 @@
+<!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
+<!-- implement following events in your component to access widget wrapper action events -->
+<!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
+
+<!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
+
+<tw-wrapper [data]="data">
+    <!-- your code goes here -->
+    <div fxLayout="row" fxLayoutAlign="center start" fusePerfectScrollbar>
+        <div fxFlex="50">
+            <tw-pannel
+                [imageUrl]="activityData.profilePicUrl !== '' ? activityData.profilePicUrl : ''"
+                [details]="activityData.details !== '' ? activityData.details : ''"
+                [title]="'Profile'"
+            >
+            </tw-pannel>
+        </div>
+       
+      <div fxFlex="50">
+            <tw-pannel [imageUrl]="activityData.snapshotUrl !== '' ? activityData.snapshotUrl : ''" [title]="'Snapshot'"> </tw-pannel>
+        </div> 
+    </div>
+    <div fxLayout="row" fxLayoutAlign="center start">
+        <div fxFlex="50">
+            <tw-pannel [videoUrl]="activityData.screenRecordUrl !== '' ? activityData.screenRecordUrl : ''" [title]="'Screen record video'">
+            </tw-pannel>
+        </div>
+        <div fxFlex="50">
+            <tw-pannel [title]="'Location'">
+                <div style="height: 300px;" *ngIf="options" leaflet [leafletOptions]="options"></div>
+            </tw-pannel>
+        </div>
+    </div>
+
+    <!-- your code goes here -->
+</tw-wrapper>

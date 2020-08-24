@@ -3,8 +3,9 @@ import { NgModule } from '@angular/core';
 import { FuseSharedModule } from '@fuse/shared.module';
 import { MaterialModule } from './material.module';
 import { ResourceNotFoundComponent } from './resource-not-found/resource-not-found.component';
+import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 
-const sharedModules = [MaterialModule, FuseSharedModule];
+const sharedModules = [MaterialModule, FuseSharedModule, LeafletModule];
 
 const sharedComponents = [ResourceNotFoundComponent];
 

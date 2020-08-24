@@ -28,7 +28,13 @@ import { TwUnknownComponent } from './tw-unknown/tw-unknown.component';
 import { TwVoiceControlsComponent } from './tw-voice-controls/tw-voice-controls.component';
 import { TwVoicePanelComponent } from './tw-voice-panel/tw-voice-panel.component';
 import { TwWallboardComponent } from './tw-wallboard/tw-wallboard.component';
-
+import { TwSuSkillsDashboardComponent } from './tw-su-skills-dashboard/tw-su-skills-dashboard.component';
+import { TwSuActiveAgentsComponent } from './tw-su-active-agents/tw-su-active-agents.component';
+import { IconNotifyCountComponent } from './tw-su-active-agents/icon-notify-count/icon-notify-count.component';
+import { TwSuWorkCodesComponent } from './tw-su-work-codes/tw-su-work-codes.component';
+import { TwSuAgentActivityComponent } from './tw-su-agent-activity/tw-su-agent-activity.component';
+import { TwPannelComponent } from './tw-pannel/tw-pannel.component';
+import { TwSuAgentActivityDetailsComponent } from './tw-su-agent-activity/tw-su-agent-activity-details/tw-su-agent-activity-details.component';
 
 @NgModule({
     declarations: [
@@ -57,12 +63,14 @@ import { TwWallboardComponent } from './tw-wallboard/tw-wallboard.component';
         TwSuChannelsStatusComponent,
         TwSuChannelsComponent,
         TwSuStatusComponent,
+        TwSuSkillsDashboardComponent,
+        TwSuActiveAgentsComponent,
+        IconNotifyCountComponent,
+        TwSuWorkCodesComponent,
+        TwSuAgentActivityComponent,
+        TwPannelComponent,
+        TwSuAgentActivityDetailsComponent,
     ],
-    imports: [
-        SharedModule,
-        TwWrapperModule,
-        NgxChartsModule,
-        AvatarModule
-    ]
+    imports: [SharedModule, TwWrapperModule, NgxChartsModule, AvatarModule]
 })
-export class TwCollectionsModule { }
+export class TwCollectionsModule {}

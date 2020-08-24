@@ -1,0 +1,40 @@
+<tw-wrapper [data]="data">
+    <!-- your code goes here -->
+    <div *ngIf="details; else elseBlock">
+        <div fxLayout="row" fxLayoutAlign="center center">
+            <div fxFlex="50">
+                <ng-container>
+                    <img *ngIf="imageUrl" [src]="imageUrl" />
+                    <video *ngIf="videoUrl" controls>
+                        <source [src]="videoUrl" type="video/mp4" />
+                    </video>
+                </ng-container>
+            </div>
+            <div fxFlex="50">
+                <div fxLayout="column" fxLayoutAlign="start start">
+                    
+                    <div fxLayout="row" *ngFor="let item of details" fxLayoutAlign="start start">
+                        <ng-container fxFlex="30">
+                            <div style="margin:5px;">{{ item.key }}</div>
+                        </ng-container>
+                        <ng-container >
+                            <div style="margin:5px;">{{ item.value }}</div>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <ng-template #elseBlock>
+        <div fxLayout="row" fxLayoutAlign="center center">
+            <img *ngIf="imageUrl" [src]="imageUrl" />
+            <video *ngIf="videoUrl" controls style="width: 100%; height: 100%;">
+                <source [src]="videoUrl" type="video/mp4" />
+            </video>
+        </div>
+    </ng-template>
+    <ng-content> </ng-content>
+
+    <!-- your code goes here -->
+</tw-wrapper>

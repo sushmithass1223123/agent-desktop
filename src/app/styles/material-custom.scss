@@ -186,3 +186,9 @@ mat-form-field {
         display: flex;
     }
 }
+mat-chip {
+    &.mat-chip {
+        border-radius: 2rem;
+        padding: 10px;
+    }
+}

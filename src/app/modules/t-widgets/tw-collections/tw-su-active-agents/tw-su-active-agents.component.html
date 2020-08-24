@@ -1,0 +1,76 @@
+<!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
+<!-- implement following events in your component to access widget wrapper action events -->
+<!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
+
+<!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
+
+<tw-wrapper [data]="data">
+    <!-- your code goes here -->
+    <table mat-table [dataSource]="datasource" class="mat-elevation-z0 w-100-p">
+        <!--- Note that these columns can be defined in any order.
+        The actual rendered columns are set as a property on the row definition" -->
+
+        <!-- Position Column -->
+        <ng-container matColumnDef="name">
+            <!-- <th mat-header-cell *matHeaderCellDef mat-sort-header>Channel</th> -->
+            <td mat-cell *matCellDef="let element">
+                <div class="flex-container" fxLayout="row">
+                    <mat-avatar class="agent-avatar mat-elevation-z0"
+                        >{{ getFirstCharFromName(element.name) }}
+                        <span class="status-notification"></span>
+                    </mat-avatar>
+                </div>
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+            <!-- <th mat-header-cell *matHeaderCellDef mat-sort-header>Channel</th> -->
+            <td mat-cell *matCellDef="let element">
+                <div class="flex-container" fxLayout="row">
+                    <div class="w-100-p text-left text-bold">{{ element.name }}</div>
+                </div>
+                <div class="flex-container" fxLayout="row">
+                    <div class="w-100-p text-left mat-caption">{{ element.status }}</div>
+                </div>
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="channels">
+            <!-- <th mat-header-cell *matHeaderCellDef mat-sort-header>Channel</th> -->
+            <td mat-cell *matCellDef="let element">
+                <div class="flex-container" fxLayout="row">
+                    <div *ngFor="let channel of element.channels" class="partial mat-elevation-z0" style="position: relative;">
+                        <!-- <mat-icon>{{getChannelIcon(channel)}}</mat-icon> -->
+                        <button mat-icon-button>
+                            <mat-icon>{{ getChannelIcon(channel.type) }}</mat-icon>
+                        </button>
+                        <span class="channel-notification mat-caption">
+                            {{ channel.notificationCount }}
+                        </span>
+                    </div>
+                </div>
+                <div class="agent-activity-buttons" >
+                    <button mat-icon-button>
+                        <mat-icon>camera_alt</mat-icon>
+                    </button>
+                    <button mat-icon-button>
+                        <mat-icon>remove_red_eye</mat-icon>
+                    </button>
+                </div>
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="connectivity">
+            <!-- <th mat-header-cell *matHeaderCellDef mat-sort-header>Channel</th> -->
+            <td mat-cell *matCellDef="let element">
+                <div class="flex-container" fxLayout="row">
+                        <!-- <mat-icon>{{getChannelIcon(channel)}}</mat-icon> -->
+                        <button mat-icon-button>
+                            <mat-icon>{{ getConectivityIcon(element.connectivity.type) }}</mat-icon>
+                        </button>
+                </div>
+                
+            </td>
+        </ng-container>
+        <!-- <tr mat-header-row *matHeaderRowDef="[]"></tr> -->
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+    <!-- your code goes here -->
+</tw-wrapper>

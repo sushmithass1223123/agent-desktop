@@ -1,0 +1,41 @@
+.channel-notification {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    height: 15px;
+    width: 15px;
+    padding: 3px;
+    background-color: #93cd87;
+    border-radius: 50%;
+    color: white;
+    font-size: xx-small;
+    line-height: inherit;
+}
+
+.status-notification {
+    position: absolute;
+    bottom: 3px;
+    right: -10px;
+    height: 15px;
+    width: 15px;
+    padding: 3px;
+    background-color: #93cd87;
+    border-radius: 50%;
+}
+
+.agent-avatar {
+    height: 40px;
+    width: 48px;
+    line-height: 40px;
+    background: white;
+    border-radius: 10px;
+    margin: 10px 0px;
+    position: relative;
+}
+
+.agent-activity-buttons{
+    display: none;
+}
+tr:hover td .agent-activity-buttons{
+    display: flex;
+}
