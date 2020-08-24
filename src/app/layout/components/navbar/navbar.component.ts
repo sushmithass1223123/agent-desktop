@@ -1,12 +1,12 @@
-import { Component, ViewEncapsulation, OnInit, OnDestroy, Input, ViewChildren, QueryList } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, QueryList, ViewChildren, ViewEncapsulation } from '@angular/core';
+import { MatListOption } from '@angular/material/list';
+import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { FuseConfigService } from '@fuse/services/config.service';
-import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { IWidget } from 'app/interfaces/';
 import { AppDataService } from 'app/services/app-data.service';
 import { ContentPageService } from 'app/services/content-page.service';
-import { IWidget } from 'app/interfaces/';
-import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
-import { MatListOption } from '@angular/material/list';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
     selector: 'navbar',

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActiveInteraction, InteractionRef } from 'app/interfaces';
+import { InteractionRef, InteractionCount } from 'app/interfaces';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
@@ -11,7 +11,7 @@ import { SDKClient } from 'tmac-sdk';
 export class InteractionManagerService {
 
     // Private
-    private _interactionsSubject: BehaviorSubject<any[]>;
+    private _interactionsSubject: BehaviorSubject<InteractionRef[]>;
 
     constructor() {
         // intialize all the subject
@@ -39,6 +39,8 @@ export class InteractionManagerService {
             return;
         }
 
+        console.log('InteractionManagerService', payload);
+
         // Get the value from the behavior subject
         const interactions = this._interactionsSubject.getValue();
 
@@ -49,38 +51,47 @@ export class InteractionManagerService {
         this._interactionsSubject.next(interactions);
     }
 
-    updateInteraction(interactionId: number, key: string, value: any): void {
+    updateInteraction(interactionId: number, value: any): void {
         // check if the key and value are not null
-        if (!key || !value) {
+        if (!interactionId || !value) {
             return;
         }
 
         // Get the value from the behavior subject
         const interactions = this._interactionsSubject.getValue();
 
+        // filter and check if the interaction is present
+        if (interactions.filter(i => i.interactionId === interactionId).length === 0) {
+            return;
+        }
+
         // is updated flag
         let updated = false;
 
         // update the interaction value
         const updatedInteractions = _.map(interactions, item => {
-            // if its to update the active interaction, initially set all the interaction inactive
-            if (key === 'isActive') {
-                item.isActive = false;
+            const currentItem = { ...item };
+            // check the item for isActive
+            if (Object.keys(value).includes('isActive')) {
+                currentItem.isActive = false;
             }
-            // filter the matching interaction
-            if (item.interactionId === interactionId && item.hasOwnProperty(key) && item[key] !== value) {
-                // check if the key is to update the active state
-                if (key === 'isActive') {
-                    // call the sdk to update the server
+            // filter for the interaction
+            if (item.interactionId === interactionId) {
+                // check the item for isActive and check if its not active already
+                if (Object.keys(value).includes('isActive') && !item.isActive) {
                     SDKClient.selectInteraction(interactionId.toString(), null);
+                    // for textchat interaction set the unread message count to 0
+                    if (item.type === 'textchat') {
+                        item.otherData.unreadCount = 0;
+                    }
                 }
-                // update the value of key
-                item[key] = value;
-                // set the updated flag true
+                // set the upated flag to true
                 updated = true;
+                // return the modified item
+                return { ...item, ...value };
             }
-            // return the item
-            return item;
+            // else return the current item
+            return currentItem;
         });
 
         // Notify the observers if updated
@@ -104,8 +115,23 @@ export class InteractionManagerService {
         }
     }
 
-    getInteractionCount(): number {
-        return 0;
+    getInteractionCount(): InteractionCount {
+        // get all the interactions
+        const interactions = this._interactionsSubject.getValue();
+        // init the result obkect
+        let result: InteractionCount = {
+            total: 0,
+            active: 0
+        };
+        try {
+            // try calc the count
+            result = {
+                total: interactions.length || 0,
+                active: interactions.filter(i => i.status === 'connected').length || 0
+            };
+        } catch (error) { }
+        // return the result
+        return result;
     }
 }
 

@@ -1,0 +1,41 @@
+tw-active-interactions {
+    .voice {
+        .mat-card-avatar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #ffffff;
+            cursor: pointer;
+        }
+
+        .mat-icon-button {
+            .mat-icon {
+                width: 20px;
+                height: 20px;
+                font-size: 20px;
+            }
+
+            &.hold {
+                background: #f1c754;
+            }
+
+            &.drop {
+                background: #d38a73;
+            }
+        }
+    }
+
+    avatar {
+        margin-left: 4px;
+        cursor: pointer;
+
+        .avatar-content {
+            width: 44px;
+            height: 44px;
+        }
+        .mat-badge-content {
+            background: #f1c754 !important;
+            color: rgba(0, 0, 0, 0.87) !important;
+        }
+    }
+}

@@ -186,3 +186,14 @@ mat-form-field {
         display: flex;
     }
 }
+
+mat-chip {
+    &.mat-chip {
+        border-radius: 5px;
+    }
+}
+
+mat-dialog-container {
+    position: relative;
+    border-radius: 10px !important;
+}

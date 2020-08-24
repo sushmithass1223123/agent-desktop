@@ -43,7 +43,7 @@ export class TWLibrary {
         'tw-su-transferred-conferenced-calls': TwSuTransferredConferencedCallsComponent,
         'tw-su-channels-status': TwSuChannelsStatusComponent,
         'tw-su-channels': TwSuChannelsComponent,
-        'tw-su-status': TwSuStatusComponent
+        'tw-su-status': TwSuStatusComponent,
     };
 
     public static getAllWidgets(): Record<string, Type<any>> {

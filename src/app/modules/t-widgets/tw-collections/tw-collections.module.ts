@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { SharedModule } from '@modules/shared/shared.module';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { AvatarModule } from 'ngx-avatar';
 import { TwWrapperModule } from '../tw-wrapper/tw-wrapper.module';
 import { TwAdCallbacksComponent } from './tw-ad-callbacks/tw-ad-callbacks.component';
 import { TwAdInteractionDetailsComponent } from './tw-ad-interaction-details/tw-ad-interaction-details.component';
@@ -28,8 +27,6 @@ import { TwUnknownComponent } from './tw-unknown/tw-unknown.component';
 import { TwVoiceControlsComponent } from './tw-voice-controls/tw-voice-controls.component';
 import { TwVoicePanelComponent } from './tw-voice-panel/tw-voice-panel.component';
 import { TwWallboardComponent } from './tw-wallboard/tw-wallboard.component';
-
-
 @NgModule({
     declarations: [
         TwCustomComponent,
@@ -56,13 +53,12 @@ import { TwWallboardComponent } from './tw-wallboard/tw-wallboard.component';
         TwSuTransferredConferencedCallsComponent,
         TwSuChannelsStatusComponent,
         TwSuChannelsComponent,
-        TwSuStatusComponent,
+        TwSuStatusComponent
     ],
     imports: [
         SharedModule,
         TwWrapperModule,
         NgxChartsModule,
-        AvatarModule
     ]
 })
 export class TwCollectionsModule { }

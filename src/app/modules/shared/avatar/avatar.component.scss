@@ -1,0 +1,29 @@
+avatar {
+    .avatar-content {
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #ffffff;
+
+        img {
+            border-radius: 50%;
+            width: inherit;
+            height: inherit;
+        }
+
+        .initials {
+            font-size: 20px;
+            line-height: 19px;
+            letter-spacing: 0.2625px;
+        }
+    }
+
+    .mat-badge-content {
+        right: -4px !important;
+        top: -4px !important;
+        font-size: 11px;
+    }
+}

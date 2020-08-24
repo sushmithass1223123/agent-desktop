@@ -52,7 +52,9 @@
                                 "Description": "",
                                 "Type": "tw-aux-codes",
                                 "Config": {},
-                                "Data": {}
+                                "Data": {
+                                    "LogoutAux": "logout"
+                                }
                             }
                         ]
                     }
@@ -194,7 +196,9 @@
                                     "Header": true,
                                     "Disabled": false
                                 },
-                                "Data": {}
+                                "Data": {
+                                    "Source": "dashboard"
+                                }
                             },
                             {
                                 "Name": "Call",
@@ -620,7 +624,7 @@
                             {
                                 "Name": "Skill Dashboard",
                                 "Description": "",
-                                "Type": "tw-sample",
+                                "Type": "tw-wallboard",
                                 "Config": {
                                     "Anchor": false,
                                     "Icon": "",
@@ -641,7 +645,9 @@
                                     "Header": true,
                                     "Disabled": false
                                 },
-                                "Data": {}
+                                "Data": {
+                                    "Source": "supervisor"
+                                }
                             },
                             {
                                 "Name": "Channels",
@@ -1098,7 +1104,130 @@
                                                 "Header": true,
                                                 "Disabled": false
                                             },
-                                            "Data": {}
+                                            "Data": {
+                                                "CustomerInfo": [
+                                                    {
+                                                        "Title": "Name",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pName",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "CIF",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pCIF",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "Gender",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pGender",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "Phone",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pMobileNumber",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "Nationality",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pNationality",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "Language",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pLang",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "Cust ID Status",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pCustIdStatus",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "Customer Tag",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pCustomerTag",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "DOB",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pDOB",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "First Login Date",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pFirstLogiDate",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "First Login Time",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pfirstLoginTime",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "Last Login Date",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.plastLoginDate",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "Last Login Time",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.plastLoginTime",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "Failed 2F Count",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pFailedTwoFACount",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "PIB Issue Date",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pPIBissueDate",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "Token Activated",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pTokenActivated",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "Token Serial Number",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pTokenSerialNumber",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "Token Status",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pTokenStatus",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "PIB Issue Date",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pPIBissueDate",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "Queue time",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.QueueTime",
+                                                        "Unit": "s",
+                                                        "DefaultValue": "NA"
+                                                    }
+                                                ]
+                                            }
                                         },
                                         {
                                             "Name": "Customer Journey",
@@ -1394,16 +1523,16 @@
             },
             "Customer": {
                 "Large": {
-                    "Src": "https://cdn1.singteldigital.com/content/dam/singtel/online-draft/singtel_logo_coloured.png",
-                    "Width": 160,
-                    "Height": 88
-                },
-                "Small": {
-                    "Src": "https://cdn1.singteldigital.com/content/dam/singtel/online-draft/singtel_logo_coloured.png",
+                    "Src": "",
                     "Width": null,
                     "Height": null
                 },
-                "Alt": "Customer"
+                "Small": {
+                    "Src": "https://tmac.tetherfilabs.com/Images/singtel_small.png",
+                    "Width": 50,
+                    "Height": 50
+                },
+                "Alt": "Singtel"
             }
         },
         "WindowSettings": {
@@ -1428,7 +1557,7 @@
                 "Type": "soap"
             },
             "SignalRProxy": {
-                "Logging": true,
+                "Logging": false,
                 "Protocol": "webSockets",
                 "Timeout": 10
             },

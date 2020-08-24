@@ -2,9 +2,12 @@ import { Component, ElementRef, Input, OnDestroy, OnInit, ViewEncapsulation } fr
 import { TWidget } from '@modules/t-widgets/utils';
 import { TWLibrary } from '@twidgets/utils/widget-library/tw-library';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
-import { IWidget } from 'app/interfaces';
+import { IWidget, InteractionWidgets } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
 import { IncomingCallEvent, InteractionClosedEvent, SDKClient } from 'tmac-sdk';
+import { InteractionEventService } from '@services/interaction-event.service';
+import { takeUntil } from 'rxjs/operators';
+import { InteractionManagerService } from '@services/interaction-manager.service';
 
 @Component({
     selector: 'twc-voice',
@@ -16,59 +19,72 @@ export class TwcVoiceComponent extends TWContentWrapper implements OnInit, OnDes
 
     @Input() data: any;
 
-    interactions: InteractionVoiceWidgets[] = [];
+    interactions: InteractionWidgets[] = [];
 
     constructor(
         public hostElement: ElementRef,
-        public contentPageService: ContentPageService
+        public contentPageService: ContentPageService,
+        private _interactionEventService: InteractionEventService,
+        private _interactionManagerService: InteractionManagerService
     ) {
         super(hostElement, contentPageService);
     }
 
     ngOnInit(): void {
+        // call the wrapper init method
         this.initWrapper(this.data);
 
-        // listen to TMAC events
-        this.registerToEvents();
+        // subscribe to interaction events observable
+        this._interactionEventService.constructDisposeEvents
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((evt: any) => {
+                // filter the event name
+                if (evt.EventName === 'IncomingCallEvent') {
+                    this.incomingCallEvent(evt);
+                }
+                else if (evt.EventName === 'InteractionClosedEvent') {
+                    this.interactionClosed(evt);
+                }
+            });
     }
 
     ngOnDestroy(): void {
+        // call the wrapper destroy method
         this.destroyWrapper();
     }
 
-    private registerToEvents(): void {
-        // listen to incoming call event
-        SDKClient.events.on('IncomingCallEvent', ((evt: IncomingCallEvent) => {
-            const voiceWidgets: TWidget[] = [];
-            // get the content widgets
-            const widgets = this.data.Data.Widgets || [];
-            // loop and get the widgets
-            widgets.forEach((widget: IWidget) => {
-                // add the interaction details
-                widget.InteractionDetails = evt;
-                // get the widget component by type
-                const component = TWLibrary.getWidget(widget.Type, widget);
-                // check if the component is proper
-                if (component) {
-                    // append the widget component to the list
-                    voiceWidgets.push(component);
-                }
-            });
-            // push the interaction details with widgets to the list
-            this.interactions.push({
-                interactionId: evt.InteractionID,
-                widgets: voiceWidgets
-            });
-        }));
-
-        // listen to the interaction closed event and filter out the interaction
-        SDKClient.events.on('InteractionClosedEvent', (evt: InteractionClosedEvent) => {
-            this.interactions = this.interactions.filter((i: InteractionVoiceWidgets) => i.interactionId !== evt.InteractionID);
+    private incomingCallEvent = (evt: IncomingCallEvent) => {
+        const voiceWidgets: TWidget[] = [];
+        // get the content widgets
+        const widgets = this.data.Data.Widgets || [];
+        // loop and get the widgets
+        widgets.forEach((widget: IWidget) => {
+            // append the interaction details to the widget data
+            widget.InteractionDetails = evt;
+            // append the path to the widget data
+            widget.Data.Path = this.data.Data.Path;
+            // get the widget component by type
+            const component = TWLibrary.getWidget(widget.Type, widget);
+            // check if the component is proper
+            if (component) {
+                // append the widget component to the list
+                voiceWidgets.push(component);
+            }
+        });
+        // push the interaction details with widgets to the list
+        this.interactions.push({
+            interactionId: evt.InteractionID,
+            widgets: voiceWidgets
         });
     }
-}
 
-interface InteractionVoiceWidgets {
-    interactionId: number;
-    widgets: TWidget[];
+    private interactionClosed = (evt: InteractionClosedEvent) => {
+        this.interactions = this.interactions.filter((i: InteractionWidgets) => i.interactionId !== evt.InteractionID);
+        // if there are other item in the list auto select fist chat after closing current
+        if (this.interactions.length > 0) {
+            this._interactionManagerService.updateInteraction(this.interactions[0].interactionId, {
+                'isActive': true
+            });
+        }
+    }
 }

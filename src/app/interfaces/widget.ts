@@ -12,5 +12,4 @@ export interface IWidget {
 export interface InteractionWidgets {
     interactionId: number;
     widgets: TWidget[];
-    status: string;
 }

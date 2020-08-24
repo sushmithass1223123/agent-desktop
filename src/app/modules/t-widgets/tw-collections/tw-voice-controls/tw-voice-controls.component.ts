@@ -26,17 +26,11 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
     ngOnInit(): void {
         // call the wrapper init method
-        this.initWrapper(this.data);
-
-        console.log('TwVoiceControlsComponent', this.data.InteractionDetails);
-
+        this.initWrapper(this.data); 
     }
 
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-
-        this.unsubscribeAll.next();
-        this.unsubscribeAll.complete();
     }
 }

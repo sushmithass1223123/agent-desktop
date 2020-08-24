@@ -1,7 +1,14 @@
 <tw-wrapper [data]="data">
     <div class="h-50-p w-100-p bg-inherit mat-table-container" fusePerfectScrollbar>
-        <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z0" matSortActive="CallsInQueue"
-            matSortDirection="asc" matSortDisableClear>
+        <table
+            mat-table
+            [dataSource]="dataSource"
+            matSort
+            class="mat-elevation-z0"
+            matSortActive="CallsInQueue"
+            matSortDirection="desc"
+            matSortDisableClear
+        >
             <!--- Note that these columns can be defined in any order.
               The actual rendered columns are set as a property on the row definition" -->
 
@@ -25,16 +32,15 @@
 
             <!-- Symbol Column -->
             <ng-container matColumnDef="CallsInQueue">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Calls in Queue
-                </th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Calls in Queue</th>
                 <td mat-cell *matCellDef="let element">{{ element.CallsInQueue }}</td>
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
         </table>
-        <p *ngIf="dataSource.data.length === 0" class="text-center m-0 font-size-16"> No data available </p>
+        <p *ngIf="dataSource.data.length === 0" class="text-center m-0 font-size-16">No data available</p>
     </div>
 
-    <img class="vector-image" src="assets/images/vectors/home.svg" width="580" />
+    <img *ngIf="data.Data.Source === 'dashboard'" class="vector-image" src="assets/images/vectors/home.svg" width="580" />
 </tw-wrapper>

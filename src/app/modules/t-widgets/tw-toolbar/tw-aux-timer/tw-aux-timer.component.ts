@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, Input, ViewEncapsulation } from '@angular/core';
 import { TWidgetWrapper } from '@twidgets/utils';
 import { Subscription, timer } from 'rxjs';
-import { SDKClient } from 'tmac-sdk';
+import { SDKClient, AgentStatusChangeEvent } from 'tmac-sdk';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
@@ -13,6 +13,7 @@ import { takeUntil } from 'rxjs/operators';
 export class TwAuxTimerComponent extends TWidgetWrapper implements OnInit, OnDestroy {
 
     @Input() data: any;
+    lastStatus = '';
 
     timerSub: Subscription;
     minutes1 = '0';
@@ -30,8 +31,13 @@ export class TwAuxTimerComponent extends TWidgetWrapper implements OnInit, OnDes
         this.initTimer();
 
         // listen for agent status change
-        SDKClient.events.on('AgentStatusChangeEvent', () => {
-            this.restartTimer();
+        SDKClient.events.on('AgentStatusChangeEvent', (evt: AgentStatusChangeEvent) => {
+            if (!evt.Status.includes('On Call') || !this.lastStatus.includes('On Call')) {
+                // rest the timer
+                this.restartTimer();
+            }
+            // update last status
+            this.lastStatus = evt.Status;
         });
     }
 

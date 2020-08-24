@@ -3,6 +3,7 @@ import { FuseConfigService } from '@fuse/services/config.service';
 import { IWidget } from 'app/interfaces';
 import { Subject } from 'rxjs/internal/Subject';
 import { takeUntil } from 'rxjs/operators';
+import { FuseConfig } from '@fuse/types';
 
 @Component({
     selector: 'tw-wrapper',
@@ -11,19 +12,22 @@ import { takeUntil } from 'rxjs/operators';
     encapsulation: ViewEncapsulation.None
 })
 export class TwWrapperComponent implements OnInit, OnDestroy {
+
     @Input() data: IWidget;
-
-    @HostBinding('class.position-relative') floating = false;
-
-    dragPosition: any = '';
 
     @Output() maximizeEvent = new EventEmitter();
     @Output() collapseEvent = new EventEmitter();
     @Output() floatEvent = new EventEmitter();
 
-    fuseConfig: any;
+    fuseConfig: FuseConfig;
+
+    dragPosition: any = '';
+
+    @HostBinding('class.position-relative')
+    floating = false;
     maximized = false;
     collapsed = false;
+    hidden = false;
 
     // Private
     _unsubscribeAll: Subject<any>;
@@ -51,6 +55,7 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
             this.maximized = this.data.Config.ViewState === 'maximize';
             this.collapsed = this.data.Config.ViewState === 'minimize';
             this.floating = this.data.Config.ViewState === 'float';
+            this.hidden = this.data.Config.ViewState === 'hidden';
         }
     }
 

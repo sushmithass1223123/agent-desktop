@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { ILoginData } from 'app/interfaces';
 import * as _ from 'lodash';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { MatSnackBar, MatSnackBarVerticalPosition, MatSnackBarHorizontalPosition } from '@angular/material/snack-bar';
 
 @Injectable({
     providedIn: 'root'
@@ -9,9 +9,10 @@ import { BehaviorSubject, Observable } from 'rxjs';
 export class AppDataService {
     // Private
     private _configSubject: BehaviorSubject<any>;
-    private _loginData: ILoginData;
 
-    constructor() {
+    constructor(
+        private _snackBar: MatSnackBar
+    ) {
         // Set the config from the default config
         this._configSubject = new BehaviorSubject(new Object());
     }
@@ -38,19 +39,20 @@ export class AppDataService {
         return this._configSubject.asObservable();
     }
 
-    setLoginData(data: ILoginData): void {
-        // check if the data is privided
-        if (data) {
-            this._loginData = data;
-            console.log('Login data binded successfully', data);
-        }
+    playAudio(type: string = 'default', volume: number = 1): void {
+        const audio = new Audio();
+        audio.src = `assets/sounds/${type}.mp3`;
+        audio.load();
+        audio.volume = volume;
+        audio.play();
     }
 
-    getLoginData(): ILoginData {
-        // check if the data is there
-        if (this._loginData) {
-            return { ...this._loginData };
-        }
-        return null;
+    showMessage(message: string, vPos?: MatSnackBarVerticalPosition, hPos?: MatSnackBarHorizontalPosition, style?: string, duration?: number): void {
+        this._snackBar.open(message, 'x', {
+            duration: duration || 2000,
+            verticalPosition: vPos || 'top', // 'top' | 'bottom'
+            horizontalPosition: hPos || 'center', // 'start' | 'center' | 'end' | 'left' | 'right'
+            panelClass: style ? [style] : ['snackbar']
+        });
     }
 }

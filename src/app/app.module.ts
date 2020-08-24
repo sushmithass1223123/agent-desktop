@@ -11,6 +11,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AppComponent } from 'app/app.component';
 import { fuseConfig } from 'app/constants';
 import { AppRoutingModule } from './app-routing.module';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 @NgModule({
     declarations: [
@@ -33,7 +35,8 @@ import { AppRoutingModule } from './app-routing.module';
 
         // App modules
         CoreModule,
-        SharedModule
+        SharedModule,
+        ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
     ],
     bootstrap: [
         AppComponent

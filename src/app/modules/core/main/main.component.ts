@@ -1,23 +1,20 @@
 import { DOCUMENT } from '@angular/common';
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { FuseConfigService } from '@fuse/services/config.service';
-import { AppDataService } from '@services/app-data.service';
+import { InteractionEventService } from '@services/interaction-event.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AgentForcedLogoffEvent, SDKClient, InteractionClosedEvent } from 'tmac-sdk';
-import { ILoginData } from 'app/interfaces';
-import { InteractionManagerService } from '@services/interaction-manager.service';
-import { InteractionEventsService } from '@services/interaction-events.service';
+import { AgentForcedLogoffEvent, SDKClient } from 'tmac-sdk';
 
 @Component({
     selector: 'main',
     templateUrl: './main.component.html',
     styleUrls: ['./main.component.scss']
 })
-export class MainComponent implements OnInit, OnDestroy {
+export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
 
     fuseConfig: any;
     loaded = false;
@@ -31,10 +28,8 @@ export class MainComponent implements OnInit, OnDestroy {
         private _fuseSidebarService: FuseSidebarService,
         private _router: Router,
         private _snackBar: MatSnackBar,
-        private _appDataService: AppDataService,
-        private _interactionManagerService: InteractionManagerService,
         // this service must not be removed, this will listen to some TMAC events
-        private _interactionEventsService: InteractionEventsService
+        private _interactionEventsService: InteractionEventService
     ) {
         // Set the private defaults
         this._unsubscribeAll = new Subject();
@@ -48,15 +43,21 @@ export class MainComponent implements OnInit, OnDestroy {
      * On init
      */
     ngOnInit(): void {
+        // register to all the tmac events in service
+        this._interactionEventsService.registerTMACEvents();
+
         // Subscribe to config changes
         this._fuseConfigService.config
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((config: any) => {
-
                 this.fuseConfig = config;
-
             });
+    }
 
+    /**
+     * On After View Init
+     */
+    ngAfterViewInit(): void {
         // check the login
         this.checkLogin();
     }
@@ -68,6 +69,12 @@ export class MainComponent implements OnInit, OnDestroy {
         // Unsubscribe from all subscriptions
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
+
+        // de-register the TMAC events in service
+        this._interactionEventsService.deReigsterTMACEvents();
+
+        // deregister from tmac events
+        SDKClient.events.off('AgentForcedLogoffEvent', this.forcedLogoffEvent);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -85,15 +92,15 @@ export class MainComponent implements OnInit, OnDestroy {
                 this._router.navigate(['login']);
             }
             else {
-                this.pollForEvent(loginData);
+                this.pollForEvent();
             }
         }
         else {
-            this.pollForEvent(loginData);
+            this.pollForEvent();
         }
     }
 
-    private pollForEvent(loginData: ILoginData): void {
+    private pollForEvent(): void {
         this._snackBar.open('Hello, welcome to TMAC', 'x', {
             duration: 3000,
             verticalPosition: 'top', // 'top' | 'bottom'
@@ -101,56 +108,47 @@ export class MainComponent implements OnInit, OnDestroy {
             panelClass: ['snackbar']
         });
 
-        // set the login data
-        this._appDataService.setLoginData(loginData);
-
         // set the loaded to true
         this.loaded = true;
 
-        // listen to the interaction closed event and remove from service
-        SDKClient.events.on('InteractionClosedEvent', (evt: InteractionClosedEvent) => {
-            // remove interaction from service
-            this._interactionManagerService.removeInteraction(evt.InteractionID);
-            // remove the events from service
-            this._interactionEventsService.remove(evt.InteractionID);
-        });
-
         // listen to force log off event
-        SDKClient.events.on('AgentForcedLogoffEvent', (evt: AgentForcedLogoffEvent) => {
-            let description = '';
-            switch (evt.Type) {
-                case 'SupervisorInitiatedLogout':
-                    description = 'You are logged out by the supervisor!';
-                    break;
-                case 'SessionNotFound':
-                    description = 'There is no session found in server, pelase re-login!';
-                    break;
-                case 'SessionKeyExpired':
-                    description = 'Your existing session expired as you are logged in using another session!';
-                    break;
-                case 'NotLoggedIntoACD':
-                    description = '';
-                    break;
-                case 'AgentInfoNotFound':
-                    description = 'Agent information not found, please re-login!';
-                    break;
-                default:
-            }
-            // we will route to login page
-            this._router.navigate(['not-found'],
-                {
-                    queryParamsHandling: 'preserve',
-                    preserveFragment: true,
-                    state: {
-                        subtitle: 'Oops',
-                        title: '',
-                        description
-                    }
-                });
-        });
+        SDKClient.events.on('AgentForcedLogoffEvent', this.forcedLogoffEvent);
 
         // register for get events
         SDKClient.getEvents();
+    }
+
+    forcedLogoffEvent = (evt: AgentForcedLogoffEvent) => {
+        let description = '';
+        switch (evt.Type) {
+            case 'SupervisorInitiatedLogout':
+                description = 'You are logged out by the supervisor!';
+                break;
+            case 'SessionNotFound':
+                description = 'There is no session found in server, pelase re-login!';
+                break;
+            case 'SessionKeyExpired':
+                description = 'Your existing session expired as you are logged in using another session!';
+                break;
+            case 'NotLoggedIntoACD':
+                description = '';
+                break;
+            case 'AgentInfoNotFound':
+                description = 'Agent information not found, please re-login!';
+                break;
+            default:
+        }
+        // we will route to login page
+        this._router.navigate(['not-found'],
+            {
+                queryParamsHandling: 'preserve',
+                preserveFragment: true,
+                state: {
+                    subtitle: 'Oops',
+                    title: '',
+                    description
+                }
+            });
     }
 
     // -----------------------------------------------------------------------------------------------------

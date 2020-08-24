@@ -1,20 +1,19 @@
 <div fxFlex fxFill fxLayout="row" fxLayoutAlign="start center" *ngIf="agentData.agentName">
-
     <button mat-button class="user-button" [matMenuTriggerFor]="userMenu">
         <div fxLayout="row" fxLayoutAlign="center center">
-            <img class="avatar mr-0 mr-sm-16 mat-elevation-z3"
+            <img
+                class="avatar mr-0 mr-sm-16"
                 [style.backgroundImage]="'url(' + agentData.profilePicture + ')'"
-                *ngIf="data.Data.ProfilePicture && agentData.profilePicture">
+                *ngIf="data.Data.ProfilePicture && agentData.profilePicture"
+            />
             <div fxLayout="column" fxLayoutAlign="center start" class="agent-details">
                 <span class="username mr-12 line-height-24" fxHide fxShow.gt-sm>{{ agentData.agentName }}</span>
-                <span class="font-size-14 mat-caption agent-status" fxHide fxShow.gt-sm
-                    *ngIf="data.Data.Status">{{ agentData.agentStatus }}</span>
+                <span class="font-size-14 mat-caption agent-status" fxHide fxShow.gt-sm *ngIf="data.Data.Status">{{ agentData.agentStatus }}</span>
             </div>
         </div>
     </button>
 
     <mat-menu #userMenu="matMenu" [overlapTrigger]="false">
-
         <button mat-menu-item>
             <mat-icon>account_circle</mat-icon>
             <span>My Profile</span>
@@ -29,7 +28,5 @@
             <mat-icon>exit_to_app</mat-icon>
             <span>Logout</span>
         </button>
-
     </mat-menu>
-
 </div>

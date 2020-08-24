@@ -1,31 +1,40 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, QueryList, ViewChild, ViewChildren, ViewEncapsulation } from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    EventEmitter,
+    Input,
+    OnDestroy,
+    OnInit,
+    Output,
+    QueryList,
+    ViewChild,
+    ViewChildren,
+    ViewEncapsulation
+} from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { FuseConfirmDialogComponent } from '@fuse/components/confirm-dialog/confirm-dialog.component';
 import { FusePerfectScrollbarDirective } from '@fuse/directives/fuse-perfect-scrollbar/fuse-perfect-scrollbar.directive';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
-import { AppDataService } from '@services/app-data.service';
-import { InteractionEventsService } from '@services/interaction-events.service';
+import { ConfirmDialogComponent } from '@modules/shared/confirm-dialog/confirm-dialog.component';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { ActiveInteraction, InteractionRef, IWidget } from 'app/interfaces';
-import { timer } from 'rxjs';
+import { InteractionRef, IWidget } from 'app/interfaces';
+import { Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
 import {
     IAgentData,
-
-
     SDKClient,
     TextChatDisconnectedEvent,
     TextChatMessageReceivedEvent,
-
-
-
-    TextChatMessageSentEvent, TextChatRemoteUserConnectedEvent,
-
-    TextChatTranscriptForTransferEvent, TUtils
+    TextChatMessageSentEvent,
+    TextChatMessageTemplateSentEvent, TextChatRemoteUserConnectedEvent,
+    TextChatTranscriptForTransferEvent, TUtils, IUIEvent, IResponse, IReason
 } from 'tmac-sdk';
+import { InteractionEventService } from '@services/interaction-event.service';
+import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
+import { AppDataService } from '@services/app-data.service';
+import { MatButton } from '@angular/material/button';
 
 @Component({
     selector: 'tw-chat-controls',
@@ -43,21 +52,21 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
     fuseConfig: FuseConfig;
 
-    interactionList: ActiveInteraction[];
+    interactionList: InteractionRef[];
     interactionId: number;
 
+    user: IAgentData;
+    replyInput: any;
     isConnected: boolean;
     sessionID: string;
     startTime: string;
     interactionDuration: string;
+    stopTimer = new Subject();
     interactionStatus: string;
     chatTranscripts: any[] = [];
+    customerName: string;
 
-    user: IAgentData;
-    chat: any;
-    contact: any;
-    replyInput: any;
-    selectedChat: any;
+    unreadChats: number;
 
     @ViewChildren(FusePerfectScrollbarDirective) directiveScrolls: QueryList<FusePerfectScrollbarDirective>;
     @ViewChildren('replyInput') replyInputField: any;
@@ -66,9 +75,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     constructor(
         private _fuseConfigService: FuseConfigService,
         private _interactionManagerService: InteractionManagerService,
-        private _appDataService: AppDataService,
+        private _interactionEventService: InteractionEventService,
         private _dialog: MatDialog,
-        private _interactionEventsService: InteractionEventsService
+        private _appDataService: AppDataService,
+        private _fuseProgressBarService: FuseProgressBarService
     ) {
         super();
 
@@ -77,6 +87,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.startTime = 'NA';
         this.interactionDuration = 'NA';
         this.interactionStatus = 'NA';
+        this.customerName = 'Customer';
+        this.unreadChats = 0;
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -87,36 +99,35 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // call the wrapper init method
         this.initWrapper(this.data);
 
+        // set the interaction id from data
+        this.interactionId = this.data.InteractionDetails.InteractionID;
+
         this._fuseConfigService.config
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe(
                 (config: any) => {
                     this.fuseConfig = config;
-                }
-            );
+                });
 
         this._interactionManagerService.interactions
             .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(
-                (interactions: any[]) => {
-                    // filter out the textchat interaction
-                    this.interactionList = interactions.filter((i: InteractionRef) => i.type === 'textchat');
-                    console.log('TwChatControlsComponent', this.interactionList);
-                }
-            );
+            .subscribe((interactions: InteractionRef[]) => {
+                // filter out the textchat interaction
+                this.interactionList = interactions.filter((i: InteractionRef) => i.type === 'textchat');
+            });
 
         // set the user info 
-        this.user = this._appDataService.getLoginData()?.agentData || null;
+        this.user = SDKClient.getAgentData() || null;
 
         // set the status
         this.interactionStatus = 'Incoming';
-        // set the interaction id from data
-        this.interactionId = this.data.InteractionDetails.InteractionID;
+
         // set the start time
         this.startTime = new Date(Date.parse(this.data.InteractionDetails.CreatedTime)).toLocaleString();
+
         // subscribe to the timer
         timer(1000, 1000)
-            .pipe(takeUntil(this.unsubscribeAll))
+            .pipe(takeUntil(this.unsubscribeAll), takeUntil(this.stopTimer))
             .subscribe(val => {
                 const totalSeconds = val + 1;
                 const hours = Math.floor(totalSeconds / 3600);
@@ -141,179 +152,282 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+
+        this.deRegisterFromEvents();
     }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Private methods
     // -----------------------------------------------------------------------------------------------------
 
-    private async registerToEvents(): Promise<any> {
+    private registerToEvents(): void {
+        // get the event from event bag to make sure no events are missed
+        const eventBag = this._interactionEventService.get(this.interactionId);
 
-        const events = await this._interactionEventsService.get(this.interactionId);
+        // process the events if any
+        eventBag.forEach((evt: IUIEvent) => {
+            this[evt.EventName]?.(evt);
+        });
 
-        console.log('TwChatControlsComponent', events);
+        // register to tmac events
+        SDKClient.events.on('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
+        SDKClient.events.on('TextChatTranscriptForTransferEvent', this.TextChatTranscriptForTransferEvent);
+        SDKClient.events.on('TextChatMessageSentEvent', this.TextChatMessageSentEvent);
+        SDKClient.events.on('TextChatMessageTemplateSentEvent', this.TextChatMessageTemplateSentEvent);
+        SDKClient.events.on('TextChatMessageReceivedEvent', this.TextChatMessageReceivedEvent);
+        SDKClient.events.on('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
+    }
 
-        SDKClient.events.on('TextChatRemoteUserConnectedEvent', (evt: TextChatRemoteUserConnectedEvent) => {
-            // check the interaction
-            if (evt.InteractionID !== this.interactionId) {
-                return;
-            }
+    private deRegisterFromEvents(): void {
+        // deregister from tmac events
+        SDKClient.events.off('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
+        SDKClient.events.off('TextChatTranscriptForTransferEvent', this.TextChatTranscriptForTransferEvent);
+        SDKClient.events.off('TextChatMessageSentEvent', this.TextChatMessageSentEvent);
+        SDKClient.events.off('TextChatMessageTemplateSentEvent', this.TextChatMessageTemplateSentEvent);
+        SDKClient.events.off('TextChatMessageReceivedEvent', this.TextChatMessageReceivedEvent);
+        SDKClient.events.off('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
+    }
 
-            // change the connected status
-            this.isConnected = true;
-            this.interactionStatus = 'Connected';
-            // update the interaction status
-            this._interactionManagerService.updateInteraction(evt.InteractionID, 'status', 'connected');
-            // update the session ID
-            this.sessionID = evt.TextChatSessionID + '|' + evt.InteractionID;
-            // check for bot history
-            try {
-                const botHistory = JSON.parse(evt.ChatHistoryData);
-                // check the length of history data
-                if (botHistory.length > 0) {
-                    botHistory.forEach((item: any) => {
+    private TextChatRemoteUserConnectedEvent = (evt: TextChatRemoteUserConnectedEvent) => {
+        // check the interaction
+        if (evt.InteractionID !== this.interactionId) {
+            return;
+        }
+        // change the connected status
+        this.isConnected = true;
+        this.interactionStatus = 'Connected';
+        // get the customer name
+        this.customerName = evt.screenName;
+        // update the interaction status and user
+        this._interactionManagerService.updateInteraction(evt.InteractionID, {
+            'status': 'connected',
+            'user': this.customerName
+        });
+        // update the session ID
+        this.sessionID = evt.TextChatSessionID + '|' + evt.InteractionID;
+        // check for bot history
+        try {
+            const botHistory = JSON.parse(evt.ChatHistoryData);
+            // check the length of history data
+            if (botHistory.length > 0) {
+                botHistory.forEach((item: any) => {
 
-                        let message = '';
-                        let who = '';
+                    let message = '';
+                    let who = '';
 
-                        if (item.customer_inpu) {
-                            // customer message 
-                            who = 'Customer'; // TODO:: change to customer name
+                    if (item.customer_inpu) {
+                        // customer message 
+                        who = this.customerName,
                             message = item.reply;
-                        }
-                        else if (item.customer_inpu) {
-                            // agent message
-                            who = 'Chatbot';
-                            message = item.reply;
-                        }
-
-                        // check the message and add message to the transcripts
-                        if (message) {
-                            this.chatTranscripts.push({
-                                who,
-                                messageId: TUtils.Generic.uuid(),
-                                message,
-                                time: item.timestamp
-                            });
-                        }
-                    });
-                }
-            } catch (error) { }
-        });
-
-        SDKClient.events.on('TextChatTranscriptForTransferEvent', (evt: TextChatTranscriptForTransferEvent) => {
-            // check the interaction
-            if (evt.InteractionID !== this.interactionId) {
-                return;
-            }
-
-            // TODO:: handle transfer/conference transcripts
-        });
-
-        SDKClient.events.on('TextChatMessageSentEvent', (evt: TextChatMessageSentEvent) => {
-            // check the interaction
-            if (evt.InteractionID !== this.interactionId) {
-                return;
-            }
-
-            // TODO:: handle message sent
-        });
-
-        SDKClient.events.on('TextChatMessageReceivedEvent', (evt: TextChatMessageReceivedEvent) => {
-            // check the interaction
-            if (evt.InteractionID !== this.interactionId) {
-                return;
-            }
-
-            // check if app message 
-            if (evt.IsAppMessage) {
-                // TODO:: handle app messages
-                return;
-            }
-
-            // method variables
-            let json = null;
-            const data = {
-                messageId: evt.EventId,
-                type: 'text',
-                message: evt.Message,
-                replyId: '',
-                replyJson: {}, // TODO:: to implement reply
-                attachment: {},
-                isValid: false
-            };
-
-            try {
-                // check the message 
-                if (this.isValidJson(evt.Message)) {
-                    // parse the message
-                    json = JSON.parse(evt.Message);
-                    // check if the message is from SMM
-                    if (json.hasOwnProperty('_id')) {
-                        data.messageId = json._id;
-                        data.type = typeof json.msg === 'object' ? json.msg.type : 'text';
-                        // check if the message is an attachment
-                        if (typeof json.msg === 'object') {
-                            //  if attachment from SMM
-                            data.attachment = {
-                                src: json.msg.content.url,
-                                type: json.msg.type,
-                                name: ''
-                            };
-                            //  TODO:: when caption for image is implemented, this can be changed
-                            data.message = '';
-                        }
-                        else {
-                            // not an attachment from SMM
-                            data.message = json.msg;
-                            data.attachment = null;
-                        }
-                    } else {
-                        // message from livechat
-                        data.messageId = json.messageId;
-                        data.type = json.type === 'attachment' ? json.attachment.type : json.type;
-                        data.message = json.message;
-                        data.replyId = json.replyId;
-                        data.attachment = json.attachment ? json.attachment : null;
                     }
-                }
-            } catch (error) {
-                // Logger.log('Error in TextChatRemoteUserConnectedEvent', error);
+                    else if (item.customer_inpu) {
+                        // agent message
+                        who = 'Chatbot';
+                        message = item.reply;
+                    }
+
+                    // check the message and add message to the transcripts
+                    if (message) {
+                        this.chatTranscripts.push({
+                            who,
+                            messageId: TUtils.Generic.uuid(),
+                            message,
+                            time: item.timestamp
+                        });
+                    }
+                });
             }
+        } catch (error) { }
+    }
 
-            // TODO:: sanitze the message
-            //        add message badge if the chat window is not active
-            //        time taken timer update
-            //        check for hyperlinks
+    private TextChatTranscriptForTransferEvent = (evt: TextChatTranscriptForTransferEvent) => {
+        // check the interaction
+        if (evt.InteractionID !== this.interactionId) {
+            return;
+        }
 
-            // add message to the transcripts
-            this.chatTranscripts.push({
-                who: 'Customer', // TODO:: change to customer name
-                messageId: data.messageId,
-                message: data.message,
-                time: new Date(Date.parse(this.data.InteractionDetails.CreatedTime)).toLocaleString() || new Date().toLocaleString()
-            });
+        // TODO:: handle transfer/conference transcripts
+    }
 
-            // focus and scroll
-            this.readyToReply();
-
-            // TODO:: show chrome notification if needed
-            //        hide freeze auto response button
-
-        });
-
-        SDKClient.events.on('TextChatDisconnectedEvent', (evt: TextChatDisconnectedEvent) => {
+    private TextChatMessageSentEvent = (evt: TextChatMessageSentEvent) => {
+        try {
             // check the interaction
             if (evt.InteractionID !== this.interactionId) {
                 return;
             }
+            // check if recovery or template sent then show it
+            if (evt.RecoveryEvent && !evt.IsAppMessage || evt.EventName === 'TextChatMessageTemplateSentEvent') {
+                const formattedMessage = this.isValidJson(evt.Message) ? JSON.parse(evt.Message) : null;
+                const messageId = formattedMessage ? formattedMessage.messageId : evt.EventId;
+                // const type = formattedMessage ? formattedMessage.type : '';
+                const message = formattedMessage ? formattedMessage.message : evt.Message;
+                // const isReply = formattedMessage && formattedMessage.replyId ? formattedMessage.replyId : false;
+                // const replyJson = {};
 
-            // change the connected status
-            this.isConnected = false;
-            this.interactionStatus = 'Disconnected';
-            // update the interaction status
-            this._interactionManagerService.updateInteraction(evt.InteractionID, 'status', 'disconnected');
+                // TODO:: implement reply and get the replied message
+
+                // add message to the transcripts
+                this.chatTranscripts.push({
+                    who: this.user.agentName,
+                    messageId,
+                    message,
+                    time: new Date(Date.parse(evt.CreatedTime.toString())).toLocaleString() || new Date().toLocaleString()
+                });
+
+                // set ready to reply
+                this.readyToReply();
+            }
+        } catch (error) { }
+    }
+
+    private TextChatMessageTemplateSentEvent = (evt: TextChatMessageTemplateSentEvent) => {
+        this.messageSentEvent(evt);
+    }
+
+    private TextChatMessageReceivedEvent = (evt: TextChatMessageReceivedEvent) => {
+        // check the interaction
+        if (evt.InteractionID !== this.interactionId) {
+            return;
+        }
+        // check if app message 
+        if (evt.IsAppMessage) {
+            // TODO:: handle app messages
+            return;
+        }
+
+        // method variables
+        let json = null;
+        const data = {
+            messageId: evt.EventId,
+            type: 'text',
+            message: evt.Message,
+            replyId: '',
+            replyJson: {}, // TODO:: to implement reply
+            attachment: {},
+            isValid: false
+        };
+
+        try {
+            // check the message 
+            if (this.isValidJson(evt.Message)) {
+                // parse the message
+                json = JSON.parse(evt.Message);
+                // check if the message is from SMM
+                if (json.hasOwnProperty('_id')) {
+                    data.messageId = json._id;
+                    data.type = typeof json.msg === 'object' ? json.msg.type : 'text';
+                    // check if the message is an attachment
+                    if (typeof json.msg === 'object') {
+                        //  if attachment from SMM
+                        data.attachment = {
+                            src: json.msg.content.url,
+                            type: json.msg.type,
+                            name: ''
+                        };
+                        //  TODO:: when caption for image is implemented, this can be changed
+                        data.message = '';
+                    }
+                    else {
+                        // not an attachment from SMM
+                        data.message = json.msg;
+                        data.attachment = null;
+                    }
+                } else {
+                    // message from livechat
+                    data.messageId = json.messageId;
+                    data.type = json.type === 'attachment' ? json.attachment.type : json.type;
+                    data.message = json.message;
+                    data.replyId = json.replyId;
+                    data.attachment = json.attachment ? json.attachment : null;
+                }
+            }
+        } catch (error) {
+            // Logger.log('Error in TextChatRemoteUserConnectedEvent', error);
+        }
+
+        // TODO:: sanitze the message
+        //        add message badge if the chat window is not active
+        //        time taken timer update
+        //        check for hyperlinks
+
+        // add message to the transcripts
+        this.chatTranscripts.push({
+            who: this.customerName,
+            messageId: data.messageId,
+            message: data.message,
+            time: new Date(Date.parse(this.data.InteractionDetails.CreatedTime)).toLocaleString() || new Date().toLocaleString()
         });
+
+        let isActive = false;
+        // check if the interaction is active, else count unread
+        this.interactionList.forEach((item: InteractionRef) => {
+            isActive = (item.interactionId === this.interactionId && item.isActive);
+        });
+
+        // in not active then increment the count
+        if (!isActive) {
+            ++this.unreadChats;
+            // update the interaction other data
+            this._interactionManagerService.updateInteraction(evt.InteractionID, {
+                'otherData': {
+                    unreadCount: this.unreadChats
+                }
+            });
+        }
+
+        // focus and scroll
+        this.readyToReply();
+
+        // TODO:: show chrome notification if needed
+        //        hide freeze auto response button
+
+    }
+
+    private TextChatDisconnectedEvent = (evt: TextChatDisconnectedEvent) => {
+        // check the interaction
+        if (evt.InteractionID !== this.interactionId) {
+            return;
+        }
+        // change the connected status
+        this.isConnected = false;
+        this.interactionStatus = 'Disconnected';
+        // update the interaction status
+        this._interactionManagerService.updateInteraction(evt.InteractionID, {
+            'status': 'disconnected'
+        });
+        // stop the duration timer
+        this.stopTimer.next();
+    }
+
+    private messageSentEvent(evt: TextChatMessageSentEvent | TextChatMessageTemplateSentEvent): void {
+        try {
+            // check the interaction
+            if (evt.InteractionID !== this.interactionId) {
+                return;
+            }
+            // check if recovery or template sent then show it
+            if (evt.RecoveryEvent && !evt.IsAppMessage || evt.EventName === 'TextChatMessageTemplateSentEvent') {
+                const formattedMessage = this.isValidJson(evt.Message) ? JSON.parse(evt.Message) : null;
+                const messageId = formattedMessage ? formattedMessage.messageId : evt.EventId;
+                // const type = formattedMessage ? formattedMessage.type : '';
+                const message = formattedMessage ? formattedMessage.message : evt.Message;
+                // const isReply = formattedMessage && formattedMessage.replyId ? formattedMessage.replyId : false;
+                // const replyJson = {};
+
+                // TODO:: implement reply and get the replied message
+
+                // add message to the transcripts
+                this.chatTranscripts.push({
+                    who: this.user.agentName,
+                    messageId,
+                    message,
+                    time: new Date(Date.parse(evt.CreatedTime.toString())).toLocaleString() || new Date().toLocaleString()
+                });
+
+                // set ready to reply
+                this.readyToReply();
+            }
+        } catch (error) { }
     }
 
     private readyToReply(): void {
@@ -362,16 +476,38 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     reply(event: any): void {
         event.preventDefault();
 
-        if (!this.replyForm.form.value.message) {
+        if (!this.replyForm.form.value.message.trim()) {
             return;
         }
+
+        // get the typed message
+        const inputMessage = this.replyForm.form.value.message;
+        const messageId = `a_${TUtils.Generic.uuid()}`;
+        let messageData = this.replyForm.form.value.message;
 
         // Message
         const message = {
             who: this.user.agentName,
-            message: this.replyForm.form.value.message,
+            message: inputMessage,
             time: new Date().toLocaleString()
         };
+
+        // check if reply feature is enabled
+        if (this.data.Data.ReplyOnChatAllowed) {
+            const jsonMessage = {
+                messageId: messageId,
+                type: 'text',
+                message: inputMessage,
+                replyId: '',
+                templateId: '',
+                attachment: null
+            };
+
+            // TODO:: check for reply messages
+
+            // stringy the json
+            messageData = JSON.stringify(jsonMessage);
+        }
 
         // Add the message to the chat
         this.chatTranscripts.push(message);
@@ -385,42 +521,71 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // Update the server
         SDKClient.sendTextChat({
             interactionId: this.interactionId.toString(),
-            message: message.message,
-            messageId: '',
+            message: messageData,
+            messageId,
             templateId: '',
             type: 'text'
-        }, null).then((dt: any) => {
+        }, null).then((dt: IReason) => {
             console.log('sendTextChat', dt);
         });
     }
 
-    selectInteraction(item: ActiveInteraction): void {
-        this._interactionManagerService.updateInteraction(item.interactionId, 'isActive', true);
+    selectInteraction(item: InteractionRef): void {
+        // if same interaction is seleted then return
+        if (this.interactionId === item.interactionId) {
+            return;
+        }
+        // update is active
+        this._interactionManagerService.updateInteraction(item.interactionId, {
+            'isActive': true
+        });
     }
 
-    endChat(): void {
+    endChat(endBtn: MatButton): void {
         // config force login
-        const confirmDialogRef = this._dialog.open(FuseConfirmDialogComponent, {
+        const confirmDialogRef = this._dialog.open(ConfirmDialogComponent, {
             disableClose: false
         });
-        confirmDialogRef.componentInstance.confirmMessage = 'Are you sure to end this chat?';
+        confirmDialogRef.componentInstance.message = 'Are you sure to end this chat?';
         confirmDialogRef.afterClosed().subscribe((dialogResult) => {
             if (dialogResult) {
+                // disable the button
+                endBtn.disabled = true;
+                // show the progress bar 
+                this._fuseProgressBarService.show();
                 SDKClient.endTextChat({
                     interactionId: this.interactionId.toString(),
                     reason: 'AgentChatDisconnected'
                 }, null)
-                    .then((dt) => {
-                        console.log('endTextChat', dt);
+                    .then(() => {
+                        // enable the button
+                        endBtn.disabled = false;
+                        // hide the progress bar
+                        this._fuseProgressBarService.hide();
                     });
             }
         });
 
     }
 
-    closeInteraction(): void {
+    closeInteraction(closeBtn: MatButton): void {
+        // show the progress bar 
+        this._fuseProgressBarService.show();
+        // disable the button
+        closeBtn.disabled = true;
         SDKClient.closeInteraction(this.interactionId.toString(), null)
-            .then((dt: any) => {
+            .then((dt: IResponse) => {
+                // hide the progress bar
+                this._fuseProgressBarService.hide();
+                // check the response
+                if (dt.response && dt.response.ResultCode === 0) {
+                    this._appDataService.showMessage('Interaction closed sucessfully');
+                }
+                else {
+                    // enable if something goes wrong
+                    closeBtn.disabled = false;
+                    this._appDataService.showMessage('Close interaction failed');
+                }
                 console.log('closeInteraction', dt);
             });
     }

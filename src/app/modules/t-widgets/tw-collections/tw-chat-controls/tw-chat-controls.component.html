@@ -53,30 +53,27 @@
                 <div
                     fxLayout="column"
                     fxLayoutAlign=" center"
-                    class="w-100-p h-100-p mt-8 interactions"
+                    class="w-100-p h-100-p mt-8 pt-8 pr-8 interactions"
                     fusePerfectScrollbar
                     [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
                 >
-                    <ngx-avatar
+                    <avatar
                         *ngFor="let item of interactionList"
-                        class="mt-8 user-avatar"
-                        [ngClass]="item.interactionId === interactionId ? 'active' : ''"
-                        bgColor="#FFFFFF"
-                        fgColor="#555555"
-                        cornerRadius="15"
-                        size="50"
-                        [round]="false"
-                        name="{{ item.interactionId }}"
-                        [style]="{ cursor: 'pointer', height: '40px' }"
+                        name="{{ item.user }}"
+                        [ngClass]="item.status + ' ' + (item.interactionId === interactionId ? 'active' : '')"
+                        matTooltip="{{ item.user }}"
+                        matTooltipPosition="after"
                         (click)="selectInteraction(item)"
-                    >
-                    </ngx-avatar>
+                        matBadge="{{ item.interactionId !== interactionId ? item.otherData.unreadCount || '' : '' }}"
+                        matBadgePosition="after"
+                        matBadgeColor="accent"
+                    ></avatar>
                 </div>
             </div>
             <div
                 fxLayout="column"
                 fxLayoutAlign=" none"
-                class="tw-br-2 ml-8 chat-content"
+                class="tw-br-2 chat-content"
                 [ngClass]="
                     fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
                         ? fuseConfig.layout.anchorWidget.contentBackground
@@ -89,14 +86,16 @@
                     <button
                         *ngIf="data.Data.TransferAllowed"
                         [disabled]="!isConnected"
-                        class="mat-elevation-z2"
                         mat-mini-fab
                         color="default"
                         [ngClass]="
-                            fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                            (fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
                                 ? fuseConfig.layout.anchorWidget.bodyBackground
-                                : ''
+                                : '') +
+                            ' ' +
+                            (isConnected ? 'mat-elevation-z2' : '')
                         "
+                        matTooltip="Transfer"
                     >
                         <mat-icon>forward</mat-icon>
                     </button>
@@ -104,14 +103,16 @@
                     <button
                         *ngIf="data.Data.ConferenceAllowed"
                         [disabled]="!isConnected"
-                        class="mat-elevation-z2"
                         mat-mini-fab
                         color="default"
                         [ngClass]="
-                            fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                            (fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
                                 ? fuseConfig.layout.anchorWidget.bodyBackground
-                                : ''
+                                : '') +
+                            ' ' +
+                            (isConnected ? 'mat-elevation-z2' : '')
                         "
+                        matTooltip="Conference"
                     >
                         <mat-icon>group</mat-icon>
                     </button>
@@ -119,14 +120,16 @@
                     <button
                         *ngIf="data.Data.AV.Escalate.Audio"
                         [disabled]="!isConnected"
-                        class="mat-elevation-z2"
                         mat-mini-fab
                         color="default"
                         [ngClass]="
-                            fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                            (fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
                                 ? fuseConfig.layout.anchorWidget.bodyBackground
-                                : ''
+                                : '') +
+                            ' ' +
+                            (isConnected ? 'mat-elevation-z2' : '')
                         "
+                        matTooltip="Escalate to Audio"
                     >
                         <mat-icon>call</mat-icon>
                     </button>
@@ -134,28 +137,40 @@
                     <button
                         *ngIf="data.Data.AV.Escalate.Video"
                         [disabled]="!isConnected"
-                        class="mat-elevation-z2"
                         mat-mini-fab
                         color="default"
                         [ngClass]="
-                            fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                            (fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
                                 ? fuseConfig.layout.anchorWidget.bodyBackground
-                                : ''
+                                : '') +
+                            ' ' +
+                            (isConnected ? 'mat-elevation-z2' : '')
                         "
+                        matTooltip="Escalate to Video"
                     >
                         <mat-icon>video_call</mat-icon>
                     </button>
 
-                    <button [disabled]="!isConnected" class="mat-elevation-z2" mat-mini-fab color="warn" (click)="endChat()">
+                    <button
+                        [disabled]="!isConnected"
+                        [ngClass]="isConnected ? 'mat-elevation-z2' : ''"
+                        mat-mini-fab
+                        color="warn"
+                        #endBtn
+                        (click)="endChat(endBtn)"
+                        matTooltip="End Chat"
+                    >
                         <mat-icon>close</mat-icon>
                     </button>
 
                     <button
                         *ngIf="!isConnected"
                         mat-raised-button
-                        class="animate__animated animate__slideInRight animate__faster"
+                        class="tw-br-2 animate__animated animate__slideInRight animate__faster"
                         color="warn"
-                        (click)="closeInteraction()"
+                        #closeBtn
+                        (click)="closeInteraction(closeBtn)"
+                        matTooltip="Close Interaction"
                     >
                         Close
                     </button>
@@ -188,6 +203,28 @@
                                         : ''
                                 "
                             >
+                                <div *ngIf="isFirstMessageOfGroup(message, i)" [ngClass]="message.who === user.agentName ? 'right-svg' : 'left-svg'">
+                                    <svg
+                                        *ngIf="message.who !== user.agentName"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 8 13"
+                                        width="8"
+                                        height="13"
+                                    >
+                                        <path opacity=".13" fill="#0000000" d="M1.533 3.568L8 12.193V1H2.812C1.042 1 .474 2.156 1.533 3.568z"></path>
+                                        <path fill="currentColor" d="M1.533 2.568L8 11.193V0H2.812C1.042 0 .474 1.156 1.533 2.568z"></path>
+                                    </svg>
+                                    <svg
+                                        *ngIf="message.who === user.agentName"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 8 13"
+                                        width="8"
+                                        height="13"
+                                    >
+                                        <path opacity=".13" d="M5.188 1H0v11.193l6.467-8.625C7.526 2.156 6.958 1 5.188 1z"></path>
+                                        <path fill="currentColor" d="M5.188 0H0v11.193l6.467-8.625C7.526 1.156 6.958 0 5.188 0z"></path>
+                                    </svg>
+                                </div>
                                 <div *ngIf="isFirstMessageOfGroup(message, i)" class="user-label font-size-16 text-bold">{{ message.who }}</div>
                                 <div class="message">{{ message.message }}</div>
                                 <div class="time">{{ message.time | date: 'shortTime' }}</div>
@@ -217,6 +254,7 @@
                                 class="emoji-button"
                                 mat-icon-button
                                 aria-label="Select Emoji"
+                                matTooltip="Emoji"
                             >
                                 <mat-icon>emoji_emotions</mat-icon>
                             </button>
@@ -240,7 +278,14 @@
                                 ></textarea>
                             </mat-form-field>
 
-                            <button [disabled]="!isConnected" class="send-message-button" mat-icon-button type="submit" aria-label="Send message">
+                            <button
+                                [disabled]="!isConnected"
+                                class="send-message-button"
+                                mat-icon-button
+                                type="submit"
+                                aria-label="Send message"
+                                matTooltip="Send"
+                            >
                                 <mat-icon>send</mat-icon>
                             </button>
                         </form>

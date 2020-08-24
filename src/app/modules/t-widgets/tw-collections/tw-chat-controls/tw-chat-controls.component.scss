@@ -43,16 +43,13 @@ tw-chat-controls {
                 }
             }
 
-            .user-avatar {
-                .avatar-container {
-                    height: 100% !important;
-                    .avatar-content {
-                        width: 100%;
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        // box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
-                    }
+            avatar {
+                .avatar-content {
+                    width: 53px;
+                    height: 38px;
+                    border-radius: 16px;
+                    margin-bottom: 6px;
+                    cursor: pointer;
                 }
 
                 &.active {
@@ -109,6 +106,20 @@ tw-chat-controls {
                                 // padding: 12px;
                                 max-width: 100%;
 
+                                .right-svg {
+                                    color: #e0e0e0;
+                                    position: absolute;
+                                    right: -7px;
+                                    top: -1px;
+                                }
+
+                                .left-svg {
+                                    color: #d2c8d9;
+                                    position: absolute;
+                                    left: -7px;
+                                    top: -1px;
+                                }
+
                                 padding: 6px 7px 8px 9px;
 
                                 .message {
@@ -116,7 +127,7 @@ tw-chat-controls {
                                     line-height: 1.2;
 
                                     font-size: 14px;
-                                    margin-bottom: 10px;
+                                    margin-bottom: 12px;
                                 }
 
                                 .time {
@@ -155,7 +166,7 @@ tw-chat-controls {
 
                                 &.first-of-group {
                                     .bubble {
-                                        border-top-left-radius: 10px;
+                                        border-top-left-radius: 0px;
                                     }
                                 }
 
@@ -194,7 +205,7 @@ tw-chat-controls {
 
                                 &.first-of-group {
                                     .bubble {
-                                        border-top-right-radius: 10px;
+                                        border-top-right-radius: 0px;
                                     }
                                 }
 

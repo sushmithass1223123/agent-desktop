@@ -189,6 +189,7 @@ $typography: mat-typography-config(
 
 @import 'src/app/modules/core/login/login.theme';
 
+@import 'src/app/modules/t-widgets/tw-toolbar/tw-toolbar.theme';
 @import 'src/app/modules/t-widgets/tw-content/tw-content.theme';
 @import 'src/app/modules/t-widgets/tw-wrapper/tw-wrapper.theme';
 @import 'src/app/modules/t-widgets/tw-collections/tw-chat-controls/tw-chat-controls.theme';
@@ -224,6 +225,7 @@ $typography: mat-typography-config(
     @include login-theme($theme);
 
     // T-Widgets components
+    @include tw-toolbar-theme($theme);
     @include tw-content-theme($theme);
     @include tw-wrapper-theme($theme);
     @include tw-chat-controls-theme($theme);

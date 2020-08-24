@@ -43,6 +43,11 @@ export class TWidgetWrapper {
             // add the postion class
             this.class += ' ' + data.Config.Class;
         }
+
+        // add the view state as class
+        if (data.Config.ViewState) {
+            this.class += ' ' + data.Config.ViewState;
+        }
     }
 
     destroyWrapper(): void {
