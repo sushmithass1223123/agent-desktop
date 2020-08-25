@@ -1567,7 +1567,11 @@
                 "Enabled": true,
                 "Remote": true,
                 "RemoteThreshold": 15
-            }
+            },
+            "CustomSripts": [
+                "libs/webclientapi-lib.js",
+                "libs/collector.min.js"
+            ]
         }
     }
 }

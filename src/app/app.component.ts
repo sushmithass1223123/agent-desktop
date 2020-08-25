@@ -251,7 +251,9 @@ export class AppComponent implements OnInit, OnDestroy {
                     enabled: config.AppConfigs.SDK.Logging.Enabled,
                     remote: config.AppConfigs.SDK.Logging.Remote,
                     remoteThreshold: config.AppConfigs.SDK.Logging.RemoteThreshold
-                }
+                },
+                customScripts:
+                    [...config.AppConfigs.SDK.CustomSripts]
             });
         }
         else {
