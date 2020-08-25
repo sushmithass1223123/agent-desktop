@@ -1,8 +1,164 @@
-<tw-wrapper [data]="data" (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)"
-    (floatEvent)="floatEvent.emit($event)">
-    <div fxFlex fxFill fxLayout="row" fxLayoutAlign="center center" class="tw-full" fusePerfectScrollbar>
-        <span class="mat-headline mb-0">
-            {{ data.Name }} widget!
-        </span>
+<tw-wrapper
+    [data]="data"
+    (maximizeEvent)="maximizeEvent.emit($event)"
+    (collapseEvent)="collapseEvent.emit($event)"
+    (floatEvent)="floatEvent.emit($event)"
+>
+    <div class="w-100-p h-100-p voice-controls" fusePerfectScrollbar>
+        <div fxFill fxLayout="row" fxLayoutAlign=" none">
+            <div
+                fxLayout="column"
+                fxLayoutAlign=" center"
+                class="w-60 h-100-p mr-4 pr-4 py-8 interactions"
+                fusePerfectScrollbar
+                [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
+            >
+                <avatar
+                    *ngFor="let item of interactionList"
+                    name="{{ item.user }}"
+                    [ngClass]="item.status + ' ' + (item.interactionId === interactionId ? 'active' : '')"
+                    matTooltip="{{ item.user }}"
+                    matTooltipPosition="after"
+                    (click)="selectInteraction(item)"
+                ></avatar>
+            </div>
+            <div fxFlex fxLayout="column" fxLayoutAlign=" none">
+                <div
+                    fxFlex
+                    fxLayout="column"
+                    fxLayoutAlign=" none"
+                    class="w-100-p px-12 py-8 tw-br-2 font-size-12 interaction-details"
+                    [ngClass]="
+                        fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                            ? fuseConfig.layout.anchorWidget.contentBackground
+                            : fuseConfig.layout.widget.customBackgroundColor === true
+                            ? fuseConfig.layout.widget.contentBackground
+                            : ''
+                    "
+                >
+                    <div fxFlex fxLayout="column" fxLayoutAlign="space-between none">
+                        <div fxLayout="row" fxLayoutAlign="space-between none">
+                            <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>alarm_on</mat-icon> {{ startTime }}</div>
+                            <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>construction</mat-icon> {{ sessionID }}</div>
+                        </div>
+                        <div fxLayout="row" fxLayoutAlign="space-between none">
+                            <span fxLayout="row" fxLayoutAlign=" center"> <mat-icon>timer</mat-icon> {{ interactionDuration }} </span>
+                        </div>
+                        <div fxLayout="column" fxLayoutAlign=" none">
+                            <span fxLayout="row" fxLayoutAlign=" center">
+                                <span>Verification Status: </span>
+                                <span class="title text-bold ml-4">NA</span>
+                            </span>
+                            <span fxLayout="row" fxLayoutAlign=" center">
+                                <span>Verification Type: </span>
+                                <span class="title text-bold ml-4">NA</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div
+                        *ngIf="data.Data.IVR?.MenuEnabled"
+                        fxLayout="row"
+                        fxLayoutAlign=" none"
+                        class="mt-8 px-12 tw-br-3 font-size-12 position-relative ivr-history"
+                    >
+                        <div class="label">
+                            IVR History
+                        </div>
+                        <ul class="breadcrumbs">
+                            <li>
+                                <span>NA</span>
+                            </li>
+                            <li>
+                                <span>NA</span>
+                            </li>
+                            <li>
+                                <span>NA</span>
+                            </li>
+                            <li>
+                                <span>NA</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div fxLayout="row" fxLayoutAlign=" none" class="call-controls">
+                    <button
+                        *ngIf="interactionStatus !== 'disconnected'"
+                        mat-flat-button
+                        class="success"
+                        [disabled]="interactionStatus !== 'initial'"
+                        #answerBtn
+                        (click)="answerCall(answerBtn)"
+                    >
+                        <mat-icon>call</mat-icon>
+                    </button>
+                    <button
+                        *ngIf="interactionStatus !== 'disconnected'"
+                        mat-flat-button
+                        class="danger"
+                        [disabled]="interactionStatus !== 'connected'"
+                        #disconnectBtn
+                        (click)="disconnectCall(disconnectBtn)"
+                    >
+                        <mat-icon>call_end</mat-icon>
+                    </button>
+                    <button
+                        *ngIf="interactionStatus !== 'hold' && interactionStatus !== 'disconnected'"
+                        mat-flat-button
+                        class="warning"
+                        [disabled]="interactionStatus !== 'connected'"
+                        #holdBtn
+                        (click)="holdCall(holdBtn)"
+                    >
+                        <mat-icon>phone_paused</mat-icon>
+                    </button>
+                    <button
+                        *ngIf="interactionStatus === 'hold' && interactionStatus !== 'disconnected'"
+                        mat-flat-button
+                        class="success"
+                        #unHoldBtn
+                        (click)="unHoldCall(unHoldBtn)"
+                    >
+                        <mat-icon>phone_in_talk</mat-icon>
+                    </button>
+                    <button
+                        *ngIf="data.Data?.TransferAllowed && interactionStatus !== 'disconnected'"
+                        mat-flat-button
+                        [disabled]="interactionStatus !== 'connected'"
+                    >
+                        <mat-icon>phone_forwarded</mat-icon>
+                    </button>
+                    <button
+                        *ngIf="data.Data?.ConferenceAllowed && interactionStatus !== 'disconnected'"
+                        mat-flat-button
+                        [disabled]="interactionStatus !== 'connected'"
+                    >
+                        <mat-icon>group</mat-icon>
+                    </button>
+                    <button
+                        *ngIf="data.Data.IVR?.Transfer?.Allowed && interactionStatus !== 'disconnected'"
+                        mat-flat-button
+                        [disabled]="interactionStatus !== 'connected'"
+                    >
+                        <mat-icon>phonelink_ring</mat-icon>
+                    </button>
+                    <button
+                        *ngIf="interactionStatus === 'disconnected'"
+                        mat-flat-button
+                        class="tw-br-2 animate__animated animate__slideInRight animate__faster"
+                        color="warn"
+                        #closeBtn
+                        (click)="closeInteraction(closeBtn)"
+                        matTooltip="Close Interaction"
+                    >
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- For web phone -->
+    <div hidden>
+        <audio *ngFor="let item of msAudioStreams" autoplay playsinline="true" [srcObject]="item.stream"></audio>
     </div>
 </tw-wrapper>

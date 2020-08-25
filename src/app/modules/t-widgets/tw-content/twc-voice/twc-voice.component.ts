@@ -76,6 +76,17 @@ export class TwcVoiceComponent extends TWContentWrapper implements OnInit, OnDes
             interactionId: evt.InteractionID,
             widgets: voiceWidgets
         });
+
+        // add the construct event to the interaction manager
+        this._interactionManagerService.addInteraction({
+            interactionId: evt.InteractionID,
+            type: 'voice',
+            status: 'incoming',
+            isActive: this.interactions.length === 1,
+            user: evt.PhoneNumber,
+            path: this.data.Data.Path,
+            otherData: {}
+        });
     }
 
     private interactionClosed = (evt: InteractionClosedEvent) => {

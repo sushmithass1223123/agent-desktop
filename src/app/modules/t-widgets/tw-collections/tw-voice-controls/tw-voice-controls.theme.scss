@@ -1,0 +1,41 @@
+@mixin tw-voice-controls-theme($theme) {
+    $background: map-get($theme, background);
+    $foreground: map-get($theme, foreground);
+    $primary: map-get($theme, primary);
+    $accent: map-get($theme, accent);
+    $is-dark: map-get($theme, is-dark);
+    $mat-warn: map-get($theme, warn);
+
+    tw-voice-controls {
+        avatar {
+            .avatar-content {
+                @if ($is-dark == true) {
+                    color: #fafafa !important;
+                    background-color: rgba(0, 0, 0, 0.87) !important;
+                } @else {
+                    color: rgba(0, 0, 0, 0.87) !important;
+                    background-color: #fafafa !important;
+                }
+            }
+
+            &.connected {
+                .avatar-content {
+                    border: 2px solid map-get($primary, default);
+                }
+            }
+
+            &.disconnected {
+                .avatar-content {
+                    border: 1px solid map-get($mat-warn, default);
+                }
+            }
+
+            &.active {
+                .avatar-content {
+                    color: map-get($primary, default-contrast) !important;
+                    background-color: map-get($primary, default) !important;
+                }
+            }
+        }
+    }
+}

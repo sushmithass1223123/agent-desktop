@@ -8,7 +8,7 @@
         <div
             fxLayout="column"
             fxLayoutAlign=" none"
-            class="w-100-p px-12 py-8 interaction-details tw-br-2"
+            class="w-100-p px-12 py-8 tw-br-2 font-size-12 interaction-details"
             [ngClass]="
                 fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
                     ? fuseConfig.layout.anchorWidget.contentBackground
@@ -118,7 +118,7 @@
                     </button>
 
                     <button
-                        *ngIf="data.Data.AV.Escalate.Audio"
+                        *ngIf="data.Data.AudioEscalateEnabled"
                         [disabled]="!isConnected"
                         mat-mini-fab
                         color="default"
@@ -135,7 +135,7 @@
                     </button>
 
                     <button
-                        *ngIf="data.Data.AV.Escalate.Video"
+                        *ngIf="data.Data.VideoEscalateEnabled"
                         [disabled]="!isConnected"
                         mat-mini-fab
                         color="default"

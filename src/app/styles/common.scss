@@ -1,0 +1,43 @@
+.breadcrumbs {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    overflow: hidden;
+    white-space: nowrap;
+
+    > li {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+
+    > li {
+        display: inline-block;
+    }
+
+    > li a,
+    > li span {
+        position: relative;
+        display: block;
+        font-size: 12px;
+        line-height: 24px;
+    }
+
+    > li + li a,
+    > li + li span {
+        padding-left: 40px;
+    }
+
+    > li + li a:before,
+    > li + li span:before {
+        position: absolute;
+        top: 50%;
+        left: 8px;
+        margin-top: -12px;
+        content: '\e315';
+        font-family: 'Material Icons';
+        font-size: 24px;
+        display: block;
+        color: #727272;
+    }
+}

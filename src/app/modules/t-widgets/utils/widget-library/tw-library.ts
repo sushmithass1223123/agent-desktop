@@ -21,6 +21,7 @@ import { TwSuTransferredConferencedCallsComponent } from '@modules/t-widgets/tw-
 import { TwSuChannelsStatusComponent } from '@modules/t-widgets/tw-collections/tw-su-channels-status/tw-su-channels-status.component';
 import { TwSuChannelsComponent } from '@modules/t-widgets/tw-collections/tw-su-channels/tw-su-channels.component';
 import { TwSuStatusComponent } from '@modules/t-widgets/tw-collections/tw-su-status/tw-su-status.component';
+import { TwVoiceControlsComponent } from '@modules/t-widgets/tw-collections/tw-voice-controls/tw-voice-controls.component';
 
 export class TWLibrary {
     static widgetLibrary: Record<string, Type<any>> = {
@@ -44,6 +45,7 @@ export class TWLibrary {
         'tw-su-channels-status': TwSuChannelsStatusComponent,
         'tw-su-channels': TwSuChannelsComponent,
         'tw-su-status': TwSuStatusComponent,
+        'tw-voice-controls': TwVoiceControlsComponent
     };
 
     public static getAllWidgets(): Record<string, Type<any>> {

@@ -112,10 +112,12 @@ export class LoginComponent implements OnInit, OnDestroy {
     // to load the config
     private loadConfig(): void {
         // Subscribe to config changes
-        this._appDataService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
-            this.appConfig = config;
-            this.configLoaded(config);
-        });
+        this._appDataService.config
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((config: any) => {
+                this.appConfig = config;
+                this.configLoaded(config);
+            });
     }
 
     private configLoaded(config: any): void {
@@ -235,6 +237,10 @@ export class LoginComponent implements OnInit, OnDestroy {
                             }
                         });
                     } else {
+                        // TODO:: assign the agent config if available
+                        // if (response.OtherData.ItemOne) {
+                        //     this._appDataService.config = JSON.parse(response.OtherData.ItemOne);
+                        // }
                         // login success
                         // we will route to main page
                         this._router.navigate(['main'], {

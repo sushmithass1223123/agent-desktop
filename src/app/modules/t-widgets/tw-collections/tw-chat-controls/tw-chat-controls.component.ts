@@ -60,7 +60,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     isConnected = false;
     sessionID = 'NA';
     startTime = 'NA';
-    interactionDuration = 'NA';
+    interactionDuration = '00:00:00';
     stopTimer = new Subject();
     interactionStatus = 'NA';
     chatTranscripts: any[] = [];
@@ -91,7 +91,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.initWrapper(this.data);
 
         // set the interaction id from data
-        this.interactionId = this.data.InteractionDetails.InteractionID;
+        this.interactionId = this.data.InteractionDetails?.InteractionID;
 
         this._fuseConfigService.config
             .pipe(takeUntil(this.unsubscribeAll))
@@ -115,21 +115,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // set the start time
         this.startTime = new Date(Date.parse(this.data.InteractionDetails.CreatedTime)).toLocaleString();
-
-        // subscribe to the timer
-        timer(1000, 1000)
-            .pipe(takeUntil(this.unsubscribeAll), takeUntil(this.stopTimer))
-            .subscribe(val => {
-                const totalSeconds = val + 1;
-                const hours = Math.floor(totalSeconds / 3600);
-                const minutes = Math.floor(totalSeconds % 3600 / 60);
-                const seconds = Math.floor(totalSeconds % 3600 % 60);
-                // set the interaction duration
-                this.interactionDuration =
-                    (hours > 9 ? hours : '0' + hours) + ':' +
-                    (minutes > 9 ? minutes : '0' + minutes) + ':'
-                    + (seconds > 9 ? seconds : '0' + seconds);
-            });
 
         // listen to TMAC events
         this.registerToEvents();
@@ -184,6 +169,22 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         if (evt.InteractionID !== this.interactionId) {
             return;
         }
+
+        // subscribe to the timer
+        timer(1000, 1000)
+            .pipe(takeUntil(this.unsubscribeAll), takeUntil(this.stopTimer))
+            .subscribe(val => {
+                const totalSeconds = val + 1;
+                const hours = Math.floor(totalSeconds / 3600);
+                const minutes = Math.floor(totalSeconds % 3600 / 60);
+                const seconds = Math.floor(totalSeconds % 3600 % 60);
+                // set the interaction duration
+                this.interactionDuration =
+                    (hours > 9 ? hours : '0' + hours) + ':' +
+                    (minutes > 9 ? minutes : '0' + minutes) + ':'
+                    + (seconds > 9 ? seconds : '0' + seconds);
+            });
+
         // change the connected status
         this.isConnected = true;
         this.interactionStatus = 'Connected';

@@ -70,6 +70,7 @@ export class TwAuxTimerComponent extends TWidgetWrapper implements OnInit, OnDes
         this.seconds1 = '0';
         this.seconds2 = '0';
         this.timerSub.unsubscribe();
+        this.timerSub = null;
         this.initTimer();
     }
 }

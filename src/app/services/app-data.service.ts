@@ -9,6 +9,8 @@ import { MatSnackBar, MatSnackBarVerticalPosition, MatSnackBarHorizontalPosition
 export class AppDataService {
     // Private
     private _configSubject: BehaviorSubject<any>;
+    private _audioInterval: any;
+    private _audio: any;
 
     constructor(
         private _snackBar: MatSnackBar
@@ -39,15 +41,37 @@ export class AppDataService {
         return this._configSubject.asObservable();
     }
 
-    playAudio(type: string = 'default', volume: number = 1): void {
-        const audio = new Audio();
-        audio.src = `assets/sounds/${type}.mp3`;
-        audio.load();
-        audio.volume = volume;
-        audio.play();
+    public playAudio(type: string = 'default', volume: number = 1, repeat = false): void {
+        // clear if any interval
+        clearInterval(this._audioInterval);
+        // start dial tone
+        this._audio = new Audio(`assets/sounds/${type}.mp3`);
+        // set the volume 
+        this._audio.volume = volume;
+        // play once
+        this._audio.play();
+        // if repeat then loop it
+        if (repeat) {
+            // start interval
+            this._audioInterval = setInterval((x: any) => {
+                x.play();
+            }, 5000, this._audio);
+        }
     }
 
-    showMessage(message: string, vPos?: MatSnackBarVerticalPosition, hPos?: MatSnackBarHorizontalPosition, style?: string, duration?: number): void {
+    public clearAudio(): void {
+        // if audio playing 
+        if (this._audio) {
+            // pause the audio
+            this._audio.pause();
+        }
+        // clear interval
+        clearInterval(this._audioInterval);
+        // set the interval to null
+        this._audioInterval = null;
+    }
+
+    public showMessage(message: string, vPos?: MatSnackBarVerticalPosition, hPos?: MatSnackBarHorizontalPosition, style?: string, duration?: number): void {
         this._snackBar.open(message, 'x', {
             duration: duration || 2000,
             verticalPosition: vPos || 'top', // 'top' | 'bottom'

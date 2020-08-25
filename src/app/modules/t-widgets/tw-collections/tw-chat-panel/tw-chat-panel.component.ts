@@ -76,7 +76,7 @@ export class TwChatPanelComponent extends TWidgetWrapper implements OnInit, OnDe
         }
 
         // play new chat sound 
-        this._appDataService.playAudio('newchat', 0.5);
+        this._appDataService.playAudio('new-chat', 0.5);
     }
 
     ngOnDestroy(): void {

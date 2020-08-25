@@ -1,3 +1,5 @@
+@import 'src/app/styles/colors';
+
 tw-active-interactions {
     .voice {
         .mat-card-avatar {
@@ -16,11 +18,11 @@ tw-active-interactions {
             }
 
             &.hold {
-                background: #f1c754;
+                background: $tw-warning;
             }
 
             &.drop {
-                background: #d38a73;
+                background: $tw-danger;
             }
         }
     }
@@ -34,8 +36,8 @@ tw-active-interactions {
             height: 44px;
         }
         .mat-badge-content {
-            background: #f1c754 !important;
-            color: rgba(0, 0, 0, 0.87) !important;
+            background: $tw-warning !important;
+            color: $tw-black !important;
         }
     }
 }
