@@ -192,6 +192,7 @@ $typography: mat-typography-config(
 @import 'src/app/modules/t-widgets/tw-content/tw-content.theme';
 @import 'src/app/modules/t-widgets/tw-wrapper/tw-wrapper.theme';
 @import 'src/app/modules/t-widgets/tw-collections/tw-chat-controls/tw-chat-controls.theme';
+@import 'src/app/modules/t-widgets/tw-collections/tw-su-active-agents/tw-su-active-agents.theme';
 
 // Define a mixin for easier access
 @mixin components-theme($theme) {
@@ -227,6 +228,7 @@ $typography: mat-typography-config(
     @include tw-content-theme($theme);
     @include tw-wrapper-theme($theme);
     @include tw-chat-controls-theme($theme);
+    @include tw-su-active-agents-theme($theme);
 }
 
 // -----------------------------------------------------------------------------------------------------

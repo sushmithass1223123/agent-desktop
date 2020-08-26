@@ -1,0 +1,38 @@
+@mixin tw-su-active-agents-theme($theme) {
+    $background: map-get($theme, background);
+    $foreground: map-get($theme, foreground);
+    $accent: map-get($theme, accent);
+    $is-dark: map-get($theme, is-dark);
+
+    tw-su-active-agents {
+        mat-form-field {
+            .mat-form-field-wrapper {
+                .mat-form-field-outline {
+                    @if ($is-dark) {
+                        background-color: map-get($background, hover);
+                    } @else {
+                        background: #ffffff;
+                    }
+                }
+            }
+        }
+
+        .agent-list {
+            .agent-item {
+                @if ($is-dark) {
+                    background-color: map-get($background, hover);
+                }
+            }
+        }
+
+        .channel-list {
+            .mat-card-avatar {
+                @if ($is-dark) {
+                    background-color: map-get($background, hover);
+                } @else {
+                    background: #ffffff;
+                }
+            }
+        }
+    }
+}

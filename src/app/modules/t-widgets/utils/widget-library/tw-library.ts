@@ -21,6 +21,9 @@ import { TwSuTransferredConferencedCallsComponent } from '@modules/t-widgets/tw-
 import { TwSuChannelsStatusComponent } from '@modules/t-widgets/tw-collections/tw-su-channels-status/tw-su-channels-status.component';
 import { TwSuChannelsComponent } from '@modules/t-widgets/tw-collections/tw-su-channels/tw-su-channels.component';
 import { TwSuStatusComponent } from '@modules/t-widgets/tw-collections/tw-su-status/tw-su-status.component';
+import { TwSuActiveAgentsComponent } from '@modules/t-widgets/tw-collections/tw-su-active-agents/tw-su-active-agents.component';
+import { TwSuWorkCodesComponent } from '@modules/t-widgets/tw-collections/tw-su-work-codes/tw-su-work-codes.component';
+import { TwSuAgentActivityComponent } from '@modules/t-widgets/tw-collections/tw-su-agent-activity/tw-su-agent-activity.component';
 
 export class TWLibrary {
     static widgetLibrary: Record<string, Type<any>> = {
@@ -43,7 +46,10 @@ export class TWLibrary {
         'tw-su-transferred-conferenced-calls': TwSuTransferredConferencedCallsComponent,
         'tw-su-channels-status': TwSuChannelsStatusComponent,
         'tw-su-channels': TwSuChannelsComponent,
-        'tw-su-status': TwSuStatusComponent
+        'tw-su-status': TwSuStatusComponent,
+        'tw-su-active-agents': TwSuActiveAgentsComponent,
+        'tw-su-work-codes': TwSuWorkCodesComponent,
+        'tw-su-agent-activity': TwSuAgentActivityComponent,
     };
 
     public static getAllWidgets(): Record<string, Type<any>> {

@@ -155,6 +155,46 @@ login {
                         @include media-breakpoint('xs') {
                             width: 80%;
                         }
+
+                        .mat-form-field-wrapper {
+                            .mat-select-arrow,
+                            .mat-form-field.mat-focused.mat-primary .mat-select-arrow,
+                            .mat-select-placeholder,
+                            .mat-select-value {
+                                color: #732b90 !important;
+                            }
+
+                            .mat-form-field-label {
+                                color: #732b90 !important;
+                            }
+
+                            .mat-form-field-outline {
+                                color: #f9f1ff !important;
+                                background: #f9f1ff !important;
+                            }
+                        }
+
+                        input {
+                            &::-webkit-input-placeholder {
+                                /* Chrome/Opera/Safari */
+                                color: #732b90 !important;
+                            }
+
+                            &::-moz-placeholder {
+                                /* Firefox 19+ */
+                                color: #732b90 !important;
+                            }
+
+                            &:-ms-input-placeholder {
+                                /* IE 10+ */
+                                color: #732b90 !important;
+                            }
+
+                            &:-moz-placeholder {
+                                /* Firefox 18- */
+                                color: #732b90 !important;
+                            }
+                        }
                     }
 
                     .submit-button {

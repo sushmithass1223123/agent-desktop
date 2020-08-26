@@ -1,0 +1,60 @@
+<!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
+<!-- implement following events in your component to access widget wrapper action events -->
+<!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
+
+<!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
+
+<tw-wrapper [data]="data">
+    <!-- your code goes here -->
+    <div fxFill fxLayout="column" fxLayoutAlign=" none">
+        <div class="w-100-p">
+            <mat-form-field class="form-field w-100-p" appearance="outline">
+                <input class="login-input" required matInput placeholder="Search" />
+                <button mat-icon-button matSuffix>
+                    <mat-icon>search</mat-icon>
+                </button>
+            </mat-form-field>
+        </div>
+        <div fxFlex fxLayout="column" fxLayoutAlign=" none" class="agent-list" [@animateStagger]="{ value: '50' }" *fuseIfOnDom fusePerfectScrollbar>
+            <div
+                *ngFor="let item of agentList"
+                fxLayout="row"
+                fxLayoutAlign="space-between center"
+                class="w-100-p p-12 border-radius-16 agent-item"
+                [ngClass]="
+                    fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                        ? fuseConfig.layout.anchorWidget.contentBackground
+                        : fuseConfig.layout.widget.customBackgroundColor === true
+                        ? fuseConfig.layout.widget.contentBackground
+                        : ''
+                "
+                [@animate]="{ value: '*', params: { y: '100%' } }"
+            >
+                <div fxLayout="row" fxLayoutAlign="start center" fxFlex="30">
+                    <div mat-card-avatar>{{ item.name.substr(0, 2) }}</div>
+                    <div fxLayout="column" fxLayoutAlign=" none" class="ml-8">
+                        <span class="font-weight-700"> {{ item.name }}</span>
+                        <span class="font-size-12">{{ item.status }}</span>
+                    </div>
+                </div>
+
+                <div fxLayout="row" fxLayoutAlign="center center" fxFlex="60" class="channel-list">
+                    <div mat-card-avatar matBadge="4">
+                        <mat-icon>phone</mat-icon>
+                    </div>
+                    <div mat-card-avatar matBadge="4">
+                        <mat-icon>chat</mat-icon>
+                    </div>
+                    <div mat-card-avatar matBadge="4">
+                        <mat-icon>duo</mat-icon>
+                    </div>
+                </div>
+
+                <div fxLayout="row" fxLayoutAlign="end center" fxFlex="10">
+                    <mat-icon>wifi</mat-icon>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- your code goes here -->
+</tw-wrapper>

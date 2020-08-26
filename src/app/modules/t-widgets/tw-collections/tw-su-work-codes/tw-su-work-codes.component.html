@@ -1,0 +1,63 @@
+<!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
+<!-- implement following events in your component to access widget wrapper action events -->
+<!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
+<tw-wrapper [data]="data">
+    <!-- your code goes here -->
+    <div fxFlex fxFill fxLayout="row" *ngIf="isHeatMap; else elseBlock">
+        <mat-chip-list aria-label="Fish selection">
+            <mat-chip
+                *ngFor="let workCode of allWorkCodes"
+                [ngClass]="{
+                    less: workCode.value === 'less',
+                    average: workCode.value === 'average',
+                    more: workCode.value === 'more',
+                    most: workCode.value === 'most'
+                }"
+            >
+                <mat-icon class="mat-icon-mirror mr-4">{{ 'local_offer' }}</mat-icon>
+                {{ workCode.name }}
+            </mat-chip>
+        </mat-chip-list>
+    </div>
+    <ng-template #elseBlock>
+        <div fxFlex fxFill fxLayout="row" fxLayoutAlign="center end">
+            <!-- <tw-work-codes-input>
+
+            </tw-work-codes-input> -->
+            <mat-form-field class="example-chip-list">
+                <mat-chip-list #chipList aria-label="workCode selection">
+                    <mat-chip
+                        *ngFor="let workCode of selectedWorkCodes"
+                        [selectable]="selectable"
+                        [removable]="removable"
+                        [ngClass]="{
+                            less: workCode.value === 'less',
+                            average: workCode.value === 'average',
+                            more: workCode.value === 'more',
+                            most: workCode.value === 'most'
+                        }"
+                        (removed)="remove(workCode)"
+                    >
+                        <mat-icon class="mat-icon-mirror mr-4">{{ 'local_offer' }}</mat-icon>
+                        {{ workCode.name }}
+                        <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                    </mat-chip>
+                    <input
+                        #workCodeInput
+                        [formControl]="workCodeCtrl"
+                        [matAutocomplete]="auto"
+                        [matChipInputFor]="chipList"
+                        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                        (matChipInputTokenEnd)="add($event)"
+                    />
+                </mat-chip-list>
+                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+                    <mat-option *ngFor="let workCode of filteredWorkCodes | async" [value]="workCode.name">
+                        {{ workCode.name }}
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+        </div>
+    </ng-template>
+    <!-- your code goes here -->
+</tw-wrapper>

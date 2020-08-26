@@ -1,0 +1,23 @@
+tw-su-agent-activity-details {
+    margin-bottom: 8px;
+    tw-panel {
+        min-height: 250px;
+        max-height: 50%;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 2rem;
+        }
+
+        video {
+            min-width: 100%;
+            width: 100%;
+            min-height: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 2rem;
+        }
+    }
+}
