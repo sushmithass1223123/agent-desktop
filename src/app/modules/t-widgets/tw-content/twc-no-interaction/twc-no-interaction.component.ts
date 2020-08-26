@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewEncapsulation, Input } from '@angular/core';
+import { TwWidgetModel } from 'app/models';
 
 @Component({
     selector: 'twc-no-interaction',
@@ -10,33 +11,14 @@ export class TwcNoInteractionComponent implements OnInit {
 
     @Input() type: string;
 
-    data = {
-        'Name': 'No Interaction',
-        'Description': 'No interaction yet!',
-        'Type': 'tw-no-interaction',
-        'Config': {
-            'Static': false,
-            'Anchor': false,
-            'Icon': '',
-            'Class': '',
-            'Position': {
-                'X': 3,
-                'Y': 6
-            },
-            'Actions': [],
-            'ViewState': 'restore',
-            'PinState': false,
-            'FloatState': false,
-            'Resizable': false,
-            'Header': true,
-            'Disabled': false
-        },
-        'Data': {}
-    };
+    data: any;
 
     constructor() { }
 
     ngOnInit(): void {
+        // assing the widget model to data
+        this.data = new TwWidgetModel('No Interaction', 'tw-no-interaction');
+        this.data.Config.Position.X = 3;
+        this.data.Config.Position.Y = 6;
     }
-
 }

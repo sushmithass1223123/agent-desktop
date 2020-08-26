@@ -1,0 +1,7 @@
+<tw-wrapper [data]="data">
+    <div fxFill fxLayout="column" fxLayoutAlign=" none" [@animateStagger]="{ value: '50' }" *fuseIfOnDom fusePerfectScrollbar>
+        <ng-container *ngFor="let item of activityWidgets">
+            <tw-su-agent-activity-details [data]="item" [@animate]="{ value: '*', params: { y: '100%' } }"></tw-su-agent-activity-details>
+        </ng-container>
+    </div>
+</tw-wrapper>

@@ -22,6 +22,9 @@ import { TwSuChannelsStatusComponent } from '@modules/t-widgets/tw-collections/t
 import { TwSuChannelsComponent } from '@modules/t-widgets/tw-collections/tw-su-channels/tw-su-channels.component';
 import { TwSuStatusComponent } from '@modules/t-widgets/tw-collections/tw-su-status/tw-su-status.component';
 import { TwVoiceControlsComponent } from '@modules/t-widgets/tw-collections/tw-voice-controls/tw-voice-controls.component';
+import { TwSuActiveAgentsComponent } from '@modules/t-widgets/tw-collections/tw-su-active-agents/tw-su-active-agents.component';
+import { TwSuWorkCodesComponent } from '@modules/t-widgets/tw-collections/tw-su-work-codes/tw-su-work-codes.component';
+import { TwSuAgentActivityComponent } from '@modules/t-widgets/tw-collections/tw-su-agent-activity/tw-su-agent-activity.component';
 
 export class TWLibrary {
     static widgetLibrary: Record<string, Type<any>> = {
@@ -45,7 +48,10 @@ export class TWLibrary {
         'tw-su-channels-status': TwSuChannelsStatusComponent,
         'tw-su-channels': TwSuChannelsComponent,
         'tw-su-status': TwSuStatusComponent,
-        'tw-voice-controls': TwVoiceControlsComponent
+        'tw-voice-controls': TwVoiceControlsComponent,
+        'tw-su-active-agents': TwSuActiveAgentsComponent,
+        'tw-su-work-codes': TwSuWorkCodesComponent,
+        'tw-su-agent-activity': TwSuAgentActivityComponent,
     };
 
     public static getAllWidgets(): Record<string, Type<any>> {

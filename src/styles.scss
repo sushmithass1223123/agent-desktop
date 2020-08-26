@@ -156,8 +156,15 @@ html {
     border-radius: 30px;
 }
 
-ngx-avatar {
-    .avatar-content {
-        font-family: 'Source Sans Pro', 'Montserrat', 'Muli', 'Helvetica Neue', 'Arial', sans-serif !important;
+.leaflet-pane {
+    &.leaflet-map-pane {
+        z-index: 100;
+    }
+}
+
+.leaflet-control-container {
+    .leaflet-top,
+    .leaflet-bottom {
+        z-index: 100;
     }
 }
