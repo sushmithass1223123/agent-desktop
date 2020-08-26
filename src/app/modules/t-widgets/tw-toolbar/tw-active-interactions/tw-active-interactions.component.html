@@ -1,15 +1,37 @@
 <div fxFlex fxFill fxLayout="row" fxLayoutAlign=" center" *ngIf="interactionList.length > 0">
     <ng-container *ngFor="let item of interactionList">
-        <div fxLayout="row" class="voice grey-300 tw-br-3 p-8" *ngIf="item.type === 'voice'">
+        <div fxLayout="row" class="voice grey-300 border-radius-30 p-8" *ngIf="item.type === 'voice'">
             <div mat-card-avatar class="w-36 h-36" (click)="openInteraction(item)">
                 <mat-icon>phone</mat-icon>
             </div>
-            <div class="mx-8" fxLayout="row" fxLayoutAlign="center center">number</div>
+            <div class="mx-8" fxLayout="row" fxLayoutAlign="center center">{{ item.user }}</div>
             <div>
-                <button mat-icon-button class="w-36 h-36 hold">
+                <button
+                    *ngIf="item.status !== 'hold'"
+                    [disabled]="item.status !== 'connected'"
+                    mat-icon-button
+                    class="w-36 h-36 hold"
+                    #holdBtn
+                    (click)="holdCall(item, holdBtn)"
+                >
                     <mat-icon>phone_paused</mat-icon>
                 </button>
-                <button mat-icon-button class="w-36 h-36 ml-4 drop">
+                <button
+                    *ngIf="item.status === 'hold'"
+                    mat-icon-button
+                    class="w-36 h-36 unhold"
+                    #unHoldBtn
+                    (click)="unHoldCall(item, unHoldBtn)"
+                >
+                    <mat-icon>phone_in_talk</mat-icon>
+                </button>
+                <button
+                    [disabled]="item.status !== 'connected'"
+                    mat-icon-button
+                    class="w-36 h-36 ml-4 drop"
+                    #disconnectBtn
+                    (click)="disconnectCall(item, disconnectBtn)"
+                >
                     <mat-icon>call_end</mat-icon>
                 </button>
             </div>

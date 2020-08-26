@@ -8,7 +8,7 @@
         <div
             fxLayout="column"
             fxLayoutAlign=" none"
-            class="w-100-p px-12 py-8 tw-br-2 font-size-12 interaction-details"
+            class="w-100-p px-12 py-8 border-radius-20 font-size-12 interaction-details"
             [ngClass]="
                 fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
                     ? fuseConfig.layout.anchorWidget.contentBackground
@@ -73,7 +73,7 @@
             <div
                 fxLayout="column"
                 fxLayoutAlign=" none"
-                class="tw-br-2 chat-content"
+                class="border-radius-20 chat-content"
                 [ngClass]="
                     fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
                         ? fuseConfig.layout.anchorWidget.contentBackground
@@ -166,7 +166,7 @@
                     <button
                         *ngIf="!isConnected"
                         mat-raised-button
-                        class="tw-br-2 animate__animated animate__slideInRight animate__faster"
+                        class="border-radius-20 animate__animated animate__slideInRight animate__faster"
                         color="warn"
                         #closeBtn
                         (click)="closeInteraction(closeBtn)"

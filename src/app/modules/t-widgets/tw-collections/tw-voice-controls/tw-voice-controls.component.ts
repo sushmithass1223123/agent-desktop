@@ -104,6 +104,14 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     this.appConfig = config;
                 });
 
+        // subscribe to interaction manager service
+        this._interactionManagerService.interactions
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((interactions: InteractionRef[]) => {
+                // filter out the textchat interaction
+                this.interactionList = interactions.filter((i: InteractionRef) => i.type === 'voice');
+            });
+
         if (this.data.InteractionDetails) {
             const interactionDetails = this.data.InteractionDetails;
             // set the interaction id from data
@@ -125,14 +133,6 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             console.warn('Interaction details are not available for voice');
             return;
         }
-
-        // subscribe to interaction manager service
-        this._interactionManagerService.interactions
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((interactions: InteractionRef[]) => {
-                // filter out the textchat interaction
-                this.interactionList = interactions.filter((i: InteractionRef) => i.type === 'voice');
-            });
 
         // set the status
         this.interactionStatus = 'initial';
@@ -225,7 +225,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         // update the interaction status and user
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
             'status': 'connected',
-            'user': this.callerID
+            'user': this.callerID,
+            'otherData': {
+                isMSCall: this.isMSCall
+            }
         });
     }
 
@@ -240,7 +243,6 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // set the status
         this.interactionStatus = 'disconnected';
-
         // update the interaction status and user
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
             'status': 'disconnected'
@@ -258,6 +260,13 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // set the status
         this.interactionStatus = 'hold';
+        // update the interaction status
+        this._interactionManagerService.updateInteraction(evt.InteractionID, {
+            'status': 'hold'
+        });
+
+        // hide the progress bar
+        this._fuseProgressBarService.hide();
     }
 
     private CallHoldReconnectEvent = (evt: CallHoldReconnectEvent) => {
@@ -268,6 +277,13 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // set the status
         this.interactionStatus = 'connected';
+        // update the interaction status
+        this._interactionManagerService.updateInteraction(evt.InteractionID, {
+            'status': 'connected'
+        });
+
+        // hide the progress bar
+        this._fuseProgressBarService.hide();
     }
 
     private CallTransferInitiatedEvent = (evt: CallTransferInitiatedEvent) => {
@@ -405,6 +421,13 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             // push the connection to the list
             this.avConns[this.sessionID] = connection;
 
+            // update the interaction status and user
+            this._interactionManagerService.updateInteraction(this.interactionId, {
+                'otherData': {
+                    avConn: this.avConns[this.sessionID]
+                }
+            });
+
             console.log('##### createAVConnection', connection);
 
             // return the connection
@@ -441,13 +464,18 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 // remove the stream from the reference
                 this.msAudioStreams = this.msAudioStreams.filter(a => a.streamInfo.id !== evt.data.streamInfo.id);
                 break;
+            case 'onEnd':
+                // remove the av reference on end
+                delete this.avConns[this.sessionID];
+                break;
             default:
                 console.log(`unhandled:: [${evt.event}]`, evt);
         }
     }
 
     private processEventAV(evt: any): void {
-        switch (evt) {
+        console.log('%c##### MediaServerEvent', 'background: red; color: white;', evt);
+        switch (evt.event) {
             case 'connected':
                 break;
             case 'call-held':
@@ -457,7 +485,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             case 'disconnected':
                 break;
             case 'call-ended':
-                this._appDataService.playAudio('hung-up', 0.5, true);
+                // play call ended tone
+                this._appDataService.playAudio('hung-up', 0.5, false);
+                // close the av connection
+                this.avConns[this.sessionID]?.close();
                 break;
             default:
         }
@@ -559,6 +590,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     }
 
     public holdCall(btn: MatButton): void {
+        // toggle the button
+        this.toggleButton(true, btn);
         // check if ms call then do not call api, invoke webclient api hold
         if (this.isMSCall) {
             // get the connection variable
@@ -569,8 +602,6 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             }
             return;
         }
-        // toggle the button
-        this.toggleButton(true, btn);
         SDKClient.holdCall(this.interactionId.toString(), null)
             .then((dt: IResponse) => {
                 // toggle the button
@@ -586,6 +617,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     }
 
     public unHoldCall(btn: MatButton): void {
+        // toggle the button
+        this.toggleButton(true, btn);
         // check if ms call then do not call api, invoke webclient api hold
         if (this.isMSCall) {
             // get the connection variable
@@ -596,8 +629,6 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             }
             return;
         }
-        // toggle the button
-        this.toggleButton(true, btn);
         SDKClient.unHoldCall(this.interactionId.toString(), null)
             .then((dt: IResponse) => {
                 // toggle the button

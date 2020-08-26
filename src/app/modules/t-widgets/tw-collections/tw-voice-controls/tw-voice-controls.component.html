@@ -27,7 +27,7 @@
                     fxFlex
                     fxLayout="column"
                     fxLayoutAlign=" none"
-                    class="w-100-p px-12 py-8 tw-br-2 font-size-12 interaction-details"
+                    class="w-100-p px-12 py-8 border-radius-20 font-size-12 interaction-details"
                     [ngClass]="
                         fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
                             ? fuseConfig.layout.anchorWidget.contentBackground
@@ -59,11 +59,9 @@
                         *ngIf="data.Data.IVR?.MenuEnabled"
                         fxLayout="row"
                         fxLayoutAlign=" none"
-                        class="mt-8 px-12 tw-br-3 font-size-12 position-relative ivr-history"
+                        class="mt-8 px-12 border-radius-30 font-size-12 position-relative ivr-history"
                     >
-                        <div class="label">
-                            IVR History
-                        </div>
+                        <div class="label">IVR History</div>
                         <ul class="breadcrumbs">
                             <li>
                                 <span>NA</span>
@@ -138,7 +136,7 @@
                     <button
                         *ngIf="interactionStatus === 'disconnected'"
                         mat-flat-button
-                        class="tw-br-2 animate__animated animate__slideInRight animate__faster"
+                        class="border-radius-20 animate__animated animate__slideInRight animate__faster"
                         color="warn"
                         #closeBtn
                         (click)="closeInteraction(closeBtn)"
@@ -153,6 +151,6 @@
 
     <!-- For web phone -->
     <div hidden>
-        <audio *ngFor="let item of msAudioStreams" autoplay playsinline="true" [srcObject]="item.stream"></audio>
+        <audio *ngFor="let item of msAudioStreams" autoplay playsinline="true" [srcObject]="item.stream" id="{{ item.stream.id }}"></audio>
     </div>
 </tw-wrapper>

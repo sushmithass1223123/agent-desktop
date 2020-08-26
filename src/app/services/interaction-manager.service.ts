@@ -85,6 +85,13 @@ export class InteractionManagerService {
                         item.otherData.unreadCount = 0;
                     }
                 }
+                // if the update is for other data then keep the exisitng other data values
+                if (Object.keys(value).includes('otherData')) {
+                    value.otherData = {
+                        ...item.otherData,
+                        ...value.otherData
+                    };
+                }
                 // set the upated flag to true
                 updated = true;
                 // return the modified item

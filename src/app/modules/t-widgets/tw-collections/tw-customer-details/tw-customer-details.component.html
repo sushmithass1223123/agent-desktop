@@ -4,7 +4,7 @@
     (collapseEvent)="collapseEvent.emit($event)"
     (floatEvent)="floatEvent.emit($event)"
 >
-    <div class="w-100-p h-100-p px-12 py-8 tw-br-2 customer-info" fusePerfectScrollbar>
+    <div class="w-100-p h-100-p px-12 py-8 border-radius-20 customer-info" fusePerfectScrollbar>
         <div *ngFor="let item of customerInfo">
             <span class="title text-bold"> {{ item.Title }}: </span>
             <span class="value">

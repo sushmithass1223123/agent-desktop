@@ -21,6 +21,10 @@ tw-active-interactions {
                 background: $tw-warning;
             }
 
+            &.unhold {
+                background: $tw-success;
+            }
+
             &.drop {
                 background: $tw-danger;
             }

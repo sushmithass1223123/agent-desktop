@@ -3,7 +3,7 @@
         "AuthType": "credential",
         "Modes": {
             "Enabled": true,
-            "Type": "nonpbx"
+            "Type": "pbxms"
         },
         "DomainListEnabled": false,
         "PasswordEnabled": false,
@@ -118,42 +118,42 @@
                 ],
                 "Bottom": [
                     {
-                        "Name": "Tetherfi",
+                        "Name": "TDM",
                         "Description": "",
                         "Type": "twn-custom",
                         "Data": {
-                            "Icon": "filter_frames",
-                            "Path": "/custom1",
+                            "Icon": "tv",
+                            "Path": "/tdm-client",
                             "Active": false
                         }
                     },
                     {
-                        "Name": "Angular Material",
+                        "Name": "TMeet",
                         "Description": "",
                         "Type": "twn-custom",
                         "Data": {
-                            "Icon": "pages",
-                            "Path": "/custom2",
+                            "Icon": "meeting_room",
+                            "Path": "/tmeet",
                             "Active": false
                         }
                     },
                     {
-                        "Name": "Team",
+                        "Name": "Supervisor",
                         "Description": "",
-                        "Type": "twn-team",
+                        "Type": "twn-custom",
                         "Data": {
                             "Icon": "groups",
-                            "Path": "/groups",
+                            "Path": "/tsupervisor",
                             "Active": false
                         }
                     },
                     {
-                        "Name": "Help",
+                        "Name": "Dashboard",
                         "Description": "",
-                        "Type": "twn-help",
+                        "Type": "twn-custom",
                         "Data": {
-                            "Icon": "help",
-                            "Path": "/help",
+                            "Icon": "dashboard",
+                            "Path": "/dashboard",
                             "Active": false
                         }
                     }
@@ -1445,7 +1445,7 @@
                     }
                 },
                 {
-                    "Name": "Custom-1",
+                    "Name": "TDM",
                     "Description": "",
                     "Type": "twc-custom",
                     "Config": {
@@ -1456,13 +1456,13 @@
                         }
                     },
                     "Data": {
-                        "Path": "/custom1",
-                        "Url": "https://www.tetherfi.com",
+                        "Path": "/tdm-client",
+                        "Url": "https://dice.tetherfi.cloud/TDM_Client/",
                         "QueryParams": []
                     }
                 },
                 {
-                    "Name": "Custom-2",
+                    "Name": "TMeet",
                     "Description": "",
                     "Type": "twc-custom",
                     "Config": {
@@ -1473,8 +1473,42 @@
                         }
                     },
                     "Data": {
-                        "Path": "/custom2",
-                        "Url": "https://material.angular.io/",
+                        "Path": "/tmeet",
+                        "Url": "https://dice.tetherfi.cloud/t-meet/",
+                        "QueryParams": []
+                    }
+                },
+                {
+                    "Name": "Supervisor",
+                    "Description": "",
+                    "Type": "twc-custom",
+                    "Config": {
+                        "Class": "",
+                        "Position": {
+                            "X": 3,
+                            "Y": 6
+                        }
+                    },
+                    "Data": {
+                        "Path": "/tsupervisor",
+                        "Url": "https://dice.tetherfi.cloud/Supervisor/",
+                        "QueryParams": []
+                    }
+                },
+                {
+                    "Name": "Dashboard",
+                    "Description": "",
+                    "Type": "twc-custom",
+                    "Config": {
+                        "Class": "",
+                        "Position": {
+                            "X": 3,
+                            "Y": 6
+                        }
+                    },
+                    "Data": {
+                        "Path": "/dashboard",
+                        "Url": "https://dice.tetherfi.cloud/tmac_agent_utils/ui/Dashboard.html?agentId=50020",
                         "QueryParams": []
                     }
                 }
@@ -1528,10 +1562,10 @@
             "Timeout": 5000
         },
         "AV": {
-            "WebRTCConfig": {
+            "webRTCConfig": {
                 "iceServers": [
                     {
-                        "urls": "turn:dice.tetherfilabs.com:3585",
+                        "urls": "turn:dice.tetherfi.cloud:3585",
                         "username": "tetherfi",
                         "credential": "nuwan"
                     }
@@ -1539,30 +1573,30 @@
                 "iceTransportPolicy": "all",
                 "sdpSemantics": "plan-b"
             },
-            "MediaConstraints": {
+            "mediaConstraints": {
                 "type": "",
                 "video": {
                     "width": 640,
                     "height": 480
                 }
             },
-            "OfferOptions": {
+            "offerOptions": {
                 "offerToReceiveAudio": true,
                 "offerToReceiveVideo": true,
                 "iceRestart": true
             },
-            "RecordingOptions": {
+            "recordingOptions": {
                 "enabled": false,
                 "recordLocal": false
             },
-            "AudioLevelCheck": {
+            "audioLevelCheck": {
                 "enabled": true,
                 "threshold": 0.30
             },
-            "ConnectionBandwidthUpperLimit": 1024,
-            "AudioTrackBandwidthUpperLimit": 16,
-            "VideoTrackBandwidthUpperLimit": 128,
-            "AudioMixerEnabled": true
+            "connectionBandwidthUpperLimit": 1024,
+            "audioTrackBandwidthUpperLimit": 16,
+            "videoTrackBandwidthUpperLimit": 128,
+            "audioMixerEnabled": true
         },
         "SDK": {
             "Proxy": {
@@ -1583,7 +1617,7 @@
             },
             "CustomSripts": [
                 "https://tmac.tetherfilabs.com/tmac_client/custom_scripts/collector.min.js",
-                "https://tmac.tetherfilabs.com/tmac_client/custom_scripts/webclientapi-lib.debug.js"
+                "https://tmac.tetherfilabs.com/tmac_client/custom_scripts/webclientapi-lib.js"
             ]
         }
     }
