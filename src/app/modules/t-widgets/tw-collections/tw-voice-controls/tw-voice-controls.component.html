@@ -111,13 +111,7 @@
                     >
                         <mat-icon>phone_paused</mat-icon>
                     </button>
-                    <button
-                        *ngIf="interactionStatus === 'hold' && interactionStatus !== 'disconnected'"
-                        mat-flat-button
-                        class="success"
-                        #unHoldBtn
-                        (click)="unHoldCall(unHoldBtn)"
-                    >
+                    <button *ngIf="interactionStatus === 'hold'" mat-flat-button class="success" #unHoldBtn (click)="unHoldCall(unHoldBtn)">
                         <mat-icon>phone_in_talk</mat-icon>
                     </button>
                     <button
