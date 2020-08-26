@@ -1,0 +1,43 @@
+<!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
+<!-- implement following events in your component to access widget wrapper action events -->
+<!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
+<tw-wrapper [data]="data">
+    <!-- your code goes here -->
+    <div class="p-4" fxLayout="row wrap">
+        <div fxFlex="100" fxLayout fxLayoutAlign="space-between center">
+            <small>
+                20/7/2020
+            </small>
+            <small>
+                09:00:00
+            </small>
+        </div>
+
+        <div fxFlex="100">
+            <p>
+                <strong>
+                    Customer Feedback
+                </strong>
+            </p>
+            <small>
+                Call Duration : 02:16:33
+            </small>
+
+            <p>
+                <span *ngFor="let star of totalStars; let i = index">
+                    <mat-icon *ngIf="!(i + 1 > stars)" color="primary">
+                        star_rating
+                    </mat-icon>
+                    <mat-icon *ngIf="i + 1 >= stars">
+                        star_border
+                    </mat-icon>
+                </span>
+            </p>
+
+            <p>
+                Positive
+            </p>
+        </div>
+    </div>
+    <!-- your code goes here -->
+</tw-wrapper>

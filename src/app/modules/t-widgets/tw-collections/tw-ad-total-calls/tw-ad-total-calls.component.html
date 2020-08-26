@@ -4,7 +4,7 @@
 <tw-wrapper [data]="data" (maximizeEvent)="maximizeEvent($event)">
     <!-- your code goes here -->
     <div fxLayout="column" fxLayoutAlign="center center" class="w-100-p h-100-p">
-        <div class="w-100-p h-100-p" #chartContainerRef>
+        <div *fuseIfOnDom class="t-chart w-100-p h-100-p" #chartContainerRef>
             <ngx-charts-pie-chart
                 *fuseIfOnDom
                 [view]="widget.view.length === 0 ? [chartContainerRef.offsetWidth, chartContainerRef.offsetHeight] : widget.view"
@@ -15,13 +15,11 @@
                 [doughnut]="widget.doughnut"
             >
             </ngx-charts-pie-chart>
+            <div class="t-pie-chart-value">{{ widget.data[1].value }}</div>
         </div>
         <!-- <div>
             <mat-button (click)="" ></mat-button>
         </div> -->
-        <div *ngIf="widget.state.maximized" class="details">
-            Some data
-        </div>
     </div>
     <!-- your code goes here -->
 </tw-wrapper>

@@ -334,7 +334,7 @@
                             {
                                 "Name": "Performance",
                                 "Description": "",
-                                "Type": "tw-performance-dashboard",
+                                "Type": "tw-ad-performance",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
@@ -356,12 +356,14 @@
                                     "Header": true,
                                     "Disabled": false
                                 },
-                                "Data": {}
+                                "Data": {
+                                    "AgentProgressUrl" : "https://demo2.tetherfilabs.com:55443/GamificationProxy/Proxy.asmx/GetProgress"
+                                }
                             },
                             {
                                 "Name": "Gamification",
                                 "Description": "",
-                                "Type": "tw-gamification-dashboard",
+                                "Type": "tw-ad-gamification",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
@@ -383,19 +385,21 @@
                                     "Header": true,
                                     "Disabled": false
                                 },
-                                "Data": {}
+                                "Data": {
+                                    "LeaderBoardUrl" : "https://demo2.tetherfilabs.com:55443/GamificationProxy/Proxy.asmx/GetLeaderBoard"
+                                }
                             },
                             {
-                                "Name": "Call-backs",
-                                "Description": "phone_callback",
-                                "Type": "tw-ad-callbacks",
+                                "Name": "Customer Journey",
+                                "Description": "",
+                                "Type": "tw-ad-customer-journey",
                                 "Config": {
                                     "Static": false,
-                                    "Anchor": false,
-                                    "Icon": "",
+                                    "Anchor": true,
+                                    "Icon": "storage",
                                     "Class": "",
                                     "Position": {
-                                        "X": 0,
+                                        "X": 1,
                                         "Y": 2
                                     },
                                     "Actions": [
@@ -410,12 +414,14 @@
                                     "Header": true,
                                     "Disabled": false
                                 },
-                                "Data": {}
+                                "Data": {
+                                    "IframeBaseUrl": "https://dice.tetherfi.cloud//CustomerJourneyUI/index.html?Key=SessionID:"
+                                }
                             },
                             {
                                 "Name": "Feedback",
                                 "Description": "",
-                                "Type": "tw-sample",
+                                "Type": "tw-ad-feedback",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
@@ -442,7 +448,7 @@
                             {
                                 "Name": "Score",
                                 "Description": "",
-                                "Type": "tw-sample",
+                                "Type": "tw-ad-score",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
@@ -511,13 +517,13 @@
                                 "Data": {}
                             },
                             {
-                                "Name": "Total Calls",
+                                "Name": "Gamification",
                                 "Description": "",
-                                "Type": "tw-su-total-calls",
+                                "Type": "tw-su-gamification",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
-                                    "Icon": "",
+                                    "Icon": "extension",
                                     "Class": "",
                                     "Position": {
                                         "X": 0,
@@ -535,7 +541,9 @@
                                     "Header": true,
                                     "Disabled": false
                                 },
-                                "Data": {}
+                                "Data": {
+                                    "LeaderBoardUrl" : "https://demo2.tetherfilabs.com:55443/GamificationProxy/Proxy.asmx/GetLeaderBoard"
+                                }
                             },
                             {
                                 "Name": "Avg. Handle Time",
@@ -792,7 +800,7 @@
                                         {
                                             "Name": "Customer Journey",
                                             "Description": "",
-                                            "Type": "tw-customer-journey",
+                                            "Type": "tw-ad-customer-journey",
                                             "Config": {
                                                 "Static": false,
                                                 "Anchor": true,
@@ -1103,7 +1111,7 @@
                                         {
                                             "Name": "Customer Journey",
                                             "Description": "",
-                                            "Type": "tw-customer-journey",
+                                            "Type": "tw-ad-customer-journey",
                                             "Config": {
                                                 "Static": false,
                                                 "Anchor": true,

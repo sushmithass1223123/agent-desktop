@@ -28,7 +28,11 @@ import { TwUnknownComponent } from './tw-unknown/tw-unknown.component';
 import { TwVoiceControlsComponent } from './tw-voice-controls/tw-voice-controls.component';
 import { TwVoicePanelComponent } from './tw-voice-panel/tw-voice-panel.component';
 import { TwWallboardComponent } from './tw-wallboard/tw-wallboard.component';
-
+import { TwAdFeedbackComponent } from './tw-ad-feedback/tw-ad-feedback.component';
+import { TwAdGamificationComponent } from './tw-ad-gamification/tw-ad-gamification.component';
+import { TwAdPerformanceComponent } from './tw-ad-performance/tw-ad-performance.component';
+import { TwAdScoreComponent } from './tw-ad-score/tw-ad-score.component';
+import { TwSuGamificationComponent } from './tw-su-gamification/tw-su-gamification.component';
 
 @NgModule({
     declarations: [
@@ -57,12 +61,12 @@ import { TwWallboardComponent } from './tw-wallboard/tw-wallboard.component';
         TwSuChannelsStatusComponent,
         TwSuChannelsComponent,
         TwSuStatusComponent,
+        TwAdFeedbackComponent,
+        TwAdGamificationComponent,
+        TwAdPerformanceComponent,
+        TwAdScoreComponent,
+        TwSuGamificationComponent
     ],
-    imports: [
-        SharedModule,
-        TwWrapperModule,
-        NgxChartsModule,
-        AvatarModule
-    ]
+    imports: [SharedModule, TwWrapperModule, NgxChartsModule, AvatarModule]
 })
-export class TwCollectionsModule { }
+export class TwCollectionsModule {}

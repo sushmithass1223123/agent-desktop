@@ -42,6 +42,18 @@
                     background-color: #eaeaea;
                 }
             }
+
+            &.selected {
+                td {
+                    @if ($is-dark) {
+                        color: #eaeaea;
+                        background-color: lighten(#303030, 5);
+                    } @else {
+                        color: #303030;
+                        background-color: darken(#eaeaea, 5);
+                    }
+                }
+            }
         }
     }
 

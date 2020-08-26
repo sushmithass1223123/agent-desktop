@@ -21,6 +21,12 @@ import { TwSuTransferredConferencedCallsComponent } from '@modules/t-widgets/tw-
 import { TwSuChannelsStatusComponent } from '@modules/t-widgets/tw-collections/tw-su-channels-status/tw-su-channels-status.component';
 import { TwSuChannelsComponent } from '@modules/t-widgets/tw-collections/tw-su-channels/tw-su-channels.component';
 import { TwSuStatusComponent } from '@modules/t-widgets/tw-collections/tw-su-status/tw-su-status.component';
+import { TwAdFeedbackComponent } from '@modules/t-widgets/tw-collections/tw-ad-feedback/tw-ad-feedback.component';
+import { TwAdScoreComponent } from '@modules/t-widgets/tw-collections/tw-ad-score/tw-ad-score.component';
+import { TwAdPerformanceComponent } from '@modules/t-widgets/tw-collections/tw-ad-performance/tw-ad-performance.component';
+import { TwAdGamificationComponent } from '@modules/t-widgets/tw-collections/tw-ad-gamification/tw-ad-gamification.component';
+import { TwCustomerJourneyComponent } from '@modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.component';
+import { TwSuGamificationComponent } from '@modules/t-widgets/tw-collections/tw-su-gamification/tw-su-gamification.component';
 
 export class TWLibrary {
     static widgetLibrary: Record<string, Type<any>> = {
@@ -43,7 +49,13 @@ export class TWLibrary {
         'tw-su-transferred-conferenced-calls': TwSuTransferredConferencedCallsComponent,
         'tw-su-channels-status': TwSuChannelsStatusComponent,
         'tw-su-channels': TwSuChannelsComponent,
-        'tw-su-status': TwSuStatusComponent
+        'tw-su-status': TwSuStatusComponent,
+        'tw-ad-feedback': TwAdFeedbackComponent,
+        'tw-ad-score': TwAdScoreComponent,
+        'tw-ad-performance': TwAdPerformanceComponent,
+        'tw-ad-gamification': TwAdGamificationComponent,
+        'tw-ad-customer-journey': TwCustomerJourneyComponent,
+        'tw-su-gamification': TwSuGamificationComponent
     };
 
     public static getAllWidgets(): Record<string, Type<any>> {
