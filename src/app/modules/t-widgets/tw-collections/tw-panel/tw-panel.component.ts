@@ -1,26 +1,15 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { tileLayer, latLng } from 'leaflet';
 
 @Component({
-    selector: 'tw-su-agent-activity-details',
-    templateUrl: './tw-su-agent-activity-details.component.html',
-    styleUrls: ['./tw-su-agent-activity-details.component.scss'],
+    selector: 'tw-panel',
+    templateUrl: './tw-panel.component.html',
+    styleUrls: ['./tw-panel.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class TwSuAgentActivityDetailsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+export class TwPanelComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     // holds all the data related to this widget from the config
     @Input() data: any;
-
-    activityWidgets: any;
-
-    options = {
-        layers: [
-            tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '...' })
-        ],
-        zoom: 5,
-        center: latLng(46.879966, -121.726909)
-    };
 
     /**
      * Constructor 
@@ -40,9 +29,6 @@ export class TwSuAgentActivityDetailsComponent extends TWidgetWrapper implements
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-
-        // assign the activity widgets
-        this.activityWidgets = this.data.Data.Widgets || [];
     }
 
     /**
@@ -61,5 +47,6 @@ export class TwSuAgentActivityDetailsComponent extends TWidgetWrapper implements
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
 }
+
 
 // for more info visit - https://angular.io/api/core

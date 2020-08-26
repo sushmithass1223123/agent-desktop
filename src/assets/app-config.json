@@ -484,9 +484,9 @@
                         "Path": "/supervisor",
                         "Widgets": [
                             {
-                                "Name": "Active Agents",
+                                "Name": "Sample-2",
                                 "Description": "",
-                                "Type": "tw-su-active-agents",
+                                "Type": "tw-sample",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
@@ -505,23 +505,23 @@
                                     "PinState": false,
                                     "FloatState": false,
                                     "Resizable": false,
-                                    "Header": true,
+                                    "Header": false,
                                     "Disabled": false
                                 },
                                 "Data": {}
                             },
                             {
-                                "Name": "Agent Activity",
+                                "Name": "Total Calls",
                                 "Description": "",
-                                "Type": "tw-su-agent-activity",
+                                "Type": "tw-su-total-calls",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
-                                        "X": 4,
-                                        "Y": 3
+                                        "X": 0,
+                                        "Y": 1
                                     },
                                     "Actions": [
                                         "maximize",
@@ -535,15 +535,167 @@
                                     "Header": true,
                                     "Disabled": false
                                 },
-                                "Data": {
-                                    "profilePictureUrl": "",
-                                    "screenshotUrl": "",
-                                    "snapshotUrl": "",
-                                    "locationData":"",
-                                    "agentDetails": ""
-                                }
+                                "Data": {}
+                            },
+                            {
+                                "Name": "Avg. Handle Time",
+                                "Description": "",
+                                "Type": "tw-su-average-handle-time",
+                                "Config": {
+                                    "Static": false,
+                                    "Anchor": false,
+                                    "Icon": "",
+                                    "Class": "",
+                                    "Position": {
+                                        "X": 0,
+                                        "Y": 1
+                                    },
+                                    "Actions": [
+                                        "maximize",
+                                        "pin",
+                                        "float"
+                                    ],
+                                    "ViewState": "restore",
+                                    "PinState": false,
+                                    "FloatState": false,
+                                    "Resizable": false,
+                                    "Header": true,
+                                    "Disabled": false
+                                },
+                                "Data": {}
+                            },
+                            {
+                                "Name": "Calls in Queue",
+                                "Description": "",
+                                "Type": "tw-su-calls-in-queue",
+                                "Config": {
+                                    "Anchor": false,
+                                    "Icon": "",
+                                    "Class": "",
+                                    "Position": {
+                                        "X": 0,
+                                        "Y": 1
+                                    },
+                                    "Actions": [
+                                        "maximize",
+                                        "pin",
+                                        "float"
+                                    ],
+                                    "ViewState": "restore",
+                                    "PinState": false,
+                                    "FloatState": false,
+                                    "Resizable": false,
+                                    "Header": true,
+                                    "Disabled": false
+                                },
+                                "Data": {}
+                            },
+                            {
+                                "Name": "Transfer/Conf.",
+                                "Description": "",
+                                "Type": "tw-su-transferred-conferenced-calls",
+                                "Config": {
+                                    "Static": false,
+                                    "Anchor": false,
+                                    "Icon": "",
+                                    "Class": "",
+                                    "Position": {
+                                        "X": 0,
+                                        "Y": 1
+                                    },
+                                    "Actions": [
+                                        "maximize",
+                                        "pin",
+                                        "float"
+                                    ],
+                                    "ViewState": "restore",
+                                    "PinState": false,
+                                    "FloatState": false,
+                                    "Resizable": false,
+                                    "Header": true,
+                                    "Disabled": false
+                                },
+                                "Data": {}
+                            },
+                            {
+                                "Name": "Skill Dashboard",
+                                "Description": "",
+                                "Type": "tw-sample",
+                                "Config": {
+                                    "Anchor": false,
+                                    "Icon": "",
+                                    "Class": "",
+                                    "Position": {
+                                        "X": 2,
+                                        "Y": 2
+                                    },
+                                    "Actions": [
+                                        "maximize",
+                                        "pin",
+                                        "float"
+                                    ],
+                                    "ViewState": "restore",
+                                    "PinState": false,
+                                    "FloatState": false,
+                                    "Resizable": false,
+                                    "Header": true,
+                                    "Disabled": false
+                                },
+                                "Data": {}
+                            },
+                            {
+                                "Name": "Channels",
+                                "Description": "",
+                                "Type": "tw-su-channels",
+                                "Config": {
+                                    "Static": false,
+                                    "Anchor": false,
+                                    "Icon": "",
+                                    "Class": "",
+                                    "Position": {
+                                        "X": 0,
+                                        "Y": 2
+                                    },
+                                    "Actions": [
+                                        "maximize",
+                                        "pin",
+                                        "float"
+                                    ],
+                                    "ViewState": "restore",
+                                    "PinState": false,
+                                    "FloatState": false,
+                                    "Resizable": false,
+                                    "Header": true,
+                                    "Disabled": false
+                                },
+                                "Data": {}
+                            },
+                            {
+                                "Name": "Status",
+                                "Description": "",
+                                "Type": "tw-su-status",
+                                "Config": {
+                                    "Anchor": false,
+                                    "Icon": "",
+                                    "Class": "",
+                                    "Position": {
+                                        "X": 0,
+                                        "Y": 2
+                                    },
+                                    "Actions": [
+                                        "maximize",
+                                        "pin",
+                                        "float"
+                                    ],
+                                    "ViewState": "restore",
+                                    "PinState": false,
+                                    "FloatState": false,
+                                    "Resizable": false,
+                                    "Header": true,
+                                    "Disabled": false
+                                },
+                                "Data": {}
                             }
-                           
                         ]
                     }
                 },

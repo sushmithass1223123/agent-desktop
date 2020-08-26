@@ -1,108 +1,92 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AppDataService } from '@services/app-data.service';
-import { FuseConfigService } from '@fuse/services/config.service';
-import { takeUntil } from 'rxjs/operators';
-import { SDKClient } from 'tmac-sdk';
-import { TWLibrary } from '@modules/t-widgets/utils';
-import { IWidget } from 'app/interfaces';
+import { TwWidgetModel } from 'app/models';
+import { tileLayer, latLng } from 'leaflet';
+import { fuseAnimations } from '@fuse/animations';
 
 @Component({
     selector: 'tw-su-agent-activity',
     templateUrl: './tw-su-agent-activity.component.html',
     styleUrls: ['./tw-su-agent-activity.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    animations: fuseAnimations
 })
 export class TwSuAgentActivityComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     // holds all the data related to this widget from the config
     @Input() data: any;
 
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store the fuse config for theme
-    // -----------------------------------------------------------
-    fuseConfig: any;
+    activityWidgets = [];
 
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store entire app config and get update
-    // -----------------------------------------------------------
-    appConfig: any;
-    agentActivityData = [
+    sampleData = [
         {
-            title: 'Profile',
+            dateTime: '10/10/10 10:10:10',
             profilePicUrl: 'https://image.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg',
-            screenRecordUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+            details: [
+                {
+                    Title: 'Agent Name',
+                    Value: 'chirag'
+                },
+                {
+                    Title: 'Agent ID',
+                    Value: '55001'
+                }
+            ],
             snapshotUrl: 'https://image.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg',
             location: {
                 x: 12.914142,
                 y: 74.855957
             },
-            dateTime: '10/10/10 10:10:10',
-            details: [
-                {
-                    key: 'name',
-                    value: 'chirag'
-                },
-                {
-                    key: 'Phone',
-                    value: '1234567890'
-                },
-                {
-                    key: 'Country',
-                    value: 'India'
-                },
-                {
-                    key: 'Address',
-                    value: '1983  Red Maple Drive, Hollywood, California California, 90028'
-                }
-            ]
+            screenshotUrl: 'https://image.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg',
+            screenRecordUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
         },
         {
-            title: 'Profile',
+            dateTime: '10/10/10 10:10:10',
             profilePicUrl: 'https://image.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg',
-            screenRecordUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+            details: [
+                {
+                    Title: 'Agent Name',
+                    Value: 'chirag'
+                },
+                {
+                    Title: 'Agent ID',
+                    Value: '55001'
+                }
+            ],
             snapshotUrl: 'https://image.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg',
             location: {
                 x: 12.914142,
                 y: 74.855957
             },
-            dateTime: '10/10/10 10:10:10',
-            details: [
-                {
-                    key: 'name',
-                    value: 'chirag'
-                }
-            ]
+            screenshotUrl: 'https://image.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg',
+            screenRecordUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
         },
         {
-            title: 'Profile',
+            dateTime: '10/10/10 10:10:10',
             profilePicUrl: 'https://image.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg',
-            screenRecordUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+            details: [
+                {
+                    Title: 'Agent Name',
+                    Value: 'chirag'
+                },
+                {
+                    Title: 'Agent ID',
+                    Value: '55001'
+                }
+            ],
             snapshotUrl: 'https://image.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg',
             location: {
                 x: 12.914142,
                 y: 74.855957
             },
-            dateTime: '10/10/10 10:10:10',
-            details: [
-                {
-                    key: 'name',
-                    value: 'chirag'
-                }
-            ]
+            screenshotUrl: 'https://image.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg',
+            screenRecordUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
         }
     ];
 
     /**
      * Constructor
-     * @param {FuseConfigService} _fuseConfigService
-     * @param {AppDataService} _appDataService
      */
-    constructor(
-        // @ [OPTIONAL]
-        private _fuseConfigService: FuseConfigService,
-        // @ [OPTIONAL]
-        private _appDataService: AppDataService
-    ) {
+    constructor() {
         super();
     }
 
@@ -117,30 +101,57 @@ export class TwSuAgentActivityComponent extends TWidgetWrapper implements OnInit
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the fuse config
-        // -----------------------------------------------------------
-        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.fuseConfig = config;
-        });
 
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the app config
-        // -----------------------------------------------------------
-        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.appConfig = config;
-        });
+        this.sampleData.forEach((item: any) => {
+            // create activity details widget
+            const widget = new TwWidgetModel(item.dateTime, 'tw-su-agent-activity-details', 'local_activity');
+            widget.Config.Actions = ['minimize'];
+            widget.Config.ViewState = 'minimize';
+            widget.Data.Widgets = [];
 
-        // // loop and get the widgets
-        // this.agentActivityData.forEach((widget: IWidget) => {
-        //     // get the widget component by type
-        //     const component = TWLibrary.getWidget(widget.Type, widget);
-        //     // check if the component is proper
-        //     if (component) {
-        //         // append the widget component to the list
-        //         this.agentAcitivityPanels.push(component);
-        //     }
-        // });
+            // create profile widget
+            const profileWidget = new TwWidgetModel('Profile', 'tw-panel', 'account_box');
+            profileWidget.Data.ImageURL = item.profilePicUrl;
+            profileWidget.Data.Details = item.details;
+            profileWidget.Config.Class = 'cover panel';
+            profileWidget.Config.Actions = ['maximize'];
+
+            const snapshotWidget = new TwWidgetModel('Snapshot', 'tw-panel', 'camera');
+            snapshotWidget.Data.ImageURL = item.snapshotUrl;
+            snapshotWidget.Config.Class = 'cover panel';
+            snapshotWidget.Config.Actions = ['maximize'];
+
+            const locationWidget = new TwWidgetModel('Location', 'tw-panel', 'location_on');
+            locationWidget.Data.Location = {
+                layers: [
+                    tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '...' })
+                ],
+                zoom: 5,
+                center: latLng(item.location.x, item.location.y)
+            };
+            locationWidget.Config.Class = 'cover panel';
+            locationWidget.Config.Actions = ['maximize'];
+
+            const screenshotWidget = new TwWidgetModel('Screenshot', 'tw-panel', 'all_out');
+            screenshotWidget.Data.ImageURL = item.screenshotUrl;
+            screenshotWidget.Config.Class = 'cover panel';
+            screenshotWidget.Config.Actions = ['maximize'];
+
+            const screenVideoWidget = new TwWidgetModel('Screen Video', 'tw-panel', 'featured_video');
+            screenVideoWidget.Data.VideoURL = item.screenRecordUrl;
+            screenVideoWidget.Config.Class = 'cover panel';
+            screenVideoWidget.Config.Actions = ['maximize'];
+
+            // push all the widgets
+            widget.Data.Widgets.push(profileWidget);
+            widget.Data.Widgets.push(snapshotWidget);
+            widget.Data.Widgets.push(locationWidget);
+            widget.Data.Widgets.push(screenshotWidget);
+            widget.Data.Widgets.push(screenVideoWidget);
+
+            // push the widget to list
+            this.activityWidgets.push(widget);
+        });
     }
 
     /**

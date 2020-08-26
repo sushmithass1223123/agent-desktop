@@ -1,41 +1,42 @@
-.channel-notification {
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    height: 15px;
-    width: 15px;
-    padding: 3px;
-    background-color: #93cd87;
-    border-radius: 50%;
-    color: white;
-    font-size: xx-small;
-    line-height: inherit;
-}
+tw-su-active-agents {
+    tw-wrapper {
+        mat-card-content {
+            &.mat-card-content {
+                position: relative;
+                background: inherit !important;
 
-.status-notification {
-    position: absolute;
-    bottom: 3px;
-    right: -10px;
-    height: 15px;
-    width: 15px;
-    padding: 3px;
-    background-color: #93cd87;
-    border-radius: 50%;
-}
+                mat-form-field {
+                    .mat-form-field-wrapper {
+                        .mat-form-field-infix {
+                            border: none;
+                        }
 
-.agent-avatar {
-    height: 40px;
-    width: 48px;
-    line-height: 40px;
-    background: white;
-    border-radius: 10px;
-    margin: 10px 0px;
-    position: relative;
-}
+                        .mat-form-field-suffix {
+                            top: 8px !important;
+                        }
+                    }
+                }
 
-.agent-activity-buttons{
-    display: none;
-}
-tr:hover td .agent-activity-buttons{
-    display: flex;
+                .agent-list {
+                    gap: 8px;
+                }
+
+                .channel-list {
+                    .mat-card-avatar {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        margin: 0px 8px;
+                        box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+
+                        .mat-badge-content {
+                            top: -6px;
+                            height: 20px;
+                            width: 20px;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

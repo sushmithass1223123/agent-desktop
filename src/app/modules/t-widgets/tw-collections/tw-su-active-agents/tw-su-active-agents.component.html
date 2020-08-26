@@ -6,71 +6,55 @@
 
 <tw-wrapper [data]="data">
     <!-- your code goes here -->
-    <table mat-table [dataSource]="datasource" class="mat-elevation-z0 w-100-p">
-        <!--- Note that these columns can be defined in any order.
-        The actual rendered columns are set as a property on the row definition" -->
-
-        <!-- Position Column -->
-        <ng-container matColumnDef="name">
-            <!-- <th mat-header-cell *matHeaderCellDef mat-sort-header>Channel</th> -->
-            <td mat-cell *matCellDef="let element">
-                <div class="flex-container" fxLayout="row">
-                    <mat-avatar class="agent-avatar mat-elevation-z0"
-                        >{{ getFirstCharFromName(element.name) }}
-                        <span class="status-notification"></span>
-                    </mat-avatar>
-                </div>
-            </td>
-        </ng-container>
-        <ng-container matColumnDef="status">
-            <!-- <th mat-header-cell *matHeaderCellDef mat-sort-header>Channel</th> -->
-            <td mat-cell *matCellDef="let element">
-                <div class="flex-container" fxLayout="row">
-                    <div class="w-100-p text-left text-bold">{{ element.name }}</div>
-                </div>
-                <div class="flex-container" fxLayout="row">
-                    <div class="w-100-p text-left mat-caption">{{ element.status }}</div>
-                </div>
-            </td>
-        </ng-container>
-        <ng-container matColumnDef="channels">
-            <!-- <th mat-header-cell *matHeaderCellDef mat-sort-header>Channel</th> -->
-            <td mat-cell *matCellDef="let element">
-                <div class="flex-container" fxLayout="row">
-                    <div *ngFor="let channel of element.channels" class="partial mat-elevation-z0" style="position: relative;">
-                        <!-- <mat-icon>{{getChannelIcon(channel)}}</mat-icon> -->
-                        <button mat-icon-button>
-                            <mat-icon>{{ getChannelIcon(channel.type) }}</mat-icon>
-                        </button>
-                        <span class="channel-notification mat-caption">
-                            {{ channel.notificationCount }}
-                        </span>
+    <div fxFill fxLayout="column" fxLayoutAlign=" none">
+        <div class="w-100-p">
+            <mat-form-field class="form-field w-100-p" appearance="outline">
+                <input class="login-input" required matInput placeholder="Search" />
+                <button mat-icon-button matSuffix>
+                    <mat-icon>search</mat-icon>
+                </button>
+            </mat-form-field>
+        </div>
+        <div fxFlex fxLayout="column" fxLayoutAlign=" none" class="agent-list" [@animateStagger]="{ value: '50' }" *fuseIfOnDom fusePerfectScrollbar>
+            <div
+                *ngFor="let item of agentList"
+                fxLayout="row"
+                fxLayoutAlign="space-between center"
+                class="w-100-p p-12 border-radius-16 agent-item"
+                [ngClass]="
+                    fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                        ? fuseConfig.layout.anchorWidget.contentBackground
+                        : fuseConfig.layout.widget.customBackgroundColor === true
+                        ? fuseConfig.layout.widget.contentBackground
+                        : ''
+                "
+                [@animate]="{ value: '*', params: { y: '100%' } }"
+            >
+                <div fxLayout="row" fxLayoutAlign="start center" fxFlex="30">
+                    <div mat-card-avatar>{{ item.name.substr(0, 2) }}</div>
+                    <div fxLayout="column" fxLayoutAlign=" none" class="ml-8">
+                        <span class="font-weight-700"> {{ item.name }}</span>
+                        <span class="font-size-12">{{ item.status }}</span>
                     </div>
                 </div>
-                <div class="agent-activity-buttons" >
-                    <button mat-icon-button>
-                        <mat-icon>camera_alt</mat-icon>
-                    </button>
-                    <button mat-icon-button>
-                        <mat-icon>remove_red_eye</mat-icon>
-                    </button>
+
+                <div fxLayout="row" fxLayoutAlign="center center" fxFlex="60" class="channel-list">
+                    <div mat-card-avatar matBadge="4">
+                        <mat-icon>phone</mat-icon>
+                    </div>
+                    <div mat-card-avatar matBadge="4">
+                        <mat-icon>chat</mat-icon>
+                    </div>
+                    <div mat-card-avatar matBadge="4">
+                        <mat-icon>duo</mat-icon>
+                    </div>
                 </div>
-            </td>
-        </ng-container>
-        <ng-container matColumnDef="connectivity">
-            <!-- <th mat-header-cell *matHeaderCellDef mat-sort-header>Channel</th> -->
-            <td mat-cell *matCellDef="let element">
-                <div class="flex-container" fxLayout="row">
-                        <!-- <mat-icon>{{getChannelIcon(channel)}}</mat-icon> -->
-                        <button mat-icon-button>
-                            <mat-icon>{{ getConectivityIcon(element.connectivity.type) }}</mat-icon>
-                        </button>
+
+                <div fxLayout="row" fxLayoutAlign="end center" fxFlex="10">
+                    <mat-icon>wifi</mat-icon>
                 </div>
-                
-            </td>
-        </ng-container>
-        <!-- <tr mat-header-row *matHeaderRowDef="[]"></tr> -->
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-    </table>
+            </div>
+        </div>
+    </div>
     <!-- your code goes here -->
 </tw-wrapper>

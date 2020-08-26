@@ -14,7 +14,7 @@
                     most: workCode.value === 'most'
                 }"
             >
-                <mat-icon class="mat-icon-mirror" style="color: white;">{{ 'local_offer' }}</mat-icon>
+                <mat-icon class="mat-icon-mirror mr-4">{{ 'local_offer' }}</mat-icon>
                 {{ workCode.name }}
             </mat-chip>
         </mat-chip-list>
@@ -38,11 +38,11 @@
                         }"
                         (removed)="remove(workCode)"
                     >
-                        <mat-icon class="mat-icon-mirror" style="color: white;">{{ 'local_offer' }}</mat-icon>
+                        <mat-icon class="mat-icon-mirror mr-4">{{ 'local_offer' }}</mat-icon>
                         {{ workCode.name }}
                         <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
                     </mat-chip>
-                    <input                        
+                    <input
                         #workCodeInput
                         [formControl]="workCodeCtrl"
                         [matAutocomplete]="auto"

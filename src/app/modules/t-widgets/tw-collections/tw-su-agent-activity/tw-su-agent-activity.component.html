@@ -1,15 +1,7 @@
-<!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
-<!-- implement following events in your component to access widget wrapper action events -->
-<!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
-
-<!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
-
 <tw-wrapper [data]="data">
-    <!-- your code goes here -->
-    <div fxLayout="column" fxLayoutAlign="space-around stretch" style="gap: 1rem;" fusePerfectScrollbar>
-        <ng-container *ngFor="let item of agentActivityData" >
-            <tw-su-agent-activity-details [activityData]="item" fxLayoutAlign=" stretch" > </tw-su-agent-activity-details>
+    <div fxFill fxLayout="column" fxLayoutAlign=" none" [@animateStagger]="{ value: '50' }" *fuseIfOnDom fusePerfectScrollbar>
+        <ng-container *ngFor="let item of activityWidgets">
+            <tw-su-agent-activity-details [data]="item" [@animate]="{ value: '*', params: { y: '100%' } }"></tw-su-agent-activity-details>
         </ng-container>
     </div>
-    <!-- your code goes here -->
 </tw-wrapper>

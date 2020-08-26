@@ -1,15 +1,13 @@
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation, ElementRef, ViewChild } from '@angular/core';
-import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AppDataService } from '@services/app-data.service';
-import { FuseConfigService } from '@fuse/services/config.service';
-import { takeUntil } from 'rxjs/operators';
-import { SDKClient } from 'tmac-sdk';
-import { FormControl } from '@angular/forms';
-import { MatAutocompleteSelectedEvent, MatAutocomplete } from '@angular/material/autocomplete';
-import { MatChipInputEvent } from '@angular/material/chips';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { map, startWith } from 'rxjs/operators';
+import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { MatAutocomplete, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatChipInputEvent } from '@angular/material/chips';
+import { FuseConfigService } from '@fuse/services/config.service';
+import { AppDataService } from '@services/app-data.service';
+import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { Observable } from 'rxjs';
+import { map, startWith, takeUntil } from 'rxjs/operators';
 
 @Component({
     selector: 'tw-su-work-codes',
@@ -87,6 +85,7 @@ export class TwSuWorkCodesComponent extends TWidgetWrapper implements OnInit, On
 
     @ViewChild('workCodeInput') workCodeInput: ElementRef<HTMLInputElement>;
     @ViewChild('auto') matAutocomplete: MatAutocomplete;
+
     /**
      * Constructor
      * @param {FuseConfigService} _fuseConfigService
@@ -99,6 +98,7 @@ export class TwSuWorkCodesComponent extends TWidgetWrapper implements OnInit, On
         private _appDataService: AppDataService
     ) {
         super();
+
         this.filteredWorkCodes = this.workCodeCtrl.valueChanges.pipe(
             startWith(null),
             map((workcode) => (workcode ? this._filter(workcode) : this.allWorkCodes.slice()))
@@ -142,13 +142,24 @@ export class TwSuWorkCodesComponent extends TWidgetWrapper implements OnInit, On
     // -----------------------------------------------------------------------------------------------------
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
-    add(event: MatChipInputEvent): void {
+
+    private _filter(value: string): any {
+        const filterValue = value; // .name.toLowerCase();
+
+        return this.allWorkCodes.filter((workcode) => workcode.name.toLowerCase().indexOf(filterValue) === 0);
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+    // @  Public Methods
+    // -----------------------------------------------------------------------------------------------------
+
+    public add(event: MatChipInputEvent): void {
         const input = event.input;
         const value = event.value;
 
         // Add our fruit
         if ((value || '').trim()) {
-            let workCode = this.getWorkCode(value);
+            const workCode = this.getWorkCode(value);
             if (workCode) {
                 this.selectedWorkCodes.push(workCode);
             }
@@ -161,10 +172,8 @@ export class TwSuWorkCodesComponent extends TWidgetWrapper implements OnInit, On
 
         this.workCodeCtrl.setValue(null);
     }
-    getWorkCode(value) {
-        return this.allWorkCodes.find((workCode) => workCode.name === value);
-    }
-    remove(workCode): void {
+
+    public remove(workCode: any): void {
         const index = this.selectedWorkCodes.indexOf(workCode);
 
         if (index >= 0) {
@@ -172,20 +181,15 @@ export class TwSuWorkCodesComponent extends TWidgetWrapper implements OnInit, On
         }
     }
 
-    selected(event: MatAutocompleteSelectedEvent): void {
+    public selected(event: MatAutocompleteSelectedEvent): void {
         this.selectedWorkCodes.push(this.getWorkCode(event.option.viewValue));
         this.workCodeInput.nativeElement.value = '';
         this.workCodeCtrl.setValue(null);
     }
 
-    private _filter(value) {
-        const filterValue = value; //.name.toLowerCase();
-
-        return this.allWorkCodes.filter((workcode) => workcode.name.toLowerCase().indexOf(filterValue) === 0);
+    public getWorkCode(value: string): any {
+        return this.allWorkCodes.find((workCode) => workCode.name === value);
     }
-    // -----------------------------------------------------------------------------------------------------
-    // @  Public Methods
-    // -----------------------------------------------------------------------------------------------------
 }
 
 // for more info visit - https://angular.io/api/core

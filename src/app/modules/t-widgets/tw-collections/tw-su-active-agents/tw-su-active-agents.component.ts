@@ -1,114 +1,100 @@
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
-import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AppDataService } from '@services/app-data.service';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseConfigService } from '@fuse/services/config.service';
+import { AppDataService } from '@services/app-data.service';
+import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient } from 'tmac-sdk';
+import { fuseAnimations } from '@fuse/animations';
 
 @Component({
     selector: 'tw-su-active-agents',
     templateUrl: './tw-su-active-agents.component.html',
     styleUrls: ['./tw-su-active-agents.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    animations: fuseAnimations
 })
 export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     // holds all the data related to this widget from the config
     @Input() data: any;
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store the fuse config for theme
-    // -----------------------------------------------------------
-    fuseConfig: any;
 
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store entire app config and get update
-    // -----------------------------------------------------------
+    fuseConfig: any;
     appConfig: any;
 
-    agentList = {
-        data: [
-            {
-                name: 'chirag Ramdas',
-                status: 'Available',
-                channels: [
-                    {
-                        type: 'voice',
-                        notificationCount: 1
-                    },
-                    {
-                        type: 'chat',
-                        notificationCount: 2
-                    },
-                    {
-                        type: 'video',
-                        notificationCount: 3
-                    }
-                ],
-                connectivity: {
-                    type: 'polling',
-                    status: ''
+    agentList = [
+        {
+            name: 'Chirag Ramdas',
+            status: 'Available',
+            channels: [
+                {
+                    type: 'voice',
+                    notificationCount: 1
+                },
+                {
+                    type: 'chat',
+                    notificationCount: 2
+                },
+                {
+                    type: 'video',
+                    notificationCount: 3
                 }
-            },
-            {
-                name: 'Kavya Nayak',
-                status: 'Available',
-                channels: [
-                    {
-                        type: 'voice',
-                        notificationCount: 1
-                    },
-                    {
-                        type: 'chat',
-                        notificationCount: 2
-                    },
-                    {
-                        type: 'video',
-                        notificationCount: 3
-                    }
-                ],
-                connectivity: {
-                    type: 'polling',
-                    status: ''
-                }
-            },
-            {
-                name: 'Vishal Pinto',
-                status: 'Available',
-                channels: [
-                    {
-                        type: 'voice',
-                        notificationCount: 1
-                    },
-                    {
-                        type: 'chat',
-                        notificationCount: 2
-                    },
-                    {
-                        type: 'video',
-                        notificationCount: 3
-                    }
-                ],
-                connectivity: {
-                    type: 'polling',
-                    status: ''
-                }
+            ],
+            connectivity: {
+                type: 'polling',
+                status: ''
             }
-        ]
-    };
-    displayedColumns = ['name', 'status', 'channels', 'connectivity'];
+        },
+        {
+            name: 'Kavya Nayak',
+            status: 'Available',
+            channels: [
+                {
+                    type: 'voice',
+                    notificationCount: 1
+                },
+                {
+                    type: 'chat',
+                    notificationCount: 2
+                },
+                {
+                    type: 'video',
+                    notificationCount: 3
+                }
+            ],
+            connectivity: {
+                type: 'polling',
+                status: ''
+            }
+        },
+        {
+            name: 'Vishal Pinto',
+            status: 'Available',
+            channels: [
+                {
+                    type: 'voice',
+                    notificationCount: 1
+                },
+                {
+                    type: 'chat',
+                    notificationCount: 2
+                },
+                {
+                    type: 'video',
+                    notificationCount: 3
+                }
+            ],
+            connectivity: {
+                type: 'polling',
+                status: ''
+            }
+        }
+    ];
 
-    datasource = new MatTableDataSource([]);
     /**
      * Constructor
      * @param {FuseConfigService} _fuseConfigService
      * @param {AppDataService} _appDataService
      */
     constructor(
-        // @ [OPTIONAL]
         private _fuseConfigService: FuseConfigService,
-        // @ [OPTIONAL]
         private _appDataService: AppDataService
     ) {
         super();
@@ -125,23 +111,19 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the fuse config
-        // -----------------------------------------------------------
-        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.fuseConfig = config;
-        });
 
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the app config
-        // -----------------------------------------------------------
-        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.appConfig = config;
-        });
+        this._fuseConfigService.config
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((config: any) => {
+                this.fuseConfig = config;
+            });
 
-        // build material table data source
-        this.datasource = new MatTableDataSource(this.agentList.data);
-        this.datasource.sort = this.sort;
+
+        this._appDataService.config
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((config: any) => {
+                this.appConfig = config;
+            });
     }
 
     /**
@@ -160,29 +142,6 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
 
-    searchAgent(searchValue) {}
-
-    getFirstCharFromName(str) {
-        var matches = str.match(/\b(\w)/g); // ['J','S','O','N']
-        return matches.join('').toUpperCase(); // JSON
-    }
-
-    getChannelIcon(channel) {
-        switch (channel) {
-            case 'voice':
-                return 'call';
-            case 'chat':
-                return 'chat';
-            case 'video':
-                return 'duo';
-        }
-    }
-    getConectivityIcon(type) {
-        switch (type) {
-            case 'polling':
-                return 'wifi';
-        }
-    }
 }
 
 // for more info visit - https://angular.io/api/core
