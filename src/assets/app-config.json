@@ -491,28 +491,24 @@
                         "Path": "/supervisor",
                         "Widgets": [
                             {
-                                "Name": "Sample-2",
+                                "Name": "Active Agents",
                                 "Description": "",
-                                "Type": "tw-sample",
+                                "Type": "tw-su-active-agents",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
-                                    "Icon": "",
+                                    "Icon": "vertical_split",
                                     "Class": "",
                                     "Position": {
                                         "X": 3,
                                         "Y": 2
                                     },
-                                    "Actions": [
-                                        "maximize",
-                                        "pin",
-                                        "float"
-                                    ],
+                                    "Actions": [],
                                     "ViewState": "restore",
                                     "PinState": false,
                                     "FloatState": false,
                                     "Resizable": false,
-                                    "Header": false,
+                                    "Header": true,
                                     "Disabled": false
                                 },
                                 "Data": {}

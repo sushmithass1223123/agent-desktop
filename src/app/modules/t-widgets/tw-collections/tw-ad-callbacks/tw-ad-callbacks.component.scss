@@ -1,9 +1,12 @@
+@import 'src/app/styles/colors';
+
 tw-ad-callbacks {
     .callbacks {
         padding: 10px;
     }
     .callback-total {
         & > * {
+            min-width: 210px;
             background-color: white;
             padding: 8px 14px;
             border-radius: 20px;
@@ -22,12 +25,12 @@ tw-ad-callbacks {
 
         .handled {
             button {
-                background-color: #8bb768;
+                background-color: $tw-success;
             }
         }
         .missed {
             button {
-                background-color: #d38a73;
+                background-color: $tw-danger;
             }
         }
     }

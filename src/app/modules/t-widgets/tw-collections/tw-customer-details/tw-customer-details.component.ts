@@ -3,6 +3,7 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { SDKClient, TextChatRemoteUserConnectedEvent, IUIEvent } from 'tmac-sdk';
 import { InteractionEventService } from '@services/interaction-event.service';
 import { join } from 'lodash';
+import * as _ from 'lodash';
 
 @Component({
     selector: 'tw-customer-details',
@@ -85,7 +86,10 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
             valueSourceSplit.shift();
             // map the property and get the value from event property
             const valueMap = join(valueSourceSplit, '.');
-            item.Value = valueMap.split('.').reduce((r, k) => r[k], evt);
+            // item.Value = valueMap.split('.').reduce((r, k) => r[k], evt);
+
+            // get the value from path or default value
+            item.Value = _.get(evt, valueMap, item.DefaultValue);
         });
     }
 }

@@ -17,6 +17,9 @@ export class AvatarComponent implements OnInit {
     public name: string;
 
     @Input()
+    public classes: string;
+
+    @Input()
     public circleColor: string;
 
     public showInitials = false;

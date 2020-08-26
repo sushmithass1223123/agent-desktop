@@ -9,18 +9,37 @@
     <div fxFill fxLayout="column" fxLayoutAlign=" none">
         <div class="w-100-p">
             <mat-form-field class="form-field w-100-p" appearance="outline">
-                <input class="login-input" required matInput placeholder="Search" />
-                <button mat-icon-button matSuffix>
-                    <mat-icon>search</mat-icon>
+                <input class="login-input" matInput placeholder="Search" [(ngModel)]="searchTerm" (input)="filterAgents()" />
+                <button
+                    *ngIf="!searchTerm; else clearBtn"
+                    mat-icon-button
+                    matSuffix
+                    [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
+                    disabled
+                >
+                    <mat-icon matSuffix>search</mat-icon>
                 </button>
+                <ng-template #clearBtn>
+                    <button
+                        mat-button
+                        color="primary"
+                        matSuffix
+                        mat-icon-button
+                        aria-label="Clear"
+                        [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
+                        (click)="searchTerm = ''; filterAgents()"
+                    >
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </ng-template>
             </mat-form-field>
         </div>
-        <div fxFlex fxLayout="column" fxLayoutAlign=" none" class="agent-list" [@animateStagger]="{ value: '50' }" *fuseIfOnDom fusePerfectScrollbar>
+        <div fxFlex fxLayout="column" fxLayoutAlign=" none" class="agent-list" [@animateStagger]="{ value: '50' }" fusePerfectScrollbar>
             <div
-                *ngFor="let item of agentList"
+                *ngFor="let item of filteredAgents"
                 fxLayout="row"
                 fxLayoutAlign="space-between center"
-                class="w-100-p p-12 border-radius-16 agent-item"
+                class="w-100-p p-12 border-radius-20 agent-item"
                 [ngClass]="
                     fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
                         ? fuseConfig.layout.anchorWidget.contentBackground
@@ -30,15 +49,27 @@
                 "
                 [@animate]="{ value: '*', params: { y: '100%' } }"
             >
-                <div fxLayout="row" fxLayoutAlign="start center" fxFlex="30">
-                    <div mat-card-avatar>{{ item.name.substr(0, 2) }}</div>
-                    <div fxLayout="column" fxLayoutAlign=" none" class="ml-8">
-                        <span class="font-weight-700"> {{ item.name }}</span>
-                        <span class="font-size-12">{{ item.status }}</span>
+                <div fxLayout="row" fxLayoutAlign="start center" fxFlex="40">
+                    <div class="position-relative">
+                        <avatar name="{{ item.AgentName }}"></avatar>
+                        <span
+                            class="element-status"
+                            [ngClass]="
+                                item.CurrentAgentStatus.includes('Available')
+                                    ? 'success'
+                                    : item.CurrentAgentStatus.includes('On Call')
+                                    ? 'danger'
+                                    : 'warning'
+                            "
+                        ></span>
+                    </div>
+                    <div fxLayout="column" fxLayoutAlign=" none" class="ml-16">
+                        <span class="font-weight-700"> {{ item.AgentName }}</span>
+                        <span>{{ item.CurrentAgentStatus }}</span>
                     </div>
                 </div>
 
-                <div fxLayout="row" fxLayoutAlign="center center" fxFlex="60" class="channel-list">
+                <div fxLayout="row" fxLayoutAlign="center center" fxFlex="50" class="channel-list">
                     <div mat-card-avatar matBadge="4">
                         <mat-icon>phone</mat-icon>
                     </div>
@@ -50,9 +81,25 @@
                     </div>
                 </div>
 
-                <div fxLayout="row" fxLayoutAlign="end center" fxFlex="10">
+                <div fxLayout="row" fxLayoutAlign="center center" fxFlex="10">
                     <mat-icon>wifi</mat-icon>
                 </div>
+            </div>
+            <div
+                *ngIf="filteredAgents.length === 0"
+                fxLayout="row"
+                fxLayoutAlign="center center"
+                class="w-100-p h-68 p-12 border-radius-20 agent-item"
+                [ngClass]="
+                    fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                        ? fuseConfig.layout.anchorWidget.contentBackground
+                        : fuseConfig.layout.widget.customBackgroundColor === true
+                        ? fuseConfig.layout.widget.contentBackground
+                        : ''
+                "
+                [@animate]="{ value: '*', params: { y: '100%' } }"
+            >
+                <span class="mat-title m-0"> No agents found!</span>
             </div>
         </div>
     </div>

@@ -1,3 +1,5 @@
+@import 'src/app/styles/colors';
+
 tw-su-active-agents {
     tw-wrapper {
         mat-card-content {
@@ -9,16 +11,35 @@ tw-su-active-agents {
                     .mat-form-field-wrapper {
                         .mat-form-field-infix {
                             border: none;
-                        }
-
-                        .mat-form-field-suffix {
-                            top: 8px !important;
+                            padding: 0.5em 0.5rem !important;
                         }
                     }
                 }
 
                 .agent-list {
                     gap: 8px;
+
+                    .agent-item {
+                        avatar {
+                            .avatar-content {
+                                width: 54px;
+                                height: 44px;
+                                border-radius: 16px;
+                            }
+                        }
+
+                        .element-status {
+                            &.success {
+                                background: $tw-status-success;
+                            }
+                            &.warning {
+                                background: $tw-status-warning;
+                            }
+                            &.danger {
+                                background: $tw-status-danger;
+                            }
+                        }
+                    }
                 }
 
                 .channel-list {
@@ -33,6 +54,8 @@ tw-su-active-agents {
                             top: -6px;
                             height: 20px;
                             width: 20px;
+                            background: $tw-success !important;
+                            color: $tw-black !important;
                         }
                     }
                 }

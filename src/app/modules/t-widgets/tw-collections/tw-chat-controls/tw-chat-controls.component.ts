@@ -57,7 +57,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
     user: IAgentData;
     replyInput: any;
-    isConnected = false;
     sessionID = 'NA';
     startTime = 'NA';
     interactionDuration = '00:00:00';
@@ -185,8 +184,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     + (seconds > 9 ? seconds : '0' + seconds);
             });
 
-        // change the connected status
-        this.isConnected = true;
         this.interactionStatus = 'Connected';
         // get the customer name
         this.customerName = evt.screenName || 'Customer';
@@ -380,8 +377,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         if (evt.InteractionID !== this.interactionId) {
             return;
         }
-        // change the connected status
-        this.isConnected = false;
         this.interactionStatus = 'Disconnected';
         // update the interaction status
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
@@ -517,7 +512,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             messageId,
             templateId: '',
             type: 'text'
-        }, null).then((dt: IReason) => {
+        }, null).then((dt) => {
             console.log('sendTextChat', dt);
         });
     }
@@ -550,8 +545,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     reason: 'AgentChatDisconnected'
                 }, null)
                     .then(() => {
-                        // enable the button
-                        endBtn.disabled = false;
                         // hide the progress bar
                         this._fuseProgressBarService.hide();
                     });
