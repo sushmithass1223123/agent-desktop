@@ -13,9 +13,7 @@ import { fuseConfig } from 'app/constants';
 import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
-    declarations: [
-        AppComponent,
-    ],
+    declarations: [AppComponent],
     imports: [
         BrowserModule,
         BrowserAnimationsModule,
@@ -35,9 +33,6 @@ import { AppRoutingModule } from './app-routing.module';
         CoreModule,
         SharedModule
     ],
-    bootstrap: [
-        AppComponent
-    ]
+    bootstrap: [AppComponent]
 })
-export class AppModule {
-}
+export class AppModule {}

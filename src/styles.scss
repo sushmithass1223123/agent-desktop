@@ -143,10 +143,35 @@ html {
 }
 // chart maximized :: end
 
+// utils :: start
 .bg-inherit {
     background: inherit;
 }
 
+.d {
+    &-block {
+        display: block;
+    }
+    &-flex {
+        display: flex;
+    }
+}
+// utils :: end
+
+// charts :: start
+.t-chart {
+    position: relative;
+    .t-pie-chart-value {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 2em;
+    }
+}
+// charts :: end
+
+// leatlet :: start
 .leaflet-pane {
     &.leaflet-map-pane {
         z-index: 100;
@@ -158,3 +183,4 @@ html {
         z-index: 100;
     }
 }
+// leaflet :: end

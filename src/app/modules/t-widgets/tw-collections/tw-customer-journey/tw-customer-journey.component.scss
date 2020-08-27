@@ -1,0 +1,149 @@
+tw-customer-journey {
+    // .bold {
+    //     font-weight: bold;
+    // }
+    // .time {
+    //     position: absolute;
+    //     left: -110px;
+    // }
+    // .timeline-wrapper {
+    //     padding-left: 80px;
+    //     min-width: 400px;
+    //     font-family: 'Helvetica';
+    //     font-size: 14px;
+    //     /*border: 1px solid #CCC;*/
+    // }
+    // .StepProgress {
+    //     position: relative;
+    //     padding-left: 45px;
+    //     list-style: none;
+    // }
+    // .StepProgress::before {
+    //     display: inline-block;
+    //     content: '';
+    //     position: absolute;
+    //     top: 0;
+    //     left: 15px;
+    //     width: 10px;
+    //     height: 100%;
+    //     border-left: 2px solid #ccc;
+    // }
+    // .StepProgress-item {
+    //     position: relative;
+    //     counter-increment: list;
+    // }
+    // .StepProgress-item:not(:last-child) {
+    //     padding-bottom: 20px;
+    // }
+    // .StepProgress-item::before {
+    //     display: inline-block;
+    //     content: '';
+    //     position: absolute;
+    //     left: -30px;
+    //     height: 100%;
+    //     width: 10px;
+    // }
+    // .StepProgress-item::after {
+    //     content: '';
+    //     display: inline-block;
+    //     position: absolute;
+    //     top: 0;
+    //     left: -37px;
+    //     width: 12px;
+    //     height: 12px;
+    //     border: 2px solid #ccc;
+    //     border-radius: 50%;
+    //     background-color: #fff;
+    // }
+    // .StepProgress-item.is-done::before {
+    //     border-left: 2px solid green;
+    // }
+    // .StepProgress-item.is-done::after {
+    //     /*content: "?";*/
+    //     font-size: 10px;
+    //     color: #fff;
+    //     text-align: center;
+    //     border: 2px solid green;
+    //     background-color: green;
+    // }
+    // .StepProgress strong {
+    //     display: block;
+    // }
+    .customer-journey {
+        width: 100%;
+        height: 100%;
+        padding: 8px;
+        background: inherit;
+        .timeline {
+            width: 100%;
+            height: 100%;
+            padding: 5px 10px;
+            .step {
+                background-color: rgba(purple, 0.05);
+                border-radius: 20px;
+                .step-details {
+                    position: relative;
+                }
+                &-details::before {
+                    content: '';
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    width: 1px;
+                    height: 180%;
+                    background-color: purple;
+                }
+                &:nth-child(3) .step-details::before {
+                    top: 25%;
+                }
+                &:last-child .step-details::before {
+                    top: unset;
+                    bottom: 75%;
+                }
+                &-details::after {
+                    content: '';
+                    position: absolute;
+                    width: 10px;
+                    z-index: 1;
+                    height: 10px;
+                    border-radius: 50%;
+                    background-color: white;
+                    border: 1px solid purple;
+                    top: 20%;
+                    left: -5px;
+                }
+            }
+        }
+        .table {
+            width: 100%;
+            height: 50%;
+            padding: 8px;
+            background: inherit;
+            border-radius: 10px;
+        }
+        .spread {
+            width: 100%;
+            height: 50%;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        mat-icon {
+            font-size: 18px;
+            line-height: 2;
+        }
+    }
+
+    iframe {
+        height: 100%;
+        width: 100%;
+        margin: 0px;
+        padding: 0px;
+        border-radius: 2rem;
+
+        .none {
+            display: none;
+        }
+    }
+}

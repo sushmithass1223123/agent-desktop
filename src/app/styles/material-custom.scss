@@ -76,6 +76,16 @@ mat-selection-list {
         color: currentColor !important;
         &.mat-header-cell {
             border-color: transparent !important;
+            align-items: center;
+            justify-content: flex-end;
+            span {
+                flex: 1;
+                text-align: center;
+            }
+            mat-menu {
+                width: 20vw;
+                height: 30vh;
+            }
         }
         .mat-sort-header-arrow {
             margin: 0 6px 0px 3px;
