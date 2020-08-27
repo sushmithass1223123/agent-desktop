@@ -1,8 +1,6 @@
 <div id="login" class="inner-scroll" fxLayout="row" fxLayoutAlign="start">
     <div id="login-intro" fxFlex fxHide fxShow.gt-xs class="animate__animated animate__fadeIn">
-        <div class="title" [@animate]="{ value: '*', params: { delay: '50ms', y: '25px' } }">
-            Welcome to the TMAC!
-        </div>
+        <div class="title" [@animate]="{ value: '*', params: { delay: '50ms', y: '25px' } }">Welcome to the TMAC!</div>
     </div>
 
     <div id="login-form-wrapper" fusePerfectScrollbar [@animate]="{ value: '*', params: { delay: '300ms', x: '100%' } }">
@@ -26,9 +24,7 @@
                         <mat-option>None</mat-option>
                         <mat-option *ngFor="let item of domainList" value="item">{{ item }}</mat-option>
                     </mat-select>
-                    <mat-error>
-                        Domain Name is required
-                    </mat-error>
+                    <mat-error> Domain Name is required </mat-error>
                 </mat-form-field>
 
                 <mat-form-field class="form-field" appearance="outline">
@@ -44,9 +40,7 @@
                     >
                         <mat-icon>close</mat-icon>
                     </button>
-                    <mat-error>
-                        LAN ID is required
-                    </mat-error>
+                    <mat-error> LAN ID is required </mat-error>
                 </mat-form-field>
 
                 <mat-form-field class="form-field" appearance="outline" *ngIf="agentIdEnabled">
@@ -62,9 +56,7 @@
                     >
                         <mat-icon>close</mat-icon>
                     </button>
-                    <mat-error>
-                        Agent ID is required
-                    </mat-error>
+                    <mat-error> Agent ID is required </mat-error>
                 </mat-form-field>
 
                 <mat-form-field class="form-field" appearance="outline" *ngIf="passwordEnabled">
@@ -89,9 +81,7 @@
                     >
                         <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
                     </button>
-                    <mat-error>
-                        Password is required
-                    </mat-error>
+                    <mat-error> Password is required </mat-error>
                 </mat-form-field>
 
                 <mat-form-field class="form-field animate__animated animate__flipInX animate__fast" appearance="outline" *ngIf="stationEnabled">
@@ -115,9 +105,7 @@
                     >
                         <mat-icon>close</mat-icon>
                     </button>
-                    <mat-error>
-                        Station is required
-                    </mat-error>
+                    <mat-error> Station is required </mat-error>
                 </mat-form-field>
 
                 <mat-list *ngIf="loginModeEnabled">
@@ -147,10 +135,11 @@
                     </mat-list-item>
                 </mat-list>
 
-                <button mat-raised-button color="primary" class="submit-button" aria-label="LOGIN" (click)="login(false)">
-                    LOGIN
-                </button>
+                <button mat-raised-button color="primary" class="submit-button" aria-label="LOGIN" (click)="login(false)">LOGIN</button>
             </form>
+            <div fxLayout="row" fxLayoutAlign="center center" class="font-size-12 secondary-text copyright-version">
+                Copyright Tetherfi | Version: {{ version }}
+            </div>
         </div>
     </div>
 

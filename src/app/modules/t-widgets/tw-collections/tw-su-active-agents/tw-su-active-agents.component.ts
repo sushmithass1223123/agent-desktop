@@ -86,8 +86,15 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     // -----------------------------------------------------------------------------------------------------
 
     private async getAgentList(): Promise<void> {
-        const result = await SDKClient.getAgentListStaffed(null);
-        this.agentList = this.filteredAgents = result.response.filter((a: any) => a.LoginID !== this.user.agentId);
+        const result = await SDKClient.getAgentSessionsList({
+            agentId: '',
+            interactionId: '',
+            supervisorId: '',
+            teamId: '',
+            tmacServer: ''
+        }, null);
+
+        this.agentList = this.filteredAgents = result.response.filter((a: any) => a.AgentLoginID !== this.user.agentId);
 
         setTimeout(() => {
             this.getAgentList();

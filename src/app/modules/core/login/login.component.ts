@@ -44,6 +44,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     domainList = [];
 
     loading = false;
+    version = '';
 
     constructor(
         private _fuseConfigService: FuseConfigService,
@@ -92,7 +93,6 @@ export class LoginComponent implements OnInit, OnDestroy {
         });
 
         this.loadConfig();
-
         this.getData();
     }
 
@@ -166,6 +166,12 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     // to get data from server
     private getData(): void {
+        // get the TMAC server version
+        SDKClient.getTMACVersion('', null)
+            .then((dt) => {
+                this.version = dt.response;
+            });
+
         if (this.domainListEnabled) {
             SDKClient.getUserDomainList(null).then((result: IResponse) => {
                 this.domainList = result.response || [];
