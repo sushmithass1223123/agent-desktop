@@ -4,6 +4,9 @@
 // import material custom styles
 @import 'app/styles/material-custom';
 
+// import common styles
+@import 'app/styles/common.scss';
+
 // Import app theme styles
 @import 'app/app.theme';
 
@@ -47,6 +50,12 @@ html {
     max-width: calc(100vw - 112px);
 }
 
+.tw-card {
+    &.hidden {
+        display: none;
+    }
+}
+
 @media screen and (max-width: 768px) {
     .twc-card,
     .tw-card {
@@ -72,31 +81,6 @@ html {
         grid-template-columns: repeat(auto-fit, minmax(calc(100% / 7), 1fr));
         grid-auto-rows: minmax(calc(100% / 4), 1fr);
     }
-}
-
-.tw-full {
-    height: 100% !important;
-    width: 100% !important;
-}
-
-.tw-center {
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    height: 100% !important;
-    width: 100% !important;
-}
-
-.tw-br-1 {
-    border-radius: 1rem;
-}
-
-.tw-br-2 {
-    border-radius: 2rem;
-}
-
-.tw-br-3 {
-    border-radius: 3rem;
 }
 
 ///***************************************************************************************************************///
@@ -148,6 +132,31 @@ html {
     background: inherit;
 }
 
+.tw-full {
+    height: 100% !important;
+    width: 100% !important;
+}
+
+.tw-center {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    height: 100% !important;
+    width: 100% !important;
+}
+
+.border-radius-10 {
+    border-radius: 10px !important;
+}
+
+.border-radius-20 {
+    border-radius: 20px !important;
+}
+
+.border-radius-30 {
+    border-radius: 30px !important;
+}
+
 .d {
     &-block {
         display: block;
@@ -177,6 +186,7 @@ html {
         z-index: 100;
     }
 }
+
 .leaflet-control-container {
     .leaflet-top,
     .leaflet-bottom {

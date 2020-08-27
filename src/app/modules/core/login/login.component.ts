@@ -1,11 +1,11 @@
-import { Component, OnInit, ViewEncapsulation, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
-import { FuseConfirmDialogComponent } from '@fuse/components/confirm-dialog/confirm-dialog.component';
 import { FuseConfigService } from '@fuse/services/config.service';
+import { ConfirmDialogComponent } from '@modules/shared/confirm-dialog/confirm-dialog.component';
 import { AppDataService } from 'app/services/app-data.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -24,10 +24,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     appConfig: any;
     brandLogo = null;
-
     loginForm: FormGroup;
-    confirmDialogRef: MatDialogRef<FuseConfirmDialogComponent>;
-
     loginConfig = null;
     logoSrc = '';
     logoAlt = '';
@@ -47,6 +44,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     domainList = [];
 
     loading = false;
+    version = '';
 
     constructor(
         private _fuseConfigService: FuseConfigService,
@@ -95,7 +93,6 @@ export class LoginComponent implements OnInit, OnDestroy {
         });
 
         this.loadConfig();
-
         this.getData();
     }
 
@@ -115,10 +112,12 @@ export class LoginComponent implements OnInit, OnDestroy {
     // to load the config
     private loadConfig(): void {
         // Subscribe to config changes
-        this._appDataService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
-            this.appConfig = config;
-            this.configLoaded(config);
-        });
+        this._appDataService.config
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((config: any) => {
+                this.appConfig = config;
+                this.configLoaded(config);
+            });
     }
 
     private configLoaded(config: any): void {
@@ -167,6 +166,12 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     // to get data from server
     private getData(): void {
+        // get the TMAC server version
+        SDKClient.getTMACVersion('', null)
+            .then((dt) => {
+                this.version = dt.response;
+            });
+
         if (this.domainListEnabled) {
             SDKClient.getUserDomainList(null).then((result: IResponse) => {
                 this.domainList = result.response || [];
@@ -227,17 +232,21 @@ export class LoginComponent implements OnInit, OnDestroy {
                 if (response.ResultCode > 0) {
                     if (response.ResultCode === 3) {
                         // config force login
-                        this.confirmDialogRef = this._dialog.open(FuseConfirmDialogComponent, {
+                        const confirmDialogRef = this._dialog.open(ConfirmDialogComponent, {
                             disableClose: false
                         });
-                        this.confirmDialogRef.componentInstance.confirmMessage = 'Another session detected. Do you want to take it over?';
-                        this.confirmDialogRef.afterClosed().subscribe((dialogResult) => {
+                        confirmDialogRef.componentInstance.title = 'Confirm Login';
+                        confirmDialogRef.componentInstance.message = 'Another session detected. Do you want to take it over?';
+                        confirmDialogRef.afterClosed().subscribe((dialogResult) => {
                             if (dialogResult) {
                                 this.login(true);
                             }
-                            this.confirmDialogRef = null;
                         });
                     } else {
+                        // TODO:: assign the agent config if available
+                        // if (response.OtherData.ItemOne) {
+                        //     this._appDataService.config = JSON.parse(response.OtherData.ItemOne);
+                        // }
                         // login success
                         // we will route to main page
                         this._router.navigate(['main'], {

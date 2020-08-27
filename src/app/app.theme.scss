@@ -75,7 +75,7 @@ $tw-primary: (
         800: $light-primary-text,
         900: $light-primary-text,
         A100: $dark-primary-text,
-        A200: $light-primary-text,
+        A200: $dark-primary-text,
         A400: $light-primary-text,
         A700: $light-primary-text
     )
@@ -189,8 +189,10 @@ $typography: mat-typography-config(
 
 @import 'src/app/modules/core/login/login.theme';
 
+@import 'src/app/modules/t-widgets/tw-toolbar/tw-toolbar.theme';
 @import 'src/app/modules/t-widgets/tw-content/tw-content.theme';
 @import 'src/app/modules/t-widgets/tw-wrapper/tw-wrapper.theme';
+@import 'src/app/modules/t-widgets/tw-collections/tw-voice-controls/tw-voice-controls.theme';
 @import 'src/app/modules/t-widgets/tw-collections/tw-chat-controls/tw-chat-controls.theme';
 @import 'src/app/modules/t-widgets/tw-collections/tw-su-active-agents/tw-su-active-agents.theme';
 
@@ -225,8 +227,10 @@ $typography: mat-typography-config(
     @include login-theme($theme);
 
     // T-Widgets components
+    @include tw-toolbar-theme($theme);
     @include tw-content-theme($theme);
     @include tw-wrapper-theme($theme);
+    @include tw-voice-controls-theme($theme);
     @include tw-chat-controls-theme($theme);
     @include tw-su-active-agents-theme($theme);
 }

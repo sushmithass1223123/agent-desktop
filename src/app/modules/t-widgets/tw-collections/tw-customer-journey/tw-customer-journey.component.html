@@ -10,7 +10,18 @@
 <tw-wrapper [data]="data" (maximizeEvent)="maximizeEvent($event)">
     <div *ngIf="!customerJourneyTable.loading" class="customer-journey" [fxLayout]="maximized ? 'column' : 'row wrap'" fxLayoutGap="20px">
         <div *ngIf="!maximized" class="timeline" fusePerfectScrollbar>
-            <div *ngFor="let s of customerJourneyTable.tableData.source.data" fxLayout="row-wrap" class="step mb-8 p-8">
+            <div
+                *ngFor="let s of customerJourneyTable.tableData.source.data"
+                fxLayout="row-wrap"
+                class="step mb-8 p-4"
+                [ngClass]="
+                    fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                        ? fuseConfig.layout.anchorWidget.contentBackground
+                        : fuseConfig.layout.widget.customBackgroundColor === true
+                        ? fuseConfig.layout.widget.contentBackground
+                        : ''
+                "
+            >
                 <div fxFlex="25" fxLayout fxLayoutAlign="center center" class="step-time pr-8">
                     <small fxFlex="80" class="text-right">
                         {{ s.InteractionDate }}
@@ -37,6 +48,7 @@
                             <ng-container *ngSwitchCase="'videochat'">
                                 <ng-container *ngTemplateOutlet="interactionBrandType; context: s"></ng-container>
                             </ng-container>
+                            <mat-icon color="primary" *ngSwitchCase="'voice'"> call </mat-icon>
                             <mat-icon color="primary" *ngSwitchCase="'sms'"> textsms </mat-icon>
                             <mat-icon color="primary" *ngSwitchCase="'email'"> email </mat-icon>
                             <mat-icon color="primary" *ngSwitchCase="'fax'"> chat </mat-icon>
@@ -44,6 +56,7 @@
                             <mat-icon color="primary" *ngSwitchDefault> chat </mat-icon>
                         </button>
                         <span class="ml-8" [ngSwitch]="s.Channel | lowercase">
+                            <ng-container *ngSwitchCase="'voice'"> Voice with </ng-container>
                             <ng-container *ngSwitchCase="'chat'"> Chat with </ng-container>
                             <ng-container *ngSwitchCase="'audio'"> Audio Call with </ng-container>
                             <ng-container *ngSwitchCase="'video'"> Video Call with </ng-container>
@@ -95,6 +108,7 @@
                         <ng-container *ngSwitchCase="'videochat'">
                             <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>
                         </ng-container>
+                        <mat-icon color="primary" *ngSwitchCase="'voice'"> call </mat-icon>
                         <mat-icon color="primary" *ngSwitchCase="'sms'"> textsms </mat-icon>
                         <mat-icon color="primary" *ngSwitchCase="'email'"> email </mat-icon>
                         <mat-icon color="primary" *ngSwitchCase="'fax'"> chat </mat-icon>

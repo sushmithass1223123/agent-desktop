@@ -11,6 +11,10 @@ tw-chat-controls {
         .chat-controls {
             .interaction-details {
                 line-height: 1.5;
+
+                .mat-icon {
+                    font-size: 20px;
+                }
             }
 
             .chat-container {
@@ -43,16 +47,13 @@ tw-chat-controls {
                 }
             }
 
-            .user-avatar {
-                .avatar-container {
-                    height: 100% !important;
-                    .avatar-content {
-                        width: 100%;
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        // box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
-                    }
+            avatar {
+                .avatar-content {
+                    width: 53px;
+                    height: 38px;
+                    border-radius: 16px;
+                    margin-bottom: 6px;
+                    cursor: pointer;
                 }
 
                 &.active {
@@ -79,7 +80,6 @@ tw-chat-controls {
 
                 .chat-transcripts {
                     background: transparent;
-                    height: calc(100% - 62px);
                     overflow: auto;
                     -webkit-overflow-scrolling: touch;
 
@@ -106,48 +106,76 @@ tw-chat-controls {
                                 display: flex;
                                 align-items: center;
                                 justify-content: center;
-                                padding: 12px;
+                                // padding: 12px;
                                 max-width: 100%;
+
+                                .right-svg {
+                                    color: #e0e0e0;
+                                    position: absolute;
+                                    right: -7px;
+                                    top: -1px;
+                                }
+
+                                .left-svg {
+                                    color: #d2c8d9;
+                                    position: absolute;
+                                    left: -7px;
+                                    top: -1px;
+                                }
+
+                                padding: 6px 7px 8px 9px;
 
                                 .message {
                                     white-space: pre-wrap;
                                     line-height: 1.2;
+
+                                    font-size: 14px;
+                                    margin-bottom: 12px;
                                 }
 
                                 .time {
-                                    position: absolute;
-                                    display: none;
+                                    // position: absolute;
+                                    // display: none;
                                     width: 100%;
-                                    font-size: 11px;
-                                    margin-top: 8px;
-                                    top: 100%;
-                                    left: 0;
+                                    // font-size: 11px;
+
+                                    font-size: 10px;
+
+                                    // margin-top: 8px;
+                                    // top: 100%;
+                                    // left: 0;
+
                                     white-space: nowrap;
+
+                                    text-align: right;
+                                    margin: -10px 40px -5px 0px;
                                 }
                             }
 
                             &.contact {
                                 .bubble {
-                                    border-top-left-radius: 5px;
-                                    border-bottom-left-radius: 5px;
+                                    // border-top-left-radius: 5px;
+                                    // border-bottom-left-radius: 5px;
 
-                                    border-top-right-radius: 20px;
-                                    border-bottom-right-radius: 20px;
+                                    // border-top-right-radius: 20px;
+                                    // border-bottom-right-radius: 20px;
+
+                                    border-radius: 5px;
 
                                     .time {
-                                        margin-left: 12px;
+                                        // margin-left: 12px;
                                     }
                                 }
 
                                 &.first-of-group {
                                     .bubble {
-                                        border-top-left-radius: 20px;
+                                        border-top-left-radius: 0px;
                                     }
                                 }
 
                                 &.last-of-group {
                                     .bubble {
-                                        border-bottom-left-radius: 20px;
+                                        border-bottom-left-radius: 10px;
                                     }
                                 }
                             }
@@ -163,52 +191,54 @@ tw-chat-controls {
                                 .bubble {
                                     margin-left: auto;
 
-                                    border-top-left-radius: 20px;
-                                    border-bottom-left-radius: 20px;
+                                    // border-top-left-radius: 20px;
+                                    // border-bottom-left-radius: 20px;
 
-                                    border-top-right-radius: 5px;
-                                    border-bottom-right-radius: 5px;
+                                    // border-top-right-radius: 5px;
+                                    // border-bottom-right-radius: 5px;
+
+                                    border-radius: 5px;
 
                                     .time {
-                                        justify-content: flex-end;
-                                        right: 0;
-                                        margin-right: 12px;
+                                        // justify-content: flex-end;
+                                        // right: 0;
+                                        // margin-right: 12px;
                                     }
                                 }
 
                                 &.first-of-group {
                                     .bubble {
-                                        border-top-right-radius: 20px;
+                                        border-top-right-radius: 0px;
                                     }
                                 }
 
                                 &.last-of-group {
                                     .bubble {
-                                        border-bottom-right-radius: 20px;
+                                        border-bottom-right-radius: 10px;
                                     }
                                 }
                             }
 
                             &.contact + .me,
                             &.me + .contact {
-                                padding-top: 20px;
-                                margin-top: 20px;
+                                padding-top: 4px;
+                                margin-top: 4px;
                             }
 
                             &.first-of-group {
                                 .bubble {
-                                    border-top-left-radius: 20px;
-                                    padding-top: 13px;
+                                    // border-top-left-radius: 20px;
+                                    // padding-top: 13px;
                                 }
                             }
 
                             &.last-of-group {
                                 .bubble {
-                                    border-bottom-left-radius: 20px;
-                                    padding-bottom: 13px;
+                                    // border-bottom-left-radius: 20px;
+                                    // padding-bottom: 13px;
 
                                     .time {
-                                        display: flex;
+                                        // display: flex;
                                     }
                                 }
                             }
@@ -217,7 +247,8 @@ tw-chat-controls {
                 }
 
                 .chat-footer {
-                    padding: 8px 8px 8px 16px;
+                    // padding: 8px 8px 8px 16px;
+                    padding: 8px 8px 12px 16px;
 
                     .reply-form {
                         position: relative;
@@ -231,7 +262,7 @@ tw-chat-controls {
                                     padding: 0;
 
                                     .mat-form-field-infix {
-                                        padding: 0px 0px 0px 46px !important;
+                                        padding: 0px !important;
                                         border: none;
                                         border-radius: 20px;
 
@@ -246,6 +277,16 @@ tw-chat-controls {
 
                                 .mat-form-field-underline {
                                     display: none !important;
+                                }
+                            }
+
+                            &.emoji {
+                                .mat-form-field-wrapper {
+                                    .mat-form-field-flex {
+                                        .mat-form-field-infix {
+                                            padding: 0px 0px 0px 46px !important;
+                                        }
+                                    }
                                 }
                             }
                         }

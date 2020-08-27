@@ -1,22 +1,21 @@
 <div id="login" class="inner-scroll" fxLayout="row" fxLayoutAlign="start">
-    <div id="login-intro" fxFlex fxHide fxShow.gt-xs>
-
-        <div class="title" [@animate]="{value:'*',params:{delay:'50ms',y:'25px'}}">
-            Welcome to the TMAC!
-        </div>
-
+    <div id="login-intro" fxFlex fxHide fxShow.gt-xs class="animate__animated animate__fadeIn">
+        <div class="title" [@animate]="{ value: '*', params: { delay: '50ms', y: '25px' } }">Welcome to the TMAC!</div>
     </div>
 
-    <div id="login-form-wrapper" fusePerfectScrollbar
-        [@animate]="{value: '*',params:{delay:'300ms',x:'100%'}}">
+    <div id="login-form-wrapper" fusePerfectScrollbar [@animate]="{ value: '*', params: { delay: '300ms', x: '100%' } }">
         <div class="spinner" *ngIf="loading">
             <mat-spinner></mat-spinner>
         </div>
 
         <div id="login-form" class="{{ loading ? 'blur' : null }}">
             <div class="logo" [@animate]="{ value: '*', params: { scale: '0.5' } }">
-                <img [src]="logoSrc || 'assets/images/logos/tetherfi.png'" [width]="logoWidth || 180"
-                    [height]="logoHeight || 90" alt="{{ logoAlt || 'Tetherfi' }}" />
+                <img
+                    [src]="logoSrc || 'assets/images/logos/tetherfi.png'"
+                    [width]="logoWidth || 180"
+                    [height]="logoHeight || 90"
+                    alt="{{ logoAlt || 'Tetherfi' }}"
+                />
             </div>
 
             <form name="loginForm" [formGroup]="loginForm" novalidate>
@@ -25,86 +24,131 @@
                         <mat-option>None</mat-option>
                         <mat-option *ngFor="let item of domainList" value="item">{{ item }}</mat-option>
                     </mat-select>
-                    <mat-error>
-                        Domain Name is required
-                    </mat-error>
+                    <mat-error> Domain Name is required </mat-error>
                 </mat-form-field>
 
                 <mat-form-field class="form-field" appearance="outline">
-                    <input class="login-input" matInput required placeholder="LAN ID" (keydown.enter)="login(false)"
-                        formControlName="lanId" #lanId />
-                    <button mat-button color="primary" *ngIf="loginForm.get('lanId').value" matSuffix mat-icon-button
-                        aria-label="Clear" (click)="resetField('lanId')">
+                    <input class="login-input" matInput required placeholder="LAN ID" (keydown.enter)="login(false)" formControlName="lanId" #lanId />
+                    <button
+                        mat-button
+                        color="primary"
+                        *ngIf="loginForm.get('lanId').value"
+                        matSuffix
+                        mat-icon-button
+                        aria-label="Clear"
+                        (click)="resetField('lanId')"
+                    >
                         <mat-icon>close</mat-icon>
                     </button>
-                    <mat-error>
-                        LAN ID is required
-                    </mat-error>
+                    <mat-error> LAN ID is required </mat-error>
                 </mat-form-field>
 
                 <mat-form-field class="form-field" appearance="outline" *ngIf="agentIdEnabled">
-                    <input class="login-input" matInput required placeholder="AGENT ID" (keydown.enter)="login(false)"
-                        formControlName="agentId" />
-                    <button mat-button color="primary" *ngIf="loginForm.get('agentId').value" matSuffix mat-icon-button
-                        aria-label="Clear" (click)="resetField('agentId')">
+                    <input class="login-input" matInput required placeholder="AGENT ID" (keydown.enter)="login(false)" formControlName="agentId" />
+                    <button
+                        mat-button
+                        color="primary"
+                        *ngIf="loginForm.get('agentId').value"
+                        matSuffix
+                        mat-icon-button
+                        aria-label="Clear"
+                        (click)="resetField('agentId')"
+                    >
                         <mat-icon>close</mat-icon>
                     </button>
-                    <mat-error>
-                        Agent ID is required
-                    </mat-error>
+                    <mat-error> Agent ID is required </mat-error>
                 </mat-form-field>
 
                 <mat-form-field class="form-field" appearance="outline" *ngIf="passwordEnabled">
-                    <input class="login-input" required matInput [type]="hidePassword ? 'password' : 'text'" required
-                        placeholder="PASSWORD" (keydown.enter)="login(false)" formControlName="password" />
-                    <button mat-icon-button color="primary" color="primary" matSuffix
-                        (click)="hidePassword = !hidePassword" [attr.aria-label]="'Hide password'"
-                        [attr.aria-pressed]="hidePassword">
+                    <input
+                        class="login-input"
+                        required
+                        matInput
+                        [type]="hidePassword ? 'password' : 'text'"
+                        required
+                        placeholder="PASSWORD"
+                        (keydown.enter)="login(false)"
+                        formControlName="password"
+                    />
+                    <button
+                        mat-icon-button
+                        color="primary"
+                        color="primary"
+                        matSuffix
+                        (click)="hidePassword = !hidePassword"
+                        [attr.aria-label]="'Hide password'"
+                        [attr.aria-pressed]="hidePassword"
+                    >
                         <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
                     </button>
-                    <mat-error>
-                        Password is required
-                    </mat-error>
+                    <mat-error> Password is required </mat-error>
                 </mat-form-field>
 
-                <mat-form-field class="form-field animate__animated animate__flipInX animate__fast" appearance="outline"
-                    *ngIf="stationEnabled">
-                    <input class="login-input" color="primary" matInput required placeholder="STATION"
-                        (keypress)="numberOnly($event)" (keydown.enter)="login(false)" formControlName="station" />
-                    <button *ngIf="loginForm.get('station').value" matSuffix mat-icon-button color="primary"
-                        aria-label="Clear" (click)="resetField('station')">
+                <mat-form-field class="form-field animate__animated animate__flipInX animate__fast" appearance="outline" *ngIf="stationEnabled">
+                    <input
+                        class="login-input"
+                        color="primary"
+                        matInput
+                        required
+                        placeholder="STATION"
+                        (keypress)="numberOnly($event)"
+                        (keydown.enter)="login(false)"
+                        formControlName="station"
+                    />
+                    <button
+                        *ngIf="loginForm.get('station').value"
+                        matSuffix
+                        mat-icon-button
+                        color="primary"
+                        aria-label="Clear"
+                        (click)="resetField('station')"
+                    >
                         <mat-icon>close</mat-icon>
                     </button>
-                    <mat-error>
-                        Station is required
-                    </mat-error>
+                    <mat-error> Station is required </mat-error>
                 </mat-form-field>
 
                 <mat-list *ngIf="loginModeEnabled">
                     <mat-list-item>
-                        <mat-slide-toggle fxFlex class="mat-primary" [checked]="pbxChecked"
-                            (change)="onPBXToggle($event)" aria-label="Notifications" labelPosition="after">
+                        <mat-slide-toggle
+                            fxFlex
+                            class="mat-primary"
+                            [checked]="pbxChecked"
+                            (change)="onPBXToggle($event)"
+                            aria-label="Notifications"
+                            labelPosition="after"
+                        >
                             <h3>Login to PBX?</h3>
                         </mat-slide-toggle>
                     </mat-list-item>
 
                     <mat-list-item>
-                        <mat-slide-toggle fxFlex class="mat-primary" [checked]="msChecked"
-                            (change)="msChecked = $event.checked" labelPosition="after">
+                        <mat-slide-toggle
+                            fxFlex
+                            class="mat-primary"
+                            [checked]="msChecked"
+                            (change)="msChecked = $event.checked"
+                            labelPosition="after"
+                        >
                             <h3>Login to MS?</h3>
                         </mat-slide-toggle>
                     </mat-list-item>
                 </mat-list>
 
-                <button mat-raised-button color="primary" class="submit-button" aria-label="LOGIN"
-                    (click)="login(false)">
-                    LOGIN
-                </button>
+                <button mat-raised-button color="primary" class="submit-button" aria-label="LOGIN" (click)="login(false)">LOGIN</button>
             </form>
+            <div fxLayout="row" fxLayoutAlign="center center" class="font-size-12 secondary-text copyright-version">
+                Copyright Tetherfi | Version: {{ version }}
+            </div>
         </div>
     </div>
 
-    <img class="brand-logo" [@animate]="{value:'*',params:{scale:'0.2'}}" [src]="brandLogo?.Small.Src || 'assets/images/logos/tetherfi-logo-round.png'"
-        [alt]="brandLogo?.Alt || 'Tetherfi'" [width]="brandLogo?.Small.Width || 50"
-        [height]="brandLogo?.Small.Height || 50" />
+    <img
+        class="brand-logo"
+        [@animate]="{ value: '*', params: { scale: '0.2' } }"
+        [src]="brandLogo?.Small.Src || 'assets/images/logos/tetherfi-logo-round.png'"
+        [alt]="brandLogo?.Alt || 'Tetherfi'"
+        [width]="brandLogo?.Small.Width || 50"
+        [height]="brandLogo?.Small.Height || 50"
+    />
 </div>

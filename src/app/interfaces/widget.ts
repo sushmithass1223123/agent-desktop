@@ -1,3 +1,5 @@
+import { TWidget } from '@modules/t-widgets/utils';
+
 export interface IWidget {
     Name: string;
     Description: string;
@@ -5,6 +7,11 @@ export interface IWidget {
     Config: IWidgetConfig;
     Data: any;
     InteractionDetails?: any;
+}
+
+export interface InteractionWidgets {
+    interactionId: number;
+    widgets: TWidget[];
 }
 
 export interface IWidgetConfig {

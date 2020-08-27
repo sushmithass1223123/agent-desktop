@@ -4,6 +4,7 @@ import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { takeUntil } from 'rxjs/operators';
 import { fuseAnimations } from '@fuse/animations';
+import { SDKClient, IAgentData } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-su-active-agents',
@@ -19,74 +20,10 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     fuseConfig: any;
     appConfig: any;
 
-    agentList = [
-        {
-            name: 'Chirag Ramdas',
-            status: 'Available',
-            channels: [
-                {
-                    type: 'voice',
-                    notificationCount: 1
-                },
-                {
-                    type: 'chat',
-                    notificationCount: 2
-                },
-                {
-                    type: 'video',
-                    notificationCount: 3
-                }
-            ],
-            connectivity: {
-                type: 'polling',
-                status: ''
-            }
-        },
-        {
-            name: 'Kavya Nayak',
-            status: 'Available',
-            channels: [
-                {
-                    type: 'voice',
-                    notificationCount: 1
-                },
-                {
-                    type: 'chat',
-                    notificationCount: 2
-                },
-                {
-                    type: 'video',
-                    notificationCount: 3
-                }
-            ],
-            connectivity: {
-                type: 'polling',
-                status: ''
-            }
-        },
-        {
-            name: 'Vishal Pinto',
-            status: 'Available',
-            channels: [
-                {
-                    type: 'voice',
-                    notificationCount: 1
-                },
-                {
-                    type: 'chat',
-                    notificationCount: 2
-                },
-                {
-                    type: 'video',
-                    notificationCount: 3
-                }
-            ],
-            connectivity: {
-                type: 'polling',
-                status: ''
-            }
-        }
-    ];
+    user: IAgentData;
+    agentList: any[];
+    filteredAgents: any[];
+    searchTerm: string;
 
     /**
      * Constructor
@@ -98,6 +35,10 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         private _appDataService: AppDataService
     ) {
         super();
+
+        this.agentList = [];
+        this.filteredAgents = [];
+        this.user = SDKClient.getAgentData();
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -124,6 +65,9 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             .subscribe((config: any) => {
                 this.appConfig = config;
             });
+
+        this.filteredAgents = [];
+        this.getAgentList();
     }
 
     /**
@@ -138,10 +82,46 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
 
+    private async getAgentList(): Promise<void> {
+        // get all the session list
+        const result = await SDKClient.getAgentSessionsList({
+            agentId: '',
+            interactionId: '',
+            supervisorId: '',
+            teamId: '',
+            tmacServer: ''
+        }, null);
+
+        console.log(result.response);
+
+        // filter for excpet me
+        this.agentList = this.filteredAgents = result.response.filter((a: any) => a.AgentLoginID !== this.user.agentId);
+        // check any search term is there, then filter 
+        if (this.searchTerm) {
+            this.filterAgents();
+        }
+        // pull after 5s
+        setTimeout(() => {
+            this.getAgentList();
+        }, 5000);
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
 
+    public filterAgents(): void {
+        const searchTerm = this.searchTerm.toLowerCase();
+        // Search
+        if (searchTerm === '') {
+            this.filteredAgents = this.agentList;
+        }
+        else {
+            this.filteredAgents = this.agentList.filter((agentItem) => {
+                return agentItem.AgentName.toLowerCase().includes(searchTerm);
+            });
+        }
+    }
 }
 
 // for more info visit - https://angular.io/api/core

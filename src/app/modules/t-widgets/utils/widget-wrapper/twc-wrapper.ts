@@ -7,12 +7,13 @@ import { takeUntil } from 'rxjs/operators';
 // tslint:disable-next-line: directive-class-suffix
 export class TWContentWrapper {
 
-    @HostBinding('class') class = 'twc-card';
+    @HostBinding('class') class = 'twc-card animate__animated animate__zoomIn animate__faster';
     @HostBinding('style') style = '';
 
     widgetData: any;
 
     unsubscribeAll: Subject<any>;
+    pageActive: boolean;
 
     constructor(
         public hostElement: ElementRef,
@@ -20,6 +21,7 @@ export class TWContentWrapper {
     ) {
         // Set the unsubscribeAll defaults
         this.unsubscribeAll = new Subject();
+        this.pageActive = false;
     }
 
     initWrapper(data: any): void {
@@ -57,7 +59,6 @@ export class TWContentWrapper {
         this.contentPageService.mode
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((d: string) => {
-
                 // get the path
                 const active = d === this.widgetData.Data.Path;
                 // set the style
@@ -65,6 +66,11 @@ export class TWContentWrapper {
                 // check if active, then trigger event
                 if (active) {
                     this.onActive();
+                    this.pageActive = true;
+                }
+                else {
+                    this.onInactive();
+                    this.pageActive = false;
                 }
             });
     }
@@ -76,4 +82,7 @@ export class TWContentWrapper {
     }
 
     onActive = () => { };
+
+    onInactive = () => { };
+
 }

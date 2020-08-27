@@ -17,14 +17,9 @@ login {
 
         #login-intro {
             padding: 128px;
-            background: url('/assets/images/vectors/login.svg') no-repeat;
+            background: url('../../../../assets/images/vectors/login.svg') no-repeat;
             background-size: 140%;
             background-position: bottom left;
-            // position: relative;
-            opacity: 0;
-            animation-name: fade-in;
-            animation-fill-mode: forwards;
-            animation-duration: 1s;
             &::after {
                 content: '';
                 position: absolute;
@@ -34,15 +29,6 @@ login {
                 height: 100%;
                 width: 140%;
                 z-index: -1;
-            }
-
-            @keyframes fade-in {
-                0% {
-                    opacity: 0;
-                }
-                100% {
-                    opacity: 100%;
-                }
             }
 
             @include media-breakpoint('sm') {
@@ -246,6 +232,12 @@ login {
                             left: 100%;
                         }
                     }
+                }
+
+                .copyright-version {
+                    position: absolute;
+                    bottom: 10px;
+                    right: 10px;
                 }
             }
         }

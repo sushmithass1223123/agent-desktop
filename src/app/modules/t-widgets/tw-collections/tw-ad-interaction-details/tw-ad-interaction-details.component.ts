@@ -1,19 +1,19 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { MatSort, Sort } from '@angular/material/sort';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { fuseAnimations } from '@fuse/animations';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { fromEvent, Observable } from 'rxjs';
 import { distinctUntilChanged } from 'rxjs/operators';
-import { SDKClient, WallboardRefreshEvent, WallboardSkillModel } from 'tmac-sdk';
-import * as _ from 'lodash';
-import { MatPaginator } from '@angular/material/paginator';
+import { SDKClient, WallboardRefreshEvent } from 'tmac-sdk';
+import { fuseAnimations } from '@fuse/animations';
 
 @Component({
     selector: 'tw-ad-interaction-details',
     templateUrl: './tw-ad-interaction-details.component.html',
     styleUrls: ['./tw-ad-interaction-details.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    animations: fuseAnimations
 })
 export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     @Input() data: any;

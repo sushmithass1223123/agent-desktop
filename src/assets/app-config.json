@@ -3,7 +3,7 @@
         "AuthType": "credential",
         "Modes": {
             "Enabled": true,
-            "Type": "nonpbx"
+            "Type": "pbxms"
         },
         "DomainListEnabled": false,
         "PasswordEnabled": false,
@@ -52,7 +52,10 @@
                                 "Description": "",
                                 "Type": "tw-aux-codes",
                                 "Config": {},
-                                "Data": {}
+                                "Data": {
+                                    "LogoutAux": "logout",
+                                    "makeCallAux": "callcustomer"
+                                }
                             }
                         ]
                     }
@@ -115,42 +118,42 @@
                 ],
                 "Bottom": [
                     {
-                        "Name": "Tetherfi",
+                        "Name": "TDM",
                         "Description": "",
                         "Type": "twn-custom",
                         "Data": {
-                            "Icon": "filter_frames",
-                            "Path": "/custom1",
+                            "Icon": "tv",
+                            "Path": "/tdm-client",
                             "Active": false
                         }
                     },
                     {
-                        "Name": "Angular Material",
+                        "Name": "TMeet",
                         "Description": "",
                         "Type": "twn-custom",
                         "Data": {
-                            "Icon": "pages",
-                            "Path": "/custom2",
+                            "Icon": "meeting_room",
+                            "Path": "/tmeet",
                             "Active": false
                         }
                     },
                     {
-                        "Name": "Team",
+                        "Name": "Supervisor",
                         "Description": "",
-                        "Type": "twn-team",
+                        "Type": "twn-custom",
                         "Data": {
                             "Icon": "groups",
-                            "Path": "/groups",
+                            "Path": "/tsupervisor",
                             "Active": false
                         }
                     },
                     {
-                        "Name": "Help",
+                        "Name": "Dashboard",
                         "Description": "",
-                        "Type": "twn-help",
+                        "Type": "twn-custom",
                         "Data": {
-                            "Icon": "help",
-                            "Path": "/help",
+                            "Icon": "dashboard",
+                            "Path": "/dashboard",
                             "Active": false
                         }
                     }
@@ -176,7 +179,7 @@
                             {
                                 "Name": "Wallbaord",
                                 "Description": "",
-                                "Type": "tw-wallbaord",
+                                "Type": "tw-wallboard",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": true,
@@ -194,7 +197,9 @@
                                     "Header": true,
                                     "Disabled": false
                                 },
-                                "Data": {}
+                                "Data": {
+                                    "Source": "dashboard"
+                                }
                             },
                             {
                                 "Name": "Call",
@@ -334,7 +339,7 @@
                             {
                                 "Name": "Performance",
                                 "Description": "",
-                                "Type": "tw-performance-dashboard",
+                                "Type": "tw-custom",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
@@ -356,7 +361,9 @@
                                     "Header": true,
                                     "Disabled": false
                                 },
-                                "Data": {}
+                                "Data": {
+                                    "Url": "https://cdn.dribbble.com/users/13218/screenshots/14075817/media/c408c1056f04b16a886f1fd8593598c5.png"
+                                }
                             },
                             {
                                 "Name": "Gamification",
@@ -484,28 +491,24 @@
                         "Path": "/supervisor",
                         "Widgets": [
                             {
-                                "Name": "Sample-2",
+                                "Name": "Active Agents",
                                 "Description": "",
-                                "Type": "tw-sample",
+                                "Type": "tw-su-active-agents",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
-                                    "Icon": "",
+                                    "Icon": "vertical_split",
                                     "Class": "",
                                     "Position": {
                                         "X": 3,
                                         "Y": 2
                                     },
-                                    "Actions": [
-                                        "maximize",
-                                        "pin",
-                                        "float"
-                                    ],
+                                    "Actions": [],
                                     "ViewState": "restore",
                                     "PinState": false,
                                     "FloatState": false,
                                     "Resizable": false,
-                                    "Header": false,
+                                    "Header": true,
                                     "Disabled": false
                                 },
                                 "Data": {}
@@ -620,7 +623,7 @@
                             {
                                 "Name": "Skill Dashboard",
                                 "Description": "",
-                                "Type": "tw-sample",
+                                "Type": "tw-wallboard",
                                 "Config": {
                                     "Anchor": false,
                                     "Icon": "",
@@ -641,7 +644,9 @@
                                     "Header": true,
                                     "Disabled": false
                                 },
-                                "Data": {}
+                                "Data": {
+                                    "Source": "supervisor"
+                                }
                             },
                             {
                                 "Name": "Channels",
@@ -761,7 +766,24 @@
                                                 "Header": true,
                                                 "Disabled": false
                                             },
-                                            "Data": {}
+                                            "Data": {
+                                                "TransferAllowed": true,
+                                                "ConferenceAllowed": true,
+                                                "IVR": {
+                                                    "MenuEnabled": true,
+                                                    "Transfer": {
+                                                        "Allowed": true,
+                                                        "Menu": [
+                                                            {
+                                                                "Text": "Accesscode+TPIN",
+                                                                "Type": "v_nv",
+                                                                "Value": "tpin",
+                                                                "Icon": "lock"
+                                                            }
+                                                        ]
+                                                    }
+                                                }
+                                            }
                                         },
                                         {
                                             "Name": "Customer Details",
@@ -813,7 +835,9 @@
                                                 "Header": true,
                                                 "Disabled": false
                                             },
-                                            "Data": {}
+                                            "Data": {
+                                                "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/index.html?Key=SESSIONID:"
+                                            }
                                         }
                                     ]
                                 }
@@ -996,8 +1020,10 @@
                                                 "ConferenceAllowed": true,
                                                 "ImmediateCallbackAllowed": false,
                                                 "ScheduledCallbackAllowed": false,
+                                                "AudioEscalateEnabled": false,
+                                                "VideoEscalateEnabled": false,
                                                 "SignatureAllowed": false,
-                                                "EmojiAllowed": false,
+                                                "EmojiAllowed": true,
                                                 "ReplyOnChatAllowed": false,
                                                 "CameraCaptureAllowed": false,
                                                 "VoiceNoteAllowed": false,
@@ -1027,50 +1053,6 @@
                                                         "oncall",
                                                         "afterdisconnect"
                                                     ]
-                                                },
-                                                "AV": {
-                                                    "Enabled": true,
-                                                    "Escalate": {
-                                                        "Audio": true,
-                                                        "Video": true
-                                                    },
-                                                    "Config": {
-                                                        "WebRTCConfig": {
-                                                            "iceServers": [
-                                                                {
-                                                                    "urls": "turn:tmac.tetherfilabs.com:3585",
-                                                                    "username": "tetherfi",
-                                                                    "credential": "nuwan"
-                                                                }
-                                                            ],
-                                                            "iceTransportPolicy": "all",
-                                                            "sdpSemantics": "plan-b"
-                                                        },
-                                                        "MediaConstraints": {
-                                                            "type": "",
-                                                            "video": {
-                                                                "width": 640,
-                                                                "height": 480
-                                                            }
-                                                        },
-                                                        "OfferOptions": {
-                                                            "offerToReceiveAudio": true,
-                                                            "offerToReceiveVideo": true,
-                                                            "iceRestart": true
-                                                        },
-                                                        "RecordingOptions": {
-                                                            "enabled": false,
-                                                            "recordLocal": false
-                                                        },
-                                                        "AudioLevelCheck": {
-                                                            "enabled": true,
-                                                            "threshold": 0.30
-                                                        },
-                                                        "ConnectionBandwidthUpperLimit": 1024,
-                                                        "AudioTrackBandwidthUpperLimit": 16,
-                                                        "VideoTrackBandwidthUpperLimit": 128,
-                                                        "AudioMixerEnabled": true
-                                                    }
                                                 }
                                             }
                                         },
@@ -1098,7 +1080,130 @@
                                                 "Header": true,
                                                 "Disabled": false
                                             },
-                                            "Data": {}
+                                            "Data": {
+                                                "CustomerInfo": [
+                                                    {
+                                                        "Title": "Name",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pName",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "CIF",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pCIF",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "Gender",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pGender",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "Phone",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pMobileNumber",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "Nationality",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pNationality",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "Language",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pLang",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "Cust ID Status",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pCustIdStatus",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "Customer Tag",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pCustomerTag",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "DOB",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pDOB",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "First Login Date",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pFirstLogiDate",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "First Login Time",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pfirstLoginTime",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "Last Login Date",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.plastLoginDate",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "Last Login Time",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.plastLoginTime",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "Failed 2F Count",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pFailedTwoFACount",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "PIB Issue Date",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pPIBissueDate",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "Token Activated",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pTokenActivated",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "Token Serial Number",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pTokenSerialNumber",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "Token Status",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pTokenStatus",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "PIB Issue Date",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pPIBissueDate",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "Queue time",
+                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.QueueTime",
+                                                        "Unit": "s",
+                                                        "DefaultValue": "NA"
+                                                    }
+                                                ]
+                                            }
                                         },
                                         {
                                             "Name": "Customer Journey",
@@ -1124,7 +1229,9 @@
                                                 "Header": true,
                                                 "Disabled": false
                                             },
-                                            "Data": {}
+                                            "Data": {
+                                                "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/index.html?Key=SESSIONID:"
+                                            }
                                         }
                                     ]
                                 }
@@ -1338,7 +1445,7 @@
                     }
                 },
                 {
-                    "Name": "Custom-1",
+                    "Name": "TDM",
                     "Description": "",
                     "Type": "twc-custom",
                     "Config": {
@@ -1349,13 +1456,13 @@
                         }
                     },
                     "Data": {
-                        "Path": "/custom1",
-                        "Url": "https://www.tetherfi.com",
+                        "Path": "/tdm-client",
+                        "Url": "https://dice.tetherfi.cloud/TDM_Client/",
                         "QueryParams": []
                     }
                 },
                 {
-                    "Name": "Custom-2",
+                    "Name": "TMeet",
                     "Description": "",
                     "Type": "twc-custom",
                     "Config": {
@@ -1366,8 +1473,42 @@
                         }
                     },
                     "Data": {
-                        "Path": "/custom2",
-                        "Url": "https://material.angular.io/",
+                        "Path": "/tmeet",
+                        "Url": "https://dice.tetherfi.cloud/t-meet/",
+                        "QueryParams": []
+                    }
+                },
+                {
+                    "Name": "Supervisor",
+                    "Description": "",
+                    "Type": "twc-custom",
+                    "Config": {
+                        "Class": "",
+                        "Position": {
+                            "X": 3,
+                            "Y": 6
+                        }
+                    },
+                    "Data": {
+                        "Path": "/tsupervisor",
+                        "Url": "https://dice.tetherfi.cloud/Supervisor/",
+                        "QueryParams": []
+                    }
+                },
+                {
+                    "Name": "Dashboard",
+                    "Description": "",
+                    "Type": "twc-custom",
+                    "Config": {
+                        "Class": "",
+                        "Position": {
+                            "X": 3,
+                            "Y": 6
+                        }
+                    },
+                    "Data": {
+                        "Path": "/dashboard",
+                        "Url": "https://dice.tetherfi.cloud/tmac_agent_utils/ui/Dashboard.html?agentId=50020",
                         "QueryParams": []
                     }
                 }
@@ -1394,16 +1535,16 @@
             },
             "Customer": {
                 "Large": {
-                    "Src": "https://cdn1.singteldigital.com/content/dam/singtel/online-draft/singtel_logo_coloured.png",
-                    "Width": 160,
-                    "Height": 88
-                },
-                "Small": {
-                    "Src": "https://cdn1.singteldigital.com/content/dam/singtel/online-draft/singtel_logo_coloured.png",
+                    "Src": "",
                     "Width": null,
                     "Height": null
                 },
-                "Alt": "Customer"
+                "Small": {
+                    "Src": "https://tmac.tetherfilabs.com/Images/singtel_small.png",
+                    "Width": 50,
+                    "Height": 50
+                },
+                "Alt": "Singtel"
             }
         },
         "WindowSettings": {
@@ -1420,15 +1561,52 @@
             "Enabled": true,
             "Timeout": 5000
         },
+        "AV": {
+            "webRTCConfig": {
+                "iceServers": [
+                    {
+                        "urls": "turn:dice.tetherfi.cloud:3585",
+                        "username": "tetherfi",
+                        "credential": "nuwan"
+                    }
+                ],
+                "iceTransportPolicy": "all",
+                "sdpSemantics": "plan-b"
+            },
+            "mediaConstraints": {
+                "type": "",
+                "video": {
+                    "width": 640,
+                    "height": 480
+                }
+            },
+            "offerOptions": {
+                "offerToReceiveAudio": true,
+                "offerToReceiveVideo": true,
+                "iceRestart": true
+            },
+            "recordingOptions": {
+                "enabled": false,
+                "recordLocal": false
+            },
+            "audioLevelCheck": {
+                "enabled": true,
+                "threshold": 0.30
+            },
+            "connectionBandwidthUpperLimit": 1024,
+            "audioTrackBandwidthUpperLimit": 16,
+            "videoTrackBandwidthUpperLimit": 128,
+            "audioMixerEnabled": true
+        },
         "SDK": {
             "Proxy": {
                 "Urls": [
-                    "https://tmac.tetherfilabs.com/TMACHttpProxy/TmacProxy.asmx"
+                    "https://dice.tetherfi.cloud/TMACHttpProxy/TmacProxy.asmx"
                 ],
                 "Type": "soap"
             },
             "SignalRProxy": {
-                "Logging": true,
+                "Logging": false,
                 "Protocol": "webSockets",
                 "Timeout": 10
             },
@@ -1436,7 +1614,11 @@
                 "Enabled": true,
                 "Remote": true,
                 "RemoteThreshold": 15
-            }
+            },
+            "CustomSripts": [
+                "https://tmac.tetherfilabs.com/tmac_client/custom_scripts/collector.min.js",
+                "https://tmac.tetherfilabs.com/tmac_client/custom_scripts/webclientapi-lib.js"
+            ]
         }
     }
 }

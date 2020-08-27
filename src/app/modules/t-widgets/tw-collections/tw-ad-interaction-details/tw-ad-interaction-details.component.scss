@@ -1,3 +1,5 @@
+@import 'src/app/styles/colors';
+
 tw-ad-interaction-details {
     mat-icon {
         &.channel-icon {
@@ -12,13 +14,13 @@ tw-ad-interaction-details {
         margin: 4px auto;
         border-radius: 20px;
         &.active {
-            background-color: #8bb768;
+            background-color: $tw-success;
         }
         &.closed {
-            background-color: #d38a73;
+            background-color: $tw-danger;
         }
         &.on-hold {
-            background-color: #f1c754;
+            background-color: $tw-warning;
         }
 
         mat-icon {

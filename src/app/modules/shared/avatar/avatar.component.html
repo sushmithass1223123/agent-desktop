@@ -1,0 +1,11 @@
+<div class="avatar-content" [ngStyle]="{ 'background-color': circleColor }" [ngClass]="classes">
+    <img *ngIf="!showInitials && photoUrl" src="{{ photoUrl }}" />
+
+    <div *ngIf="!showInitials && matIcon" class="initials">
+        <mat-icon>{{ matIcon }}</mat-icon>
+    </div>
+
+    <div *ngIf="showInitials" class="initials">
+        {{ getInitial(name) }}
+    </div>
+</div>

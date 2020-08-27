@@ -1,5 +1,5 @@
 <!-- No interaction template -->
-<twc-no-interaction class="animate__animated animate__fadeIn animate__faster" *ngIf="interactions.length === 0" type="textchat"> </twc-no-interaction>
+<twc-no-interaction *ngIf="interactions.length === 0" type="textchat"> </twc-no-interaction>
 
 <!-- Interaction template -->
 <ng-container *ngFor="let item of interactions; index as i">
@@ -8,7 +8,7 @@
 
     <!-- widget template -->
     <tw-template
-        class="widget-grid animate__animated animate__fadeIn animate__faster"
+        class="widget-grid"
         [ngClass]="item.interactionId === activeInteraction ? 'active' : ''"
         *ngIf="item.widgets.length > 0"
         [widgets]="item.widgets"

@@ -33,4 +33,11 @@ export class ContentPageService {
     get mode(): any | Observable<any> {
         return this._viewModeSubject.asObservable();
     }
+
+    /**
+     * To get the current page
+     */
+    getCurrentMode(): string {
+        return this._viewModeSubject.getValue();
+    }
 }

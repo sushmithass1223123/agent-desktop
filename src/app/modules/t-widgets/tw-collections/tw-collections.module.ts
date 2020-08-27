@@ -36,7 +36,6 @@ import { TwAdGamificationComponent } from './tw-ad-gamification/tw-ad-gamificati
 import { TwAdPerformanceComponent } from './tw-ad-performance/tw-ad-performance.component';
 import { TwAdScoreComponent } from './tw-ad-score/tw-ad-score.component';
 import { TwSuGamificationComponent } from './tw-su-gamification/tw-su-gamification.component';
-
 @NgModule({
     declarations: [
         TwCustomComponent,
@@ -75,6 +74,9 @@ import { TwSuGamificationComponent } from './tw-su-gamification/tw-su-gamificati
         TwPanelComponent,
         TwSuAgentActivityDetailsComponent,
     ],
-    imports: [SharedModule, TwWrapperModule]
+    imports: [
+        SharedModule,
+        TwWrapperModule,
+    ]
 })
 export class TwCollectionsModule { }

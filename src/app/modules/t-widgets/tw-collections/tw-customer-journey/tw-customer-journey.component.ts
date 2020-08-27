@@ -7,7 +7,11 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { HistoryInteraction } from 'app/models';
 import { sortBy, uniqBy } from 'lodash';
-import { SDKClient } from 'tmac-sdk';
+import { SDKClient, InteractionHistoryReadyEvent, IGetInteractionHistory, IUIEvent } from 'tmac-sdk';
+import { InteractionEventService } from '@services/interaction-event.service';
+import { FuseConfigService } from '@fuse/services/config.service';
+import { takeUntil } from 'rxjs/operators';
+import { FuseConfig } from '@fuse/types';
 
 @Component({
     selector: 'tw-customer-journey',
@@ -16,6 +20,10 @@ import { SDKClient } from 'tmac-sdk';
     encapsulation: ViewEncapsulation.None
 })
 export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+    @Input() data: any;
+
+    fuseConfig: FuseConfig;
+
     @ViewChild(MatPaginator) set paginatorContent(content: MatPaginator) {
         if (content) {
             // initially setter gets called with undefined
@@ -54,20 +62,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         }
     };
 
-    constructor(private sanitizer: DomSanitizer) {
-        super();
-        this.customerJourneyTable = {
-            loading: true,
-            iframeUrl: '',
-            lastId: '',
-            tableData: {
-                columns: Object.keys(this.filterObj),
-                selection: new SelectionModel<HistoryInteraction>(false, []),
-                source: new MatTableDataSource([])
-            }
-        };
-    }
-    @Input() data: any;
+    interactionId: number;
+    historyParams: IGetInteractionHistory;
 
     customerJourneyTable: {
         loading: boolean;
@@ -82,6 +78,25 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
 
     maximized = false;
 
+    constructor(
+        private _fuseConfigService: FuseConfigService,
+        private _interactionEventService: InteractionEventService,
+        private sanitizer: DomSanitizer
+    ) {
+        super();
+
+        this.customerJourneyTable = {
+            loading: true,
+            iframeUrl: '',
+            lastId: '',
+            tableData: {
+                columns: Object.keys(this.filterObj),
+                selection: new SelectionModel<HistoryInteraction>(false, []),
+                source: new MatTableDataSource([])
+            }
+        };
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @ Lifecycle hooks
     // -----------------------------------------------------------------------------------------------------
@@ -90,45 +105,64 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         // call the wrapper init method
         this.initWrapper(this.data);
 
+        // set the interaction id from data
+        this.interactionId = this.data.InteractionDetails.InteractionID;
+
+        // subscribe to fuse
+        this._fuseConfigService.config
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe(
+                (config: any) => {
+                    this.fuseConfig = config;
+                });
+
+        this.historyParams = {
+            cif: '',
+            email: '',
+            nric: '',
+            phone: '',
+            noOfRecords: this.customerJourneyTable && this.customerJourneyTable.tableData.source.paginator?.pageSize.toString() || '5',
+            lastId: '0'
+        };
+
+        // get the event from event bag to make sure no events are missed
+        const eventBag = this._interactionEventService.get(this.interactionId);
+
+        // process the events if any
+        eventBag.forEach((evt: IUIEvent) => {
+            this[evt.EventName]?.(evt);
+        });
+
         this.setupListeners();
     }
 
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-
-        this.unsubscribeAll.next();
-        this.unsubscribeAll.complete();
+        // de-register from TMAC event
+        SDKClient.events.off('InteractionHistoryReadyEvent', this.InteractionHistoryReadyEvent);
     }
 
-    maximizeEvent(state: boolean): void {
-        this.maximized = state;
+    private setupListeners(): void {
+        SDKClient.events.on('InteractionHistoryReadyEvent', this.InteractionHistoryReadyEvent);
     }
 
-    setupListeners(): void {
-        this.setupInteractionHistory();
-    }
-
-    setupInteractionHistory(): void {
+    private InteractionHistoryReadyEvent(evt: InteractionHistoryReadyEvent): void {
+        // assign the history params
+        this.historyParams = {
+            cif: evt.HistoryParameters.CIF,
+            email: evt.HistoryParameters.EmailID,
+            nric: evt.HistoryParameters.NRIC,
+            phone: evt.HistoryParameters.PhoneNumber,
+            noOfRecords: this.customerJourneyTable && this.customerJourneyTable.tableData.source.paginator?.pageSize.toString() || '5',
+            lastId: '0'
+        };
+        // get history
         this.getInteractionHistory();
-        SDKClient.events.on('InteractionHistoryReadyEvent', (evt: HistoryInteraction[]) => {
-            console.log('InteractionHistoryReadyEvent', { evt });
-            this.getInteractionHistory();
-        });
     }
 
-    getInteractionHistory(lastId?: string): void {
-        SDKClient.getInteractionHistory(
-            {
-                noOfRecords: this.customerJourneyTable.tableData.source.paginator?.pageSize.toString() || '20',
-                cif: 'S1234567A',
-                email: '',
-                lastId: lastId || '0',
-                nric: '',
-                phone: ''
-            },
-            null
-        )
+    private getInteractionHistory(lastId?: string): void {
+        SDKClient.getInteractionHistory(lastId ? { ...this.historyParams, lastId } : this.historyParams, null)
             .then((res) => {
                 let tableData = [];
                 if (lastId) {
@@ -146,14 +180,18 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             });
     }
 
-    setIframe(row: HistoryInteraction): void {
+    public setIframe(row: HistoryInteraction): void {
         this.customerJourneyTable.tableData.selection.toggle(row);
         this.customerJourneyTable.iframeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(`${this.data.Data.IframeBaseUrl}${row.SessionID}`);
     }
 
-    pageEvent(): void {
+    public pageEvent(): void {
         if (!this.customerJourneyTable.tableData.source.paginator?.hasNextPage()) {
             this.getInteractionHistory(this.customerJourneyTable.tableData.source.data[0].LastID.toString());
         }
+    }
+
+    public maximizeEvent(state: boolean): void {
+        this.maximized = state;
     }
 }

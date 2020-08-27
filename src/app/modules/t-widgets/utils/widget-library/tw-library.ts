@@ -30,12 +30,13 @@ import { TwUnknownComponent } from '@modules/t-widgets/tw-collections/tw-unknown
 import { TwVoicePanelComponent } from '@modules/t-widgets/tw-collections/tw-voice-panel/tw-voice-panel.component';
 import { TwWallboardComponent } from '@modules/t-widgets/tw-collections/tw-wallboard/tw-wallboard.component';
 import { TWidget } from '../t-widget';
+import { TwVoiceControlsComponent } from '@modules/t-widgets/tw-collections/tw-voice-controls/tw-voice-controls.component';
 
 export class TWLibrary {
     static widgetLibrary: Record<string, Type<any>> = {
         'tw-sample': TwSampleComponent,
         'tw-custom': TwCustomComponent,
-        'tw-wallbaord': TwWallboardComponent,
+        'tw-wallboard': TwWallboardComponent,
         'tw-voice-panel': TwVoicePanelComponent,
         'tw-chat-panel': TwChatPanelComponent,
         'tw-chat-controls': TwChatControlsComponent,
@@ -53,6 +54,7 @@ export class TWLibrary {
         'tw-su-channels-status': TwSuChannelsStatusComponent,
         'tw-su-channels': TwSuChannelsComponent,
         'tw-su-status': TwSuStatusComponent,
+        'tw-voice-controls': TwVoiceControlsComponent,
         'tw-su-active-agents': TwSuActiveAgentsComponent,
         'tw-su-work-codes': TwSuWorkCodesComponent,
         'tw-su-agent-activity': TwSuAgentActivityComponent,
