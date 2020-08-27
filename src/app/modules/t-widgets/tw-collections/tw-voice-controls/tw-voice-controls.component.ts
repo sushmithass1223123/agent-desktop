@@ -224,9 +224,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         this.interactionStatus = 'connected';
         // update the interaction status and user
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
-            'status': 'connected',
-            'user': this.callerID,
-            'otherData': {
+            status: 'connected',
+            user: this.callerID,
+            otherData: {
                 isMSCall: this.isMSCall
             }
         });
@@ -245,7 +245,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         this.interactionStatus = 'disconnected';
         // update the interaction status and user
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
-            'status': 'disconnected'
+            status: 'disconnected'
         });
 
         // stop duration timer
@@ -262,7 +262,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         this.interactionStatus = 'hold';
         // update the interaction status
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
-            'status': 'hold'
+            status: 'hold'
         });
 
         // hide the progress bar
@@ -279,7 +279,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         this.interactionStatus = 'connected';
         // update the interaction status
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
-            'status': 'connected'
+            status: 'connected'
         });
 
         // hide the progress bar
@@ -423,7 +423,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
             // update the interaction status and user
             this._interactionManagerService.updateInteraction(this.interactionId, {
-                'otherData': {
+                otherData: {
                     avConn: this.avConns[this.sessionID]
                 }
             });
@@ -520,7 +520,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         }
         // update is active
         this._interactionManagerService.updateInteraction(item.interactionId, {
-            'isActive': true
+            isActive: true
         });
     }
 

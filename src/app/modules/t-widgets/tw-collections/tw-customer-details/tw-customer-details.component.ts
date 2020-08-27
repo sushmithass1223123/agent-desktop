@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { SDKClient, TextChatRemoteUserConnectedEvent, IUIEvent } from 'tmac-sdk';
+import { SDKClient, TextChatRemoteUserConnectedEvent, IUIEvent, IncomingCallEvent } from 'tmac-sdk';
 import { InteractionEventService } from '@services/interaction-event.service';
 import { join } from 'lodash';
 import * as _ from 'lodash';
@@ -52,7 +52,12 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
         });
 
         // register to tmac events
-        SDKClient.events.on('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
+        SDKClient.events.on('TextChatRemoteUserConnectedEvent', this.CustomerDetailsEvent);
+        SDKClient.events.on('IncomingCallEvent', this.CustomerDetailsEvent);
+        SDKClient.events.on('CallerIntentEvent', this.CustomerDetailsEvent);
+        SDKClient.events.on('IVRDataEvent', this.CustomerDetailsEvent);
+        SDKClient.events.on('UUIDataEvent', this.CustomerDetailsEvent);
+        SDKClient.events.on('CCLDataEvent', this.CustomerDetailsEvent);
     }
 
     ngOnDestroy(): void {
@@ -60,15 +65,19 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
         this.destroyWrapper();
 
         // deregister from tmac events
-        SDKClient.events.off('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
+        SDKClient.events.off('TextChatRemoteUserConnectedEvent', this.CustomerDetailsEvent);
+        SDKClient.events.off('IncomingCallEvent', this.CustomerDetailsEvent);
+        SDKClient.events.off('CallerIntentEvent', this.CustomerDetailsEvent);
+        SDKClient.events.off('IVRDataEvent', this.CustomerDetailsEvent);
+        SDKClient.events.off('UUIDataEvent', this.CustomerDetailsEvent);
+        SDKClient.events.off('CCLDataEvent', this.CustomerDetailsEvent);
     }
 
-    private TextChatRemoteUserConnectedEvent = (evt: TextChatRemoteUserConnectedEvent) => {
+    private CustomerDetailsEvent = (evt: IUIEvent) => {
         // check the interaction
         if (evt.InteractionID !== this.interactionId) {
             return;
         }
-
         // check for this event customer info map is there
         this.checkForCustomerInfo(evt);
     }
@@ -86,7 +95,6 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
             valueSourceSplit.shift();
             // map the property and get the value from event property
             const valueMap = join(valueSourceSplit, '.');
-            // item.Value = valueMap.split('.').reduce((r, k) => r[k], evt);
 
             // get the value from path or default value
             item.Value = _.get(evt, valueMap, item.DefaultValue);

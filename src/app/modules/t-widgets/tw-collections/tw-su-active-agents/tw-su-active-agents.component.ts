@@ -92,8 +92,6 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             tmacServer: ''
         }, null);
 
-        console.log(result.response);
-
         // filter for excpet me
         this.agentList = this.filteredAgents = result.response.filter((a: any) => a.AgentLoginID !== this.user.agentId);
         // check any search term is there, then filter 

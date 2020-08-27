@@ -50,4 +50,12 @@ content {
     @include media-breakpoint('xs') {
         border-radius: 0px;
     }
+
+    .aot-widgets {
+        z-index: 1;
+
+        tw-wrapper {
+            position: absolute;
+        }
+    }
 }

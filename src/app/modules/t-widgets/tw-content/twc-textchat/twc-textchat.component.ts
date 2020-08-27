@@ -1,7 +1,5 @@
 import { Component, ElementRef, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { TWidget } from '@modules/t-widgets/utils';
 import { InteractionEventService } from '@services/interaction-event.service';
-import { TWLibrary } from '@twidgets/utils/widget-library/tw-library';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { InteractionRef, InteractionWidgets, IWidget } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
@@ -17,10 +15,7 @@ import { InteractionClosedEvent, TextChatIncomingEvent } from 'tmac-sdk';
 })
 export class TwcTextchatComponent extends TWContentWrapper implements OnInit, OnDestroy {
 
-    @Input() data: any;
-
-    // TODO-1 dependancy
-    // textchatWidgets: TWidget[] = [];
+    @Input() data: IWidget;
 
     interactions: InteractionWidgets[] = [];
     activeInteraction: number;
@@ -64,21 +59,6 @@ export class TwcTextchatComponent extends TWContentWrapper implements OnInit, On
                     });
                 }
             });
-
-        // TODO-1:: check if any impact on doing on event then do it here
-        // // get the content widgets
-        // const widgets = this.data.Data.Widgets || [];
-
-        // // loop and get the widgets
-        // widgets.forEach((widget: IWidget) => {
-        //     // get the widget component by type
-        //     const component = TWLibrary.getWidget(widget.Type, widget);
-        //     // check if the component is proper
-        //     if (component) {
-        //         // append the widget component to the list
-        //         this.textchatWidgets.push(component);
-        //     }
-        // });
     }
 
     ngOnDestroy(): void {
@@ -87,37 +67,14 @@ export class TwcTextchatComponent extends TWContentWrapper implements OnInit, On
     }
 
     private textChatIncomingEvent = (evt: TextChatIncomingEvent) => {
-
-        // TODO-1 dependancy
-        // // createa a copy of textchat widgets
-        // const textchatWidgets: TWidget[] = [...this.textchatWidgets];
-
-        // create a copy of textchat widgets
-        const textchatWidgets: TWidget[] = [];
-
         // get the content widgets
-        const widgets = this.data.Data.Widgets || [];
-        // loop and get the widgets
-        widgets.forEach((widget: IWidget) => {
-            // append the interaction details to the widget data
-            widget.InteractionDetails = evt;
-            // append the path to the widget data
-            widget.Data.Path = this.data.Data.Path;
-            // get the widget component by type
-            const component = TWLibrary.getWidget(widget.Type, widget);
-            // check if the component is proper
-            if (component) {
-                // append the widget component to the list
-                textchatWidgets.push(component);
-            }
-        });
+        const textchatWidgets = this.data.Data.Widgets || [];
 
-        // TODO-1 dependancy
-        // // append the interaction details to the widget data
-        // textchatWidgets.forEach((item: TWidget) => {
-        //     item.data.InteractionDetails = evt;
-        //     item.data.Path = this.data.Data.Path;
-        // });
+        // loop the widgets and add append interaction details
+        textchatWidgets.forEach((widget: IWidget) => {
+            widget.InteractionDetails = evt;
+            widget.Data.Path = this.data.Data.Path;
+        });
 
         // push the interaction details with widgets to the list
         this.interactions.push({
@@ -133,7 +90,9 @@ export class TwcTextchatComponent extends TWContentWrapper implements OnInit, On
             isActive: this.interactions.length === 1,
             user: 'Customer',
             path: this.data.Data.Path,
-            otherData: {}
+            otherData: {
+                unreadCount: 0
+            }
         });
     }
 
@@ -142,7 +101,7 @@ export class TwcTextchatComponent extends TWContentWrapper implements OnInit, On
         // if there are other item in the list auto select fist chat after closing current
         if (this.interactions.length > 0) {
             this._interactionManagerService.updateInteraction(this.interactions[0].interactionId, {
-                'isActive': true
+                isActive: true
             });
         }
     }

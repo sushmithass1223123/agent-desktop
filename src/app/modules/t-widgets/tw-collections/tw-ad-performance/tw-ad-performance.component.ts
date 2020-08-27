@@ -59,7 +59,7 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
     loading = true;
 
     private performanceChartRef: BaseChartDirective;
-    @ViewChild(BaseChartDirective) set setChartRef(content) {
+    @ViewChild(BaseChartDirective) set setChartRef(content: any) {
         if (content) {
             this.performanceChartRef = content;
         }
@@ -128,6 +128,10 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
     }
 
     setChartData(): void {
+        if (!this.data.Data.AgentProgressUrl) {
+            // this.loading = false;
+        }
+
         this.gamificationService.getAgentProgress(this.data.Data.AgentProgressUrl, '1014').subscribe((res) => {
             this.loading = false;
             const metrics = JSON.parse(res.d);
@@ -137,7 +141,7 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
                 RequiredPointsForNextBadge: []
             };
 
-            metrics.forEach((m) => {
+            metrics.forEach((m: any) => {
                 labels.push(m.MetricName);
                 datasets.PointsAssigned.push(m.PointsAssigned);
                 datasets.RequiredPointsForNextBadge.push(m.PointsAssigned + m.RequiredPointsForNextBadge);

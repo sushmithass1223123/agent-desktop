@@ -1,13 +1,11 @@
 import { Component, ElementRef, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { TWidget } from '@modules/t-widgets/utils';
-import { TWLibrary } from '@twidgets/utils/widget-library/tw-library';
-import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
-import { IWidget, InteractionWidgets } from 'app/interfaces';
-import { ContentPageService } from 'app/services/content-page.service';
-import { IncomingCallEvent, InteractionClosedEvent, SDKClient } from 'tmac-sdk';
 import { InteractionEventService } from '@services/interaction-event.service';
-import { takeUntil } from 'rxjs/operators';
 import { InteractionManagerService } from '@services/interaction-manager.service';
+import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
+import { InteractionWidgets, IWidget } from 'app/interfaces';
+import { ContentPageService } from 'app/services/content-page.service';
+import { takeUntil } from 'rxjs/operators';
+import { IncomingCallEvent, InteractionClosedEvent } from 'tmac-sdk';
 
 @Component({
     selector: 'twc-voice',
@@ -54,23 +52,16 @@ export class TwcVoiceComponent extends TWContentWrapper implements OnInit, OnDes
     }
 
     private incomingCallEvent = (evt: IncomingCallEvent) => {
-        const voiceWidgets: TWidget[] = [];
+
         // get the content widgets
-        const widgets = this.data.Data.Widgets || [];
-        // loop and get the widgets
-        widgets.forEach((widget: IWidget) => {
-            // append the interaction details to the widget data
+        const voiceWidgets = this.data.Data.Widgets || [];
+
+        // loop the widgets and add append interaction details
+        voiceWidgets.forEach((widget: IWidget) => {
             widget.InteractionDetails = evt;
-            // append the path to the widget data
             widget.Data.Path = this.data.Data.Path;
-            // get the widget component by type
-            const component = TWLibrary.getWidget(widget.Type, widget);
-            // check if the component is proper
-            if (component) {
-                // append the widget component to the list
-                voiceWidgets.push(component);
-            }
         });
+
         // push the interaction details with widgets to the list
         this.interactions.push({
             interactionId: evt.InteractionID,
@@ -94,7 +85,7 @@ export class TwcVoiceComponent extends TWContentWrapper implements OnInit, OnDes
         // if there are other item in the list auto select fist chat after closing current
         if (this.interactions.length > 0) {
             this._interactionManagerService.updateInteraction(this.interactions[0].interactionId, {
-                'isActive': true
+                isActive: true
             });
         }
     }

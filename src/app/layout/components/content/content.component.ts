@@ -1,10 +1,13 @@
-import { Component, OnInit, ViewEncapsulation, OnDestroy } from '@angular/core';
-import { TWContentLibrary } from '@modules/t-widgets/utils';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { TWidget } from '@modules/t-widgets/utils';
+import { AotWidgetService } from '@services/aot-widget.service';
 import { IWidget } from 'app/interfaces';
+import { TwWidgetModel } from 'app/models';
 import { AppDataService } from 'app/services/app-data.service';
 import { ContentPageService } from 'app/services/content-page.service';
-import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { SDKClient } from 'tmac-sdk';
 
 @Component({
     selector: 'content',
@@ -18,17 +21,21 @@ export class ContentComponent implements OnInit, OnDestroy {
     private _unsubscribeAll: Subject<any>;
 
     viewMode = '';
-    contentWidgets = [];
+    contentWidgets: TWidget[] = [];
+    aotWidget: TWidget;
+    aotWidgets: IWidget[];
 
     /**
      * Constructor
      *
      * @param {AppDataService} _appDataService
      * @param {ContentPageService} _contentPageService
+     * @param {AotWidgetService} _aotWidgetService
      */
     constructor(
         private _appDataService: AppDataService,
-        private _contentPageService: ContentPageService
+        private _contentPageService: ContentPageService,
+        private _aotWidgetService: AotWidgetService
     ) {
         // Set the private defaults
         this._unsubscribeAll = new Subject();
@@ -47,18 +54,17 @@ export class ContentComponent implements OnInit, OnDestroy {
                     // check if the config is not null
                     if (config !== null) {
                         // get the content widgets
-                        const widgets = config.Main.Content.Widgets || [];
-                        // loop and get the widgets
-                        widgets.forEach((widget: IWidget) => {
-                            // get the widget component by type 
-                            const component = TWContentLibrary.getWidget(widget.Type, widget);
-                            // check if the component is proper
-                            if (component) {
-                                // append the widget component to the list
-                                this.contentWidgets.push(component);
-                            }
-                        });
+                        this.contentWidgets = config.Main.Content.Widgets || [];
                     }
+                }
+            );
+
+        // subscribe to AOT widget
+        this._aotWidgetService.widgets
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe(
+                (widgets: IWidget[]) => {
+                    this.aotWidgets = widgets;
                 }
             );
     }

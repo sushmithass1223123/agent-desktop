@@ -35,6 +35,7 @@ import { InteractionEventService } from '@services/interaction-event.service';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { AppDataService } from '@services/app-data.service';
 import { MatButton } from '@angular/material/button';
+import { ContentPageService } from '@services/content-page.service';
 
 @Component({
     selector: 'tw-chat-controls',
@@ -64,7 +65,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     interactionStatus = 'NA';
     chatTranscripts: any[] = [];
     customerName = 'Customer';
-    unreadChats = 0;
 
     @ViewChildren(FusePerfectScrollbarDirective) directiveScrolls: QueryList<FusePerfectScrollbarDirective>;
     @ViewChildren('replyInput') replyInputField: any;
@@ -76,7 +76,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         private _interactionEventService: InteractionEventService,
         private _dialog: MatDialog,
         private _appDataService: AppDataService,
-        private _fuseProgressBarService: FuseProgressBarService
+        private _fuseProgressBarService: FuseProgressBarService,
+        private _contentPageService: ContentPageService
     ) {
         super();
     }
@@ -120,6 +121,17 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     }
 
     ngAfterViewInit(): void {
+        // check if the current page is textchat page
+        if (this._interactionManagerService.getInteractionCount().active <= 1 &&
+            this._contentPageService.getCurrentMode() !== this.data.Data.Path) {
+            setTimeout(() => {
+                this._contentPageService.mode = this.data.Data.Path;
+            }, 500);
+        }
+
+        // play new chat sound 
+        this._appDataService.playAudio('new-chat', 0.5);
+
         this.replyInput = this.replyInputField.first.nativeElement;
         this.readyToReply();
     }
@@ -354,12 +366,13 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         });
 
         // in not active then increment the count
-        if (!isActive) {
-            ++this.unreadChats;
+        if (!isActive || this._contentPageService.getCurrentMode() !== this.data.Data.Path) {
+            const currentInteraction = this.interactionList.filter(i => i.interactionId === this.interactionId)[0];
+            const unreadCount = ++currentInteraction.otherData.unreadCount;
             // update the interaction other data
             this._interactionManagerService.updateInteraction(evt.InteractionID, {
-                'otherData': {
-                    unreadCount: this.unreadChats
+                otherData: {
+                    unreadCount
                 }
             });
         }
@@ -380,7 +393,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.interactionStatus = 'Disconnected';
         // update the interaction status
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
-            'status': 'disconnected'
+            status: 'disconnected'
         });
         // stop the duration timer
         this.stopTimer.next();
@@ -524,7 +537,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
         // update is active
         this._interactionManagerService.updateInteraction(item.interactionId, {
-            'isActive': true
+            isActive: true,
+            otherData: {
+                unreadCount: 0
+            }
         });
     }
 

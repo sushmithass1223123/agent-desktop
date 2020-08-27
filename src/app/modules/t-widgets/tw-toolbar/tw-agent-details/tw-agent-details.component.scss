@@ -2,7 +2,8 @@ tw-agent-details {
     .agent-details {
         width: 100px;
 
-        .agent-status {
+        .agent-status,
+        .username {
             width: 100%;
             white-space: nowrap;
             overflow: hidden;

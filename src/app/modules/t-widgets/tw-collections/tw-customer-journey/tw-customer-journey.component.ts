@@ -4,14 +4,14 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { FuseConfigService } from '@fuse/services/config.service';
+import { FuseConfig } from '@fuse/types';
+import { InteractionEventService } from '@services/interaction-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { HistoryInteraction } from 'app/models';
 import { sortBy, uniqBy } from 'lodash';
-import { SDKClient, InteractionHistoryReadyEvent, IGetInteractionHistory, IUIEvent } from 'tmac-sdk';
-import { InteractionEventService } from '@services/interaction-event.service';
-import { FuseConfigService } from '@fuse/services/config.service';
 import { takeUntil } from 'rxjs/operators';
-import { FuseConfig } from '@fuse/types';
+import { IGetInteractionHistory, InteractionHistoryReadyEvent, IUIEvent, SDKClient } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-customer-journey',
@@ -133,7 +133,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             this[evt.EventName]?.(evt);
         });
 
-        this.setupListeners();
+        SDKClient.events.on('InteractionHistoryReadyEvent', (this.InteractionHistoryReadyEvent));
     }
 
     ngOnDestroy(): void {
@@ -143,11 +143,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         SDKClient.events.off('InteractionHistoryReadyEvent', this.InteractionHistoryReadyEvent);
     }
 
-    private setupListeners(): void {
-        SDKClient.events.on('InteractionHistoryReadyEvent', this.InteractionHistoryReadyEvent);
-    }
-
-    private InteractionHistoryReadyEvent(evt: InteractionHistoryReadyEvent): void {
+    private InteractionHistoryReadyEvent = (evt: InteractionHistoryReadyEvent) => {
         // assign the history params
         this.historyParams = {
             cif: evt.HistoryParameters.CIF,

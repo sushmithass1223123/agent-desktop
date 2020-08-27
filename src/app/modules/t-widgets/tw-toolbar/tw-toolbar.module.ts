@@ -6,20 +6,19 @@ import { TwAuxTimerComponent } from './tw-aux-timer/tw-aux-timer.component';
 import { TwToolbarMenuComponent } from './tw-toolbar-menu/tw-toolbar-menu.component';
 import { SharedModule } from '@modules/shared/shared.module';
 
+const toolbarComponents = [
+    TwActiveInteractionsComponent,
+    TwAgentDetailsComponent,
+    TwAuxCodesComponent,
+    TwAuxTimerComponent,
+    TwToolbarMenuComponent
+];
+
 @NgModule({
-    declarations: [
-        TwActiveInteractionsComponent,
-        TwAgentDetailsComponent,
-        TwAuxCodesComponent,
-        TwAuxTimerComponent,
-        TwToolbarMenuComponent
-    ],
+    declarations: toolbarComponents,
     imports: [
         SharedModule
     ],
-    exports: [
-        TwActiveInteractionsComponent,
-        TwToolbarMenuComponent
-    ]
+    exports: toolbarComponents
 })
 export class TwToolbarModule { }

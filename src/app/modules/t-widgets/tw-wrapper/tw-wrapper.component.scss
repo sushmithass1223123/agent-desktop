@@ -8,10 +8,16 @@ tw-wrapper {
     tw-card {
         top: 0;
         right: 0;
-        transition-property: transform, height, min-height, max-height;
+        transition-property: height, min-height, max-height;
         transition-duration: 0.3s;
         transition-timing-function: ease-in-out;
-
+        &:not(.aot) {
+            transition-property: transform, height, min-height, max-height;
+        }
+        &.aot {
+            display: grid;
+            min-width: 250px;
+        }
         &.maximized {
             position: absolute;
             width: 100%;
@@ -35,7 +41,7 @@ tw-wrapper {
         }
 
         &.collapsed {
-            height: 4rem;
+            height: 4rem !important;
             .card-wrapper {
                 padding: 0 !important;
                 mat-card-content {
@@ -47,8 +53,9 @@ tw-wrapper {
 
         &.collapsed {
             &.maximized,
-            &.floating {
-                height: 5.8rem;
+            &.floating,
+            &.aot {
+                height: 5.8rem !important;
                 .card-wrapper {
                     padding: 8px !important;
                 }

@@ -41,7 +41,7 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
         private _fuseConfigService: FuseConfigService,
         // @ [OPTIONAL]
         private _appDataService: AppDataService,
-        private gamificationService: GamificationService
+        private _gamificationService: GamificationService
     ) {
         super();
     }
@@ -71,18 +71,8 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
         this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
             this.appConfig = config;
         });
-        this.setBadges();
-    }
 
-    setBadges(): void {
-        this.gamificationService.fetchLeaderBoard(this.data.Data.LeaderBoardUrl).subscribe((leaders) => {
-            if (leaders && leaders.length) {
-                this.badges = {
-                    loading: false,
-                    data: leaders[0].TotalBadges
-                };
-            }
-        });
+        this.setBadges();
     }
 
     /**
@@ -97,11 +87,28 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
 
+    private setBadges(): void {
+        if (!this.data.Data.LeaderBoardUrl) {
+            this.badges = {
+                loading: false,
+                data: []
+            };
+        }
+        this._gamificationService.fetchLeaderBoard(this.data.Data.LeaderBoardUrl).subscribe((leaders) => {
+            if (leaders && leaders.length) {
+                this.badges = {
+                    loading: false,
+                    data: leaders[0].TotalBadges
+                };
+            }
+        });
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
 
-    maximizeEvent(state: boolean) {
+    public maximizeEvent(state: boolean): void {
         this.maximized = state;
     }
 }

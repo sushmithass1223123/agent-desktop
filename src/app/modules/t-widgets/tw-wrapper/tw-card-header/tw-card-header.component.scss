@@ -1,5 +1,6 @@
 mat-card-header {
-    &.floating {
+    &.floating,
+    &.aot {
         cursor: all-scroll;
     }
 }
