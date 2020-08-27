@@ -67,9 +67,6 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             });
 
         this.filteredAgents = [];
-
-        SDKClient.getAgentListStaffed(null);
-
         this.getAgentList();
     }
 
@@ -86,6 +83,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     // -----------------------------------------------------------------------------------------------------
 
     private async getAgentList(): Promise<void> {
+        // get all the session list
         const result = await SDKClient.getAgentSessionsList({
             agentId: '',
             interactionId: '',
@@ -94,8 +92,15 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             tmacServer: ''
         }, null);
 
-        this.agentList = this.filteredAgents = result.response.filter((a: any) => a.AgentLoginID !== this.user.agentId);
+        console.log(result.response);
 
+        // filter for excpet me
+        this.agentList = this.filteredAgents = result.response.filter((a: any) => a.AgentLoginID !== this.user.agentId);
+        // check any search term is there, then filter 
+        if (this.searchTerm) {
+            this.filterAgents();
+        }
+        // pull after 5s
         setTimeout(() => {
             this.getAgentList();
         }, 5000);

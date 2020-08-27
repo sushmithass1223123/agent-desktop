@@ -1,12 +1,11 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { ConfirmDialogComponent } from '@modules/shared/confirm-dialog/confirm-dialog.component';
+import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils';
 import { AgentStatusChangeEvent, IAgentData, IAUXCodes, IResponse, SDKClient } from 'tmac-sdk';
-import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
-import { AppDataService } from '@services/app-data.service';
 
 @Component({
     selector: 'tw-aux-codes',

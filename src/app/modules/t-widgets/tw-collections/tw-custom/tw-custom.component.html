@@ -11,13 +11,20 @@
             <mat-spinner></mat-spinner>
         </div>
 
-        <div fxFlex fxFill fxLayout="row" fxLayoutAlign="center center" *ngIf="!url">
-            <span class="mat-display-1 mb-0">
-                Custom URL not found!
-            </span>
-        </div>
+        <iframe
+            *ngIf="url; else noURL"
+            [src]="url"
+            class="frame"
+            frameborder="0"
+            seamless="seamless"
+            allow="geolocation; microphone; camera;"
+        ></iframe>
 
-        <iframe *ngIf="url" [src]="url" class="frame" frameborder="0" seamless="seamless" allow="geolocation; microphone; camera;"></iframe>
+        <ng-template #noURL>
+            <div fxFlex fxFill fxLayout="row" fxLayoutAlign="center center" *ngIf="!url">
+                <span class="mat-display-1 mb-0"> Custom URL not found! </span>
+            </div>
+        </ng-template>
     </div>
     <!-- your code goes here -->
 </tw-wrapper>

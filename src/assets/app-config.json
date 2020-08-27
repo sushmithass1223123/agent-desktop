@@ -835,7 +835,9 @@
                                                 "Header": true,
                                                 "Disabled": false
                                             },
-                                            "Data": {}
+                                            "Data": {
+                                                "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/index.html?Key=SESSIONID:"
+                                            }
                                         }
                                     ]
                                 }
@@ -1227,7 +1229,9 @@
                                                 "Header": true,
                                                 "Disabled": false
                                             },
-                                            "Data": {}
+                                            "Data": {
+                                                "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/index.html?Key=SESSIONID:"
+                                            }
                                         }
                                     ]
                                 }

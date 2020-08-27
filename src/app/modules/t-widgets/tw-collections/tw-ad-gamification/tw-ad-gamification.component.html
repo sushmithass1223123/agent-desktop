@@ -1,0 +1,17 @@
+<!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
+<!-- implement following events in your component to access widget wrapper action events -->
+<!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
+<tw-wrapper [data]="data" (maximizeEvent)="maximizeEvent($event)">
+    <!-- your code goes here -->
+    <div *ngIf="badges.loading" class="w-100-p h-100-p" fxLayout fxLayoutAlign="center center">
+        <mat-spinner></mat-spinner>
+    </div>
+
+    <div *ngIf="!badges.loading" fxFill fxLayout="row wrap" fxLayoutGap="10" class="p-4">
+        <div fxFlex="33" *ngFor="let badge of badges.data" class="mb-4">
+            <img [src]="badge.BadgeUrl" class="w-70-p mx-auto d-block" />
+            <span class="text-truncate text-center my-4"> {{ badge.BadgeName }} </span>
+        </div>
+    </div>
+    <!-- your code goes here -->
+</tw-wrapper>
