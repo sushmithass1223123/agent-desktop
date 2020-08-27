@@ -44,45 +44,21 @@
                             <mat-icon color="primary" *ngSwitchDefault> chat </mat-icon>
                         </button>
                         <span class="ml-8" [ngSwitch]="s.Channel | lowercase">
-                            <ng-container *ngSwitchCase="'chat'">
-                                Chat with
-                            </ng-container>
-                            <ng-container *ngSwitchCase="'audio'">
-                                Audio Call with
-                            </ng-container>
-                            <ng-container *ngSwitchCase="'video'">
-                                Video Call with
-                            </ng-container>
-                            <ng-container *ngSwitchCase="'textchat'">
-                                Chat with
-                            </ng-container>
-                            <ng-container *ngSwitchCase="'audiochat'">
-                                Audio chat with
-                            </ng-container>
-                            <ng-container *ngSwitchCase="'videochat'">
-                                Video chat with
-                            </ng-container>
-                            <ng-container *ngSwitchCase="'sms'">
-                                SMS chat with
-                            </ng-container>
-                            <ng-container *ngSwitchCase="'email'">
-                                Email with
-                            </ng-container>
-                            <ng-container *ngSwitchCase="'fax'">
-                                Fax with
-                            </ng-container>
-                            <ng-container *ngSwitchCase="'line'">
-                                Line chat with
-                            </ng-container>
-                            <ng-container *ngSwitchDefault>
-                                Chat with
-                            </ng-container>
+                            <ng-container *ngSwitchCase="'chat'"> Chat with </ng-container>
+                            <ng-container *ngSwitchCase="'audio'"> Audio Call with </ng-container>
+                            <ng-container *ngSwitchCase="'video'"> Video Call with </ng-container>
+                            <ng-container *ngSwitchCase="'textchat'"> Chat with </ng-container>
+                            <ng-container *ngSwitchCase="'audiochat'"> Audio chat with </ng-container>
+                            <ng-container *ngSwitchCase="'videochat'"> Video chat with </ng-container>
+                            <ng-container *ngSwitchCase="'sms'"> SMS chat with </ng-container>
+                            <ng-container *ngSwitchCase="'email'"> Email with </ng-container>
+                            <ng-container *ngSwitchCase="'fax'"> Fax with </ng-container>
+                            <ng-container *ngSwitchCase="'line'"> Line chat with </ng-container>
+                            <ng-container *ngSwitchDefault> Chat with </ng-container>
                             {{ s.LastServicedAgentName || s.AgentName }}
                         </span>
                     </div>
-                    <small>
-                        Default
-                    </small>
+                    <small> Default </small>
                 </div>
             </div>
         </div>
@@ -94,35 +70,7 @@
                 <ng-container matColumnDef="InteractionDate">
                     <th mat-header-cell *matHeaderCellDef class="d-flex w-100-p">
                         <span mat-sort-header> Received At </span>
-                        <!-- <button mat-icon-button [matMenuTriggerFor]="idFilter">
-                            <mat-icon>search</mat-icon>
-                        </button> -->
-                        <mat-form-field class="px-8" (click)="$event.stopPropagation()" >
-                            <mat-label>
-                                <button mat-icon-button >
-                                    <mat-icon>search</mat-icon>
-                                </button> 
-                            </mat-label>
-                            <mat-select (change)="filterChange('InteractionDate', $event)">
-                                <mat-option *ngFor="let f of filterObj.InteractionDate.options">
-                                    {{ f }}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
                     </th>
-
-                    <mat-menu #idFilter>
-                        <mat-form-field class="w-100-p px-8" (click)="$event.stopPropagation()">
-                            <mat-label>
-                                Filter
-                            </mat-label>
-                            <mat-select (change)="filterChange('InteractionDate', $event)">
-                                <mat-option *ngFor="let f of filterObj.InteractionDate.options">
-                                    {{ f }}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                    </mat-menu>
                     <td mat-cell *matCellDef="let element">{{ element.InteractionDate || '---' }}</td>
                 </ng-container>
 

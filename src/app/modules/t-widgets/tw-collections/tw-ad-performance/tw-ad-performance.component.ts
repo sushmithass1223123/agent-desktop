@@ -128,7 +128,7 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
     }
 
     setChartData(): void {
-        this.gamificationService.getAgentProgress(this.data.Data.AgentProgressUrl, '1005').subscribe((res) => {
+        this.gamificationService.getAgentProgress(this.data.Data.AgentProgressUrl, '1014').subscribe((res) => {
             this.loading = false;
             const metrics = JSON.parse(res.d);
             let labels = [];

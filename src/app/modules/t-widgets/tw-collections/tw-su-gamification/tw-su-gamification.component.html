@@ -43,7 +43,7 @@
                         width="30"
                         style="border-radius: 50%;"
                     />
-                    <span *ngIf="badges.length > 10" [matMenuTriggerFor]="badgesMenu" class="ml-4" mat-ripple> + {{ badges.length - 10 }} more </span>
+                    <span fxLayout fxLayoutAlign="center center" *ngIf="badges.length > 10" [matMenuTriggerFor]="badgesMenu" class="ml-4" mat-ripple> + {{ badges.length - 10 }} more </span>
                     <mat-menu backdropClass="badges-menu" #badgesMenu fusePerfectScrollbar>
                         <div fxLayout="row wrap" flexLayoutAlign="space-evenly" class="p-4">
                             <div fxFlex="20" *ngFor="let badge of badges | slice: 10">

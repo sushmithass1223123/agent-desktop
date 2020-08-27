@@ -82,27 +82,6 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
 
     maximized = false;
 
-    steps = Array(20)
-        .fill(1)
-        .map((x) => ({
-            timestamp: Date.now(),
-            name: `Chat with rahil`,
-            type: 'chat'
-        }));
-
-    filterValues = {};
-
-    getFilterObject(fullObj, key): any[] {
-        const uniqChk = [];
-        fullObj.filter((obj) => {
-            if (!uniqChk.includes(obj[key])) {
-                uniqChk.push(obj[key]);
-            }
-            return obj;
-        });
-        return uniqChk;
-    }
-
     // -----------------------------------------------------------------------------------------------------
     // @ Lifecycle hooks
     // -----------------------------------------------------------------------------------------------------
@@ -111,7 +90,6 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        this.customerJourneyTable.tableData.source.filterPredicate = this.createFilter();
         this.setupListeners();
     }
 
@@ -160,64 +138,12 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 }
                 this.customerJourneyTable.tableData.source.data = tableData;
                 this.customerJourneyTable.lastId = res.response[0]?.LastIndex;
-
-                Object.keys(this.filterObj).filter((k) => {
-                    const options = this.getFilterObject(tableData, k);
-                    this.filterObj[k] = { options };
-                });
-
                 this.customerJourneyTable.loading = false;
             })
             .catch((err) => {
                 console.log({ err });
                 this.customerJourneyTable.loading = false;
             });
-    }
-
-    // Called on Filter change
-    filterChange(column, event): void {
-        console.log(event.target.value);
-        this.filterValues[column] = event.target.value.trim().toLowerCase();
-        this.customerJourneyTable.tableData.source.filter = JSON.stringify(this.filterValues);
-    }
-
-    // Custom filter method fot Angular Material Datatable
-    createFilter(): any {
-        let filterFunction = function (data: any, filter: string): boolean {
-            let searchTerms = JSON.parse(filter);
-            let isFilterSet = false;
-            for (const col in searchTerms) {
-                if (searchTerms[col].toString() !== '') {
-                    isFilterSet = true;
-                } else {
-                    delete searchTerms[col];
-                }
-            }
-
-            console.log(searchTerms);
-
-            let nameSearch = () => {
-                let found = false;
-                if (isFilterSet) {
-                    for (const col in searchTerms) {
-                        searchTerms[col]
-                            .trim()
-                            .toLowerCase()
-                            .split(' ')
-                            .forEach((word) => {
-                                if (data[col].toString().toLowerCase().indexOf(word) != -1 && isFilterSet) {
-                                    found = true;
-                                }
-                            });
-                    }
-                    return found;
-                } else {
-                    return true;
-                }
-            };
-            return nameSearch();
-        };
-        return filterFunction;
     }
 
     setIframe(row: HistoryInteraction): void {

@@ -134,4 +134,16 @@ tw-customer-journey {
             line-height: 2;
         }
     }
+
+    iframe {
+        height: 100%;
+        width: 100%;
+        margin: 0px;
+        padding: 0px;
+        border-radius: 2rem;
+
+        .none {
+            display: none;
+        }
+    }
 }

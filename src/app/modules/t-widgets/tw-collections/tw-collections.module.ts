@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { SharedModule } from '@modules/shared/shared.module';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { AvatarModule } from 'ngx-avatar';
 import { TwWrapperModule } from '../tw-wrapper/tw-wrapper.module';
 import { TwAdCallbacksComponent } from './tw-ad-callbacks/tw-ad-callbacks.component';
 import { TwAdInteractionDetailsComponent } from './tw-ad-interaction-details/tw-ad-interaction-details.component';
@@ -67,6 +66,6 @@ import { TwSuGamificationComponent } from './tw-su-gamification/tw-su-gamificati
         TwAdScoreComponent,
         TwSuGamificationComponent
     ],
-    imports: [SharedModule, TwWrapperModule, NgxChartsModule, AvatarModule]
+    imports: [SharedModule, TwWrapperModule, NgxChartsModule]
 })
-export class TwCollectionsModule {}
+export class TwCollectionsModule { }
