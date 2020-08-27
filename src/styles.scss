@@ -169,3 +169,18 @@ html {
         font-size: 2em;
     }
 }
+// charts :: end
+
+// leatlet :: start
+.leaflet-pane {
+    &.leaflet-map-pane {
+        z-index: 100;
+    }
+}
+.leaflet-control-container {
+    .leaflet-top,
+    .leaflet-bottom {
+        z-index: 100;
+    }
+}
+// leaflet :: end
