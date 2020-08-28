@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 
@@ -8,7 +8,7 @@ import { IWidget } from 'app/interfaces';
     styleUrls: ['./tw-chat-panel.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class TwChatPanelComponent extends TWidgetWrapper implements OnInit, OnDestroy, AfterViewInit {
+export class TwChatPanelComponent extends TWidgetWrapper implements OnInit, OnDestroy {
 
     @Input() data: IWidget;
 
