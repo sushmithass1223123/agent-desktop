@@ -36,6 +36,9 @@ import { TwAdGamificationComponent } from './tw-ad-gamification/tw-ad-gamificati
 import { TwAdPerformanceComponent } from './tw-ad-performance/tw-ad-performance.component';
 import { TwAdScoreComponent } from './tw-ad-score/tw-ad-score.component';
 import { TwSuGamificationComponent } from './tw-su-gamification/tw-su-gamification.component';
+import { TwAmdocsBccComponent } from './tw-amdocs-bcc/tw-amdocs-bcc.component';
+import { TwAccountInformationComponent } from './tw-account-information/tw-account-information.component';
+import { TwCannedResponsesComponent } from './tw-canned-responses/tw-canned-responses.component';
 
 const collectionComponents = [
     TwCustomComponent,
@@ -73,6 +76,9 @@ const collectionComponents = [
     TwSuAgentActivityComponent,
     TwPanelComponent,
     TwSuAgentActivityDetailsComponent,
+    TwAmdocsBccComponent,
+    TwAccountInformationComponent,
+    TwCannedResponsesComponent,
 ];
 
 @NgModule({

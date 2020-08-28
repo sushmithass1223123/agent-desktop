@@ -22,9 +22,9 @@
                     <div
                         class="status"
                         [ngClass]="{
-                            active: element.Status === 'Active',
-                            'on-hold': element.Status === 'OnHold',
-                            closed: element.Status === 'Closed',
+                            'bg-success': element.Status === 'Active',
+                            'bg-warning': element.Status === 'OnHold',
+                            'bg-danger': element.Status === 'Closed',
                             'w-30-p': maximized,
                             'w-70-p': !maximized
                         }"

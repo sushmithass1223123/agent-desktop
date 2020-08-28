@@ -1,0 +1,85 @@
+<!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
+<!-- implement following events in your component to access widget wrapper action events -->
+<!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
+
+<!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
+
+<tw-wrapper tChart [data]="data" (maximizeEvent)="maximized = !maximized">
+    <!-- your code goes here -->
+
+    <div fxLayout fxLayoutAlign="start center" class="p-4 w-100-p h-100-p">
+        <div fxLayout="column" fxLayoutAlign="space-around center" class="h-100-p">
+            <button mat-button>
+                <mat-icon>phonelink_ring</mat-icon>
+            </button>
+            <button mat-button>
+                <mat-icon>vibration</mat-icon>
+            </button>
+            <button mat-button>
+                <mat-icon>tap_and_play</mat-icon>
+            </button>
+            <button mat-button>
+                <mat-icon>live_tv</mat-icon>
+            </button>
+        </div>
+
+        <div fxFlex fxLayout="column" class="h-100-p">
+            <div fxFlex fxLayout fxLayoutAlign="center center">
+                <div fxFlex="30" class="position-relative">
+                    <canvas
+                        baseChart
+                        [data]="doughnutChartData"
+                        [options]="doughnutOptions"
+                        [labels]="doughnutChartLabels"
+                        [chartType]="doughnutChartType"
+                        [colors]="doughnutColors"
+                    >
+                    </canvas>
+                    <span fxFlex fxLayoutAlign="center center" class="absolute-center">30%</span>
+                </div>
+                <div class="h5" fxFlex="70" fxLayout="row wrap">
+                    <div fxLayout="column" fxLayoutAlign="center start">
+                        <div class="text-bold">+65-9875-4321</div>
+                        <div>Used: 26GB / 30GB</div>
+                    </div>
+                    <div fxLayout fxLayoutAlign="center center" class="ml-16 mr-4 p-12 bg-success border-radius-16">
+                        <div class="">$250.50</div>
+                    </div>
+                    <div fxFlex fxLayout="column" fxLayoutAlign="center end" class="p-12 bg-danger border-radius-16 text-right">
+                        <div>Due Date</div>
+                        <div class="text-bold">15 Jun 2020</div>
+                    </div>
+                </div>
+            </div>
+            <div fxFlex fxLayout fxLayoutAlign="center center">
+                <div fxFlex="30" class="position-relative">
+                    <canvas
+                        baseChart
+                        [data]="doughnutChartData"
+                        [options]="doughnutOptions"
+                        [labels]="doughnutChartLabels"
+                        [chartType]="doughnutChartType"
+                        [colors]="doughnutColors"
+                    >
+                    </canvas>
+                    <span fxFlex fxLayoutAlign="center center" class="absolute-center">30%</span>
+                </div>
+                <div class="h5" fxFlex="70" fxLayout="row wrap">
+                    <div fxLayout="column" fxLayoutAlign="center start">
+                        <div class="text-bold">+65-9875-4321</div>
+                        <div>Used: 26GB / 30GB</div>
+                    </div>
+                    <div fxLayout fxLayoutAlign="center center" class="ml-16 mr-4 p-12 bg-success border-radius-16">
+                        <div class="">$250.50</div>
+                    </div>
+                    <div fxFlex fxLayout="column" fxLayoutAlign="center end" class="p-12 bg-success border-radius-16 text-right">
+                        <div>Due Date</div>
+                        <div class="text-bold">15 Jun 2020</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- your code goes here -->
+</tw-wrapper>

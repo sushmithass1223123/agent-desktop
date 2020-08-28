@@ -1,0 +1,72 @@
+.d {
+    &-block {
+        display: block;
+    }
+    &-flex {
+        display: flex;
+    }
+}
+
+.bg {
+    &-inherit {
+        background: inherit;
+    }
+    &-primary {
+        background-color: $tw-primary !important;
+    }
+    &-secondary {
+        background-color: $tw-secondary !important;
+    }
+    &-tertiary {
+        background-color: $tw-tertiary !important;
+    }
+    &-danger {
+        background-color: $tw-danger !important;
+    }
+    &-warning {
+        background-color: $tw-warning !important;
+    }
+    &-success {
+        background-color: $tw-success !important;
+    }
+    &-dark {
+        background-color: $tw-dark !important;
+    }
+}
+
+.bg-alt {
+    &-danger {
+        background-color: $tw-status-danger !important;
+    }
+    &-warning {
+        background-color: $tw-status-warning !important;
+    }
+    &-success {
+        background-color: $tw-status-success !important;
+    }
+}
+
+.border-radius-10 {
+    border-radius: 10px !important;
+}
+
+.border-radius-20 {
+    border-radius: 20px !important;
+}
+
+.border-radius-30 {
+    border-radius: 30px !important;
+}
+
+.spacer {
+    flex: 1 1 auto;
+}
+
+.absolute-center {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+}

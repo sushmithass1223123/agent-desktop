@@ -13,6 +13,14 @@ import { ResourceNotFoundComponent } from './resource-not-found/resource-not-fou
 
 Chart.defaults.global.responsive = true;
 Chart.defaults.global.maintainAspectRatio = false;
+Chart.defaults.global.elements = {
+    rectangle: {
+        borderWidth: 0
+    },
+    arc: {
+        borderWidth: 0
+    }
+};
 
 const sharedModules = [
     MaterialModule,

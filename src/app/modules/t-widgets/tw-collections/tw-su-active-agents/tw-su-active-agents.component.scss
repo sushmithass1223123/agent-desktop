@@ -1,4 +1,4 @@
-@import 'src/app/styles/colors';
+@import 'src/app/scss/shared';
 
 tw-su-active-agents {
     tw-wrapper {
@@ -55,7 +55,7 @@ tw-su-active-agents {
                             height: 20px;
                             width: 20px;
                             background: $tw-success !important;
-                            color: $tw-black !important;
+                            color: $tw-dark !important;
                         }
                     }
                 }

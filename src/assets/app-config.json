@@ -1323,9 +1323,9 @@
                                 }
                             },
                             {
-                                "Name": "Voice-bot Transcript",
+                                "Name": "Canned Responses",
                                 "Description": "",
-                                "Type": "tw-sample",
+                                "Type": "tw-canned-responses",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
@@ -1353,7 +1353,7 @@
                             {
                                 "Name": "Account Information",
                                 "Description": "",
-                                "Type": "tw-sample",
+                                "Type": "tw-account-information",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
@@ -1379,9 +1379,9 @@
                                 "Data": {}
                             },
                             {
-                                "Name": "AMDO-CRM",
+                                "Name": "AMDOC-BCC",
                                 "Description": "",
-                                "Type": "tw-sample",
+                                "Type": "tw-amdocs-bcc",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
@@ -1463,9 +1463,9 @@
                                 "Data": {}
                             },
                             {
-                                "Name": "Speech To Text",
+                                "Name": "Work Codes",
                                 "Description": "",
-                                "Type": "tw-sample",
+                                "Type": "tw-work-codes",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
@@ -1608,40 +1608,7 @@
             ]
         },
         "AOT": {
-            "Widgets": [
-                {
-                    "Name": "TRS",
-                    "Description": "",
-                    "Type": "tw-custom",
-                    "Config": {
-                        "Static": false,
-                        "Anchor": true,
-                        "AOT": true,
-                        "Icon": "dvr",
-                        "Class": "",
-                        "Position": {
-                            "X": 0,
-                            "Y": 0,
-                            "W": 325,
-                            "H": 740
-                        },
-                        "Actions": [
-                            "minimize",
-                            "destroy"
-                        ],
-                        "ViewState": "restore",
-                        "PinState": false,
-                        "FloatState": false,
-                        "Resizable": false,
-                        "Header": true,
-                        "Disabled": false
-                    },
-                    "Data": {
-                        "Url": "https://tmac.tetherfilabs.com/tcie-web-appv8",
-                        "QueryParams": []
-                    }
-                }
-            ]
+            "Widgets": []
         }
     },
     "AppConfigs": {

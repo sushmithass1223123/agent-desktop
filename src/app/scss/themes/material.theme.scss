@@ -1,4 +1,4 @@
-@mixin matarial-custom-theme($theme) {
+@mixin matarial-theme($theme) {
     $background: map-get($theme, background);
     $foreground: map-get($theme, foreground);
     $accent: map-get($theme, accent);

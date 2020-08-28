@@ -1,4 +1,4 @@
-@import 'src/app/styles/colors';
+@import 'src/app/scss/shared';
 
 tw-active-interactions {
     .voice {
@@ -42,7 +42,7 @@ tw-active-interactions {
         
         .mat-badge-content {
             background: $tw-warning !important;
-            color: $tw-black !important;
+            color: $tw-dark !important;
         }
     }
 }

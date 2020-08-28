@@ -163,6 +163,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         SDKClient.events.on('TextChatMessageTemplateSentEvent', this.TextChatMessageTemplateSentEvent);
         SDKClient.events.on('TextChatMessageReceivedEvent', this.TextChatMessageReceivedEvent);
         SDKClient.events.on('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
+        SDKClient.events.on('CannedResposeEvent', this.CannedResposeEvent);
     }
 
     private deRegisterFromEvents(): void {
@@ -173,6 +174,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         SDKClient.events.off('TextChatMessageTemplateSentEvent', this.TextChatMessageTemplateSentEvent);
         SDKClient.events.off('TextChatMessageReceivedEvent', this.TextChatMessageReceivedEvent);
         SDKClient.events.off('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
+        SDKClient.events.on('CannedResposeEvent', this.CannedResposeEvent);
     }
 
     private TextChatRemoteUserConnectedEvent = (evt: TextChatRemoteUserConnectedEvent) => {
@@ -399,6 +401,16 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.stopTimer.next();
     }
 
+    private CannedResposeEvent = (evt: any) => {
+        // check the interaction
+        if (evt.InteractionID !== this.interactionId) {
+            return;
+        }
+
+        // send the selected template
+        this.sendMessage(evt.Template);
+    }
+
     private messageSentEvent(evt: TextChatMessageSentEvent | TextChatMessageTemplateSentEvent): void {
         try {
             // check the interaction
@@ -461,6 +473,58 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         return false;
     }
 
+    private sendMessage(template: any): void {
+        // get the typed message
+        const inputMessage = template ? template.Text : this.replyForm.form.value.message;
+        const messageId = `a_${TUtils.Generic.uuid()}`;
+        let messageData = inputMessage;
+
+        // Message
+        const message = {
+            who: this.user.agentName,
+            message: inputMessage,
+            time: new Date().toLocaleString()
+        };
+
+        // check if reply feature is enabled
+        if (this.data.Data.ReplyOnChatAllowed) {
+            const jsonMessage = {
+                messageId: messageId,
+                type: 'text',
+                message: inputMessage,
+                replyId: '',
+                templateId: template ? template.ID : '',
+                attachment: null
+            };
+
+            // TODO:: check for reply messages
+
+            // stringy the json
+            messageData = JSON.stringify(jsonMessage);
+        }
+
+        // Add the message to the chat
+        this.chatTranscripts.push(message);
+
+
+        // Update the server
+        SDKClient.sendTextChat({
+            interactionId: this.interactionId.toString(),
+            message: messageData,
+            messageId,
+            templateId: template ? template.ID : '',
+            type: 'text'
+        }, null).then((dt) => {
+            console.log('sendTextChat', dt);
+        });
+
+        // Reset the reply form
+        this.replyForm.reset();
+
+        // set ready to reply
+        this.readyToReply();
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------    
@@ -480,54 +544,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             return;
         }
 
-        // get the typed message
-        const inputMessage = this.replyForm.form.value.message;
-        const messageId = `a_${TUtils.Generic.uuid()}`;
-        let messageData = this.replyForm.form.value.message;
-
-        // Message
-        const message = {
-            who: this.user.agentName,
-            message: inputMessage,
-            time: new Date().toLocaleString()
-        };
-
-        // check if reply feature is enabled
-        if (this.data.Data.ReplyOnChatAllowed) {
-            const jsonMessage = {
-                messageId: messageId,
-                type: 'text',
-                message: inputMessage,
-                replyId: '',
-                templateId: '',
-                attachment: null
-            };
-
-            // TODO:: check for reply messages
-
-            // stringy the json
-            messageData = JSON.stringify(jsonMessage);
-        }
-
-        // Add the message to the chat
-        this.chatTranscripts.push(message);
-
-        // Reset the reply form
-        this.replyForm.reset();
-
-        // set ready to reply
-        this.readyToReply();
-
-        // Update the server
-        SDKClient.sendTextChat({
-            interactionId: this.interactionId.toString(),
-            message: messageData,
-            messageId,
-            templateId: '',
-            type: 'text'
-        }, null).then((dt) => {
-            console.log('sendTextChat', dt);
-        });
+        // send the typed message
+        this.sendMessage(null);
     }
 
     selectInteraction(item: InteractionRef): void {

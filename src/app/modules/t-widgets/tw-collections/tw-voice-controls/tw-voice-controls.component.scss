@@ -1,4 +1,4 @@
-@import 'src/app/styles/colors';
+@import 'src/app/scss/shared';
 
 tw-voice-controls {
     .collapsed {
@@ -48,7 +48,7 @@ tw-voice-controls {
             .call-controls {
                 button:not(.mat-button-disabled, .mat-warn) {
                     background: $tw-primary;
-                    color: $tw-black;
+                    color: $tw-dark;
                 }
 
                 button {

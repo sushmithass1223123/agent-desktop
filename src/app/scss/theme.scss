@@ -1,0 +1,57 @@
+// Material components custom theming
+@import 'themes/material.theme';
+
+// Layout components theming
+@import 'src/app/layout/components/chat-panel/chat-panel.theme';
+@import 'src/app/layout/components/toolbar/toolbar.theme';
+@import 'src/app/layout/components/theme-options/theme-options.theme';
+
+// Core components theming
+@import 'src/app/modules/core/login/login.theme';
+
+// Module components theming
+@import 'src/app/modules/t-widgets/tw-toolbar/tw-toolbar.theme';
+@import 'src/app/modules/t-widgets/tw-content/tw-content.theme';
+@import 'src/app/modules/t-widgets/tw-wrapper/tw-wrapper.theme';
+@import 'src/app/modules/t-widgets/tw-collections/tw-voice-controls/tw-voice-controls.theme';
+@import 'src/app/modules/t-widgets/tw-collections/tw-chat-controls/tw-chat-controls.theme';
+@import 'src/app/modules/t-widgets/tw-collections/tw-su-active-agents/tw-su-active-agents.theme';
+
+// Define a mixin for easier access
+@mixin app-core-theme($theme) {
+    $is-dark: map-get($theme, is-dark);
+    $background: map-get($theme, background);
+    $foreground: map-get($theme, foreground);
+
+    // Base colors
+    & {
+        color: map-get($foreground, text);
+
+        // If it's a light theme, use a darker background
+        // color other than the default #F5F5F5
+        @if ($is-dark) {
+            background: map-get($background, background);
+        } @else {
+            background: #f5f5f5;
+        }
+    }
+
+    // Material custom
+    @include matarial-theme($theme);
+
+    // Layout components
+    @include chat-panel-theme($theme);
+    @include toolbar-theme($theme);
+    @include app-theme-options-theme($theme);
+
+    // Core components
+    @include login-theme($theme);
+
+    // T-Widgets components
+    @include tw-toolbar-theme($theme);
+    @include tw-content-theme($theme);
+    @include tw-wrapper-theme($theme);
+    @include tw-voice-controls-theme($theme);
+    @include tw-chat-controls-theme($theme);
+    @include tw-su-active-agents-theme($theme);
+}
