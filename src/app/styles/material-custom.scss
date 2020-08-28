@@ -167,8 +167,11 @@ mat-form-field {
 
 mat-chip {
     &.mat-chip {
-        border-radius: 5px;
+        border-radius: 10px;
         padding: 10px;
+    }
+    mat-icon {
+        color: white !important;
     }
 }
 

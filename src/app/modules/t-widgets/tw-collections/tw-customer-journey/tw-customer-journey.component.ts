@@ -109,19 +109,16 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         this.interactionId = this.data.InteractionDetails.InteractionID;
 
         // subscribe to fuse
-        this._fuseConfigService.config
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(
-                (config: any) => {
-                    this.fuseConfig = config;
-                });
+        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+            this.fuseConfig = config;
+        });
 
         this.historyParams = {
             cif: '',
             email: '',
             nric: '',
             phone: '',
-            noOfRecords: this.customerJourneyTable && this.customerJourneyTable.tableData.source.paginator?.pageSize.toString() || '5',
+            noOfRecords: (this.customerJourneyTable && this.customerJourneyTable.tableData.source.paginator?.pageSize.toString()) || '5',
             lastId: '0'
         };
 
@@ -143,22 +140,23 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         SDKClient.events.off('InteractionHistoryReadyEvent', this.InteractionHistoryReadyEvent);
     }
 
-    private setupListeners(): void {
-        SDKClient.events.on('InteractionHistoryReadyEvent', this.InteractionHistoryReadyEvent);
-    }
-
-    private InteractionHistoryReadyEvent(evt: InteractionHistoryReadyEvent): void {
+    InteractionHistoryReadyEvent(evt: InteractionHistoryReadyEvent): void {
+        const noOfRecords = this.customerJourneyTable.tableData.source.paginator?.pageSize.toString() || '5';
         // assign the history params
         this.historyParams = {
             cif: evt.HistoryParameters.CIF,
             email: evt.HistoryParameters.EmailID,
             nric: evt.HistoryParameters.NRIC,
             phone: evt.HistoryParameters.PhoneNumber,
-            noOfRecords: this.customerJourneyTable && this.customerJourneyTable.tableData.source.paginator?.pageSize.toString() || '5',
+            noOfRecords,
             lastId: '0'
         };
         // get history
         this.getInteractionHistory();
+    }
+
+    setupListeners(): void {
+        SDKClient.events.on('InteractionHistoryReadyEvent', (evt) => this.InteractionHistoryReadyEvent(evt));
     }
 
     private getInteractionHistory(lastId?: string): void {
