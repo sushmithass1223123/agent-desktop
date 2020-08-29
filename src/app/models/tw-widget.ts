@@ -1,7 +1,9 @@
 import { IWidgetConfig } from 'app/interfaces';
+import { TUtils } from 'tmac-sdk';
 
 export class TwWidgetModel {
     Name: string;
+    ID: string;
     Description: string;
     Type: string;
     Config: IWidgetConfig;
@@ -9,11 +11,13 @@ export class TwWidgetModel {
 
     constructor(name: string, type: string, icon?: string) {
         this.Name = name || 'Widget';
+        this.ID = TUtils.Generic.uuid();
         this.Description = '';
         this.Type = type || '';
         this.Config = {
             Static: false,
             Anchor: false,
+            AOT: false,
             Icon: icon || 'widgets',
             Class: '',
             Position: {

@@ -2,6 +2,7 @@ import { TWidget } from '@modules/t-widgets/utils';
 
 export interface IWidget {
     Name: string;
+    ID: string;
     Description: string;
     Type: string;
     Config: IWidgetConfig;
@@ -17,6 +18,7 @@ export interface InteractionWidgets {
 export interface IWidgetConfig {
     Static: boolean;
     Anchor: boolean;
+    AOT: boolean;
     Icon: string;
     Class: string;
     Position: IWidgetPosition;
@@ -32,4 +34,6 @@ export interface IWidgetConfig {
 export interface IWidgetPosition {
     X: number;
     Y: number;
+    H?: number;
+    W?: number;
 }

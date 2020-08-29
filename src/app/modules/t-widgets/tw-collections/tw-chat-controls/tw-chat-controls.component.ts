@@ -35,6 +35,7 @@ import { InteractionEventService } from '@services/interaction-event.service';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { AppDataService } from '@services/app-data.service';
 import { MatButton } from '@angular/material/button';
+import { ContentPageService } from '@services/content-page.service';
 
 @Component({
     selector: 'tw-chat-controls',
@@ -64,7 +65,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     interactionStatus = 'NA';
     chatTranscripts: any[] = [];
     customerName = 'Customer';
-    unreadChats = 0;
 
     @ViewChildren(FusePerfectScrollbarDirective) directiveScrolls: QueryList<FusePerfectScrollbarDirective>;
     @ViewChildren('replyInput') replyInputField: any;
@@ -76,7 +76,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         private _interactionEventService: InteractionEventService,
         private _dialog: MatDialog,
         private _appDataService: AppDataService,
-        private _fuseProgressBarService: FuseProgressBarService
+        private _fuseProgressBarService: FuseProgressBarService,
+        private _contentPageService: ContentPageService
     ) {
         super();
     }
@@ -120,6 +121,17 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     }
 
     ngAfterViewInit(): void {
+        // check if the current page is textchat page
+        if (this._interactionManagerService.getInteractionCount().active <= 1 &&
+            this._contentPageService.getCurrentMode() !== this.data.Data.Path) {
+            setTimeout(() => {
+                this._contentPageService.mode = this.data.Data.Path;
+            }, 500);
+        }
+
+        // play new chat sound 
+        this._appDataService.playAudio('new-chat', 0.5);
+
         this.replyInput = this.replyInputField.first.nativeElement;
         this.readyToReply();
     }
@@ -151,6 +163,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         SDKClient.events.on('TextChatMessageTemplateSentEvent', this.TextChatMessageTemplateSentEvent);
         SDKClient.events.on('TextChatMessageReceivedEvent', this.TextChatMessageReceivedEvent);
         SDKClient.events.on('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
+        SDKClient.events.on('CannedResposeEvent', this.CannedResposeEvent);
     }
 
     private deRegisterFromEvents(): void {
@@ -161,6 +174,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         SDKClient.events.off('TextChatMessageTemplateSentEvent', this.TextChatMessageTemplateSentEvent);
         SDKClient.events.off('TextChatMessageReceivedEvent', this.TextChatMessageReceivedEvent);
         SDKClient.events.off('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
+        SDKClient.events.on('CannedResposeEvent', this.CannedResposeEvent);
     }
 
     private TextChatRemoteUserConnectedEvent = (evt: TextChatRemoteUserConnectedEvent) => {
@@ -354,12 +368,13 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         });
 
         // in not active then increment the count
-        if (!isActive) {
-            ++this.unreadChats;
+        if (!isActive || this._contentPageService.getCurrentMode() !== this.data.Data.Path) {
+            const currentInteraction = this.interactionList.filter(i => i.interactionId === this.interactionId)[0];
+            const unreadCount = ++currentInteraction.otherData.unreadCount;
             // update the interaction other data
             this._interactionManagerService.updateInteraction(evt.InteractionID, {
-                'otherData': {
-                    unreadCount: this.unreadChats
+                otherData: {
+                    unreadCount
                 }
             });
         }
@@ -380,10 +395,20 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.interactionStatus = 'Disconnected';
         // update the interaction status
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
-            'status': 'disconnected'
+            status: 'disconnected'
         });
         // stop the duration timer
         this.stopTimer.next();
+    }
+
+    private CannedResposeEvent = (evt: any) => {
+        // check the interaction
+        if (evt.InteractionID !== this.interactionId) {
+            return;
+        }
+
+        // send the selected template
+        this.sendMessage(evt.Template);
     }
 
     private messageSentEvent(evt: TextChatMessageSentEvent | TextChatMessageTemplateSentEvent): void {
@@ -448,6 +473,58 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         return false;
     }
 
+    private sendMessage(template: any): void {
+        // get the typed message
+        const inputMessage = template ? template.Text : this.replyForm.form.value.message;
+        const messageId = `a_${TUtils.Generic.uuid()}`;
+        let messageData = inputMessage;
+
+        // Message
+        const message = {
+            who: this.user.agentName,
+            message: inputMessage,
+            time: new Date().toLocaleString()
+        };
+
+        // check if reply feature is enabled
+        if (this.data.Data.ReplyOnChatAllowed) {
+            const jsonMessage = {
+                messageId: messageId,
+                type: 'text',
+                message: inputMessage,
+                replyId: '',
+                templateId: template ? template.ID : '',
+                attachment: null
+            };
+
+            // TODO:: check for reply messages
+
+            // stringy the json
+            messageData = JSON.stringify(jsonMessage);
+        }
+
+        // Add the message to the chat
+        this.chatTranscripts.push(message);
+
+
+        // Update the server
+        SDKClient.sendTextChat({
+            interactionId: this.interactionId.toString(),
+            message: messageData,
+            messageId,
+            templateId: template ? template.ID : '',
+            type: 'text'
+        }, null).then((dt) => {
+            console.log('sendTextChat', dt);
+        });
+
+        // Reset the reply form
+        this.replyForm.reset();
+
+        // set ready to reply
+        this.readyToReply();
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------    
@@ -467,54 +544,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             return;
         }
 
-        // get the typed message
-        const inputMessage = this.replyForm.form.value.message;
-        const messageId = `a_${TUtils.Generic.uuid()}`;
-        let messageData = this.replyForm.form.value.message;
-
-        // Message
-        const message = {
-            who: this.user.agentName,
-            message: inputMessage,
-            time: new Date().toLocaleString()
-        };
-
-        // check if reply feature is enabled
-        if (this.data.Data.ReplyOnChatAllowed) {
-            const jsonMessage = {
-                messageId: messageId,
-                type: 'text',
-                message: inputMessage,
-                replyId: '',
-                templateId: '',
-                attachment: null
-            };
-
-            // TODO:: check for reply messages
-
-            // stringy the json
-            messageData = JSON.stringify(jsonMessage);
-        }
-
-        // Add the message to the chat
-        this.chatTranscripts.push(message);
-
-        // Reset the reply form
-        this.replyForm.reset();
-
-        // set ready to reply
-        this.readyToReply();
-
-        // Update the server
-        SDKClient.sendTextChat({
-            interactionId: this.interactionId.toString(),
-            message: messageData,
-            messageId,
-            templateId: '',
-            type: 'text'
-        }, null).then((dt) => {
-            console.log('sendTextChat', dt);
-        });
+        // send the typed message
+        this.sendMessage(null);
     }
 
     selectInteraction(item: InteractionRef): void {
@@ -524,7 +555,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
         // update is active
         this._interactionManagerService.updateInteraction(item.interactionId, {
-            'isActive': true
+            isActive: true,
+            otherData: {
+                unreadCount: 0
+            }
         });
     }
 

@@ -1,9 +1,10 @@
 import { Component, EventEmitter, HostBinding, Input, OnDestroy, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { FuseConfigService } from '@fuse/services/config.service';
+import { FuseConfig } from '@fuse/types';
 import { IWidget } from 'app/interfaces';
+import { TwWidgetModel } from 'app/models';
 import { Subject } from 'rxjs/internal/Subject';
 import { takeUntil } from 'rxjs/operators';
-import { FuseConfig } from '@fuse/types';
 
 @Component({
     selector: 'tw-wrapper',
@@ -28,6 +29,7 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
     maximized = false;
     collapsed = false;
     hidden = false;
+    aot = false;
 
     // Private
     _unsubscribeAll: Subject<any>;
@@ -50,6 +52,11 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
             this.fuseConfig = fuseConfig;
         });
 
+        // check if the basic data input is provided, if not create a dummy widget data
+        if (!this.data) {
+            this.data = new TwWidgetModel('Widget', 'tw-widget');
+        }
+
         // check the default view of widget
         if (this.data !== null && this.data.Config.ViewState !== 'restore') {
             this.maximized = this.data.Config.ViewState === 'maximize';
@@ -57,6 +64,9 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
             this.floating = this.data.Config.ViewState === 'float';
             this.hidden = this.data.Config.ViewState === 'hidden';
         }
+
+        // assign the AOT config
+        this.aot = this.data.Config.AOT;
     }
 
     ngOnDestroy(): void {

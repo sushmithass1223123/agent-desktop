@@ -289,7 +289,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.loading = true;
 
         // check if face auth is needed 
-        if (this.faceAuthEnabled && !await this.doFaceAuthentication()) {
+        if (!force && this.faceAuthEnabled && !await this.doFaceAuthentication()) {
             this.loading = false;
             return;
         }
@@ -359,6 +359,11 @@ export class LoginComponent implements OnInit, OnDestroy {
                                 fromUrl: 'login'
                             }
                         });
+                        // check if face auth enabled, then stop camera
+                        if (this.faceAuthEnabled) {
+                            this.selfVideo.getTracks().forEach((track: MediaStreamTrack) => { track.stop(); });
+                        }
+
                     }
                 } else if (response.ResultCode === -3) {
                     // invalid Lan id check whether to prompt agent Id

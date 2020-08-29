@@ -1,9 +1,12 @@
 {
     "Login": {
-        "AuthType": "credential",
         "Modes": {
             "Enabled": true,
             "Type": "pbxms"
+        },
+        "FaceAuth": {
+            "Enabled": true,
+            "AuthServerUrl": "https://tmac.tetherfilabs.com/TFaceAuthProxyNew/Proxy.asmx/VerifyFaceImages"
         },
         "DomainListEnabled": false,
         "PasswordEnabled": false,
@@ -183,6 +186,7 @@
                                 "Config": {
                                     "Static": false,
                                     "Anchor": true,
+                                    "AOT": false,
                                     "Icon": "dvr",
                                     "Class": "",
                                     "Position": {
@@ -208,6 +212,7 @@
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
+                                    "AOT": false,
                                     "Icon": "phone",
                                     "Class": "",
                                     "Position": {
@@ -235,6 +240,7 @@
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
+                                    "AOT": false,
                                     "Icon": "chat",
                                     "Class": "",
                                     "Position": {
@@ -262,6 +268,7 @@
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
+                                    "AOT": false,
                                     "Icon": "",
                                     "Class": "duo",
                                     "Position": {
@@ -289,6 +296,7 @@
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
+                                    "AOT": false,
                                     "Icon": "dvr",
                                     "Class": "",
                                     "Position": {
@@ -316,6 +324,7 @@
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
+                                    "AOT": false,
                                     "Icon": "format_list_bulleted",
                                     "Class": "",
                                     "Position": {
@@ -339,10 +348,11 @@
                             {
                                 "Name": "Performance",
                                 "Description": "",
-                                "Type": "tw-custom",
+                                "Type": "tw-ad-performance",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
+                                    "AOT": false,
                                     "Icon": "pie_chart",
                                     "Class": "",
                                     "Position": {
@@ -362,16 +372,17 @@
                                     "Disabled": false
                                 },
                                 "Data": {
-                                    "Url": "https://cdn.dribbble.com/users/13218/screenshots/14075817/media/c408c1056f04b16a886f1fd8593598c5.png"
+                                    "AgentProgressUrl": "https://demo2.tetherfilabs.com:55443/GamificationProxy/Proxy.asmx/GetProgress"
                                 }
                             },
                             {
                                 "Name": "Gamification",
                                 "Description": "",
-                                "Type": "tw-gamification-dashboard",
+                                "Type": "tw-ad-gamification",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
+                                    "AOT": false,
                                     "Icon": "extension",
                                     "Class": "",
                                     "Position": {
@@ -390,7 +401,9 @@
                                     "Header": true,
                                     "Disabled": false
                                 },
-                                "Data": {}
+                                "Data": {
+                                    "LeaderBoardUrl": "https://demo2.tetherfilabs.com:55443/GamificationProxy/Proxy.asmx/GetLeaderBoard"
+                                }
                             },
                             {
                                 "Name": "Call-backs",
@@ -399,6 +412,7 @@
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
+                                    "AOT": false,
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
@@ -422,10 +436,11 @@
                             {
                                 "Name": "Feedback",
                                 "Description": "",
-                                "Type": "tw-sample",
+                                "Type": "tw-ad-feedback",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
+                                    "AOT": false,
                                     "Icon": "feedback",
                                     "Class": "",
                                     "Position": {
@@ -449,10 +464,11 @@
                             {
                                 "Name": "Score",
                                 "Description": "",
-                                "Type": "tw-sample",
+                                "Type": "tw-ad-score",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
+                                    "AOT": false,
                                     "Icon": "score",
                                     "Class": "",
                                     "Position": {
@@ -497,6 +513,7 @@
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
+                                    "AOT": false,
                                     "Icon": "vertical_split",
                                     "Class": "",
                                     "Position": {
@@ -514,12 +531,13 @@
                                 "Data": {}
                             },
                             {
-                                "Name": "Total Calls",
+                                "Name": "Leaderboard",
                                 "Description": "",
-                                "Type": "tw-su-total-calls",
+                                "Type": "tw-su-gamification",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
+                                    "AOT": false,
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
@@ -538,7 +556,9 @@
                                     "Header": true,
                                     "Disabled": false
                                 },
-                                "Data": {}
+                                "Data": {
+                                    "LeaderBoardUrl": "https://demo2.tetherfilabs.com:55443/GamificationProxy/Proxy.asmx/GetLeaderBoard"
+                                }
                             },
                             {
                                 "Name": "Avg. Handle Time",
@@ -547,6 +567,7 @@
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
+                                    "AOT": false,
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
@@ -573,6 +594,7 @@
                                 "Type": "tw-su-calls-in-queue",
                                 "Config": {
                                     "Anchor": false,
+                                    "AOT": false,
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
@@ -600,6 +622,7 @@
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
+                                    "AOT": false,
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
@@ -626,6 +649,7 @@
                                 "Type": "tw-wallboard",
                                 "Config": {
                                     "Anchor": false,
+                                    "AOT": false,
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
@@ -655,6 +679,7 @@
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
+                                    "AOT": false,
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
@@ -681,6 +706,7 @@
                                 "Type": "tw-su-status",
                                 "Config": {
                                     "Anchor": false,
+                                    "AOT": false,
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
@@ -725,6 +751,7 @@
                                 "Config": {
                                     "Static": true,
                                     "Anchor": false,
+                                    "AOT": false,
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
@@ -748,6 +775,7 @@
                                             "Config": {
                                                 "Static": false,
                                                 "Anchor": true,
+                                                "AOT": false,
                                                 "Icon": "phone",
                                                 "Class": "",
                                                 "Position": {
@@ -792,6 +820,7 @@
                                             "Config": {
                                                 "Static": false,
                                                 "Anchor": true,
+                                                "AOT": false,
                                                 "Icon": "person",
                                                 "Class": "",
                                                 "Position": {
@@ -809,7 +838,58 @@
                                                 "Header": true,
                                                 "Disabled": false
                                             },
-                                            "Data": {}
+                                            "Data": {
+                                                "CustomerInfo": [
+                                                    {
+                                                        "Title": "CallerID",
+                                                        "ValueSource": "IncomingCallEvent.PhoneNumber",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "Name",
+                                                        "ValueSource": "IncomingCallEvent.Name",
+                                                        "Unit": "",
+                                                        "DefaultValue": "Gary Lim"
+                                                    },
+                                                    {
+                                                        "Title": "Language",
+                                                        "ValueSource": "IncomingCallEvent.Language",
+                                                        "Unit": "",
+                                                        "DefaultValue": "English"
+                                                    },
+                                                    {
+                                                        "Title": "Email",
+                                                        "ValueSource": "IncomingCallEvent.Email",
+                                                        "Unit": "",
+                                                        "DefaultValue": "garylim@tetherfi.com"
+                                                    },
+                                                    {
+                                                        "Title": "NRIC",
+                                                        "ValueSource": "IncomingCallEvent.Email",
+                                                        "Unit": "",
+                                                        "DefaultValue": "S1234567F"
+                                                    },
+                                                    {
+                                                        "Title": "QueueTime",
+                                                        "ValueSource": "IVRDataEvent.QueueTime",
+                                                        "Unit": "",
+                                                        "DefaultValue": "00:00:00"
+                                                    },
+                                                    {
+                                                        "Title": "Intent Name",
+                                                        "ValueSource": "CallerIntentEvent.IntentName",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    },
+                                                    {
+                                                        "Title": "Intent Status",
+                                                        "ValueSource": "CallerIntentEvent.IntentStatus",
+                                                        "Unit": "",
+                                                        "DefaultValue": "NA"
+                                                    }
+                                                ]
+                                            }
                                         },
                                         {
                                             "Name": "Customer Journey",
@@ -818,6 +898,7 @@
                                             "Config": {
                                                 "Static": false,
                                                 "Anchor": true,
+                                                "AOT": false,
                                                 "Icon": "storage",
                                                 "Class": "",
                                                 "Position": {
@@ -849,6 +930,7 @@
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
+                                    "AOT": false,
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
@@ -876,6 +958,7 @@
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
+                                    "AOT": false,
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
@@ -903,6 +986,7 @@
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
+                                    "AOT": false,
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
@@ -930,6 +1014,7 @@
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
+                                    "AOT": false,
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
@@ -974,6 +1059,7 @@
                                 "Config": {
                                     "Static": true,
                                     "Anchor": false,
+                                    "AOT": false,
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
@@ -997,6 +1083,7 @@
                                             "Config": {
                                                 "Static": false,
                                                 "Anchor": true,
+                                                "AOT": false,
                                                 "Icon": "chat",
                                                 "Class": "",
                                                 "Position": {
@@ -1063,6 +1150,7 @@
                                             "Config": {
                                                 "Static": false,
                                                 "Anchor": true,
+                                                "AOT": false,
                                                 "Icon": "person",
                                                 "Class": "",
                                                 "Position": {
@@ -1212,6 +1300,7 @@
                                             "Config": {
                                                 "Static": false,
                                                 "Anchor": true,
+                                                "AOT": false,
                                                 "Icon": "storage",
                                                 "Class": "",
                                                 "Position": {
@@ -1237,12 +1326,13 @@
                                 }
                             },
                             {
-                                "Name": "Voice-bot Transcript",
+                                "Name": "Canned Responses",
                                 "Description": "",
-                                "Type": "tw-sample",
+                                "Type": "tw-canned-responses",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
+                                    "AOT": false,
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
@@ -1266,10 +1356,11 @@
                             {
                                 "Name": "Account Information",
                                 "Description": "",
-                                "Type": "tw-sample",
+                                "Type": "tw-account-information",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
+                                    "AOT": false,
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
@@ -1291,12 +1382,13 @@
                                 "Data": {}
                             },
                             {
-                                "Name": "AMDO-CRM",
+                                "Name": "AMDOC-BCC",
                                 "Description": "",
-                                "Type": "tw-sample",
+                                "Type": "tw-amdocs-bcc",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
+                                    "AOT": false,
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
@@ -1324,6 +1416,7 @@
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
+                                    "AOT": false,
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
@@ -1351,6 +1444,7 @@
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
+                                    "AOT": false,
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
@@ -1372,12 +1466,13 @@
                                 "Data": {}
                             },
                             {
-                                "Name": "Speech To Text",
+                                "Name": "Work Codes",
                                 "Description": "",
-                                "Type": "tw-sample",
+                                "Type": "tw-work-codes",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
+                                    "AOT": false,
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
@@ -1399,20 +1494,20 @@
                                 "Data": {}
                             },
                             {
-                                "Name": "Heat Map",
+                                "Name": "Agent Assist",
                                 "Description": "",
-                                "Type": "tw-heat-map",
+                                "Type": "tw-agent-assist",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
-                                    "Icon": "",
+                                    "AOT": false,
+                                    "Icon": "verified_user",
                                     "Class": "",
                                     "Position": {
                                         "X": 1,
                                         "Y": 2
                                     },
                                     "Actions": [
-                                        "maximize",
                                         "pin",
                                         "float"
                                     ],
@@ -1423,7 +1518,19 @@
                                     "Header": true,
                                     "Disabled": false
                                 },
-                                "Data": {}
+                                "Data": {
+                                    "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr/chat?intent=",
+                                    "Title": "Visual IVR",
+                                    "Icon": "assistant",
+                                    "Width": 450,
+                                    "Height": 700,
+                                    "Actions": [
+                                        "minimize",
+                                        "maximize",
+                                        "destroy"
+                                    ],
+                                    "ViewState": "restore"
+                                }
                             }
                         ]
                     }
@@ -1513,6 +1620,9 @@
                     }
                 }
             ]
+        },
+        "AOT": {
+            "Widgets": []
         }
     },
     "AppConfigs": {

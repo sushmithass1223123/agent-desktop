@@ -4,14 +4,14 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { FuseConfigService } from '@fuse/services/config.service';
+import { FuseConfig } from '@fuse/types';
+import { InteractionEventService } from '@services/interaction-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { HistoryInteraction } from 'app/models';
 import { sortBy, uniqBy } from 'lodash';
-import { SDKClient, InteractionHistoryReadyEvent, IGetInteractionHistory, IUIEvent } from 'tmac-sdk';
-import { InteractionEventService } from '@services/interaction-event.service';
-import { FuseConfigService } from '@fuse/services/config.service';
 import { takeUntil } from 'rxjs/operators';
-import { FuseConfig } from '@fuse/types';
+import { IGetInteractionHistory, InteractionHistoryReadyEvent, IUIEvent, SDKClient } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-customer-journey',
@@ -130,7 +130,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             this[evt.EventName]?.(evt);
         });
 
-        this.setupListeners();
+        SDKClient.events.on('InteractionHistoryReadyEvent', (this.InteractionHistoryReadyEvent));
     }
 
     ngOnDestroy(): void {
@@ -140,7 +140,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         SDKClient.events.off('InteractionHistoryReadyEvent', this.InteractionHistoryReadyEvent);
     }
 
-    InteractionHistoryReadyEvent(evt: InteractionHistoryReadyEvent): void {
+    InteractionHistoryReadyEvent = (evt: InteractionHistoryReadyEvent): void => {
         const noOfRecords = this.customerJourneyTable.tableData.source.paginator?.pageSize.toString() || '5';
         // assign the history params
         this.historyParams = {
@@ -155,13 +155,9 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         this.getInteractionHistory();
     }
 
-    setupListeners(): void {
-        SDKClient.events.on('InteractionHistoryReadyEvent', (evt) => this.InteractionHistoryReadyEvent(evt));
-    }
-
     private getInteractionHistory(lastId?: string): void {
         SDKClient.getInteractionHistory(lastId ? { ...this.historyParams, lastId } : this.historyParams, null)
-            .then((res) => {
+            .then((res: any) => {
                 let tableData = [];
                 if (lastId) {
                     tableData = uniqBy([...this.customerJourneyTable.tableData.source.data, ...sortBy(res.response, 'ItemID')], 'SessionID');
@@ -172,7 +168,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 this.customerJourneyTable.lastId = res.response[0]?.LastIndex;
                 this.customerJourneyTable.loading = false;
             })
-            .catch((err) => {
+            .catch((err: string) => {
                 console.log({ err });
                 this.customerJourneyTable.loading = false;
             });

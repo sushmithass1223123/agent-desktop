@@ -1,0 +1,26 @@
+<!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
+<!-- implement following events in your component to access widget wrapper action events -->
+<!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
+
+<!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
+
+<tw-wrapper [data]="data" class="p-8">
+    <!-- your code goes here -->
+    <div fxFill fxLayout="column" class="px-16" fusePerfectScrollbar>
+        <div fxLayout>
+            <p fxFlex="20" fxLayoutAlign=" center" class="px-8">Case ID</p>
+            <mat-form-field fxFlex appearance="outline" class="case-id">
+                <input matInput required placeholder="Case ID" />
+                <mat-error> Case ID is required </mat-error>
+            </mat-form-field>
+        </div>
+        <div fxFlex fxLayout>
+            <p fxFlex="20" fxLayoutAlign=" flex-start" class="px-8 mt-16">Case Notes</p>
+            <mat-form-field fxFlex floatLabel="never" appearance="standard" class="case-note">
+                <textarea fxFlex matInput placeholder="Enter case notes here..." matAutosizeMinRows="1" [matTextareaAutosize]="true"></textarea>
+                <button class="submit-btn bg-success border-radius-20" mat-button>Submit</button>
+            </mat-form-field>
+        </div>
+    </div>
+    <!-- your code goes here -->
+</tw-wrapper>

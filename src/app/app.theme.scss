@@ -48,7 +48,7 @@ $fuse-navy: (
     )
 );
 
-$tw-primary: (
+$tetherfi-primary: (
     50: #f1e5f3,
     100: #ddbfe2,
     200: #c895cf,
@@ -81,7 +81,7 @@ $tw-primary: (
     )
 );
 
-$tw-secondary: (
+$tetherfi-secondary: (
     50: #ffebf0,
     100: #ffcdd7,
     200: #f699a2,
@@ -114,7 +114,7 @@ $tw-secondary: (
     )
 );
 
-$tw-grey: (
+$tetherfi-grey: (
     50: #f8f9fb,
     100: #f1f2f4,
     200: #e7e9eb,
@@ -152,10 +152,10 @@ $custom_palettes: (
     'fuse-white': $fuse-white,
     'fuse-black': $fuse-black,
     'fuse-navy': $fuse-navy,
-    'purple': $tw-primary,
-    'tw-primary': $tw-primary,
-    'tw-secondary': $tw-secondary,
-    'tw-grey': $tw-grey
+    'purple': $tetherfi-primary,
+    'tetherfi-primary': $tetherfi-primary,
+    'tetherfi-secondary': $tetherfi-secondary,
+    'tetherfi-grey': $tetherfi-grey
 );
 
 @include fuse-color-classes($custom_palettes);
@@ -177,71 +177,12 @@ $typography: mat-typography-config(
 @include angular-material-typography($typography);
 
 // -----------------------------------------------------------------------------------------------------
-// @ Component theming
-// -----------------------------------------------------------------------------------------------------
-
-// Import app and page component themes here to enable theming for them
-@import 'src/app/styles/material-custom.theme';
-
-@import 'src/app/layout/components/chat-panel/chat-panel.theme';
-@import 'src/app/layout/components/toolbar/toolbar.theme';
-@import 'src/app/layout/components/theme-options/theme-options.theme';
-
-@import 'src/app/modules/core/login/login.theme';
-
-@import 'src/app/modules/t-widgets/tw-toolbar/tw-toolbar.theme';
-@import 'src/app/modules/t-widgets/tw-content/tw-content.theme';
-@import 'src/app/modules/t-widgets/tw-wrapper/tw-wrapper.theme';
-@import 'src/app/modules/t-widgets/tw-collections/tw-voice-controls/tw-voice-controls.theme';
-@import 'src/app/modules/t-widgets/tw-collections/tw-chat-controls/tw-chat-controls.theme';
-@import 'src/app/modules/t-widgets/tw-collections/tw-su-active-agents/tw-su-active-agents.theme';
-
-// Define a mixin for easier access
-@mixin components-theme($theme) {
-    $is-dark: map-get($theme, is-dark);
-    $background: map-get($theme, background);
-    $foreground: map-get($theme, foreground);
-
-    // Base colors
-    & {
-        color: map-get($foreground, text);
-
-        // If it's a light theme, use a darker background
-        // color other than the default #F5F5F5
-        @if ($is-dark) {
-            background: map-get($background, background);
-        } @else {
-            background: #f5f5f5;
-        }
-    }
-
-    // Material custom
-    @include matarial-custom-theme($theme);
-
-    // Layout components
-    @include chat-panel-theme($theme);
-    @include toolbar-theme($theme);
-    @include app-theme-options-theme($theme);
-
-    // Core components
-    @include login-theme($theme);
-
-    // T-Widgets components
-    @include tw-toolbar-theme($theme);
-    @include tw-content-theme($theme);
-    @include tw-wrapper-theme($theme);
-    @include tw-voice-controls-theme($theme);
-    @include tw-chat-controls-theme($theme);
-    @include tw-su-active-agents-theme($theme);
-}
-
-// -----------------------------------------------------------------------------------------------------
 // @ Define the default theme
 // -----------------------------------------------------------------------------------------------------
 
 // Define the primary, accent and warn palettes
-$default-primary-palette: mat-palette($tw-primary);
-$default-accent-palette: mat-palette($tw-secondary);
+$default-primary-palette: mat-palette($tetherfi-primary);
+$default-accent-palette: mat-palette($tetherfi-secondary);
 $default-warn-palette: mat-palette($mat-red);
 
 // Create the Material theme object
@@ -257,7 +198,7 @@ body.theme-default {
     @include fuse-core-theme($theme);
 
     // Apply the theme to the user components
-    @include components-theme($theme);
+    @include app-core-theme($theme);
 
     // Generate Fuse color classes for primary, accent and warn colors
     $palettes: (
@@ -274,8 +215,8 @@ body.theme-default {
 // -----------------------------------------------------------------------------------------------------
 
 // Define the primary, accent and warn palettes
-$gray-dark-theme-primary-palette: mat-palette($tw-primary);
-$gray-dark-theme-accent-palette: mat-palette($tw-grey);
+$gray-dark-theme-primary-palette: mat-palette($tetherfi-primary);
+$gray-dark-theme-accent-palette: mat-palette($tetherfi-grey);
 $gray-dark-theme-warn-palette: mat-palette($mat-red);
 
 // Create the Material theme object
@@ -290,8 +231,8 @@ body.theme-dark {
     // Apply the theme to the Fuse Core
     @include fuse-core-theme($gray-dark-theme);
 
-    // Apply the theme to the user components
-    @include components-theme($gray-dark-theme);
+    // Apply the theme to the user app core
+    @include app-core-theme($gray-dark-theme);
 
     // Generate Fuse color classes for primary, accent and warn colors
     $palettes: (

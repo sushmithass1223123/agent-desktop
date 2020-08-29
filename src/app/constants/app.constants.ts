@@ -16,3 +16,10 @@ export const CHART_COLORS: Color[] = [
 ];
 
 export const CUSTOMER_SENTIMENT_PLOT_RECORDS = 10;
+
+export const AVATAR_COLORS = [
+    '#D32F2F', // Red-700
+    '#303F9F', // Indigo-700 
+    '#00796B', // Teal-700
+    '#388E3C', // Green-700
+];

@@ -1,3 +1,6 @@
 <div class="tw-content" fusePerfectScrollbar>
-    <tw-template class="widget-grid" *ngIf="contentWidgets.length > 0" [widgets]=contentWidgets></tw-template>
+    <div class="aot-widgets">
+        <tw-template *ngFor="let item of aotWidgets" [widget]="item"></tw-template>
+    </div>
+    <tw-template class="widget-grid" *ngIf="contentWidgets.length > 0" [widgets]="contentWidgets"></tw-template>
 </div>

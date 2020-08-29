@@ -1,0 +1,76 @@
+<!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
+<!-- implement following events in your component to access widget wrapper action events -->
+<!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
+
+<!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
+
+<tw-wrapper [data]="data">
+    <!-- your code goes here -->
+    <div fxFill fxFlex fxLayout="column" fxLayoutAlign=" none" class="px-16 py-4">
+        <div fxLayout="row" fxLayoutAlign="space-between center" class="w-100-p template-selector">
+            <div fxFill fxFlex="50" class="mr-4">
+                <mat-form-field fxFill class="select-box" appearance="outline">
+                    <mat-select placeholder="Department" [(ngModel)]="selectedDepartment" (selectionChange)="onSelectDepartment($event)">
+                        <mat-option>None</mat-option>
+                        <mat-option *ngFor="let item of departments" [value]="item.ID">{{ item.Name }}</mat-option>
+                    </mat-select>
+                    <mat-error> Department is required </mat-error>
+                </mat-form-field>
+            </div>
+            <div fxFill fxFlex="50">
+                <mat-form-field fxFill class="select-box" appearance="outline">
+                    <mat-select
+                        placeholder="Groups"
+                        [disabled]="!selectedDepartment"
+                        [(ngModel)]="selectedGroup"
+                        (selectionChange)="onSelectGroups($event)"
+                    >
+                        <mat-option>None</mat-option>
+                        <mat-option *ngFor="let item of groups" [value]="item.ID">{{ item.Name }}</mat-option>
+                    </mat-select>
+                    <mat-error> Groups is required </mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+        <div fxLayout="row" class="mt-8 w-100-p template-items">
+            <div
+                *ngIf="templates.length > 0"
+                fxFlex="20"
+                fxLayout="column"
+                fxLayoutAlign=" center"
+                class="animate__animated animate__faster animate__slideInLeft"
+                fusePerfectScrollbar
+            >
+                <button
+                    mat-flat-button
+                    class="w-90-p mb-8 border-radius-10 template"
+                    [color]="template === selectedTemplate ? 'primary' : ''"
+                    *ngFor="let template of templates"
+                    (click)="onTemplateSelect(template)"
+                >
+                    {{ template.Name }}
+                </button>
+            </div>
+            <mat-form-field [fxFlex]="templates.length > 0 ? 80 : 100" floatLabel="never" appearance="standard" class="selected-template">
+                <textarea
+                    fxFlex
+                    matInput
+                    matAutosizeMinRows="1"
+                    [matTextareaAutosize]="true"
+                    placeholder="Please select a template..."
+                    [(ngModel)]="templateText"
+                    [disabled]="!selectedTemplate"
+                ></textarea>
+                <button
+                    mat-button
+                    class="select-btn bg-success border-radius-20"
+                    [disabled]="!selectedTemplate"
+                    (click)="sendTemplate(selectedTemplate)"
+                >
+                    Select
+                </button>
+            </mat-form-field>
+        </div>
+    </div>
+    <!-- your code goes here -->
+</tw-wrapper>

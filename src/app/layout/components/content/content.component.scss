@@ -3,7 +3,7 @@
 content {
     position: relative;
     display: flex;
-    z-index: 1;
+    z-index: 1000;
     flex: 1 0 auto;
 
     &.navbar-left {
@@ -49,5 +49,14 @@ content {
 
     @include media-breakpoint('xs') {
         border-radius: 0px;
+    }
+
+    .aot-widgets {
+        position: fixed;
+        z-index: 1;
+
+        tw-wrapper {
+            position: absolute;
+        }
     }
 }

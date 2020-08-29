@@ -4,6 +4,9 @@ import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { takeUntil } from 'rxjs/operators';
 import { SDKClient, GenericEvent } from 'tmac-sdk';
+import { AotWidgetService } from '@services/aot-widget.service';
+import { TwWidgetModel } from 'app/models';
+import { IWidget } from 'app/interfaces';
 
 @Component({
     selector: 'tw-agent-assist',
@@ -13,12 +16,14 @@ import { SDKClient, GenericEvent } from 'tmac-sdk';
 })
 export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     // holds all the data related to this widget from the config
-    @Input() data: any;
+    @Input() data: IWidget;
+
+    widgetData: any;
 
     eventData = {
         SubEventName: 'OnNLPDataEvent',
         JsonData:
-            '{"eventName":"OnNLPDataEvent","speechResult":"","nluResult":"{\\"intent\\":{\\"name\\":\\"Complaint\\",\\"confidence\\":0.3467572524},\\"entities\\":[],\\"intent_ranking\\":[{\\"name\\":\\"Complaint\\",\\"confidence\\":0.3467572524},{\\"name\\":\\"Clarification\\",\\"confidence\\":0.3072097413},{\\"name\\":\\"mood_unhappy\\",\\"confidence\\":0.0942083595},{\\"name\\":\\"New_Connection\\",\\"confidence\\":0.0808563845},{\\"name\\":\\"goodbye\\",\\"confidence\\":0.0785963859},{\\"name\\":\\"mood_great\\",\\"confidence\\":0.0378756104},{\\"name\\":\\"affirm\\",\\"confidence\\":0.0241965965},{\\"name\\":\\"deny\\",\\"confidence\\":0.0213421076},{\\"name\\":\\"greet\\",\\"confidence\\":0.008957562}],\\"text\\":\\"hey i have a prolem with my internet and it is keep on disconncting. How many time i should approach you guys to check this issue ?\\"}","sentimentResult":"Negative","resonseType":0,"errorMessage":null,"ucid":"Livechat200827180940_1348","agentID":"1014"}',
+            '{"eventName":"OnNLPDataEvent","speechResult":"","nluResult":"{\\"intent\\":{\\"name\\":\\"Complaint\\",\\"confidence\\":0.3467572524},\\"entities\\":[],\\"intent_ranking\\":[{\\"name\\":\\"Complaint\\",\\"confidence\\":0.3467572524},{\\"name\\":\\"Clarification\\",\\"confidence\\":0.3072097413},{\\"name\\":\\"mood_unhappy\\",\\"confidence\\":0.0942083595},{\\"name\\":\\"New_Connection\\",\\"confidence\\":0.0808563845},{\\"name\\":\\"goodbye\\",\\"confidence\\":0.0785963859},{\\"name\\":\\"mood_great\\",\\"confidence\\":0.0378756104},{\\"name\\":\\"affirm\\",\\"confidence\\":0.0241965965},{\\"name\\":\\"deny\\",\\"confidence\\":0.0213421076},{\\"name\\":\\"dice\\",\\"confidence\\":0.008957562}],\\"text\\":\\"hey i have a prolem with my internet and it is keep on disconncting. How many time i should approach you guys to check this issue ?\\"}","sentimentResult":"Negative","resonseType":0,"errorMessage":null,"ucid":"Livechat200827180940_1348","agentID":"1014"}',
         EventName: 'GenericTMACEvent',
         InteractionID: 0,
         IsInteractionConstructEvent: false,
@@ -51,7 +56,8 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         // @ [OPTIONAL]
         private _fuseConfigService: FuseConfigService,
         // @ [OPTIONAL]
-        private _appDataService: AppDataService
+        private _appDataService: AppDataService,
+        private _aotWidgetService: AotWidgetService
     ) {
         super();
     }
@@ -80,7 +86,14 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
             this.appConfig = config;
         });
-        this.setupOnNLPDataEventListener();
+
+        // assign the widget data
+        this.widgetData = this.data.Data || new Object();
+
+        // TEST
+        this.OnNLPDataEvent();
+        // register to the event
+        SDKClient.events.on('OnNLPDataEvent', this.OnNLPDataEvent);
     }
 
     /**
@@ -89,18 +102,15 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+        // de-register from the event
+        SDKClient.events.off('OnNLPDataEvent', this.OnNLPDataEvent);
     }
 
     // -----------------------------------------------------------------------------------------------------
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
 
-    private setupOnNLPDataEventListener(): void {
-        this.handleOnNLPDataEvent();
-        SDKClient.events.on('OnNLPDataEvent', this.handleOnNLPDataEvent);
-    }
-
-    private handleOnNLPDataEvent(evt?: GenericEvent): void {
+    private OnNLPDataEvent = (evt?: GenericEvent): void => {
         const receivedData = evt || this.eventData;
         if (receivedData) {
             const parsedJson = JSON.parse(receivedData.JsonData);
@@ -112,6 +122,40 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
+
+    public openAssitWidget(intent: any): void {
+        const url = this.widgetData.AssistWidgetUrl;
+
+        // check if url is provided
+        if (!url) {
+            this._appDataService.showMessage('Assist widget URL not found!');
+            return;
+        }
+
+        // get the intent name
+        const intentName = intent.name;
+
+        // get assist widget config
+        const title = `${(this.widgetData.Title || 'Custom')} - ${intentName}`;
+        const icon = this.widgetData.Icon || '';
+        const width = this.widgetData.Width || 500;
+        const height = this.widgetData.Height || 500;
+        const actions = this.widgetData.Actions || ['destroy'];
+        const viewState = this.widgetData.ViewState || 'restore';
+
+        // create a widget model
+        const widget = new TwWidgetModel(title, 'tw-custom', icon);
+        widget.Config.AOT = true;
+        widget.Config.Position.W = width;
+        widget.Config.Position.H = height;
+        widget.Config.Actions = actions;
+        widget.Config.ViewState = viewState;
+        widget.Data.Url = url + intentName;
+
+        // add to AOT widget service
+        this._aotWidgetService.addWidget(widget);
+    }
+
 }
 
 // for more info visit - https://angular.io/api/core

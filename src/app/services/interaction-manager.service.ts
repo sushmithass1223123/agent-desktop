@@ -41,13 +41,13 @@ export class InteractionManagerService {
 
         console.log('InteractionManagerService', payload);
 
-        // Get the value from the behavior subject
+        // get the value from the behavior subject
         const interactions = this._interactionsSubject.getValue();
 
         // push the new content
         interactions.push(payload);
 
-        // Notify the observers
+        // notify the observers
         this._interactionsSubject.next(interactions);
     }
 
@@ -101,7 +101,7 @@ export class InteractionManagerService {
             return currentItem;
         });
 
-        // Notify the observers if updated
+        // notify the observers if updated
         if (updated) {
             this._interactionsSubject.next(updatedInteractions);
         }
@@ -112,12 +112,17 @@ export class InteractionManagerService {
         let interactions = this._interactionsSubject.getValue();
         const currentCount = interactions.length;
 
+        // if there are no interaction for this id return
+        if (currentCount === 0) {
+            return;
+        }
+
         // filter the interaction by id
         interactions = interactions.filter((i: InteractionRef) => i.interactionId !== interactionId);
 
         // check if any item is removed
         if (interactions.length !== currentCount) {
-            // Notify the observers
+            // notify the observers
             this._interactionsSubject.next(interactions);
         }
     }

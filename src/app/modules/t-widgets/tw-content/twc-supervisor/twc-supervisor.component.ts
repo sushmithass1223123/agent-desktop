@@ -1,5 +1,4 @@
 import { Component, ElementRef, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { TWLibrary } from '@twidgets/utils/widget-library/tw-library';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { IWidget } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
@@ -12,7 +11,7 @@ import { ContentPageService } from 'app/services/content-page.service';
 })
 export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, OnDestroy {
 
-    @Input() data: any;
+    @Input() data: IWidget;
 
     supervisorWidgets = [];
 
@@ -25,24 +24,14 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
 
     ngOnInit(): void {
         this.initWrapper(this.data);
+        // call the wrapper init method
 
         // get the content widgets
-        const widgets = this.data.Data.Widgets || [];
-        // loop and get the widgets
-        widgets.forEach((widget: IWidget) => {
-            // get the widget component by type
-            const component = TWLibrary.getWidget(widget.Type, widget);
-            // check if the component is proper
-            if (component) {
-                // append the widget component to the list
-                this.supervisorWidgets.push(component);
-            }
-        });
+        this.supervisorWidgets = this.data.Data.Widgets || [];
     }
-
 
     ngOnDestroy(): void {
+        // call the wrapper destroy method
         this.destroyWrapper();
     }
-
 }

@@ -2,6 +2,8 @@ import { HostBinding, ElementRef, Directive } from '@angular/core';
 import { ContentPageService } from '@services/content-page.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { IWidget } from 'app/interfaces';
+import { TUtils } from 'tmac-sdk';
 
 @Directive()
 // tslint:disable-next-line: directive-class-suffix
@@ -9,6 +11,7 @@ export class TWContentWrapper {
 
     @HostBinding('class') class = 'twc-card animate__animated animate__zoomIn animate__faster';
     @HostBinding('style') style = '';
+    @HostBinding('id') id = '';
 
     widgetData: any;
 
@@ -24,11 +27,19 @@ export class TWContentWrapper {
         this.pageActive = false;
     }
 
-    initWrapper(data: any): void {
+    initWrapper(data: IWidget): void {
         // check if the data is null
         if (!data) {
             console.warn('TWContentWrapper: data us null');
             return;
+        }
+
+        // check if any id is appended, if not add here
+        if (!data.ID) {
+            // get new id from uuid
+            data.ID = TUtils.Generic.uuid();
+            // append id to the tag
+            this.id = data.ID;
         }
 
         // add display none to the host element

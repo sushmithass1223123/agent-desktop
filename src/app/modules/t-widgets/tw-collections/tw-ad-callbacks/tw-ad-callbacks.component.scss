@@ -1,5 +1,3 @@
-@import 'src/app/styles/colors';
-
 tw-ad-callbacks {
     .callbacks {
         padding: 10px;
@@ -20,17 +18,6 @@ tw-ad-callbacks {
                 font-size: 16px;
                 padding: 16px;
                 margin: 10px;
-            }
-        }
-
-        .handled {
-            button {
-                background-color: $tw-success;
-            }
-        }
-        .missed {
-            button {
-                background-color: $tw-danger;
             }
         }
     }

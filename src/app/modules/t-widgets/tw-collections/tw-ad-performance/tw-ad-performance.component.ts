@@ -64,7 +64,7 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
     };
 
     private performanceChartRef: BaseChartDirective;
-    @ViewChild(BaseChartDirective) set setChartRef(content) {
+    @ViewChild(BaseChartDirective) set setChartRef(content: any) {
         if (content) {
             this.performanceChartRef = content;
         }
@@ -134,7 +134,7 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
 
     setChartData(): void {
         if (!this.data.Data.AgentProgressUrl) {
-            this.gamificationReqStatus = { loading: false, error: true, msg: 'AgentProgressUrl not provided in app config' };
+            this.gamificationReqStatus = { loading: false, error: true, msg: 'AgentProgressUrl is not provided in app config' };
             return;
         }
         this.gamificationService.getAgentProgress(this.data.Data.AgentProgressUrl, '1014').subscribe(

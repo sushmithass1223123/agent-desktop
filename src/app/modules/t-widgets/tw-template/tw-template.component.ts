@@ -1,5 +1,6 @@
 import { AfterContentInit, Component, ComponentFactoryResolver, Input, ViewChild } from '@angular/core';
-import { TWidget } from '@twidgets/utils';
+import { TWContentLibrary, TWidget, TWLibrary } from '@twidgets/utils';
+import { IWidget } from 'app/interfaces';
 import { TwTemplateDirective } from './tw-template.directive';
 
 
@@ -10,7 +11,13 @@ import { TwTemplateDirective } from './tw-template.directive';
 })
 export class TwTemplateComponent implements AfterContentInit {
 
-    @Input() widgets: TWidget[];
+    // widget list loader
+    @Input() widgets: IWidget[];
+
+    // single widget loader
+    @Input() set widget(widget: IWidget) {
+        this.loadComponent(widget);
+    }
 
     @ViewChild(TwTemplateDirective, { static: true }) widgetTemplate: TwTemplateDirective;
 
@@ -19,28 +26,48 @@ export class TwTemplateComponent implements AfterContentInit {
     ) { }
 
     ngAfterContentInit(): void {
-        // load the components
-        this.loadComponent();
+        // loop throught input widgets
+        this.widgets?.forEach((widget: IWidget) => {
+            // load the components
+            this.loadComponent(widget);
+        });
     }
 
-    private loadComponent(): void {
-        // loop throught input widgets
-        this.widgets.forEach((widget) => {
+    private loadComponent(widgetModel: IWidget): void {
+        let widget: TWidget = null;
 
-            // console.log(`TwTemplateComponent: ${widget.data.Type}`, widget);
+        // null check
+        if (!widgetModel) {
+            console.warn('TwTemplateComponent: widget model is null!');
+        }
 
-            // create the component factory
-            const componentFactory = this._componentFactoryResolver.resolveComponentFactory(widget.component);
+        // get the widget component by type 
+        if (widgetModel.Type.startsWith('twc-')) {
+            // content type
+            widget = TWContentLibrary.getWidget(widgetModel.Type, widgetModel);
+        }
+        else if (widgetModel.Type.startsWith('tw-')) {
+            // basic widget
+            widget = TWLibrary.getWidget(widgetModel.Type, widgetModel);
+        }
+        else {
+            console.warn(`TwTemplateComponent: widget type [${widgetModel.Type}] is not supported!`);
+            return;
+        }
 
-            // get the view container reference from widget host
-            const viewContainerRef = this.widgetTemplate.viewContainerRef;
+        // console.log(`TwTemplateComponent: ${widget.data.Type}`, widget);
 
-            // add the component to the view
-            const componentRef = viewContainerRef.createComponent(componentFactory);
+        // create the component factory
+        const componentFactory = this._componentFactoryResolver.resolveComponentFactory(widget.component);
 
-            // add the data params
-            componentRef.instance.data = widget.data;
-        });
+        // get the view container reference from widget host
+        const viewContainerRef = this.widgetTemplate.viewContainerRef;
+
+        // add the component to the view
+        const componentRef = viewContainerRef.createComponent(componentFactory);
+
+        // add the data params
+        componentRef.instance.data = widgetModel;
     }
 
 }

@@ -1,4 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
+import { FuseConfig } from '@fuse/types';
+import { IWidget } from 'app/interfaces';
+import { AotWidgetService } from '@services/aot-widget.service';
 
 @Component({
     selector: 'tw-card-header',
@@ -7,17 +10,17 @@ import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } fro
     encapsulation: ViewEncapsulation.None
 })
 export class TwCardHeaderComponent implements OnInit {
-    @Input() data: any;
-
-    @Input() fuseConfig: any;
-
+    @Input() data: IWidget;
+    @Input() fuseConfig: FuseConfig;
     @Input() widgetState: Record<string, boolean>;
 
     @Output() maximize = new EventEmitter();
     @Output() float = new EventEmitter();
     @Output() collapse = new EventEmitter();
 
-    constructor() { }
+    constructor(
+        private _aotWidgetService: AotWidgetService
+    ) { }
 
     ngOnInit(): void { }
 
@@ -31,5 +34,14 @@ export class TwCardHeaderComponent implements OnInit {
 
     collapseWidget(): void {
         this.collapse.emit();
+    }
+
+    destroyAOTWidget(): void {
+        // get widget id
+        const id = this.data.ID;
+        // check if id is available, then call destroy
+        if (id) {
+            this._aotWidgetService.destroyWidget(id);
+        }
     }
 }

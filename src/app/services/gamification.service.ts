@@ -1,8 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
 import { ResGamification } from 'app/models';
-import { AppDataService } from './app-data.service';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Injectable({
@@ -12,10 +11,7 @@ export class GamificationService {
     private leaderboard = new BehaviorSubject<ResGamification[]>(null);
 
     constructor(private httpClient: HttpClient) {
-        // this.fetchLeaderBoard();
-        // appDataService.config.subscribe((res) => {
-        //     console.log({ res });
-        // });
+
     }
 
     fetchLeaderBoard(url: string): Observable<ResGamification[]> {
