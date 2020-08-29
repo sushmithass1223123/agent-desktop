@@ -31,6 +31,8 @@ import { TwVoicePanelComponent } from '@modules/t-widgets/tw-collections/tw-voic
 import { TwWallboardComponent } from '@modules/t-widgets/tw-collections/tw-wallboard/tw-wallboard.component';
 import { TWidget } from '../t-widget';
 import { TwVoiceControlsComponent } from '@modules/t-widgets/tw-collections/tw-voice-controls/tw-voice-controls.component';
+import { TwAgentAssistComponent } from '@modules/t-widgets/tw-collections/tw-agent-assist/tw-agent-assist.component';
+import { TwCustomerSentimentComponent } from '@modules/t-widgets/tw-collections/tw-customer-sentiment/tw-customer-sentiment.component';
 
 export class TWLibrary {
     static widgetLibrary: Record<string, Type<any>> = {
@@ -63,7 +65,9 @@ export class TWLibrary {
         'tw-ad-performance': TwAdPerformanceComponent,
         'tw-ad-gamification': TwAdGamificationComponent,
         'tw-ad-customer-journey': TwCustomerJourneyComponent,
-        'tw-su-gamification': TwSuGamificationComponent
+        'tw-su-gamification': TwSuGamificationComponent,
+        'tw-agent-assist': TwAgentAssistComponent,
+        'tw-customer-sentiment': TwCustomerSentimentComponent
     };
 
     public static getAllWidgets(): Record<string, Type<any>> {

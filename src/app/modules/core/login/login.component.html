@@ -18,6 +18,11 @@
                 />
             </div>
 
+            <div *ngIf="faceAuthEnabled && selfVideo" class="self-view animate__animated animate__zoomIn animate__faster">
+                <video #video autoplay playsinline="true" [muted]="true" [srcObject]="selfVideo"></video>
+                <span class="face-shape"></span>
+            </div>
+
             <form name="loginForm" [formGroup]="loginForm" novalidate>
                 <mat-form-field class="form-field" appearance="outline" *ngIf="domainListEnabled">
                     <mat-select placeholder="DOMAIN LIST" formControlName="domain">

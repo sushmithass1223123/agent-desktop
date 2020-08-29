@@ -3,13 +3,18 @@
 <!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
 <tw-wrapper tChart [data]="data">
     <!-- your code goes here -->
-    <div *ngIf="!loading" fxFlex fxFill fxLayout="row" class="h-100-p w-100-p p-8 p-relative">
+    <div *ngIf="!gamificationReqStatus.loading && !gamificationReqStatus.error" fxFlex fxFill fxLayout="row" class="h-100-p w-100-p p-8 p-relative">
         <canvas baseChart [datasets]="performanceChart.data" [labels]="performanceChart.labels" [options]="performanceChart.options" chartType="bar">
         </canvas>
     </div>
 
-    <div *ngIf="loading" fxLayout fxLayouAlign="center center" class="w-100-p h-100-p">
+    <div *ngIf="gamificationReqStatus.loading" fxLayout fxLayoutAlign="center center" class="w-100-p h-100-p">
         <mat-spinner></mat-spinner>
+    </div>
+
+    <div *ngIf="gamificationReqStatus.error" fxLayout="column" fxLayoutAlign="center center" class="w-100-p h-100-p">
+        <p>{{ gamificationReqStatus.msg }}</p>
+        <button mat-raised-button color="primary" (click)="setChartData()">Retry</button>
     </div>
 
     <!-- your code goes here -->
