@@ -3,7 +3,7 @@ import { FuseConfigService } from '@fuse/services/config.service';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient } from 'tmac-sdk';
+import { SDKClient, GenericEvent } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-agent-assist',
@@ -91,12 +91,16 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         this.destroyWrapper();
     }
 
-    setupOnNLPDataEventListener(): void {
+    // -----------------------------------------------------------------------------------------------------
+    // @  Private Methods
+    // -----------------------------------------------------------------------------------------------------
+
+    private setupOnNLPDataEventListener(): void {
         this.handleOnNLPDataEvent();
         SDKClient.events.on('OnNLPDataEvent', this.handleOnNLPDataEvent);
     }
 
-    handleOnNLPDataEvent(evt?: any): void {
+    private handleOnNLPDataEvent(evt?: GenericEvent): void {
         const receivedData = evt || this.eventData;
         if (receivedData) {
             const parsedJson = JSON.parse(receivedData.JsonData);
@@ -104,10 +108,6 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
             this.nlpCurrentData = { ...receivedData, JsonData: { ...parsedJson, nluResult: parsedNlu } };
         }
     }
-
-    // -----------------------------------------------------------------------------------------------------
-    // @  Private Methods
-    // -----------------------------------------------------------------------------------------------------
 
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods

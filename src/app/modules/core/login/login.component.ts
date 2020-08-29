@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation, Renderer2, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -22,6 +22,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     // Private
     private _unsubscribeAll: Subject<any>;
 
+    @ViewChild('video', { static: false }) videoElement: ElementRef;
+
     appConfig: any;
     brandLogo = null;
     loginForm: FormGroup;
@@ -31,6 +33,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     logoWidth = 0;
     logoHeight = 0;
 
+    faceAuthEnabled = false;
+    faceAuthServerUrl = '';
     domainListEnabled = false;
     promptAgentIdOnInvalidLanId = false;
     agentIdEnabled = false;
@@ -46,13 +50,15 @@ export class LoginComponent implements OnInit, OnDestroy {
     loading = false;
     version = '';
 
+    selfVideo: MediaStream;
+
     constructor(
         private _fuseConfigService: FuseConfigService,
         private _formBuilder: FormBuilder,
         private _appDataService: AppDataService,
         private _router: Router,
         private _dialog: MatDialog,
-        private _snackBar: MatSnackBar
+        private _snackBar: MatSnackBar,
     ) {
         // Configure the layout
         this._fuseConfigService.config = {
@@ -93,6 +99,12 @@ export class LoginComponent implements OnInit, OnDestroy {
         });
 
         this.loadConfig();
+
+        // open self view if face auth is enabled
+        if (this.faceAuthEnabled) {
+            this.startCamera();
+        }
+
         this.getData();
     }
 
@@ -129,6 +141,8 @@ export class LoginComponent implements OnInit, OnDestroy {
             this.logoWidth = config.AppConfigs.Logos.Customer.Large.Width;
             this.logoHeight = config.AppConfigs.Logos.Customer.Large.Height;
 
+            this.faceAuthEnabled = config.Login.FaceAuth?.Enabled;
+            this.faceAuthServerUrl = config.Login.FaceAuth?.AuthServerUrl;
             this.domainListEnabled = config.Login.DomainListEnabled;
             this.passwordEnabled = config.Login.PasswordEnabled;
             this.stationEnabled = config.Login.StationEnabled;
@@ -164,6 +178,89 @@ export class LoginComponent implements OnInit, OnDestroy {
         }
     }
 
+    private startCamera(): void {
+        // capture selfview
+        navigator.getUserMedia(
+            {
+                audio: false,
+                video: true
+            },
+            (stream: MediaStream) => {
+                this.selfVideo = stream;
+            },
+            (error: MediaStreamError) => {
+                this.showMessage(error.message);
+            }
+        );
+    }
+
+    private async doFaceAuthentication(): Promise<boolean> {
+        // create a canvas
+        const canvas = document.createElement('canvas');
+        // scale the canvas accordingly
+        canvas.width = this.videoElement.nativeElement.videoWidth;
+        canvas.height = this.videoElement.nativeElement.videoHeight;
+        // get the context
+        const ctx = canvas.getContext('2d');
+        // draw the canvas
+        ctx.drawImage(this.videoElement.nativeElement, 0, 0, canvas.width, canvas.height);
+        // get base64 url
+        const base64 = canvas.toDataURL();
+
+        if (!base64) {
+            // face authentication failed
+            this.showMessage('Login failed, Unable to capture image, make sure you provide access to camera');
+            return false;
+        }
+
+        // send request to face auth server
+        const result: any = await TUtils.HttpClient.sendRequest(this.faceAuthServerUrl, {
+            snapdata: base64.split(',')[1],
+            snaptype: 'base64',
+            pptype: 'url',
+            agentId: this.loginForm.get('lanId').value,
+            originator: 'TMACUI',
+            ppdata: `${this.loginForm.get('lanId').value}.png`,
+            isrealface: 1
+        });
+
+        // check for valid response from server
+        if (!result) {
+            this.showMessage('Login failed, Unable to reach face authentication server. Please contact the administrator.');
+            return false;
+        }
+
+        // check the response
+        if (result.response && result.response.d) {
+            // parse the response 
+            const response = JSON.parse(result.response.d);
+            // check if the returned data has face authentication properties
+            if (!response.hasOwnProperty('face_found_in_image') ||
+                !response.hasOwnProperty('face_authenticated_percentage')) {
+                // login error
+                this.showMessage('Error in face authentication');
+                return false;
+            }
+
+            // check if the response
+            if (response.face_found_in_image === true && response.face_authenticated_percentage >= 80 && response.face_isreal === 1) {
+                // face authentication sucess
+                this.showMessage('Face authentication success, trying to login');
+                return true;
+            }
+            else {
+                // face authentication failed
+                this.showMessage('Face authentication failed');
+                return false;
+            }
+        }
+        else {
+            // login error
+            this.showMessage('Face authentication: Invalid response from server');
+            return false;
+        }
+    }
+
     // to get data from server
     private getData(): void {
         // get the TMAC server version
@@ -187,9 +284,15 @@ export class LoginComponent implements OnInit, OnDestroy {
         }
     }
 
-    public login(force: boolean): void {
+    public async login(force: boolean): Promise<void> {
         // set loading to true
         this.loading = true;
+
+        // check if face auth is needed 
+        if (this.faceAuthEnabled && !await this.doFaceAuthentication()) {
+            this.loading = false;
+            return;
+        }
 
         const selectedDomain = this.loginForm.get('domain').value;
         const lanId = this.loginForm.get('lanId').value;
