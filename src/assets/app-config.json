@@ -5,7 +5,7 @@
             "Type": "pbxms"
         },
         "FaceAuth": {
-            "Enabled": true,
+            "Enabled": false,
             "AuthServerUrl": "https://tmac.tetherfilabs.com/TFaceAuthProxyNew/Proxy.asmx/VerifyFaceImages"
         },
         "DomainListEnabled": false,

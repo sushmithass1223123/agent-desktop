@@ -1,44 +1,35 @@
 <tw-wrapper [data]="data">
     <div class="w-100-p bg-inherit mat-table-container" [ngClass]="this.source === 'supervisor' ? 'h-100-p' : 'h-50-p'" fusePerfectScrollbar>
-        <table
-            mat-table
-            [dataSource]="dataSource"
-            matSort
-            class="mat-elevation-z0"
-            matSortActive="CallsInQueue"
-            matSortDirection="desc"
-            matSortDisableClear
-        >
-            <!--- Note that these columns can be defined in any order.
-              The actual rendered columns are set as a property on the row definition" -->
-
-            <!-- Position Column -->
+        <mat-table matSort [dataSource]="dataSource" matSortActive="CallsInQueue" matSortDirection="desc" matSortDisableClear>
+            <!-- User name Definition -->
             <ng-container matColumnDef="SkillName">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Skill Name</th>
-                <td mat-cell *matCellDef="let element">{{ element.SkillName }}</td>
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Skill Name </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{ row.SkillName }} </mat-cell>
             </ng-container>
 
-            <!-- Name Column -->
+            <!-- Age Definition -->
             <ng-container matColumnDef="AgentsStaffed">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Agents Staffed</th>
-                <td mat-cell *matCellDef="let element">{{ element.AgentsStaffed }}</td>
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Agents Staffed </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{ row.AgentsStaffed }} </mat-cell>
             </ng-container>
 
-            <!-- Weight Column -->
+            <!-- Title Definition -->
             <ng-container matColumnDef="AgentAvailable">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Agents Available</th>
-                <td mat-cell *matCellDef="let element">{{ element.AgentAvailable }}</td>
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Agents Available </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{ row.AgentAvailable }} </mat-cell>
             </ng-container>
 
-            <!-- Symbol Column -->
+            <!-- Title Definition -->
             <ng-container matColumnDef="CallsInQueue">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Calls in Queue</th>
-                <td mat-cell *matCellDef="let element">{{ element.CallsInQueue }}</td>
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Calls In Queue </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{ row.CallsInQueue }} </mat-cell>
             </ng-container>
 
-            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-        </table>
+            <!-- Header and Row Declarations -->
+            <mat-header-row *matHeaderRowDef="['SkillName', 'AgentsStaffed', 'AgentAvailable', 'CallsInQueue']; sticky: true"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: ['SkillName', 'AgentsStaffed', 'AgentAvailable', 'CallsInQueue']"></mat-row>
+        </mat-table>
+
         <p *ngIf="dataSource.data.length === 0" class="text-center m-0 font-size-16">No data available</p>
     </div>
 

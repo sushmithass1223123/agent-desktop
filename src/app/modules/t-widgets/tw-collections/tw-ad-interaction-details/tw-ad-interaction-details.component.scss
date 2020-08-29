@@ -1,14 +1,11 @@
 tw-ad-interaction-details {
-    mat-icon {
-        &.channel-icon {
-            line-height: 1.5;
+    mat-table {
+        mat-header-row {
+            min-height: 30px;
         }
     }
 
     .status {
-        display: block;
-        background-size: 80%;
-        background-position: center center;
         margin: 4px auto;
         border-radius: 20px;
 
