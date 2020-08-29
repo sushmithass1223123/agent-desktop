@@ -1,10 +1,10 @@
 import { Component, EventEmitter, HostBinding, Input, OnDestroy, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { FuseConfigService } from '@fuse/services/config.service';
+import { FuseConfig } from '@fuse/types';
 import { IWidget } from 'app/interfaces';
+import { TwWidgetModel } from 'app/models';
 import { Subject } from 'rxjs/internal/Subject';
 import { takeUntil } from 'rxjs/operators';
-import { FuseConfig } from '@fuse/types';
-import { TwWidgetModel } from 'app/models';
 
 @Component({
     selector: 'tw-wrapper',

@@ -2,9 +2,9 @@ import { Component, Input, OnDestroy, OnInit, ViewEncapsulation, ViewChild } fro
 import { FuseConfigService } from '@fuse/services/config.service';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { TChartConfig } from 'app/models';
+import { TChartConfig, ResStatus } from 'app/models';
 import { takeUntil } from 'rxjs/operators';
-import { chartColors } from 'app/constants';
+import { CHART_COLORS } from 'app/constants';
 import { BaseChartDirective } from 'ng2-charts';
 import { GamificationService } from '@services/gamification.service';
 
@@ -56,7 +56,12 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
             }
         }
     };
-    loading = true;
+
+    gamificationReqStatus: ResStatus = {
+        error: false,
+        loading: true,
+        msg: ''
+    };
 
     private performanceChartRef: BaseChartDirective;
     @ViewChild(BaseChartDirective) set setChartRef(content: any) {
@@ -129,39 +134,48 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
 
     setChartData(): void {
         if (!this.data.Data.AgentProgressUrl) {
-            // this.loading = false;
+            this.gamificationReqStatus = { loading: false, error: true, msg: 'AgentProgressUrl is not provided in app config' };
+            return;
         }
+        this.gamificationService.getAgentProgress(this.data.Data.AgentProgressUrl, '1014').subscribe(
+            (res) => {
+                try {
+                    this.gamificationReqStatus.loading = false;
+                    const metrics = JSON.parse(res.d);
+                    let labels = [];
+                    let datasets = {
+                        PointsAssigned: [],
+                        RequiredPointsForNextBadge: []
+                    };
 
-        this.gamificationService.getAgentProgress(this.data.Data.AgentProgressUrl, '1014').subscribe((res) => {
-            this.loading = false;
-            const metrics = JSON.parse(res.d);
-            let labels = [];
-            let datasets = {
-                PointsAssigned: [],
-                RequiredPointsForNextBadge: []
-            };
+                    metrics.forEach((m) => {
+                        labels.push(m.MetricName);
+                        datasets.PointsAssigned.push(m.PointsAssigned);
+                        datasets.RequiredPointsForNextBadge.push(m.PointsAssigned + m.RequiredPointsForNextBadge);
+                    });
 
-            metrics.forEach((m: any) => {
-                labels.push(m.MetricName);
-                datasets.PointsAssigned.push(m.PointsAssigned);
-                datasets.RequiredPointsForNextBadge.push(m.PointsAssigned + m.RequiredPointsForNextBadge);
-            });
+                    this.performanceChart.labels = labels;
+                    Object.keys(datasets).forEach((d, i) => {
+                        this.performanceChart.data.push({
+                            data: datasets[d],
+                            label: d,
+                            barPercentage: 0.2,
+                            backgroundColor: CHART_COLORS[i].backgroundColor,
+                            hoverBackgroundColor: CHART_COLORS[i].hoverBackgroundColor
+                        });
+                    });
 
-            this.performanceChart.labels = labels;
-            Object.keys(datasets).forEach((d, i) => {
-                this.performanceChart.data.push({
-                    data: datasets[d],
-                    label: d,
-                    backgroundColor: chartColors[i],
-                    hoverBackgroundColor: chartColors[i],
-                    barPercentage: 0.2
-                });
-            });
-
-            setTimeout(() => {
-                (this.performanceChartRef as any).refresh();
-            }, 10);
-        });
+                    setTimeout(() => {
+                        (this.performanceChartRef as any).refresh();
+                    }, 10);
+                } catch (e) {
+                    this.gamificationReqStatus = { loading: false, error: true, msg: 'Looks like something went wrong' };
+                }
+            },
+            (err) => {
+                this.gamificationReqStatus = { loading: false, error: true, msg: 'Something went wrong while fetching progress' };
+            }
+        );
     }
 }
 

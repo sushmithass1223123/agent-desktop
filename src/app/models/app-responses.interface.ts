@@ -1,3 +1,9 @@
+export interface ResStatus {
+    loading: boolean;
+    error: boolean;
+    msg: string;
+}
+
 export interface ResGamification {
     AgentId: string;
     AgentName: string;

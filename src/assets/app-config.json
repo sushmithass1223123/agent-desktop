@@ -1,9 +1,12 @@
 {
     "Login": {
-        "AuthType": "credential",
         "Modes": {
             "Enabled": true,
             "Type": "pbxms"
+        },
+        "FaceAuth": {
+            "Enabled": true,
+            "AuthServerUrl": "https://tmac.tetherfilabs.com/TFaceAuthProxyNew/Proxy.asmx/VerifyFaceImages"
         },
         "DomainListEnabled": false,
         "PasswordEnabled": false,
@@ -1491,21 +1494,20 @@
                                 "Data": {}
                             },
                             {
-                                "Name": "Heat Map",
+                                "Name": "Agent Assist",
                                 "Description": "",
-                                "Type": "tw-heat-map",
+                                "Type": "tw-agent-assist",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
                                     "AOT": false,
-                                    "Icon": "",
+                                    "Icon": "verified_user",
                                     "Class": "",
                                     "Position": {
                                         "X": 1,
                                         "Y": 2
                                     },
                                     "Actions": [
-                                        "maximize",
                                         "pin",
                                         "float"
                                     ],
@@ -1516,7 +1518,19 @@
                                     "Header": true,
                                     "Disabled": false
                                 },
-                                "Data": {}
+                                "Data": {
+                                    "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr/chat?intent=",
+                                    "Title": "Visual IVR",
+                                    "Icon": "assistant",
+                                    "Width": 450,
+                                    "Height": 700,
+                                    "Actions": [
+                                        "minimize",
+                                        "maximize",
+                                        "destroy"
+                                    ],
+                                    "ViewState": "restore"
+                                }
                             }
                         ]
                     }

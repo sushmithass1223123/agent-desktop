@@ -1,8 +1,9 @@
-import { ChartDataSets, ChartOptions } from 'chart.js';
-import { Label } from 'ng2-charts';
+import { ChartDataSets, ChartOptions, ChartColor } from 'chart.js';
+import { Label, Color } from 'ng2-charts';
 
 export interface TChartConfig {
     data: ChartDataSets[];
-    labels: Label;
-    options: ChartOptions;
+    labels?: Label | number[];
+    options: ChartOptions & { setFeedbackEmoji?: boolean };
+    colors?: Color[];
 }

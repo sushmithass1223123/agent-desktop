@@ -27,28 +27,40 @@
     <button
         *ngIf="data.Config.Actions.includes('maximize') && !widgetState.floating && !widgetState.maximized"
         mat-icon-button
+        matTooltip="Maximize"
         (click)="maximizeWidget()"
     >
         <mat-icon>fullscreen</mat-icon>
     </button>
 
-    <button *ngIf="data.Config.Actions.includes('float') && !widgetState.floating && !widgetState.maximized" mat-icon-button (click)="floatWidget()">
+    <button
+        *ngIf="data.Config.Actions.includes('float') && !widgetState.floating && !widgetState.maximized"
+        mat-icon-button
+        matTooltip="Float"
+        (click)="floatWidget()"
+    >
         <mat-icon>picture_in_picture</mat-icon>
+    </button>
+
+    <button
+        *ngIf="widgetState.floating || widgetState.maximized"
+        mat-icon-button
+        matTooltip="Restore"
+        (click)="widgetState.floating ? floatWidget() : maximizeWidget()"
+    >
+        <mat-icon>close_fullscreen</mat-icon>
     </button>
 
     <button
         *ngIf="data.Config.Actions.includes('minimize') || widgetState.floating || widgetState.maximized"
         mat-icon-button
+        [matTooltip]="widgetState.collapsed ? 'Expand' : 'Collapse'"
         (click)="collapseWidget()"
     >
         <mat-icon [ngClass]="{ 'rotate-180': !widgetState.collapsed }">expand_more</mat-icon>
     </button>
 
-    <button *ngIf="widgetState.floating || widgetState.maximized" mat-icon-button (click)="widgetState.floating ? floatWidget() : maximizeWidget()">
-        <mat-icon>close</mat-icon>
-    </button>
-
-    <button *ngIf="data.Config.Actions.includes('destroy')" mat-icon-button (click)="destroyAOTWidget()">
+    <button *ngIf="data.Config.Actions.includes('destroy')" mat-icon-button matTooltip="Close" (click)="destroyAOTWidget()">
         <mat-icon>close</mat-icon>
     </button>
 </mat-card-header>

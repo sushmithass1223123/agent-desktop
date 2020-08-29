@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewEncapsulation, Input } from '@angular/core';
-import { avatarColors } from 'app/constants';
+import { AVATAR_COLORS } from 'app/constants';
 @Component({
     selector: 'avatar',
     templateUrl: './avatar.component.html',
@@ -26,7 +26,7 @@ export class AvatarComponent implements OnInit {
     public showInitials = false;
     public initials: string;
 
-    private colors = avatarColors;
+    private colors = AVATAR_COLORS;
 
     ngOnInit(): void {
 

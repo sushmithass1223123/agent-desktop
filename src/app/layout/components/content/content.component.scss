@@ -3,7 +3,7 @@
 content {
     position: relative;
     display: flex;
-    z-index: 1;
+    z-index: 1000;
     flex: 1 0 auto;
 
     &.navbar-left {
@@ -52,6 +52,7 @@ content {
     }
 
     .aot-widgets {
+        position: fixed;
         z-index: 1;
 
         tw-wrapper {

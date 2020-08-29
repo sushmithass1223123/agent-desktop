@@ -109,19 +109,16 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         this.interactionId = this.data.InteractionDetails.InteractionID;
 
         // subscribe to fuse
-        this._fuseConfigService.config
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(
-                (config: any) => {
-                    this.fuseConfig = config;
-                });
+        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+            this.fuseConfig = config;
+        });
 
         this.historyParams = {
             cif: '',
             email: '',
             nric: '',
             phone: '',
-            noOfRecords: this.customerJourneyTable && this.customerJourneyTable.tableData.source.paginator?.pageSize.toString() || '5',
+            noOfRecords: (this.customerJourneyTable && this.customerJourneyTable.tableData.source.paginator?.pageSize.toString()) || '5',
             lastId: '0'
         };
 
@@ -143,14 +140,15 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         SDKClient.events.off('InteractionHistoryReadyEvent', this.InteractionHistoryReadyEvent);
     }
 
-    private InteractionHistoryReadyEvent = (evt: InteractionHistoryReadyEvent) => {
+    InteractionHistoryReadyEvent = (evt: InteractionHistoryReadyEvent): void => {
+        const noOfRecords = this.customerJourneyTable.tableData.source.paginator?.pageSize.toString() || '5';
         // assign the history params
         this.historyParams = {
             cif: evt.HistoryParameters.CIF,
             email: evt.HistoryParameters.EmailID,
             nric: evt.HistoryParameters.NRIC,
             phone: evt.HistoryParameters.PhoneNumber,
-            noOfRecords: this.customerJourneyTable && this.customerJourneyTable.tableData.source.paginator?.pageSize.toString() || '5',
+            noOfRecords,
             lastId: '0'
         };
         // get history
@@ -159,7 +157,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
 
     private getInteractionHistory(lastId?: string): void {
         SDKClient.getInteractionHistory(lastId ? { ...this.historyParams, lastId } : this.historyParams, null)
-            .then((res) => {
+            .then((res: any) => {
                 let tableData = [];
                 if (lastId) {
                     tableData = uniqBy([...this.customerJourneyTable.tableData.source.data, ...sortBy(res.response, 'ItemID')], 'SessionID');
@@ -170,7 +168,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 this.customerJourneyTable.lastId = res.response[0]?.LastIndex;
                 this.customerJourneyTable.loading = false;
             })
-            .catch((err) => {
+            .catch((err: string) => {
                 console.log({ err });
                 this.customerJourneyTable.loading = false;
             });

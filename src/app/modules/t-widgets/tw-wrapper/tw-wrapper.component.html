@@ -6,11 +6,11 @@
 <!-- Widget card -->
 <tw-card
     cdkDrag
-    cdkDragBoundary=".tw-content"
-    [cdkDragDisabled]="!data.Config.AOT"
+    cdkDragBoundary=".main"
+    [cdkDragDisabled]="!aot || maximized"
     [cdkDragFreeDragPosition]="dragPosition"
     class="tw-card animate__animated animate__faster {{
-        data.Config.Class + ' ' + (data.Config.Static ? 'tw-static-widget' : '') + ' ' + (maximized || data.Config.AOT ? 'animate__zoomIn' : '')
+        data.Config.Class + ' ' + (data.Config.Static ? 'tw-static-widget' : '') + ' ' + (maximized ? 'animate__zoomIn' : '')
     }}"
     [ngClass]="{ collapsed: collapsed, maximized: maximized, floating: floating, hidden: hidden, aot: aot }"
     [ngStyle]="{ 'width.px': data.Config.Position.W, 'height.px': data.Config.Position.H }"
@@ -19,7 +19,7 @@
     <mat-card
         cdkDrag
         cdkDragBoundary=".widget-grid"
-        [cdkDragDisabled]="!floating"
+        [cdkDragDisabled]="aot || !floating"
         [cdkDragFreeDragPosition]="dragPosition"
         class="widget-card"
         [ngClass]="
