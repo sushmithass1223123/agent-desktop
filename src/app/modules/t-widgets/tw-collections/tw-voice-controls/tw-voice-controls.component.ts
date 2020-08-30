@@ -27,7 +27,9 @@ import {
     IUIEvent,
     MediaServerEvent,
     SDKClient,
-    Enums
+    Enums,
+    TUtils,
+    AVEvent
 } from 'tmac-sdk';
 import { timer, Subject } from 'rxjs';
 
@@ -342,8 +344,6 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 return;
             }
 
-            console.log('%c##### MediaServerEvent', 'background: blue; color: white;', evt.Type);
-
             // set the session Id if empty
             if (!this.sessionID) {
                 this.sessionID = evt.SessionID;
@@ -393,7 +393,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 }
             }
         } catch (error) {
-            console.error(error);
+            TUtils.Logger.log('Exception in TwVoiceControlsComponent.MediaServerEvent', error);
         }
     }
 
@@ -428,25 +428,23 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 }
             });
 
-            console.log('##### createAVConnection', connection);
-
             // return the connection
             return connection;
 
         } catch (error) {
-            console.error(error);
+            TUtils.Logger.log('Exception in TwVoiceControlsComponent.createAVConnection', error);
         }
         return null;
     }
 
-    private onAVEvent = (evt: any) => {
+    private onAVEvent = (evt: AVEvent) => {
         // swtich the av events
         switch (evt.event) {
             case 'onTrace':
                 console.log(evt.data);
                 break;
             case 'onError':
-                console.error(evt.data);
+                TUtils.Logger.log('Exception in TwVoiceControlsComponent.onAVEvent', evt.data);
                 break;
             case 'onConnected':
                 console.log('onAVEvent - onConnected');
@@ -474,7 +472,6 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     }
 
     private processEventAV(evt: any): void {
-        console.log('%c##### MediaServerEvent', 'background: red; color: white;', evt);
         switch (evt.event) {
             case 'connected':
                 break;

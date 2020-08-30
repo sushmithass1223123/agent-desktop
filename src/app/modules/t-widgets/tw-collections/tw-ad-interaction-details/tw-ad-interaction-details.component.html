@@ -3,45 +3,41 @@
 <!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
 <tw-wrapper [data]="data" (maximizeEvent)="maximizeEvent($event)">
     <div class="w-100-p bg-inherit" [ngClass]="maximized ? 'h-90-p' : 'h-100-p'" fusePerfectScrollbar>
-        <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z0" matSortDisableClear [@animateStagger]="{ value: '50' }">
+        <mat-table [dataSource]="dataSource" matSort matSortDisableClear [@animateStagger]="{ value: '50' }">
             <ng-container matColumnDef="Channel">
-                <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>Channel</mat-header-cell>
-                <mat-cell mat-cell *matCellDef="let element">
-                    <mat-icon class="channel-icon" color="primary"> {{ element.Channel }} </mat-icon>
+                <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="20">Channel</mat-header-cell>
+                <mat-cell *matCellDef="let element" fxFlex="20">
+                    <mat-icon class="channel-icon color-primary">
+                        {{
+                            element.Channel === 'Voice'
+                                ? 'phone'
+                                : element.Channel === 'TextChat'
+                                ? 'chat'
+                                : element.Channel === 'Email'
+                                ? 'email'
+                                : 'library_books'
+                        }}
+                        {{ element.Channel.toLowerCase() }}
+                    </mat-icon>
                 </mat-cell>
             </ng-container>
 
-            <ng-container matColumnDef="Status">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    <div
-                        class="status text-center"
-                        [ngClass]="{
-                            'bg-success': element.Status === 'Active',
-                            'bg-warning': element.Status === 'OnHold',
-                            'bg-danger': element.Status === 'Closed',
-                            'w-30-p': maximized,
-                            'w-40-p': !maximized
-                        }"
-                    >
-                        <mat-icon>
-                            {{ element.Status === 'OnHold' ? 'phone_paused' : element.Status === 'Active' ? 'phone' : 'call_end' }}
-                        </mat-icon>
-                    </div>
+            <ng-container matColumnDef="SubChannel">
+                <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="20">Sub Channel</mat-header-cell>
+                <mat-cell *matCellDef="let element" fxFlex="20">
+                    {{ element.SubChannel || 'NA' }}
                 </mat-cell>
             </ng-container>
 
-            <ng-container matColumnDef="Created Time">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Created Time</mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    {{ element.CreatedTime | date: 'medium' }}
-                </mat-cell>
+            <ng-container matColumnDef="CreatedTime">
+                <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="30">Created Time</mat-header-cell>
+                <mat-cell *matCellDef="let element" fxFlex="30">{{ element.CreatedDateTime | date: 'medium' }} </mat-cell>
             </ng-container>
 
-            <ng-container matColumnDef="Active Time">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Active Time</mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    {{ element.ActiveTime }}
+            <ng-container matColumnDef="ClosedTime">
+                <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="30">Closed Time</mat-header-cell>
+                <mat-cell *matCellDef="let element" fxFlex="30">
+                    {{ element.ClosedDateTime | date: 'medium' }}
                 </mat-cell>
             </ng-container>
 

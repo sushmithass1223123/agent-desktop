@@ -1619,7 +1619,12 @@
                         "QueryParams": []
                     }
                 }
-            ]
+            ],
+            "Urls": {
+                "DashboardServerUrls": [
+                    "https://dice.tetherfi.cloud:443/SignalRDashboardSup"
+                ]
+            }
         },
         "AOT": {
             "Widgets": []

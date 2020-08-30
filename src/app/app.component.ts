@@ -13,7 +13,7 @@ import { locale as navigationTurkish } from 'app/navigation/i18n/tr';
 import { navigation } from 'app/navigation/navigation';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient } from 'tmac-sdk';
+import { SDKClient, TUtils } from 'tmac-sdk';
 import { AppDataService } from './services/app-data.service';
 
 
@@ -216,7 +216,7 @@ export class AppComponent implements OnInit, OnDestroy {
                 this._appDataService.config = data;
             }
         } catch (error) {
-            console.error(error);
+            TUtils.Logger.log('Exception in AppComponent.getConfig', error);
         }
         // set the loaded flag to true
         this.loaded = true;

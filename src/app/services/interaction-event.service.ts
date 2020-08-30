@@ -73,7 +73,6 @@ export class InteractionEventService {
         // get the events based on interaction Id
         const events = this._tmacEventArray.filter(i => i.InteractionID === interactionId);
         if (events.length > 0) {
-            console.log(`InteractionEventsService: count=${events.length}`);
             return events;
         }
         return [];

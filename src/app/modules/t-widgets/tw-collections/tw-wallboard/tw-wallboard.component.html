@@ -3,26 +3,26 @@
         <mat-table matSort [dataSource]="dataSource" matSortActive="CallsInQueue" matSortDirection="desc" matSortDisableClear>
             <!-- User name Definition -->
             <ng-container matColumnDef="SkillName">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> Skill Name </mat-header-cell>
-                <mat-cell *matCellDef="let row"> {{ row.SkillName }} </mat-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="40"> Skill Name </mat-header-cell>
+                <mat-cell *matCellDef="let row" fxFlex="40"> {{ row.SkillName }} </mat-cell>
             </ng-container>
 
             <!-- Age Definition -->
             <ng-container matColumnDef="AgentsStaffed">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> Agents Staffed </mat-header-cell>
-                <mat-cell *matCellDef="let row"> {{ row.AgentsStaffed }} </mat-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="20" class="px-8"> Agents Staffed </mat-header-cell>
+                <mat-cell *matCellDef="let row" fxFlex="20"> {{ row.AgentsStaffed }} </mat-cell>
             </ng-container>
 
             <!-- Title Definition -->
             <ng-container matColumnDef="AgentAvailable">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> Agents Available </mat-header-cell>
-                <mat-cell *matCellDef="let row"> {{ row.AgentAvailable }} </mat-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="20" class="px-8"> Agents Available </mat-header-cell>
+                <mat-cell *matCellDef="let row" fxFlex="20"> {{ row.AgentAvailable }} </mat-cell>
             </ng-container>
 
             <!-- Title Definition -->
             <ng-container matColumnDef="CallsInQueue">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> Calls In Queue </mat-header-cell>
-                <mat-cell *matCellDef="let row"> {{ row.CallsInQueue }} </mat-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="20"> CIQ </mat-header-cell>
+                <mat-cell *matCellDef="let row" fxFlex="20"> {{ row.CallsInQueue }} </mat-cell>
             </ng-container>
 
             <!-- Header and Row Declarations -->

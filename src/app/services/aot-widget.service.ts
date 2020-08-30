@@ -19,9 +19,9 @@ export class AotWidgetService {
         // get the config and check for AOT widgets
         _appDataService.config
             .subscribe(
-                (configs: any) => {
+                (config: any) => {
                     // get the AOT widgets
-                    const widgets = configs.Main.AOT.Widgets;
+                    const widgets = config.Main.AOT.Widgets;
                     // check if widgets are there, if so load it
                     widgets.forEach((widget: IWidget) => {
                         this.addWidget(widget);

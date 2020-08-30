@@ -25,10 +25,8 @@ tw-wallboard {
                             }
                         }
 
-                        mat-cell:first-of-type,
-                        mat-header-cell:first-of-type,
-                        mat-footer-cell:first-of-type {
-                            flex: 2;
+                        mat-cell:first-of-type {
+                            justify-content: start;
                         }
                     }
                 }
