@@ -2,7 +2,7 @@ import { Component, Input, OnDestroy, OnInit, ViewEncapsulation, ViewChild } fro
 import { FuseConfigService } from '@fuse/services/config.service';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { TChartConfig, ResStatus } from 'app/models';
+import { TwChartConfig, ResStatus } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
 import { CHART_COLORS } from 'app/constants';
 import { BaseChartDirective } from 'ng2-charts';
@@ -18,7 +18,7 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
     // holds all the data related to this widget from the config
     @Input() data: any;
 
-    performanceChart: TChartConfig = {
+    performanceChart: TwChartConfig = {
         data: [],
         labels: [],
         options: {

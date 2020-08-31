@@ -5,9 +5,11 @@ import { SharedModule } from '@modules/shared/shared.module';
 import { LayoutModule } from 'app/layout/layout.module';
 import { LoginComponent } from './login/login.component';
 import { MainComponent } from './main/main.component';
+import { TwPreviewComponent } from './tw-preview/tw-preview.component';
+import { TWidgetsModule } from '@modules/t-widgets/t-widgets.module';
 
 @NgModule({
-    declarations: [LoginComponent, MainComponent],
+    declarations: [LoginComponent, MainComponent, TwPreviewComponent],
     imports: [
         // Fuse modules
         FuseProgressBarModule,
@@ -15,7 +17,8 @@ import { MainComponent } from './main/main.component';
         FuseSidebarModule,
 
         SharedModule,
-        LayoutModule
+        LayoutModule,
+        TWidgetsModule
     ]
 })
 export class CoreModule { }

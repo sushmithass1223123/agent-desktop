@@ -41,6 +41,7 @@ import { TwUnknownComponent } from './tw-unknown/tw-unknown.component';
 import { TwVoiceControlsComponent } from './tw-voice-controls/tw-voice-controls.component';
 import { TwVoicePanelComponent } from './tw-voice-panel/tw-voice-panel.component';
 import { TwWallboardComponent } from './tw-wallboard/tw-wallboard.component';
+import { TwAudioControlsComponent } from './tw-audio-controls/tw-audio-controls.component';
 
 const collectionComponents = [
     TwCustomComponent,
@@ -83,6 +84,7 @@ const collectionComponents = [
     TwCannedResponsesComponent,
     TwAgentAssistComponent,
     TwCustomerSentimentComponent,
+    TwAudioControlsComponent
 ];
 
 @NgModule({

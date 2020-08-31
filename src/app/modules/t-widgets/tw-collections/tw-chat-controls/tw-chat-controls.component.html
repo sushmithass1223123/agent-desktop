@@ -130,6 +130,7 @@
                             (interactionStatus === 'Connected' ? 'mat-elevation-z2' : '')
                         "
                         matTooltip="Escalate to Audio"
+                        (click)="escalateToAV('audio')"
                     >
                         <mat-icon>call</mat-icon>
                     </button>
@@ -147,6 +148,7 @@
                             (interactionStatus === 'Connected' ? 'mat-elevation-z2' : '')
                         "
                         matTooltip="Escalate to Video"
+                        (click)="escalateToAV('video')"
                     >
                         <mat-icon>video_call</mat-icon>
                     </button>

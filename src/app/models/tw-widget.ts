@@ -8,6 +8,7 @@ export class TwWidgetModel {
     Type: string;
     Config: IWidgetConfig;
     Data: any;
+    InteractionDetails?: any;
 
     constructor(name: string, type: string, icon?: string) {
         this.Name = name || 'Widget';

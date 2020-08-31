@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { LoginComponent } from '@modules/core/login/login.component';
 import { MainComponent } from '@modules/core/main/main.component';
 import { ResourceNotFoundComponent } from '@modules/shared/resource-not-found/resource-not-found.component';
+import { TwPreviewComponent } from '@modules/core/tw-preview/tw-preview.component';
 
 const appRoutes: Routes = [
     {
@@ -17,6 +18,10 @@ const appRoutes: Routes = [
     {
         path: 'main',
         component: MainComponent
+    },
+    {
+        path: 'preview',
+        component: TwPreviewComponent
     },
     {
         path: 'not-found',

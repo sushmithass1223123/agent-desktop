@@ -20,9 +20,15 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
     maximized = false;
+    interactionList: any[] = [];
 
-    displayedColumns: string[] = ['Channel', 'SubChannel', 'CreatedTime', 'ClosedTime'];
-    dataSource = new MatTableDataSource([]);
+    mindisplayedColumns: string[] = ['Channel', 'Direction', 'User', 'CreatedTime'];
+    maxdisplayedColumns: string[] = ['Channel', 'SubChannel', 'Direction', 'User', 'Dnis', 'Intent', 'CreatedTime', 'ClosedTime', 'ActiveTime'];
+
+    interactionDetailsTable = {
+        source: new MatTableDataSource([]),
+        columns: this.mindisplayedColumns
+    };
 
     constructor() {
         super();
@@ -42,15 +48,21 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         SDKClient.events.off('AgentInteractionDetailsEvent', this.AgentInteractionDetailsEvent);
     }
 
-    private AgentInteractionDetailsEvent = (evt: any[]) => {
-        if (evt.length > 1) {
-            this.dataSource = new MatTableDataSource(evt);
-            this.dataSource.sort = this.sort;
-            this.dataSource.paginator = this.paginator;
-        }
+    private AgentInteractionDetailsEvent = (data: any[]) => {
+        this.interactionList.push(data);
+
+        this.interactionDetailsTable.source = new MatTableDataSource(this.interactionList);
+        this.interactionDetailsTable.source.sort = this.sort;
+        this.interactionDetailsTable.source.paginator = this.paginator;
+
     }
 
     maximizeEvent(state: boolean): void {
         this.maximized = state;
+        if (state) {
+            this.interactionDetailsTable.columns = this.maxdisplayedColumns;
+        } else {
+            this.interactionDetailsTable.columns = this.mindisplayedColumns;
+        }
     }
 }

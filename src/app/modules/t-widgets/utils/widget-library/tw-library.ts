@@ -36,6 +36,7 @@ import { TwVoiceControlsComponent } from '@modules/t-widgets/tw-collections/tw-v
 import { TwVoicePanelComponent } from '@modules/t-widgets/tw-collections/tw-voice-panel/tw-voice-panel.component';
 import { TwWallboardComponent } from '@modules/t-widgets/tw-collections/tw-wallboard/tw-wallboard.component';
 import { TWidget } from '@modules/t-widgets/utils/t-widget';
+import { TwAudioControlsComponent } from '@modules/t-widgets/tw-collections/tw-audio-controls/tw-audio-controls.component';
 
 export class TWLibrary {
     static widgetLibrary: Record<string, Type<any>> = {
@@ -73,7 +74,8 @@ export class TWLibrary {
         'tw-account-information': TwAccountInformationComponent,
         'tw-canned-responses': TwCannedResponsesComponent,
         'tw-agent-assist': TwAgentAssistComponent,
-        'tw-customer-sentiment': TwCustomerSentimentComponent
+        'tw-customer-sentiment': TwCustomerSentimentComponent,
+        'tw-audio-controls': TwAudioControlsComponent,
     };
 
     public static getWidget(type: string, data: any): TWidget {

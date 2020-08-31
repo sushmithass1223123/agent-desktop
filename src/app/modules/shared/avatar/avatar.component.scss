@@ -1,6 +1,5 @@
 avatar {
     .avatar-content {
-        border-radius: 50%;
         width: 60px;
         height: 60px;
         display: flex;
@@ -9,7 +8,6 @@ avatar {
         color: #ffffff;
 
         img {
-            border-radius: 50%;
             width: inherit;
             height: inherit;
         }

@@ -3,10 +3,17 @@
 <!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
 <tw-wrapper [data]="data" (maximizeEvent)="maximizeEvent($event)">
     <div class="w-100-p bg-inherit" [ngClass]="maximized ? 'h-90-p' : 'h-100-p'" fusePerfectScrollbar>
-        <mat-table [dataSource]="dataSource" matSort matSortDisableClear [@animateStagger]="{ value: '50' }">
+        <mat-table [dataSource]="interactionDetailsTable.source" matSort matSortDisableClear [@animateStagger]="{ value: '50' }">
+            <ng-container matColumnDef="SessionId">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>SessionId</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{ element.SessionId || 'NA' }}
+                </mat-cell>
+            </ng-container>
+
             <ng-container matColumnDef="Channel">
-                <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="20">Channel</mat-header-cell>
-                <mat-cell *matCellDef="let element" fxFlex="20">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Channel</mat-header-cell>
+                <mat-cell *matCellDef="let element">
                     <mat-icon class="channel-icon color-primary">
                         {{
                             element.Channel === 'Voice'
@@ -17,35 +24,71 @@
                                 ? 'email'
                                 : 'library_books'
                         }}
-                        {{ element.Channel.toLowerCase() }}
+                    </mat-icon>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="Direction">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Direction</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-icon class="channel-icon color-secondary">
+                        {{ element.Direction === 'In' ? 'south' : 'north' }}
                     </mat-icon>
                 </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="SubChannel">
-                <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="20">Sub Channel</mat-header-cell>
-                <mat-cell *matCellDef="let element" fxFlex="20">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Sub Channel</mat-header-cell>
+                <mat-cell *matCellDef="let element">
                     {{ element.SubChannel || 'NA' }}
                 </mat-cell>
             </ng-container>
 
-            <ng-container matColumnDef="CreatedTime">
-                <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="30">Created Time</mat-header-cell>
-                <mat-cell *matCellDef="let element" fxFlex="30">{{ element.CreatedDateTime | date: 'medium' }} </mat-cell>
-            </ng-container>
-
-            <ng-container matColumnDef="ClosedTime">
-                <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="30">Closed Time</mat-header-cell>
-                <mat-cell *matCellDef="let element" fxFlex="30">
-                    {{ element.ClosedDateTime | date: 'medium' }}
+            <ng-container matColumnDef="User">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>User</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{ element.User || 'NA' }}
                 </mat-cell>
             </ng-container>
 
-            <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumns" [@animate]="{ value: '*', params: { y: '100%' } }"></mat-row>
+            <ng-container matColumnDef="Dnis">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>DNIS</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{ element.Dnis || 'NA' }}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="Intent">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Intent</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{ element.Intent || 'NA' }}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="CreatedTime">
+                <mat-header-cell *matHeaderCellDef mat-sort-header class="px-8">Created Time</mat-header-cell>
+                <mat-cell *matCellDef="let element" class="px-8">{{ element.CreatedDateTime | date: 'short' }} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="ClosedTime">
+                <mat-header-cell *matHeaderCellDef mat-sort-header class="px-8">Closed Time</mat-header-cell>
+                <mat-cell *matCellDef="let element" class="px-8">
+                    {{ element.ClosedDateTime | date: 'short' }}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="ActiveTime">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>ActiveTime</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{ element.ActiveTime * 1000 | date: 'H:mm:ss':'UTC' }}
+                </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="interactionDetailsTable.columns; sticky: true"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: interactionDetailsTable.columns" [@animate]="{ value: '*', params: { y: '100%' } }"></mat-row>
         </mat-table>
 
-        <p *ngIf="dataSource.data.length === 0" class="text-center m-0 font-size-16">No data available</p>
+        <p *ngIf="interactionDetailsTable.source.data.length === 0" class="text-center m-0 font-size-16">No data available</p>
     </div>
     <mat-paginator *ngIf="maximized" [pageSizeOptions]="maximized ? [30, 40, 50] : [3, 6, 12]" showFirstLastButtons> </mat-paginator>
 </tw-wrapper>

@@ -51,13 +51,11 @@ export class DashboardService {
 
             // register to agent interaction list event
             signalR.hub.on('onAgentInteractionList', (interactionList: any) => {
-                console.log(interactionList);
                 SDKClient.events.emit('AgentInteractionDetailsEvent', interactionList);
             });
 
             // register to agent channel list event
             signalR.hub.on('onChannelList', (channelList: any) => {
-                console.log(channelList);
                 SDKClient.events.emit('AgentChannelDetailsEvent', channelList);
             });
 
