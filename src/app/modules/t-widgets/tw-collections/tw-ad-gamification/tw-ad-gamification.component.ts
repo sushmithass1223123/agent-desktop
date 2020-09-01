@@ -4,7 +4,7 @@ import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { takeUntil } from 'rxjs/operators';
 import { GamificationService } from 'app/services/gamification.service';
-import { ResStatus } from 'app/models';
+import { ResStatus } from 'app/interfaces';
 import { SDKClient } from 'tmac-sdk';
 import * as interfaces from 'app/interfaces/interaction-manager';
 

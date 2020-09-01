@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { SDKClient, TUtils } from 'tmac-sdk';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
+import { IResponse, TUtils } from 'tmac-sdk';
 
 @Component({
     selector: 'widget-preview',
@@ -71,7 +71,11 @@ export class WidgetPreviewComponent implements OnInit {
         try {
             this._fuseProgressBarService.show();
             // get the template json
-            const result = await TUtils.HttpClient.sendRequest(`${this.appConfig.ProxyUrl}/GetWidgetPreviewJson`, { id: templateName });
+            const result: IResponse = await TUtils.HttpClient.sendRequest({
+                url: `${this.appConfig.ProxyUrl}/GetWidgetPreviewJson`,
+                requestArgs: { id: templateName },
+                method: 'POST'
+            });
             setTimeout(() => {
                 // check the response
                 if (result.response) {

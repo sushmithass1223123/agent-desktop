@@ -4,8 +4,8 @@ import { FuseConfig } from '@fuse/types';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CHART_COLORS } from 'app/constants';
-import { TChartConfig } from 'app/models';
 import { takeUntil } from 'rxjs/operators';
+import { TwChartConfig } from 'app/interfaces';
 
 const interactionsData = {
     AgentId: '50004',
@@ -88,7 +88,7 @@ export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements On
     // -----------------------------------------------------------
     appConfig: any;
 
-    allInteractionsChart: TChartConfig = {
+    allInteractionsChart: TwChartConfig = {
         datasets: [{ data: [] }],
         options: {
             showLines: false,

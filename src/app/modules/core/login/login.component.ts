@@ -215,14 +215,19 @@ export class LoginComponent implements OnInit, OnDestroy {
         }
 
         // send request to face auth server
-        const result: any = await TUtils.HttpClient.sendRequest(this.faceAuthServerUrl, {
-            snapdata: base64.split(',')[1],
-            snaptype: 'base64',
-            pptype: 'url',
-            agentId: this.loginForm.get('lanId').value,
-            originator: 'TMACUI',
-            ppdata: `${this.loginForm.get('lanId').value}.png`,
-            isrealface: 1
+        // get the login json from proxy
+        const result: IResponse = await TUtils.HttpClient.sendRequest({
+            url: this.faceAuthServerUrl,
+            requestArgs: {
+                snapdata: base64.split(',')[1],
+                snaptype: 'base64',
+                pptype: 'url',
+                agentId: this.loginForm.get('lanId').value,
+                originator: 'TMACUI',
+                ppdata: `${this.loginForm.get('lanId').value}.png`,
+                isrealface: 1
+            },
+            method: 'POST'
         });
 
         // check for valid response from server
