@@ -4,7 +4,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { fuseAnimations } from '@fuse/animations';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { SDKClient } from 'tmac-sdk';
+import { SDKClient, InteractionData } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-ad-interaction-details',
@@ -48,7 +48,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         SDKClient.events.off('AgentInteractionDetailsEvent', this.AgentInteractionDetailsEvent);
     }
 
-    private AgentInteractionDetailsEvent = (data: any[]) => {
+    private AgentInteractionDetailsEvent = (data: InteractionData[]) => {
         this.interactionList = [...this.interactionList, ...data];
 
         this.interactionDetailsTable.source = new MatTableDataSource(this.interactionList);

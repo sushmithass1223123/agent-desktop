@@ -1115,8 +1115,8 @@
                                                 "CameraCaptureAllowed": false,
                                                 "VoiceNoteAllowed": false,
                                                 "AttachmentAllowed": true,
-                                                "ScreenShareAllowed": true,
-                                                "SnapshotAllowed": false,
+                                                "ScreenShareAllowed": false,
+                                                "SnapshotAllowed": true,
                                                 "ShowUserLabel": false,
                                                 "ChatTemplate": {
                                                     "ButtonEnabled": true,
@@ -1410,9 +1410,9 @@
                                 "Data": {}
                             },
                             {
-                                "Name": "Feedback",
-                                "Description": "",
-                                "Type": "tw-sample",
+                                "Name": "Customer Sentiment",
+                                "Description": "feedback",
+                                "Type": "tw-customer-sentiment",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
@@ -1420,36 +1420,8 @@
                                     "Icon": "",
                                     "Class": "",
                                     "Position": {
-                                        "X": 1,
-                                        "Y": 1
-                                    },
-                                    "Actions": [
-                                        "maximize",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
-                                },
-                                "Data": {}
-                            },
-                            {
-                                "Name": "Score",
-                                "Description": "",
-                                "Type": "tw-sample",
-                                "Config": {
-                                    "Static": false,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "Icon": "",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 1,
-                                        "Y": 1
+                                        "X": 0,
+                                        "Y": 2
                                     },
                                     "Actions": [
                                         "maximize",
@@ -1491,7 +1463,9 @@
                                     "Header": true,
                                     "Disabled": false
                                 },
-                                "Data": {}
+                                "Data": {
+                                    "Source": "interaction"
+                                }
                             },
                             {
                                 "Name": "Agent Assist",

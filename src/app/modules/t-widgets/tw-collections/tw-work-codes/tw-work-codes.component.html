@@ -3,7 +3,7 @@
 <!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
 <tw-wrapper [data]="data">
     <!-- your code goes here -->
-    <div *ngIf="!loadWorkCodesReq.loading && !loadWorkCodesReq.error" fxFlex fxFill fxLayout="row" fxLayoutAlign="center">
+    <div *ngIf="!loadWorkCodesReq.loading && !loadWorkCodesReq.error" fxFlex fxFill fxLayout="row" fxLayoutAlign="center" class="px-16 py-8">
         <mat-form-field *ngIf="DataConf.Source === 'interaction'" class="w-100-p">
             <mat-autocomplete class="w-100-p" #allWorkCodesRef (optionSelected)="setWorkCode($event)">
                 <mat-optgroup *ngFor="let group of loadWorkCodesReq.data | keyvalue" [label]="group.key">
@@ -20,6 +20,7 @@
                 </mat-chip>
                 <input
                     #workCodeInput
+                    placeholder="Select workCodes..."
                     [formControl]="workCodeCtrl"
                     [matAutocomplete]="allWorkCodesRef"
                     [matChipInputFor]="selectedWorkCodesRef"
@@ -43,7 +44,7 @@
 
     <div *ngIf="loadWorkCodesReq.error" class="w-100-p h-100-p text-center p-8" fxLayout fxLayoutAlign="center center">
         <p>{{ loadWorkCodesReq.msg }}</p>
-        <button mat-button mat-raised-button color="primary" (click)="setup()">Retry</button>
+        <button mat-button mat-raised-button color="primary" class="ml-8" (click)="setup()">Retry</button>
     </div>
 
     <!-- your code goes here -->
