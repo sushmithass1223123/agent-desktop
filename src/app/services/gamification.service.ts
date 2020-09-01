@@ -8,18 +8,14 @@ import { map } from 'rxjs/operators';
     providedIn: 'root'
 })
 export class GamificationService {
-    private leaderboard = new BehaviorSubject<ResGamification[]>(null);
-
-    constructor(private httpClient: HttpClient) {
-
-    }
+    constructor(private httpClient: HttpClient) {}
 
     fetchLeaderBoard(url: string): Observable<ResGamification[]> {
-        if (this.leaderboard.getValue()?.length) {
-            return this.leaderboard.asObservable();
-        } else {
-            return this.httpClient.post<{ d: string }>(url, {}).pipe(map((x) => JSON.parse(x.d)));
-        }
+        // if (this.leaderboard.getValue()?.length) {
+        //     return this.leaderboard.asObservable();
+        // } else {
+        return this.httpClient.post<{ d: string }>(url, {}).pipe(map((x) => JSON.parse(x.d)));
+        // }
     }
 
     getAgentProgress(url: string, agentId: string): Observable<any> {

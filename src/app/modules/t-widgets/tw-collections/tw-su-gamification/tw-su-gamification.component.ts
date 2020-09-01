@@ -7,6 +7,7 @@ import { GamificationService } from '@services/gamification.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { sortBy } from 'lodash';
+import { ResStatus } from 'app/models';
 
 @Component({
     selector: 'tw-su-gamification',
@@ -28,6 +29,11 @@ export class TwSuGamificationComponent extends TWidgetWrapper implements OnInit,
     // -----------------------------------------------------------
     appConfig: any;
 
+    gamificationReqStatus: ResStatus = {
+        error: false,
+        loading: true,
+        msg: ''
+    };
     maximized = false;
     maximizedTableColumns = ['Position', 'AgentName', 'TotalBadges', 'TeamName', 'TotalPoints'];
     minimizedTableColumns = ['Position', 'AgentName', 'TotalPoints'];
@@ -35,45 +41,6 @@ export class TwSuGamificationComponent extends TWidgetWrapper implements OnInit,
         source: new MatTableDataSource([]),
         columns: this.minimizedTableColumns
     };
-
-    badges = [
-        {
-            BadgeId: 0,
-            BadgeName: 'Starter',
-            BadgeUrl: 'https://cdn2.iconfinder.com/data/icons/award-and-reward/128/Golden-badges-star-award-winner-512.png'
-        },
-        { BadgeId: 0, BadgeName: 'Master', BadgeUrl: 'https://dab1nmslvvntp.cloudfront.net/wp-content/uploads/2014/11/1415490092badge.png' },
-        { BadgeId: 0, BadgeName: 'Influencer', BadgeUrl: 'https://devopsinstitute.imgix.net/2017/08/devop-foundation-badge.jpg' },
-
-        {
-            BadgeId: 0,
-            BadgeName: 'Starter',
-            BadgeUrl: 'https://cdn2.iconfinder.com/data/icons/award-and-reward/128/Golden-badges-star-award-winner-512.png'
-        },
-        { BadgeId: 0, BadgeName: 'Master', BadgeUrl: 'https://dab1nmslvvntp.cloudfront.net/wp-content/uploads/2014/11/1415490092badge.png' },
-        { BadgeId: 0, BadgeName: 'Influencer', BadgeUrl: 'https://devopsinstitute.imgix.net/2017/08/devop-foundation-badge.jpg' },
-        {
-            BadgeId: 0,
-            BadgeName: 'Starter',
-            BadgeUrl: 'https://cdn2.iconfinder.com/data/icons/award-and-reward/128/Golden-badges-star-award-winner-512.png'
-        },
-        { BadgeId: 0, BadgeName: 'Master', BadgeUrl: 'https://dab1nmslvvntp.cloudfront.net/wp-content/uploads/2014/11/1415490092badge.png' },
-        { BadgeId: 0, BadgeName: 'Influencer', BadgeUrl: 'https://devopsinstitute.imgix.net/2017/08/devop-foundation-badge.jpg' },
-        {
-            BadgeId: 0,
-            BadgeName: 'Starter',
-            BadgeUrl: 'https://cdn2.iconfinder.com/data/icons/award-and-reward/128/Golden-badges-star-award-winner-512.png'
-        },
-        { BadgeId: 0, BadgeName: 'Master', BadgeUrl: 'https://dab1nmslvvntp.cloudfront.net/wp-content/uploads/2014/11/1415490092badge.png' },
-        { BadgeId: 0, BadgeName: 'Influencer', BadgeUrl: 'https://devopsinstitute.imgix.net/2017/08/devop-foundation-badge.jpg' },
-        {
-            BadgeId: 0,
-            BadgeName: 'Starter',
-            BadgeUrl: 'https://cdn2.iconfinder.com/data/icons/award-and-reward/128/Golden-badges-star-award-winner-512.png'
-        },
-        { BadgeId: 0, BadgeName: 'Master', BadgeUrl: 'https://dab1nmslvvntp.cloudfront.net/wp-content/uploads/2014/11/1415490092badge.png' },
-        { BadgeId: 0, BadgeName: 'Influencer', BadgeUrl: 'https://devopsinstitute.imgix.net/2017/08/devop-foundation-badge.jpg' }
-    ];
 
     @ViewChild(MatSort) set sortContent(content: MatSort) {
         if (content) {
@@ -95,7 +62,6 @@ export class TwSuGamificationComponent extends TWidgetWrapper implements OnInit,
         public gamificationService: GamificationService
     ) {
         super();
-        this.badges = [...this.badges, ...this.badges, ...this.badges, ...this.badges, ...this.badges];
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -143,11 +109,17 @@ export class TwSuGamificationComponent extends TWidgetWrapper implements OnInit,
     // -----------------------------------------------------------------------------------------------------
 
     setupLeaderBoard(): void {
-        this.gamificationService.fetchLeaderBoard(this.data.Data.LeaderBoardUrl).subscribe((leaders) => {
-            if (leaders && leaders.length) {
-                this.leaderboardTable.source = new MatTableDataSource(sortBy(leaders, 'Position'));
+        this.gamificationService.fetchLeaderBoard(this.data.Data.LeaderBoardUrl).subscribe(
+            (leaders) => {
+                if (leaders && leaders.length) {
+                    this.leaderboardTable.source = new MatTableDataSource(sortBy(leaders, 'Position'));
+                }
+                this.gamificationReqStatus = { msg: '', error: false, loading: false };
+            },
+            () => {
+                this.gamificationReqStatus = { msg: 'Something went wrong', error: true, loading: false };
             }
-        });
+        );
     }
 
     maximizeEvent(state: boolean): void {

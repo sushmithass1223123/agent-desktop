@@ -46,6 +46,20 @@
     }
 }
 
+.tw-accordion {
+    & + &-menu {
+        transition: all 0.3s ease-in-out;
+        max-height: 0;
+        overflow: hidden;
+        background-color: inherit;
+        padding: 0;
+    }
+    &.active + &-menu {
+        padding: 20px 5px;
+        max-height: 1000px;
+    }
+}
+
 @media screen and (max-width: 768px) {
     .twc-card,
     .tw-card {

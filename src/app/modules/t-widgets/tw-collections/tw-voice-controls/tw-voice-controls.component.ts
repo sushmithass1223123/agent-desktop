@@ -27,7 +27,7 @@ import {
     IUIEvent,
     MediaServerEvent,
     SDKClient,
-    Enums
+    TEnums
 } from 'tmac-sdk';
 import { timer, Subject } from 'rxjs';
 
@@ -357,14 +357,14 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 case 'call-received':
                     // create WebRTC peer connection
                     connection = this.createAVConnection('out');
-                    connection?.directCall(Enums.WrcCallTypes.Audio, 'in');
+                    connection?.directCall(TEnums.WrcCallTypes.Audio, 'in');
                     // play incoming call sound 
                     this._appDataService.playAudio('incoming-call', 0.5, true);
                     break;
                 case 'call-connecting':
                     // create WebRTC peer connection
                     connection = this.createAVConnection('in');
-                    connection?.directCall(Enums.WrcCallTypes.Audio);
+                    connection?.directCall(TEnums.WrcCallTypes.Audio);
                     // play incoming call sound 
                     this._appDataService.playAudio('ringing', 0.5, true);
                     break;
