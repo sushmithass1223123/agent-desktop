@@ -101,21 +101,6 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
         }
     };
 
-    eventData = {
-        SubEventName: 'OnNLPDataEvent',
-        JsonData:
-            '{"eventName":"OnNLPDataEvent","speechResult":"","nluResult":"{\\"intent\\":{\\"name\\":\\"Complaint\\",\\"confidence\\":0.3467572524},\\"entities\\":[],\\"intent_ranking\\":[{\\"name\\":\\"Complaint\\",\\"confidence\\":0.3467572524},{\\"name\\":\\"Clarification\\",\\"confidence\\":0.3072097413},{\\"name\\":\\"mood_unhappy\\",\\"confidence\\":0.0942083595},{\\"name\\":\\"New_Connection\\",\\"confidence\\":0.0808563845},{\\"name\\":\\"goodbye\\",\\"confidence\\":0.0785963859},{\\"name\\":\\"mood_great\\",\\"confidence\\":0.0378756104},{\\"name\\":\\"affirm\\",\\"confidence\\":0.0241965965},{\\"name\\":\\"deny\\",\\"confidence\\":0.0213421076},{\\"name\\":\\"greet\\",\\"confidence\\":0.008957562}],\\"text\\":\\"hey i have a prolem with my internet and it is keep on disconncting. How many time i should approach you guys to check this issue ?\\"}","sentimentResult":"Negative","resonseType":0,"errorMessage":null,"ucid":"Livechat200827180940_1348","agentID":"1014"}',
-        EventName: 'GenericTMACEvent',
-        InteractionID: 0,
-        IsInteractionConstructEvent: false,
-        IsInteractionDisposeEvent: false,
-        CreatedTime: '0001-01-01T00:00:00',
-        EventId: null,
-        RecoveryEvent: false,
-        QueuedEvent: false,
-        ACK: null
-    };
-
     nlpCurrentData: any = null;
 
     // -----------------------------------------------------------
@@ -166,7 +151,7 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
         this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
             this.appConfig = config;
         });
-        this.setupOnNLPDataEventListener();
+        SDKClient.events.on('OnNLPDataEvent', this.OnNLPDataEvent);
     }
 
     /**
@@ -177,8 +162,8 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
         this.destroyWrapper();
     }
 
-    handleOnNLPDataEvent = (evt?: any): void => {
-        const receivedData = evt || this.eventData;
+    OnNLPDataEvent = (evt: any): void => {
+        const receivedData = evt;
         if (receivedData) {
             const parsedJson = {
                 ...JSON.parse(receivedData.JsonData),
@@ -194,12 +179,7 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
                 y: parsedJson.sentimentResult
             } as any);
         }
-    }
-
-    setupOnNLPDataEventListener(): void {
-        setInterval(this.handleOnNLPDataEvent, 5000);
-        SDKClient.events.on('OnNLPDataEvent', this.handleOnNLPDataEvent);
-    }
+    };
 
     // -----------------------------------------------------------------------------------------------------
     // @  Private Methods

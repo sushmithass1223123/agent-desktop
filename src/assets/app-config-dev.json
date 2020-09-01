@@ -2,7 +2,7 @@
     "Login": {
         "Modes": {
             "Enabled": true,
-            "Type": "pbxms"
+            "Type": "nonpbx"
         },
         "FaceAuth": {
             "Enabled": false,
@@ -206,90 +206,6 @@
                                 }
                             },
                             {
-                                "Name": "Call",
-                                "Description": "",
-                                "Type": "tw-ad-total-calls",
-                                "Config": {
-                                    "Static": false,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "Icon": "phone",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 0,
-                                        "Y": 1
-                                    },
-                                    "Actions": [
-                                        "maximize",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
-                                },
-                                "Data": {}
-                            },
-                            {
-                                "Name": "Chat",
-                                "Description": "",
-                                "Type": "tw-ad-total-chats",
-                                "Config": {
-                                    "Static": false,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "Icon": "chat",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 0,
-                                        "Y": 1
-                                    },
-                                    "Actions": [
-                                        "maximize",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
-                                },
-                                "Data": {}
-                            },
-                            {
-                                "Name": "A/V",
-                                "Description": "",
-                                "Type": "tw-ad-total-av",
-                                "Config": {
-                                    "Static": false,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "Icon": "",
-                                    "Class": "duo",
-                                    "Position": {
-                                        "X": 0,
-                                        "Y": 1
-                                    },
-                                    "Actions": [
-                                        "maximize",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
-                                },
-                                "Data": {}
-                            },
-                            {
                                 "Name": "All Interactions",
                                 "Description": "",
                                 "Type": "tw-ad-total-interactions",
@@ -317,6 +233,63 @@
                                 },
                                 "Data": {}
                             },
+                            {
+                                "Name": "AHT / Transfer / Conference ",
+                                "Description": "",
+                                "Type": "tw-aht-tc",
+                                "Config": {
+                                    "Static": false,
+                                    "Anchor": false,
+                                    "AOT": false,
+                                    "Icon": "phone",
+                                    "Class": "",
+                                    "Position": {
+                                        "X": 0,
+                                        "Y": 2
+                                    },
+                                    "Actions": [
+                                        "maximize",
+                                        "pin",
+                                        "float"
+                                    ],
+                                    "ViewState": "restore",
+                                    "PinState": false,
+                                    "FloatState": false,
+                                    "Resizable": false,
+                                    "Header": true,
+                                    "Disabled": false
+                                },
+                                "Data": {}
+                            },
+                            {
+                                "Name": "Aux Status",
+                                "Description": "",
+                                "Type": "tw-aux-status-chart",
+                                "Config": {
+                                    "Static": false,
+                                    "Anchor": false,
+                                    "AOT": false,
+                                    "Icon": "",
+                                    "Class": "duo",
+                                    "Position": {
+                                        "X": 0,
+                                        "Y": 1
+                                    },
+                                    "Actions": [
+                                        "maximize",
+                                        "pin",
+                                        "float"
+                                    ],
+                                    "ViewState": "restore",
+                                    "PinState": false,
+                                    "FloatState": false,
+                                    "Resizable": false,
+                                    "Header": true,
+                                    "Disabled": false
+                                },
+                                "Data": {}
+                            },
+
                             {
                                 "Name": "Interaction Details",
                                 "Description": "",
@@ -1464,7 +1437,8 @@
                                     "Disabled": false
                                 },
                                 "Data": {
-                                    "Source": "interaction"
+                                    "Source" : "interaction",
+                                    "ByTeam" : true
                                 }
                             },
                             {

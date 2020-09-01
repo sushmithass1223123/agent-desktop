@@ -1,24 +1,22 @@
 import { Injectable } from '@angular/core';
-import { TUtils, IAgentData, SDKClient } from 'tmac-sdk';
+import { TUtils, IAgentData, SDKClient, AgentStateDurationList } from 'tmac-sdk';
 import { AppDataService } from './app-data.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class DashboardService {
-
     private serviceUrls: string[];
 
     constructor(_appDataService: AppDataService) {
-        _appDataService.config
-            .subscribe((config: any) => {
-                // check whether the Urls are provided in config
-                this.serviceUrls = config.Main.Content.Urls?.DashboardServerUrls || [];
-                // if urls are there then start service
-                if (this.serviceUrls.length > 0) {
-                    this.startService();
-                }
-            });
+        _appDataService.config.subscribe((config: any) => {
+            // check whether the Urls are provided in config
+            this.serviceUrls = config.Main.Content.Urls?.DashboardServerUrls || [];
+            // if urls are there then start service
+            if (this.serviceUrls.length > 0) {
+                this.startService();
+            }
+        });
     }
 
     private startService(): void {
@@ -47,7 +45,7 @@ export class DashboardService {
         // check if the connection is created successfully
         if (signalR) {
             // on registered event
-            signalR.hub.on('onRegistered', () => { });
+            signalR.hub.on('onRegistered', () => {});
 
             // register to agent interaction list event
             signalR.hub.on('onAgentInteractionList', (interactionList: any) => {
@@ -62,6 +60,10 @@ export class DashboardService {
             // connection connected event
             signalR.events.on('onConnected', () => {
                 signalR.hub.invoke('GetAgentData', signalR.hub.connection.id, agentData.agentId, true);
+            });
+
+            signalR.events.on('onStatusList', (statusDetails: AgentStateDurationList) => {
+                SDKClient.events.emit('AgentStatusDetailsEvent', statusDetails);
             });
 
             // connect to the server

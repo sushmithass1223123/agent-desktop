@@ -1,10 +1,10 @@
 <!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
 <!-- implement following events in your component to access widget wrapper action events -->
 <!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
-<tw-wrapper [data]="data" (maximizeEvent)="allInteractionsChart.legend = $event">
+<tw-wrapper [data]="data" (maximizeEvent)="statusChart.legend = $event">
     <!-- your code goes here -->
     <div
-        *ngIf="allInteractionsChart.datasets.length >= 1 && allInteractionsChart.datasets[0].data.length"
+        *ngIf="statusChart.datasets.length >= 1 && statusChart.datasets[0].data.length"
         fxLayout="column"
         fxLayoutAlign="center center"
         class="w-100-p h-100-p"
@@ -12,12 +12,12 @@
         <div class="tw-chart w-100-p h-100-p p-4" #chartContainerRef>
             <canvas
                 baseChart
-                [colors]="allInteractionsChart.colors"
-                [datasets]="allInteractionsChart.datasets"
-                [options]="allInteractionsChart.options"
-                [labels]="allInteractionsChart.labels"
-                [legend]="allInteractionsChart.legend"
-                chartType="doughnut"
+                [colors]="statusChart.colors"
+                [datasets]="statusChart.datasets"
+                [options]="statusChart.options"
+                [labels]="statusChart.labels"
+                [legend]="statusChart.legend"
+                chartType="pie"
             >
             </canvas>
             <!-- <div class="t-pie-chart-value">{{ widget.data[1].value }}</div> -->
@@ -25,7 +25,7 @@
     </div>
 
     <div
-        *ngIf="allInteractionsChart.datasets.length === 1 && !allInteractionsChart.datasets[0].data.length"
+        *ngIf="statusChart.datasets.length === 1 && !statusChart.datasets[0].data.length"
         class="w-100-p h-100-p text-center"
         fxLayout
         fxLayoutAlign="center center"
