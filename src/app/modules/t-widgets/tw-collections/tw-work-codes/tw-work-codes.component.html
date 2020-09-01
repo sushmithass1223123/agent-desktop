@@ -41,7 +41,7 @@
         <mat-spinner></mat-spinner>
     </div>
 
-    <div *ngIf="loadWorkCodesReq.error" class="w-100-p h-100-p text-center p-8" fxLayout fxLayoutAlign="center center">
+    <div *ngIf="loadWorkCodesReq.error" class="w-100-p h-100-p text-center p-8" fxLayout="column" fxLayoutAlign="center center">
         <p>{{ loadWorkCodesReq.msg }}</p>
         <button mat-button mat-raised-button color="primary" (click)="setup()">Retry</button>
     </div>

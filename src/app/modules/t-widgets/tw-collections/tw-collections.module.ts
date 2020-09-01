@@ -43,7 +43,8 @@ import { TwVideoControlsComponent } from './tw-video-controls/tw-video-controls.
 import { TwVoiceControlsComponent } from './tw-voice-controls/tw-voice-controls.component';
 import { TwVoicePanelComponent } from './tw-voice-panel/tw-voice-panel.component';
 import { TwWallboardComponent } from './tw-wallboard/tw-wallboard.component';
-
+import { TwAuxStatusChartComponent } from './tw-aux-status-chart/tw-aux-status-chart.component';
+import { TwAhtTcComponent } from './tw-aht-tc/tw-aht-tc.component';
 const collectionComponents = [
     TwCustomComponent,
     TwUnknownComponent,
@@ -87,6 +88,8 @@ const collectionComponents = [
     TwCustomerSentimentComponent,
     TwAudioControlsComponent,
     TwVideoControlsComponent,
+    TwAuxStatusChartComponent,
+    TwAhtTcComponent
 ];
 
 @NgModule({

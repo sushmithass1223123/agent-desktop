@@ -4,23 +4,23 @@ import { FuseConfig } from '@fuse/types';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CHART_COLORS } from 'app/constants';
-import { AgentChannelDetailsEventRes, TwChartConfig } from 'app/interfaces';
+import { TwChartConfig } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient } from 'tmac-sdk';
+import { SDKClient, AgentStateDurationList } from 'tmac-sdk';
 
 const multiColors: any = {
-    backgroundColor: CHART_COLORS.map((c) => c.backgroundColor),
+    backgroundColor: [...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS].map((c) => c.backgroundColor),
     borderCapStyle: 'butt',
-    hoverBackgroundColor: CHART_COLORS.map((c) => c.hoverBackgroundColor)
+    hoverBackgroundColor: [...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS].map((c) => c.hoverBackgroundColor)
 };
 
 @Component({
-    selector: 'tw-ad-total-interactions',
-    templateUrl: './tw-ad-total-interactions.component.html',
-    styleUrls: ['./tw-ad-total-interactions.component.scss'],
+    selector: 'tw-aux-status-chart.component',
+    templateUrl: './tw-aux-status-chart.component.html',
+    styleUrls: ['./tw-aux-status-chart.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+export class TwAuxStatusChartComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     // holds all the data related to this widget from the config
     @Input() data: any;
 
@@ -34,7 +34,7 @@ export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements On
     // -----------------------------------------------------------
     appConfig: any;
 
-    allInteractionsChart: TwChartConfig = {
+    statusChart: TwChartConfig = {
         datasets: [{ data: [] }],
         options: {
             showLines: false,
@@ -46,7 +46,9 @@ export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements On
                 }
             }
         },
-        colors: [multiColors, multiColors],
+        colors: Array(20)
+            .fill(1)
+            .map(() => multiColors),
         labels: [],
         legend: false
     };
@@ -91,31 +93,30 @@ export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements On
             this.appConfig = config;
         });
 
-        SDKClient.events.on('AgentChannelDetailsEvent', this.AgentChannelDetailsEvent);
+        SDKClient.events.on('AgentStatusDetailsEvent', this.AgentStatusDetailsEvent);
     }
 
     /**
      * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
      */
     ngOnDestroy(): void {
-        SDKClient.events.off('AgentChannelDetailsEvent', this.AgentChannelDetailsEvent);
+        SDKClient.events.off('AgentStatusDetailsEvent', this.AgentStatusDetailsEvent);
         // call the wrapper destroy method
         this.destroyWrapper();
     }
 
-    AgentChannelDetailsEvent = (interactionsData: AgentChannelDetailsEventRes): void => {
-        const datasets = { Total: [], AHT: [] };
+    AgentStatusDetailsEvent = (evt: AgentStateDurationList) => {
+        const datasets = { Duration: [] };
         const labels = [];
-        interactionsData.Channels.forEach((c) => {
-            datasets.Total.push(c.Total);
-            datasets.AHT.push(c.AverageActiveTime + c.AverageHoldTime);
-            labels.push(c.Channel);
+        evt.States.forEach((c) => {
+            datasets.Duration.push(c.Duration);
+            labels.push(c.State);
         });
-        this.allInteractionsChart.datasets = Object.keys(datasets).map((d) => ({
+        this.statusChart.datasets = Object.keys(datasets).map((d) => ({
             data: datasets[d],
             label: d
         }));
-        this.allInteractionsChart.labels = labels;
+        this.statusChart.labels = labels;
     };
 
     // -----------------------------------------------------------------------------------------------------
