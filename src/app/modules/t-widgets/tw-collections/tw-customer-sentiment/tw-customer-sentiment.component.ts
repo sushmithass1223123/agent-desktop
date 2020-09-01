@@ -59,7 +59,7 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
     @Input() data: any;
 
     customerSentimentChart: TwChartConfig = {
-        data: [
+        datasets: [
             {
                 data: [],
                 label: 'Sentiment',
@@ -85,7 +85,7 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
                 }
             },
             scales: {
-                xAxes: [{ type: 'time', time: { stepSize: 5 } }],
+                xAxes: [{ type: 'time', time: { unitStepSize: 5 }, distribution: 'series' }],
                 yAxes: [
                     {
                         ticks: {
@@ -185,11 +185,11 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
                 sentimentResult: Object.values(sentimentDataPoints)[random(2, false)]
             };
 
-            if (this.customerSentimentChart.data[0].data.length === CUSTOMER_SENTIMENT_PLOT_RECORDS) {
-                this.customerSentimentChart.data[0].data = this.customerSentimentChart.data[0].data.slice(1);
+            if (this.customerSentimentChart.datasets[0].data.length === CUSTOMER_SENTIMENT_PLOT_RECORDS) {
+                this.customerSentimentChart.datasets[0].data = this.customerSentimentChart.datasets[0].data.slice(1);
             }
 
-            this.customerSentimentChart.data[0].data.push({
+            this.customerSentimentChart.datasets[0].data.push({
                 t: Date.now(),
                 y: parsedJson.sentimentResult
             } as any);

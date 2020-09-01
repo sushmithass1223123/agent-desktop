@@ -35,7 +35,7 @@
     width: 100% !important;
 }
 
-.t-chart {
+.tw-chart {
     position: relative;
     .t-pie-chart-value {
         position: absolute;
@@ -43,6 +43,20 @@
         left: 50%;
         transform: translate(-50%, -50%);
         font-size: 2em;
+    }
+}
+
+.tw-accordion {
+    & + &-menu {
+        transition: all 0.3s ease-in-out;
+        max-height: 0;
+        overflow: hidden;
+        background-color: inherit;
+        padding: 0;
+    }
+    &.active + &-menu {
+        padding: 20px 5px;
+        max-height: 1000px;
     }
 }
 

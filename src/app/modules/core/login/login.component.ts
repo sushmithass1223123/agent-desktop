@@ -199,12 +199,12 @@ export class LoginComponent implements OnInit, OnDestroy {
         // create a canvas
         const canvas = document.createElement('canvas');
         // scale the canvas accordingly
-        canvas.width = this.videoElement.nativeElement.videoWidth;
-        canvas.height = this.videoElement.nativeElement.videoHeight;
+        canvas.width = this.videoElement?.nativeElement.videoWidth;
+        canvas.height = this.videoElement?.nativeElement.videoHeight;
         // get the context
         const ctx = canvas.getContext('2d');
         // draw the canvas
-        ctx.drawImage(this.videoElement.nativeElement, 0, 0, canvas.width, canvas.height);
+        ctx.drawImage(this.videoElement?.nativeElement, 0, 0, canvas.width, canvas.height);
         // get base64 url
         const base64 = canvas.toDataURL();
 

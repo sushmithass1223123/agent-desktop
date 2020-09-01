@@ -1,9 +1,12 @@
-import { ChartDataSets, ChartOptions, ChartColor } from 'chart.js';
-import { Label, Color } from 'ng2-charts';
+import { ChartDataSets, ChartOptions } from 'chart.js';
+import { Color, SingleOrMultiDataSet } from 'ng2-charts';
 
 export interface TwChartConfig {
-    data: ChartDataSets[];
-    labels?: Label | number[];
+    data?: SingleOrMultiDataSet[];
+    datasets?: ChartDataSets[];
+    labels?: string[] | number[];
     options: ChartOptions & { setFeedbackEmoji?: boolean };
     colors?: Color[];
+    legend?: boolean;
+    refresh?: () => void;
 }

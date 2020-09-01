@@ -47,26 +47,90 @@
 }
 
 .border {
-    &-primary {
-        background-color: $tw-primary !important;
+    @mixin border-color($width, $position: false) {
+        $exactPos: '';
+        @if $position {
+            $exactPos: '-' + #{$position};
+        }
+        &-primary {
+            border#{$exactPos}: #{$width}px solid $tw-primary !important;
+        }
+        &-secondary {
+            border#{$exactPos}: #{$width}px solid $tw-secondary !important;
+        }
+        &-tertiary {
+            border#{$exactPos}: #{$width}px solid $tw-tertiary !important;
+        }
+        &-danger {
+            border#{$exactPos}: #{$width}px solid $tw-danger !important;
+        }
+        &-warning {
+            border#{$exactPos}: #{$width}px solid $tw-warning !important;
+        }
+        &-success {
+            border#{$exactPos}: #{$width}px solid $tw-success !important;
+        }
+        &-dark {
+            border#{$exactPos}: #{$width}px solid $tw-dark !important;
+        }
     }
-    &-secondary {
-        background-color: $tw-secondary !important;
+    &-left {
+        @include border-color(1, left);
+        &-sm {
+            @include border-color(0.5, left);
+        }
+        &-md {
+            @include border-color(3, left);
+        }
+        &-lg {
+            @include border-color(5, left);
+        }
     }
-    &-tertiary {
-        background-color: $tw-tertiary !important;
+    &-right {
+        @include border-color(1, right);
+        &-sm {
+            @include border-color(0.5, right);
+        }
+        &-md {
+            @include border-color(3, right);
+        }
+        &-lg {
+            @include border-color(5, right);
+        }
     }
-    &-danger {
-        background-color: $tw-danger !important;
+    &-bottom {
+        @include border-color(1, bottom);
+        &-sm {
+            @include border-color(0.5, bottom);
+        }
+        &-md {
+            @include border-color(3, bottom);
+        }
+        &-lg {
+            @include border-color(5, bottom);
+        }
     }
-    &-warning {
-        background-color: $tw-warning !important;
+    &-top {
+        @include border-color(1, top);
+        &-sm {
+            @include border-color(0.5, top);
+        }
+        &-md {
+            @include border-color(3, top);
+        }
+        &-lg {
+            @include border-color(5, top);
+        }
     }
-    &-success {
-        background-color: $tw-success !important;
+    @include border-color(1);
+    &-sm {
+        @include border-color(0.5);
     }
-    &-dark {
-        background-color: $tw-dark !important;
+    &-md {
+        @include border-color(3);
+    }
+    &-lg {
+        @include border-color(5);
     }
 }
 
@@ -106,16 +170,16 @@
     }
 }
 
-.border-radius-10 {
-    border-radius: 10px !important;
-}
-
-.border-radius-20 {
-    border-radius: 20px !important;
-}
-
-.border-radius-30 {
-    border-radius: 30px !important;
+.border-radius {
+    &-10 {
+        border-radius: 10px !important;
+    }
+    &-20 {
+        border-radius: 20px !important;
+    }
+    &-30 {
+        border-radius: 30px !important;
+    }
 }
 
 .spacer {

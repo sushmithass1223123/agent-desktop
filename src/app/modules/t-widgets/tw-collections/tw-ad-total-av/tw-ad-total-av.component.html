@@ -4,7 +4,7 @@
 <tw-wrapper [data]="data" (maximizeEvent)="maximizeEvent($event)">
     <!-- your code goes here -->
     <div fxLayout="column" fxLayoutAlign="center center" class="w-100-p h-100-p">
-        <div class="t-chart w-100-p h-100-p" #chartContainerRef>
+        <div class="tw-chart w-100-p h-100-p" #chartContainerRef>
             <ngx-charts-pie-chart
                 *fuseIfOnDom
                 [view]="widget.view.length === 0 ? [chartContainerRef.offsetWidth, chartContainerRef.offsetHeight] : widget.view"

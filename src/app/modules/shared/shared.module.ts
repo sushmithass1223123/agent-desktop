@@ -7,39 +7,21 @@ import * as Chart from 'chart.js';
 import { ChartsModule } from 'ng2-charts';
 import { AvatarComponent } from './avatar/avatar.component';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
-import { TChartDirective } from './directives/t-chart.directive';
+import { TWChartDirective } from './directives/tw-chart.directive';
 import { MaterialModule } from './material.module';
 import { ResourceNotFoundComponent } from './resource-not-found/resource-not-found.component';
+import { SnackbarComponent } from './snackbar/snackbar.component';
 
 Chart.defaults.global.responsive = true;
 Chart.defaults.global.maintainAspectRatio = false;
-Chart.defaults.global.elements = {
-    rectangle: {
-        borderWidth: 0
-    },
-    arc: {
-        borderWidth: 0
-    }
-};
 
-const sharedModules = [
-    MaterialModule,
-    FuseSharedModule,
-    LeafletModule,
-    ChartsModule,
-    NgxChartsModule
-];
+const sharedModules = [MaterialModule, FuseSharedModule, LeafletModule, ChartsModule, NgxChartsModule];
 
-const sharedComponents = [
-    ResourceNotFoundComponent,
-    ConfirmDialogComponent,
-    AvatarComponent,
-    TChartDirective
-];
+const sharedComponents = [ResourceNotFoundComponent, ConfirmDialogComponent, AvatarComponent, TWChartDirective, SnackbarComponent];
 
 @NgModule({
     declarations: sharedComponents,
     imports: [CommonModule, ...sharedModules],
     exports: [...sharedModules, ...sharedComponents]
 })
-export class SharedModule { }
+export class SharedModule {}

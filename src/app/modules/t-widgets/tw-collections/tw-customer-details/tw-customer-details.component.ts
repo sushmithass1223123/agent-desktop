@@ -12,7 +12,6 @@ import { IUIEvent, SDKClient } from 'tmac-sdk';
     encapsulation: ViewEncapsulation.None
 })
 export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-
     @Input() data: any;
 
     interactionId: number;
@@ -23,9 +22,7 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
     @Output() floatEvent = new EventEmitter();
     @Output() collapseEvent = new EventEmitter();
 
-    constructor(
-        private _interactionEventService: InteractionEventService
-    ) {
+    constructor(private _interactionEventService: InteractionEventService) {
         super();
     }
 
@@ -80,7 +77,7 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
         }
         // check for this event customer info map is there
         this.checkForCustomerInfo(evt);
-    }
+    };
 
     checkForCustomerInfo(evt: any): void {
         // check if customer info map is available in this event

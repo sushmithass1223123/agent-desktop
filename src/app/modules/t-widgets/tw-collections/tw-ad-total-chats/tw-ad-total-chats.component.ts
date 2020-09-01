@@ -4,6 +4,7 @@ import { FuseConfig } from '@fuse/types';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { takeUntil } from 'rxjs/operators';
+import { CHART_COLORS } from 'app/constants';
 
 @Component({
     selector: 'app-tw-ad-total-chats',
@@ -33,13 +34,7 @@ export class TwAdTotalChatsComponent extends TWidgetWrapper implements OnInit, O
         doughnut: true,
         view: [],
         scheme: {
-            domain: [
-                '#91359f',
-                '#a24fad',
-                '#b26cbc',
-                '#c895cf',
-                '#ddbfe2',
-            ]
+            domain: CHART_COLORS.map((c) => c.backgroundColor)
         },
         data: [
             {

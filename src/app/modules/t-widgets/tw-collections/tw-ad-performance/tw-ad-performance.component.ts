@@ -1,12 +1,40 @@
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { AppDataService } from '@services/app-data.service';
-import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { TwChartConfig, ResStatus } from 'app/interfaces';
-import { takeUntil } from 'rxjs/operators';
-import { CHART_COLORS } from 'app/constants';
-import { BaseChartDirective } from 'ng2-charts';
 import { GamificationService } from '@services/gamification.service';
+import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
+import { ResStatus } from 'app/interfaces';
+import { BaseChartDirective } from 'ng2-charts';
+import { takeUntil } from 'rxjs/operators';
+
+const OnLoadMetricsToAgent = {
+    SubEventName: 'OnLoadMetricsToAgent',
+    JsonData:
+        '{"eventdata":"[{\\"GoalId\\":1,\\"GoalType\\":\\"Daily\\",\\"MetricType\\":\\"AHT\\",\\"GoalName\\":\\"Voice_AHT\\",\\"GoalTarget\\":90},{\\"GoalId\\":2,\\"GoalType\\":\\"Daily\\",\\"MetricType\\":\\"TotalChat\\",\\"GoalName\\":\\"TotalChatInteractions\\",\\"GoalTarget\\":10},{\\"GoalId\\":3,\\"GoalType\\":\\"Daily\\",\\"MetricType\\":\\"AHT\\",\\"GoalName\\":\\"Chat_AHT\\",\\"GoalTarget\\":60}]"}',
+    EventName: 'GenericTMACEvent',
+    InteractionID: 0,
+    IsInteractionConstructEvent: false,
+    IsInteractionDisposeEvent: false,
+    CreatedTime: '0001-01-01T00:00:00',
+    EventId: null,
+    RecoveryEvent: false,
+    QueuedEvent: false,
+    ACK: null
+};
+
+const OnAssignPointsToAgent = {
+    SubEventName: 'OnAssignPointsToAgent',
+    JsonData: '{"totalPointsAssigned":"AHT points : 5, TotalChats points : 2"}',
+    EventName: 'GenericTMACEvent',
+    InteractionID: 0,
+    IsInteractionConstructEvent: false,
+    IsInteractionDisposeEvent: false,
+    CreatedTime: '0001-01-01T00:00:00',
+    EventId: null,
+    RecoveryEvent: false,
+    QueuedEvent: false,
+    ACK: null
+};
 
 @Component({
     selector: 'tw-ad-performance',
@@ -18,43 +46,53 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
     // holds all the data related to this widget from the config
     @Input() data: any;
 
-    performanceChart: TwChartConfig = {
-        data: [],
-        labels: [],
-        options: {
-            showLines: false,
-            legend: {
-                display: false
-            },
-            scales: {
-                xAxes: [
-                    {
-                        stacked: true,
-                        ticks: {
-                            maxRotation: 90,
-                            minRotation: 90
-                        },
-                        gridLines: {
-                            display: false
-                        }
-                    }
-                ],
-                yAxes: [
-                    {
-                        stacked: true,
-                        gridLines: {
-                            display: false
-                        },
-                        ticks: {
-                            stepSize: 50
-                        }
-                    }
-                ],
-                scaleLabel: {
-                    display: false
-                }
-            }
-        }
+    // performanceChart: TChartConfig = {
+    //     datasets: [],
+    //     labels: [],
+    //     colors: CHART_COLORS,
+    //     options: {
+    //         showLines: false,
+    //         legend: {
+    //             display: false
+    //         },
+    //         scales: {
+    //             xAxes: [
+    //                 {
+    //                     stacked: true,
+    //                     ticks: {
+    //                         maxRotation: 90,
+    //                         minRotation: 90
+    //                     },
+    //                     gridLines: {
+    //                         display: false
+    //                     }
+    //                 }
+    //             ],
+    //             yAxes: [
+    //                 {
+    //                     stacked: true,
+    //                     gridLines: {
+    //                         display: false
+    //                     },
+    //                     ticks: {
+    //                         stepSize: 50
+    //                     }
+    //                 }
+    //             ],
+    //             scaleLabel: {
+    //                 display: false
+    //             }
+    //         }
+    //     },
+    //     refresh: () =>
+    //         setTimeout(() => {
+    //             (this.performanceChartRef as any).refresh();
+    //         }, 10)
+    // };
+
+    performanceChartProgress = {
+        badge: {},
+        goal: {}
     };
 
     gamificationReqStatus: ResStatus = {
@@ -137,37 +175,49 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
             this.gamificationReqStatus = { loading: false, error: true, msg: 'AgentProgressUrl is not provided in app config' };
             return;
         }
+
+        let onLoadMetricsToAgent = {
+            ...OnLoadMetricsToAgent,
+            JsonData: JSON.parse(OnLoadMetricsToAgent.JsonData)
+        };
+
+        onLoadMetricsToAgent = {
+            ...onLoadMetricsToAgent,
+            JsonData: { ...onLoadMetricsToAgent.JsonData, eventdata: JSON.parse(onLoadMetricsToAgent.JsonData.eventdata) }
+        };
+
+        console.log({ onLoadMetricsToAgent });
+
         this.gamificationService.getAgentProgress(this.data.Data.AgentProgressUrl, '1014').subscribe(
             (res) => {
                 try {
                     this.gamificationReqStatus.loading = false;
                     const metrics = JSON.parse(res.d);
-                    let labels = [];
-                    let datasets = {
-                        PointsAssigned: [],
-                        RequiredPointsForNextBadge: []
-                    };
-
-                    metrics.forEach((m) => {
-                        labels.push(m.MetricName);
-                        datasets.PointsAssigned.push(m.PointsAssigned);
-                        datasets.RequiredPointsForNextBadge.push(m.PointsAssigned + m.RequiredPointsForNextBadge);
+                    console.log({ rest: metrics });
+                    // let labels = [];
+                    // let datasets = {
+                    //     PointsAssigned: [],
+                    //     RequiredPointsForNextBadge: []
+                    // };
+                    metrics.forEach((m: any) => {
+                        this.performanceChartProgress.badge[m.MetricName] = {
+                            max: m.PointsAssigned + m.RequiredPointsForNextBadge,
+                            current: m.PointsAssigned
+                        };
+                        this.performanceChartProgress.goal[m.MetricName] = {
+                            max: parseInt(m.MetricMaxValue, 10),
+                            current: parseInt(m.MetricCurrentValue, 10)
+                        };
+                        // labels.push(m.MetricName);
+                        // datasets.PointsAssigned.push(m.PointsAssigned);
+                        // datasets.RequiredPointsForNextBadge.push(m.PointsAssigned + m.RequiredPointsForNextBadge);
                     });
-
-                    this.performanceChart.labels = labels;
-                    Object.keys(datasets).forEach((d, i) => {
-                        this.performanceChart.data.push({
-                            data: datasets[d],
-                            label: d,
-                            barPercentage: 0.2,
-                            backgroundColor: CHART_COLORS[i].backgroundColor,
-                            hoverBackgroundColor: CHART_COLORS[i].hoverBackgroundColor
-                        });
-                    });
-
-                    setTimeout(() => {
-                        (this.performanceChartRef as any).refresh();
-                    }, 10);
+                    // this.performanceChart.labels = labels;
+                    // this.performanceChart.datasets = Object.values(datasets).map((d) => ({
+                    //     data: d,
+                    //     barThickness: 8
+                    // }));
+                    // this.performanceChart.refresh();
                 } catch (e) {
                     this.gamificationReqStatus = { loading: false, error: true, msg: 'Looks like something went wrong' };
                 }

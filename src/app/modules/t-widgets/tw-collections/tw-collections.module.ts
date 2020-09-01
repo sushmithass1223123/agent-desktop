@@ -37,7 +37,7 @@ import { TwSuGamificationComponent } from './tw-su-gamification/tw-su-gamificati
 import { TwSuStatusComponent } from './tw-su-status/tw-su-status.component';
 import { TwSuTotalCallsComponent } from './tw-su-total-calls/tw-su-total-calls.component';
 import { TwSuTransferredConferencedCallsComponent } from './tw-su-transferred-conferenced-calls/tw-su-transferred-conferenced-calls.component';
-import { TwSuWorkCodesComponent } from './tw-su-work-codes/tw-su-work-codes.component';
+import { TwWorkCodesComponent } from './tw-work-codes/tw-work-codes.component';
 import { TwUnknownComponent } from './tw-unknown/tw-unknown.component';
 import { TwVideoControlsComponent } from './tw-video-controls/tw-video-controls.component';
 import { TwVoiceControlsComponent } from './tw-voice-controls/tw-voice-controls.component';
@@ -76,7 +76,7 @@ const collectionComponents = [
     TwAdScoreComponent,
     TwSuGamificationComponent,
     TwSuActiveAgentsComponent,
-    TwSuWorkCodesComponent,
+    TwWorkCodesComponent,
     TwSuAgentActivityComponent,
     TwPanelComponent,
     TwSuAgentActivityDetailsComponent,
@@ -91,10 +91,7 @@ const collectionComponents = [
 
 @NgModule({
     declarations: collectionComponents,
-    imports: [
-        SharedModule,
-        TwWrapperModule,
-    ],
+    imports: [SharedModule, TwWrapperModule],
     exports: collectionComponents
 })
-export class TwCollectionsModule { }
+export class TwCollectionsModule {}

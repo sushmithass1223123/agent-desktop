@@ -28,7 +28,7 @@ import { TwSuGamificationComponent } from '@modules/t-widgets/tw-collections/tw-
 import { TwSuStatusComponent } from '@modules/t-widgets/tw-collections/tw-su-status/tw-su-status.component';
 import { TwSuTotalCallsComponent } from '@modules/t-widgets/tw-collections/tw-su-total-calls/tw-su-total-calls.component';
 import { TwSuTransferredConferencedCallsComponent } from '@modules/t-widgets/tw-collections/tw-su-transferred-conferenced-calls/tw-su-transferred-conferenced-calls.component';
-import { TwSuWorkCodesComponent } from '@modules/t-widgets/tw-collections/tw-su-work-codes/tw-su-work-codes.component';
+import { TwWorkCodesComponent } from '@modules/t-widgets/tw-collections/tw-work-codes/tw-work-codes.component';
 import { TwUnknownComponent } from '@modules/t-widgets/tw-collections/tw-unknown/tw-unknown.component';
 import { TwVideoControlsComponent } from '@modules/t-widgets/tw-collections/tw-video-controls/tw-video-controls.component';
 import { TwVoicePanelComponent } from '@modules/t-widgets/tw-collections/tw-voice-panel/tw-voice-panel.component';
@@ -56,7 +56,7 @@ export class TWLibrary {
         'tw-su-channels': TwSuChannelsComponent,
         'tw-su-status': TwSuStatusComponent,
         'tw-su-active-agents': TwSuActiveAgentsComponent,
-        'tw-su-work-codes': TwSuWorkCodesComponent,
+        'tw-work-codes': TwWorkCodesComponent,
         'tw-su-agent-activity': TwSuAgentActivityComponent,
         'tw-ad-feedback': TwAdFeedbackComponent,
         'tw-ad-score': TwAdScoreComponent,

@@ -1,0 +1,11 @@
+<div fxFlayout fxLayoutAlign="space-between center">
+    <span> {{ data.message }} {{ data.icon }} </span>
+    <mat-icon
+        [ngClass]="{
+            spin: data.loading
+        }"
+        [color]="data.color"
+    >
+        {{ data.icon }}
+    </mat-icon>
+</div>
