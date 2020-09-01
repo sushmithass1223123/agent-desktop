@@ -34,6 +34,8 @@ import { TwVideoControlsComponent } from '@modules/t-widgets/tw-collections/tw-v
 import { TwVoicePanelComponent } from '@modules/t-widgets/tw-collections/tw-voice-panel/tw-voice-panel.component';
 import { TwWallboardComponent } from '@modules/t-widgets/tw-collections/tw-wallboard/tw-wallboard.component';
 import { TWidget } from '@modules/t-widgets/utils/t-widget';
+import { TwAuxStatusChartComponent } from '@modules/t-widgets/tw-collections/tw-aux-status-chart/tw-aux-status-chart.component';
+import { TwAhtTcComponent } from '@modules/t-widgets/tw-collections/tw-aht-tc/tw-aht-tc.component';
 
 export class TWLibrary {
     static widgetLibrary: Record<string, Type<any>> = {
@@ -70,6 +72,8 @@ export class TWLibrary {
         'tw-customer-sentiment': TwCustomerSentimentComponent,
         'tw-audio-controls': TwAudioControlsComponent,
         'tw-video-controls': TwVideoControlsComponent,
+        'tw-aux-status-chart': TwAuxStatusChartComponent,
+        'tw-aht-tc': TwAhtTcComponent
     };
 
     public static getWidget(type: string, data: any): TWidget {
