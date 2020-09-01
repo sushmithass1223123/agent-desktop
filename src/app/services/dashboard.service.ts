@@ -45,7 +45,7 @@ export class DashboardService {
         // check if the connection is created successfully
         if (signalR) {
             // on registered event
-            signalR.hub.on('onRegistered', () => {});
+            signalR.hub.on('onRegistered', () => { });
 
             // register to agent interaction list event
             signalR.hub.on('onAgentInteractionList', (interactionList: any) => {
@@ -57,13 +57,14 @@ export class DashboardService {
                 SDKClient.events.emit('AgentChannelDetailsEvent', channelList);
             });
 
+            // register to agent status list event
+            signalR.hub.on('onStatusList', (statusDetails: AgentStateDurationList) => {
+                SDKClient.events.emit('AgentStatusDetailsEvent', statusDetails);
+            });
+
             // connection connected event
             signalR.events.on('onConnected', () => {
                 signalR.hub.invoke('GetAgentData', signalR.hub.connection.id, agentData.agentId, true);
-            });
-
-            signalR.events.on('onStatusList', (statusDetails: AgentStateDurationList) => {
-                SDKClient.events.emit('AgentStatusDetailsEvent', statusDetails);
             });
 
             // connect to the server

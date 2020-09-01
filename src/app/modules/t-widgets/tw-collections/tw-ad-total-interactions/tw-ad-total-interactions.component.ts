@@ -4,9 +4,9 @@ import { FuseConfig } from '@fuse/types';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CHART_COLORS } from 'app/constants';
-import { AgentChannelDetailsEventRes, TwChartConfig } from 'app/interfaces';
+import { TwChartConfig } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient } from 'tmac-sdk';
+import { AgentChannelDataList, SDKClient } from 'tmac-sdk';
 
 const multiColors: any = {
     backgroundColor: CHART_COLORS.map((c) => c.backgroundColor),
@@ -103,10 +103,10 @@ export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements On
         this.destroyWrapper();
     }
 
-    AgentChannelDetailsEvent = (interactionsData: AgentChannelDetailsEventRes): void => {
+    AgentChannelDetailsEvent = (channelData: AgentChannelDataList): void => {
         const datasets = { Total: [], AHT: [] };
         const labels = [];
-        interactionsData.Channels.forEach((c) => {
+        channelData.Channels.forEach((c) => {
             datasets.Total.push(c.Total);
             datasets.AHT.push(c.AverageActiveTime + c.AverageHoldTime);
             labels.push(c.Channel);
@@ -116,7 +116,7 @@ export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements On
             label: d
         }));
         this.allInteractionsChart.labels = labels;
-    };
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @  Private Methods
