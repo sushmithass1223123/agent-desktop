@@ -5,7 +5,7 @@
             "Type": "pbxms"
         },
         "FaceAuth": {
-            "Enabled": true,
+            "Enabled": false,
             "AuthServerUrl": "https://tmac.tetherfilabs.com/TFaceAuthProxyNew/Proxy.asmx/VerifyFaceImages"
         },
         "DomainListEnabled": false,
@@ -318,24 +318,19 @@
                                 "Data": {}
                             },
                             {
-                                "Name": "Interaction Details",
+                                "Name": "Customer Sentiment",
                                 "Description": "",
-                                "Type": "tw-ad-interaction-details",
+                                "Type": "tw-customer-sentiment",
                                 "Config": {
                                     "Static": false,
                                     "Anchor": false,
-                                    "AOT": false,
-                                    "Icon": "format_list_bulleted",
+                                    "Icon": "show_chart",
                                     "Class": "",
                                     "Position": {
                                         "X": 0,
                                         "Y": 2
                                     },
-                                    "Actions": [
-                                        "maximize",
-                                        "pin",
-                                        "float"
-                                    ],
+                                    "Actions": ["maximize", "pin", "float"],
                                     "ViewState": "restore",
                                     "PinState": false,
                                     "FloatState": false,
@@ -1491,7 +1486,10 @@
                                     "Header": true,
                                     "Disabled": false
                                 },
-                                "Data": {}
+                                "Data": {
+                                    "Source" : "supervisor",
+                                    "ByTeam" : true
+                                }
                             },
                             {
                                 "Name": "Agent Assist",

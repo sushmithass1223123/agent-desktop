@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewEncapsulation, Output, EventEmitter } from '@angular/core';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
@@ -16,6 +16,7 @@ import { SDKClient, IAgentData } from 'tmac-sdk';
 export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     // holds all the data related to this widget from the config
     @Input() data: any;
+    @Output() selectActiveAgent = new EventEmitter();
 
     fuseConfig: any;
     appConfig: any;
@@ -24,16 +25,14 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     agentList: any[];
     filteredAgents: any[];
     searchTerm: string;
+    selectedAgent: any = null;
 
     /**
      * Constructor
      * @param {FuseConfigService} _fuseConfigService
      * @param {AppDataService} _appDataService
      */
-    constructor(
-        private _fuseConfigService: FuseConfigService,
-        private _appDataService: AppDataService
-    ) {
+    constructor(private _fuseConfigService: FuseConfigService, private _appDataService: AppDataService) {
         super();
 
         this.agentList = [];
@@ -53,18 +52,13 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        this._fuseConfigService.config
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((config: any) => {
-                this.fuseConfig = config;
-            });
+        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+            this.fuseConfig = config;
+        });
 
-
-        this._appDataService.config
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((config: any) => {
-                this.appConfig = config;
-            });
+        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+            this.appConfig = config;
+        });
 
         this.filteredAgents = [];
         this.getAgentList();
@@ -84,17 +78,22 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
 
     private async getAgentList(): Promise<void> {
         // get all the session list
-        const result = await SDKClient.getAgentSessionsList({
-            agentId: '',
-            interactionId: '',
-            supervisorId: '',
-            teamId: '',
-            tmacServer: ''
-        }, null);
+        const result = await SDKClient.getAgentSessionsList(
+            {
+                agentId: '',
+                interactionId: '',
+                supervisorId: '',
+                teamId: '',
+                tmacServer: ''
+            },
+            null
+        );
 
-        // filter for excpet me
-        this.agentList = this.filteredAgents = result.response.filter((a: any) => a.AgentLoginID !== this.user.agentId);
-        // check any search term is there, then filter 
+        if (!this.filteredAgents.length) {
+            // filter for excpet me
+            this.agentList = this.filteredAgents = result.response.filter((a: any) => a.AgentLoginID !== this.user.agentId);
+        }
+        // check any search term is there, then filter
         if (this.searchTerm) {
             this.filterAgents();
         }
@@ -113,12 +112,20 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         // Search
         if (searchTerm === '') {
             this.filteredAgents = this.agentList;
-        }
-        else {
+        } else {
             this.filteredAgents = this.agentList.filter((agentItem) => {
                 return agentItem.AgentName.toLowerCase().includes(searchTerm);
             });
         }
+    }
+
+    public selectAgent(agent: any): void {
+        if (this.selectedAgent?.AgentLoginID === agent.AgentLoginID) {
+            this.selectedAgent = null;
+        } else {
+            this.selectedAgent = agent;
+        }
+        this.selectActiveAgent.emit(this.selectedAgent);
     }
 }
 

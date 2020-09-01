@@ -37,51 +37,116 @@
         <div fxFlex fxLayout="column" fxLayoutAlign=" none" class="agent-list" [@animateStagger]="{ value: '50' }" fusePerfectScrollbar>
             <div
                 *ngFor="let item of filteredAgents"
-                fxLayout="row"
-                fxLayoutAlign="space-between center"
                 class="w-100-p p-12 border-radius-20 agent-item"
                 [ngClass]="
-                    fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                    (fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
                         ? fuseConfig.layout.anchorWidget.contentBackground
                         : fuseConfig.layout.widget.customBackgroundColor === true
                         ? fuseConfig.layout.widget.contentBackground
-                        : ''
+                        : '') +
+                    ' ' +
+                    (item.AgentLoginID === selectedAgent?.AgentLoginID ? 'border-lg-success' : '')
                 "
             >
-                <div fxLayout="row" fxLayoutAlign="start center" fxFlex="40">
-                    <div class="position-relative">
-                        <avatar name="{{ item.AgentName }}"></avatar>
-                        <span
-                            class="element-status"
-                            [ngClass]="
-                                item.CurrentAgentStatus.includes('Available')
-                                    ? 'success'
-                                    : item.CurrentAgentStatus.includes('On Call')
-                                    ? 'danger'
-                                    : 'warning'
-                            "
-                        ></span>
+                <div
+                    fxLayout="row"
+                    fxLayoutAlign="space-between center"
+                    class="tw-accordion w-100-p"
+                    (click)="selectAgent(item)"
+                    [ngClass]="{ active: item.AgentLoginID === selectedAgent?.AgentLoginID }"
+                >
+                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="40">
+                        <div class="position-relative">
+                            <avatar name="{{ item.AgentName }}"></avatar>
+                            <span
+                                class="element-status"
+                                [ngClass]="{
+                                    'bg-alt-success': item.CurrentAgentStatus.includes('Available'),
+                                    'bg-alt-danger': item.CurrentAgentStatus.includes('On Call'),
+                                    'bg-alt-warning': item.CurrentAgentStatus.includes('On Hold')
+                                }"
+                            >
+                            </span>
+                        </div>
+                        <div fxLayout="column" fxLayoutAlign=" none" class="ml-16">
+                            <span class="font-weight-700"> {{ item.AgentName }}</span>
+                            <span>{{ item.CurrentAgentStatus }}</span>
+                        </div>
                     </div>
-                    <div fxLayout="column" fxLayoutAlign=" none" class="ml-16">
-                        <span class="font-weight-700"> {{ item.AgentName }}</span>
-                        <span>{{ item.CurrentAgentStatus }}</span>
+
+                    <div fxLayout="row" fxLayoutAlign="center center" fxFlex="50" class="channel-list">
+                        <div mat-card-avatar matBadge="4">
+                            <mat-icon>phone</mat-icon>
+                        </div>
+                        <div mat-card-avatar matBadge="4">
+                            <mat-icon>chat</mat-icon>
+                        </div>
+                        <div mat-card-avatar matBadge="4">
+                            <mat-icon>duo</mat-icon>
+                        </div>
+                    </div>
+
+                    <div fxLayout="row" fxLayoutAlign="center center" fxFlex="10">
+                        <mat-icon>wifi</mat-icon>
                     </div>
                 </div>
+                <div fxLayout class="tw-accordion-menu">
+                    <div fxFlex="50" fxLayout="row wrap" fxLayoutAlign="space-between start" class="channel-list border-right-primary px-8">
+                        <div mat-card-avatar mat-ripple>
+                            <mat-icon> supervised_user_circle </mat-icon>
+                        </div>
+                        <div mat-card-avatar mat-ripple>
+                            <mat-icon>comment</mat-icon>
+                        </div>
+                        <div mat-card-avatar mat-ripple>
+                            <mat-icon>message</mat-icon>
+                        </div>
+                        <div mat-card-avatar mat-ripple>
+                            <mat-icon>camera_alt</mat-icon>
+                        </div>
 
-                <div fxLayout="row" fxLayoutAlign="center center" fxFlex="50" class="channel-list">
-                    <div mat-card-avatar matBadge="4">
-                        <mat-icon>phone</mat-icon>
+                        <div mat-card-avatar mat-ripple>
+                            <mat-icon>message</mat-icon>
+                        </div>
+                        <div mat-card-avatar mat-ripple>
+                            <mat-icon>camera_alt</mat-icon>
+                        </div>
+                        <div mat-card-avatar mat-ripple>
+                            <mat-icon>message</mat-icon>
+                        </div>
+                        <div mat-card-avatar mat-ripple>
+                            <mat-icon>camera_alt</mat-icon>
+                        </div>
                     </div>
-                    <div mat-card-avatar matBadge="4">
-                        <mat-icon>chat</mat-icon>
+                    <div fxFlex="50" fxLayout="row wrap" fxLayoutAlign="space-between start" class="channel-list px-8">
+                        <div mat-card-avatar matBadge="4">
+                            <mat-icon>email</mat-icon>
+                        </div>
+                        <div mat-card-avatar matBadge="4">
+                            <mat-icon>sms</mat-icon>
+                        </div>
+                        <div mat-card-avatar matBadge="4">
+                            <mat-icon>print</mat-icon>
+                        </div>
+                        <div mat-card-avatar matBadge="4">
+                            <mat-icon>email</mat-icon>
+                        </div>
+                        <div mat-card-avatar matBadge="4">
+                            <mat-icon>sms</mat-icon>
+                        </div>
+                        <div mat-card-avatar matBadge="4">
+                            <mat-icon>print</mat-icon>
+                        </div>
+                        <div mat-card-avatar matBadge="4">
+                            <mat-icon>email</mat-icon>
+                        </div>
+                        <div mat-card-avatar matBadge="4">
+                            <mat-icon>sms</mat-icon>
+                        </div>
+                        <div mat-card-avatar matBadge="4">
+                            <mat-icon>print</mat-icon>
+                        </div>
                     </div>
-                    <div mat-card-avatar matBadge="4">
-                        <mat-icon>duo</mat-icon>
-                    </div>
-                </div>
-
-                <div fxLayout="row" fxLayoutAlign="center center" fxFlex="10">
-                    <mat-icon>wifi</mat-icon>
                 </div>
             </div>
             <div

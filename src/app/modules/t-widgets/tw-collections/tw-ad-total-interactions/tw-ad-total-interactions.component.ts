@@ -1,9 +1,72 @@
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation, ViewChild, ElementRef } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
+import { CHART_COLORS } from 'app/constants';
+import { TChartConfig } from 'app/models';
 import { takeUntil } from 'rxjs/operators';
+
+const interactionsData = {
+    AgentId: '50004',
+    Duration: 100,
+    Channels: [
+        {
+            Channel: 'TextChat',
+            Total: 81,
+            In: 81,
+            Out: 0,
+            Transfer: 0,
+            Conference: 0,
+            AverageActiveTime: 20,
+            TotalActive: 6743,
+            TotalHold: 0,
+            AverageHoldTime: 0,
+            LongestCall: 1218,
+            ShortestCall: 1,
+            TotalDuration: 6849,
+            AverageInteractionTime: 84.55555555555556
+        },
+        {
+            Channel: 'AV',
+            Total: 81,
+            In: 81,
+            Out: 0,
+            Transfer: 0,
+            Conference: 0,
+            AverageActiveTime: 3,
+            TotalActive: 6743,
+            TotalHold: 0,
+            AverageHoldTime: 100,
+            LongestCall: 1218,
+            ShortestCall: 1,
+            TotalDuration: 6849,
+            AverageInteractionTime: 84.55555555555556
+        },
+        {
+            Channel: 'Voice',
+            Total: 81,
+            In: 81,
+            Out: 0,
+            Transfer: 0,
+            Conference: 0,
+            AverageActiveTime: 3,
+            TotalActive: 6743,
+            TotalHold: 0,
+            AverageHoldTime: 0,
+            LongestCall: 1218,
+            ShortestCall: 1,
+            TotalDuration: 6849,
+            AverageInteractionTime: 84.55555555555556
+        }
+    ]
+};
+
+const multiColors: any = {
+    backgroundColor: CHART_COLORS.map((c) => c.backgroundColor),
+    borderCapStyle: 'butt',
+    hoverBackgroundColor: CHART_COLORS.map((c) => c.hoverBackgroundColor)
+};
 
 @Component({
     selector: 'tw-ad-total-interactions',
@@ -25,38 +88,21 @@ export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements On
     // -----------------------------------------------------------
     appConfig: any;
 
-    @ViewChild('chartContainerRef') chartContainerRef: ElementRef;
-
-    widget = {
-        legend: false,
-        labels: true,
-        doughnut: true,
-        view: [],
-        scheme: {
-            domain: [
-                '#91359f',
-                '#a24fad',
-                '#b26cbc',
-                '#c895cf',
-                '#ddbfe2',
-            ]
-        },
-        data: [
-            {
-                name: 'Closed Interactions',
-                value: 70
-            },
-            {
-                name: 'Total Interactions',
-                value: 105
+    allInteractionsChart: TChartConfig = {
+        datasets: [{ data: [] }],
+        options: {
+            showLines: false,
+            tooltips: {
+                callbacks: {
+                    title: (item, data) => {
+                        return data.datasets[item[0].datasetIndex].label;
+                    }
+                }
             }
-        ],
-        state: {
-            maximized: false
         },
-        onSelect: (ev: any) => {
-            console.log(ev);
-        }
+        colors: [multiColors, multiColors],
+        labels: [],
+        legend: false
     };
 
     /**
@@ -98,6 +144,8 @@ export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements On
         this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
             this.appConfig = config;
         });
+
+        this.setupTotalInteractionChart();
     }
 
     /**
@@ -108,6 +156,21 @@ export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements On
         this.destroyWrapper();
     }
 
+    setupTotalInteractionChart(): void {
+        const datasets = { Total: [], AHT: [] };
+        const labels = [];
+        interactionsData.Channels.forEach((c) => {
+            datasets.Total.push(c.Total);
+            datasets.AHT.push(c.AverageActiveTime + c.AverageHoldTime);
+            labels.push(c.Channel);
+        });
+        this.allInteractionsChart.datasets = Object.keys(datasets).map((d) => ({
+            data: datasets[d],
+            label: d
+        }));
+        this.allInteractionsChart.labels = labels;
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
@@ -115,18 +178,6 @@ export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements On
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
-
-    maximizeEvent(isMaximized: boolean): void {
-        // set the maximized state
-        this.widget.state.maximized = isMaximized;
-        // set it first to avoid widget.view length 0
-        this.widget.view = [this.chartContainerRef.nativeElement.offsetWidth, this.chartContainerRef.nativeElement.offsetHeight];
-        // setttime is to make sure this event processing will be passed
-        setTimeout(() => {
-            // this is to avoid "Expression ___ has changed after it was checked" error
-            this.widget.view = [this.chartContainerRef.nativeElement.offsetWidth, this.chartContainerRef.nativeElement.offsetHeight];
-        }, 0);
-    }
 }
 
 // for more info visit - https://angular.io/api/core

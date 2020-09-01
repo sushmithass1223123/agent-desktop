@@ -22,3 +22,16 @@ export interface HistoryInteraction {
     LastID: number;
     SubType: string;
 }
+
+export interface WorkCode {
+    Code: string;
+    Name: string;
+    ParentID: string;
+    TeamID: string;
+    __type: string;
+}
+
+export interface ResLoadWorkCodes {
+    response: WorkCode[];
+    userObject: any;
+}

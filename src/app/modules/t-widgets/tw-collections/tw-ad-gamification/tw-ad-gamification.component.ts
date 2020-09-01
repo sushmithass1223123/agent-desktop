@@ -4,6 +4,9 @@ import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { takeUntil } from 'rxjs/operators';
 import { GamificationService } from 'app/services/gamification.service';
+import { ResStatus } from 'app/models';
+import { SDKClient } from 'tmac-sdk';
+import * as interfaces from 'app/interfaces/interaction-manager';
 
 @Component({
     selector: 'tw-ad-gamification',
@@ -15,10 +18,14 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
     // holds all the data related to this widget from the config
     @Input() data: any;
 
-    badges = {
+    gamificationReqStatus: ResStatus = {
+        error: false,
         loading: true,
-        data: []
+        msg: ''
     };
+
+    receivedBadges: any[] = [];
+
     maximized = false;
     // -----------------------------------------------------------
     // @ [OPTIONAL] to store the fuse config for theme
@@ -58,6 +65,8 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
         // call the wrapper init method
         this.initWrapper(this.data);
 
+        console.log({ interfaces });
+
         // -----------------------------------------------------------
         // @ [OPTIONAL] to get the fuse config
         // -----------------------------------------------------------
@@ -73,6 +82,7 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
         });
 
         this.setBadges();
+        this.setupBadgeListeners();
     }
 
     /**
@@ -87,22 +97,26 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
 
-    private setBadges(): void {
-        if (!this.data.Data.LeaderBoardUrl) {
-            this.badges = {
-                loading: false,
-                data: []
-            };
-        }
-        this._gamificationService.fetchLeaderBoard(this.data.Data.LeaderBoardUrl).subscribe((leaders) => {
-            if (leaders && leaders.length) {
-                this.badges = {
-                    loading: false,
-                    data: leaders[0].TotalBadges
-                };
-            }
-        });
+    private setupBadgeListeners(): void {
+        SDKClient.events.on('InteractionClosedEvent', this.setBadges);
     }
+
+    private setBadges = (): void => {
+        if (!this.data.Data.LeaderBoardUrl) {
+            this.gamificationReqStatus = { loading: false, error: true, msg: 'LeaderBoardUrl not provided in app config' };
+        }
+        this._gamificationService.fetchLeaderBoard(this.data.Data.LeaderBoardUrl).subscribe(
+            (leaders) => {
+                if (leaders && leaders.length) {
+                    this.receivedBadges = leaders[0].TotalBadges;
+                }
+                this.gamificationReqStatus = { loading: false, error: false, msg: '' };
+            },
+            (err) => {
+                this.gamificationReqStatus = { msg: 'Something went wrong', error: true, loading: false };
+            }
+        );
+    };
 
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods

@@ -4,6 +4,13 @@ export interface ResStatus {
     msg: string;
 }
 
+export interface ResData<T> {
+    loading: boolean;
+    error: boolean;
+    msg: string;
+    data: T;
+}
+
 export interface ResGamification {
     AgentId: string;
     AgentName: string;
