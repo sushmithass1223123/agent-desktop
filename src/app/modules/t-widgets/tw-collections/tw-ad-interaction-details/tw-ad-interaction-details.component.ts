@@ -49,7 +49,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
     }
 
     private AgentInteractionDetailsEvent = (data: any[]) => {
-        this.interactionList.push(data);
+        this.interactionList = [...this.interactionList, ...data];
 
         this.interactionDetailsTable.source = new MatTableDataSource(this.interactionList);
         this.interactionDetailsTable.source.sort = this.sort;

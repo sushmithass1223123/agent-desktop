@@ -194,7 +194,7 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
                 y: parsedJson.sentimentResult
             } as any);
         }
-    };
+    }
 
     setupOnNLPDataEventListener(): void {
         setInterval(this.handleOnNLPDataEvent, 5000);

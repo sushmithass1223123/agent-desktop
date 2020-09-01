@@ -138,7 +138,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
                 break;
             default:
         }
-        // we will route to login page
+        // we will route to not-found page
         this._router.navigate(['not-found'],
             {
                 queryParamsHandling: 'preserve',
@@ -146,7 +146,8 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
                 state: {
                     subtitle: 'Oops',
                     title: '',
-                    description
+                    description,
+                    login: true
                 }
             });
     }

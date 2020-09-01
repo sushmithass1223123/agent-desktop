@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation, Renderer2, ViewChild, ElementRef } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -10,6 +10,7 @@ import { AppDataService } from 'app/services/app-data.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CommandResultEvent, IResponse, SDKClient, TUtils } from 'tmac-sdk';
+import { environment } from '../../../../environments/environment';
 
 @Component({
     selector: 'login',
@@ -346,10 +347,13 @@ export class LoginComponent implements OnInit, OnDestroy {
                             }
                         });
                     } else {
-                        // TODO:: assign the agent config if available
-                        // if (response.OtherData.ItemOne) {
-                        //     this._appDataService.config = JSON.parse(response.OtherData.ItemOne);
-                        // }
+                        // check the environment
+                        if (environment.production && response.OtherData.ItemTwo) {
+                            // assign the agent based config
+                            this._appDataService.config = JSON.parse(response.OtherData.ItemTwo);
+                            TUtils.Logger.console('info', 'App config updated!');
+                        }
+
                         // login success
                         // we will route to main page
                         this._router.navigate(['main'], {

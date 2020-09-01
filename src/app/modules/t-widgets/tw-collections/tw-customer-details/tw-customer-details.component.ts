@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewEncapsulation } from '@angular/core';
-import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { SDKClient, TextChatRemoteUserConnectedEvent, IUIEvent, IncomingCallEvent } from 'tmac-sdk';
 import { InteractionEventService } from '@services/interaction-event.service';
-import { join } from 'lodash';
+import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import * as _ from 'lodash';
+import { join } from 'lodash';
+import { IUIEvent, SDKClient } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-customer-details',

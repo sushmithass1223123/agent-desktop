@@ -9,6 +9,7 @@ import { MatSnackBar, MatSnackBarVerticalPosition, MatSnackBarHorizontalPosition
 export class AppDataService {
     // Private
     private _configSubject: BehaviorSubject<any>;
+    private _appConfigSubject: BehaviorSubject<any>;
     private _audioInterval: any;
     private _audio: any;
 
@@ -17,6 +18,7 @@ export class AppDataService {
     ) {
         // Set the config from the default config
         this._configSubject = new BehaviorSubject(new Object());
+        this._appConfigSubject = new BehaviorSubject(new Object());
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -24,7 +26,7 @@ export class AppDataService {
     // -----------------------------------------------------------------------------------------------------
 
     /**
-     * Set and get the config
+     * Set and Get the config
      */
     set config(value) {
         // Get the value from the behavior subject
@@ -40,6 +42,28 @@ export class AppDataService {
     get config(): any | Observable<any> {
         return this._configSubject.asObservable();
     }
+
+    // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * Set and Get the appConfig
+     */
+    set appConfig(value) {
+        // Get the value from the behavior subject
+        let config = this._appConfigSubject.getValue();
+
+        // Merge the new config
+        config = _.merge({}, config, value);
+
+        // Notify the observers
+        this._appConfigSubject.next(config);
+    }
+
+    get appConfig(): any | Observable<any> {
+        return this._appConfigSubject.asObservable();
+    }
+
+    // -----------------------------------------------------------------------------------------------------
 
     public playAudio(type: string = 'default', volume: number = 1, repeat = false): void {
         // clear if any interval

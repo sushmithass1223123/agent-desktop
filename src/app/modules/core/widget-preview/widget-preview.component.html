@@ -1,0 +1,18 @@
+<!-- PROGRESS BAR -->
+<fuse-progress-bar></fuse-progress-bar>
+<!-- / PROGRESS BAR -->
+
+<tw-template
+    class="widget-grid"
+    *ngIf="!loading && previewWidgets.length > 0; else noWidgets"
+    [widgets]="previewWidgets"
+    fusePerfectScrollbar
+></tw-template>
+
+<ng-template #noWidgets>
+    <twc-no-widgets class="twc-card" type="Preview"></twc-no-widgets>
+</ng-template>
+
+<div class="spinner" *ngIf="loading">
+    <mat-spinner></mat-spinner>
+</div>

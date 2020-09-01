@@ -12,13 +12,11 @@ import { TwAdTotalChatsComponent } from '@modules/t-widgets/tw-collections/tw-ad
 import { TwAdTotalInteractionsComponent } from '@modules/t-widgets/tw-collections/tw-ad-total-interactions/tw-ad-total-interactions.component';
 import { TwAgentAssistComponent } from '@modules/t-widgets/tw-collections/tw-agent-assist/tw-agent-assist.component';
 import { TwAmdocsBccComponent } from '@modules/t-widgets/tw-collections/tw-amdocs-bcc/tw-amdocs-bcc.component';
+import { TwAudioControlsComponent } from '@modules/t-widgets/tw-collections/tw-audio-controls/tw-audio-controls.component';
 import { TwCannedResponsesComponent } from '@modules/t-widgets/tw-collections/tw-canned-responses/tw-canned-responses.component';
-import { TwChatControlsComponent } from '@modules/t-widgets/tw-collections/tw-chat-controls/tw-chat-controls.component';
 import { TwChatPanelComponent } from '@modules/t-widgets/tw-collections/tw-chat-panel/tw-chat-panel.component';
 import { TwCustomComponent } from '@modules/t-widgets/tw-collections/tw-custom/tw-custom.component';
-import { TwCustomerJourneyComponent } from '@modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.component';
 import { TwCustomerSentimentComponent } from '@modules/t-widgets/tw-collections/tw-customer-sentiment/tw-customer-sentiment.component';
-import { TwHeatMapComponent } from '@modules/t-widgets/tw-collections/tw-heat-map/tw-heat-map.component';
 import { TwSampleComponent } from '@modules/t-widgets/tw-collections/tw-sample/tw-sample.component';
 import { TwSuActiveAgentsComponent } from '@modules/t-widgets/tw-collections/tw-su-active-agents/tw-su-active-agents.component';
 import { TwSuAgentActivityComponent } from '@modules/t-widgets/tw-collections/tw-su-agent-activity/tw-su-agent-activity.component';
@@ -32,11 +30,10 @@ import { TwSuTotalCallsComponent } from '@modules/t-widgets/tw-collections/tw-su
 import { TwSuTransferredConferencedCallsComponent } from '@modules/t-widgets/tw-collections/tw-su-transferred-conferenced-calls/tw-su-transferred-conferenced-calls.component';
 import { TwSuWorkCodesComponent } from '@modules/t-widgets/tw-collections/tw-su-work-codes/tw-su-work-codes.component';
 import { TwUnknownComponent } from '@modules/t-widgets/tw-collections/tw-unknown/tw-unknown.component';
-import { TwVoiceControlsComponent } from '@modules/t-widgets/tw-collections/tw-voice-controls/tw-voice-controls.component';
+import { TwVideoControlsComponent } from '@modules/t-widgets/tw-collections/tw-video-controls/tw-video-controls.component';
 import { TwVoicePanelComponent } from '@modules/t-widgets/tw-collections/tw-voice-panel/tw-voice-panel.component';
 import { TwWallboardComponent } from '@modules/t-widgets/tw-collections/tw-wallboard/tw-wallboard.component';
 import { TWidget } from '@modules/t-widgets/utils/t-widget';
-import { TwAudioControlsComponent } from '@modules/t-widgets/tw-collections/tw-audio-controls/tw-audio-controls.component';
 
 export class TWLibrary {
     static widgetLibrary: Record<string, Type<any>> = {
@@ -45,8 +42,6 @@ export class TWLibrary {
         'tw-wallboard': TwWallboardComponent,
         'tw-voice-panel': TwVoicePanelComponent,
         'tw-chat-panel': TwChatPanelComponent,
-        'tw-chat-controls': TwChatControlsComponent,
-        'tw-heat-map': TwHeatMapComponent,
         'tw-ad-total-calls': TwAdTotalCallsComponent,
         'tw-ad-total-interactions': TwAdTotalInteractionsComponent,
         'tw-ad-total-av': TwAdTotalAvComponent,
@@ -60,7 +55,6 @@ export class TWLibrary {
         'tw-su-channels-status': TwSuChannelsStatusComponent,
         'tw-su-channels': TwSuChannelsComponent,
         'tw-su-status': TwSuStatusComponent,
-        'tw-voice-controls': TwVoiceControlsComponent,
         'tw-su-active-agents': TwSuActiveAgentsComponent,
         'tw-su-work-codes': TwSuWorkCodesComponent,
         'tw-su-agent-activity': TwSuAgentActivityComponent,
@@ -68,7 +62,6 @@ export class TWLibrary {
         'tw-ad-score': TwAdScoreComponent,
         'tw-ad-performance': TwAdPerformanceComponent,
         'tw-ad-gamification': TwAdGamificationComponent,
-        'tw-ad-customer-journey': TwCustomerJourneyComponent,
         'tw-su-gamification': TwSuGamificationComponent,
         'tw-amdocs-bcc': TwAmdocsBccComponent,
         'tw-account-information': TwAccountInformationComponent,
@@ -76,6 +69,7 @@ export class TWLibrary {
         'tw-agent-assist': TwAgentAssistComponent,
         'tw-customer-sentiment': TwCustomerSentimentComponent,
         'tw-audio-controls': TwAudioControlsComponent,
+        'tw-video-controls': TwVideoControlsComponent,
     };
 
     public static getWidget(type: string, data: any): TWidget {

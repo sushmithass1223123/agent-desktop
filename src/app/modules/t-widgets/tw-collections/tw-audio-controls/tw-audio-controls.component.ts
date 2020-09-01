@@ -1,13 +1,13 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseConfigService } from '@fuse/services/config.service';
+import { AotWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { takeUntil } from 'rxjs/operators';
-import { AVChannel, SDKClient, IAgentData, TUtils, AVEvent, TEnums, WrcCodes, TextChatDisconnectedEvent } from 'tmac-sdk';
 import { IWidget } from 'app/interfaces';
-import { AotWidgetService } from '@services/aot-widget.service';
-import { timer, Subject } from 'rxjs';
 import * as _ from 'lodash';
+import { timer } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { AVChannel, AVEvent, SDKClient, TEnums, TextChatDisconnectedEvent, TUtils } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-audio-controls',
@@ -268,7 +268,15 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
 
     endCall(): void {
         // end the call
-        this.avConn.dropCall('');
+        // if there is only customer then endCall else dropCall
+        if (this.userList.length > 1) {
+            this.avConn.dropCall('');
+        }
+        else {
+            this.avConn.endCall(TEnums.WrcCallTypes.Audio, '');
+        }
+        // close the widget
+        this.destroyWidget();
     }
 }
 
