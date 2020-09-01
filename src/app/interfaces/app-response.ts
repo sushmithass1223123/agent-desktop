@@ -1,3 +1,5 @@
+import { WorkCode } from 'tmac-sdk';
+
 export interface ResStatus {
     loading: boolean;
     error: boolean;
@@ -27,4 +29,9 @@ export interface ResGamificationBadge {
     BadgeId: number;
     BadgeName: string;
     BadgeUrl: string;
+}
+
+export interface ResLoadWorkCodes {
+    response: WorkCode[];
+    userObject: any;
 }

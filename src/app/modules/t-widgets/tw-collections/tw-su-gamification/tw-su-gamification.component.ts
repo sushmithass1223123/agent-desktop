@@ -7,7 +7,7 @@ import { GamificationService } from '@services/gamification.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { sortBy } from 'lodash';
-import { ResStatus } from 'app/models';
+import { ResStatus } from 'app/interfaces';
 
 @Component({
     selector: 'tw-su-gamification',

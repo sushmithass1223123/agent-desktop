@@ -8,10 +8,9 @@ import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
 import { InteractionEventService } from '@services/interaction-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { HistoryInteraction } from 'app/interfaces';
 import { sortBy, uniqBy } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { IGetInteractionHistory, InteractionHistoryReadyEvent, IUIEvent, SDKClient } from 'tmac-sdk';
+import { IGetInteractionHistory, InteractionHistoryReadyEvent, IUIEvent, SDKClient, InteractionHistory } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-customer-journey',
@@ -70,9 +69,9 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         lastId: string;
         iframeUrl: SafeResourceUrl;
         tableData: {
-            source: MatTableDataSource<HistoryInteraction>;
+            source: MatTableDataSource<InteractionHistory>;
             columns: string[];
-            selection: SelectionModel<HistoryInteraction>;
+            selection: SelectionModel<InteractionHistory>;
         };
     };
 
@@ -91,7 +90,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             lastId: '',
             tableData: {
                 columns: Object.keys(this.filterObj),
-                selection: new SelectionModel<HistoryInteraction>(false, []),
+                selection: new SelectionModel<InteractionHistory>(false, []),
                 source: new MatTableDataSource([])
             }
         };
@@ -174,7 +173,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             });
     }
 
-    public setIframe(row: HistoryInteraction): void {
+    public setIframe(row: InteractionHistory): void {
         this.customerJourneyTable.tableData.selection.toggle(row);
         this.customerJourneyTable.iframeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(`${this.data.Data.IframeBaseUrl}${row.SessionID}`);
     }

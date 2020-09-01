@@ -2,12 +2,10 @@ import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TWidget } from '@modules/t-widgets/utils';
 import { AotWidgetService } from '@services/aot-widget.service';
 import { IWidget } from 'app/interfaces';
-import { TwWidgetModel } from 'app/models';
 import { AppDataService } from 'app/services/app-data.service';
 import { ContentPageService } from 'app/services/content-page.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient } from 'tmac-sdk';
 
 @Component({
     selector: 'content',

@@ -8,10 +8,10 @@ import { SnackbarComponent } from '@modules/shared/snackbar/snackbar.component';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
-import { ResData, WorkCode } from 'app/models';
+import { ResData } from 'app/interfaces';
 import { groupBy } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient } from 'tmac-sdk';
+import { SDKClient, WorkCode } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-work-codes',
