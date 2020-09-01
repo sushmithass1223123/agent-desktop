@@ -110,22 +110,6 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
 
-    private setup(): void {
-        if (this.DataConf.Source === 'interaction') {
-            this.loadWorkCodesReq.loading = true;
-            this.getAllWorkCodes();
-        } else if (this.DataConf.Source === 'supervisor') {
-            this.selectedWorkCodes = [
-                { Code: '2', Name: 'Outage', ParentID: '1', TeamID: '2', __type: 'DataModel.CallWorkCodeModel' },
-                { Code: '4', Name: 'WifiIssue', ParentID: '3', TeamID: '2', __type: 'DataModel.CallWorkCodeModel' }
-            ];
-        } else {
-            this.loadWorkCodesReq.error = true;
-            this.loadWorkCodesReq.loading = false;
-            this.loadWorkCodesReq.msg = 'Source not provided / Invalid Source';
-        }
-    }
-
     private async getAllWorkCodes(): Promise<void> {
         try {
             const loadWCRes = await SDKClient.loadCallWorkCodes(this.DataConf.ByTeam, null);
@@ -141,6 +125,22 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
+
+    public setup(): void {
+        if (this.DataConf.Source === 'interaction') {
+            this.loadWorkCodesReq.loading = true;
+            this.getAllWorkCodes();
+        } else if (this.DataConf.Source === 'supervisor') {
+            this.selectedWorkCodes = [
+                { Code: '2', Name: 'Outage', ParentID: '1', TeamID: '2', __type: 'DataModel.CallWorkCodeModel' },
+                { Code: '4', Name: 'WifiIssue', ParentID: '3', TeamID: '2', __type: 'DataModel.CallWorkCodeModel' }
+            ];
+        } else {
+            this.loadWorkCodesReq.error = true;
+            this.loadWorkCodesReq.loading = false;
+            this.loadWorkCodesReq.msg = 'Source not provided / Invalid Source';
+        }
+    }
 
     public setWorkCode(option: MatAutocompleteSelectedEvent): void {
         this._snackbar.openFromComponent(SnackbarComponent, {
