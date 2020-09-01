@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from '@modules/core/login/login.component';
 import { MainComponent } from '@modules/core/main/main.component';
+import { WidgetPreviewComponent } from '@modules/core/widget-preview/widget-preview.component';
 import { ResourceNotFoundComponent } from '@modules/shared/resource-not-found/resource-not-found.component';
 
 const appRoutes: Routes = [
@@ -17,6 +18,10 @@ const appRoutes: Routes = [
     {
         path: 'main',
         component: MainComponent
+    },
+    {
+        path: 'preview',
+        component: WidgetPreviewComponent
     },
     {
         path: 'not-found',

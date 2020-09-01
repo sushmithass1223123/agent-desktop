@@ -24,6 +24,10 @@ tw-wallboard {
                                 width: 40%;
                             }
                         }
+
+                        mat-cell:first-of-type {
+                            justify-content: start;
+                        }
                     }
                 }
             }

@@ -3,8 +3,7 @@ import { FuseConfigService } from '@fuse/services/config.service';
 import { AppDataService } from '@services/app-data.service';
 import { GamificationService } from '@services/gamification.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { CHART_COLORS } from 'app/constants';
-import { ResStatus, TChartConfig } from 'app/models';
+import { ResStatus } from 'app/interfaces';
 import { BaseChartDirective } from 'ng2-charts';
 import { takeUntil } from 'rxjs/operators';
 

@@ -78,7 +78,6 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
         this.interactionId = this.data.InteractionDetails?.InteractionID;
 
         SDKClient.getTextTemplateDepartments({}).then((result: IResponse) => {
-            console.log(result);
             this.departments = result.response;
         });
     }

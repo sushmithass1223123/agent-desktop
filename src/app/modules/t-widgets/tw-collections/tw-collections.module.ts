@@ -14,6 +14,7 @@ import { TwAdTotalChatsComponent } from './tw-ad-total-chats/tw-ad-total-chats.c
 import { TwAdTotalInteractionsComponent } from './tw-ad-total-interactions/tw-ad-total-interactions.component';
 import { TwAgentAssistComponent } from './tw-agent-assist/tw-agent-assist.component';
 import { TwAmdocsBccComponent } from './tw-amdocs-bcc/tw-amdocs-bcc.component';
+import { TwAudioControlsComponent } from './tw-audio-controls/tw-audio-controls.component';
 import { TwCannedResponsesComponent } from './tw-canned-responses/tw-canned-responses.component';
 import { TwChatControlsComponent } from './tw-chat-controls/tw-chat-controls.component';
 import { TwChatPanelComponent } from './tw-chat-panel/tw-chat-panel.component';
@@ -38,6 +39,7 @@ import { TwSuTotalCallsComponent } from './tw-su-total-calls/tw-su-total-calls.c
 import { TwSuTransferredConferencedCallsComponent } from './tw-su-transferred-conferenced-calls/tw-su-transferred-conferenced-calls.component';
 import { TwWorkCodesComponent } from './tw-work-codes/tw-work-codes.component';
 import { TwUnknownComponent } from './tw-unknown/tw-unknown.component';
+import { TwVideoControlsComponent } from './tw-video-controls/tw-video-controls.component';
 import { TwVoiceControlsComponent } from './tw-voice-controls/tw-voice-controls.component';
 import { TwVoicePanelComponent } from './tw-voice-panel/tw-voice-panel.component';
 import { TwWallboardComponent } from './tw-wallboard/tw-wallboard.component';
@@ -82,7 +84,9 @@ const collectionComponents = [
     TwAccountInformationComponent,
     TwCannedResponsesComponent,
     TwAgentAssistComponent,
-    TwCustomerSentimentComponent
+    TwCustomerSentimentComponent,
+    TwAudioControlsComponent,
+    TwVideoControlsComponent,
 ];
 
 @NgModule({

@@ -3,7 +3,7 @@ import { FuseConfigService } from '@fuse/services/config.service';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CHART_COLORS, CUSTOMER_SENTIMENT_PLOT_RECORDS } from 'app/constants';
-import { TChartConfig } from 'app/models';
+import { TwChartConfig } from 'app/interfaces';
 import * as Chart from 'chart.js';
 import { random } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
@@ -58,7 +58,7 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
     // holds all the data related to this widget from the config
     @Input() data: any;
 
-    customerSentimentChart: TChartConfig = {
+    customerSentimentChart: TwChartConfig = {
         datasets: [
             {
                 data: [],
@@ -194,7 +194,7 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
                 y: parsedJson.sentimentResult
             } as any);
         }
-    };
+    }
 
     setupOnNLPDataEventListener(): void {
         setInterval(this.handleOnNLPDataEvent, 5000);

@@ -2,6 +2,7 @@ import { Component, ElementRef, Input, OnDestroy, OnInit, ViewEncapsulation } fr
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { IWidget } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
+import { DashboardService } from '@services/dashboard.service';
 
 @Component({
     selector: 'twc-supervisor',
@@ -17,7 +18,8 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
 
     constructor(
         public hostElement: ElementRef,
-        public contentPageService: ContentPageService
+        public contentPageService: ContentPageService,
+        private _dashboardService: DashboardService
     ) {
         super(hostElement, contentPageService);
     }

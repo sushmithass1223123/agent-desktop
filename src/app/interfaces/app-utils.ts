@@ -1,7 +1,7 @@
 import { ChartDataSets, ChartOptions } from 'chart.js';
 import { Color, SingleOrMultiDataSet } from 'ng2-charts';
 
-export interface TChartConfig {
+export interface TwChartConfig {
     data?: SingleOrMultiDataSet[];
     datasets?: ChartDataSets[];
     labels?: string[] | number[];

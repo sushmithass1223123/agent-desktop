@@ -4,7 +4,7 @@
 <tw-wrapper [data]="data" (maximizeEvent)="allInteractionsChart.legend = $event">
     <!-- your code goes here -->
     <div fxLayout="column" fxLayoutAlign="center center" class="w-100-p h-100-p">
-        <div class="t-chart w-100-p h-100-p p-4" #chartContainerRef>
+        <div class="tw-chart w-100-p h-100-p p-4" #chartContainerRef>
             <canvas
                 baseChart
                 [colors]="allInteractionsChart.colors"

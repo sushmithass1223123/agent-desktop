@@ -144,6 +144,45 @@ mat-selection-list {
             }
         }
     }
+
+    // flex mat table styles
+    mat-row {
+        border: none;
+        min-height: 30px;
+        border-radius: 20px;
+        margin-bottom: 4px;
+    }
+
+    mat-header-row {
+        border: none;
+        min-height: 48px;
+
+        mat-header-cell {
+            position: relative;
+
+            .mat-sort-header-arrow {
+                margin: 0 6px 0px 6px;
+            }
+        }
+
+        mat-header-cell:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            width: 1px;
+            height: 40%;
+            top: 30%;
+            right: 0%;
+            background-color: #cccccc;
+        }
+    }
+
+    mat-cell,
+    mat-header-cell,
+    mat-footer-cell {
+        justify-content: center;
+        text-align: center;
+        font-size: 12px;
+    }
 }
 // mat table
 

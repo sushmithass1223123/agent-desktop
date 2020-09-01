@@ -13,9 +13,9 @@ import { locale as navigationTurkish } from 'app/navigation/i18n/tr';
 import { navigation } from 'app/navigation/navigation';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient } from 'tmac-sdk';
+import { SDKClient, TUtils, IResponse } from 'tmac-sdk';
 import { AppDataService } from './services/app-data.service';
-
+import { environment } from '../environments/environment';
 
 @Component({
     selector: 'app',
@@ -27,7 +27,9 @@ export class AppComponent implements OnInit, OnDestroy {
     navigation: any;
     config: any;
 
-    configPath = 'assets/app-config.json';
+    prodConfigPath = 'assets/app-config.json';
+    devConfigPath = 'assets/app-config-dev.json';
+
     loaded = false;
 
     // Private
@@ -144,6 +146,11 @@ export class AppComponent implements OnInit, OnDestroy {
         // Set the private defaults
         this._unsubscribeAll = new Subject();
 
+        // do not load config for preview page
+        if (this._router.url === '/preview') {
+            return;
+        }
+
         // Get the app config
         this.getConfig();
     }
@@ -198,30 +205,62 @@ export class AppComponent implements OnInit, OnDestroy {
     // @ Private methods
     // -----------------------------------------------------------------------------------------------------
 
-    private getConfig = async () => {
-
+    private async getConfig(): Promise<any> {
         let data = null;
         try {
-            const respnse = await fetch(this.configPath);
-            data = await respnse.json();
-            console.log('App config loaded: ', data);
-            // check if the config is empty or null
-            if (data === null || Object.keys(data).length === 0) {
-                data = null;
+            // check the environment and load config
+            if (environment.production) {
+                // get the config from server for production
+                data = await this.getProductionConfig();
+                TUtils.Logger.console('info', 'App config loaded');
             }
-            // set the local config
-            this.config = data;
+            else {
+                // get the config from local for developement
+                data = await this.getDevelopementConfig();
+                TUtils.Logger.console('info', 'App config loaded', data);
+            }
+
             // set the config to service
             if (data) {
                 this._appDataService.config = data;
             }
+
         } catch (error) {
-            console.error(error);
+            TUtils.Logger.log('Exception in AppComponent.getConfig', error);
         }
         // set the loaded flag to true
         this.loaded = true;
-        // set the TMAC SDK config
+        // set the TMAC config
         this.setTMACConfig(data);
+    }
+
+    private async getProductionConfig(): Promise<any> {
+        // get the config
+        const respnse = await fetch(this.prodConfigPath);
+        // get the json response
+        const data = await respnse.json();
+
+        // check if the config is empty or null
+        if (data === null || Object.keys(data).length === 0) {
+            return null;
+        }
+
+        // set the app config to service
+        if (data) {
+            this._appDataService.appConfig = data;
+        }
+
+        // get the login json from proxy
+        const loginJson: IResponse = await TUtils.HttpClient.sendRequest(`${data.ProxyUrl}/GetTmacLoginJson`, { id: '' });
+
+        // parse the json and return
+        return loginJson.response ? JSON.parse(loginJson.response.d) : null;
+    }
+
+    private async getDevelopementConfig(): Promise<any> {
+        // get the config
+        const respnse = await fetch(this.devConfigPath);
+        return await respnse.json();
     }
 
     private setTMACConfig(config: any): void {
@@ -257,8 +296,18 @@ export class AppComponent implements OnInit, OnDestroy {
             });
         }
         else {
-            // we will route to error page
-            this._router.navigate(['error']);
+            // we will route to not-found page
+            this._router.navigate(['not-found'],
+                {
+                    queryParamsHandling: 'preserve',
+                    preserveFragment: true,
+                    state: {
+                        subtitle: 'Oops',
+                        title: '',
+                        description: 'Config is not found, please contact administrator!',
+                        login: false
+                    }
+                });
         }
     }
 

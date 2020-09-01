@@ -8,9 +8,11 @@ import { InteractionEventService } from '@services/interaction-event.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { InteractionRef, IWidget } from 'app/interfaces';
+import { Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
     AVChannel,
+    AVEvent,
     CallConferenceCompletedEvent,
     CallConferenceInitiatedEvent,
     CallConferenceLineDisconnectEvent,
@@ -27,9 +29,9 @@ import {
     IUIEvent,
     MediaServerEvent,
     SDKClient,
+    TUtils,
     TEnums
 } from 'tmac-sdk';
-import { timer, Subject } from 'rxjs';
 
 @Component({
     selector: 'tw-voice-controls',
@@ -53,7 +55,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
     user: IAgentData;
     callerID = 'NA';
-    startTime = 'NA';
+    startTime = '00:00:00';
     sessionID = 'NA';
     direction = 'NA';
     interactionDuration = '00:00:00';
@@ -121,7 +123,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             // assign the caller id
             this.callerID = interactionDetails.PhoneNumber || 'NA';
             // update the session ID
-            this.sessionID = interactionDetails.UCID || 'NA';
+            this.sessionID = (interactionDetails.UCID || 'NA') + '|' + this.interactionId;
             // set the manual anser flag
             this.isManualAnswer = interactionDetails.IsManualAnswer;
             // set the process media messages flag
@@ -342,12 +344,11 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 return;
             }
 
-            console.log('%c##### MediaServerEvent', 'background: blue; color: white;', evt.Type);
-
-            // set the session Id if empty
-            if (!this.sessionID) {
-                this.sessionID = evt.SessionID;
-            }
+            // ReviewCodeLine: to check if this is needed
+            // // set the session Id if empty
+            // if (!this.sessionID) {
+            //     this.sessionID = evt.SessionID;
+            // }
 
             // init the connection variable
             let connection: AVChannel = null;
@@ -393,7 +394,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 }
             }
         } catch (error) {
-            console.error(error);
+            TUtils.Logger.log('Exception in TwVoiceControlsComponent.MediaServerEvent', error);
         }
     }
 
@@ -428,25 +429,23 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 }
             });
 
-            console.log('##### createAVConnection', connection);
-
             // return the connection
             return connection;
 
         } catch (error) {
-            console.error(error);
+            TUtils.Logger.log('Exception in TwVoiceControlsComponent.createAVConnection', error);
         }
         return null;
     }
 
-    private onAVEvent = (evt: any) => {
+    private onAVEvent = (evt: AVEvent) => {
         // swtich the av events
         switch (evt.event) {
             case 'onTrace':
-                console.log(evt.data);
+                TUtils.Logger.log(evt.data);
                 break;
             case 'onError':
-                console.error(evt.data);
+                TUtils.Logger.log('Exception in TwVoiceControlsComponent.onAVEvent', evt.data);
                 break;
             case 'onConnected':
                 console.log('onAVEvent - onConnected');
@@ -474,7 +473,6 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     }
 
     private processEventAV(evt: any): void {
-        console.log('%c##### MediaServerEvent', 'background: red; color: white;', evt);
         switch (evt.event) {
             case 'connected':
                 break;

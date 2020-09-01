@@ -26,6 +26,9 @@ import { TwcTextchatComponent } from './twc-textchat/twc-textchat.component';
         SharedModule,
         TwTemplateModule,
         TwWrapperModule
+    ],
+    exports: [
+        TwcNoWidgetsComponent
     ]
 })
 export class TwContentModule { }

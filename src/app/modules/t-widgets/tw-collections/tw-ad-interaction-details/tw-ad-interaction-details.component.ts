@@ -2,11 +2,9 @@ import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } fro
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { fromEvent, Observable } from 'rxjs';
-import { distinctUntilChanged } from 'rxjs/operators';
-import { SDKClient, WallboardRefreshEvent } from 'tmac-sdk';
 import { fuseAnimations } from '@fuse/animations';
+import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
+import { SDKClient } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-ad-interaction-details',
@@ -22,15 +20,15 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
     maximized = false;
+    interactionList: any[] = [];
 
-    displayedColumns: string[] = ['Channel', 'Status', 'Created Time', 'Active Time'];
-    dataSource = new MatTableDataSource([]);
+    mindisplayedColumns: string[] = ['Channel', 'Direction', 'User', 'CreatedTime'];
+    maxdisplayedColumns: string[] = ['Channel', 'SubChannel', 'Direction', 'User', 'Dnis', 'Intent', 'CreatedTime', 'ClosedTime', 'ActiveTime'];
 
-    eventListener: Observable<any>;
-    test: any;
-
-    availableChannels = ['phone', 'chat', 'email'];
-    availableStatuses = ['Active', 'OnHold', 'Closed'];
+    interactionDetailsTable = {
+        source: new MatTableDataSource([]),
+        columns: this.mindisplayedColumns
+    };
 
     constructor() {
         super();
@@ -40,34 +38,31 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        this.eventListener = fromEvent(SDKClient.events, 'WallboardRefreshEvent').pipe(distinctUntilChanged());
-        this.eventListener.subscribe((dt: WallboardRefreshEvent) => {
-            this.test = dt;
-            // this.dataSource = new MatTableDataSource(this.getDummyData());
-            this.dataSource.sort = this.sort;
-            this.dataSource.paginator = this.paginator;
-        });
-
-        this.dataSource = new MatTableDataSource(this.getDummyData());
-    }
-
-    getDummyData(): any[] {
-        return Array(50)
-            .fill(1)
-            .map(() => ({
-                Channel: this.availableChannels[Math.floor(Math.random() * this.availableChannels.length)],
-                Status: this.availableStatuses[Math.floor(Math.random() * this.availableStatuses.length)],
-                CreatedTime: Date.now(),
-                ActiveTime: '02:16:33'
-            }));
+        SDKClient.events.on('AgentInteractionDetailsEvent', this.AgentInteractionDetailsEvent);
     }
 
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+
+        SDKClient.events.off('AgentInteractionDetailsEvent', this.AgentInteractionDetailsEvent);
+    }
+
+    private AgentInteractionDetailsEvent = (data: any[]) => {
+        this.interactionList = [...this.interactionList, ...data];
+
+        this.interactionDetailsTable.source = new MatTableDataSource(this.interactionList);
+        this.interactionDetailsTable.source.sort = this.sort;
+        this.interactionDetailsTable.source.paginator = this.paginator;
+
     }
 
     maximizeEvent(state: boolean): void {
         this.maximized = state;
+        if (state) {
+            this.interactionDetailsTable.columns = this.maxdisplayedColumns;
+        } else {
+            this.interactionDetailsTable.columns = this.mindisplayedColumns;
+        }
     }
 }

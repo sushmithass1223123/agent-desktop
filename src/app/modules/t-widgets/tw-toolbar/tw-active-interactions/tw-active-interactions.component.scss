@@ -32,14 +32,8 @@ tw-active-interactions {
     }
 
     avatar {
-        margin-left: 4px;
         cursor: pointer;
 
-        .avatar-content {
-            width: 44px;
-            height: 44px;
-        }
-        
         .mat-badge-content {
             background: $tw-warning !important;
             color: $tw-dark !important;

@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { SharedModule } from '@modules/shared/shared.module';
+import { DashboardService } from '@services/dashboard.service';
 import { InteractionEventService } from '@services/interaction-event.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TwCollectionsModule } from './tw-collections/tw-collections.module';
@@ -18,7 +19,8 @@ const widgetModules = [
     declarations: [],
     providers: [
         InteractionManagerService,
-        InteractionEventService
+        InteractionEventService,
+        DashboardService
     ],
     imports: [SharedModule, ...widgetModules],
     exports: [...widgetModules]

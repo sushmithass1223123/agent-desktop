@@ -1,0 +1,66 @@
+@import 'src/app/scss/shared';
+
+tw-audio-controls {
+    .mat-card-content {
+        background: inherit !important;
+
+        avatar {
+            &.talking {
+                .avatar-content {
+                    border: 3px solid $tw-tertiary;
+                }
+            }
+        }
+
+        .call-details {
+            line-height: 1.8;
+
+            .mat-icon {
+                font-size: 20px;
+            }
+        }
+
+        .call-controls {
+            .actions {
+                button {
+                    margin: 8px 4px 0px;
+                }
+                button:not(.mat-warn) {
+                    background-color: rgba(0, 0, 0, 0.05);
+                }
+            }
+
+            .controls {
+                button:not(.mat-button-disabled, .mat-warn) {
+                    background: $tw-primary;
+                    color: $tw-dark;
+                }
+
+                button {
+                    .mat-button-wrapper {
+                        justify-content: center;
+                        align-items: center;
+                        display: flex;
+                    }
+
+                    margin: 8px 4px 0px;
+                    width: 70px;
+                    height: 40px;
+                    border-radius: 20px;
+
+                    &.success:not(.mat-button-disabled) {
+                        background: $tw-success;
+                    }
+
+                    &.danger:not(.mat-button-disabled) {
+                        background: $tw-danger;
+                    }
+
+                    &.warning:not(.mat-button-disabled) {
+                        background: $tw-warning;
+                    }
+                }
+            }
+        }
+    }
+}

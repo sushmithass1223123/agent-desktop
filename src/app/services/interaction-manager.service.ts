@@ -39,8 +39,6 @@ export class InteractionManagerService {
             return;
         }
 
-        console.log('InteractionManagerService', payload);
-
         // get the value from the behavior subject
         const interactions = this._interactionsSubject.getValue();
 

@@ -16,13 +16,7 @@
                 >
                     <mat-icon>phone_paused</mat-icon>
                 </button>
-                <button
-                    *ngIf="item.status === 'hold'"
-                    mat-icon-button
-                    class="w-36 h-36 unhold"
-                    #unHoldBtn
-                    (click)="unHoldCall(item, unHoldBtn)"
-                >
+                <button *ngIf="item.status === 'hold'" mat-icon-button class="w-36 h-36 unhold" #unHoldBtn (click)="unHoldCall(item, unHoldBtn)">
                     <mat-icon>phone_in_talk</mat-icon>
                 </button>
                 <button
@@ -38,8 +32,10 @@
         </div>
 
         <avatar
+            class="mx-4"
             matIcon="{{ item.user === 'Customer' ? 'person' : null }}"
             name="{{ item.user }}"
+            classes="w-44 h-44 border-radius-100"
             matTooltip="{{ item.user }}"
             circleColor="#5A4980"
             matBadge="{{ item.otherData.unreadCount || '' }}"
