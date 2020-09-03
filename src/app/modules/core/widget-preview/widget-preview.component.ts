@@ -77,17 +77,17 @@ export class WidgetPreviewComponent implements OnInit {
                 method: 'POST'
             });
             setTimeout(() => {
+                this._fuseProgressBarService.hide();
                 // check the response
                 if (result.response) {
                     // set loading false
                     this.loading = false;
                     // assign the widgets
-                    this.previewWidgets = JSON.parse(result.response.d) || [];
+                    this.previewWidgets = result.response.d ? JSON.parse(result.response.d) : [];
                 }
                 else {
                     this.routeToNotFound('Template name is not found!');
                 }
-                this._fuseProgressBarService.hide();
             }, 1000);
         } catch (error) {
             TUtils.Logger.log('Exception in getTemplateJson', error);

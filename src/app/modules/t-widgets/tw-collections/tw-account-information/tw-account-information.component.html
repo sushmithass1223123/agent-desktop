@@ -7,7 +7,7 @@
 <tw-wrapper twChart [data]="data" (maximizeEvent)="maximized = !maximized">
     <!-- your code goes here -->
 
-    <div fxLayout fxLayoutAlign="start center" class="p-4 w-100-p h-100-p">
+    <div fxLayout fxLayoutAlign="start center" class="p-4 w-100-p h-100-p" fusePerfectScrollbar>
         <div fxLayout="column" fxLayoutAlign="space-around center" class="h-100-p">
             <button mat-button>
                 <mat-icon>phonelink_ring</mat-icon>
@@ -37,7 +37,7 @@
                     </canvas>
                     <span fxFlex fxLayoutAlign="center center" class="absolute-center">30%</span>
                 </div>
-                <div class="h5" fxFlex="70" fxLayout="row wrap">
+                <div class="h5" fxFlex="70" fxLayout="row" fxLayoutAlign="space-between none">
                     <div fxLayout="column" fxLayoutAlign="center start">
                         <div class="text-bold">+65-9875-4321</div>
                         <div>Used: 26GB / 30GB</div>
@@ -45,7 +45,7 @@
                     <div fxLayout fxLayoutAlign="center center" class="ml-16 mr-4 p-12 bg-success border-radius-16">
                         <div class="">$250.50</div>
                     </div>
-                    <div fxFlex fxLayout="column" fxLayoutAlign="center end" class="p-12 bg-danger border-radius-16 text-right">
+                    <div fxLayout="column" fxLayoutAlign="center end" class="p-12 bg-danger border-radius-16 text-right w-40-p">
                         <div>Due Date</div>
                         <div class="text-bold">15 Jun 2020</div>
                     </div>
@@ -64,7 +64,7 @@
                     </canvas>
                     <span fxFlex fxLayoutAlign="center center" class="absolute-center">30%</span>
                 </div>
-                <div class="h5" fxFlex="70" fxLayout="row wrap">
+                <div class="h5" fxFlex="70" fxLayout="row" fxLayoutAlign="space-between none">
                     <div fxLayout="column" fxLayoutAlign="center start">
                         <div class="text-bold">+65-9875-4321</div>
                         <div>Used: 26GB / 30GB</div>
@@ -72,7 +72,7 @@
                     <div fxLayout fxLayoutAlign="center center" class="ml-16 mr-4 p-12 bg-success border-radius-16">
                         <div class="">$250.50</div>
                     </div>
-                    <div fxFlex fxLayout="column" fxLayoutAlign="center end" class="p-12 bg-success border-radius-16 text-right">
+                    <div fxLayout="column" fxLayoutAlign="center end" class="p-12 bg-success border-radius-16 text-right w-40-p">
                         <div>Due Date</div>
                         <div class="text-bold">15 Jun 2020</div>
                     </div>

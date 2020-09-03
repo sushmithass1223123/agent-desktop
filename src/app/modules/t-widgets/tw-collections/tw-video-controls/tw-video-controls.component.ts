@@ -159,7 +159,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                 timer(1000, 1000)
                     .pipe(takeUntil(this.unsubscribeAll), takeUntil(this.unsubscribeAll))
                     .subscribe(val => {
-                        this.duration = Math.floor((val + 1) % 3600 % 60) * 1000;
+                        this.duration = (val + 1) * 1000;
                     });
                 break;
             case 'onSourceVideoAdded':
@@ -204,6 +204,9 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                 break;
             case 'onDisconnected':
                 console.log('### Disconnected ###');
+                this._appDataService.showMessage('Call disconnected, unexpected end!');
+                // close the widget
+                this.destroyWidget();
                 break;
             case 'onVoiceActivity':
                 _.map(this.userList, (user: any) => {

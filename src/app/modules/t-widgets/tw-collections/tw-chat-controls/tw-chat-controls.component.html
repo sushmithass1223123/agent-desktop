@@ -3,7 +3,7 @@
         <div
             fxLayout="column"
             fxLayoutAlign=" none"
-            class="w-100-p px-12 py-8 border-radius-20 font-size-12 interaction-details"
+            class="w-100-p px-12 py-4 border-radius-20 font-size-12 interaction-details"
             [ngClass]="
                 fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
                     ? fuseConfig.layout.anchorWidget.contentBackground
@@ -13,17 +13,19 @@
             "
         >
             <div fxLayout="row" fxLayoutAlign="space-between none">
-                <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>alarm_on</mat-icon> {{ startTime }}</div>
+                <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>alarm_on</mat-icon> {{ startTime | date: 'medium' }}</div>
                 <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>construction</mat-icon> {{ sessionID }}</div>
             </div>
             <div fxLayout="row" fxLayoutAlign="space-between none">
                 <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>timer</mat-icon> {{ (duration | date: 'H:mm:ss':'UTC') || '00:00:00' }}</div>
-                <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>grading</mat-icon> {{ intent }}</div>
+                <div fxLayout="row" fxLayoutAlign=" center">
+                    <mat-icon>grading</mat-icon> <span class="text-bold">{{ intent }}</span>
+                </div>
             </div>
         </div>
 
         <div fxLayout="row" fxLayoutAlign=" none" class="mt-4 chat-container">
-            <div fxLayout="column" fxLayoutAlign=" center" class="pt-8 interaction-selector">
+            <div fxLayout="column" fxLayoutAlign=" center" class="pt-4 pr-4 interaction-selector">
                 <button [disabled]="status !== 'connected'" class="mat--z0 more-option-button" mat-mini-fab color="default">
                     <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
@@ -36,7 +38,7 @@
                 <div
                     fxLayout="column"
                     fxLayoutAlign=" center"
-                    class="w-100-p h-100-p mt-8 pt-8 pr-8 interactions"
+                    class="w-100-p h-100-p mt-12 interactions"
                     fusePerfectScrollbar
                     [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
                 >
@@ -286,7 +288,7 @@
                                             >
                                             </span>
                                             <span
-                                                *ngIf="message.attachment.type === 'image' && message.attachment.type === 'video'"
+                                                *ngIf="message.attachment.type === 'image' || message.attachment.type === 'video'"
                                                 class="time-overlay"
                                             ></span>
                                         </div>

@@ -11,9 +11,11 @@ tw-wrapper {
         transition-property: height, min-height, max-height;
         transition-duration: 0.3s;
         transition-timing-function: ease-in-out;
+
         &:not(.aot) {
             transition-property: transform, height, min-height, max-height;
         }
+
         &.aot {
             display: grid;
             min-width: 250px;
@@ -29,6 +31,7 @@ tw-wrapper {
                 transform: translate3d(0px, 0px, 0px) !important;
             }
         }
+
         &.maximized {
             position: absolute;
             width: 100%;
@@ -60,15 +63,28 @@ tw-wrapper {
                     display: none !important;
                 }
             }
-        }
 
-        &.collapsed {
             &.maximized,
             &.floating,
             &.aot {
                 height: 5.8rem !important;
                 .card-wrapper {
-                    padding: 8px !important;
+                    padding: 6px !important;
+                }
+            }
+
+            &.inherit-header {
+                height: 4rem !important;
+                .card-header {
+                    height: 4rem !important;
+                }
+
+                &.maximized,
+                &.floating,
+                &.aot {
+                    .card-header {
+                        height: 3rem !important;
+                    }
                 }
             }
         }
@@ -83,6 +99,24 @@ tw-wrapper {
 
         &.animate__faster {
             --animate-duration: 0.8s;
+        }
+
+        &.inherit-header {
+            .card-header {
+                height: 3rem !important;
+                background: inherit !important;
+                color: inherit !important;
+
+                .mat-card-avatar {
+                    background: inherit !important;
+                    color: inherit !important;
+                }
+            }
+
+            .mat-card-content {
+                padding-top: 0px;
+                margin-top: 0px;
+            }
         }
     }
 
@@ -117,7 +151,7 @@ tw-wrapper {
             word-break: break-word;
 
             .card-wrapper {
-                padding: 8px;
+                padding: 6px;
                 height: 100%;
                 border-radius: 2rem;
                 transition-property: padding;
@@ -133,7 +167,7 @@ tw-wrapper {
             }
 
             .mat-card-header-text {
-                margin: 0 0.6rem;
+                margin: 0 6px;
                 overflow: hidden;
 
                 .mat-card-title {
@@ -157,8 +191,8 @@ tw-wrapper {
             .mat-card-content {
                 flex: 1;
                 border-radius: 2rem;
-                padding: 0.5rem;
-                margin-top: 8px;
+                padding: 6px;
+                margin-top: 6px;
                 margin-bottom: 0;
                 overflow: hidden;
 
@@ -208,12 +242,12 @@ tw-wrapper {
             background: inherit !important;
             .tw-static-card-wrapper {
                 background: inherit !important;
-                padding: 0rem;
+                padding: 0;
                 .tw-static-card-content {
                     background: inherit !important;
                     overflow: inherit;
-                    padding: 0rem;
-                    margin-bottom: 0rem;
+                    padding: 0;
+                    margin-bottom: 0;
                 }
             }
         }

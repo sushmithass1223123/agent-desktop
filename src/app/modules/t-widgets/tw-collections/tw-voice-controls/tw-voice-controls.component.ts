@@ -211,7 +211,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         timer(1000, 1000)
             .pipe(takeUntil(this.unsubscribeAll), takeUntil(this.stopTimer))
             .subscribe(val => {
-                this.duration = Math.floor((val + 1) % 3600 % 60) * 1000;
+                this.duration = (val + 1) * 1000;
             });
 
         // set the status

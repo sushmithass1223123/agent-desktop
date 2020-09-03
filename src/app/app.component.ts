@@ -254,7 +254,8 @@ export class AppComponent implements OnInit, OnDestroy {
         const loginJson: IResponse = await TUtils.HttpClient.sendRequest({
             url: `${data.ProxyUrl}/GetTmacLoginJson`,
             requestArgs: { id: '' },
-            method: 'POST'
+            method: 'POST',
+            retry: 3
         });
 
         // parse the json and return

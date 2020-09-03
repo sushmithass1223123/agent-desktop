@@ -231,7 +231,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         timer(1000, 1000)
             .pipe(takeUntil(this.unsubscribeAll), takeUntil(this.stopTimer))
             .subscribe(val => {
-                this.duration = Math.floor((val + 1) % 3600 % 60) * 1000;
+                this.duration = (val + 1) * 1000;
             });
 
         this.status = 'connected';
@@ -663,8 +663,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // swtich the av events
         switch (evt.event) {
             case 'onIncoming':
-                // open the widget
-                this.openCallWidget(evt.data.param);
                 // disable av buttons
                 this.disableAV = true;
                 // request param
@@ -686,8 +684,14 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         evt.data.response(false);
                         // close the call widget
                         this._aotWidgetService.destroyWidget(this.callWidget.ID);
+                        this.callWidget = null;
                     }
                 });
+                // check if any widget has opened
+                if (!this.callWidget) {
+                    // open the widget
+                    this.openCallWidget(evt.data.param);
+                }
                 break;
             case 'onConnected':
                 this.disableAV = true;
@@ -706,18 +710,18 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     private openCallWidget(param: string): void {
         // get the widget type
         const widgetMode = {
-            title: param === 'video' ? 'Video Call' : 'Audio Call',
-            type: param === 'video' ? 'tw-video-controls' : 'tw-audio-controls',
-            icon: param === 'video' ? 'phone' : 'duo'
+            title: param === 'audio' ? 'Audio Call' : 'Video Call',
+            type: param === 'audio' ? 'tw-audio-controls' : 'tw-video-controls',
+            icon: param === 'audio' ? 'duo' : 'phone'
         };
         // create a call AOT widget
         const widget = new TwWidgetModel(widgetMode.title, widgetMode.type, widgetMode.icon);
         widget.InteractionDetails = this.data.InteractionDetails;
         widget.Config.AOT = true;
         widget.Config.Anchor = true;
-        widget.Config.Position.W = param === 'video' ? 800 : 600;
-        widget.Config.Position.H = param === 'video' ? 550 : 275;
-        widget.Config.Actions = param === 'video' ? ['minimize', 'maximize'] : ['minimize'];
+        widget.Config.Position.W = param === 'audio' ? 600 : 800;
+        widget.Config.Position.H = param === 'audio' ? 275 : 550;
+        widget.Config.Actions = param === 'audio' ? ['minimize'] : ['minimize', 'maximize'];
         widget.Data.AVConn = this.avConn;
         widget.Data.CustomerName = this.customerName;
         widget.Data.SelfUser = this.user;
@@ -834,6 +838,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     this._appDataService.showMessage(`Escalate to ${dt.param} request timed out`);
                     // close the call widget
                     this._aotWidgetService.destroyWidget(this.callWidget.ID);
+                    this.callWidget = null;
                     // enable AV buttons 
                     this.disableAV = false;
                 }
