@@ -170,8 +170,8 @@
                             *ngFor="let message of chatTranscripts; let i = index"
                             class="message-row animate__animated animate__slideInUp animate__faster"
                             [ngClass]="{
-                                me: message?.who === user.agentName,
-                                contact: message?.who !== user.agentName,
+                                me: message?.who === user.agentName || message?.who === 'Chatbot',
+                                contact: message?.who !== user.agentName && message?.who !== 'Chatbot',
                                 'first-of-group': isFirstMessageOfGroup(message, i),
                                 'last-of-group': isLastMessageOfGroup(message, i)
                             }"
@@ -183,6 +183,7 @@
                                 class="bubble"
                                 [ngClass]="
                                     (message.who !== user.agentName &&
+                                    message.who !== 'Chatbot' &&
                                     fuseConfig.layout.anchorWidget.customBackgroundColor === true &&
                                     data.Config.Anchor
                                         ? fuseConfig.layout.anchorWidget.bodyBackground
@@ -191,9 +192,12 @@
                                     (maximized ? 'maximized' : '')
                                 "
                             >
-                                <div *ngIf="isFirstMessageOfGroup(message, i)" [ngClass]="message.who === user.agentName ? 'right-svg' : 'left-svg'">
+                                <div
+                                    *ngIf="isFirstMessageOfGroup(message, i)"
+                                    [ngClass]="message.who === user.agentName || message?.who === 'Chatbot' ? 'right-svg' : 'left-svg'"
+                                >
                                     <svg
-                                        *ngIf="message.who !== user.agentName"
+                                        *ngIf="message.who !== user.agentName && message.who !== 'Chatbot'"
                                         xmlns="http://www.w3.org/2000/svg"
                                         viewBox="0 0 8 13"
                                         width="8"
@@ -203,7 +207,7 @@
                                         <path fill="currentColor" d="M1.533 2.568L8 11.193V0H2.812C1.042 0 .474 1.156 1.533 2.568z"></path>
                                     </svg>
                                     <svg
-                                        *ngIf="message.who === user.agentName"
+                                        *ngIf="message.who === user.agentName || message.who === 'Chatbot'"
                                         xmlns="http://www.w3.org/2000/svg"
                                         viewBox="0 0 8 13"
                                         width="8"
@@ -222,19 +226,24 @@
                                     <ng-container *ngIf="message.attachment?.src">
                                         <div fxLayout="column" fxLayoutAlign=" none" class="attachments">
                                             <!-- Images -->
-                                            <img
-                                                *ngIf="message.attachment.type === 'image'"
-                                                [src]="message.attachment.src"
-                                                (click)="previewMedia(message)"
-                                            />
+                                            <div *ngIf="message.attachment.type === 'image'" (click)="previewMedia(message)">
+                                                <img [src]="message.attachment.src" (click)="previewMedia(message)" />
+                                            </div>
 
                                             <!-- Videos -->
-                                            <video
-                                                *ngIf="message.attachment.type === 'video'"
-                                                [src]="message.attachment.src"
-                                                controls
-                                                (click)="previewMedia(message)"
-                                            ></video>
+                                            <div *ngIf="message.attachment.type === 'video'">
+                                                <div fxFill fxLayout fxLayoutAlign="center center" class="video-overlay">
+                                                    <button
+                                                        mat-stroked-button
+                                                        mat-icon-button
+                                                        class="mat-elevation-z6"
+                                                        (click)="previewMedia(message)"
+                                                    >
+                                                        <mat-icon>play_arrow</mat-icon>
+                                                    </button>
+                                                </div>
+                                                <video [src]="message.attachment.src"></video>
+                                            </div>
 
                                             <!-- Audios -->
                                             <audio *ngIf="message.attachment.type === 'audio'" [src]="message.attachment.src" controls></audio>

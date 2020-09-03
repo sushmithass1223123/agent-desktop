@@ -25,7 +25,7 @@ import { ContentPageService } from '@services/content-page.service';
 import { InteractionEventService } from '@services/interaction-event.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { InteractionRef, IWidget, ChatTranscripts } from 'app/interfaces';
+import { ChatTranscripts, InteractionRef, IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
@@ -45,9 +45,8 @@ import {
     TextChatRemoteUserConnectedEvent,
     TextChatTranscriptForTransferEvent,
     TextChatUserMessageWaitTimerEvent,
-    TUtils,
+    TUtils
 } from 'tmac-sdk';
-import { title } from 'process';
 
 @Component({
     selector: 'tw-chat-controls',
@@ -85,10 +84,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     customerName = 'Customer';
     avConn: AVChannel;
     callWidget: IWidget;
-
     disableAV: boolean;
-
     fileUploadUrl: any;
+    channel: string;
+    isSMM: boolean;
 
     @ViewChildren(FusePerfectScrollbarDirective) directiveScrolls: QueryList<FusePerfectScrollbarDirective>;
     @ViewChildren('replyInput') replyInputField: any;
@@ -237,9 +236,13 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         this.status = 'connected';
         // get the customer name
-        this.customerName = evt.screenName || 'Customer';
+        this.customerName = evt.ScreenName || 'Customer';
         // assign the intent
         this.intent = evt.Intent || 'Default';
+        // check the channel
+        this.channel = evt.Channel.toLowerCase() || 'textchat';
+        // check social media
+        this.isSMM = evt.IsSMM || false;
         // update the interaction status and user
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
             'status': 'connected',
@@ -260,8 +263,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
                     if (item.customer_input) {
                         // customer message 
-                        who = this.customerName,
-                            message = item.reply;
+                        who = this.customerName;
+                        message = item.customer_input;
                     }
                     else if (item.reply) {
                         // agent message
@@ -582,8 +585,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             time: new Date().toLocaleString()
         };
 
-        // check if reply feature is enabled
-        if (this.data.Data.ReplyOnChatAllowed) {
+        // check if reply feature is enabled or not social media
+        if (this.data.Data.ReplyOnChatAllowed && !this.isSMM) {
             const jsonMessage = {
                 messageId: messageId,
                 type: 'text',
@@ -609,9 +612,13 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             messageId,
             templateId: template?.ID || '',
             type: 'text'
-        }, null).then((dt) => {
-            console.log('sendTextChat', dt);
-        });
+        }, null)
+            .then((dt: any) => {
+                console.log('sendTextChat', dt);
+            })
+            .catch(() => {
+                this._appDataService.showMessage('Message send failed!');
+            });
 
         // Reset the reply form
         this.replyForm.reset();
@@ -850,7 +857,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             confirmDialogRef.componentInstance.message = `<img src=${previewData.attachment.src} width="100%" width="100%" />`;
         }
         else if (previewData.attachment.type === 'video') {
-            confirmDialogRef.componentInstance.message = `<video controls src=${previewData.attachment.src} width="100%" width="100%"></video>`;
+            confirmDialogRef.componentInstance.message = `<video controls autoplay src=${previewData.attachment.src} width="100%" width="100%"></video>`;
         }
 
         confirmDialogRef.componentInstance.title = 'Preview';
