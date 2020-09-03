@@ -60,10 +60,21 @@ export class DashboardService {
             // connection connected event
             signalR.events.on('onConnected', () => {
                 signalR.hub.invoke('GetAgentData', signalR.hub.connection.id, agentData.agentId, true);
+                if (agentData.agentProfile === 'S') {
+                    signalR.hub.invoke('GetActiveAgentList', signalR.hub.connection.id, agentData.agentId, agentData.teamId, true);
+                }
             });
 
-            signalR.events.on('onStatusList', (statusDetails: AgentStateDurationList) => {
+            signalR.hub.on('onStatusList', (statusDetails: AgentStateDurationList) => {
                 SDKClient.events.emit('AgentStatusDetailsEvent', statusDetails);
+            });
+
+            signalR.hub.on('onTeamChannelList', (channelList: any) => {
+                SDKClient.events.emit('SupervisorTeamChannelListEvent', channelList);
+            });
+
+            signalR.hub.on('onIntentList', (intentList: any) => {
+                SDKClient.events.emit('SupervisorIntentListEvent', intentList);
             });
 
             // connect to the server

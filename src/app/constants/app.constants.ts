@@ -2,17 +2,14 @@ import { Color } from 'ng2-charts';
 
 export const CHART_COLORS: Color[] = [
     {
-        borderCapStyle: 'butt',
-        backgroundColor: 'rgba(189, 160, 188, 1)',
-        hoverBackgroundColor: 'rgba(189, 160, 188, 0.6)'
-    },
-    {
-        borderCapStyle: 'butt',
         backgroundColor: 'rgba(196, 189, 231, 1)',
         hoverBackgroundColor: 'rgba(196, 189, 231, 0.6)'
     },
     {
-        borderCapStyle: 'butt',
+        backgroundColor: 'rgba(189, 160, 188, 1)',
+        hoverBackgroundColor: 'rgba(189, 160, 188, 0.6)'
+    },
+    {
         backgroundColor: 'rgba(231, 189, 211, 1)',
         hoverBackgroundColor: 'rgba(231, 189, 211, 0.6)'
     },

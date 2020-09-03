@@ -9,7 +9,7 @@ import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { ResData } from 'app/interfaces';
-import { groupBy } from 'lodash';
+import { groupBy, random } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 import { SDKClient, WorkCode } from 'tmac-sdk';
 
@@ -21,10 +21,7 @@ import { SDKClient, WorkCode } from 'tmac-sdk';
 })
 export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     // holds all the data related to this widget from the config
-    @Input() data: any;
-    // @ViewChild('fruitInput') fruitInput: ElementRef<HTMLInputElement>;
-    // @ViewChild('auto') matAutocomplete: MatAutocomplete;
-    // -----------------------------------------------------------
+    @Input() data: any; // -----------------------------------------------------------
     // @ [OPTIONAL] to store the fuse config for theme
     // -----------------------------------------------------------
     fuseConfig: any;
@@ -46,7 +43,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         ByTeam: boolean;
     };
 
-    selectedWorkCodes = [];
+    selectedWorkCodes: any = [];
     separatorKeysCodes: number[] = [ENTER, COMMA];
     workCodeCtrl = new FormControl();
 
@@ -115,10 +112,13 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
             this.loadWorkCodesReq.loading = true;
             this.getAllWorkCodes();
         } else if (this.DataConf.Source === 'supervisor') {
-            this.selectedWorkCodes = [
-                { Code: '2', Name: 'Outage', ParentID: '1', TeamID: '2', __type: 'DataModel.CallWorkCodeModel' },
-                { Code: '4', Name: 'WifiIssue', ParentID: '3', TeamID: '2', __type: 'DataModel.CallWorkCodeModel' }
-            ];
+            let codes = {};
+            Array(10)
+                .fill(1)
+                .forEach((_, i) => {
+                    codes[`Code ${i}`] = random(0, 100);
+                });
+            this.selectedWorkCodes = codes;
         } else {
             this.loadWorkCodesReq.error = true;
             this.loadWorkCodesReq.loading = false;

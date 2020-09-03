@@ -10,7 +10,6 @@ import { SDKClient } from 'tmac-sdk';
 
 const multiColors: any = {
     backgroundColor: CHART_COLORS.map((c) => c.backgroundColor),
-    borderCapStyle: 'butt',
     hoverBackgroundColor: CHART_COLORS.map((c) => c.hoverBackgroundColor)
 };
 
@@ -33,6 +32,7 @@ export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements On
     // @ [OPTIONAL] to store entire app config and get update
     // -----------------------------------------------------------
     appConfig: any;
+    dataConfig: { Source: string; AgentId: string };
 
     allInteractionsChart: TwChartConfig = {
         datasets: [{ data: [] }],
@@ -76,6 +76,7 @@ export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements On
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
+        this.dataConfig = this.data.Data;
 
         // -----------------------------------------------------------
         // @ [OPTIONAL] to get the fuse config
@@ -91,7 +92,11 @@ export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements On
             this.appConfig = config;
         });
 
-        SDKClient.events.on('AgentChannelDetailsEvent', this.AgentChannelDetailsEvent);
+        if (SDKClient.getAgentData().agentProfile === 'S') {
+            SDKClient.events.on('SupervisorTeamChannelListEvent', this.SupervisorTeamChannelListEvent);
+        } else {
+            SDKClient.events.on('AgentChannelDetailsEvent', this.AgentChannelDetailsEvent);
+        }
     }
 
     /**
@@ -99,16 +104,34 @@ export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements On
      */
     ngOnDestroy(): void {
         SDKClient.events.off('AgentChannelDetailsEvent', this.AgentChannelDetailsEvent);
+        SDKClient.events.off('SupervisorTeamChannelListEvent', this.SupervisorTeamChannelListEvent);
         // call the wrapper destroy method
         this.destroyWrapper();
     }
 
     AgentChannelDetailsEvent = (interactionsData: AgentChannelDetailsEventRes): void => {
+        if (this.dataConfig.AgentId && this.dataConfig.AgentId !== interactionsData.AgentId) {
+            return;
+        }
         const datasets = { Total: [], AHT: [] };
         const labels = [];
         interactionsData.Channels.forEach((c) => {
             datasets.Total.push(c.Total);
             datasets.AHT.push(c.AverageActiveTime + c.AverageHoldTime);
+            labels.push(c.Channel);
+        });
+        this.allInteractionsChart.datasets = Object.keys(datasets).map((d) => ({
+            data: datasets[d],
+            label: d
+        }));
+        this.allInteractionsChart.labels = labels;
+    };
+
+    SupervisorTeamChannelListEvent = (evt: AgentChannelDetailsEventRes) => {
+        const datasets = { Duration: [] };
+        const labels = [];
+        evt.Channels.forEach((c) => {
+            datasets.Duration.push(c.Total);
             labels.push(c.Channel);
         });
         this.allInteractionsChart.datasets = Object.keys(datasets).map((d) => ({
