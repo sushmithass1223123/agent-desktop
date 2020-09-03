@@ -43,6 +43,16 @@ tw-video-controls {
                     width: 32px;
                     height: 32px;
                 }
+
+                .user {
+                    position: absolute;
+                    bottom: 5px;
+                    left: 5px;
+                    z-index: 1;
+                    font-size: 14px;
+                    background-color: rgb(49 49 49);
+                    color: rgb(255 255 255 / 54%);
+                }
             }
         }
 

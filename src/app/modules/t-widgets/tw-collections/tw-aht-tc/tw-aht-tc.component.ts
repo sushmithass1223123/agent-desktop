@@ -4,8 +4,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { fuseAnimations } from '@fuse/animations';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AgentChannelDetailsEventRes } from 'app/interfaces';
-import { SDKClient } from 'tmac-sdk';
+import { SDKClient, AgentChannelDataList } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-aht-tc',
@@ -46,10 +45,10 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
         SDKClient.events.off('AgentChannelDetailsEvent', this.AgentChannelDetailsEvent);
     }
 
-    private AgentChannelDetailsEvent = (data: AgentChannelDetailsEventRes) => {
+    private AgentChannelDetailsEvent = (data: AgentChannelDataList) => {
         this.interactionList = data.Channels;
         this.interactionDetailsTable.source = new MatTableDataSource(this.interactionList);
         this.interactionDetailsTable.source.sort = this.sort;
         this.interactionDetailsTable.source.paginator = this.paginator;
-    };
+    }
 }

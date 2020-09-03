@@ -1,6 +1,8 @@
 // mat icon
 .mat-icon-button {
     .mat-button-wrapper {
+        width: 100%;
+        height: 100%;
         justify-content: center;
         align-items: center;
         display: flex;
@@ -201,36 +203,38 @@ mat-paginator {
 
 // mat form field
 mat-form-field {
-    .mat-form-field-wrapper {
-        padding-bottom: 1rem !important;
+    &.custom {
+        .mat-form-field-wrapper {
+            padding-bottom: 1rem !important;
 
-        .mat-form-field-subscript-wrapper {
-            top: calc(100% - 1.4rem);
-        }
+            .mat-form-field-subscript-wrapper {
+                top: calc(100% - 1.4rem);
+            }
 
-        .mat-form-field-infix {
-            padding: 1em 0.5rem !important;
-            border-top: 0.5em solid transparent;
-        }
+            .mat-form-field-infix {
+                padding: 1em 0.5rem !important;
+                border-top: 0.5em solid transparent;
+            }
 
-        .mat-form-field-suffix {
-            top: 0.5rem !important;
-        }
+            .mat-form-field-suffix {
+                top: 0.5rem !important;
+            }
 
-        .mat-form-field-outline {
-            border-radius: 2rem;
-            top: 0.75rem !important;
-        }
+            .mat-form-field-outline {
+                border-radius: 2rem;
+                top: 0.75rem !important;
+            }
 
-        .mat-form-field-outline-start {
-            border-radius: 2rem 0 0 1.5rem !important;
-            min-width: 2rem !important;
-            border-color: transparent;
-        }
+            .mat-form-field-outline-start {
+                border-radius: 2rem 0 0 1.5rem !important;
+                min-width: 2rem !important;
+                border-color: transparent;
+            }
 
-        .mat-form-field-outline-end {
-            border-radius: 0 2rem 2rem 0 !important;
-            border-color: transparent;
+            .mat-form-field-outline-end {
+                border-radius: 0 2rem 2rem 0 !important;
+                border-color: transparent;
+            }
         }
     }
 }

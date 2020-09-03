@@ -89,10 +89,9 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             null
         );
 
-        if (!this.filteredAgents.length) {
-            // filter for excpet me
-            this.agentList = this.filteredAgents = result.response.filter((a: any) => a.AgentLoginID !== this.user.agentId);
-        }
+        // filter for excpet me
+        this.agentList = this.filteredAgents = result.response.filter((a: any) => a.AgentLoginID !== this.user.agentId);
+
         // check any search term is there, then filter
         if (this.searchTerm) {
             this.filterAgents();

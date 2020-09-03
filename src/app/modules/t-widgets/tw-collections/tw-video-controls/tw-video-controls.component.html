@@ -38,6 +38,8 @@
                 >
                     <mat-icon> camera </mat-icon>
                 </button>
+
+                <span class="text-boxed user">{{ user.streamInfo.user }}</span>
             </div>
 
             <div fxFill fxFlex fxLayout fxLayoutAlign="center center" *ngIf="userList.length === 0">
@@ -51,7 +53,7 @@
                 <span fxLayout="row" fxLayoutAlign=" center"> <mat-icon>wifi</mat-icon> {{ mos }} </span>
                 <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>alarm_on</mat-icon> {{ startTime | date: 'mediumTime' }}</div>
                 <span fxLayout="row" fxLayoutAlign=" center">
-                    <mat-icon>timer</mat-icon> {{ (duration * 1000 | date: 'H:mm:ss':'UTC') || '00:00:00' }}
+                    <mat-icon>timer</mat-icon> {{ (duration | date: 'H:mm:ss':'UTC') || '00:00:00' }}
                 </span>
             </div>
         </div>

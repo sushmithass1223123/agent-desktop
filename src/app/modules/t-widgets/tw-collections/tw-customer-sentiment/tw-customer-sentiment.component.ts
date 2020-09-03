@@ -10,17 +10,17 @@ import { takeUntil } from 'rxjs/operators';
 import { SDKClient } from 'tmac-sdk';
 
 const average = new Image();
-average.src = '/assets/images/vectors/average-score.svg';
+average.src = 'assets/images/vectors/average-score.svg';
 average.width = 20;
 average.height = 20;
 
 const positive = new Image();
-positive.src = '/assets/images/vectors/positive-score.svg';
+positive.src = 'assets/images/vectors/positive-score.svg';
 positive.width = 20;
 positive.height = 20;
 
 const negative = new Image();
-negative.src = '/assets/images/vectors/negative-score.svg';
+negative.src = 'assets/images/vectors/negative-score.svg';
 negative.width = 20;
 negative.height = 20;
 

@@ -13,9 +13,9 @@ import { locale as navigationTurkish } from 'app/navigation/i18n/tr';
 import { navigation } from 'app/navigation/navigation';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient, TUtils, IResponse } from 'tmac-sdk';
-import { AppDataService } from './services/app-data.service';
+import { IResponse, SDKClient, TEnums, TUtils } from 'tmac-sdk';
 import { environment } from '../environments/environment';
+import { AppDataService } from './services/app-data.service';
 
 @Component({
     selector: 'app',
@@ -282,18 +282,19 @@ export class AppComponent implements OnInit, OnDestroy {
             // set the SDK config
             SDKClient.setConfig({
                 proxy: {
-                    urls: config.AppConfigs.SDK.Proxy.Urls,
-                    type: config.AppConfigs.SDK.Proxy.Type
+                    urls: config.AppConfigs.SDK.Proxy.Urls || '',
+                    type: config.AppConfigs.SDK.Proxy.Type || TEnums.ProxyType.SOAP,
+                    timeout: config.AppConfigs.SDK.Proxy.Timeout || 30000
                 },
                 signalRProxy: {
-                    logging: config.AppConfigs.SDK.SignalRProxy.Logging,
-                    protocol: config.AppConfigs.SDK.SignalRProxy.Protocol,
-                    timeout: config.AppConfigs.SDK.SignalRProxy.Timeout
+                    logging: config.AppConfigs.SDK.SignalRProxy.Logging || false,
+                    protocol: config.AppConfigs.SDK.SignalRProxy?.Protocol,
+                    timeout: config.AppConfigs.SDK.SignalRProxy.Timeout || 30
                 },
                 logging: {
-                    enabled: config.AppConfigs.SDK.Logging.Enabled,
-                    remote: config.AppConfigs.SDK.Logging.Remote,
-                    remoteThreshold: config.AppConfigs.SDK.Logging.RemoteThreshold
+                    enabled: config.AppConfigs.SDK.Logging.Enabled || false,
+                    remote: config.AppConfigs.SDK.Logging.Remote || false,
+                    remoteThreshold: config.AppConfigs.SDK.Logging.RemoteThreshold || 15
                 },
                 customScripts:
                     [...config.AppConfigs.SDK.CustomSripts]

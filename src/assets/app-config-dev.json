@@ -289,7 +289,6 @@
                                 },
                                 "Data": {}
                             },
-
                             {
                                 "Name": "Interaction Details",
                                 "Description": "",
@@ -1437,8 +1436,8 @@
                                     "Disabled": false
                                 },
                                 "Data": {
-                                    "Source" : "interaction",
-                                    "ByTeam" : true
+                                    "Source": "interaction",
+                                    "ByTeam": true
                                 }
                             },
                             {
@@ -1571,7 +1570,11 @@
             "Urls": {
                 "DashboardServerUrls": [
                     "https://dice.tetherfi.cloud:443/SignalRDashboardSup"
-                ]
+                ],
+                "FileServerUrl": {
+                    "SMM": "",
+                    "MediaProxy": "https://dice.tetherfi.cloud/ApiFileUploadDownLoad/"
+                }
             }
         },
         "AOT": {
@@ -1666,7 +1669,8 @@
                 "Urls": [
                     "https://dice.tetherfi.cloud/TMACHttpProxy/TmacProxy.asmx"
                 ],
-                "Type": "soap"
+                "Type": "soap",
+                "Timeout": 30
             },
             "SignalRProxy": {
                 "Logging": false,

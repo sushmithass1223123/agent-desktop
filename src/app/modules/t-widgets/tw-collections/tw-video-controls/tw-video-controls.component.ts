@@ -41,7 +41,6 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
     interactionId: number;
     sessionID: string;
     customerName: string;
-    customerData: any;
 
     userList: any[] = [];
 
@@ -117,7 +116,6 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // add the widget data
         this.interactionId = this.data.InteractionDetails?.InteractionID;
-        this.customerData = this.data.InteractionDetails?.JsonDataObj;
         this.sessionID = this.data.InteractionDetails?.TextChatSessionID;
         this.avConn = this.data.Data?.AVConn;
         this.avConn?.events.on('onAVEvent', this.onAVEvent);
@@ -161,7 +159,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                 timer(1000, 1000)
                     .pipe(takeUntil(this.unsubscribeAll), takeUntil(this.unsubscribeAll))
                     .subscribe(val => {
-                        this.duration = Math.floor((val + 1) % 3600 % 60);
+                        this.duration = Math.floor((val + 1) % 3600 % 60) * 1000;
                     });
                 break;
             case 'onSourceVideoAdded':
@@ -323,8 +321,8 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                             email: '',
                             interactionId: this.interactionId.toString(),
                             name: this.customerName,
-                            nric: '',
-                            phone: '',
+                            nric: this.data.InteractionDetails.NRIC || '',
+                            phone: this.data.InteractionDetails.RegNo1 || '',
                             sessionId: this.sessionID
                         }, null)
                             .then((result: IResponse) => {
@@ -337,7 +335,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                                     this._appDataService.showMessage('Snapshot save failed!');
                                 }
                             })
-                            .catch(err => {
+                            .catch(() => {
                                 this._fuseProgressBarService.hide();
                                 this._appDataService.showMessage('Error in saving snapshot!');
                             });

@@ -9,7 +9,7 @@
     <div fxFill fxFlex fxLayout="column" fxLayoutAlign=" none" class="px-16 py-4">
         <div fxLayout="row" fxLayoutAlign="space-between center" class="w-100-p template-selector">
             <div fxFill fxFlex="50" class="mr-4">
-                <mat-form-field fxFill class="select-box" appearance="outline">
+                <mat-form-field fxFill class="custom select-box" appearance="outline">
                     <mat-select placeholder="Department" [(ngModel)]="selectedDepartment" (selectionChange)="onSelectDepartment($event)">
                         <mat-option>None</mat-option>
                         <mat-option *ngFor="let item of departments" [value]="item.ID">{{ item.Name }}</mat-option>
@@ -18,7 +18,7 @@
                 </mat-form-field>
             </div>
             <div fxFill fxFlex="50">
-                <mat-form-field fxFill class="select-box" appearance="outline">
+                <mat-form-field fxFill class="custom select-box" appearance="outline">
                     <mat-select
                         placeholder="Groups"
                         [disabled]="!selectedDepartment"
@@ -47,11 +47,12 @@
                     [color]="template === selectedTemplate ? 'primary' : ''"
                     *ngFor="let template of templates"
                     (click)="onTemplateSelect(template)"
+                    [matTooltip]="template.Name"
                 >
                     {{ template.Name }}
                 </button>
             </div>
-            <mat-form-field [fxFlex]="templates.length > 0 ? 80 : 100" floatLabel="never" appearance="standard" class="selected-template">
+            <mat-form-field [fxFlex]="templates.length > 0 ? 80 : 100" floatLabel="never" appearance="standard" class="custom selected-template">
                 <textarea
                     fxFlex
                     matInput

@@ -73,11 +73,23 @@
         &-dark {
             border#{$exactPos}: #{$width}px solid $tw-dark !important;
         }
+        &-alt-success {
+            border#{$exactPos}: #{$width}px solid $tw-alt-success !important;
+        }
+        &-alt-warning {
+            border#{$exactPos}: #{$width}px solid $tw-alt-warning !important;
+        }
+        &-alt-danger {
+            border#{$exactPos}: #{$width}px solid $tw-alt-danger !important;
+        }
     }
     &-left {
         @include border-color(1, left);
-        &-sm {
+        &-xs {
             @include border-color(0.5, left);
+        }
+        &-sm {
+            @include border-color(2, left);
         }
         &-md {
             @include border-color(3, left);
@@ -88,8 +100,11 @@
     }
     &-right {
         @include border-color(1, right);
-        &-sm {
+        &-xs {
             @include border-color(0.5, right);
+        }
+        &-sm {
+            @include border-color(2, right);
         }
         &-md {
             @include border-color(3, right);
@@ -100,8 +115,11 @@
     }
     &-bottom {
         @include border-color(1, bottom);
-        &-sm {
+        &-xs {
             @include border-color(0.5, bottom);
+        }
+        &-sm {
+            @include border-color(2, bottom);
         }
         &-md {
             @include border-color(3, bottom);
@@ -112,8 +130,11 @@
     }
     &-top {
         @include border-color(1, top);
-        &-sm {
+        &-xs {
             @include border-color(0.5, top);
+        }
+        &-sm {
+            @include border-color(2, top);
         }
         &-md {
             @include border-color(3, top);
@@ -123,8 +144,11 @@
         }
     }
     @include border-color(1);
-    &-sm {
+    &-xs {
         @include border-color(0.5);
+    }
+    &-sm {
+        @include border-color(2);
     }
     &-md {
         @include border-color(3);

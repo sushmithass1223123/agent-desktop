@@ -8,7 +8,7 @@
     <!-- your code goes here -->
     <div fxFill fxLayout="column" fxLayoutAlign=" none">
         <div class="w-100-p">
-            <mat-form-field class="form-field w-100-p" appearance="outline">
+            <mat-form-field class="custom form-field w-100-p" appearance="outline">
                 <input class="login-input" matInput placeholder="Search" [(ngModel)]="searchTerm" (input)="filterAgents()" />
                 <button
                     *ngIf="!searchTerm; else clearBtn"
@@ -60,11 +60,13 @@
                             <avatar name="{{ item.AgentName }}"></avatar>
                             <span
                                 class="element-status"
-                                [ngClass]="{
-                                    'bg-alt-success': item.CurrentAgentStatus.includes('Available'),
-                                    'bg-alt-danger': item.CurrentAgentStatus.includes('On Call'),
-                                    'bg-alt-warning': item.CurrentAgentStatus.includes('On Hold')
-                                }"
+                                [ngClass]="
+                                    item.CurrentAgentStatus.includes('Available')
+                                        ? 'bg-alt-success'
+                                        : item.CurrentAgentStatus.includes('On Call')
+                                        ? 'bg-alt-danger'
+                                        : 'bg-alt-warning'
+                                "
                             >
                             </span>
                         </div>
@@ -74,15 +76,23 @@
                         </div>
                     </div>
 
-                    <div fxLayout="row" fxLayoutAlign="center center" fxFlex="50" class="channel-list">
-                        <div mat-card-avatar matBadge="4">
-                            <mat-icon>phone</mat-icon>
-                        </div>
-                        <div mat-card-avatar matBadge="4">
-                            <mat-icon>chat</mat-icon>
-                        </div>
-                        <div mat-card-avatar matBadge="4">
-                            <mat-icon>duo</mat-icon>
+                    <div fxFlex="50" fxLayout="row wrap" fxLayoutAlign=" center" class="channel-list px-8">
+                        <div mat-card-avatar *ngFor="let channel of item.AllowedChannelCount | slice: 0:3" [matTooltip]="channel.Channel">
+                            <mat-icon>{{
+                                channel.Channel === 'voice'
+                                    ? 'phone'
+                                    : channel.Channel === 'textchat'
+                                    ? 'chat'
+                                    : channel.Channel.includes('audio')
+                                    ? 'settings_phone'
+                                    : channel.Channel.includes('video')
+                                    ? 'duo'
+                                    : channel.Channel.includes('sms')
+                                    ? 'textsms'
+                                    : channel.Channel.includes('email')
+                                    ? 'email'
+                                    : 'receipt'
+                            }}</mat-icon>
                         </div>
                     </div>
 
@@ -91,7 +101,7 @@
                     </div>
                 </div>
                 <div fxLayout class="tw-accordion-menu">
-                    <div fxFlex="50" fxLayout="row wrap" fxLayoutAlign="space-between start" class="channel-list border-right-primary px-8">
+                    <div fxFlex="50" fxLayout="row wrap" fxLayoutAlign=" start" class="channel-list border-right-primary px-8">
                         <div mat-card-avatar mat-ripple>
                             <mat-icon> supervised_user_circle </mat-icon>
                         </div>
@@ -104,47 +114,24 @@
                         <div mat-card-avatar mat-ripple>
                             <mat-icon>camera_alt</mat-icon>
                         </div>
-
-                        <div mat-card-avatar mat-ripple>
-                            <mat-icon>message</mat-icon>
-                        </div>
-                        <div mat-card-avatar mat-ripple>
-                            <mat-icon>camera_alt</mat-icon>
-                        </div>
-                        <div mat-card-avatar mat-ripple>
-                            <mat-icon>message</mat-icon>
-                        </div>
-                        <div mat-card-avatar mat-ripple>
-                            <mat-icon>camera_alt</mat-icon>
-                        </div>
                     </div>
-                    <div fxFlex="50" fxLayout="row wrap" fxLayoutAlign="space-between start" class="channel-list px-8">
-                        <div mat-card-avatar matBadge="4">
-                            <mat-icon>email</mat-icon>
-                        </div>
-                        <div mat-card-avatar matBadge="4">
-                            <mat-icon>sms</mat-icon>
-                        </div>
-                        <div mat-card-avatar matBadge="4">
-                            <mat-icon>print</mat-icon>
-                        </div>
-                        <div mat-card-avatar matBadge="4">
-                            <mat-icon>email</mat-icon>
-                        </div>
-                        <div mat-card-avatar matBadge="4">
-                            <mat-icon>sms</mat-icon>
-                        </div>
-                        <div mat-card-avatar matBadge="4">
-                            <mat-icon>print</mat-icon>
-                        </div>
-                        <div mat-card-avatar matBadge="4">
-                            <mat-icon>email</mat-icon>
-                        </div>
-                        <div mat-card-avatar matBadge="4">
-                            <mat-icon>sms</mat-icon>
-                        </div>
-                        <div mat-card-avatar matBadge="4">
-                            <mat-icon>print</mat-icon>
+                    <div fxFlex="50" fxLayout="row wrap" fxLayoutAlign=" start" class="channel-list px-8">
+                        <div mat-card-avatar *ngFor="let channel of item.AllowedChannelCount" [matTooltip]="channel.Channel">
+                            <mat-icon>{{
+                                channel.Channel === 'voice'
+                                    ? 'phone'
+                                    : channel.Channel === 'textchat'
+                                    ? 'chat'
+                                    : channel.Channel.includes('audio')
+                                    ? 'settings_phone'
+                                    : channel.Channel.includes('video')
+                                    ? 'duo'
+                                    : channel.Channel.includes('sms')
+                                    ? 'textsms'
+                                    : channel.Channel.includes('email')
+                                    ? 'email'
+                                    : 'receipt'
+                            }}</mat-icon>
                         </div>
                     </div>
                 </div>
