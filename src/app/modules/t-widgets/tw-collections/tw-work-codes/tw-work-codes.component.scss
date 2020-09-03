@@ -16,4 +16,22 @@ tw-work-codes {
             }
         }
     }
+
+    .bg {
+        &-color-1 {
+            background-color: #fb7d7d !important;
+        }
+        &-color-2 {
+            background-color: #8eaff9 !important;
+        }
+        &-color-3 {
+            background-color: #8eaff9 !important;
+        }
+        &-color-4 {
+            background-color: #f2e2b5 !important;
+        }
+        &-color-5 {
+            background-color: #e1c6f3 !important;
+        }
+    }
 }

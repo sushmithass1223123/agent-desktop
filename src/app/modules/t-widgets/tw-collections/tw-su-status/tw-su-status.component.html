@@ -1,50 +1,36 @@
 <!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
 <!-- implement following events in your component to access widget wrapper action events -->
 <!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
-<tw-wrapper [data]="data" (maximizeEvent)="maximizeEvent($event)">
+<tw-wrapper [data]="data" (maximizeEvent)="statusChart.legend = $event">
     <!-- your code goes here -->
-    <div fxFlex fxLayout="row" fxLayoutAlign="center center" class="w-100-p h-100-p" #chartContainerRef>
-        <div class="w-100-p h-100-p position-relative">
-            <ngx-charts-pie-chart
-                [view]="widget.view.length === 0 ? [chartContainerRef.offsetWidth / 2, chartContainerRef.offsetHeight] : widget.view"
-                [scheme]="pieChat.scheme"
-                [results]="pieChat.data"
-                [gradient]="pieChat.gradient"
-                [legend]="pieChat.legend"
-                [legendPosition]="pieChat.legendPosition"
-                [labels]="widget.state.maximized"
-                [doughnut]="pieChat.doughnut"
+    <div
+        *ngIf="statusChart.datasets.length >= 1 && statusChart.datasets[0].data.length"
+        fxLayout="column"
+        fxLayoutAlign="center center"
+        class="w-100-p h-100-p"
+    >
+        <div class="tw-chart w-100-p h-100-p p-4" #chartContainerRef>
+            <canvas
+                baseChart
+                [colors]="statusChart.colors"
+                [datasets]="statusChart.datasets"
+                [options]="statusChart.options"
+                [labels]="statusChart.labels"
+                [legend]="statusChart.legend"
+                chartType="pie"
             >
-            </ngx-charts-pie-chart>
-            <div
-                fxFlex
-                fxFill
-                fxLayout="row"
-                fxLayoutAlign="center center"
-                class="w-100-p h-100-p position-absolute m-0"
-                [ngClass]="widget.state.maximized ? 'mat-display-4' : 'mat-display-1'"
-            >
-                76
-            </div>
+            </canvas>
+            <!-- <div class="t-pie-chart-value">{{ widget.data[1].value }}</div> -->
         </div>
-        <div class="w-100-p h-100-p">
-            <ngx-charts-bar-vertical-stacked
-                [view]="widget.view.length === 0 ? [chartContainerRef.offsetWidth / 2, chartContainerRef.offsetHeight] : widget.view"
-                [scheme]="barChart.colorScheme"
-                [results]="barChart.dataSource"
-                [gradient]="barChart.gradient"
-                [xAxis]="barChart.showXAxis"
-                [yAxis]="barChart.showYAxis"
-                [legend]="barChart.showLegend"
-                [showXAxisLabel]="barChart.showXAxisLabel"
-                [showYAxisLabel]="barChart.showYAxisLabel"
-                [xAxisLabel]="barChart.xAxisLabel"
-                [yAxisLabel]="barChart.yAxisLabel"
-                [animations]="barChart.animations"
-                [barPadding]="30"
-            >
-            </ngx-charts-bar-vertical-stacked>
-        </div>
+    </div>
+
+    <div
+        *ngIf="statusChart.datasets.length === 0 || (statusChart.datasets.length === 1 && !statusChart.datasets[0].data.length)"
+        class="w-100-p h-100-p text-center"
+        fxLayout
+        fxLayoutAlign="center center"
+    >
+        <p>No Data Available</p>
     </div>
     <!-- your code goes here -->
 </tw-wrapper>

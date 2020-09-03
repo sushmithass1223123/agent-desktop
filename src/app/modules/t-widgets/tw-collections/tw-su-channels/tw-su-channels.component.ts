@@ -1,11 +1,20 @@
-import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseConfigService } from '@fuse/services/config.service';
+import { FuseConfig } from '@fuse/types';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
+import { CHART_COLORS } from 'app/constants';
+import { TwChartConfig } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
+import { SDKClient, AgentStateDurationList } from 'tmac-sdk';
+
+const multiColors: any = {
+    backgroundColor: [...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS].map((c) => c.backgroundColor),
+    hoverBackgroundColor: [...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS].map((c) => c.hoverBackgroundColor)
+};
 
 @Component({
-    selector: 'tw-su-channels',
+    selector: 'tw-su-channels.component',
     templateUrl: './tw-su-channels.component.html',
     styleUrls: ['./tw-su-channels.component.scss'],
     encapsulation: ViewEncapsulation.None
@@ -17,135 +26,30 @@ export class TwSuChannelsComponent extends TWidgetWrapper implements OnInit, OnD
     // -----------------------------------------------------------
     // @ [OPTIONAL] to store the fuse config for theme
     // -----------------------------------------------------------
-    fuseConfig: any;
+    fuseConfig: FuseConfig;
 
     // -----------------------------------------------------------
     // @ [OPTIONAL] to store entire app config and get update
     // -----------------------------------------------------------
     appConfig: any;
 
-    @ViewChild('chartContainerRef') chartContainerRef: ElementRef;
-
-    widget = {
-        view: [],
-        state: {
-            maximized: false
-        }
-    };
-
-    pieChat = {
-        legend: false,
-        doughnut: true,
-        gradient: true,
-        legendPosition: 'below',
-        scheme: {
-            domain: [
-                '#91359f',
-                '#a24fad',
-                '#b26cbc',
-                '#c895cf',
-                '#ddbfe2',
-            ]
-        },
-        data: [
-            {
-                name: 'Voice',
-                value: 10
-            },
-            {
-                name: 'Chat',
-                value: 20
-            },
-            {
-                name: 'Email',
-                value: 40
-            },
-            {
-                name: 'SMS',
-                value: 20
+    channelsChart: TwChartConfig = {
+        datasets: [{ data: [] }],
+        options: {
+            showLines: false,
+            tooltips: {
+                callbacks: {
+                    title: (item, data) => {
+                        return data.datasets[item[0].datasetIndex].label;
+                    }
+                }
             }
-        ],
-        onSelect: (ev: any) => {
-            console.log(ev);
         },
-        onActivate: (ev: any) => {
-            console.log(ev);
-        },
-        onDeactivate: (ev: any) => {
-            console.log(ev);
-        }
-    };
-
-    barChart = {
-        showXAxis: true,
-        showYAxis: true,
-        gradient: false,
-        showLegend: false,
-        showXAxisLabel: false,
-        xAxisLabel: 'Country',
-        showYAxisLabel: false,
-        yAxisLabel: 'Population',
-        animations: false,
-        colorScheme: {
-            domain: [
-                '#91359f',
-                '#ddbfe2'
-            ]
-        },
-        dataSource: [
-            {
-                name: 'Chat',
-                series: [
-                    {
-                        name: 'transfered',
-                        value: 5
-                    },
-                    {
-                        name: 'conferenced',
-                        value: 3
-                    }
-                ]
-            },
-            {
-                name: 'Voice',
-                series: [
-                    {
-                        name: 'transfered',
-                        value: 7
-                    },
-                    {
-                        name: 'conferenced',
-                        value: 4
-                    }
-                ]
-            },
-            {
-                name: 'EMAIL',
-                series: [
-                    {
-                        name: 'transfered',
-                        value: 3
-                    },
-                    {
-                        name: 'conferenced',
-                        value: 8
-                    }
-                ]
-            },
-            {
-                name: 'SMS',
-                series: [
-                    {
-                        name: 'transfered',
-                        value: 6
-                    },
-                    {
-                        name: 'conferenced',
-                        value: 2
-                    }
-                ]
-            }
-        ]
+        colors: Array(20)
+            .fill(1)
+            .map(() => multiColors),
+        labels: [],
+        legend: false
     };
 
     /**
@@ -187,15 +91,32 @@ export class TwSuChannelsComponent extends TWidgetWrapper implements OnInit, OnD
         this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
             this.appConfig = config;
         });
+
+        SDKClient.events.on('AgentStatusDetailsEvent', this.AgentStatusDetailsEvent);
     }
 
     /**
      * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
      */
     ngOnDestroy(): void {
+        SDKClient.events.off('AgentStatusDetailsEvent', this.AgentStatusDetailsEvent);
         // call the wrapper destroy method
         this.destroyWrapper();
     }
+
+    AgentStatusDetailsEvent = (evt: AgentStateDurationList) => {
+        const datasets = { Duration: [] };
+        const labels = [];
+        evt.States.forEach((c) => {
+            datasets.Duration.push(c.Duration);
+            labels.push(c.State);
+        });
+        this.channelsChart.datasets = Object.keys(datasets).map((d) => ({
+            data: datasets[d],
+            label: d
+        }));
+        this.channelsChart.labels = labels;
+    };
 
     // -----------------------------------------------------------------------------------------------------
     // @  Private Methods
@@ -204,18 +125,6 @@ export class TwSuChannelsComponent extends TWidgetWrapper implements OnInit, OnD
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
-
-    maximizeEvent(isMaximized: boolean): void {
-        // set the maximized state
-        this.widget.state.maximized = isMaximized;
-        // set it first to avoid widget.view length 0
-        this.widget.view = [this.chartContainerRef.nativeElement.offsetWidth / 2, this.chartContainerRef.nativeElement.offsetHeight];
-        // setttime is to make sure this event processing will be passed
-        setTimeout(() => {
-            // this is to avoid "Expression ___ has changed after it was checked" error
-            this.widget.view = [this.chartContainerRef.nativeElement.offsetWidth / 2, this.chartContainerRef.nativeElement.offsetHeight];
-        }, 100);
-    }
 }
 
 // for more info visit - https://angular.io/api/core

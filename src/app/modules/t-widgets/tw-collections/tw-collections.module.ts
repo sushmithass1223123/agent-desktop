@@ -29,7 +29,6 @@ import { TwSampleComponent } from './tw-sample/tw-sample.component';
 import { TwSuActiveAgentsComponent } from './tw-su-active-agents/tw-su-active-agents.component';
 import { TwSuAgentActivityDetailsComponent } from './tw-su-agent-activity/tw-su-agent-activity-details/tw-su-agent-activity-details.component';
 import { TwSuAgentActivityComponent } from './tw-su-agent-activity/tw-su-agent-activity.component';
-import { TwSuAverageHandleTimeComponent } from './tw-su-average-handle-time/tw-su-average-handle-time.component';
 import { TwSuCallsInQueueComponent } from './tw-su-calls-in-queue/tw-su-calls-in-queue.component';
 import { TwSuChannelsStatusComponent } from './tw-su-channels-status/tw-su-channels-status.component';
 import { TwSuChannelsComponent } from './tw-su-channels/tw-su-channels.component';
@@ -45,6 +44,7 @@ import { TwVoicePanelComponent } from './tw-voice-panel/tw-voice-panel.component
 import { TwWallboardComponent } from './tw-wallboard/tw-wallboard.component';
 import { TwAuxStatusChartComponent } from './tw-aux-status-chart/tw-aux-status-chart.component';
 import { TwAhtTcComponent } from './tw-aht-tc/tw-aht-tc.component';
+import { TwSuIntentListComponent } from './tw-su-intent-list/tw-su-intent-list.component';
 const collectionComponents = [
     TwCustomComponent,
     TwUnknownComponent,
@@ -66,7 +66,6 @@ const collectionComponents = [
     TwAdCallbacksComponent,
     TwSuTotalCallsComponent,
     TwSuCallsInQueueComponent,
-    TwSuAverageHandleTimeComponent,
     TwSuTransferredConferencedCallsComponent,
     TwSuChannelsStatusComponent,
     TwSuChannelsComponent,
@@ -89,7 +88,8 @@ const collectionComponents = [
     TwAudioControlsComponent,
     TwVideoControlsComponent,
     TwAuxStatusChartComponent,
-    TwAhtTcComponent
+    TwAhtTcComponent,
+    TwSuIntentListComponent
 ];
 
 @NgModule({

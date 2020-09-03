@@ -1,39 +1,26 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { FuseConfigService } from '@fuse/services/config.service';
-import { FuseConfig } from '@fuse/types';
-import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { CHART_COLORS } from 'app/constants';
-import { TwChartConfig } from 'app/interfaces';
+import { AppDataService } from '@services/app-data.service';
+import { FuseConfigService } from '@fuse/services/config.service';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient, AgentStateDurationList } from 'tmac-sdk';
-
-const multiColors: any = {
-    backgroundColor: [...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS].map((c) => c.backgroundColor),
-    hoverBackgroundColor: [...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS].map((c) => c.hoverBackgroundColor)
-};
+import { SDKClient, TeamIntentDataList } from 'tmac-sdk';
+import { TwChartConfig } from 'app/interfaces';
+import { CHART_COLORS } from 'app/constants';
+import { ChartDataSets } from 'chart.js';
+import { sortBy } from 'lodash';
 
 @Component({
-    selector: 'tw-su-status.component',
-    templateUrl: './tw-su-status.component.html',
-    styleUrls: ['./tw-su-status.component.scss'],
+    selector: 'tw-su-intent-list',
+    templateUrl: './tw-su-intent-list.component.html',
+    styleUrls: ['./tw-su-intent-list.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class TwSuStatusComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+export class TwSuIntentListComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     // holds all the data related to this widget from the config
     @Input() data: any;
 
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store the fuse config for theme
-    // -----------------------------------------------------------
-    fuseConfig: FuseConfig;
-
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store entire app config and get update
-    // -----------------------------------------------------------
-    appConfig: any;
-
-    statusChart: TwChartConfig = {
+    maximized = false;
+    intentChart: TwChartConfig = {
         datasets: [{ data: [] }],
         options: {
             showLines: false,
@@ -45,12 +32,22 @@ export class TwSuStatusComponent extends TWidgetWrapper implements OnInit, OnDes
                 }
             }
         },
-        colors: Array(20)
-            .fill(1)
-            .map(() => multiColors),
+        colors: CHART_COLORS,
         labels: [],
         legend: false
     };
+
+    allDatasets: { datasets: ChartDataSets[]; labels: string[] } = { datasets: [], labels: [] };
+
+    // -----------------------------------------------------------
+    // @ [OPTIONAL] to store the fuse config for theme
+    // -----------------------------------------------------------
+    fuseConfig: any;
+
+    // -----------------------------------------------------------
+    // @ [OPTIONAL] to store entire app config and get update
+    // -----------------------------------------------------------
+    appConfig: any;
 
     /**
      * Constructor
@@ -77,7 +74,6 @@ export class TwSuStatusComponent extends TWidgetWrapper implements OnInit, OnDes
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-
         // -----------------------------------------------------------
         // @ [OPTIONAL] to get the fuse config
         // -----------------------------------------------------------
@@ -92,31 +88,46 @@ export class TwSuStatusComponent extends TWidgetWrapper implements OnInit, OnDes
             this.appConfig = config;
         });
 
-        SDKClient.events.on('AgentStatusDetailsEvent', this.AgentStatusDetailsEvent);
+        SDKClient.events.on('SupervisorIntentListEvent', this.SupervisorIntentListEvent);
     }
+
+    SupervisorIntentListEvent = (supervisorIntentListEventRes: TeamIntentDataList) => {
+        const datasets = { Count: [] };
+        const labels = [];
+        const res = sortBy(supervisorIntentListEventRes.Intents, 'Counts');
+
+        [
+            ...supervisorIntentListEventRes.Intents,
+            ...supervisorIntentListEventRes.Intents,
+            ...supervisorIntentListEventRes.Intents,
+            ...supervisorIntentListEventRes.Intents,
+            ...supervisorIntentListEventRes.Intents
+        ].forEach((c) => {
+            datasets.Count.push(c.Count);
+            labels.push(c.Intent || 'Unknown');
+        });
+        this.allDatasets.datasets = Object.keys(datasets).map((d) => ({
+            data: datasets[d],
+            label: d
+        }));
+        this.allDatasets.labels = labels;
+        if (this.maximized) {
+            this.intentChart.datasets = this.allDatasets.datasets;
+            this.intentChart.labels = this.allDatasets.labels;
+        } else {
+            this.intentChart.datasets = this.allDatasets.datasets.map((x) => ({ ...x, data: x.data.slice(0, 3) }));
+            this.intentChart.labels = this.allDatasets.labels.slice(0, 3);
+        }
+    };
 
     /**
      * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
      */
     ngOnDestroy(): void {
-        SDKClient.events.off('AgentStatusDetailsEvent', this.AgentStatusDetailsEvent);
         // call the wrapper destroy method
         this.destroyWrapper();
+        SDKClient.events.off('SupervisorIntentListEvent', this.SupervisorIntentListEvent);
     }
-
-    AgentStatusDetailsEvent = (evt: AgentStateDurationList) => {
-        const datasets = { Duration: [] };
-        const labels = [];
-        evt.States.forEach((c) => {
-            datasets.Duration.push(c.Duration);
-            labels.push(c.State);
-        });
-        this.statusChart.datasets = Object.keys(datasets).map((d) => ({
-            data: datasets[d],
-            label: d
-        }));
-        this.statusChart.labels = labels;
-    };
 
     // -----------------------------------------------------------------------------------------------------
     // @  Private Methods
@@ -125,6 +136,17 @@ export class TwSuStatusComponent extends TWidgetWrapper implements OnInit, OnDes
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
+
+    maximizeEvt(state: boolean): void {
+        this.maximized = state;
+        if (state) {
+            this.intentChart.datasets = this.allDatasets.datasets;
+            this.intentChart.labels = this.allDatasets.labels;
+        } else {
+            this.intentChart.datasets = this.allDatasets.datasets.map((x) => ({ ...x, data: x.data.slice(0, 3) }));
+            this.intentChart.labels = this.allDatasets.labels.slice(0, 3);
+        }
+    }
 }
 
 // for more info visit - https://angular.io/api/core

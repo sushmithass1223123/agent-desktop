@@ -1,25 +1,53 @@
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { takeUntil } from 'rxjs/operators';
+import { TwWrapperComponent } from '@modules/t-widgets/tw-wrapper/tw-wrapper.component';
+import { MatTableDataSource } from '@angular/material/table';
+import { random } from 'lodash';
+import { MatSort } from '@angular/material/sort';
+import { MatPaginator } from '@angular/material/paginator';
+import { fuseAnimations } from '@fuse/animations';
 
 @Component({
     selector: 'tw-ad-feedback',
     templateUrl: './tw-ad-feedback.component.html',
     styleUrls: ['./tw-ad-feedback.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    animations: fuseAnimations
 })
 export class TwAdFeedbackComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     // holds all the data related to this widget from the config
     @Input() data: any;
 
-    totalStars = Array(4).fill(1);
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
+    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+
+    ratings = Array(5).fill(1);
     stars = 4;
     // -----------------------------------------------------------
     // @ [OPTIONAL] to store the fuse config for theme
     // -----------------------------------------------------------
     fuseConfig: any;
+
+    dataConfig: {
+        Source: 'dashboard' | 'supervisor';
+    };
+
+    feedbackDetailsTable = {
+        source: new MatTableDataSource(
+            Array(10)
+                .fill(1)
+                .map((_, i) => ({
+                    InteractionID: `100${i}`,
+                    Channel: ['Chat', 'Voice', 'Email', 'Whatsapp'][random(0, 3, false)],
+                    Feedback: random(0, 5, false),
+                    Score: random(1, 10)
+                }))
+        ),
+        columns: ['InteractionID', 'Channel', 'Feedback', 'Score']
+    };
 
     // -----------------------------------------------------------
     // @ [OPTIONAL] to store entire app config and get update
@@ -65,6 +93,10 @@ export class TwAdFeedbackComponent extends TWidgetWrapper implements OnInit, OnD
         this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
             this.appConfig = config;
         });
+
+        this.dataConfig = this.data.Data;
+        this.feedbackDetailsTable.source.sort = this.sort;
+        this.feedbackDetailsTable.source.paginator = this.paginator;
     }
 
     /**
