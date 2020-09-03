@@ -1,80 +1,55 @@
-import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { fuseAnimations } from '@fuse/animations';
+import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseConfigService } from '@fuse/services/config.service';
+import { FuseConfig } from '@fuse/types';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
+import { CHART_COLORS } from 'app/constants';
+import { TwChartConfig } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
+import { SDKClient, WallboardRefreshEvent } from 'tmac-sdk';
+
+const multiColors: any = {
+    backgroundColor: [...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS].map((c) => c.backgroundColor),
+    hoverBackgroundColor: [...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS].map((c) => c.hoverBackgroundColor)
+};
 
 @Component({
-    selector: 'tw-su-calls-in-queue',
+    selector: 'tw-su-calls-in-queue.component',
     templateUrl: './tw-su-calls-in-queue.component.html',
     styleUrls: ['./tw-su-calls-in-queue.component.scss'],
-    encapsulation: ViewEncapsulation.None,
-    animations: fuseAnimations
+    encapsulation: ViewEncapsulation.None
 })
 export class TwSuCallsInQueueComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-
     // holds all the data related to this widget from the config
     @Input() data: any;
 
     // -----------------------------------------------------------
     // @ [OPTIONAL] to store the fuse config for theme
     // -----------------------------------------------------------
-    fuseConfig: any;
+    fuseConfig: FuseConfig;
 
     // -----------------------------------------------------------
     // @ [OPTIONAL] to store entire app config and get update
     // -----------------------------------------------------------
     appConfig: any;
 
-    @ViewChild('chartContainerRef') chartContainerRef: ElementRef;
-
-    widget = {
-        legend: false,
-        labels: true,
-        doughnut: true,
-        gradient: true,
-        legendPosition: 'below',
-        view: [],
-        scheme: {
-            domain: [
-                '#91359f',
-                '#a24fad',
-                '#b26cbc',
-                '#c895cf',
-                '#ddbfe2',
-            ]
-        },
-        data: [
-            {
-                'name': 'Voice',
-                'value': 10
-            },
-            {
-                'name': 'Chat',
-                'value': 20
-            },
-            {
-                'name': 'Email',
-                'value': 40
-            },
-            {
-                'name': 'SMS',
-                'value': 20
+    ciqChart: TwChartConfig = {
+        datasets: [{ data: [] }],
+        options: {
+            showLines: false,
+            tooltips: {
+                callbacks: {
+                    title: (item, data) => {
+                        return data.datasets[item[0].datasetIndex].label;
+                    }
+                }
             }
-        ],
-        state: {
-            maximized: false
         },
-        onSelect: (ev: any) => {
-            console.log(ev);
-        },
-        onActivate: (ev: any) => {
-            console.log(ev);
-        },
-        onDeactivate: (ev: any) => {
-            console.log(ev);
-        }
+        colors: Array(20)
+            .fill(1)
+            .map(() => multiColors),
+        labels: [],
+        legend: false
     };
 
     /**
@@ -86,9 +61,10 @@ export class TwSuCallsInQueueComponent extends TWidgetWrapper implements OnInit,
         // @ [OPTIONAL]
         private _fuseConfigService: FuseConfigService,
         // @ [OPTIONAL]
-        private _appDataService: AppDataService,
+        private _appDataService: AppDataService
     ) {
         super();
+        this.ciqChart.options.plugins = { outlabels: { display: this.ciqChart.legend } };
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -106,54 +82,52 @@ export class TwSuCallsInQueueComponent extends TWidgetWrapper implements OnInit,
         // -----------------------------------------------------------
         // @ [OPTIONAL] to get the fuse config
         // -----------------------------------------------------------
-        this._fuseConfigService.config
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(
-                (config: any) => {
-                    this.fuseConfig = config;
-                }
-            );
+        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+            this.fuseConfig = config;
+        });
 
         // -----------------------------------------------------------
         // @ [OPTIONAL] to get the app config
         // -----------------------------------------------------------
-        this._appDataService.config
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(
-                (config: any) => {
-                    this.appConfig = config;
-                }
-            );
+        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+            this.appConfig = config;
+        });
+
+        SDKClient.events.on('TeamWallboardRefreshEvent', this.TeamWallboardRefreshEvent);
     }
 
     /**
      * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
      */
     ngOnDestroy(): void {
+        SDKClient.events.off('TeamWallboardRefreshEvent', this.TeamWallboardRefreshEvent);
         // call the wrapper destroy method
         this.destroyWrapper();
     }
+
+    TeamWallboardRefreshEvent = (evt: WallboardRefreshEvent) => {
+        const datasets = { 'Calls In Queue': [] };
+        const labels = [];
+        evt.Skills.forEach((c) => {
+            datasets['Calls In Queue'].push(c.CallsInQueue);
+            labels.push(c.SkillName);
+        });
+        this.ciqChart.datasets = Object.keys(datasets).map((d) => {
+            if (datasets[d].every((x) => x === 0)) {
+                datasets[d] = [];
+            }
+            return { data: datasets[d], label: d };
+        });
+        this.ciqChart.labels = labels;
+    };
 
     // -----------------------------------------------------------------------------------------------------
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
 
-
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
-
-    maximizeEvent(isMaximized: boolean): void {
-        // set the maximized state
-        this.widget.state.maximized = isMaximized;
-        // set it first to avoid widget.view length 0
-        this.widget.view = [this.chartContainerRef.nativeElement.offsetWidth, this.chartContainerRef.nativeElement.offsetHeight];
-        // setttime is to make sure this event processing will be passed
-        setTimeout(() => {
-            // this is to avoid "Expression ___ has changed after it was checked" error
-            this.widget.view = [this.chartContainerRef.nativeElement.offsetWidth, this.chartContainerRef.nativeElement.offsetHeight];
-        }, 0);
-    }
 }
 
 // for more info visit - https://angular.io/api/core

@@ -27,13 +27,25 @@
                 />
             </mat-chip-list>
         </mat-form-field>
-        <div *ngIf="DataConf.Source === 'supervisor'" class="w-100-p h-100-p" fusePerfectScrollbar>
+        <div *ngIf="DataConf.Source === 'supervisor'" class="w-100-p h-100-p p-12" fusePerfectScrollbar>
             <mat-chip-list aria-label="WorkCodes">
-                <mat-chip *ngFor="let workCode of selectedWorkCodes">
+                <mat-chip
+                    *ngFor="let workCode of selectedWorkCodes | keyvalue"
+                    [ngClass]="{
+                        'bg-color-1': workCode.value < 10,
+                        'bg-color-2': workCode.value > 30,
+                        'bg-color-3': workCode.value > 50,
+                        'bg-color-4': workCode.value > 70,
+                        'bg-color-5': workCode.value > 90
+                    }"
+                >
                     <mat-icon class="mat-icon-mirror mr-4">local_offer</mat-icon>
-                    {{ workCode.Name }}
+                    {{ workCode.key }}
                 </mat-chip>
             </mat-chip-list>
+            <div *ngIf="selectedWorkCodes === {}" class="w-100-p h-100-p" fxLayout fxLayoutAlign="center center">
+                <p>No data available</p>
+            </div>
         </div>
     </div>
 

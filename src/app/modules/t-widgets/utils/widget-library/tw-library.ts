@@ -20,7 +20,6 @@ import { TwCustomerSentimentComponent } from '@modules/t-widgets/tw-collections/
 import { TwSampleComponent } from '@modules/t-widgets/tw-collections/tw-sample/tw-sample.component';
 import { TwSuActiveAgentsComponent } from '@modules/t-widgets/tw-collections/tw-su-active-agents/tw-su-active-agents.component';
 import { TwSuAgentActivityComponent } from '@modules/t-widgets/tw-collections/tw-su-agent-activity/tw-su-agent-activity.component';
-import { TwSuAverageHandleTimeComponent } from '@modules/t-widgets/tw-collections/tw-su-average-handle-time/tw-su-average-handle-time.component';
 import { TwSuCallsInQueueComponent } from '@modules/t-widgets/tw-collections/tw-su-calls-in-queue/tw-su-calls-in-queue.component';
 import { TwSuChannelsStatusComponent } from '@modules/t-widgets/tw-collections/tw-su-channels-status/tw-su-channels-status.component';
 import { TwSuChannelsComponent } from '@modules/t-widgets/tw-collections/tw-su-channels/tw-su-channels.component';
@@ -36,6 +35,7 @@ import { TwWallboardComponent } from '@modules/t-widgets/tw-collections/tw-wallb
 import { TWidget } from '@modules/t-widgets/utils/t-widget';
 import { TwAuxStatusChartComponent } from '@modules/t-widgets/tw-collections/tw-aux-status-chart/tw-aux-status-chart.component';
 import { TwAhtTcComponent } from '@modules/t-widgets/tw-collections/tw-aht-tc/tw-aht-tc.component';
+import { TwSuIntentListComponent } from '@modules/t-widgets/tw-collections/tw-su-intent-list/tw-su-intent-list.component';
 
 export class TWLibrary {
     static widgetLibrary: Record<string, Type<any>> = {
@@ -52,7 +52,6 @@ export class TWLibrary {
         'tw-ad-callbacks': TwAdCallbacksComponent,
         'tw-su-total-calls': TwSuTotalCallsComponent,
         'tw-su-calls-in-queue': TwSuCallsInQueueComponent,
-        'tw-su-average-handle-time': TwSuAverageHandleTimeComponent,
         'tw-su-transferred-conferenced-calls': TwSuTransferredConferencedCallsComponent,
         'tw-su-channels-status': TwSuChannelsStatusComponent,
         'tw-su-channels': TwSuChannelsComponent,
@@ -73,7 +72,8 @@ export class TWLibrary {
         'tw-audio-controls': TwAudioControlsComponent,
         'tw-video-controls': TwVideoControlsComponent,
         'tw-aux-status-chart': TwAuxStatusChartComponent,
-        'tw-aht-tc': TwAhtTcComponent
+        'tw-aht-tc': TwAhtTcComponent,
+        'tw-su-intent-list': TwSuIntentListComponent
     };
 
     public static getWidget(type: string, data: any): TWidget {

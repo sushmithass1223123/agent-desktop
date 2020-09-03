@@ -10,7 +10,6 @@ import { SDKClient, AgentStateDurationList } from 'tmac-sdk';
 
 const multiColors: any = {
     backgroundColor: [...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS].map((c) => c.backgroundColor),
-    borderCapStyle: 'butt',
     hoverBackgroundColor: [...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS].map((c) => c.hoverBackgroundColor)
 };
 
