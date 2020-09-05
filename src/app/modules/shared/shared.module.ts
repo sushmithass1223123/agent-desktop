@@ -14,6 +14,7 @@ import { SnackbarComponent } from './snackbar/snackbar.component';
 import 'chartjs-plugin-piechart-outlabels';
 
 Chart.defaults.global.responsive = true;
+Chart.defaults.global.legend.position = 'right';
 Chart.defaults.global.maintainAspectRatio = false;
 Chart.defaults.global.plugins = {
     outlabels: { display: false, backgroundColor: null, font: { size: 15 }, color: 'black' }

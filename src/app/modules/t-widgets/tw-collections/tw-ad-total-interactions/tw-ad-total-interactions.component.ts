@@ -94,9 +94,8 @@ export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements On
 
         if (SDKClient.getAgentData().agentProfile === 'S') {
             SDKClient.events.on('SupervisorTeamChannelListEvent', this.SupervisorTeamChannelListEvent);
-        } else {
-            SDKClient.events.on('AgentChannelDetailsEvent', this.AgentChannelDetailsEvent);
         }
+        SDKClient.events.on('AgentChannelDetailsEvent', this.AgentChannelDetailsEvent);
     }
 
     /**

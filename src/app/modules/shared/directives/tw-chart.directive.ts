@@ -11,12 +11,14 @@ export class TWChartDirective {
 
     @HostListener('maximizeEvent', ['$event'])
     maximizeEvent(state: boolean): void {
-        if (this.chart.chartType === 'doughnut' || this.chart.chartType === 'pie') {
-            this.chart.options.plugins = { outlabels: { display: state } };
+        if (this.chart) {
+            if (this.chart.chartType === 'doughnut' || this.chart.chartType === 'pie') {
+                this.chart.options.plugins = { outlabels: { display: state } };
+            }
+            this.chart.legend = state;
+            setTimeout(() => {
+                (this.chart as any).refresh();
+            }, 10);
         }
-        this.chart.legend = state;
-        setTimeout(() => {
-            (this.chart as any).refresh();
-        }, 10);
     }
 }

@@ -8,7 +8,7 @@
     <!-- your code goes here -->
     <div fxFlex fxFill fxLayout="row" class="p-8">
         <mat-chip-list>
-            <mat-chip *ngFor="let intent of nlpCurrentData.JsonData.nluResult.intent_ranking" removable (click)="openAssitWidget(intent)">
+            <mat-chip *ngFor="let intent of nlpCurrentData?.JsonData.nluResult.intent_ranking" removable (click)="openAssitWidget(intent)">
                 {{ intent.name }}
                 <mat-icon matChipRemove>close</mat-icon>
             </mat-chip>
