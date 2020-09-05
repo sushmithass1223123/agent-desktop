@@ -20,6 +20,8 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
 
     ucid: string;
 
+    interactionId: number;
+
     widgetData: any;
 
     nlpCurrentData: any = null;
@@ -74,6 +76,10 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
             this.appConfig = config;
         });
 
+
+        // set the interaction id from data
+        this.interactionId = this.data.InteractionDetails.InteractionID;
+
         // assign the widget data
         this.widgetData = this.data.Data || new Object();
 
@@ -103,6 +109,11 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         const receivedData = evt;
         if (receivedData) {
             const parsedJson = JSON.parse(receivedData.JsonData);
+
+            // check for the interaction
+            if (this.interactionId !== parsedJson.interactionID) {
+                return;
+            }
 
             if (parsedJson.messageSource === 'agent') {
                 return;

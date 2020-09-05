@@ -1,15 +1,18 @@
-<button
-    mat-icon-button
-    class="tw-aux-codes {{ opened ? 'opened' : '' }}"
-    [matMenuTriggerFor]="menu"
-    aria-label="Notification dropdown"
-    (menuOpened)="menuOpened(true)"
-    (menuClosed)="menuOpened(false)"
->
-    <mat-icon>notifications</mat-icon>
-</button>
+<div class="wrap">
+    <button
+        mat-icon-button
+        class="tw-aux-codes {{ opened ? 'opened' : '' }}"
+        [matMenuTriggerFor]="menu"
+        aria-label="Notification dropdown"
+        (menuOpened)="menuOpened(true)"
+        (menuClosed)="menuOpened(false)"
+    >
+        <mat-icon class="primary-text">notifications</mat-icon>
+    </button>
+    <!-- <div class="toolbar-separator"></div> -->
+</div>
+
 <mat-menu class="tw-notification-list" #menu="matMenu" xPosition="before">
     <span class="mat-title"></span>
     <button mat-menu-item>Test</button>
 </mat-menu>
-    

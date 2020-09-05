@@ -8,12 +8,14 @@ import { MatButton } from '@angular/material/button';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { SDKClient, IResponse, AVChannel } from 'tmac-sdk';
 import { AppDataService } from '@services/app-data.service';
+import { fuseAnimations } from '@fuse/animations';
 
 @Component({
     selector: 'tw-active-interactions',
     templateUrl: './tw-active-interactions.component.html',
     styleUrls: ['./tw-active-interactions.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    animations: fuseAnimations
 })
 export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
 

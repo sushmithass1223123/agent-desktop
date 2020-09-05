@@ -1,11 +1,12 @@
 import { NgModule } from '@angular/core';
+import { SharedModule } from '@modules/shared/shared.module';
 import { TwActiveInteractionsComponent } from './tw-active-interactions/tw-active-interactions.component';
 import { TwAgentDetailsComponent } from './tw-agent-details/tw-agent-details.component';
 import { TwAuxCodesComponent } from './tw-aux-codes/tw-aux-codes.component';
 import { TwAuxTimerComponent } from './tw-aux-timer/tw-aux-timer.component';
-import { TwToolbarMenuComponent } from './tw-toolbar-menu/tw-toolbar-menu.component';
+import { TwInstantMessagingComponent } from './tw-instant-messaging/tw-instant-messaging.component';
 import { TwNotificationsComponent } from './tw-notifications/tw-notifications.component';
-import { SharedModule } from '@modules/shared/shared.module';
+import { TwToolbarMenuComponent } from './tw-toolbar-menu/tw-toolbar-menu.component';
 
 const toolbarComponents = [
     TwActiveInteractionsComponent,
@@ -13,7 +14,8 @@ const toolbarComponents = [
     TwAuxCodesComponent,
     TwAuxTimerComponent,
     TwToolbarMenuComponent,
-    TwNotificationsComponent
+    TwNotificationsComponent,
+    TwInstantMessagingComponent
 ];
 
 @NgModule({

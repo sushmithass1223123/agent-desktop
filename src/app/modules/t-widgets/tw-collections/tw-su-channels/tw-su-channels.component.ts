@@ -105,12 +105,6 @@ export class TwSuChannelsComponent extends TWidgetWrapper implements OnInit, OnD
     }
 
     TeamActiveChannelListEvent = (evt: AgentChannelDataList) => {
-
-        evt.Channels.forEach((c) => {
-            datasets.Duration.push(c.Total);
-            labels.push(c.Channel);
-        });
-
         const datasets = { Duration: [] };
         const labels = [];
         evt.Channels.forEach((c) => {

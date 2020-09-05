@@ -4,14 +4,13 @@
 <!-- Interaction template -->
 <ng-container *ngFor="let item of interactions; index as i">
     <!-- widget template -->
-    <div class="tw-interaction" [ngClass]="item.interactionId === activeInteraction ? 'active' : ''">
+    <div class="tw-interaction tw-widget-container" [ngClass]="item.interactionId === activeInteraction ? 'active' : ''">
         <div
             fxFill
             fxFlex
             fxLayout="row wrap"
             fxLayoutAlign=" none"
             fxLayoutGap.gt-md="8px"
-            class="tw-interaction"
             [ngClass]="item.interactionId === activeInteraction ? 'active' : ''"
         >
             <tw-template

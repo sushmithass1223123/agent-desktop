@@ -116,6 +116,11 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     }
 
     InteractionHistoryReadyEvent = (evt: InteractionHistoryReadyEvent): void => {
+        // check for the interaction
+        if (this.interactionId !== evt.InteractionID) {
+            return;
+        }
+
         const noOfRecords = this.customerJourneyTable.tableData.source.paginator?.pageSize.toString() || '5';
         // assign the history params
         this.historyParams = {

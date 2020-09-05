@@ -24,7 +24,11 @@ export class AotWidgetService {
                     const widgets = config.Main.AOT.Widgets;
                     // check if widgets are there, if so load it
                     widgets.forEach((widget: IWidget) => {
-                        this.addWidget(widget);
+                        if (widget.Data?.AutoOpen) {
+                            setTimeout(() => {
+                                this.addWidget(widget);
+                            }, 3000);
+                        }
                     });
                 }
             );

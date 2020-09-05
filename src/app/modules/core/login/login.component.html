@@ -89,7 +89,11 @@
                     <mat-error> Password is required </mat-error>
                 </mat-form-field>
 
-                <mat-form-field class="form-field custom animate__animated animate__flipInX animate__fast" appearance="outline" *ngIf="stationEnabled">
+                <mat-form-field
+                    class="form-field custom animate__animated animate__flipInX animate__fast"
+                    appearance="outline"
+                    *ngIf="stationEnabled"
+                >
                     <input
                         class="login-input"
                         color="primary"
@@ -143,6 +147,7 @@
                 <button mat-raised-button color="primary" class="submit-button" aria-label="LOGIN" (click)="login(false)">LOGIN</button>
             </form>
             <div fxLayout="row" fxLayoutAlign="center center" class="font-size-12 secondary-text copyright-version">
+                <span class="element-status" [ngClass]="version !== 'NA' ? 'bg-alt-success' : 'bg-alt-danger'"></span>
                 Copyright Tetherfi | Version: {{ version }}
             </div>
         </div>

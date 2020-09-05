@@ -1,0 +1,12 @@
+<div class="fab-container">
+    <button mat-fab color="primary" class="fab-toggler" (click)="onToggleFab()">
+        <mat-icon [@fabToggler]="{ value: fabTogglerState }">add</mat-icon>
+        <!-- Animation here -->
+    </button>
+    <div [@widgetStagger]="buttons.length">
+        <!-- and here -->
+        <button mat-mini-fab color="secondary" *ngFor="let btn of buttons" class="fab-secondary">
+            <mat-icon>{{ btn.icon }}</mat-icon>
+        </button>
+    </div>
+</div>

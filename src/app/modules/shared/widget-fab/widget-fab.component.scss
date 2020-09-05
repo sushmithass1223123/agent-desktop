@@ -1,0 +1,23 @@
+widget-fab {
+    .fab-container {
+        display: flex;
+        flex-direction: column-reverse;
+        align-items: center;
+
+        > div {
+            display: flex;
+            flex-direction: column-reverse;
+            align-items: center;
+            margin-bottom: 5px;
+
+            button {
+                margin-bottom: 17px;
+            }
+        }
+    }
+
+    .fab-toggler {
+        float: right;
+        z-index: 1000;
+    }
+}
