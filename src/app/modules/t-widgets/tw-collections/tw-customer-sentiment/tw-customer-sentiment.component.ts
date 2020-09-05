@@ -7,7 +7,7 @@ import { TwChartConfig } from 'app/interfaces';
 import * as Chart from 'chart.js';
 import { random } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient } from 'tmac-sdk';
+import { SDKClient, GenericEvent } from 'tmac-sdk';
 
 const average = new Image();
 average.src = '/assets/images/vectors/average-score.svg';
@@ -162,14 +162,13 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
         this.destroyWrapper();
     }
 
-    OnNLPDataEvent = (evt: any): void => {
+    OnNLPDataEvent = (evt: GenericEvent): void => {
+        console.log({ evt }, 'NLPDATAEVT');
         const receivedData = evt;
         if (receivedData) {
-            const parsedJson = {
-                ...JSON.parse(receivedData.JsonData),
-                sentimentResult: Object.values(sentimentDataPoints)[random(2, false)]
-            };
-
+            const parsedJson = JSON.parse(receivedData.JsonData);
+            parsedJson.sentimentResult = sentimentDataPoints[parsedJson.sentimentResult]
+            
             if (this.customerSentimentChart.datasets[0].data.length === CUSTOMER_SENTIMENT_PLOT_RECORDS) {
                 this.customerSentimentChart.datasets[0].data = this.customerSentimentChart.datasets[0].data.slice(1);
             }

@@ -90,14 +90,13 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         // assign the widget data
         this.widgetData = this.data.Data || new Object();
 
-        // TEST
-        this.OnNLPDataEvent();
         // register to the event
         SDKClient.events.on('OnNLPDataEvent', this.OnNLPDataEvent);
     }
 
     /**
-     * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
+     * A callback method that performs 
+     *  clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
      */
     ngOnDestroy(): void {
         // call the wrapper destroy method
@@ -110,14 +109,14 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
 
-    private OnNLPDataEvent = (evt?: GenericEvent): void => {
-        const receivedData = evt || this.eventData;
+    private OnNLPDataEvent = (evt: GenericEvent): void => {
+        const receivedData = evt;
         if (receivedData) {
             const parsedJson = JSON.parse(receivedData.JsonData);
             const parsedNlu = JSON.parse(parsedJson.nluResult);
             this.nlpCurrentData = { ...receivedData, JsonData: { ...parsedJson, nluResult: parsedNlu } };
         }
-    }
+    };
 
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
@@ -136,7 +135,7 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         const intentName = intent.name;
 
         // get assist widget config
-        const title = `${(this.widgetData.Title || 'Custom')} - ${intentName}`;
+        const title = `${this.widgetData.Title || 'Custom'} - ${intentName}`;
         const icon = this.widgetData.Icon || '';
         const width = this.widgetData.Width || 500;
         const height = this.widgetData.Height || 500;
@@ -155,7 +154,6 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         // add to AOT widget service
         this._aotWidgetService.addWidget(widget);
     }
-
 }
 
 // for more info visit - https://angular.io/api/core

@@ -95,14 +95,7 @@ export class TwSuIntentListComponent extends TWidgetWrapper implements OnInit, O
         const datasets = { Count: [] };
         const labels = [];
         const res = sortBy(supervisorIntentListEventRes.Intents, 'Counts');
-
-        [
-            ...supervisorIntentListEventRes.Intents,
-            ...supervisorIntentListEventRes.Intents,
-            ...supervisorIntentListEventRes.Intents,
-            ...supervisorIntentListEventRes.Intents,
-            ...supervisorIntentListEventRes.Intents
-        ].forEach((c) => {
+        res.forEach((c) => {
             datasets.Count.push(c.Count);
             labels.push(c.Intent || 'Unknown');
         });
