@@ -6,7 +6,7 @@ import { CHART_COLORS, CUSTOMER_SENTIMENT_PLOT_RECORDS } from 'app/constants';
 import { TwChartConfig } from 'app/interfaces';
 import * as Chart from 'chart.js';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient } from 'tmac-sdk';
+import { SDKClient, GenericEvent } from 'tmac-sdk';
 
 const neutral = new Image();
 neutral.src = 'assets/images/vectors/average-score.svg';
@@ -161,7 +161,8 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
         this.destroyWrapper();
     }
 
-    OnNLPDataEvent = (evt: any): void => {
+    OnNLPDataEvent = (evt: GenericEvent): void => {
+        console.log({ evt }, 'NLPDATAEVT');
         const receivedData = evt;
         if (receivedData) {
             const parsedJson = JSON.parse(receivedData.JsonData);

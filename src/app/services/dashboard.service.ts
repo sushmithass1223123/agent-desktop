@@ -107,6 +107,10 @@ export class DashboardService {
                 }
             });
 
+            signalR.hub.on('onTeamAgentList', (agentList: any) => {
+                SDKClient.events.emit('TeamAgentListEvent', agentList);
+            });
+
             // connect to the server
             signalR.connect();
         }

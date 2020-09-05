@@ -103,10 +103,14 @@ export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements On
      * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
      */
     ngOnDestroy(): void {
-        SDKClient.events.off('AgentChannelDetailsEvent', this.AgentChannelDetailsEvent);
-        SDKClient.events.off('TeamChannelListEvent', this.TeamChannelListEvent);
         // call the wrapper destroy method
         this.destroyWrapper();
+
+        if (SDKClient.getAgentData().agentProfile === 'S') {
+            SDKClient.events.off('TeamChannelListEvent', this.TeamChannelListEvent);
+        } else {
+            SDKClient.events.off('AgentChannelDetailsEvent', this.AgentChannelDetailsEvent);
+        }
     }
 
     AgentChannelDetailsEvent = (channelData: AgentChannelDataList): void => {

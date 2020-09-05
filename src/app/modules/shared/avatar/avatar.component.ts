@@ -7,7 +7,6 @@ import { AVATAR_COLORS } from 'app/constants';
     encapsulation: ViewEncapsulation.None
 })
 export class AvatarComponent implements OnInit {
-
     @Input()
     public photoUrl: string;
 
@@ -29,7 +28,6 @@ export class AvatarComponent implements OnInit {
     private colors = AVATAR_COLORS;
 
     ngOnInit(): void {
-
         if (!this.photoUrl && !this.matIcon) {
             this.showInitials = true;
             const randomIndex = Math.floor(Math.random() * Math.floor(this.colors.length));
@@ -57,5 +55,4 @@ export class AvatarComponent implements OnInit {
         }
         return initials;
     }
-
 }

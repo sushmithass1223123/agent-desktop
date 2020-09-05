@@ -73,7 +73,7 @@ export class TWLibrary {
         'tw-video-controls': TwVideoControlsComponent,
         'tw-aux-status-chart': TwAuxStatusChartComponent,
         'tw-aht-tc': TwAhtTcComponent,
-        'tw-su-intent-list': TwSuIntentListComponent
+        'tw-su-intent-list': TwSuIntentListComponent,
     };
 
     public static getWidget(type: string, data: any): TWidget {

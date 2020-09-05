@@ -218,3 +218,28 @@
     bottom: 0;
     margin: auto;
 }
+
+
+.text {
+    &-primary {
+        color: $tw-primary !important;
+    }
+    &-secondary {
+        color: $tw-secondary !important;
+    }
+    &-tertiary {
+        color: $tw-tertiary !important;
+    }
+    &-danger {
+        color: $tw-danger !important;
+    }
+    &-warning {
+        color: $tw-warning !important;
+    }
+    &-success {
+        color: $tw-success !important;
+    }
+    &-dark {
+        color: $tw-dark !important;
+    }
+}

@@ -85,7 +85,8 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
     }
 
     /**
-     * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
+     * A callback method that performs 
+     *  clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
      */
     ngOnDestroy(): void {
         // call the wrapper destroy method
@@ -159,7 +160,6 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         // add to AOT widget service
         this._aotWidgetService.addWidget(widget);
     }
-
 }
 
 // for more info visit - https://angular.io/api/core

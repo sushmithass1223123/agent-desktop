@@ -1,6 +1,19 @@
 <!-- SIDE PANEL -->
-<ng-container *ngIf="!fuseConfig.layout.sidepanel.hidden && fuseConfig.layout.sidepanel.position === 'left'">
+<ng-container *ngIf="fuseConfig.layout.sidepanel.position === 'left'">
     <!-- PANEL CONTENT -->
+    <!-- CHAT PANEL -->
+    <fuse-sidebar
+        name="chatPanel"
+        position="left"
+        class="chat-panel left-chat-panel"
+        [invisibleOverlay]="true"
+        [folded]="true"
+        [foldedWidth]="0"
+        [foldedAutoTriggerOnHover]="false"
+    >
+        <chat-panel></chat-panel>
+    </fuse-sidebar>
+    <!-- / CHAT PANEL -->
 </ng-container>
 <!-- / SIDE PANEL -->
 
@@ -72,8 +85,21 @@
 </div>
 
 <!-- SIDE PANEL -->
-<ng-container *ngIf="!fuseConfig.layout.sidepanel.hidden && fuseConfig.layout.sidepanel.position === 'right'">
+<ng-container *ngIf="fuseConfig.layout.sidepanel.position === 'right'">
     <!-- PANEL CONTENT -->
+
+    <!-- CHAT PANEL -->
+    <fuse-sidebar
+        name="chatPanel"
+        position="right"
+        class="chat-panel right-chat-panel"
+        [invisibleOverlay]="true"
+        [foldedWidth]="0"
+        [foldedAutoTriggerOnHover]="false"
+    >
+        <chat-panel></chat-panel>
+    </fuse-sidebar>
+    <!-- / CHAT PANEL -->
 </ng-container>
 <!-- / SIDE PANEL -->
 
