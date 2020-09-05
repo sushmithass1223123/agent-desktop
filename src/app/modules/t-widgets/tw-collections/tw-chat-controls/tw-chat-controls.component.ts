@@ -11,7 +11,7 @@ import {
     ViewChildren,
     ViewEncapsulation
 } from '@angular/core';
-import { NgForm } from '@angular/forms';
+import { FormControl, NgForm } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
@@ -88,6 +88,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     fileUploadUrl: any;
     channel: string;
     isSMM: boolean;
+
+    // myControl = new FormControl();
+    // options: string[] = ['One', 'Two', 'Three'];
 
     @ViewChildren(FusePerfectScrollbarDirective) directiveScrolls: QueryList<FusePerfectScrollbarDirective>;
     @ViewChildren('replyInput') replyInputField: any;
@@ -238,7 +241,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // get the customer name
         this.customerName = evt.ScreenName || 'Customer';
         // assign the intent
-        this.intent = evt.Intent || 'Default';
+        this.intent = evt.TransferIntent || evt.Intent || 'Default';
         // check the channel
         this.channel = evt.Channel.toLowerCase() || 'textchat';
         // check social media
@@ -291,6 +294,13 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 });
             }
         } catch (error) { }
+
+        // send greeting text
+        if (this.user.chatGreetingText) {
+            this.sendMessage({
+                Text: this.user.chatGreetingText
+            });
+        }
     }
 
     private TextChatTranscriptForTransferEvent = (evt: TextChatTranscriptForTransferEvent) => {

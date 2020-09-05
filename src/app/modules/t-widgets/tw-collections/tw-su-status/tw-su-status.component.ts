@@ -92,19 +92,19 @@ export class TwSuStatusComponent extends TWidgetWrapper implements OnInit, OnDes
             this.appConfig = config;
         });
 
-        SDKClient.events.on('AgentStatusDetailsEvent', this.AgentStatusDetailsEvent);
+        SDKClient.events.on('TeamActiveStatusDetailsEvent', this.TeamActiveStatusDetailsEvent);
     }
 
     /**
      * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
      */
     ngOnDestroy(): void {
-        SDKClient.events.off('AgentStatusDetailsEvent', this.AgentStatusDetailsEvent);
+        SDKClient.events.off('TeamActiveStatusDetailsEvent', this.TeamActiveStatusDetailsEvent);
         // call the wrapper destroy method
         this.destroyWrapper();
     }
 
-    AgentStatusDetailsEvent = (evt: AgentStateDurationList) => {
+    TeamActiveStatusDetailsEvent = (evt: AgentStateDurationList) => {
         const datasets = { Duration: [] };
         const labels = [];
         evt.States.forEach((c) => {
@@ -116,7 +116,7 @@ export class TwSuStatusComponent extends TWidgetWrapper implements OnInit, OnDes
             label: d
         }));
         this.statusChart.labels = labels;
-    };
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @  Private Methods

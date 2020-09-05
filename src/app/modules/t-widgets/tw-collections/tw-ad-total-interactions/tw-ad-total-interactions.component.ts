@@ -93,7 +93,7 @@ export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements On
         });
 
         if (SDKClient.getAgentData().agentProfile === 'S') {
-            SDKClient.events.on('SupervisorTeamChannelListEvent', this.SupervisorTeamChannelListEvent);
+            SDKClient.events.on('TeamChannelListEvent', this.TeamChannelListEvent);
         } else {
             SDKClient.events.on('AgentChannelDetailsEvent', this.AgentChannelDetailsEvent);
         }
@@ -104,7 +104,7 @@ export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements On
      */
     ngOnDestroy(): void {
         SDKClient.events.off('AgentChannelDetailsEvent', this.AgentChannelDetailsEvent);
-        SDKClient.events.off('SupervisorTeamChannelListEvent', this.SupervisorTeamChannelListEvent);
+        SDKClient.events.off('TeamChannelListEvent', this.TeamChannelListEvent);
         // call the wrapper destroy method
         this.destroyWrapper();
     }
@@ -127,7 +127,7 @@ export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements On
         this.allInteractionsChart.labels = labels;
     }
 
-    SupervisorTeamChannelListEvent = (evt: AgentChannelDataList) => {
+    TeamChannelListEvent = (evt: AgentChannelDataList) => {
         const datasets = { Duration: [] };
         const labels = [];
         evt.Channels.forEach((c) => {

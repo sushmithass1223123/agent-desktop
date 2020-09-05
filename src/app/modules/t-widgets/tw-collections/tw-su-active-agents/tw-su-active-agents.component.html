@@ -45,7 +45,7 @@
                         ? fuseConfig.layout.widget.contentBackground
                         : '') +
                     ' ' +
-                    (item.AgentLoginID === selectedAgent?.AgentLoginID ? 'border-lg-success' : '')
+                    (item.AgentLoginID === selectedAgent?.AgentLoginID ? 'border-lg-success mat-elevation-z1' : '')
                 "
             >
                 <div
@@ -55,9 +55,9 @@
                     (click)="selectAgent(item)"
                     [ngClass]="{ active: item.AgentLoginID === selectedAgent?.AgentLoginID }"
                 >
-                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="40">
+                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="45">
                         <div class="position-relative">
-                            <avatar name="{{ item.AgentName }}"></avatar>
+                            <avatar name="{{ item.AgentName }}" [matTooltip]="item.AgentName"></avatar>
                             <span
                                 class="element-status"
                                 [ngClass]="
@@ -71,35 +71,61 @@
                             </span>
                         </div>
                         <div fxLayout="column" fxLayoutAlign=" none" class="ml-16">
-                            <span class="font-weight-700"> {{ item.AgentName }}</span>
+                            <span class="font-weight-700"> {{ item.FirstName + '/' + item.AgentLoginID }}</span>
                             <span>{{ item.CurrentAgentStatus }}</span>
+                            <span
+                                class=""
+                                [ngClass]="{
+                                    'color-alt-success': item.CurrentStatusDuration > 0 && item.CurrentStatusDuration <= 60,
+                                    'color-alt-warning': item.CurrentStatusDuration > 60 && item.CurrentStatusDuration <= 120,
+                                    'color-alt-danger': item.CurrentStatusDuration > 120
+                                }"
+                                >{{ (item.CurrentStatusDuration * 1000 | date: 'H:mm:ss':'UTC') || '00:00:00' }}</span
+                            >
                         </div>
                     </div>
 
-                    <div fxFlex="50" fxLayout="row wrap" fxLayoutAlign=" center" class="channel-list px-8">
-                        <div mat-card-avatar *ngFor="let channel of item.AllowedChannelCount | slice: 0:3" [matTooltip]="channel.Channel">
+                    <div
+                        fxFlex="40"
+                        fxLayout="row wrap"
+                        fxLayoutAlign=" center"
+                        class="channel-list px-8"
+                        *ngIf="item.AgentLoginID !== selectedAgent?.AgentLoginID"
+                    >
+                        <div
+                            mat-card-avatar
+                            *ngFor="let channelItem of item.ChannelCount | slice: 0:3"
+                            [matTooltip]="channelItem.Channel.toUpperCase() + '/' + channelItem.Count"
+                            [matBadge]="channelItem.CurrentCount || ''"
+                            matBadgePosition="after"
+                        >
                             <mat-icon>{{
-                                channel.Channel === 'voice'
+                                channelItem.Channel === 'voice'
                                     ? 'phone'
-                                    : channel.Channel === 'textchat'
+                                    : channelItem.Channel === 'textchat'
                                     ? 'chat'
-                                    : channel.Channel.includes('audio')
+                                    : channelItem.Channel.includes('audio')
                                     ? 'settings_phone'
-                                    : channel.Channel.includes('video')
+                                    : channelItem.Channel.includes('video')
                                     ? 'duo'
-                                    : channel.Channel.includes('sms')
+                                    : channelItem.Channel.includes('sms')
                                     ? 'textsms'
-                                    : channel.Channel.includes('email')
+                                    : channelItem.Channel.includes('email')
                                     ? 'email'
                                     : 'receipt'
                             }}</mat-icon>
                         </div>
                     </div>
 
-                    <div fxLayout="row" fxLayoutAlign="center center" fxFlex="10">
-                        <mat-icon>wifi</mat-icon>
+                    <div fxLayout="row" fxLayoutAlign="end center" fxFlex="15" class="indicators">
+                        <mat-icon *ngIf="item.UserProfileForAgent === 'S'" matTooltip="SUPERVISOR">supervised_user_circle</mat-icon>
+                        <mat-icon *ngIf="item.IsMSAgent" matTooltip="MS AGENT">support_agent</mat-icon>
+                        <mat-icon [matTooltip]="item.ConnectionType.toUpperCase()">{{
+                            item.ConnectionType.toLowerCase() === 'websockets' ? 'wifi_tethering' : 'wifi'
+                        }}</mat-icon>
                     </div>
                 </div>
+
                 <div fxLayout class="tw-accordion-menu">
                     <div fxFlex="50" fxLayout="row wrap" fxLayoutAlign=" start" class="channel-list border-right-primary px-8">
                         <div mat-card-avatar mat-ripple>
@@ -116,19 +142,25 @@
                         </div>
                     </div>
                     <div fxFlex="50" fxLayout="row wrap" fxLayoutAlign=" start" class="channel-list px-8">
-                        <div mat-card-avatar *ngFor="let channel of item.AllowedChannelCount" [matTooltip]="channel.Channel">
+                        <div
+                            mat-card-avatar
+                            *ngFor="let channelItem of item.ChannelCount"
+                            [matTooltip]="channelItem.Channel.toUpperCase() + '/' + channelItem.Count"
+                            [matBadge]="channelItem.CurrentCount || ''"
+                            matBadgePosition="after"
+                        >
                             <mat-icon>{{
-                                channel.Channel === 'voice'
+                                channelItem.Channel === 'voice'
                                     ? 'phone'
-                                    : channel.Channel === 'textchat'
+                                    : channelItem.Channel === 'textchat'
                                     ? 'chat'
-                                    : channel.Channel.includes('audio')
+                                    : channelItem.Channel.includes('audio')
                                     ? 'settings_phone'
-                                    : channel.Channel.includes('video')
+                                    : channelItem.Channel.includes('video')
                                     ? 'duo'
-                                    : channel.Channel.includes('sms')
+                                    : channelItem.Channel.includes('sms')
                                     ? 'textsms'
-                                    : channel.Channel.includes('email')
+                                    : channelItem.Channel.includes('email')
                                     ? 'email'
                                     : 'receipt'
                             }}</mat-icon>
@@ -136,6 +168,7 @@
                     </div>
                 </div>
             </div>
+
             <div
                 *ngIf="filteredAgents.length === 0"
                 fxLayout="row"

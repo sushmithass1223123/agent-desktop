@@ -14,7 +14,8 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
 
     @Input() data: IWidget;
 
-    homeWidgets = [];
+    staticWidgets = [];
+    dynamicWidgets = [];
 
     constructor(
         public hostElement: ElementRef,
@@ -29,7 +30,10 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
         this.initWrapper(this.data);
 
         // get the home content widgets
-        this.homeWidgets = this.data.Data.Widgets || [];
+        const homeWidgets = this.data.Data.Widgets || [];
+
+        this.staticWidgets = homeWidgets.Static;
+        this.dynamicWidgets = homeWidgets.Dynamic;
     }
 
     ngOnDestroy(): void {

@@ -4,6 +4,7 @@ import { TwAgentDetailsComponent } from './tw-agent-details/tw-agent-details.com
 import { TwAuxCodesComponent } from './tw-aux-codes/tw-aux-codes.component';
 import { TwAuxTimerComponent } from './tw-aux-timer/tw-aux-timer.component';
 import { TwToolbarMenuComponent } from './tw-toolbar-menu/tw-toolbar-menu.component';
+import { TwNotificationsComponent } from './tw-notifications/tw-notifications.component';
 import { SharedModule } from '@modules/shared/shared.module';
 
 const toolbarComponents = [
@@ -11,7 +12,8 @@ const toolbarComponents = [
     TwAgentDetailsComponent,
     TwAuxCodesComponent,
     TwAuxTimerComponent,
-    TwToolbarMenuComponent
+    TwToolbarMenuComponent,
+    TwNotificationsComponent
 ];
 
 @NgModule({

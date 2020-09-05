@@ -3,9 +3,33 @@
 
 <!-- Interaction template -->
 <ng-container *ngFor="let item of interactions; index as i">
-    <!-- No widget for interaction -->
-    <twc-no-widgets *ngIf="item.widgets.length === 0"></twc-no-widgets>
-
     <!-- widget template -->
-    <tw-template class="widget-grid" [hidden]="i !== 0" *ngIf="item.widgets.length > 0" [widgets]="item.widgets"> </tw-template>
+    <div class="tw-interaction" [ngClass]="item.interactionId === activeInteraction ? 'active' : ''">
+        <div
+            fxFill
+            fxFlex
+            fxLayout="row wrap"
+            fxLayoutAlign=" none"
+            fxLayoutGap.gt-md="8px"
+            class="tw-interaction"
+            [ngClass]="item.interactionId === activeInteraction ? 'active' : ''"
+        >
+            <tw-template
+                fxFlex.gt-md="33"
+                class="static-widget-grid"
+                *ngIf="item.widgets.static.length > 0"
+                [widgets]="item.widgets.static"
+            ></tw-template>
+
+            <tw-template
+                fxFlex.gt-md="66"
+                class="dynamic-widget-grid"
+                *ngIf="item.widgets.dynamic.length > 0"
+                [widgets]="item.widgets.dynamic"
+            ></tw-template>
+        </div>
+    </div>
+
+    <!-- No widget for interaction -->
+    <twc-no-widgets class="twc-card" *ngIf="item.widgets.static.length === 0" type="voice"></twc-no-widgets>
 </ng-container>

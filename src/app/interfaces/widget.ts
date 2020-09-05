@@ -12,7 +12,10 @@ export interface IWidget {
 
 export interface InteractionWidgets {
     interactionId: number;
-    widgets: TWidget[];
+    widgets: {
+        static: TWidget[];
+        dynamic: TWidget[]
+    };
 }
 
 export interface IWidgetConfig {

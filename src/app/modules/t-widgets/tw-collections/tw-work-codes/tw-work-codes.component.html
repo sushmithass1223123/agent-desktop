@@ -31,21 +31,21 @@
         <div *ngIf="DataConf.Source === 'supervisor'" class="w-100-p h-100-p p-12" fusePerfectScrollbar>
             <mat-chip-list aria-label="WorkCodes">
                 <mat-chip
-                    *ngFor="let workCode of selectedWorkCodes | keyvalue"
+                    *ngFor="let workCode of selectedWorkCodes"
                     [ngClass]="{
-                        'bg-color-1': workCode.value < 10,
-                        'bg-color-2': workCode.value > 30,
-                        'bg-color-3': workCode.value > 50,
-                        'bg-color-4': workCode.value > 70,
-                        'bg-color-5': workCode.value > 90
+                        'bg-color-5': workCode.Count < 10,
+                        'bg-color-4': workCode.Count >= 10,
+                        'bg-color-3': workCode.Count >= 30,
+                        'bg-color-2': workCode.Count >= 50,
+                        'bg-color-1': workCode.Count >= 70
                     }"
                 >
                     <mat-icon class="mat-icon-mirror mr-4">local_offer</mat-icon>
-                    {{ workCode.key }}
+                    {{ workCode.WorkCodeName }}
                 </mat-chip>
             </mat-chip-list>
-            <div *ngIf="selectedWorkCodes === {}" class="w-100-p h-100-p" fxLayout fxLayoutAlign="center center">
-                <p>No data available</p>
+            <div *ngIf="selectedWorkCodes.length === 0" class="w-100-p h-100-p" fxLayout fxLayoutAlign="center center">
+                <p>No Data Available</p>
             </div>
         </div>
     </div>

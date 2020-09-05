@@ -1,2 +1,7 @@
-<tw-template class="widget-grid" *ngIf="homeWidgets.length > 0" [widgets]=homeWidgets></tw-template>
-<twc-no-widgets class="twc-card" *ngIf="homeWidgets.length === 0" type="home"></twc-no-widgets>
+<div class="w-100-p h-100-p">
+    <div fxFill fxFlex fxLayout="row wrap" fxLayoutAlign=" none" fxLayoutGap.gt-md="8px">
+        <tw-template fxFlex.gt-md="33" class="static-widget-grid" *ngIf="staticWidgets?.length > 0" [widgets]="staticWidgets"></tw-template>
+        <tw-template fxFlex.gt-md="66" class="dynamic-widget-grid" *ngIf="dynamicWidgets?.length > 0" [widgets]="dynamicWidgets"></tw-template>
+    </div>
+    <twc-no-widgets class="twc-card" *ngIf="!dynamicWidgets || dynamicWidgets.length === 0" type="home"></twc-no-widgets>
+</div>

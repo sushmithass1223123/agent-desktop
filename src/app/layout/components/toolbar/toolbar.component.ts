@@ -8,6 +8,7 @@ import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 
 import { AppDataService } from 'app/services/app-data.service';
 import { IWidget } from 'app/interfaces';
+import { SDKClient } from 'tmac-sdk';
 
 @Component({
     selector: 'toolbar',
@@ -27,6 +28,11 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
     activeInteractionWidget = null;
     toolbarMenuWidget = null;
+
+    connectivityStatus: {
+        status: -1,
+        eventMode: '';
+    };
 
     // Private
     private _unsubscribeAll: Subject<any>;
@@ -87,6 +93,12 @@ export class ToolbarComponent implements OnInit, OnDestroy {
                     }
                 }
             );
+
+        SDKClient.events.on('connectivityStatus', (dt) => {
+            setTimeout(() => {
+                this.connectivityStatus = dt;
+            }, 100);
+        });
     }
 
     /**

@@ -4,7 +4,8 @@ import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { takeUntil } from 'rxjs/operators';
 import { fuseAnimations } from '@fuse/animations';
-import { SDKClient, IAgentData } from 'tmac-sdk';
+import { SDKClient, IAgentData, SuAgentModel, SuAgentDataModel } from 'tmac-sdk';
+import * as _ from 'lodash';
 
 @Component({
     selector: 'tw-su-active-agents',
@@ -25,7 +26,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     agentList: any[];
     filteredAgents: any[];
     searchTerm: string;
-    selectedAgent: any = null;
+    selectedAgent = null;
 
     /**
      * Constructor
@@ -61,7 +62,10 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         });
 
         this.filteredAgents = [];
-        this.getAgentList();
+
+        // listen to agent list event
+        SDKClient.events.on('SupervisorAgentListEvent', this.SupervisorAgentListEvent);
+        SDKClient.events.on('TeamAgentListDataEvent', this.TeamAgentListDataEvent);
     }
 
     /**
@@ -70,36 +74,46 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+
+        // listen off agent list event
+        SDKClient.events.off('SupervisorAgentListEvent', this.SupervisorAgentListEvent);
+        SDKClient.events.off('TeamAgentListDataEvent', this.TeamAgentListDataEvent);
     }
 
     // -----------------------------------------------------------------------------------------------------
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
 
-    private async getAgentList(): Promise<void> {
-        // get all the session list
-        const result = await SDKClient.getAgentSessionsList(
-            {
-                agentId: '',
-                interactionId: '',
-                supervisorId: '',
-                teamId: '',
-                tmacServer: ''
-            },
-            null
-        );
-
+    private SupervisorAgentListEvent = (agentList: SuAgentModel[]) => {
         // filter for excpet me
-        this.agentList = this.filteredAgents = result.response.filter((a: any) => a.AgentLoginID !== this.user.agentId);
-
+        this.agentList = this.filteredAgents = agentList || [];
         // check any search term is there, then filter
         if (this.searchTerm) {
             this.filterAgents();
         }
-        // pull after 5s
-        setTimeout(() => {
-            this.getAgentList();
-        }, 5000);
+    }
+
+    private TeamAgentListDataEvent = (agentListData: SuAgentDataModel[]) => {
+
+        if (this.agentList.length === 0) {
+            return;
+        }
+
+        this.agentList.forEach((item1: SuAgentModel, index1) => {
+            agentListData.forEach((item2: SuAgentDataModel) => {
+                if (item2.AgentLoginID === item1.AgentLoginID) {
+                    this.agentList[index1] = { ...item1, ...item2 };
+                    this.agentList[index1].ChannelCount = _.orderBy(this.agentList[index1].ChannelCount, ['CurrentCount'], ['desc']);
+                }
+            });
+        });
+
+        this.agentList = _.orderBy(this.agentList, ['AgentName'], ['desc']);
+        this.filteredAgents = this.agentList;
+
+        if (this.searchTerm) {
+            this.filterAgents();
+        }
     }
 
     // -----------------------------------------------------------------------------------------------------

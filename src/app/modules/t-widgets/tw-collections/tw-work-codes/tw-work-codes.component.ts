@@ -9,7 +9,8 @@ import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { ResData } from 'app/interfaces';
-import { groupBy, random } from 'lodash';
+import * as _ from 'lodash';
+import { groupBy } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 import { SDKClient, WorkCode } from 'tmac-sdk';
 
@@ -101,6 +102,8 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+
+        SDKClient.events.on('TeamrWorkCodeDetailsEvent', this.TeamrWorkCodeDetailsEvent);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -110,13 +113,35 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     private async getAllWorkCodes(): Promise<void> {
         try {
             const loadWCRes = await SDKClient.loadCallWorkCodes(this.DataConf.ByTeam, null);
-            this.loadWorkCodesReq.data = groupBy(loadWCRes.response, 'ParentID');
+            const workGroup = {};
+            const workCodeList = [];
+
+            loadWCRes.response?.forEach((item: any) => {
+                if (item.ParentID === '0') {
+                    workGroup[item.Code] = { i: item.Code, Name: item.Name, Pid: item.ParentID };
+                }
+            });
+
+            loadWCRes.response?.forEach((item: any, index: number) => {
+                if (item.ParentID !== '0') {
+                    item.ParentName = workGroup[loadWCRes.response[index].ParentID].Name;
+                    workCodeList.push(item);
+                }
+            });
+
+            this.loadWorkCodesReq.data = groupBy(workCodeList, 'ParentName');
             this.loadWorkCodesReq.loading = false;
-        } catch (e) {
+            this.loadWorkCodesReq.error = false;
+        }
+        catch (e) {
             this.loadWorkCodesReq.error = true;
             this.loadWorkCodesReq.loading = false;
             this.loadWorkCodesReq.msg = COMMON_ERR_MESSAGE;
         }
+    }
+
+    private TeamrWorkCodeDetailsEvent = (workCodeList: any) => {
+        this.selectedWorkCodes = _.orderBy(workCodeList, ['Count'], ['desc']);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -128,13 +153,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
             this.loadWorkCodesReq.loading = true;
             this.getAllWorkCodes();
         } else if (this.DataConf.Source === 'supervisor') {
-            const codes = {};
-            Array(10)
-                .fill(1)
-                .forEach((_, i) => {
-                    codes[`Code ${i}`] = random(0, 100);
-                });
-            this.selectedWorkCodes = codes;
+            SDKClient.events.on('TeamrWorkCodeDetailsEvent', this.TeamrWorkCodeDetailsEvent);
         } else {
             this.loadWorkCodesReq.error = true;
             this.loadWorkCodesReq.loading = false;
@@ -211,7 +230,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
             null
         )
             .then(() => {
-                this.selectedWorkCodes = this.selectedWorkCodes.filter((s) => s.Code !== option.Code);
+                this.selectedWorkCodes = this.selectedWorkCodes.filter((s: any) => s.Code !== option.Code);
                 this.loadWorkCodesReq.data[option.ParentID].push(option);
                 this._snackbar.openFromComponent(SnackbarComponent, {
                     data: {

@@ -24,11 +24,10 @@ tw-chat-controls {
 
         .chat-container {
             .divider {
-                height: 10px;
+                height: 5px;
                 width: 80%;
                 margin: 8px auto;
                 border-radius: 20px;
-                background-color: rgb(0 0 0 / 0.1);
             }
 
             button {
@@ -137,13 +136,12 @@ tw-chat-controls {
 
                                 .message {
                                     white-space: pre-wrap;
-                                    line-height: 1.2;
-
+                                    line-height: 1.4;
                                     font-size: 14px;
                                     margin-bottom: 12px;
 
                                     .spacer {
-                                        width: 50px;
+                                        width: 60px;
                                         display: inline-block;
                                         vertical-align: middle;
                                     }
@@ -250,11 +248,12 @@ tw-chat-controls {
 
                                     text-align: right;
                                     // margin: -10px 40px -5px 0px;
-                                    margin: -24px 0px -6px -2px;
+                                    margin: -20px 0px -6px -2px;
 
                                     &.image,
                                     &.video {
                                         color: #ffffff;
+                                        margin-top: -24px;
                                     }
                                 }
                             }

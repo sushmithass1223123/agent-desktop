@@ -54,7 +54,7 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
 
     interactionDetailsTable = {
         source: new MatTableDataSource([]),
-        columns: ['Channel', 'AverageHoldTime', 'Transfer', 'Conference']
+        columns: ['Channel', 'AverageHandleTime', 'Transfer', 'Conference']
     };
 
     constructor() {
@@ -69,14 +69,14 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
         if (this.dataConfig.Source === 'dashboard') {
             SDKClient.events.on('AgentChannelDetailsEvent', this.AgentChannelDetailsEvent);
         } else if (this.dataConfig.Source === 'supervisor') {
-            SDKClient.events.on('SupervisorTeamChannelListEvent', this.SupervisorTeamChannelListEvent);
+            SDKClient.events.on('TeamChannelListEvent', this.TeamChannelListEvent);
         }
     }
 
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-        SDKClient.events.off('SupervisorTeamChannelListEvent', this.SupervisorTeamChannelListEvent);
+        SDKClient.events.off('TeamChannelListEvent', this.TeamChannelListEvent);
         SDKClient.events.off('AgentChannelDetailsEvent', this.AgentChannelDetailsEvent);
     }
 
@@ -93,10 +93,10 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
 
     // Methods for Source === 'supervisor' ::: Start
 
-    private SupervisorTeamChannelListEvent = (interactionsData: AgentChannelDetailsEventRes) => {
+    private TeamChannelListEvent = (data: AgentChannelDataList) => {
         const datasets = { AHT: [], 'Transfer / Conference': [] };
         const labels = [];
-        interactionsData.Channels.forEach((c) => {
+        data.Channels.forEach((c) => {
             datasets.AHT.push(c.AverageActiveTime + c.AverageHoldTime);
             datasets['Transfer / Conference'].push(c.Transfer + c.Conference);
             labels.push(c.Channel);

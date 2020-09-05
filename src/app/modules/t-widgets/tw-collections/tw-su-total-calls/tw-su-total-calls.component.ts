@@ -4,9 +4,9 @@ import { FuseConfig } from '@fuse/types';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CHART_COLORS } from 'app/constants';
-import { TwChartConfig, AgentChannelDetailsEventRes } from 'app/interfaces';
+import { TwChartConfig } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient, AgentStateDurationList } from 'tmac-sdk';
+import { SDKClient, AgentStateDurationList, AgentChannelDataList } from 'tmac-sdk';
 
 const multiColors: any = {
     backgroundColor: [...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS].map((c) => c.backgroundColor),
@@ -92,19 +92,19 @@ export class TwSuTotalCallsComponent extends TWidgetWrapper implements OnInit, O
             this.appConfig = config;
         });
 
-        SDKClient.events.on('SupervisorTeamChannelListEvent', this.SupervisorTeamChannelListEvent);
+        SDKClient.events.on('TeamChannelListEvent', this.TeamChannelListEvent);
     }
 
     /**
      * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
      */
     ngOnDestroy(): void {
-        SDKClient.events.off('SupervisorTeamChannelListEvent', this.SupervisorTeamChannelListEvent);
+        SDKClient.events.off('TeamChannelListEvent', this.TeamChannelListEvent);
         // call the wrapper destroy method
         this.destroyWrapper();
     }
 
-    SupervisorTeamChannelListEvent = (evt: AgentChannelDetailsEventRes) => {
+    TeamChannelListEvent = (evt: AgentChannelDataList) => {
         const datasets = { Duration: [] };
         const labels = [];
         evt.Channels.forEach((c) => {
@@ -116,7 +116,7 @@ export class TwSuTotalCallsComponent extends TWidgetWrapper implements OnInit, O
             label: d
         }));
         this.totalCallsChart.labels = labels;
-    };
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @  Private Methods

@@ -4,7 +4,7 @@
 <tw-wrapper twChart [data]="data">
     <div *ngIf="dataConfig.Source === 'dashboard'" class="w-100-p h-100-p">
         <div class="w-100-p bg-inherit" [ngClass]="maximized ? 'h-90-p' : 'h-100-p'" fusePerfectScrollbar>
-            <mat-table [dataSource]="interactionDetailsTable.source" matSort matSortDisableClear [@animateStagger]="{ value: '50' }">
+            <mat-table [dataSource]="interactionDetailsTable.source" matSort matSortDisableClear>
                 <ng-container matColumnDef="Channel">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>Channel</mat-header-cell>
                     <mat-cell *matCellDef="let element">
@@ -14,7 +14,11 @@
                                     ? 'phone'
                                     : element.Channel === 'TextChat'
                                     ? 'chat'
-                                    : element.Channel === 'Email'
+                                    : element.Channel === 'AudioChat'
+                                    ? 'phone'
+                                    : element.Channel === 'VideoChat'
+                                    ? 'duo'
+                                    : element.Channel.toLowerCase().includes('email')
                                     ? 'email'
                                     : 'library_books'
                             }}
@@ -22,10 +26,10 @@
                     </mat-cell>
                 </ng-container>
 
-                <ng-container matColumnDef="AverageHoldTime">
+                <ng-container matColumnDef="AverageHandleTime">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>AHT</mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        {{ element.AverageHoldTime }}
+                        {{ (element.AverageInteractionTime * 1000 | date: 'H:mm:ss':'UTC') || '00:00' }}
                     </mat-cell>
                 </ng-container>
 
@@ -43,10 +47,10 @@
                     </mat-cell>
                 </ng-container>
                 <mat-header-row *matHeaderRowDef="interactionDetailsTable.columns; sticky: true"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: interactionDetailsTable.columns" [@animate]="{ value: '*', params: { y: '100%' } }"></mat-row>
+                <mat-row *matRowDef="let row; columns: interactionDetailsTable.columns"></mat-row>
             </mat-table>
 
-            <p *ngIf="interactionDetailsTable.source.data.length === 0" class="text-center m-0 font-size-16">No data available</p>
+            <p *ngIf="interactionDetailsTable.source.data.length === 0" class="text-center m-0 font-size-16">No Data Available</p>
         </div>
         <mat-paginator *ngIf="maximized" [pageSizeOptions]="maximized ? [30, 40, 50] : [3, 6, 12]" showFirstLastButtons> </mat-paginator>
     </div>
@@ -74,7 +78,7 @@
         </div>
 
         <div
-            *ngIf="ahtChart.datasets.length === 0 || (ahtChart.datasets.length === 1 && !ahtChart.datasets[0].data.length)"
+            *ngIf="ahtChart.datasets.length === 0 || (ahtChart.datasets.length >= 1 && !ahtChart.datasets[0].data.length)"
             class="w-100-p h-100-p text-center"
             fxLayout
             fxLayoutAlign="center center"

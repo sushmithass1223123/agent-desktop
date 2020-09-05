@@ -15,6 +15,11 @@ import 'chartjs-plugin-piechart-outlabels';
 
 Chart.defaults.global.responsive = true;
 Chart.defaults.global.maintainAspectRatio = false;
+Chart.defaults.global.animation = {
+    duration: 0
+};
+Chart.defaults.global.responsiveAnimationDuration = 0;
+Chart.defaults.global.hover.animationDuration = 0;
 Chart.defaults.global.plugins = {
     outlabels: { display: false, backgroundColor: null, font: { size: 15 }, color: 'black' }
 };
@@ -28,4 +33,4 @@ const sharedComponents = [ResourceNotFoundComponent, ConfirmDialogComponent, Ava
     imports: [CommonModule, ...sharedModules],
     exports: [...sharedModules, ...sharedComponents]
 })
-export class SharedModule {}
+export class SharedModule { }

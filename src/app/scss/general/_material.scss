@@ -153,6 +153,11 @@ mat-selection-list {
         min-height: 30px;
         border-radius: 20px;
         margin-bottom: 4px;
+
+        &.selected {
+            background-color: rgb(0 0 0 / 0.2) !important;
+            box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+        }
     }
 
     mat-header-row {
@@ -260,7 +265,7 @@ mat-dialog-container {
 // mat dialog
 
 // mat tooltip
-.tooltip {
-    font-size: 1.5rem;
+.mat-tooltip {
+    font-size: 1.4rem !important;
 }
 // mat tooltip

@@ -1,7 +1,8 @@
 <div class="tw-navbar-menu">
     <div class="menu-item" *ngFor="let widget of toolbarMenuWidget">
-        <tw-aux-timer [data]="widget" *ngIf="widget.Type==='tw-aux-timer'"></tw-aux-timer>
-        <tw-agent-details [data]="widget" *ngIf="widget.Type==='tw-agent-details'"></tw-agent-details>
-        <tw-aux-codes [data]="widget" *ngIf="widget.Type==='tw-aux-codes'"></tw-aux-codes>
+        <tw-aux-timer [data]="widget" *ngIf="widget.Type === 'tw-aux-timer'"></tw-aux-timer>
+        <tw-notifications [data]="widget" *ngIf="widget.Type === 'tw-notifications'"></tw-notifications>
+        <tw-agent-details [data]="widget" *ngIf="widget.Type === 'tw-agent-details'"></tw-agent-details>
+        <tw-aux-codes [data]="widget" *ngIf="widget.Type === 'tw-aux-codes'"></tw-aux-codes>
     </div>
 </div>

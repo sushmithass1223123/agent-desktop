@@ -44,7 +44,7 @@ tw-su-active-agents {
 
                 .tw-accordion {
                     &.active .channel-list {
-                        opacity: 0;
+                        display: none;
                     }
                 }
 
@@ -55,7 +55,7 @@ tw-su-active-agents {
                         display: flex;
                         justify-content: center;
                         align-items: center;
-                        margin: 0px 8px 8px 0px;
+                        margin: 0px 12px 8px 0px;
 
                         .mat-badge-content {
                             top: -6px;
@@ -64,6 +64,12 @@ tw-su-active-agents {
                             background: $tw-success !important;
                             color: $tw-dark !important;
                         }
+                    }
+                }
+
+                .indicators {
+                    .mat-icon {
+                        margin-left: 4px;
                     }
                 }
             }

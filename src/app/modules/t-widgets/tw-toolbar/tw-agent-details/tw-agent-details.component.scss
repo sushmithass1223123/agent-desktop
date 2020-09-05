@@ -39,3 +39,13 @@ tw-agent-details {
         padding: 0 8px;
     }
 }
+
+.agent-info-menu {
+    &.mat-menu-panel {
+        .mat-menu-item {
+            .mat-icon {
+                margin-right: 8px;
+            }
+        }
+    }
+}

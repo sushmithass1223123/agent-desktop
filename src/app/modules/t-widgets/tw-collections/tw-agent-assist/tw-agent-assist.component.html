@@ -7,12 +7,16 @@
 <tw-wrapper [data]="data">
     <!-- your code goes here -->
     <div fxFlex fxFill fxLayout="row" class="p-8">
-        <mat-chip-list>
+        <mat-chip-list *ngIf="nlpCurrentData; else noData">
             <mat-chip *ngFor="let intent of nlpCurrentData.JsonData.nluResult.intent_ranking" removable (click)="openAssitWidget(intent)">
                 {{ intent.name }}
                 <mat-icon matChipRemove>close</mat-icon>
             </mat-chip>
         </mat-chip-list>
+
+        <ng-template #noData>
+            <div fxFill fxLayout fxLayoutAlign="center center" class="mat-title">No Data Available</div>
+        </ng-template>
     </div>
     <!-- your code goes here -->
 </tw-wrapper>
