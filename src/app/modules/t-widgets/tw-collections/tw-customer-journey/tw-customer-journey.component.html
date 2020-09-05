@@ -1,19 +1,26 @@
 <ng-template #interactionBrandType let-subType="SubType">
-    <mat-icon color="primary" *ngIf="subType === 'text'">chat</mat-icon>
-    <mat-icon color="primary" *ngIf="subType === 'whatsapp'">chat</mat-icon>
-    <mat-icon color="primary" *ngIf="subType === 'wechat'">chat</mat-icon>
-    <mat-icon color="primary" *ngIf="subType === 'line'">chat</mat-icon>
-    <mat-icon color="primary" *ngIf="subType === 'twitter'">chat</mat-icon>
+    <mat-icon color="primary" *ngIf="subType.toLowerCase() === 'chat'">chat</mat-icon>
+    <mat-icon color="primary" *ngIf="subType.toLowerCase() === 'text'">chat</mat-icon>
+    <mat-icon color="primary" *ngIf="subType.toLowerCase() === 'audio'">phone</mat-icon>
+    <mat-icon color="primary" *ngIf="subType.toLowerCase() === 'video'">duo</mat-icon>
+    <mat-icon color="primary" *ngIf="subType.toLowerCase() === 'whatsapp'">chat</mat-icon>
+    <mat-icon color="primary" *ngIf="subType.toLowerCase() === 'wechat'">chat</mat-icon>
+    <mat-icon color="primary" *ngIf="subType.toLowerCase() === 'line'">chat</mat-icon>
+    <mat-icon color="primary" *ngIf="subType.toLowerCase() === 'viber'">chat</mat-icon>
+    <mat-icon color="primary" *ngIf="subType.toLowerCase() === 'twitter'">chat</mat-icon>
+    <mat-icon color="primary" *ngIf="subType.toLowerCase() === 'textchat'">chat</mat-icon>
+    <mat-icon color="primary" *ngIf="subType.toLowerCase() === 'store'">store</mat-icon>
+    <mat-icon color="primary" *ngIf="subType.toLowerCase() === 'feild'">roofing</mat-icon>
 </ng-template>
 
 <!-- (collapseEvent)="collapseEvent($event)" (floatEvent)="floatEvent($event)" -->
 <tw-wrapper [data]="data" (maximizeEvent)="maximizeEvent($event)">
-    <div *ngIf="!customerJourneyTable.loading" class="customer-journey" [fxLayout]="maximized ? 'column' : 'row wrap'" fxLayoutGap="20px">
+    <div *ngIf="!customerJourneyTable.loading" class="customer-journey" [fxLayout]="maximized ? 'column' : 'row wrap'" fxLayoutGap="6px">
         <div *ngIf="!maximized" class="timeline" fusePerfectScrollbar>
             <div
                 *ngFor="let s of customerJourneyTable.tableData.source.data"
                 fxLayout="row-wrap"
-                class="step mb-8 p-4"
+                class="step mb-4 p-4"
                 [ngClass]="
                     fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
                         ? fuseConfig.layout.anchorWidget.contentBackground
@@ -22,23 +29,14 @@
                         : ''
                 "
             >
-                <div fxFlex="25" fxLayout fxLayoutAlign="center center" class="step-time pr-8">
+                <div fxFlex="15" fxLayout fxLayoutAlign="center center" class="step-time pr-8">
                     <small fxFlex="80" class="text-right">
                         {{ s.InteractionDate }}
                     </small>
                 </div>
-                <div fxFlex="75" fxLayout fxLayoutAlign="space-between center" class="step-details px-16">
+                <div fxFlex="85" fxLayout fxLayoutAlign="space-between center" class="step-details px-16">
                     <div fxLayout fxLayoutAlign="start center">
-                        <button mat-stroked-button mat-icon-button [ngSwitch]="s.Channel | lowercase">
-                            <ng-container *ngSwitchCase="'chat'">
-                                <ng-container *ngTemplateOutlet="interactionBrandType; context: s"></ng-container>
-                            </ng-container>
-                            <ng-container *ngSwitchCase="'audio'">
-                                <ng-container *ngTemplateOutlet="interactionBrandType; context: s"></ng-container>
-                            </ng-container>
-                            <ng-container *ngSwitchCase="'video'">
-                                <ng-container *ngTemplateOutlet="interactionBrandType; context: s"></ng-container>
-                            </ng-container>
+                        <div mat-card-avatar [ngSwitch]="s.Channel | lowercase" class="w-32 h-32 border-sm-primary">
                             <ng-container *ngSwitchCase="'textchat'">
                                 <ng-container *ngTemplateOutlet="interactionBrandType; context: s"></ng-container>
                             </ng-container>
@@ -51,22 +49,20 @@
                             <mat-icon color="primary" *ngSwitchCase="'voice'"> call </mat-icon>
                             <mat-icon color="primary" *ngSwitchCase="'sms'"> textsms </mat-icon>
                             <mat-icon color="primary" *ngSwitchCase="'email'"> email </mat-icon>
-                            <mat-icon color="primary" *ngSwitchCase="'fax'"> chat </mat-icon>
-                            <mat-icon color="primary" *ngSwitchCase="'line'"> chat </mat-icon>
-                            <mat-icon color="primary" *ngSwitchDefault> chat </mat-icon>
-                        </button>
+                            <mat-icon color="primary" *ngSwitchCase="'fax'"> print </mat-icon>
+                            <mat-icon color="primary" *ngSwitchDefault> link_off </mat-icon>
+                        </div>
                         <span class="ml-8" [ngSwitch]="s.Channel | lowercase">
                             <ng-container *ngSwitchCase="'voice'"> Voice with </ng-container>
                             <ng-container *ngSwitchCase="'chat'"> Chat with </ng-container>
-                            <ng-container *ngSwitchCase="'audio'"> Audio Call with </ng-container>
-                            <ng-container *ngSwitchCase="'video'"> Video Call with </ng-container>
+                            <ng-container *ngSwitchCase="'audiochat'"> Audio Call with </ng-container>
+                            <ng-container *ngSwitchCase="'videochat'"> Video Call with </ng-container>
                             <ng-container *ngSwitchCase="'textchat'"> Chat with </ng-container>
-                            <ng-container *ngSwitchCase="'audiochat'"> Audio chat with </ng-container>
-                            <ng-container *ngSwitchCase="'videochat'"> Video chat with </ng-container>
                             <ng-container *ngSwitchCase="'sms'"> SMS chat with </ng-container>
                             <ng-container *ngSwitchCase="'email'"> Email with </ng-container>
                             <ng-container *ngSwitchCase="'fax'"> Fax with </ng-container>
                             <ng-container *ngSwitchCase="'line'"> Line chat with </ng-container>
+                            <ng-container *ngSwitchCase="'services'"> Serviced by </ng-container>
                             <ng-container *ngSwitchDefault> Chat with </ng-container>
                             {{ s.LastServicedAgentName || s.AgentName }}
                         </span>
@@ -74,11 +70,30 @@
                     <small> Default </small>
                 </div>
             </div>
+            <div *ngIf="customerJourneyTable.tableData.source.data.length === 0" fxLayout fxLayoutAlign="center center" class="mat-title h-120">
+                No Data Available
+            </div>
         </div>
-        <div [hidden]="!maximized" class="table mat-elevation-z1" fusePerfectScrollbar>
-            <mat-table [dataSource]="customerJourneyTable.tableData.source" matSort class="mat-elevation-z0">
+        <div
+            [hidden]="!maximized"
+            class="table"
+            [ngClass]="
+                fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                    ? fuseConfig.layout.anchorWidget.contentBackground
+                    : fuseConfig.layout.widget.customBackgroundColor === true
+                    ? fuseConfig.layout.widget.contentBackground
+                    : ''
+            "
+            fusePerfectScrollbar
+        >
+            <mat-table [dataSource]="customerJourneyTable.tableData.source" matSort>
                 <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
+
+                <ng-container matColumnDef="SessionID">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Session Id</mat-header-cell>
+                    <mat-cell *matCellDef="let element">{{ element.SessionID || '---' }}</mat-cell>
+                </ng-container>
 
                 <ng-container matColumnDef="InteractionDate">
                     <mat-header-cell *matHeaderCellDef class="d-flex w-100-p">
@@ -90,15 +105,6 @@
                 <ng-container matColumnDef="Channel">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>Channel</mat-header-cell>
                     <mat-cell *matCellDef="let element" [ngSwitch]="element.Channel | lowercase">
-                        <ng-container *ngSwitchCase="'chat'">
-                            <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>
-                        </ng-container>
-                        <ng-container *ngSwitchCase="'audio'">
-                            <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>
-                        </ng-container>
-                        <ng-container *ngSwitchCase="'video'">
-                            <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>
-                        </ng-container>
                         <ng-container *ngSwitchCase="'textchat'">
                             <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>
                         </ng-container>
@@ -111,9 +117,8 @@
                         <mat-icon color="primary" *ngSwitchCase="'voice'"> call </mat-icon>
                         <mat-icon color="primary" *ngSwitchCase="'sms'"> textsms </mat-icon>
                         <mat-icon color="primary" *ngSwitchCase="'email'"> email </mat-icon>
-                        <mat-icon color="primary" *ngSwitchCase="'fax'"> chat </mat-icon>
-                        <mat-icon color="primary" *ngSwitchCase="'line'"> chat </mat-icon>
-                        <mat-icon color="primary" *ngSwitchDefault> chat </mat-icon>
+                        <mat-icon color="primary" *ngSwitchCase="'fax'"> print </mat-icon>
+                        <mat-icon color="primary" *ngSwitchDefault> link_off </mat-icon>
                     </mat-cell>
                 </ng-container>
 
@@ -122,9 +127,9 @@
                     <mat-cell *matCellDef="let element">{{ element.CIF || '---' }}</mat-cell>
                 </ng-container>
 
-                <ng-container matColumnDef="EmailId">
+                <ng-container matColumnDef="EmailID">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>Email</mat-header-cell>
-                    <mat-cell *matCellDef="let element">{{ element.EmailId || '---' }}</mat-cell>
+                    <mat-cell *matCellDef="let element">{{ element.EmailID || '---' }}</mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="NRIC">
@@ -135,11 +140,6 @@
                 <ng-container matColumnDef="PhoneNumber">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>Phone</mat-header-cell>
                     <mat-cell *matCellDef="let element">{{ element.PhoneNumber || '---' }}</mat-cell>
-                </ng-container>
-
-                <ng-container matColumnDef="SessionID">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header>Session Id</mat-header-cell>
-                    <mat-cell *matCellDef="let element">{{ element.SessionID || '---' }}</mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="ActionSettings">
@@ -161,12 +161,30 @@
                     *matRowDef="let row; columns: customerJourneyTable.tableData.columns"
                 ></mat-row>
             </mat-table>
-            <mat-paginator (page)="pageEvent()" *fuseIfOnDom [pageSizeOptions]="[10, 20, 50, 100]" showFirstLastButtons> </mat-paginator>
+            <mat-paginator
+                *ngIf="customerJourneyTable.tableData.source.data.length > 5"
+                (page)="pageEvent()"
+                [pageSizeOptions]="[10, 20, 50, 100]"
+                showFirstLastButtons
+            >
+            </mat-paginator>
 
-            <p *ngIf="customerJourneyTable.tableData.source.data.length === 0" class="text-center m-0 font-size-16">No data available</p>
+            <p *ngIf="customerJourneyTable.tableData.source.data.length === 0" class="text-center m-0 font-size-16">No Data Available</p>
         </div>
-        <div *ngIf="maximized" class="spread mat-elevation-z1">
-            <p *ngIf="!customerJourneyTable.iframeUrl" class="mat-display-1">Select a session</p>
+        <div
+            *ngIf="maximized"
+            class="spread"
+            [ngClass]="
+                fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                    ? fuseConfig.layout.anchorWidget.contentBackground
+                    : fuseConfig.layout.widget.customBackgroundColor === true
+                    ? fuseConfig.layout.widget.contentBackground
+                    : ''
+            "
+        >
+            <p *ngIf="!customerJourneyTable.iframeUrl && customerJourneyTable.tableData.source.data.length > 0" class="mat-display-1">
+                Select a session
+            </p>
             <iframe
                 *ngIf="!!customerJourneyTable.iframeUrl"
                 [src]="customerJourneyTable.iframeUrl"

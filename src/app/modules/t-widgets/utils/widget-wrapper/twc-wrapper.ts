@@ -95,5 +95,4 @@ export class TWContentWrapper {
     onActive = () => { };
 
     onInactive = () => { };
-
 }

@@ -67,11 +67,20 @@ export class TwcTextchatComponent extends TWContentWrapper implements OnInit, On
     }
 
     private textChatIncomingEvent = (evt: TextChatIncomingEvent) => {
+
         // get the content widgets
         const textchatWidgets = this.data.Data.Widgets || [];
 
+        const staticWidgets = textchatWidgets.Static || [];
+        const dynamicWidgets = textchatWidgets.Dynamic || [];
+
         // loop the widgets and add append interaction details
-        textchatWidgets.forEach((widget: IWidget) => {
+        staticWidgets.forEach((widget: IWidget) => {
+            widget.InteractionDetails = evt;
+            widget.Data.Path = this.data.Data.Path;
+        });
+
+        dynamicWidgets.forEach((widget: IWidget) => {
             widget.InteractionDetails = evt;
             widget.Data.Path = this.data.Data.Path;
         });
@@ -79,7 +88,10 @@ export class TwcTextchatComponent extends TWContentWrapper implements OnInit, On
         // push the interaction details with widgets to the list
         this.interactions.push({
             interactionId: evt.InteractionID,
-            widgets: textchatWidgets
+            widgets: {
+                static: staticWidgets,
+                dynamic: dynamicWidgets
+            }
         });
 
         // add the construct event to the interaction manager

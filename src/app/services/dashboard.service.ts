@@ -45,36 +45,66 @@ export class DashboardService {
         // check if the connection is created successfully
         if (signalR) {
             // on registered event
-            signalR.hub.on('onRegistered', () => {});
+            signalR.hub.on('onRegistered', () => { });
 
-            // register to agent interaction list event
+            signalR.hub.on('onTeamAgentList', (agentList: any) => {
+                SDKClient.events.emit('TeamAgentListEvent', agentList);
+            });
+
             signalR.hub.on('onAgentInteractionList', (interactionList: any) => {
                 SDKClient.events.emit('AgentInteractionDetailsEvent', interactionList);
             });
 
-            // register to agent channel list event
             signalR.hub.on('onChannelList', (channelList: any) => {
                 SDKClient.events.emit('AgentChannelDetailsEvent', channelList);
-            });
-
-            // connection connected event
-            signalR.events.on('onConnected', () => {
-                signalR.hub.invoke('GetAgentData', signalR.hub.connection.id, agentData.agentId, true);
-                if (agentData.agentProfile === 'S') {
-                    signalR.hub.invoke('GetActiveAgentList', signalR.hub.connection.id, agentData.agentId, agentData.teamId, true);
-                }
             });
 
             signalR.hub.on('onStatusList', (statusDetails: AgentStateDurationList) => {
                 SDKClient.events.emit('AgentStatusDetailsEvent', statusDetails);
             });
 
+            // ----- Supervisor -----
+
+            signalR.hub.on('onAgentList', (agentList: any) => {
+                SDKClient.events.emit('SupervisorAgentListEvent', agentList);
+            });
+
+            signalR.hub.on('onAgentListData', (agentListData: any) => {
+                SDKClient.events.emit('TeamAgentListDataEvent', agentListData);
+            });
+
             signalR.hub.on('onTeamChannelList', (channelList: any) => {
-                SDKClient.events.emit('SupervisorTeamChannelListEvent', channelList);
+                SDKClient.events.emit('TeamChannelListEvent', channelList);
             });
 
             signalR.hub.on('onIntentList', (intentList: any) => {
-                SDKClient.events.emit('SupervisorIntentListEvent', intentList);
+                SDKClient.events.emit('TeamIntentListEvent', intentList);
+            });
+
+            signalR.hub.on('onTeamActiveStatusList', (activeStatusList: any) => {
+                SDKClient.events.emit('TeamActiveStatusDetailsEvent', activeStatusList);
+            });
+
+            signalR.hub.on('onTeamActiveChannelList', (activeChannelList: any) => {
+                SDKClient.events.emit('TeamActiveChannelListEvent', activeChannelList);
+            });
+
+            signalR.hub.on('onInteractionList', (interactionList: any) => {
+                SDKClient.events.emit('TeamAgentInteractionDetailsEvent', interactionList);
+            });
+
+            signalR.hub.on('onWorkCodeList', (workCodeList: any) => {
+                SDKClient.events.emit('TeamrWorkCodeDetailsEvent', workCodeList);
+            });
+
+            // connection connected event
+            signalR.events.on('onConnected', () => {
+                signalR.hub.invoke('GetAgentData', signalR.hub.connection.id, agentData.agentId, true);
+
+                // check for the profile
+                if (agentData.agentProfile === 'S') {
+                    signalR.hub.invoke('GetActiveAgentList', signalR.hub.connection.id, agentData.agentId, agentData.teamId, true);
+                }
             });
 
             signalR.hub.on('onTeamAgentList', (agentList: any) => {

@@ -11,7 +11,6 @@ tw-customer-journey {
         .timeline {
             width: 100%;
             height: 100%;
-            padding: 5px 10px;
             .step {
                 border-radius: 20px;
                 .step-details {
@@ -27,11 +26,11 @@ tw-customer-journey {
                     background-color: purple;
                 }
                 &:nth-child(3) .step-details::before {
-                    top: 25%;
+                    top: 30%;
                 }
                 &:last-child .step-details::before {
                     top: unset;
-                    bottom: 75%;
+                    bottom: 70%;
                 }
                 &-details::after {
                     content: '';
@@ -42,29 +41,33 @@ tw-customer-journey {
                     border-radius: 50%;
                     background-color: white;
                     border: 1px solid purple;
-                    top: 20%;
+                    top: 30%;
                     left: -5px;
                 }
             }
         }
         .table {
             width: 100%;
-            height: 50%;
+            height: 35%;
             padding: 8px;
             background: inherit;
-            border-radius: 10px;
+            border-radius: 20px;
         }
         .spread {
             width: 100%;
-            height: 50%;
-            border-radius: 10px;
+            height: 65%;
+            border-radius: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
         }
         mat-icon {
             font-size: 18px;
-            line-height: 2;
+            line-height: 18px;
+            width: 18px;
+            height: 18px;
+            min-height: 18px;
+            min-width: 18px;
         }
     }
 

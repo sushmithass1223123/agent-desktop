@@ -268,6 +268,13 @@ login {
                     position: absolute;
                     bottom: 10px;
                     right: 10px;
+
+                    .element-status {
+                        position: initial;
+                        margin-right: 4px;
+                        width: 16px;
+                        height: 16px;
+                    }
                 }
             }
         }

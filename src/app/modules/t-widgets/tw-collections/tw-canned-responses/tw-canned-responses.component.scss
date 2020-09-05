@@ -39,6 +39,9 @@ tw-canned-responses {
     .mat-flat-button {
         &.template {
             background-color: rgb(0 0 0 / 0.1);
+            text-overflow: ellipsis;
+            max-width: 100%;
+            overflow: hidden;
         }
     }
 

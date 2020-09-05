@@ -6,12 +6,12 @@
     $is-dark: map-get($theme, is-dark);
 
     tw-agent-details {
-        .avatar {
-            @if ($is-dark) {
-                border-color: map-get($accent, default);
-            } @else {
-                border-color: map-get($primary, default);
-            }
-        }
+        // .avatar {
+        //     @if ($is-dark) {
+        //         border-color: map-get($accent, default);
+        //     } @else {
+        //         border-color: map-get($primary, default);
+        //     }
+        // }
     }
 }

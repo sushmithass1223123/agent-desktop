@@ -61,3 +61,17 @@ export interface TwChartConfig {
     legend?: boolean;
     refresh?: () => void;
 }
+
+export interface ChatTranscripts {
+    who?: string;
+    messageId?: string;
+    message?: string;
+    type?: string;
+    time?: string;
+    divider?: boolean;
+    attachment?: {
+        src: string;
+        type: string;
+        name: string;
+    };
+}

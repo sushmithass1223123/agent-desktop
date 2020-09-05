@@ -25,7 +25,7 @@
     </div>
 
     <div
-        *ngIf="statusChart.datasets.length === 0 || (statusChart.datasets.length === 1 && !statusChart.datasets[0].data.length)"
+        *ngIf="statusChart.datasets.length === 0 || (statusChart.datasets.length >= 1 && !statusChart.datasets[0].data.length)"
         class="w-100-p h-100-p text-center"
         fxLayout
         fxLayoutAlign="center center"

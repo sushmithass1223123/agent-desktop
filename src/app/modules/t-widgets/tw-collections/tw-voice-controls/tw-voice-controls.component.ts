@@ -58,10 +58,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     startTime = '00:00:00';
     sessionID = 'NA';
     direction = 'NA';
-    interactionDuration = '00:00:00';
+    duration: any;
     stopTimer = new Subject();
     last4IVR = [];
-    interactionStatus = 'NA';
+    status = 'NA';
     isMSCall = false;
     isManualAnswer = false;
     avConns: AVChannel[] = [];
@@ -137,7 +137,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         }
 
         // set the status
-        this.interactionStatus = 'initial';
+        this.status = 'initial';
 
         // listen to TMAC events
         this.registerToEvents();
@@ -211,19 +211,11 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         timer(1000, 1000)
             .pipe(takeUntil(this.unsubscribeAll), takeUntil(this.stopTimer))
             .subscribe(val => {
-                const totalSeconds = val + 1;
-                const hours = Math.floor(totalSeconds / 3600);
-                const minutes = Math.floor(totalSeconds % 3600 / 60);
-                const seconds = Math.floor(totalSeconds % 3600 % 60);
-                // set the interaction duration
-                this.interactionDuration =
-                    (hours > 9 ? hours : '0' + hours) + ':' +
-                    (minutes > 9 ? minutes : '0' + minutes) + ':'
-                    + (seconds > 9 ? seconds : '0' + seconds);
+                this.duration = (val + 1) * 1000;
             });
 
         // set the status
-        this.interactionStatus = 'connected';
+        this.status = 'connected';
         // update the interaction status and user
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
             status: 'connected',
@@ -244,7 +236,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         this._appDataService.clearAudio();
 
         // set the status
-        this.interactionStatus = 'disconnected';
+        this.status = 'disconnected';
         // update the interaction status and user
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
             status: 'disconnected'
@@ -261,7 +253,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         }
 
         // set the status
-        this.interactionStatus = 'hold';
+        this.status = 'hold';
         // update the interaction status
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
             status: 'hold'
@@ -278,7 +270,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         }
 
         // set the status
-        this.interactionStatus = 'connected';
+        this.status = 'connected';
         // update the interaction status
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
             status: 'connected'
@@ -411,7 +403,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 this.interactionId.toString(),
                 this.user.agentId,
                 '',
-                this.sessionID,
+                this.sessionID.split('|')[0],
                 'voice',
                 this.appConfig.AppConfigs.AV || {}
             );
@@ -595,7 +587,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             // get the connection variable
             const connection: AVChannel = this.avConns[this.sessionID];
             // check if the connection is there and interaction is not on hold
-            if (connection && this.interactionStatus !== 'hold') {
+            if (connection && this.status !== 'hold') {
                 connection.hold();
             }
             return;
@@ -622,7 +614,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             // get the connection variable
             const connection: AVChannel = this.avConns[this.sessionID];
             // check if the connection is there and interaction is on hold
-            if (connection && this.interactionStatus === 'hold') {
+            if (connection && this.status === 'hold') {
                 connection.unHold();
             }
             return;

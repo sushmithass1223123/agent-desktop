@@ -2,9 +2,16 @@
     <button mat-button class="user-button" [matMenuTriggerFor]="userMenu">
         <div fxLayout="row" fxLayoutAlign="center center" class="position-relative">
             <img
-                class="avatar mr-0 mr-sm-16"
+                class="avatar mr-0 mr-16"
                 [style.backgroundImage]="'url(' + (agentData.profilePicture ? agentData.profilePicture : 'assets/images/avatars/profile.jpg') + ')'"
                 *ngIf="data.Data.ProfilePicture"
+                [ngClass]="
+                    agentData.agentStatus.includes('Available')
+                        ? 'border-sm-alt-success'
+                        : agentData.agentStatus.includes('On Call')
+                        ? 'border-sm-alt-danger'
+                        : 'border-sm-alt-warning'
+                "
             />
             <span
                 class="element-status"
@@ -17,24 +24,39 @@
                 "
             ></span>
             <div fxLayout="column" fxLayoutAlign="center start" class="agent-details">
-                <span class="username mr-12 line-height-24" fxHide fxShow.gt-sm>{{ agentData.agentName }}</span>
-                <span class="font-size-14 mat-caption agent-status" fxHide fxShow.gt-sm *ngIf="data.Data.Status">{{ agentData.agentStatus }}</span>
+                <span class="username mr-12 line-height-24">{{ agentData.agentName }}</span>
+                <span class="font-size-14 mat-caption agent-status" *ngIf="data.Data.Status">{{ agentData.agentStatus }}</span>
             </div>
         </div>
     </button>
 
-    <mat-menu #userMenu="matMenu" [overlapTrigger]="false">
-        <button mat-menu-item>
-            <mat-icon>account_circle</mat-icon>
-            <span>My Profile</span>
+    <mat-menu #userMenu="matMenu" [overlapTrigger]="false" class="agent-info-menu">
+        <button mat-menu-item fxLayout fxLayoutAlign=" center">
+            <mat-icon>perm_identity</mat-icon>
+            <span>{{ agentData.agentId }}</span>
         </button>
 
-        <button mat-menu-item class="">
-            <mat-icon>mail</mat-icon>
-            <span>Inbox</span>
+        <button mat-menu-item *ngIf="agentData.agentProfile" fxLayout fxLayoutAlign=" center">
+            <mat-icon>admin_panel_settings</mat-icon>
+            <span>{{ agentData.agentProfile === 'S' ? 'Supervisor' : 'Agent' }}</span>
         </button>
 
-        <button mat-menu-item class="">
+        <button mat-menu-item *ngIf="agentData.lanId !== agentData.deviceId" fxLayout fxLayoutAlign=" center">
+            <mat-icon>phonelink_setup</mat-icon>
+            <span>{{ agentData.deviceId }}</span>
+        </button>
+
+        <button mat-menu-item *ngIf="agentData.teamName" fxLayout fxLayoutAlign=" center">
+            <mat-icon>people_alt</mat-icon>
+            <span> {{ agentData.teamName }} </span>
+        </button>
+
+        <button mat-menu-item *ngIf="agentData.isMSAgent" fxLayout fxLayoutAlign=" center">
+            <mat-icon>phonelink</mat-icon>
+            <span>MS Agent</span>
+        </button>
+
+        <button mat-menu-item [disabled]="!canLogout" (click)="logout()">
             <mat-icon>exit_to_app</mat-icon>
             <span>Logout</span>
         </button>

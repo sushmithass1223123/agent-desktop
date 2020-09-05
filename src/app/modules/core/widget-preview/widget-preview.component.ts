@@ -2,6 +2,7 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { IResponse, TUtils } from 'tmac-sdk';
+import { TwWidgetModel } from 'app/models';
 
 @Component({
     selector: 'widget-preview',
@@ -11,7 +12,9 @@ import { IResponse, TUtils } from 'tmac-sdk';
 })
 export class WidgetPreviewComponent implements OnInit {
 
-    previewWidgets = [];
+    staticWidgets = [];
+    dynamicWidgets = [];
+
     loading = true;
     appConfigPath = 'assets/app-config.json';
     appConfig: any;
@@ -26,6 +29,13 @@ export class WidgetPreviewComponent implements OnInit {
     ngOnInit(): void {
         // get the config
         this.getConfig();
+
+        // assing the widget model to data
+        const staticWidget = new TwWidgetModel('Static', 'tw-sample');
+        staticWidget.Config.Position.X = 3;
+        staticWidget.Config.Position.Y = 6;
+
+        this.staticWidgets = [staticWidget];
     }
 
     private async getConfig(): Promise<any> {
@@ -77,17 +87,17 @@ export class WidgetPreviewComponent implements OnInit {
                 method: 'POST'
             });
             setTimeout(() => {
+                this._fuseProgressBarService.hide();
                 // check the response
                 if (result.response) {
                     // set loading false
                     this.loading = false;
                     // assign the widgets
-                    this.previewWidgets = JSON.parse(result.response.d) || [];
+                    this.dynamicWidgets = result.response.d ? JSON.parse(result.response.d) : [];
                 }
                 else {
                     this.routeToNotFound('Template name is not found!');
                 }
-                this._fuseProgressBarService.hide();
             }, 1000);
         } catch (error) {
             TUtils.Logger.log('Exception in getTemplateJson', error);

@@ -1,6 +1,8 @@
 // mat icon
 .mat-icon-button {
     .mat-button-wrapper {
+        width: 100%;
+        height: 100%;
         justify-content: center;
         align-items: center;
         display: flex;
@@ -151,6 +153,11 @@ mat-selection-list {
         min-height: 30px;
         border-radius: 20px;
         margin-bottom: 4px;
+
+        &.selected {
+            background-color: rgb(0 0 0 / 0.2) !important;
+            box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+        }
     }
 
     mat-header-row {
@@ -201,36 +208,38 @@ mat-paginator {
 
 // mat form field
 mat-form-field {
-    .mat-form-field-wrapper {
-        padding-bottom: 1rem !important;
+    &.custom {
+        .mat-form-field-wrapper {
+            padding-bottom: 1rem !important;
 
-        .mat-form-field-subscript-wrapper {
-            top: calc(100% - 1.4rem);
-        }
+            .mat-form-field-subscript-wrapper {
+                top: calc(100% - 1.4rem);
+            }
 
-        .mat-form-field-infix {
-            padding: 1em 0.5rem !important;
-            border-top: 0.5em solid transparent;
-        }
+            .mat-form-field-infix {
+                padding: 1em 0.5rem !important;
+                border-top: 0.5em solid transparent;
+            }
 
-        .mat-form-field-suffix {
-            top: 0.5rem !important;
-        }
+            .mat-form-field-suffix {
+                top: 0.5rem !important;
+            }
 
-        .mat-form-field-outline {
-            border-radius: 2rem;
-            top: 0.75rem !important;
-        }
+            .mat-form-field-outline {
+                border-radius: 2rem;
+                top: 0.75rem !important;
+            }
 
-        .mat-form-field-outline-start {
-            border-radius: 2rem 0 0 1.5rem !important;
-            min-width: 2rem !important;
-            border-color: transparent;
-        }
+            .mat-form-field-outline-start {
+                border-radius: 2rem 0 0 1.5rem !important;
+                min-width: 2rem !important;
+                border-color: transparent;
+            }
 
-        .mat-form-field-outline-end {
-            border-radius: 0 2rem 2rem 0 !important;
-            border-color: transparent;
+            .mat-form-field-outline-end {
+                border-radius: 0 2rem 2rem 0 !important;
+                border-color: transparent;
+            }
         }
     }
 }
@@ -256,7 +265,7 @@ mat-dialog-container {
 // mat dialog
 
 // mat tooltip
-.tooltip {
-    font-size: 1.5rem;
+.mat-tooltip {
+    font-size: 1.4rem !important;
 }
 // mat tooltip

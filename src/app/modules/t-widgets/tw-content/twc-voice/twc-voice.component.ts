@@ -2,7 +2,7 @@ import { Component, ElementRef, Input, OnDestroy, OnInit, ViewEncapsulation } fr
 import { InteractionEventService } from '@services/interaction-event.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
-import { InteractionWidgets, IWidget } from 'app/interfaces';
+import { InteractionWidgets, IWidget, InteractionRef } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
 import { takeUntil } from 'rxjs/operators';
 import { IncomingCallEvent, InteractionClosedEvent } from 'tmac-sdk';
@@ -18,6 +18,7 @@ export class TwcVoiceComponent extends TWContentWrapper implements OnInit, OnDes
     @Input() data: any;
 
     interactions: InteractionWidgets[] = [];
+    activeInteraction: number;
 
     constructor(
         public hostElement: ElementRef,
@@ -44,6 +45,20 @@ export class TwcVoiceComponent extends TWContentWrapper implements OnInit, OnDes
                     this.interactionClosed(evt);
                 }
             });
+
+        // subscribe to active interaction observable
+        this._interactionManagerService.interactions
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((interactions: InteractionRef[]) => {
+                // check if there are voice interactions first
+                if (this.interactions.length > 0) {
+                    const textInteractions = interactions.filter(i => i.type === 'voice');
+                    // filter and get the active voice interaction if any
+                    textInteractions.forEach((interaction: InteractionRef) => {
+                        this.activeInteraction = interaction.isActive ? interaction.interactionId : this.activeInteraction;
+                    });
+                }
+            });
     }
 
     ngOnDestroy(): void {
@@ -56,8 +71,16 @@ export class TwcVoiceComponent extends TWContentWrapper implements OnInit, OnDes
         // get the content widgets
         const voiceWidgets = this.data.Data.Widgets || [];
 
+        const staticWidgets = voiceWidgets.Static || [];
+        const dynamicWidgets = voiceWidgets.Dynamic || [];
+
         // loop the widgets and add append interaction details
-        voiceWidgets.forEach((widget: IWidget) => {
+        staticWidgets.forEach((widget: IWidget) => {
+            widget.InteractionDetails = evt;
+            widget.Data.Path = this.data.Data.Path;
+        });
+
+        dynamicWidgets.forEach((widget: IWidget) => {
             widget.InteractionDetails = evt;
             widget.Data.Path = this.data.Data.Path;
         });
@@ -65,7 +88,10 @@ export class TwcVoiceComponent extends TWContentWrapper implements OnInit, OnDes
         // push the interaction details with widgets to the list
         this.interactions.push({
             interactionId: evt.InteractionID,
-            widgets: voiceWidgets
+            widgets: {
+                static: staticWidgets,
+                dynamic: dynamicWidgets
+            }
         });
 
         // add the construct event to the interaction manager

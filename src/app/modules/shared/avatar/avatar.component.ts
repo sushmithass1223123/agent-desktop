@@ -49,6 +49,10 @@ export class AvatarComponent implements OnInit {
                 }
             }
         }
+        // check if the initials are empty the take first 2 char of name
+        if (initials === '') {
+            initials = name.substring(0, 2).toUpperCase();
+        }
         return initials;
     }
 }

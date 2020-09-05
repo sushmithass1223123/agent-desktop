@@ -140,7 +140,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
                 timer(1000, 1000)
                     .pipe(takeUntil(this.unsubscribeAll), takeUntil(this.unsubscribeAll))
                     .subscribe(val => {
-                        this.duration = Math.floor((val + 1) % 3600 % 60);
+                        this.duration = (val + 1) * 1000;
                     });
                 break;
             case 'onSourceVideoAdded':

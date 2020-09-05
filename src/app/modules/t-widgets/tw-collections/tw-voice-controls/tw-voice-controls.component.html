@@ -42,7 +42,9 @@
                             <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>construction</mat-icon> {{ sessionID }}</div>
                         </div>
                         <div fxLayout="row" fxLayoutAlign="space-between none">
-                            <span fxLayout="row" fxLayoutAlign=" center"> <mat-icon>timer</mat-icon> {{ interactionDuration }} </span>
+                            <span fxLayout="row" fxLayoutAlign=" center">
+                                <mat-icon>timer</mat-icon> {{ (duration | date: 'H:mm:ss':'UTC') || '00:00:00' }}
+                            </span>
                         </div>
                         <div fxLayout="column" fxLayoutAlign=" none">
                             <span fxLayout="row" fxLayoutAlign=" center">
@@ -80,61 +82,49 @@
                 </div>
                 <div fxLayout="row" fxLayoutAlign=" none" class="call-controls">
                     <button
-                        *ngIf="interactionStatus !== 'disconnected'"
+                        *ngIf="status !== 'disconnected'"
                         mat-flat-button
                         class="success"
-                        [disabled]="interactionStatus !== 'initial'"
+                        [disabled]="status !== 'initial'"
                         #answerBtn
                         (click)="answerCall(answerBtn)"
                     >
                         <mat-icon>call</mat-icon>
                     </button>
                     <button
-                        *ngIf="interactionStatus !== 'disconnected'"
+                        *ngIf="status !== 'disconnected'"
                         mat-flat-button
                         class="danger"
-                        [disabled]="interactionStatus !== 'connected'"
+                        [disabled]="status !== 'connected'"
                         #disconnectBtn
                         (click)="disconnectCall(disconnectBtn)"
                     >
                         <mat-icon>call_end</mat-icon>
                     </button>
                     <button
-                        *ngIf="interactionStatus !== 'hold' && interactionStatus !== 'disconnected'"
+                        *ngIf="status !== 'hold' && status !== 'disconnected'"
                         mat-flat-button
                         class="warning"
-                        [disabled]="interactionStatus !== 'connected'"
+                        [disabled]="status !== 'connected'"
                         #holdBtn
                         (click)="holdCall(holdBtn)"
                     >
                         <mat-icon>phone_paused</mat-icon>
                     </button>
-                    <button *ngIf="interactionStatus === 'hold'" mat-flat-button class="success" #unHoldBtn (click)="unHoldCall(unHoldBtn)">
+                    <button *ngIf="status === 'hold'" mat-flat-button class="success" #unHoldBtn (click)="unHoldCall(unHoldBtn)">
                         <mat-icon>phone_in_talk</mat-icon>
                     </button>
-                    <button
-                        *ngIf="data.Data?.TransferAllowed && interactionStatus !== 'disconnected'"
-                        mat-flat-button
-                        [disabled]="interactionStatus !== 'connected'"
-                    >
+                    <button *ngIf="data.Data?.TransferAllowed && status !== 'disconnected'" mat-flat-button [disabled]="status !== 'connected'">
                         <mat-icon>phone_forwarded</mat-icon>
                     </button>
-                    <button
-                        *ngIf="data.Data?.ConferenceAllowed && interactionStatus !== 'disconnected'"
-                        mat-flat-button
-                        [disabled]="interactionStatus !== 'connected'"
-                    >
+                    <button *ngIf="data.Data?.ConferenceAllowed && status !== 'disconnected'" mat-flat-button [disabled]="status !== 'connected'">
                         <mat-icon>group</mat-icon>
                     </button>
-                    <button
-                        *ngIf="data.Data.IVR?.Transfer?.Allowed && interactionStatus !== 'disconnected'"
-                        mat-flat-button
-                        [disabled]="interactionStatus !== 'connected'"
-                    >
+                    <button *ngIf="data.Data.IVR?.Transfer?.Allowed && status !== 'disconnected'" mat-flat-button [disabled]="status !== 'connected'">
                         <mat-icon>phonelink_ring</mat-icon>
                     </button>
                     <button
-                        *ngIf="interactionStatus === 'disconnected'"
+                        *ngIf="status === 'disconnected'"
                         mat-flat-button
                         class="border-radius-20 animate__animated animate__slideInRight animate__faster"
                         color="warn"

@@ -37,30 +37,6 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         }
     }
 
-    filterObj = {
-        InteractionDate: {
-            options: []
-        },
-        Channel: {
-            options: []
-        },
-        CIF: {
-            options: []
-        },
-        EmailId: {
-            options: []
-        },
-        NRIC: {
-            options: []
-        },
-        PhoneNumber: {
-            options: []
-        },
-        SessionID: {
-            options: []
-        }
-    };
-
     interactionId: number;
     historyParams: IGetInteractionHistory;
 
@@ -89,7 +65,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             iframeUrl: '',
             lastId: '',
             tableData: {
-                columns: Object.keys(this.filterObj),
+                columns: ['SessionID', 'InteractionDate', 'Channel', 'CIF', 'EmailID', 'NRIC', 'PhoneNumber'],
                 selection: new SelectionModel<InteractionHistory>(false, []),
                 source: new MatTableDataSource([])
             }
@@ -140,6 +116,11 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     }
 
     InteractionHistoryReadyEvent = (evt: InteractionHistoryReadyEvent): void => {
+        // check for the interaction
+        if (this.interactionId !== evt.InteractionID) {
+            return;
+        }
+
         const noOfRecords = this.customerJourneyTable.tableData.source.paginator?.pageSize.toString() || '5';
         // assign the history params
         this.historyParams = {

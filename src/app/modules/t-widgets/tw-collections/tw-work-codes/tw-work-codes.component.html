@@ -3,8 +3,8 @@
 <!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
 <tw-wrapper [data]="data">
     <!-- your code goes here -->
-    <div *ngIf="!loadWorkCodesReq.loading && !loadWorkCodesReq.error" fxFlex fxFill fxLayout="row" fxLayoutAlign="center">
-        <mat-form-field *ngIf="DataConf.Source === 'interaction'" class="w-100-p">
+    <div *ngIf="!loadWorkCodesReq.loading && !loadWorkCodesReq.error" fxFlex fxFill fxLayout="row" fxLayoutAlign="center" class="p-4">
+        <mat-form-field *ngIf="DataConf.Source === 'interaction'" class="w-100-p" appearance="outline">
             <mat-autocomplete class="w-100-p" #allWorkCodesRef (optionSelected)="setWorkCode($event)">
                 <mat-optgroup *ngFor="let group of loadWorkCodesReq.data | keyvalue" [label]="group.key">
                     <mat-option *ngFor="let workCode of group.value" [value]="workCode">
@@ -20,6 +20,7 @@
                 </mat-chip>
                 <input
                     #workCodeInput
+                    placeholder="Select Workcodes..."
                     [formControl]="workCodeCtrl"
                     [matAutocomplete]="allWorkCodesRef"
                     [matChipInputFor]="selectedWorkCodesRef"
@@ -30,21 +31,21 @@
         <div *ngIf="DataConf.Source === 'supervisor'" class="w-100-p h-100-p p-12" fusePerfectScrollbar>
             <mat-chip-list aria-label="WorkCodes">
                 <mat-chip
-                    *ngFor="let workCode of selectedWorkCodes | keyvalue"
+                    *ngFor="let workCode of selectedWorkCodes"
                     [ngClass]="{
-                        'bg-color-1': workCode.value < 10,
-                        'bg-color-2': workCode.value > 30,
-                        'bg-color-3': workCode.value > 50,
-                        'bg-color-4': workCode.value > 70,
-                        'bg-color-5': workCode.value > 90
+                        'bg-color-5': workCode.Count < 10,
+                        'bg-color-4': workCode.Count >= 10,
+                        'bg-color-3': workCode.Count >= 30,
+                        'bg-color-2': workCode.Count >= 50,
+                        'bg-color-1': workCode.Count >= 70
                     }"
                 >
                     <mat-icon class="mat-icon-mirror mr-4">local_offer</mat-icon>
-                    {{ workCode.key }}
+                    {{ workCode.WorkCodeName }}
                 </mat-chip>
             </mat-chip-list>
-            <div *ngIf="selectedWorkCodes === {}" class="w-100-p h-100-p" fxLayout fxLayoutAlign="center center">
-                <p>No data available</p>
+            <div *ngIf="selectedWorkCodes.length === 0" class="w-100-p h-100-p" fxLayout fxLayoutAlign="center center">
+                <p>No Data Available</p>
             </div>
         </div>
     </div>
@@ -55,7 +56,7 @@
 
     <div *ngIf="loadWorkCodesReq.error" class="w-100-p h-100-p text-center p-8" fxLayout="column" fxLayoutAlign="center center">
         <p>{{ loadWorkCodesReq.msg }}</p>
-        <button mat-button mat-raised-button color="primary" (click)="setup()">Retry</button>
+        <button mat-button mat-raised-button color="primary" class="ml-8" (click)="setup()">Retry</button>
     </div>
 
     <!-- your code goes here -->

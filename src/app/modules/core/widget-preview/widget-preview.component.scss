@@ -1,6 +1,10 @@
 @import 'src/@fuse/scss/fuse';
 
 widget-preview {
+    width: 100vw;
+    max-width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
     position: relative;
     display: flex;
     z-index: 1;
@@ -9,8 +13,11 @@ widget-preview {
     align-items: center;
     background: rgb(0 0 0 / 0.3);
 
-    twc-no-widgets,
     .widget-grid {
+        gap: 0;
+    }
+
+    twc-no-widgets {
         width: 100vw;
         max-width: 100vw;
         height: 95vh;

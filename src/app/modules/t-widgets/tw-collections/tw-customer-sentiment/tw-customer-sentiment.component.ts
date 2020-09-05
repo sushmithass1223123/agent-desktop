@@ -3,30 +3,29 @@ import { FuseConfigService } from '@fuse/services/config.service';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CHART_COLORS, CUSTOMER_SENTIMENT_PLOT_RECORDS } from 'app/constants';
-import { TwChartConfig } from 'app/interfaces';
+import { TwChartConfig, IWidget } from 'app/interfaces';
 import * as Chart from 'chart.js';
-import { random } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 import { SDKClient, GenericEvent } from 'tmac-sdk';
 
-const average = new Image();
-average.src = '/assets/images/vectors/average-score.svg';
-average.width = 20;
-average.height = 20;
+const neutral = new Image();
+neutral.src = 'assets/images/vectors/average-score.svg';
+neutral.width = 20;
+neutral.height = 20;
 
 const positive = new Image();
-positive.src = '/assets/images/vectors/positive-score.svg';
+positive.src = 'assets/images/vectors/positive-score.svg';
 positive.width = 20;
 positive.height = 20;
 
 const negative = new Image();
-negative.src = '/assets/images/vectors/negative-score.svg';
+negative.src = 'assets/images/vectors/negative-score.svg';
 negative.width = 20;
 negative.height = 20;
 
 const sentimentDataPoints = {
     Negative: 8,
-    Average: 50,
+    Neutral: 50,
     Positive: 93
 };
 
@@ -34,12 +33,12 @@ Chart.pluginService.register({
     afterUpdate: (chart) => {
         if (chart.config.options['setFeedbackEmoji']) {
             const dataset: any = chart.config.data.datasets[0];
-            (Object.values(dataset._meta)[0] as any).data.forEach((d, i) => {
+            (Object.values(dataset._meta)[0] as any).data.forEach((d: any, i: any) => {
                 const val = dataset.data[i].y;
                 if (val === sentimentDataPoints.Negative) {
                     d._model.pointStyle = negative;
-                } else if (val === sentimentDataPoints.Average) {
-                    d._model.pointStyle = average;
+                } else if (val === sentimentDataPoints.Neutral) {
+                    d._model.pointStyle = neutral;
                 } else {
                     d._model.pointStyle = positive;
                 }
@@ -56,7 +55,7 @@ Chart.pluginService.register({
 })
 export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     // holds all the data related to this widget from the config
-    @Input() data: any;
+    @Input() data: IWidget;
 
     customerSentimentChart: TwChartConfig = {
         datasets: [
@@ -100,6 +99,8 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
             setFeedbackEmoji: true
         }
     };
+
+    interactionId: number;
 
     nlpCurrentData: any = null;
 
@@ -151,6 +152,10 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
         this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
             this.appConfig = config;
         });
+
+        // set the interaction id from data
+        this.interactionId = this.data.InteractionDetails.InteractionID;
+
         SDKClient.events.on('OnNLPDataEvent', this.OnNLPDataEvent);
     }
 
@@ -167,8 +172,18 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
         const receivedData = evt;
         if (receivedData) {
             const parsedJson = JSON.parse(receivedData.JsonData);
-            parsedJson.sentimentResult = sentimentDataPoints[parsedJson.sentimentResult]
-            
+
+            // check for the interaction
+            if (this.interactionId !== parsedJson.interactionID) {
+                return;
+            }
+
+            if (parsedJson.messageSource === 'agent') {
+                return;
+            }
+
+            parsedJson.sentimentResult = sentimentDataPoints[parsedJson.sentimentResult];
+
             if (this.customerSentimentChart.datasets[0].data.length === CUSTOMER_SENTIMENT_PLOT_RECORDS) {
                 this.customerSentimentChart.datasets[0].data = this.customerSentimentChart.datasets[0].data.slice(1);
             }
@@ -178,7 +193,7 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
                 y: parsedJson.sentimentResult
             } as any);
         }
-    };
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @  Private Methods

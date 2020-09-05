@@ -1,14 +1,9 @@
-<tw-wrapper
-    [data]="data"
-    (maximizeEvent)="maximizeEvent.emit($event)"
-    (collapseEvent)="collapseEvent.emit($event)"
-    (floatEvent)="floatEvent.emit($event)"
->
+<tw-wrapper [data]="data" (maximizeEvent)="onMaximized($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)">
     <div class="w-100-p h-100-p chat-controls">
         <div
             fxLayout="column"
             fxLayoutAlign=" none"
-            class="w-100-p px-12 py-8 border-radius-20 font-size-12 interaction-details"
+            class="w-100-p px-12 py-4 border-radius-20 font-size-12 interaction-details"
             [ngClass]="
                 fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
                     ? fuseConfig.layout.anchorWidget.contentBackground
@@ -18,18 +13,20 @@
             "
         >
             <div fxLayout="row" fxLayoutAlign="space-between none">
-                <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>alarm_on</mat-icon> {{ startTime }}</div>
+                <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>alarm_on</mat-icon> {{ startTime | date: 'medium' }}</div>
                 <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>construction</mat-icon> {{ sessionID }}</div>
             </div>
             <div fxLayout="row" fxLayoutAlign="space-between none">
-                <span fxLayout="row" fxLayoutAlign=" center"><mat-icon>timer</mat-icon> {{ interactionDuration }}</span>
-                <span class="font-weight-700">{{ interactionStatus }}</span>
+                <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>timer</mat-icon> {{ (duration | date: 'H:mm:ss':'UTC') || '00:00:00' }}</div>
+                <div fxLayout="row" fxLayoutAlign=" center">
+                    <mat-icon>grading</mat-icon> <span class="text-bold">{{ intent }}</span>
+                </div>
             </div>
         </div>
 
         <div fxLayout="row" fxLayoutAlign=" none" class="mt-4 chat-container">
-            <div fxLayout="column" fxLayoutAlign=" center" class="pt-8 interaction-selector">
-                <button [disabled]="interactionStatus !== 'Connected'" class="mat--z0 more-option-button" mat-mini-fab color="default">
+            <div fxLayout="column" fxLayoutAlign=" center" class="pt-4 interaction-selector">
+                <button [disabled]="status !== 'connected'" class="more-option-button" mat-mini-fab color="default">
                     <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M17 34C13.6377 34 10.3509 33.003 7.55531 31.135C4.75968 29.267 2.58075 26.612 1.29406 23.5056C0.00736582 20.3993 -0.329291 16.9811 0.326658 13.6835C0.982607 10.3858 2.6017 7.35668 4.97919 4.97919C7.35668 2.6017 10.3858 0.982607 13.6835 0.326658C16.9811 -0.329291 20.3993 0.00736582 23.5056 1.29406C26.612 2.58075 29.267 4.75968 31.135 7.55531C33.003 10.3509 34 13.6377 34 17C33.995 21.5071 32.2023 25.8282 29.0153 29.0153C25.8282 32.2023 21.5071 33.995 17 34ZM10.2 15.3C9.74914 15.3 9.31674 15.4791 8.99793 15.7979C8.67911 16.1167 8.50001 16.5491 8.50001 17C8.50001 17.4509 8.67911 17.8833 8.99793 18.2021C9.31674 18.5209 9.74914 18.7 10.2 18.7H15.3V23.8C15.3 24.2509 15.4791 24.6833 15.7979 25.0021C16.1167 25.3209 16.5491 25.5 17 25.5C17.4509 25.5 17.8833 25.3209 18.2021 25.0021C18.5209 24.6833 18.7 24.2509 18.7 23.8V18.7H23.8C24.2509 18.7 24.6833 18.5209 25.0021 18.2021C25.3209 17.8833 25.5 17.4509 25.5 17C25.5 16.5491 25.3209 16.1167 25.0021 15.7979C24.6833 15.4791 24.2509 15.3 23.8 15.3H18.7V10.2C18.7 9.74914 18.5209 9.31674 18.2021 8.99793C17.8833 8.67911 17.4509 8.50001 17 8.50001C16.5491 8.50001 16.1167 8.67911 15.7979 8.99793C15.4791 9.31674 15.3 9.74914 15.3 10.2V15.3H10.2Z"
@@ -38,22 +35,10 @@
                     </svg>
                 </button>
 
-                <!-- <mat-menu #extraActions="matMenu">
-                    <button mat-menu-item>
-                        <mat-icon>dialpad</mat-icon>
-                    </button>
-                    <button mat-menu-item disabled>
-                        <mat-icon>voicemail</mat-icon>
-                    </button>
-                    <button mat-menu-item>
-                        <mat-icon>notifications_off</mat-icon>
-                    </button>
-                </mat-menu> -->
-
                 <div
                     fxLayout="column"
-                    fxLayoutAlign=" center"
-                    class="w-100-p h-100-p mt-8 pt-8 pr-8 interactions"
+                    fxLayoutAlign=" start"
+                    class="w-60 h-100-p mt-4 pt-8 interactions"
                     fusePerfectScrollbar
                     [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
                 >
@@ -85,7 +70,7 @@
                 <div fxLayout="row" fxLayoutAlign="end none" class="chat-actions">
                     <button
                         *ngIf="data.Data.TransferAllowed"
-                        [disabled]="interactionStatus !== 'Connected'"
+                        [disabled]="status !== 'connected'"
                         mat-mini-fab
                         color="default"
                         [ngClass]="
@@ -93,7 +78,7 @@
                                 ? fuseConfig.layout.anchorWidget.bodyBackground
                                 : '') +
                             ' ' +
-                            (interactionStatus === 'Connected' ? 'mat-elevation-z2' : '')
+                            (status === 'connected' ? 'mat-elevation-z2' : '')
                         "
                         matTooltip="Transfer"
                     >
@@ -102,7 +87,7 @@
 
                     <button
                         *ngIf="data.Data.ConferenceAllowed"
-                        [disabled]="interactionStatus !== 'Connected'"
+                        [disabled]="status !== 'connected'"
                         mat-mini-fab
                         color="default"
                         [ngClass]="
@@ -110,7 +95,7 @@
                                 ? fuseConfig.layout.anchorWidget.bodyBackground
                                 : '') +
                             ' ' +
-                            (interactionStatus === 'Connected' ? 'mat-elevation-z2' : '')
+                            (status === 'connected' ? 'mat-elevation-z2' : '')
                         "
                         matTooltip="Conference"
                     >
@@ -119,7 +104,7 @@
 
                     <button
                         *ngIf="data.Data.AudioEscalateEnabled"
-                        [disabled]="interactionStatus !== 'Connected'"
+                        [disabled]="status !== 'connected' || disableAV"
                         mat-mini-fab
                         color="default"
                         [ngClass]="
@@ -127,7 +112,7 @@
                                 ? fuseConfig.layout.anchorWidget.bodyBackground
                                 : '') +
                             ' ' +
-                            (interactionStatus === 'Connected' ? 'mat-elevation-z2' : '')
+                            (status === 'connected' ? 'mat-elevation-z2' : '')
                         "
                         matTooltip="Escalate to Audio"
                         (click)="escalateToAV('audio')"
@@ -137,7 +122,7 @@
 
                     <button
                         *ngIf="data.Data.VideoEscalateEnabled"
-                        [disabled]="interactionStatus !== 'Connected'"
+                        [disabled]="status !== 'connected' || disableAV"
                         mat-mini-fab
                         color="default"
                         [ngClass]="
@@ -145,7 +130,7 @@
                                 ? fuseConfig.layout.anchorWidget.bodyBackground
                                 : '') +
                             ' ' +
-                            (interactionStatus === 'Connected' ? 'mat-elevation-z2' : '')
+                            (status === 'connected' ? 'mat-elevation-z2' : '')
                         "
                         matTooltip="Escalate to Video"
                         (click)="escalateToAV('video')"
@@ -154,8 +139,8 @@
                     </button>
 
                     <button
-                        [disabled]="interactionStatus !== 'Connected'"
-                        [ngClass]="interactionStatus === 'Connected' ? 'mat-elevation-z2' : ''"
+                        [disabled]="status !== 'connected'"
+                        [ngClass]="status === 'connected' ? 'mat-elevation-z2' : ''"
                         mat-mini-fab
                         color="warn"
                         #endBtn
@@ -166,7 +151,7 @@
                     </button>
 
                     <button
-                        *ngIf="interactionStatus !== 'Connected'"
+                        *ngIf="status !== 'connected'"
                         mat-raised-button
                         class="border-radius-20 animate__animated animate__slideInRight animate__faster"
                         color="warn"
@@ -187,27 +172,34 @@
                             *ngFor="let message of chatTranscripts; let i = index"
                             class="message-row animate__animated animate__slideInUp animate__faster"
                             [ngClass]="{
-                                me: message.who === user.agentName,
-                                contact: message.who !== user.agentName,
+                                me: message?.who === user.agentName || message?.who === 'Chatbot',
+                                contact: message?.who !== user.agentName && message?.who !== 'Chatbot',
                                 'first-of-group': isFirstMessageOfGroup(message, i),
                                 'last-of-group': isLastMessageOfGroup(message, i)
                             }"
                         >
                             <div
+                                *ngIf="!message.divider"
                                 fxLayout="column"
                                 fxLayoutAlign="start start"
                                 class="bubble"
                                 [ngClass]="
-                                    message.who !== user.agentName &&
+                                    (message.who !== user.agentName &&
+                                    message.who !== 'Chatbot' &&
                                     fuseConfig.layout.anchorWidget.customBackgroundColor === true &&
                                     data.Config.Anchor
                                         ? fuseConfig.layout.anchorWidget.bodyBackground
-                                        : ''
+                                        : '') +
+                                    ' ' +
+                                    (maximized ? 'maximized' : '')
                                 "
                             >
-                                <div *ngIf="isFirstMessageOfGroup(message, i)" [ngClass]="message.who === user.agentName ? 'right-svg' : 'left-svg'">
+                                <div
+                                    *ngIf="isFirstMessageOfGroup(message, i)"
+                                    [ngClass]="message.who === user.agentName || message?.who === 'Chatbot' ? 'right-svg' : 'left-svg'"
+                                >
                                     <svg
-                                        *ngIf="message.who !== user.agentName"
+                                        *ngIf="message.who !== user.agentName && message.who !== 'Chatbot'"
                                         xmlns="http://www.w3.org/2000/svg"
                                         viewBox="0 0 8 13"
                                         width="8"
@@ -217,7 +209,7 @@
                                         <path fill="currentColor" d="M1.533 2.568L8 11.193V0H2.812C1.042 0 .474 1.156 1.533 2.568z"></path>
                                     </svg>
                                     <svg
-                                        *ngIf="message.who === user.agentName"
+                                        *ngIf="message.who === user.agentName || message.who === 'Chatbot'"
                                         xmlns="http://www.w3.org/2000/svg"
                                         viewBox="0 0 8 13"
                                         width="8"
@@ -227,10 +219,85 @@
                                         <path fill="currentColor" d="M5.188 0H0v11.193l6.467-8.625C7.526 1.156 6.958 0 5.188 0z"></path>
                                     </svg>
                                 </div>
-                                <div *ngIf="isFirstMessageOfGroup(message, i)" class="user-label font-size-16 text-bold">{{ message.who }}</div>
-                                <div class="message">{{ message.message }}</div>
-                                <div class="time">{{ message.time | date: 'shortTime' }}</div>
+                                <div *ngIf="isFirstMessageOfGroup(message, i)" class="user-label font-size-16 text-bold mb-4">{{ message.who }}</div>
+                                <div class="message">
+                                    <ng-container *ngIf="!message.attachment?.src">
+                                        <span [innerHTML]="message.message"></span>
+                                        <span class="spacer"></span>
+                                    </ng-container>
+                                    <ng-container *ngIf="message.attachment?.src">
+                                        <div fxLayout="column" fxLayoutAlign=" none" class="attachments">
+                                            <!-- Images -->
+                                            <div *ngIf="message.attachment.type === 'image'" (click)="previewMedia(message)">
+                                                <img [src]="message.attachment.src" />
+                                            </div>
+
+                                            <!-- Videos -->
+                                            <div *ngIf="message.attachment.type === 'video'">
+                                                <div fxFill fxLayout fxLayoutAlign="center center" class="video-overlay">
+                                                    <button
+                                                        mat-stroked-button
+                                                        mat-icon-button
+                                                        class="mat-elevation-z6"
+                                                        (click)="previewMedia(message)"
+                                                    >
+                                                        <mat-icon>play_arrow</mat-icon>
+                                                    </button>
+                                                </div>
+                                                <video [src]="message.attachment.src"></video>
+                                            </div>
+
+                                            <!-- Audios -->
+                                            <audio *ngIf="message.attachment.type === 'audio'" [src]="message.attachment.src" controls></audio>
+
+                                            <!-- Files -->
+                                            <div
+                                                *ngIf="message.attachment.type === 'file' || message.attachment.type === 'others'"
+                                                fxLayout="row"
+                                                fxLayoutAlign=" center"
+                                                class="file"
+                                            >
+                                                <div fxFlex="80" fxLayout="row" fxLayoutAlign=" center">
+                                                    <mat-icon class="file-icon">insert_drive_file</mat-icon>
+                                                    <span class="file-name">{{ message.attachment.name }}</span>
+                                                </div>
+                                                <div fxFlex="20">
+                                                    <a
+                                                        mat-icon-button
+                                                        mat-raised-button
+                                                        class="download"
+                                                        [download]="message.attachment.name"
+                                                        [href]="message.attachment.src"
+                                                    >
+                                                        <mat-icon>arrow_downward</mat-icon>
+                                                    </a>
+                                                </div>
+                                            </div>
+
+                                            <!-- To show attachment captions -->
+                                            <span *ngIf="message.message" class="mt-4"> {{ message.message }} </span>
+
+                                            <!-- Spacer for better view -->
+                                            <span
+                                                *ngIf="
+                                                    message.attachment.type === 'file' ||
+                                                    message.attachment.type === 'others' ||
+                                                    message.attachment.type === 'audio'
+                                                "
+                                                class="spacer h-16"
+                                            >
+                                            </span>
+                                            <span
+                                                *ngIf="message.attachment.type === 'image' || message.attachment.type === 'video'"
+                                                class="time-overlay"
+                                            ></span>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                                <div class="time" [ngClass]="message?.type">{{ message.time | date: 'shortTime' }}</div>
                             </div>
+
+                            <div *ngIf="message.divider" class="divider bg-secondary"></div>
                         </div>
                         <!-- / MESSAGE -->
                     </div>
@@ -252,7 +319,7 @@
                         >
                             <button
                                 *ngIf="data.Data.EmojiAllowed"
-                                [disabled]="interactionStatus !== 'Connected'"
+                                [disabled]="status !== 'connected'"
                                 class="emoji-button"
                                 mat-icon-button
                                 aria-label="Select Emoji"
@@ -262,14 +329,14 @@
                             </button>
 
                             <mat-form-field
-                                class="message-text"
+                                class="custom message-text"
                                 [ngClass]="{ emoji: data.Data.EmojiAllowed }"
                                 fxFlex
                                 floatLabel="never"
                                 appearance="standard"
                             >
                                 <textarea
-                                    [disabled]="interactionStatus !== 'Connected'"
+                                    [disabled]="status !== 'connected'"
                                     matInput
                                     #replyInput
                                     placeholder="Type your message"
@@ -278,10 +345,15 @@
                                     [rows]="1"
                                     [matTextareaAutosize]="true"
                                 ></textarea>
+                                <!-- <mat-autocomplete #auto="matAutocomplete">
+                                    <mat-option *ngFor="let option of options" [value]="option">
+                                        {{ option }}
+                                    </mat-option>
+                                </mat-autocomplete> -->
                             </mat-form-field>
 
                             <button
-                                [disabled]="interactionStatus !== 'Connected'"
+                                [disabled]="status !== 'connected'"
                                 class="send-message-button"
                                 mat-icon-button
                                 type="submit"

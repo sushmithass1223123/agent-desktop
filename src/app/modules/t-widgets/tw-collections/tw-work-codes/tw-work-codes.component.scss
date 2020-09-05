@@ -1,4 +1,22 @@
 tw-work-codes {
+    mat-form-field {
+        .mat-form-field-wrapper {
+            .mat-form-field-outline-start {
+                border-radius: 2rem 0 0 1.5rem !important;
+                min-width: 2rem !important;
+            }
+
+            .mat-form-field-outline-end {
+                border-radius: 0 2rem 2rem 0 !important;
+            }
+
+            .mat-form-field-infix {
+                border: none;
+                padding: 1.25em 0 1.25em 0;
+            }
+        }
+    }
+
     .bg {
         &-color-1 {
             background-color: #fb7d7d !important;

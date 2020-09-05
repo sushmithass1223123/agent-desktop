@@ -1,5 +1,8 @@
-<mat-card>
-    <div fxFlex fxFill fxLayout="row" fxLayoutAlign="center center">
-        <span class="mat-display-1 mb-0"> No {{ type }} widgets found! </span>
+<tw-wrapper [data]="data">
+    <!-- your code goes here -->
+    <div fxFlex fxFill fxLayout="column" fxLayoutAlign="center center">
+        <img class="vector-image" src="assets/images/vectors/no-widget.svg" />
+        <span class="mat-headline mt-24"> No {{ type }} widgets found! </span>
     </div>
-</mat-card>
+    <!-- your code goes here -->
+</tw-wrapper>

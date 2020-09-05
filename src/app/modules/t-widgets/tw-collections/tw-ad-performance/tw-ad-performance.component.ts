@@ -186,14 +186,11 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
             JsonData: { ...onLoadMetricsToAgent.JsonData, eventdata: JSON.parse(onLoadMetricsToAgent.JsonData.eventdata) }
         };
 
-        console.log({ onLoadMetricsToAgent });
-
         this.gamificationService.getAgentProgress(this.data.Data.AgentProgressUrl, '1014').subscribe(
             (res) => {
                 try {
                     this.gamificationReqStatus.loading = false;
                     const metrics = JSON.parse(res.d);
-                    console.log({ rest: metrics });
                     // let labels = [];
                     // let datasets = {
                     //     PointsAssigned: [],

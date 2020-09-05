@@ -17,7 +17,7 @@ export class TwcNoInteractionComponent implements OnInit {
 
     ngOnInit(): void {
         // assing the widget model to data
-        this.data = new TwWidgetModel('No Interaction', 'tw-no-interaction');
+        this.data = new TwWidgetModel('No Interaction', 'twc-no-interaction');
         this.data.Config.Position.X = 3;
         this.data.Config.Position.Y = 6;
     }

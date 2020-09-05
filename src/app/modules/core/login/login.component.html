@@ -24,7 +24,7 @@
             </div>
 
             <form name="loginForm" [formGroup]="loginForm" novalidate>
-                <mat-form-field class="form-field" appearance="outline" *ngIf="domainListEnabled">
+                <mat-form-field class="form-field custom" appearance="outline" *ngIf="domainListEnabled">
                     <mat-select placeholder="DOMAIN LIST" formControlName="domain">
                         <mat-option>None</mat-option>
                         <mat-option *ngFor="let item of domainList" value="item">{{ item }}</mat-option>
@@ -32,7 +32,7 @@
                     <mat-error> Domain Name is required </mat-error>
                 </mat-form-field>
 
-                <mat-form-field class="form-field" appearance="outline">
+                <mat-form-field class="form-field custom" appearance="outline">
                     <input class="login-input" matInput required placeholder="LAN ID" (keydown.enter)="login(false)" formControlName="lanId" #lanId />
                     <button
                         mat-button
@@ -48,7 +48,7 @@
                     <mat-error> LAN ID is required </mat-error>
                 </mat-form-field>
 
-                <mat-form-field class="form-field" appearance="outline" *ngIf="agentIdEnabled">
+                <mat-form-field class="form-field custom" appearance="outline" *ngIf="agentIdEnabled">
                     <input class="login-input" matInput required placeholder="AGENT ID" (keydown.enter)="login(false)" formControlName="agentId" />
                     <button
                         mat-button
@@ -64,7 +64,7 @@
                     <mat-error> Agent ID is required </mat-error>
                 </mat-form-field>
 
-                <mat-form-field class="form-field" appearance="outline" *ngIf="passwordEnabled">
+                <mat-form-field class="form-field custom" appearance="outline" *ngIf="passwordEnabled">
                     <input
                         class="login-input"
                         required
@@ -89,7 +89,11 @@
                     <mat-error> Password is required </mat-error>
                 </mat-form-field>
 
-                <mat-form-field class="form-field animate__animated animate__flipInX animate__fast" appearance="outline" *ngIf="stationEnabled">
+                <mat-form-field
+                    class="form-field custom animate__animated animate__flipInX animate__fast"
+                    appearance="outline"
+                    *ngIf="stationEnabled"
+                >
                     <input
                         class="login-input"
                         color="primary"
@@ -143,6 +147,7 @@
                 <button mat-raised-button color="primary" class="submit-button" aria-label="LOGIN" (click)="login(false)">LOGIN</button>
             </form>
             <div fxLayout="row" fxLayoutAlign="center center" class="font-size-12 secondary-text copyright-version">
+                <span class="element-status" [ngClass]="version !== 'NA' ? 'bg-alt-success' : 'bg-alt-danger'"></span>
                 Copyright Tetherfi | Version: {{ version }}
             </div>
         </div>

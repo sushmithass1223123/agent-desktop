@@ -329,7 +329,13 @@ export class LoginComponent implements OnInit, OnDestroy {
                 // process the login response
                 this.loginResponse(result);
             }, 1000);
-        });
+        })
+            .catch((err: string) => {
+                // set loading to true
+                this.loading = false;
+                // login error
+                this.showMessage('Login failed, Please try again');
+            });
     }
 
     private loginResponse(result: IResponse): void {

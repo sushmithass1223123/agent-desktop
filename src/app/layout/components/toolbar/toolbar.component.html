@@ -21,10 +21,6 @@
                 <mat-icon class="primary-text">format_list_bulleted</mat-icon>
             </button>
 
-            <button mat-icon-button class="quick-panel-toggle-button"  (click)="toggleSidebarOpen('chatPanel')" >
-                <mat-icon class="primary-text">chat</mat-icon>
-            </button>
-
             <div class="toolbar-separator" *ngIf="!hiddenNavbar && rightNavbar" fxHide fxShow.gt-xs></div>
 
             <button
@@ -36,6 +32,24 @@
             >
                 <mat-icon class="primary-text">menu</mat-icon>
             </button>
+
+            <mat-icon
+                *ngIf="this.connectivityStatus?.status > -1"
+                class="connectivityStatus"
+                [ngClass]="{
+                    'color-warning': this.connectivityStatus?.status === 0,
+                    'color-alt-success': this.connectivityStatus?.status === 1,
+                    'color-danger': this.connectivityStatus?.status === 2
+                }"
+            >
+                {{
+                    this.connectivityStatus?.eventMode === 'webSockets'
+                        ? 'wifi_tethering'
+                        : this.connectivityStatus?.eventMode === 'eventPolling'
+                        ? 'wifi'
+                        : ''
+                }}
+            </mat-icon>
         </div>
     </div>
 </mat-toolbar>

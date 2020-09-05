@@ -6,7 +6,7 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CHART_COLORS } from 'app/constants';
 import { TwChartConfig } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient, AgentStateDurationList } from 'tmac-sdk';
+import { SDKClient, AgentChannelDataModel, AgentChannelDataList } from 'tmac-sdk';
 
 const multiColors: any = {
     backgroundColor: [...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS].map((c) => c.backgroundColor),
@@ -92,31 +92,32 @@ export class TwSuChannelsComponent extends TWidgetWrapper implements OnInit, OnD
             this.appConfig = config;
         });
 
-        SDKClient.events.on('AgentStatusDetailsEvent', this.AgentStatusDetailsEvent);
+        SDKClient.events.on('TeamActiveChannelListEvent', this.TeamActiveChannelListEvent);
     }
 
     /**
      * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
      */
     ngOnDestroy(): void {
-        SDKClient.events.off('AgentStatusDetailsEvent', this.AgentStatusDetailsEvent);
+        SDKClient.events.off('TeamActiveChannelListEvent', this.TeamActiveChannelListEvent);
         // call the wrapper destroy method
         this.destroyWrapper();
     }
 
-    AgentStatusDetailsEvent = (evt: AgentStateDurationList) => {
+    TeamActiveChannelListEvent = (evt: AgentChannelDataList) => {
         const datasets = { Duration: [] };
         const labels = [];
-        evt.States.forEach((c) => {
-            datasets.Duration.push(c.Duration);
-            labels.push(c.State);
+        evt.Channels.forEach((c) => {
+            datasets.Duration.push(c.Total);
+            labels.push(c.Channel);
         });
+
         this.channelsChart.datasets = Object.keys(datasets).map((d) => ({
             data: datasets[d],
             label: d
         }));
         this.channelsChart.labels = labels;
-    };
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @  Private Methods

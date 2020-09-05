@@ -11,7 +11,7 @@ import {
     ViewChildren,
     ViewEncapsulation
 } from '@angular/core';
-import { NgForm } from '@angular/forms';
+import { FormControl, NgForm } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
@@ -25,13 +25,14 @@ import { ContentPageService } from '@services/content-page.service';
 import { InteractionEventService } from '@services/interaction-event.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { InteractionRef, IWidget } from 'app/interfaces';
+import { ChatTranscripts, InteractionRef, IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
 import {
     AVChannel,
     AVControlMessageReceivedEvent,
+    AVEvent,
     IAgentData,
     IResponse,
     IUIEvent,
@@ -63,6 +64,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     @Output() floatEvent = new EventEmitter();
     @Output() collapseEvent = new EventEmitter();
 
+    maximized: boolean;
+
     fuseConfig: FuseConfig;
 
     interactionList: InteractionRef[];
@@ -72,13 +75,22 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     replyInput: any;
     sessionID = 'NA';
     startTime = 'NA';
-    interactionDuration = '00:00:00';
+    duration: number;
     stopTimer = new Subject();
-    interactionStatus = 'NA';
-    chatTranscripts: any[] = [];
+    status = 'NA';
+    intent = 'NA';
+
+    chatTranscripts: ChatTranscripts[] = [];
     customerName = 'Customer';
     avConn: AVChannel;
     callWidget: IWidget;
+    disableAV: boolean;
+    fileUploadUrl: any;
+    channel: string;
+    isSMM: boolean;
+
+    // myControl = new FormControl();
+    // options: string[] = ['One', 'Two', 'Three'];
 
     @ViewChildren(FusePerfectScrollbarDirective) directiveScrolls: QueryList<FusePerfectScrollbarDirective>;
     @ViewChildren('replyInput') replyInputField: any;
@@ -134,13 +146,16 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.user = SDKClient.getAgentData() || null;
 
         // set the status
-        this.interactionStatus = 'Incoming';
+        this.status = 'incoming';
 
         // set the start time
         this.startTime = new Date(Date.parse(this.data.InteractionDetails.CreatedTime)).toLocaleString();
 
         // listen to TMAC events
         this.registerToEvents();
+
+        // get the file upload Url
+        this.fileUploadUrl = this.appConfig.Main.Content.Urls?.FileServerUrl || null;
     }
 
     ngAfterViewInit(): void {
@@ -202,6 +217,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         SDKClient.events.off('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
         SDKClient.events.off('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
         SDKClient.events.off('CannedResposeEvent', this.CannedResposeEvent);
+        this.avConn?.events.off('onAVEvent', this.onAVEvent);
     }
 
     private TextChatRemoteUserConnectedEvent = (evt: TextChatRemoteUserConnectedEvent) => {
@@ -210,24 +226,26 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             return;
         }
 
+        // replace InteractionDetails with this event
+        // this event has the interaction details properties
+        this.data.InteractionDetails = evt;
+
         // subscribe to the timer
         timer(1000, 1000)
             .pipe(takeUntil(this.unsubscribeAll), takeUntil(this.stopTimer))
             .subscribe(val => {
-                const totalSeconds = val + 1;
-                const hours = Math.floor(totalSeconds / 3600);
-                const minutes = Math.floor(totalSeconds % 3600 / 60);
-                const seconds = Math.floor(totalSeconds % 3600 % 60);
-                // set the interaction duration
-                this.interactionDuration =
-                    (hours > 9 ? hours : '0' + hours) + ':' +
-                    (minutes > 9 ? minutes : '0' + minutes) + ':'
-                    + (seconds > 9 ? seconds : '0' + seconds);
+                this.duration = (val + 1) * 1000;
             });
 
-        this.interactionStatus = 'Connected';
+        this.status = 'connected';
         // get the customer name
-        this.customerName = evt.screenName || 'Customer';
+        this.customerName = evt.ScreenName || 'Customer';
+        // assign the intent
+        this.intent = evt.TransferIntent || evt.Intent || 'Default';
+        // check the channel
+        this.channel = evt.Channel.toLowerCase() || 'textchat';
+        // check social media
+        this.isSMM = evt.IsSMM || false;
         // update the interaction status and user
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
             'status': 'connected',
@@ -238,19 +256,20 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // check for bot history
         try {
             const botHistory = JSON.parse(evt.ChatHistoryData);
+
             // check the length of history data
             if (botHistory.length > 0) {
-                botHistory.forEach((item: any) => {
+                botHistory.forEach((item: any, index: number, array: any[]) => {
 
                     let message = '';
                     let who = '';
 
-                    if (item.customer_inpu) {
+                    if (item.customer_input) {
                         // customer message 
-                        who = this.customerName,
-                            message = item.reply;
+                        who = this.customerName;
+                        message = item.customer_input;
                     }
-                    else if (item.customer_inpu) {
+                    else if (item.reply) {
                         // agent message
                         who = 'Chatbot';
                         message = item.reply;
@@ -265,9 +284,23 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                             time: item.timestamp
                         });
                     }
+
+                    // check if the last item then add divider
+                    if ((array.length - 1) === index) {
+                        this.chatTranscripts.push({
+                            divider: true
+                        });
+                    }
                 });
             }
         } catch (error) { }
+
+        // send greeting text
+        if (this.user.chatGreetingText) {
+            this.sendMessage({
+                Text: this.user.chatGreetingText
+            });
+        }
     }
 
     private TextChatTranscriptForTransferEvent = (evt: TextChatTranscriptForTransferEvent) => {
@@ -316,7 +349,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
     private TextChatUserMessageWaitTimerEvent = (evt: TextChatUserMessageWaitTimerEvent) => {
         // check the interaction and the interaction status
-        if (evt.InteractionID !== this.interactionId || this.interactionStatus !== 'Connected') {
+        if (evt.InteractionID !== this.interactionId || this.status !== 'connected') {
             return;
         }
 
@@ -350,8 +383,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             type: 'text',
             message: evt.Message,
             replyId: '',
-            replyJson: {}, // TODO:: to implement reply
-            attachment: {},
+            replyJson: null, // TODO:: to implement reply
+            attachment: null,
             isValid: false
         };
 
@@ -387,6 +420,18 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     data.message = json.message;
                     data.replyId = json.replyId;
                     data.attachment = json.attachment ? json.attachment : null;
+
+                    // get the file upload url
+                    const fileServerUrl: string = this.fileUploadUrl?.MediaProxy;
+                    // check if we need to get full path of attachment
+                    if (data.attachment && // check if attachment is there
+                        !data.attachment.src && // check if src is not found
+                        data.attachment.name && // check if name is provided
+                        fileServerUrl // check if file server URL is configured
+                    ) {
+                        // get the attachment src
+                        data.attachment.src = `${fileServerUrl}/${this.sessionID.split('|')[0]}/${data.attachment.name}`;
+                    }
                 }
             }
         } catch (error) {
@@ -403,7 +448,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             who: this.customerName,
             messageId: data.messageId,
             message: data.message,
-            time: new Date(Date.parse(this.data.InteractionDetails.CreatedTime)).toLocaleString() || new Date().toLocaleString()
+            type: data.attachment?.type || 'text',
+            time: new Date(Date.parse(this.data.InteractionDetails.CreatedTime)).toLocaleString() || new Date().toLocaleString(),
+            attachment: data.attachment
         });
 
         let isActive = false;
@@ -440,7 +487,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // check if its a av request
         if (evt.Type === 'requestav') {
-            this.createAVConnection();
+            this.createAVConnection(JSON.parse(evt.Message).type);
         }
 
         // forward the av messages to av channel
@@ -452,13 +499,15 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         if (evt.InteractionID !== this.interactionId) {
             return;
         }
-        this.interactionStatus = 'Disconnected';
+        this.status = 'disconnected';
         // update the interaction status
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
             status: 'disconnected'
         });
         // stop the duration timer
         this.stopTimer.next();
+        // close if there is any any AV
+        this.avConn?.close();
     }
 
     private CannedResposeEvent = (evt: any) => {
@@ -546,8 +595,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             time: new Date().toLocaleString()
         };
 
-        // check if reply feature is enabled
-        if (this.data.Data.ReplyOnChatAllowed) {
+        // check if reply feature is enabled or not social media
+        if (this.data.Data.ReplyOnChatAllowed && !this.isSMM) {
             const jsonMessage = {
                 messageId: messageId,
                 type: 'text',
@@ -573,9 +622,13 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             messageId,
             templateId: template?.ID || '',
             type: 'text'
-        }, null).then((dt) => {
-            console.log('sendTextChat', dt);
-        });
+        }, null)
+            .then((dt: any) => {
+                console.log('sendTextChat', dt);
+            })
+            .catch(() => {
+                this._appDataService.showMessage('Message send failed!');
+            });
 
         // Reset the reply form
         this.replyForm.reset();
@@ -584,7 +637,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.readyToReply();
     }
 
-    private createAVConnection(): AVChannel {
+    private createAVConnection(param: string): AVChannel {
+        // if screenshare, then ignore and send to av channel
+        if (param === 'screenshare') {
+            return;
+        }
+
         // create a AV channel connection
         const connection = new AVChannel(
             SDKClient,
@@ -601,6 +659,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             return null;
         }
 
+        // listen to AV events
+        connection.events.on('onAVEvent', this.onAVEvent);
+
         // assign the av connection
         this.avConn = connection;
 
@@ -608,9 +669,88 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         return connection;
     }
 
+    private onAVEvent = (evt: AVEvent) => {
+        // swtich the av events
+        switch (evt.event) {
+            case 'onIncoming':
+                // disable av buttons
+                this.disableAV = true;
+                // request param
+                const param = evt.data.param.charAt(0).toUpperCase() + evt.data.param.slice(1);
+                // config incoming call
+                const confirmDialogRef = this._dialog.open(ConfirmDialogComponent, {
+                    disableClose: false
+                });
+                confirmDialogRef.componentInstance.message = param + ' call requested by customer, Do you want to accept it?';
+                confirmDialogRef.afterClosed().subscribe((dialogResult) => {
+                    if (dialogResult) {
+                        // accept request
+                        evt.data.response(true);
+                    }
+                    else {
+                        // enable av buttons
+                        this.disableAV = false;
+                        // reject request
+                        evt.data.response(false);
+                        // close the call widget
+                        this._aotWidgetService.destroyWidget(this.callWidget.ID);
+                        this.callWidget = null;
+                    }
+                });
+                // check if any widget has opened
+                if (!this.callWidget) {
+                    // open the widget
+                    this.openCallWidget(evt.data.param);
+                }
+                break;
+            case 'onConnected':
+                this.disableAV = true;
+                break;
+            case 'onFail':
+            case 'onDisconnected':
+            case 'onEnd':
+                this.disableAV = false;
+                break;
+            default:
+                console.log(evt);
+
+        }
+    }
+
+    private openCallWidget(param: string): void {
+        // get the widget type
+        const widgetMode = {
+            title: param === 'audio' ? 'Audio Call' : 'Video Call',
+            type: param === 'audio' ? 'tw-audio-controls' : 'tw-video-controls',
+            icon: param === 'audio' ? 'duo' : 'phone'
+        };
+        // create a call AOT widget
+        const widget = new TwWidgetModel(widgetMode.title, widgetMode.type, widgetMode.icon);
+        widget.InteractionDetails = this.data.InteractionDetails;
+        widget.Config.AOT = true;
+        widget.Config.Anchor = true;
+        widget.Config.Position.W = param === 'audio' ? 600 : 800;
+        widget.Config.Position.H = param === 'audio' ? 275 : 550;
+        widget.Config.Actions = param === 'audio' ? ['minimize'] : ['minimize', 'maximize'];
+        widget.Data.AVConn = this.avConn;
+        widget.Data.CustomerName = this.customerName;
+        widget.Data.SelfUser = this.user;
+        widget.Data.Config = this.data.Data;
+
+        // open call widget
+        this._aotWidgetService.addWidget(widget);
+        // assign to the local variable
+        this.callWidget = widget;
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------    
+
+    onMaximized(event: boolean): void {
+        this.maximizeEvent.emit(event);
+        this.maximized = event;
+    }
 
     isFirstMessageOfGroup(message: any, i: number): boolean {
         return (i === 0 || this.chatTranscripts[i - 1] && this.chatTranscripts[i - 1].who !== message.who);
@@ -669,7 +809,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     });
             }
         });
-
     }
 
     closeInteraction(closeBtn: MatButton): void {
@@ -695,8 +834,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     }
 
     escalateToAV(type: string): void {
+        // disable AV buttons
+        this.disableAV = true;
+
         // create the av connection
-        const connection = this.createAVConnection();
+        const connection = this.createAVConnection(type);
 
         // start call
         connection.startCall(type === 'video' ? TEnums.WrcCallTypes.Video : TEnums.WrcCallTypes.Audio, null)
@@ -706,33 +848,38 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     this._appDataService.showMessage(`Escalate to ${dt.param} request timed out`);
                     // close the call widget
                     this._aotWidgetService.destroyWidget(this.callWidget.ID);
+                    this.callWidget = null;
+                    // enable AV buttons 
+                    this.disableAV = false;
                 }
                 else {
-                    // get the widget type
-                    const widgetMode = {
-                        title: dt.param === 'video' ? 'Video Call' : 'Audio Call',
-                        type: dt.param === 'video' ? 'tw-video-controls' : 'tw-audio-controls',
-                        icon: dt.param === 'video' ? 'phone' : 'duo'
-                    };
-                    // create a call AOT widget
-                    const widget = new TwWidgetModel(widgetMode.title, widgetMode.type, widgetMode.icon);
-                    widget.InteractionDetails = this.data.InteractionDetails;
-                    widget.Config.AOT = true;
-                    widget.Config.Anchor = true;
-                    widget.Config.Position.W = 600;
-                    widget.Config.Position.H = 275;
-                    widget.Config.Actions = ['minimize'];
-                    widget.Data.AVConn = this.avConn;
-                    widget.Data.CustomerName = this.customerName;
-
-                    // open call widget
-                    this._aotWidgetService.addWidget(widget);
-                    // assign to the local variable
-                    this.callWidget = widget;
+                    this.openCallWidget(dt.param);
                 }
             })
             .catch((error) => {
+                // enable AV buttons 
+                this.disableAV = false;
                 this._appDataService.showMessage('Error in starting the call: ' + error);
             });
+    }
+
+    previewMedia(previewData: ChatTranscripts): void {
+        const confirmDialogRef = this._dialog.open(ConfirmDialogComponent, {
+            disableClose: false
+        });
+
+        if (previewData.attachment.type === 'image') {
+            confirmDialogRef.componentInstance.message = `<img src=${previewData.attachment.src} width="100%" width="100%" />`;
+        }
+        else if (previewData.attachment.type === 'video') {
+            confirmDialogRef.componentInstance.message = `<video controls autoplay src=${previewData.attachment.src} width="100%" width="100%"></video>`;
+        }
+
+        confirmDialogRef.componentInstance.title = 'Preview';
+        confirmDialogRef.componentInstance.isAlert = true;
+        confirmDialogRef.afterClosed().subscribe((dialogResult) => {
+            if (dialogResult) {
+            }
+        });
     }
 }

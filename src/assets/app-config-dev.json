@@ -34,6 +34,20 @@
                     "Data": {
                         "Widgets": [
                             {
+                                "Name": "Agent IM",
+                                "Description": "",
+                                "Type": "tw-instant-messaging",
+                                "Config": {},
+                                "Data": {}
+                            },
+                            {
+                                "Name": "Notification",
+                                "Description": "",
+                                "Type": "tw-notifications",
+                                "Config": {},
+                                "Data": {}
+                            },
+                            {
                                 "Name": "Aux Timer",
                                 "Description": "",
                                 "Type": "tw-aux-timer",
@@ -47,7 +61,8 @@
                                 "Config": {},
                                 "Data": {
                                     "ProfilePicture": true,
-                                    "Status": true
+                                    "Status": true,
+                                    "LogoutAux": "logout"
                                 }
                             },
                             {
@@ -55,10 +70,7 @@
                                 "Description": "",
                                 "Type": "tw-aux-codes",
                                 "Config": {},
-                                "Data": {
-                                    "LogoutAux": "logout",
-                                    "makeCallAux": "callcustomer"
-                                }
+                                "Data": {}
                             }
                         ]
                     }
@@ -178,291 +190,298 @@
                     },
                     "Data": {
                         "Path": "/home",
-                        "Widgets": [
-                            {
-                                "Name": "Wallboard",
-                                "Description": "",
-                                "Type": "tw-wallboard",
-                                "Config": {
-                                    "Static": false,
-                                    "Anchor": true,
-                                    "AOT": false,
-                                    "Icon": "dvr",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 3,
-                                        "Y": 2
+                        "Widgets": {
+                            "Static": [
+                                {
+                                    "Name": "Wallboard",
+                                    "Description": "",
+                                    "Type": "tw-wallboard",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": false,
+                                        "Icon": "dvr",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 3,
+                                            "Y": 2
+                                        },
+                                        "Actions": [],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
                                     },
-                                    "Actions": [],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
-                                },
-                                "Data": {
-                                    "Source": "dashboard"
+                                    "Data": {
+                                        "Source": "dashboard"
+                                    }
                                 }
-                            },
-                            {
-                                "Name": "All Interactions",
-                                "Description": "",
-                                "Type": "tw-ad-total-interactions",
-                                "Config": {
-                                    "Static": false,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "Icon": "dvr",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 0,
-                                        "Y": 1
+                            ],
+                            "Dynamic": [
+                                {
+                                    "Name": "All Interactions",
+                                    "Description": "",
+                                    "Type": "tw-ad-total-interactions",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "dvr",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
                                     },
-                                    "Actions": [
-                                        "maximize",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
+                                    "Data": {}
                                 },
-                                "Data": {}
-                            },
-                            {
-                                "Name": "AHT / Transfer / Conference ",
-                                "Description": "",
-                                "Type": "tw-aht-tc",
-                                "Config": {
-                                    "Static": false,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "Icon": "phone",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 0,
-                                        "Y": 2
+                                {
+                                    "Name": "AHT / Transfer / Conference ",
+                                    "Description": "",
+                                    "Type": "tw-aht-tc",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "phone",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
                                     },
-                                    "Actions": [
-                                        "maximize",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
+                                    "Data": {
+                                        "Source": "dashboard"
+                                    }
                                 },
-                                "Data": {}
-                            },
-                            {
-                                "Name": "Aux Status",
-                                "Description": "",
-                                "Type": "tw-aux-status-chart",
-                                "Config": {
-                                    "Static": false,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "Icon": "",
-                                    "Class": "duo",
-                                    "Position": {
-                                        "X": 0,
-                                        "Y": 1
+                                {
+                                    "Name": "Aux Status",
+                                    "Description": "",
+                                    "Type": "tw-aux-status-chart",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "",
+                                        "Class": "duo",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
                                     },
-                                    "Actions": [
-                                        "maximize",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
+                                    "Data": {}
                                 },
-                                "Data": {}
-                            },
-
-                            {
-                                "Name": "Interaction Details",
-                                "Description": "",
-                                "Type": "tw-ad-interaction-details",
-                                "Config": {
-                                    "Static": false,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "Icon": "format_list_bulleted",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 0,
-                                        "Y": 2
+                                {
+                                    "Name": "Interaction Details",
+                                    "Description": "",
+                                    "Type": "tw-ad-interaction-details",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "format_list_bulleted",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
                                     },
-                                    "Actions": [
-                                        "maximize",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
+                                    "Data": {}
                                 },
-                                "Data": {}
-                            },
-                            {
-                                "Name": "Performance",
-                                "Description": "",
-                                "Type": "tw-ad-performance",
-                                "Config": {
-                                    "Static": false,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "Icon": "pie_chart",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 0,
-                                        "Y": 1
+                                {
+                                    "Name": "Performance",
+                                    "Description": "",
+                                    "Type": "tw-ad-performance",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "pie_chart",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
                                     },
-                                    "Actions": [
-                                        "maximize",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
+                                    "Data": {
+                                        "AgentProgressUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetProgress"
+                                    }
                                 },
-                                "Data": {
-                                    "AgentProgressUrl": "https://demo2.tetherfilabs.com:55443/GamificationProxy/Proxy.asmx/GetProgress"
+                                {
+                                    "Name": "Gamification",
+                                    "Description": "",
+                                    "Type": "tw-ad-gamification",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "extension",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
+                                    },
+                                    "Data": {
+                                        "LeaderBoardUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetLeaderBoard"
+                                    }
+                                },
+                                {
+                                    "Name": "Call-backs",
+                                    "Description": "phone_callback",
+                                    "Type": "tw-ad-callbacks",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
+                                    },
+                                    "Data": {}
+                                },
+                                {
+                                    "Name": "Feedback",
+                                    "Description": "",
+                                    "Type": "tw-ad-feedback",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "feedback",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
+                                    },
+                                    "Data": {
+                                        "Source": "dashboard"
+                                    }
+                                },
+                                {
+                                    "Name": "Score",
+                                    "Description": "",
+                                    "Type": "tw-ad-score",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "score",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
+                                    },
+                                    "Data": {}
                                 }
-                            },
-                            {
-                                "Name": "Gamification",
-                                "Description": "",
-                                "Type": "tw-ad-gamification",
-                                "Config": {
-                                    "Static": false,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "Icon": "extension",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 0,
-                                        "Y": 1
-                                    },
-                                    "Actions": [
-                                        "maximize",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
-                                },
-                                "Data": {
-                                    "LeaderBoardUrl": "https://demo2.tetherfilabs.com:55443/GamificationProxy/Proxy.asmx/GetLeaderBoard"
-                                }
-                            },
-                            {
-                                "Name": "Call-backs",
-                                "Description": "phone_callback",
-                                "Type": "tw-ad-callbacks",
-                                "Config": {
-                                    "Static": false,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "Icon": "",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 0,
-                                        "Y": 2
-                                    },
-                                    "Actions": [
-                                        "maximize",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
-                                },
-                                "Data": {}
-                            },
-                            {
-                                "Name": "Feedback",
-                                "Description": "",
-                                "Type": "tw-ad-feedback",
-                                "Config": {
-                                    "Static": false,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "Icon": "feedback",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 0,
-                                        "Y": 1
-                                    },
-                                    "Actions": [
-                                        "maximize",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
-                                },
-                                "Data": {}
-                            },
-                            {
-                                "Name": "Score",
-                                "Description": "",
-                                "Type": "tw-ad-score",
-                                "Config": {
-                                    "Static": false,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "Icon": "score",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 0,
-                                        "Y": 1
-                                    },
-                                    "Actions": [
-                                        "maximize",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
-                                },
-                                "Data": {}
-                            }
-                        ]
+                            ]
+                        }
                     }
                 },
                 {
@@ -478,229 +497,528 @@
                     },
                     "Data": {
                         "Path": "/supervisor",
-                        "Widgets": [
-                            {
-                                "Name": "Active Agents",
-                                "Description": "",
-                                "Type": "tw-su-active-agents",
-                                "Config": {
-                                    "Static": false,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "Icon": "vertical_split",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 3,
-                                        "Y": 2
+                        "Widgets": {
+                            "Static": [
+                                {
+                                    "Name": "Active Agents",
+                                    "Description": "",
+                                    "Type": "tw-su-active-agents",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "vertical_split",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 3,
+                                            "Y": 2
+                                        },
+                                        "Actions": [],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
                                     },
-                                    "Actions": [],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
-                                },
-                                "Data": {}
-                            },
-                            {
-                                "Name": "Leaderboard",
-                                "Description": "",
-                                "Type": "tw-su-gamification",
-                                "Config": {
-                                    "Static": false,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "Icon": "",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 0,
-                                        "Y": 1
-                                    },
-                                    "Actions": [
-                                        "maximize",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
-                                },
-                                "Data": {
-                                    "LeaderBoardUrl": "https://demo2.tetherfilabs.com:55443/GamificationProxy/Proxy.asmx/GetLeaderBoard"
+                                    "Data": {}
                                 }
-                            },
-                            {
-                                "Name": "Avg. Handle Time",
-                                "Description": "",
-                                "Type": "tw-su-average-handle-time",
-                                "Config": {
-                                    "Static": false,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "Icon": "",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 0,
-                                        "Y": 1
+                            ],
+                            "Dynamic": [
+                                {
+                                    "Name": "Total Interactions",
+                                    "Description": "",
+                                    "Type": "tw-ad-total-interactions",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
                                     },
-                                    "Actions": [
-                                        "maximize",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
+                                    "Data": {
+                                        "LeaderBoardUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetLeaderBoard"
+                                    }
                                 },
-                                "Data": {}
-                            },
-                            {
-                                "Name": "Calls in Queue",
-                                "Description": "",
-                                "Type": "tw-su-calls-in-queue",
-                                "Config": {
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "Icon": "",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 0,
-                                        "Y": 1
+                                {
+                                    "Name": "Avg. Handle Time",
+                                    "Description": "",
+                                    "Type": "tw-aht-tc",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
                                     },
-                                    "Actions": [
-                                        "maximize",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
+                                    "Data": {
+                                        "Source": "supervisor"
+                                    }
                                 },
-                                "Data": {}
-                            },
-                            {
-                                "Name": "Transfer/Conf.",
-                                "Description": "",
-                                "Type": "tw-su-transferred-conferenced-calls",
-                                "Config": {
-                                    "Static": false,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "Icon": "",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 0,
-                                        "Y": 1
+                                {
+                                    "Name": "Calls in Queue",
+                                    "Description": "",
+                                    "Type": "tw-su-calls-in-queue",
+                                    "Config": {
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
                                     },
-                                    "Actions": [
-                                        "maximize",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
+                                    "Data": {}
                                 },
-                                "Data": {}
-                            },
-                            {
-                                "Name": "Skill Dashboard",
-                                "Description": "",
-                                "Type": "tw-wallboard",
-                                "Config": {
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "Icon": "",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 2,
-                                        "Y": 2
+                                {
+                                    "Name": "Intent List",
+                                    "Description": "",
+                                    "Type": "tw-su-intent-list",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
                                     },
-                                    "Actions": [
-                                        "maximize",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
+                                    "Data": {}
                                 },
-                                "Data": {
-                                    "Source": "supervisor"
+                                {
+                                    "Name": "Skill Dashboard",
+                                    "Description": "",
+                                    "Type": "tw-wallboard",
+                                    "Config": {
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
+                                    },
+                                    "Data": {
+                                        "Source": "supervisor"
+                                    }
+                                },
+                                {
+                                    "Name": "Channels",
+                                    "Description": "",
+                                    "Type": "tw-su-channels",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
+                                    },
+                                    "Data": {}
+                                },
+                                {
+                                    "Name": "Status",
+                                    "Description": "",
+                                    "Type": "tw-su-status",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
+                                    },
+                                    "Data": {}
+                                },
+                                {
+                                    "Name": "Work Codes",
+                                    "Description": "",
+                                    "Type": "tw-work-codes",
+                                    "Config": {
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
+                                    },
+                                    "Data": {
+                                        "Source": "supervisor",
+                                        "ByTeam": true
+                                    }
                                 }
-                            },
-                            {
-                                "Name": "Channels",
-                                "Description": "",
-                                "Type": "tw-su-channels",
-                                "Config": {
-                                    "Static": false,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "Icon": "",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 0,
-                                        "Y": 2
+                            ],
+                            "Agent": [
+                                {
+                                    "Name": "All Interactions",
+                                    "Description": "",
+                                    "Type": "tw-ad-total-interactions",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "dvr",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
                                     },
-                                    "Actions": [
-                                        "maximize",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
+                                    "Data": {}
                                 },
-                                "Data": {}
-                            },
-                            {
-                                "Name": "Status",
-                                "Description": "",
-                                "Type": "tw-su-status",
-                                "Config": {
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "Icon": "",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 0,
-                                        "Y": 2
+                                {
+                                    "Name": "AHT / Transfer / Conference ",
+                                    "Description": "",
+                                    "Type": "tw-aht-tc",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "phone",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
                                     },
-                                    "Actions": [
-                                        "maximize",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
+                                    "Data": {
+                                        "Source": "dashboard"
+                                    }
                                 },
-                                "Data": {}
-                            }
-                        ]
+                                {
+                                    "Name": "Aux Status",
+                                    "Description": "",
+                                    "Type": "tw-aux-status-chart",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "",
+                                        "Class": "duo",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
+                                    },
+                                    "Data": {}
+                                },
+                                {
+                                    "Name": "Interaction Details",
+                                    "Description": "",
+                                    "Type": "tw-ad-interaction-details",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "format_list_bulleted",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
+                                    },
+                                    "Data": {}
+                                },
+                                {
+                                    "Name": "Performance",
+                                    "Description": "",
+                                    "Type": "tw-ad-performance",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "pie_chart",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
+                                    },
+                                    "Data": {
+                                        "AgentProgressUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetProgress"
+                                    }
+                                },
+                                {
+                                    "Name": "Gamification",
+                                    "Description": "",
+                                    "Type": "tw-ad-gamification",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "extension",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
+                                    },
+                                    "Data": {
+                                        "LeaderBoardUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetLeaderBoard"
+                                    }
+                                },
+                                {
+                                    "Name": "Call-backs",
+                                    "Description": "phone_callback",
+                                    "Type": "tw-ad-callbacks",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
+                                    },
+                                    "Data": {}
+                                },
+                                {
+                                    "Name": "Feedback",
+                                    "Description": "",
+                                    "Type": "tw-ad-feedback",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "feedback",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
+                                    },
+                                    "Data": {
+                                        "Source": "dashboard"
+                                    }
+                                },
+                                {
+                                    "Name": "Score",
+                                    "Description": "",
+                                    "Type": "tw-ad-score",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "score",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
+                                    },
+                                    "Data": {}
+                                }
+                            ]
+                        }
                     }
                 },
                 {
@@ -716,299 +1034,374 @@
                     },
                     "Data": {
                         "Path": "/voice",
-                        "Widgets": [
-                            {
-                                "Name": "Voice-Panel",
-                                "Description": "",
-                                "Type": "tw-voice-panel",
-                                "Config": {
-                                    "Static": true,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "Icon": "",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 3,
-                                        "Y": 2
+                        "Widgets": {
+                            "Static": [
+                                {
+                                    "Name": "Voice-Panel",
+                                    "Description": "",
+                                    "Type": "tw-voice-panel",
+                                    "Config": {
+                                        "Static": true,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 3,
+                                            "Y": 2
+                                        },
+                                        "Actions": [],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": false,
+                                        "Disabled": false
                                     },
-                                    "Actions": [],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": false,
-                                    "Disabled": false
-                                },
-                                "Data": {
-                                    "Widgets": [
-                                        {
-                                            "Name": "Voice Call",
-                                            "Description": "",
-                                            "Type": "tw-voice-controls",
-                                            "Config": {
-                                                "Static": false,
-                                                "Anchor": true,
-                                                "AOT": false,
-                                                "Icon": "phone",
-                                                "Class": "",
-                                                "Position": {
-                                                    "X": 1,
-                                                    "Y": 2
+                                    "Data": {
+                                        "Widgets": [
+                                            {
+                                                "Name": "Voice Call",
+                                                "Description": "",
+                                                "Type": "tw-voice-controls",
+                                                "Config": {
+                                                    "Static": false,
+                                                    "Anchor": true,
+                                                    "AOT": false,
+                                                    "Icon": "phone",
+                                                    "Class": "",
+                                                    "Position": {
+                                                        "X": 1,
+                                                        "Y": 2
+                                                    },
+                                                    "Actions": [
+                                                        "maximize",
+                                                        "minimize",
+                                                        "float"
+                                                    ],
+                                                    "ViewState": "restore",
+                                                    "PinState": false,
+                                                    "FloatState": false,
+                                                    "Resizable": false,
+                                                    "Header": true,
+                                                    "Disabled": false
                                                 },
-                                                "Actions": [
-                                                    "maximize",
-                                                    "minimize",
-                                                    "float"
-                                                ],
-                                                "ViewState": "restore",
-                                                "PinState": false,
-                                                "FloatState": false,
-                                                "Resizable": false,
-                                                "Header": true,
-                                                "Disabled": false
-                                            },
-                                            "Data": {
-                                                "TransferAllowed": true,
-                                                "ConferenceAllowed": true,
-                                                "IVR": {
-                                                    "MenuEnabled": true,
-                                                    "Transfer": {
-                                                        "Allowed": true,
-                                                        "Menu": [
-                                                            {
-                                                                "Text": "Accesscode+TPIN",
-                                                                "Type": "v_nv",
-                                                                "Value": "tpin",
-                                                                "Icon": "lock"
-                                                            }
-                                                        ]
+                                                "Data": {
+                                                    "TransferAllowed": true,
+                                                    "ConferenceAllowed": true,
+                                                    "IVR": {
+                                                        "MenuEnabled": true,
+                                                        "Transfer": {
+                                                            "Allowed": true,
+                                                            "Menu": [
+                                                                {
+                                                                    "Text": "Accesscode+TPIN",
+                                                                    "Type": "v_nv",
+                                                                    "Value": "tpin",
+                                                                    "Icon": "lock"
+                                                                }
+                                                            ]
+                                                        }
                                                     }
                                                 }
-                                            }
-                                        },
-                                        {
-                                            "Name": "Customer Details",
-                                            "Description": "",
-                                            "Type": "tw-customer-details",
-                                            "Config": {
-                                                "Static": false,
-                                                "Anchor": true,
-                                                "AOT": false,
-                                                "Icon": "person",
-                                                "Class": "",
-                                                "Position": {
-                                                    "X": 1,
-                                                    "Y": 2
-                                                },
-                                                "Actions": [
-                                                    "maximize",
-                                                    "minimize"
-                                                ],
-                                                "ViewState": "restore",
-                                                "PinState": false,
-                                                "FloatState": false,
-                                                "Resizable": false,
-                                                "Header": true,
-                                                "Disabled": false
                                             },
-                                            "Data": {
-                                                "CustomerInfo": [
-                                                    {
-                                                        "Title": "CallerID",
-                                                        "ValueSource": "IncomingCallEvent.PhoneNumber",
-                                                        "Unit": "",
-                                                        "DefaultValue": "NA"
+                                            {
+                                                "Name": "Customer Details",
+                                                "Description": "",
+                                                "Type": "tw-customer-details",
+                                                "Config": {
+                                                    "Static": false,
+                                                    "Anchor": true,
+                                                    "AOT": false,
+                                                    "Icon": "person",
+                                                    "Class": "",
+                                                    "Position": {
+                                                        "X": 1,
+                                                        "Y": 2
                                                     },
-                                                    {
-                                                        "Title": "Name",
-                                                        "ValueSource": "IncomingCallEvent.Name",
-                                                        "Unit": "",
-                                                        "DefaultValue": "Gary Lim"
-                                                    },
-                                                    {
-                                                        "Title": "Language",
-                                                        "ValueSource": "IncomingCallEvent.Language",
-                                                        "Unit": "",
-                                                        "DefaultValue": "English"
-                                                    },
-                                                    {
-                                                        "Title": "Email",
-                                                        "ValueSource": "IncomingCallEvent.Email",
-                                                        "Unit": "",
-                                                        "DefaultValue": "garylim@tetherfi.com"
-                                                    },
-                                                    {
-                                                        "Title": "NRIC",
-                                                        "ValueSource": "IncomingCallEvent.Email",
-                                                        "Unit": "",
-                                                        "DefaultValue": "S1234567F"
-                                                    },
-                                                    {
-                                                        "Title": "QueueTime",
-                                                        "ValueSource": "IVRDataEvent.QueueTime",
-                                                        "Unit": "",
-                                                        "DefaultValue": "00:00:00"
-                                                    },
-                                                    {
-                                                        "Title": "Intent Name",
-                                                        "ValueSource": "CallerIntentEvent.IntentName",
-                                                        "Unit": "",
-                                                        "DefaultValue": "NA"
-                                                    },
-                                                    {
-                                                        "Title": "Intent Status",
-                                                        "ValueSource": "CallerIntentEvent.IntentStatus",
-                                                        "Unit": "",
-                                                        "DefaultValue": "NA"
-                                                    }
-                                                ]
-                                            }
-                                        },
-                                        {
-                                            "Name": "Customer Journey",
-                                            "Description": "",
-                                            "Type": "tw-customer-journey",
-                                            "Config": {
-                                                "Static": false,
-                                                "Anchor": true,
-                                                "AOT": false,
-                                                "Icon": "storage",
-                                                "Class": "",
-                                                "Position": {
-                                                    "X": 1,
-                                                    "Y": 2
+                                                    "Actions": [
+                                                        "maximize",
+                                                        "minimize"
+                                                    ],
+                                                    "ViewState": "restore",
+                                                    "PinState": false,
+                                                    "FloatState": false,
+                                                    "Resizable": false,
+                                                    "Header": true,
+                                                    "Disabled": false
                                                 },
-                                                "Actions": [
-                                                    "maximize",
-                                                    "minimize"
-                                                ],
-                                                "ViewState": "restore",
-                                                "PinState": false,
-                                                "FloatState": false,
-                                                "Resizable": false,
-                                                "Header": true,
-                                                "Disabled": false
+                                                "Data": {
+                                                    "CustomerInfo": [
+                                                        {
+                                                            "Title": "CallerID",
+                                                            "ValueSource": "IncomingCallEvent.PhoneNumber",
+                                                            "Unit": "",
+                                                            "DefaultValue": "NA"
+                                                        },
+                                                        {
+                                                            "Title": "Name",
+                                                            "ValueSource": "IncomingCallEvent.Name",
+                                                            "Unit": "",
+                                                            "DefaultValue": "Gary Lim"
+                                                        },
+                                                        {
+                                                            "Title": "Language",
+                                                            "ValueSource": "IncomingCallEvent.Language",
+                                                            "Unit": "",
+                                                            "DefaultValue": "English"
+                                                        },
+                                                        {
+                                                            "Title": "Email",
+                                                            "ValueSource": "IncomingCallEvent.Email",
+                                                            "Unit": "",
+                                                            "DefaultValue": "garylim@tetherfi.com"
+                                                        },
+                                                        {
+                                                            "Title": "NRIC",
+                                                            "ValueSource": "IncomingCallEvent.Email",
+                                                            "Unit": "",
+                                                            "DefaultValue": "S1234567F"
+                                                        },
+                                                        {
+                                                            "Title": "QueueTime",
+                                                            "ValueSource": "IVRDataEvent.QueueTime",
+                                                            "Unit": "",
+                                                            "DefaultValue": "00:00:00"
+                                                        },
+                                                        {
+                                                            "Title": "Intent Name",
+                                                            "ValueSource": "CallerIntentEvent.IntentName",
+                                                            "Unit": "",
+                                                            "DefaultValue": "NA"
+                                                        },
+                                                        {
+                                                            "Title": "Intent Status",
+                                                            "ValueSource": "CallerIntentEvent.IntentStatus",
+                                                            "Unit": "",
+                                                            "DefaultValue": "NA"
+                                                        }
+                                                    ]
+                                                }
                                             },
-                                            "Data": {
-                                                "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/index.html?Key=SESSIONID:"
+                                            {
+                                                "Name": "Customer Journey",
+                                                "Description": "",
+                                                "Type": "tw-customer-journey",
+                                                "Config": {
+                                                    "Static": false,
+                                                    "Anchor": true,
+                                                    "AOT": false,
+                                                    "Icon": "storage",
+                                                    "Class": "",
+                                                    "Position": {
+                                                        "X": 1,
+                                                        "Y": 2
+                                                    },
+                                                    "Actions": [
+                                                        "maximize",
+                                                        "minimize"
+                                                    ],
+                                                    "ViewState": "restore",
+                                                    "PinState": false,
+                                                    "FloatState": false,
+                                                    "Resizable": false,
+                                                    "Header": true,
+                                                    "Disabled": false
+                                                },
+                                                "Data": {
+                                                    "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/index.html?Key=SESSIONID:"
+                                                }
                                             }
-                                        }
-                                    ]
+                                        ]
+                                    }
                                 }
-                            },
-                            {
-                                "Name": "Voice-2",
-                                "Description": "",
-                                "Type": "tw-sample",
-                                "Config": {
-                                    "Static": false,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "Icon": "",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 1,
-                                        "Y": 2
+                            ],
+                            "Dynamic": [
+                                {
+                                    "Name": "Canned Responses",
+                                    "Description": "",
+                                    "Type": "tw-canned-responses",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
                                     },
-                                    "Actions": [
-                                        "maximize",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
+                                    "Data": {}
                                 },
-                                "Data": {}
-                            },
-                            {
-                                "Name": "Voice-3",
-                                "Description": "",
-                                "Type": "tw-sample",
-                                "Config": {
-                                    "Static": false,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "Icon": "",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 1,
-                                        "Y": 2
+                                {
+                                    "Name": "Account Information",
+                                    "Description": "",
+                                    "Type": "tw-account-information",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
                                     },
-                                    "Actions": [
-                                        "maximize",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
+                                    "Data": {}
                                 },
-                                "Data": {}
-                            },
-                            {
-                                "Name": "Voice-4",
-                                "Description": "",
-                                "Type": "tw-sample",
-                                "Config": {
-                                    "Static": false,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "Icon": "",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 2,
-                                        "Y": 2
+                                {
+                                    "Name": "AMDOC-BCC",
+                                    "Description": "",
+                                    "Type": "tw-amdocs-bcc",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
                                     },
-                                    "Actions": [
-                                        "maximize",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
+                                    "Data": {}
                                 },
-                                "Data": {}
-                            },
-                            {
-                                "Name": "Voice-5",
-                                "Description": "",
-                                "Type": "tw-sample",
-                                "Config": {
-                                    "Static": false,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "Icon": "",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 2,
-                                        "Y": 2
+                                {
+                                    "Name": "Customer Sentiment",
+                                    "Description": "feedback",
+                                    "Type": "tw-customer-sentiment",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "sentiment_satisfied_alt",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
                                     },
-                                    "Actions": [
-                                        "maximize",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
+                                    "Data": {}
                                 },
-                                "Data": {}
-                            }
-                        ]
+                                {
+                                    "Name": "Work Codes",
+                                    "Description": "",
+                                    "Type": "tw-work-codes",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
+                                    },
+                                    "Data": {
+                                        "Source": "interaction",
+                                        "ByTeam": false,
+                                        "ByGroup": false
+                                    }
+                                },
+                                {
+                                    "Name": "Agent Assist",
+                                    "Description": "",
+                                    "Type": "tw-agent-assist",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "verified_user",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
+                                    },
+                                    "Data": {
+                                        "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=_intent&ucid=_ucid",
+                                        "Title": "Visual IVR",
+                                        "Icon": "assistant",
+                                        "Width": 450,
+                                        "Height": 800,
+                                        "Actions": [
+                                            "minimize",
+                                            "maximize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 },
                 {
@@ -1024,491 +1417,366 @@
                     },
                     "Data": {
                         "Path": "/textchat",
-                        "Widgets": [
-                            {
-                                "Name": "Chat-Panel",
-                                "Description": "",
-                                "Type": "tw-chat-panel",
-                                "Config": {
-                                    "Static": true,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "Icon": "",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 3,
-                                        "Y": 2
+                        "Widgets": {
+                            "Static": [
+                                {
+                                    "Name": "Chat-Panel",
+                                    "Description": "",
+                                    "Type": "tw-chat-panel",
+                                    "Config": {
+                                        "Static": true,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 3,
+                                            "Y": 2
+                                        },
+                                        "Actions": [],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": false,
+                                        "Disabled": false
                                     },
-                                    "Actions": [],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": false,
-                                    "Disabled": false
-                                },
-                                "Data": {
-                                    "Widgets": [
-                                        {
-                                            "Name": "Chat Controls",
-                                            "Description": "",
-                                            "Type": "tw-chat-controls",
-                                            "Config": {
-                                                "Static": false,
-                                                "Anchor": true,
-                                                "AOT": false,
-                                                "Icon": "chat",
-                                                "Class": "",
-                                                "Position": {
-                                                    "X": 1,
-                                                    "Y": 2
+                                    "Data": {
+                                        "Widgets": [
+                                            {
+                                                "Name": "Chat Controls",
+                                                "Description": "",
+                                                "Type": "tw-chat-controls",
+                                                "Config": {
+                                                    "Static": false,
+                                                    "Anchor": true,
+                                                    "AOT": false,
+                                                    "Icon": "chat",
+                                                    "Class": "",
+                                                    "Position": {
+                                                        "X": 1,
+                                                        "Y": 2
+                                                    },
+                                                    "Actions": [
+                                                        "maximize",
+                                                        "minimize",
+                                                        "float"
+                                                    ],
+                                                    "ViewState": "restore",
+                                                    "PinState": false,
+                                                    "FloatState": false,
+                                                    "Resizable": false,
+                                                    "Header": true,
+                                                    "Disabled": false
                                                 },
-                                                "Actions": [
-                                                    "maximize",
-                                                    "minimize",
-                                                    "float"
-                                                ],
-                                                "ViewState": "restore",
-                                                "PinState": false,
-                                                "FloatState": false,
-                                                "Resizable": false,
-                                                "Header": true,
-                                                "Disabled": false
+                                                "Data": {
+                                                    "TransferAllowed": true,
+                                                    "ConferenceAllowed": true,
+                                                    "ImmediateCallbackAllowed": false,
+                                                    "ScheduledCallbackAllowed": false,
+                                                    "AudioEscalateEnabled": true,
+                                                    "VideoEscalateEnabled": true,
+                                                    "SignatureAllowed": false,
+                                                    "EmojiAllowed": true,
+                                                    "ReplyOnChatAllowed": false,
+                                                    "CameraCaptureAllowed": false,
+                                                    "VoiceNoteAllowed": false,
+                                                    "AttachmentAllowed": true,
+                                                    "ScreenShareAllowed": false,
+                                                    "SnapshotAllowed": true,
+                                                    "ShowUserLabel": false,
+                                                    "ChatTemplate": {
+                                                        "ButtonEnabled": true,
+                                                        "Filter": "startswith",
+                                                        "FilterByTime": true,
+                                                        "UpdateThreshold": 0
+                                                    },
+                                                    "InteractionConversion": {
+                                                        "Allowed": true,
+                                                        "Channels": [
+                                                            {
+                                                                "Name": "Generic",
+                                                                "Label": "Generic"
+                                                            },
+                                                            {
+                                                                "Name": "AudioVideo",
+                                                                "Label": "Audio Video"
+                                                            }
+                                                        ],
+                                                        "On": [
+                                                            "oncall",
+                                                            "afterdisconnect"
+                                                        ]
+                                                    }
+                                                }
                                             },
-                                            "Data": {
-                                                "TransferAllowed": true,
-                                                "ConferenceAllowed": true,
-                                                "ImmediateCallbackAllowed": false,
-                                                "ScheduledCallbackAllowed": false,
-                                                "AudioEscalateEnabled": true,
-                                                "VideoEscalateEnabled": true,
-                                                "SignatureAllowed": false,
-                                                "EmojiAllowed": true,
-                                                "ReplyOnChatAllowed": false,
-                                                "CameraCaptureAllowed": false,
-                                                "VoiceNoteAllowed": false,
-                                                "AttachmentAllowed": true,
-                                                "ScreenShareAllowed": true,
-                                                "SnapshotAllowed": false,
-                                                "ShowUserLabel": false,
-                                                "ChatTemplate": {
-                                                    "ButtonEnabled": true,
-                                                    "Filter": "startswith",
-                                                    "FilterByTime": true,
-                                                    "UpdateThreshold": 0
+                                            {
+                                                "Name": "Customer Details",
+                                                "Description": "",
+                                                "Type": "tw-customer-details",
+                                                "Config": {
+                                                    "Static": false,
+                                                    "Anchor": true,
+                                                    "AOT": false,
+                                                    "Icon": "person",
+                                                    "Class": "",
+                                                    "Position": {
+                                                        "X": 1,
+                                                        "Y": 2
+                                                    },
+                                                    "Actions": [
+                                                        "maximize",
+                                                        "minimize"
+                                                    ],
+                                                    "ViewState": "restore",
+                                                    "PinState": false,
+                                                    "FloatState": false,
+                                                    "Resizable": false,
+                                                    "Header": true,
+                                                    "Disabled": false
                                                 },
-                                                "InteractionConversion": {
-                                                    "Allowed": true,
-                                                    "Channels": [
+                                                "Data": {
+                                                    "CustomerInfo": [
                                                         {
-                                                            "Name": "Generic",
-                                                            "Label": "Generic"
+                                                            "Title": "Mobile",
+                                                            "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.mobile",
+                                                            "Unit": "",
+                                                            "DefaultValue": "NA"
                                                         },
                                                         {
-                                                            "Name": "AudioVideo",
-                                                            "Label": "Audio Video"
+                                                            "Title": "DNIS",
+                                                            "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.pIntent",
+                                                            "Unit": "",
+                                                            "DefaultValue": "NA"
+                                                        },
+                                                        {
+                                                            "Title": "Queue time",
+                                                            "ValueSource": "TextChatRemoteUserConnectedEvent.QueueTime",
+                                                            "Unit": "s",
+                                                            "DefaultValue": "NA"
                                                         }
-                                                    ],
-                                                    "On": [
-                                                        "oncall",
-                                                        "afterdisconnect"
                                                     ]
                                                 }
-                                            }
-                                        },
-                                        {
-                                            "Name": "Customer Details",
-                                            "Description": "",
-                                            "Type": "tw-customer-details",
-                                            "Config": {
-                                                "Static": false,
-                                                "Anchor": true,
-                                                "AOT": false,
-                                                "Icon": "person",
-                                                "Class": "",
-                                                "Position": {
-                                                    "X": 1,
-                                                    "Y": 2
-                                                },
-                                                "Actions": [
-                                                    "maximize",
-                                                    "minimize"
-                                                ],
-                                                "ViewState": "restore",
-                                                "PinState": false,
-                                                "FloatState": false,
-                                                "Resizable": false,
-                                                "Header": true,
-                                                "Disabled": false
                                             },
-                                            "Data": {
-                                                "CustomerInfo": [
-                                                    {
-                                                        "Title": "Name",
-                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pName",
-                                                        "Unit": "",
-                                                        "DefaultValue": "NA"
+                                            {
+                                                "Name": "Customer Journey",
+                                                "Description": "",
+                                                "Type": "tw-customer-journey",
+                                                "Config": {
+                                                    "Static": false,
+                                                    "Anchor": true,
+                                                    "AOT": false,
+                                                    "Icon": "storage",
+                                                    "Class": "",
+                                                    "Position": {
+                                                        "X": 1,
+                                                        "Y": 2
                                                     },
-                                                    {
-                                                        "Title": "CIF",
-                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pCIF",
-                                                        "Unit": "",
-                                                        "DefaultValue": "NA"
-                                                    },
-                                                    {
-                                                        "Title": "Gender",
-                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pGender",
-                                                        "Unit": "",
-                                                        "DefaultValue": "NA"
-                                                    },
-                                                    {
-                                                        "Title": "Phone",
-                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pMobileNumber",
-                                                        "Unit": "",
-                                                        "DefaultValue": "NA"
-                                                    },
-                                                    {
-                                                        "Title": "Nationality",
-                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pNationality",
-                                                        "Unit": "",
-                                                        "DefaultValue": "NA"
-                                                    },
-                                                    {
-                                                        "Title": "Language",
-                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pLang",
-                                                        "Unit": "",
-                                                        "DefaultValue": "NA"
-                                                    },
-                                                    {
-                                                        "Title": "Cust ID Status",
-                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pCustIdStatus",
-                                                        "Unit": "",
-                                                        "DefaultValue": "NA"
-                                                    },
-                                                    {
-                                                        "Title": "Customer Tag",
-                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pCustomerTag",
-                                                        "Unit": "",
-                                                        "DefaultValue": "NA"
-                                                    },
-                                                    {
-                                                        "Title": "DOB",
-                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pDOB",
-                                                        "Unit": "",
-                                                        "DefaultValue": "NA"
-                                                    },
-                                                    {
-                                                        "Title": "First Login Date",
-                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pFirstLogiDate",
-                                                        "Unit": "",
-                                                        "DefaultValue": "NA"
-                                                    },
-                                                    {
-                                                        "Title": "First Login Time",
-                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pfirstLoginTime",
-                                                        "Unit": "",
-                                                        "DefaultValue": "NA"
-                                                    },
-                                                    {
-                                                        "Title": "Last Login Date",
-                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.plastLoginDate",
-                                                        "Unit": "",
-                                                        "DefaultValue": "NA"
-                                                    },
-                                                    {
-                                                        "Title": "Last Login Time",
-                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.plastLoginTime",
-                                                        "Unit": "",
-                                                        "DefaultValue": "NA"
-                                                    },
-                                                    {
-                                                        "Title": "Failed 2F Count",
-                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pFailedTwoFACount",
-                                                        "Unit": "",
-                                                        "DefaultValue": "NA"
-                                                    },
-                                                    {
-                                                        "Title": "PIB Issue Date",
-                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pPIBissueDate",
-                                                        "Unit": "",
-                                                        "DefaultValue": "NA"
-                                                    },
-                                                    {
-                                                        "Title": "Token Activated",
-                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pTokenActivated",
-                                                        "Unit": "",
-                                                        "DefaultValue": "NA"
-                                                    },
-                                                    {
-                                                        "Title": "Token Serial Number",
-                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pTokenSerialNumber",
-                                                        "Unit": "",
-                                                        "DefaultValue": "NA"
-                                                    },
-                                                    {
-                                                        "Title": "Token Status",
-                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pTokenStatus",
-                                                        "Unit": "",
-                                                        "DefaultValue": "NA"
-                                                    },
-                                                    {
-                                                        "Title": "PIB Issue Date",
-                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonDataObj.pPIBissueDate",
-                                                        "Unit": "",
-                                                        "DefaultValue": "NA"
-                                                    },
-                                                    {
-                                                        "Title": "Queue time",
-                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.QueueTime",
-                                                        "Unit": "s",
-                                                        "DefaultValue": "NA"
-                                                    }
-                                                ]
-                                            }
-                                        },
-                                        {
-                                            "Name": "Customer Journey",
-                                            "Description": "",
-                                            "Type": "tw-customer-journey",
-                                            "Config": {
-                                                "Static": false,
-                                                "Anchor": true,
-                                                "AOT": false,
-                                                "Icon": "storage",
-                                                "Class": "",
-                                                "Position": {
-                                                    "X": 1,
-                                                    "Y": 2
+                                                    "Actions": [
+                                                        "maximize",
+                                                        "minimize"
+                                                    ],
+                                                    "ViewState": "minimize",
+                                                    "PinState": false,
+                                                    "FloatState": false,
+                                                    "Resizable": false,
+                                                    "Header": true,
+                                                    "Disabled": false
                                                 },
-                                                "Actions": [
-                                                    "maximize",
-                                                    "minimize"
-                                                ],
-                                                "ViewState": "minimize",
-                                                "PinState": false,
-                                                "FloatState": false,
-                                                "Resizable": false,
-                                                "Header": true,
-                                                "Disabled": false
-                                            },
-                                            "Data": {
-                                                "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/index.html?Key=SESSIONID:"
+                                                "Data": {
+                                                    "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/index.html?Key=SESSIONID:"
+                                                }
                                             }
-                                        }
-                                    ]
+                                        ]
+                                    }
                                 }
-                            },
-                            {
-                                "Name": "Canned Responses",
-                                "Description": "",
-                                "Type": "tw-canned-responses",
-                                "Config": {
-                                    "Static": false,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "Icon": "",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 1,
-                                        "Y": 2
+                            ],
+                            "Dynamic": [
+                                {
+                                    "Name": "Canned Responses",
+                                    "Description": "",
+                                    "Type": "tw-canned-responses",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
                                     },
-                                    "Actions": [
-                                        "maximize",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
+                                    "Data": {}
                                 },
-                                "Data": {}
-                            },
-                            {
-                                "Name": "Account Information",
-                                "Description": "",
-                                "Type": "tw-account-information",
-                                "Config": {
-                                    "Static": false,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "Icon": "",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 1,
-                                        "Y": 2
+                                {
+                                    "Name": "Account Information",
+                                    "Description": "",
+                                    "Type": "tw-account-information",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
                                     },
-                                    "Actions": [
-                                        "maximize",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
+                                    "Data": {}
                                 },
-                                "Data": {}
-                            },
-                            {
-                                "Name": "AMDOC-BCC",
-                                "Description": "",
-                                "Type": "tw-amdocs-bcc",
-                                "Config": {
-                                    "Static": false,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "Icon": "",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 1,
-                                        "Y": 2
+                                {
+                                    "Name": "AMDOC-BCC",
+                                    "Description": "",
+                                    "Type": "tw-amdocs-bcc",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
                                     },
-                                    "Actions": [
-                                        "maximize",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
+                                    "Data": {}
                                 },
-                                "Data": {}
-                            },
-                            {
-                                "Name": "Feedback",
-                                "Description": "",
-                                "Type": "tw-sample",
-                                "Config": {
-                                    "Static": false,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "Icon": "",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 1,
-                                        "Y": 1
+                                {
+                                    "Name": "Customer Sentiment",
+                                    "Description": "feedback",
+                                    "Type": "tw-customer-sentiment",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "sentiment_satisfied_alt",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
                                     },
-                                    "Actions": [
-                                        "maximize",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
+                                    "Data": {}
                                 },
-                                "Data": {}
-                            },
-                            {
-                                "Name": "Score",
-                                "Description": "",
-                                "Type": "tw-sample",
-                                "Config": {
-                                    "Static": false,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "Icon": "",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 1,
-                                        "Y": 1
+                                {
+                                    "Name": "Work Codes",
+                                    "Description": "",
+                                    "Type": "tw-work-codes",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
                                     },
-                                    "Actions": [
-                                        "maximize",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
+                                    "Data": {
+                                        "Source": "interaction",
+                                        "ByTeam": false,
+                                        "ByGroup": false
+                                    }
                                 },
-                                "Data": {}
-                            },
-                            {
-                                "Name": "Work Codes",
-                                "Description": "",
-                                "Type": "tw-work-codes",
-                                "Config": {
-                                    "Static": false,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "Icon": "",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 1,
-                                        "Y": 2
+                                {
+                                    "Name": "Agent Assist",
+                                    "Description": "",
+                                    "Type": "tw-agent-assist",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "verified_user",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
                                     },
-                                    "Actions": [
-                                        "maximize",
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
-                                },
-                                "Data": {
-                                    "Source" : "interaction",
-                                    "ByTeam" : true
+                                    "Data": {
+                                        "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=_intent&ucid=_ucid",
+                                        "Title": "Visual IVR",
+                                        "Icon": "assistant",
+                                        "Width": 450,
+                                        "Height": 800,
+                                        "Actions": [
+                                            "minimize",
+                                            "maximize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore"
+                                    }
                                 }
-                            },
-                            {
-                                "Name": "Agent Assist",
-                                "Description": "",
-                                "Type": "tw-agent-assist",
-                                "Config": {
-                                    "Static": false,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "Icon": "verified_user",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 1,
-                                        "Y": 2
-                                    },
-                                    "Actions": [
-                                        "pin",
-                                        "float"
-                                    ],
-                                    "ViewState": "restore",
-                                    "PinState": false,
-                                    "FloatState": false,
-                                    "Resizable": false,
-                                    "Header": true,
-                                    "Disabled": false
-                                },
-                                "Data": {
-                                    "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr/chat?intent=",
-                                    "Title": "Visual IVR",
-                                    "Icon": "assistant",
-                                    "Width": 450,
-                                    "Height": 700,
-                                    "Actions": [
-                                        "minimize",
-                                        "maximize",
-                                        "destroy"
-                                    ],
-                                    "ViewState": "restore"
-                                }
-                            }
-                        ]
+                            ]
+                        }
                     }
                 },
                 {
@@ -1599,11 +1867,49 @@
             "Urls": {
                 "DashboardServerUrls": [
                     "https://dice.tetherfi.cloud:443/SignalRDashboardSup"
-                ]
+                ],
+                "FileServerUrl": {
+                    "SMM": "",
+                    "MediaProxy": "https://dice.tetherfi.cloud/ApiFileUploadDownLoad/"
+                }
             }
         },
         "AOT": {
-            "Widgets": []
+            "Widgets": [
+                {
+                    "Name": "TRS",
+                    "Description": "",
+                    "Type": "tw-custom",
+                    "Config": {
+                        "Static": false,
+                        "Anchor": true,
+                        "AOT": true,
+                        "Icon": "dvr",
+                        "Class": "",
+                        "Position": {
+                            "X": 0,
+                            "Y": 0,
+                            "W": 325,
+                            "H": 740
+                        },
+                        "Actions": [
+                            "minimize",
+                            "destroy"
+                        ],
+                        "ViewState": "restore",
+                        "PinState": false,
+                        "FloatState": false,
+                        "Resizable": false,
+                        "Header": true,
+                        "Disabled": false
+                    },
+                    "Data": {
+                        "AutoOpen": false,
+                        "Url": "https://tmac.tetherfilabs.com/tcie-web-appv8/?id=7224",
+                        "QueryParams": []
+                    }
+                }
+            ]
         }
     },
     "AppConfigs": {
@@ -1694,7 +2000,8 @@
                 "Urls": [
                     "https://dice.tetherfi.cloud/TMACHttpProxy/TmacProxy.asmx"
                 ],
-                "Type": "soap"
+                "Type": "soap",
+                "Timeout": 30
             },
             "SignalRProxy": {
                 "Logging": false,

@@ -65,8 +65,6 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        console.log({ interfaces });
-
         // -----------------------------------------------------------
         // @ [OPTIONAL] to get the fuse config
         // -----------------------------------------------------------
@@ -116,7 +114,7 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
                 this.gamificationReqStatus = { msg: 'Something went wrong', error: true, loading: false };
             }
         );
-    };
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods

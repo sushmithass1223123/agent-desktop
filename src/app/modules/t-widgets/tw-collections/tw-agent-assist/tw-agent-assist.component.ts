@@ -18,22 +18,11 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
     // holds all the data related to this widget from the config
     @Input() data: IWidget;
 
-    widgetData: any;
+    ucid: string;
 
-    eventData = {
-        SubEventName: 'OnNLPDataEvent',
-        JsonData:
-            '{"eventName":"OnNLPDataEvent","speechResult":"","nluResult":"{\\"intent\\":{\\"name\\":\\"Complaint\\",\\"confidence\\":0.3467572524},\\"entities\\":[],\\"intent_ranking\\":[{\\"name\\":\\"Complaint\\",\\"confidence\\":0.3467572524},{\\"name\\":\\"Clarification\\",\\"confidence\\":0.3072097413},{\\"name\\":\\"mood_unhappy\\",\\"confidence\\":0.0942083595},{\\"name\\":\\"New_Connection\\",\\"confidence\\":0.0808563845},{\\"name\\":\\"goodbye\\",\\"confidence\\":0.0785963859},{\\"name\\":\\"mood_great\\",\\"confidence\\":0.0378756104},{\\"name\\":\\"affirm\\",\\"confidence\\":0.0241965965},{\\"name\\":\\"deny\\",\\"confidence\\":0.0213421076},{\\"name\\":\\"dice\\",\\"confidence\\":0.008957562}],\\"text\\":\\"hey i have a prolem with my internet and it is keep on disconncting. How many time i should approach you guys to check this issue ?\\"}","sentimentResult":"Negative","resonseType":0,"errorMessage":null,"ucid":"Livechat200827180940_1348","agentID":"1014"}',
-        EventName: 'GenericTMACEvent',
-        InteractionID: 0,
-        IsInteractionConstructEvent: false,
-        IsInteractionDisposeEvent: false,
-        CreatedTime: '0001-01-01T00:00:00',
-        EventId: null,
-        RecoveryEvent: false,
-        QueuedEvent: false,
-        ACK: null
-    };
+    interactionId: number;
+
+    widgetData: any;
 
     nlpCurrentData: any = null;
 
@@ -87,8 +76,15 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
             this.appConfig = config;
         });
 
+
+        // set the interaction id from data
+        this.interactionId = this.data.InteractionDetails.InteractionID;
+
         // assign the widget data
         this.widgetData = this.data.Data || new Object();
+
+        // assign the UCID
+        this.ucid = this.data?.InteractionDetails.UCID || '';
 
         // register to the event
         SDKClient.events.on('OnNLPDataEvent', this.OnNLPDataEvent);
@@ -109,21 +105,31 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
 
-    private OnNLPDataEvent = (evt: GenericEvent): void => {
+    private OnNLPDataEvent = (evt?: GenericEvent): void => {
         const receivedData = evt;
         if (receivedData) {
             const parsedJson = JSON.parse(receivedData.JsonData);
+
+            // check for the interaction
+            if (this.interactionId !== parsedJson.interactionID) {
+                return;
+            }
+
+            if (parsedJson.messageSource === 'agent') {
+                return;
+            }
+
             const parsedNlu = JSON.parse(parsedJson.nluResult);
             this.nlpCurrentData = { ...receivedData, JsonData: { ...parsedJson, nluResult: parsedNlu } };
         }
-    };
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
 
-    public openAssitWidget(intent: any): void {
-        const url = this.widgetData.AssistWidgetUrl;
+    public openAssitWidget(intentItem: any): void {
+        let url = this.widgetData.AssistWidgetUrl;
 
         // check if url is provided
         if (!url) {
@@ -132,10 +138,21 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         }
 
         // get the intent name
-        const intentName = intent.name;
+        const intent = intentItem.name;
+        const ucid = this.ucid;
+
+        const mapObj = {
+            '_intent': intent,
+            '_ucid': ucid
+        };
+
+        const reg = new RegExp(Object.keys(mapObj).join('|'), 'gi');
+        url = url.replace(reg, (matched: any) => {
+            return mapObj[matched];
+        });
 
         // get assist widget config
-        const title = `${this.widgetData.Title || 'Custom'} - ${intentName}`;
+        const title = `${(this.widgetData.Title || 'Custom')} - ${intent}`;
         const icon = this.widgetData.Icon || '';
         const width = this.widgetData.Width || 500;
         const height = this.widgetData.Height || 500;
@@ -149,7 +166,7 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         widget.Config.Position.H = height;
         widget.Config.Actions = actions;
         widget.Config.ViewState = viewState;
-        widget.Data.Url = url + intentName;
+        widget.Data.Url = url;
 
         // add to AOT widget service
         this._aotWidgetService.addWidget(widget);

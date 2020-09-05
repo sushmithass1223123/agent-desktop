@@ -1,6 +1,16 @@
+@import 'src/@fuse/scss/fuse';
+
 tw-agent-details {
     .agent-details {
-        width: 100px;
+        width: 130px;
+
+        @include media-breakpoint('xs') {
+            width: 80px;
+        }
+
+        @include media-breakpoint('sm') {
+            width: 100px;
+        }
 
         .agent-status,
         .username {
@@ -27,5 +37,15 @@ tw-agent-details {
 
     .user-button {
         padding: 0 8px;
+    }
+}
+
+.agent-info-menu {
+    &.mat-menu-panel {
+        .mat-menu-item {
+            .mat-icon {
+                margin-right: 8px;
+            }
+        }
     }
 }

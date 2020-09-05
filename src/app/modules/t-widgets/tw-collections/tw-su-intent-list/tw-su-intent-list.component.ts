@@ -1,13 +1,13 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AppDataService } from '@services/app-data.service';
 import { FuseConfigService } from '@fuse/services/config.service';
+import { AppDataService } from '@services/app-data.service';
+import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
+import { CHART_COLORS } from 'app/constants';
+import { TwChartConfig } from 'app/interfaces';
+import { ChartDataSets } from 'chart.js';
 import { takeUntil } from 'rxjs/operators';
 import { SDKClient, TeamIntentDataList } from 'tmac-sdk';
-import { TwChartConfig } from 'app/interfaces';
-import { CHART_COLORS } from 'app/constants';
-import { ChartDataSets } from 'chart.js';
-import { sortBy } from 'lodash';
+import * as _ from 'lodash';
 
 @Component({
     selector: 'tw-su-intent-list',
@@ -88,14 +88,28 @@ export class TwSuIntentListComponent extends TWidgetWrapper implements OnInit, O
             this.appConfig = config;
         });
 
-        SDKClient.events.on('SupervisorIntentListEvent', this.SupervisorIntentListEvent);
+        SDKClient.events.on('TeamIntentListEvent', this.TeamIntentListEvent);
     }
 
-    SupervisorIntentListEvent = (supervisorIntentListEventRes: TeamIntentDataList) => {
+    /**
+     * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
+     */
+    ngOnDestroy(): void {
+        // call the wrapper destroy method
+        this.destroyWrapper();
+        SDKClient.events.off('TeamIntentListEvent', this.TeamIntentListEvent);
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+    // @  Private Methods
+    // -----------------------------------------------------------------------------------------------------
+
+    private TeamIntentListEvent = (intentList: TeamIntentDataList) => {
         const datasets = { Count: [] };
         const labels = [];
-        const res = sortBy(supervisorIntentListEventRes.Intents, 'Counts');
-        res.forEach((c) => {
+        let intents = intentList?.Intents || [];
+        intents = _.orderBy(intents, ['Count'], ['desc']);
+        intents.forEach((c) => {
             datasets.Count.push(c.Count);
             labels.push(c.Intent || 'Unknown');
         });
@@ -108,24 +122,10 @@ export class TwSuIntentListComponent extends TWidgetWrapper implements OnInit, O
             this.intentChart.datasets = this.allDatasets.datasets;
             this.intentChart.labels = this.allDatasets.labels;
         } else {
-            this.intentChart.datasets = this.allDatasets.datasets.map((x) => ({ ...x, data: x.data.slice(0, 3) }));
-            this.intentChart.labels = this.allDatasets.labels.slice(0, 3);
+            this.intentChart.datasets = this.allDatasets.datasets.map((x) => ({ ...x, data: x.data.slice(0, 5) }));
+            this.intentChart.labels = this.allDatasets.labels.slice(0, 5);
         }
-    };
-
-    /**
-     * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
-     */
-    ngOnDestroy(): void {
-        // call the wrapper destroy method
-        this.destroyWrapper();
-        SDKClient.events.off('SupervisorIntentListEvent', this.SupervisorIntentListEvent);
     }
-
-    // -----------------------------------------------------------------------------------------------------
-    // @  Private Methods
-    // -----------------------------------------------------------------------------------------------------
-
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------

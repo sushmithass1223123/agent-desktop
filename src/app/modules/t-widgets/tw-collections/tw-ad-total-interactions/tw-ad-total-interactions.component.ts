@@ -4,9 +4,9 @@ import { FuseConfig } from '@fuse/types';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CHART_COLORS } from 'app/constants';
-import { AgentChannelDetailsEventRes, TwChartConfig } from 'app/interfaces';
+import { TwChartConfig } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient } from 'tmac-sdk';
+import { AgentChannelDataList, SDKClient } from 'tmac-sdk';
 
 const multiColors: any = {
     backgroundColor: CHART_COLORS.map((c) => c.backgroundColor),
@@ -93,28 +93,33 @@ export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements On
         });
 
         if (SDKClient.getAgentData().agentProfile === 'S') {
-            SDKClient.events.on('SupervisorTeamChannelListEvent', this.SupervisorTeamChannelListEvent);
+            SDKClient.events.on('TeamChannelListEvent', this.TeamChannelListEvent);
+        } else {
+            SDKClient.events.on('AgentChannelDetailsEvent', this.AgentChannelDetailsEvent);
         }
-        SDKClient.events.on('AgentChannelDetailsEvent', this.AgentChannelDetailsEvent);
     }
 
     /**
      * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
      */
     ngOnDestroy(): void {
-        SDKClient.events.off('AgentChannelDetailsEvent', this.AgentChannelDetailsEvent);
-        SDKClient.events.off('SupervisorTeamChannelListEvent', this.SupervisorTeamChannelListEvent);
         // call the wrapper destroy method
         this.destroyWrapper();
+
+        if (SDKClient.getAgentData().agentProfile === 'S') {
+            SDKClient.events.off('TeamChannelListEvent', this.TeamChannelListEvent);
+        } else {
+            SDKClient.events.off('AgentChannelDetailsEvent', this.AgentChannelDetailsEvent);
+        }
     }
 
-    AgentChannelDetailsEvent = (interactionsData: AgentChannelDetailsEventRes): void => {
-        if (this.dataConfig.AgentId && this.dataConfig.AgentId !== interactionsData.AgentId) {
+    AgentChannelDetailsEvent = (channelData: AgentChannelDataList): void => {
+        if (this.dataConfig.AgentId && this.dataConfig.AgentId !== channelData.AgentId) {
             return;
         }
         const datasets = { Total: [], AHT: [] };
         const labels = [];
-        interactionsData.Channels.forEach((c) => {
+        channelData.Channels.forEach((c) => {
             datasets.Total.push(c.Total);
             datasets.AHT.push(c.AverageActiveTime + c.AverageHoldTime);
             labels.push(c.Channel);
@@ -124,9 +129,9 @@ export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements On
             label: d
         }));
         this.allInteractionsChart.labels = labels;
-    };
+    }
 
-    SupervisorTeamChannelListEvent = (evt: AgentChannelDetailsEventRes) => {
+    TeamChannelListEvent = (evt: AgentChannelDataList) => {
         const datasets = { Duration: [] };
         const labels = [];
         evt.Channels.forEach((c) => {
@@ -138,7 +143,7 @@ export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements On
             label: d
         }));
         this.allInteractionsChart.labels = labels;
-    };
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @  Private Methods

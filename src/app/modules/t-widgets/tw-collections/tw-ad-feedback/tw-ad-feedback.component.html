@@ -63,9 +63,10 @@
                 <mat-row *matRowDef="let row; columns: feedbackDetailsTable.columns" [@animate]="{ value: '*', params: { y: '100%' } }"></mat-row>
             </mat-table>
 
-            <p *ngIf="feedbackDetailsTable.source.data.length === 0" class="text-center m-0 font-size-16">No data available</p>
+            <p *ngIf="feedbackDetailsTable.source.data.length === 0" class="text-center m-0 font-size-16">No Data Available</p>
         </div>
-        <mat-paginator *ngIf="maximized" [pageSizeOptions]="maximized ? [30, 40, 50] : [3, 6, 12]" showFirstLastButtons> </mat-paginator>
+        <mat-paginator *ngIf="wrapper.maximized" [pageSizeOptions]="wrapper.maximized ? [30, 40, 50] : [3, 6, 12]" showFirstLastButtons>
+        </mat-paginator>
     </div>
 
     <!-- your code goes here -->
