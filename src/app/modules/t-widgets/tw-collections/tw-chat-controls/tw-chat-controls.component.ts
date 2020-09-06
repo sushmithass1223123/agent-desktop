@@ -454,6 +454,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // focus and scroll
         this.readyToReply();
 
+        // freeze auto response if needed
+        this.freezeAutoResponse();
+
         // TODO:: show chrome notification if needed
         //        hide freeze auto response button
 
@@ -619,6 +622,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // set ready to reply   
         this.readyToReply();
+
+        // show auto freeze
+        this.showAutoFreeze = true;
     }
 
     private createAVConnection(param: string): AVChannel {

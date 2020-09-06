@@ -135,19 +135,17 @@
                 </div>
 
                 <div fxLayout class="tw-accordion-menu">
-                    <div fxFlex="50" fxLayout="row wrap" fxLayoutAlign=" start" class="channel-list border-right-primary px-8">
-                        <div mat-card-avatar mat-ripple>
-                            <mat-icon> supervised_user_circle </mat-icon>
-                        </div>
-                        <div mat-card-avatar mat-ripple>
-                            <mat-icon>comment</mat-icon>
-                        </div>
-                        <div mat-card-avatar mat-ripple>
-                            <mat-icon>message</mat-icon>
-                        </div>
-                        <div mat-card-avatar mat-ripple>
-                            <mat-icon>camera_alt</mat-icon>
-                        </div>
+                    <div fxFlex="50" fxLayout="row wrap" fxLayoutAlign=" start" class="feature-actions border-right-primary px-8">
+                        <ng-container *ngFor="let feature of item.AgentFeatures">
+                            <button
+                                mat-icon-button
+                                *ngIf="featureCheck(feature, 'agent', '')"
+                                (click)="performAgentAction(item, feature)"
+                                [matTooltip]="featureMap[feature.Feature].Label"
+                            >
+                                <mat-icon>{{ featureMap[feature.Feature].Icon }}</mat-icon>
+                            </button>
+                        </ng-container>
                     </div>
                     <div fxFlex="50" fxLayout="row wrap" fxLayoutAlign=" start" class="channel-list px-8">
                         <div
@@ -197,3 +195,5 @@
     </div>
     <!-- your code goes here -->
 </tw-wrapper>
+
+<tw-su-agent-activity-details *ngIf="activityWidget" [data]="activityWidget" (destroyEvent)="activityWidget = null"></tw-su-agent-activity-details>

@@ -52,6 +52,7 @@ tw-su-active-agents {
                     transition: opacity 0.3s;
                     opacity: 1;
                     .mat-card-avatar {
+                        cursor: default;
                         display: flex;
                         justify-content: center;
                         align-items: center;
@@ -67,8 +68,19 @@ tw-su-active-agents {
                     }
                 }
 
+                .feature-actions {
+                    button {
+                        margin: 0px 8px 8px 0px;
+                        background-color: rgba(0, 0, 0, 10%);
+                        width: 36px;
+                        height: 36px;
+                        line-height: 36px;
+                    }
+                }
+
                 .indicators {
                     .mat-icon {
+                        cursor: default;
                         margin-left: 4px;
                     }
                 }

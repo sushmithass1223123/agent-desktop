@@ -9,16 +9,17 @@
             : '') +
         ' ' +
         (widgetState.floating ? 'floating' : '') +
+        ' ' +
         (widgetState.aot ? 'aot' : '')
     "
 >
     <!-- We add a material icon from config of default a widget icon -->
     <div mat-card-avatar>
-        <mat-icon>{{ data.Config.Icon ? data.Config.Icon : 'widgets' }}</mat-icon>
+        <mat-icon>{{ data.Config.Icon || 'widgets' }}</mat-icon>
     </div>
 
     <!-- Add titile if provided in config or add widget by default -->
-    <mat-card-title>{{ data.Name ? data.Name : 'Widget' }}</mat-card-title>
+    <mat-card-title>{{ data.Name || 'Widget' }}</mat-card-title>
 
     <span class="spacer"></span>
 
@@ -43,7 +44,7 @@
     </button>
 
     <button
-        *ngIf="widgetState.floating || widgetState.maximized"
+        *ngIf="(widgetState.floating || widgetState.maximized) && !data.Config.Class.includes('no-restore')"
         mat-icon-button
         matTooltip="Restore"
         (click)="widgetState.floating ? floatWidget() : maximizeWidget()"

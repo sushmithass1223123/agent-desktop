@@ -19,7 +19,7 @@
             <ng-container matColumnDef="Channel">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Channel</mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <mat-icon class="channel-icon color-primary">
+                    <mat-icon class="channel-icon text-primary">
                         {{
                             element.Channel === 'Voice'
                                 ? 'phone'
@@ -93,7 +93,7 @@
             <mat-row *matRowDef="let row; columns: interactionDetailsTable.columns"></mat-row>
         </mat-table>
 
-        <p *ngIf="interactionDetailsTable.source.data.length === 0" class="text-center m-0 font-size-16">No Data Available</p>
+        <p *ngIf="interactionDetailsTable.source.data.length === 0" class="text-center m-0 mat-title">No Data Available</p>
     </div>
     <mat-paginator *ngIf="maximized" [pageSizeOptions]="maximized ? [30, 40, 50] : [3, 6, 12]" showFirstLastButtons> </mat-paginator>
 </tw-wrapper>

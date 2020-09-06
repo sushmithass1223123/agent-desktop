@@ -59,6 +59,15 @@
                                 "Data": {}
                             },
                             {
+                                "Name": "Logout Button",
+                                "Description": "",
+                                "Type": "tw-logout",
+                                "Config": {},
+                                "Data": {
+                                    "LogoutAux": "logout"
+                                }
+                            },
+                            {
                                 "Name": "Agent IM",
                                 "Description": "",
                                 "Type": "tw-instant-messaging",
@@ -1393,7 +1402,7 @@
                                     "Data": {
                                         "Source": "interaction",
                                         "ByTeam": false,
-                                        "ByGroup": false
+                                        "ByGroup": true
                                     }
                                 },
                                 {
@@ -1804,7 +1813,7 @@
                                     "Data": {
                                         "Source": "interaction",
                                         "ByTeam": false,
-                                        "ByGroup": false
+                                        "ByGroup": true
                                     }
                                 },
                                 {

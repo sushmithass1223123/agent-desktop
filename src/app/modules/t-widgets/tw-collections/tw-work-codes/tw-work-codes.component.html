@@ -38,8 +38,8 @@
                 <mat-chip
                     *ngFor="let workCode of selectedWorkCodes"
                     [ngClass]="{
-                        'bg-secondary': workCode.Count < 10,
-                        'bg-primary': workCode.Count >= 10,
+                        'bg-info': workCode.Count < 10,
+                        'bg-secondary': workCode.Count >= 10,
                         'bg-success': workCode.Count >= 30,
                         'bg-warning': workCode.Count >= 50,
                         'bg-danger': workCode.Count >= 70
@@ -50,7 +50,7 @@
                 </mat-chip>
             </mat-chip-list>
             <div *ngIf="selectedWorkCodes.length === 0" class="w-100-p h-100-p" fxLayout fxLayoutAlign="center center">
-                <p>No Data Available</p>
+                <p class="mat-title">No Data Available</p>
             </div>
         </div>
     </div>

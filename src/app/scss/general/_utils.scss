@@ -17,8 +17,8 @@
     &-secondary {
         background-color: $tw-secondary !important;
     }
-    &-tertiary {
-        background-color: $tw-tertiary !important;
+    &-info {
+        background-color: $tw-info !important;
     }
     &-danger {
         background-color: $tw-danger !important;
@@ -58,8 +58,8 @@
         &-secondary {
             border#{$exactPos}: #{$width}px solid $tw-secondary !important;
         }
-        &-tertiary {
-            border#{$exactPos}: #{$width}px solid $tw-tertiary !important;
+        &-info {
+            border#{$exactPos}: #{$width}px solid $tw-info !important;
         }
         &-danger {
             border#{$exactPos}: #{$width}px solid $tw-danger !important;
@@ -165,8 +165,8 @@
     &-secondary {
         color: $tw-secondary !important;
     }
-    &-tertiary {
-        color: $tw-tertiary !important;
+    &-info {
+        color: $tw-info !important;
     }
     &-danger {
         color: $tw-danger !important;
@@ -227,8 +227,8 @@
     &-secondary {
         color: $tw-secondary !important;
     }
-    &-tertiary {
-        color: $tw-tertiary !important;
+    &-info {
+        color: $tw-info !important;
     }
     &-danger {
         color: $tw-danger !important;

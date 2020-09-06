@@ -1,11 +1,13 @@
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewEncapsulation } from '@angular/core';
+import { fuseAnimations } from '@fuse/animations';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { takeUntil } from 'rxjs/operators';
-import { fuseAnimations } from '@fuse/animations';
-import { SDKClient, IAgentData, SuAgentModel, SuAgentDataModel } from 'tmac-sdk';
 import * as _ from 'lodash';
+import { takeUntil } from 'rxjs/operators';
+import { AgentFeatures, IAgentData, SDKClient, SuAgentDataModel, SuAgentModel, IResponse, TUtils } from 'tmac-sdk';
+import { TwWidgetModel } from 'app/models';
+import { IWidget } from 'app/interfaces';
 
 @Component({
     selector: 'tw-su-active-agents',
@@ -23,10 +25,93 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     appConfig: any;
 
     user: IAgentData;
-    agentList: any[];
-    filteredAgents: any[];
+    agentList: SuAgentModel[];
+    filteredAgents: SuAgentModel[];
     searchTerm: string;
     selectedAgent = null;
+
+    featureMap = {
+        AllowSupervisorToBargeIn: {
+            Type: 'interaction',
+            SubType: 'voice',
+            Icon: 'call_merge',
+            Label: 'Barge-In'
+        },
+        AllowSupervisorToCapturePicture: {
+            Type: 'agent',
+            SubType: '',
+            Icon: 'fact_check',
+            Label: 'View Activity'
+        },
+        AllowSupervisorToChangeStatus: {
+            Type: 'agent',
+            SubType: '',
+            Icon: 'track_changes',
+            Label: 'Change Status'
+        },
+        AllowSupervisorToChatConference: {
+            Type: 'interaction',
+            SubType: 'textchat',
+            Icon: 'forum',
+            Label: 'Conference'
+        },
+        AllowSupervisorToChatSilentMonitor: {
+            Type: 'interaction',
+            SubType: 'textchat',
+            Icon: 'speaker_notes',
+            Label: 'Silent Monitor'
+        },
+        AllowSupervisorToChatWhisper: {
+            Type: 'interaction',
+            SubType: 'textchat',
+            Icon: 'quickreply',
+            Label: 'Whisper'
+        },
+        AllowSupervisorToFaxTransferAgent: {
+            Type: 'interaction',
+            SubType: 'fax',
+            Icon: 'forward',
+            Label: 'Transfer Fax'
+        },
+        AllowSupervisorToFaxTransferSelf: {
+            Type: 'interaction',
+            SubType: 'fax',
+            Icon: 'play_for_work',
+            Label: 'Self Transfer'
+        },
+        AllowSupervisorToInteractionNotification: {
+            Type: 'interaction',
+            SubType: 'all',
+            Icon: 'notification_important',
+            Label: 'Interaction Notification'
+        },
+        AllowSupervisorToLogout: {
+            Type: 'agent',
+            SubType: '',
+            Icon: 'power_settings_new',
+            Label: 'Logout'
+        },
+        AllowSupervisorToSendNotification: {
+            Type: 'agent',
+            SubType: '',
+            Icon: 'notifications',
+            Label: 'Send Notification'
+        },
+        AllowSupervisorToSilentMonitor: {
+            Type: 'interaction',
+            SubType: 'voice',
+            Icon: 'contactless',
+            Label: 'Silent Monitor'
+        },
+        AllowSupervisorToViewEmailDetails: {
+            Type: 'interaction',
+            SubType: '',
+            Icon: 'email',
+            Label: 'View Details'
+        }
+    };
+
+    activityWidget: IWidget;
 
     /**
      * Constructor
@@ -85,6 +170,8 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     // -----------------------------------------------------------------------------------------------------
 
     private SupervisorAgentListEvent = (agentList: SuAgentModel[]) => {
+        console.log('agentList', agentList);
+
         // filter for excpet me
         this.agentList = this.filteredAgents = agentList || [];
         // check any search term is there, then filter
@@ -116,6 +203,20 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         }
     }
 
+    private createActivityWidget(item: any): void {
+        // create activity details widget
+        const widget = new TwWidgetModel(item.dateTime, 'tw-su-agent-activity-details', 'local_activity');
+        widget.Config.Actions = ['minimize', 'destroy'];
+        widget.Config.ViewState = 'maximize';
+        widget.Config.Position.X = 3;
+        widget.Config.Position.Y = 4;
+        widget.Config.Class = 'cover no-restore';
+        widget.Data.ActivityDetails = item;
+
+        // push the widget to list
+        this.activityWidget = widget;
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
@@ -139,6 +240,79 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             this.selectedAgent = agent;
         }
         this.selectActiveAgent.emit(this.selectedAgent);
+    }
+
+    public featureCheck(feature: AgentFeatures, type: string, subType: string): boolean {
+        // if not allow supervisor or in map the item is not found return false
+        if (!feature.Feature.startsWith('AllowSupervisor') || !this.featureMap[feature.Feature]) {
+            return false;
+        }
+
+        // check for the type and subtype
+        if (this.featureMap[feature.Feature].Type !== type || this.featureMap[feature.Feature].SubType !== subType) {
+            return false;
+        }
+
+        // check if agent action
+        if (type === 'agent') {
+            return feature.IsEnabled;
+        }
+        // check if interaction action
+        else if (type === 'interaction' && this.featureMap[feature.Feature].Type === type && this.featureMap[feature.Feature].SubType === subType) {
+            return feature.IsEnabled;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public performAgentAction(agent: SuAgentModel, feature: AgentFeatures): void {
+        console.log('performAgentAction', { agent, feature });
+
+        switch (feature.Feature) {
+            case 'AllowSupervisorToCapturePicture':
+                SDKClient.getAgentActivity({
+                    agentId: agent.AgentLoginID,
+                    consent: false,
+                    location: true,
+                    screenshot: true,
+                    screenvideo: true,
+                    snapshot: true,
+                    source: 'supervisor',
+                    sourceId: SDKClient.getAgentData().agentId
+                })
+                    .then((dt: IResponse) => {
+                        console.log('AgentSnapShotEvent Response: ', dt.response);
+                    })
+                    .catch((error: string) => {
+                        // log the error to server for troubleshooting purpose
+                        TUtils.Logger.log('Exception in performAgentAction.AgentSnapShotEvent', error);
+                    });
+
+                // this.createActivityWidget({
+                //     dateTime: '10/10/10 10:10:10',
+                //     profilePicUrl: 'https://image.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg',
+                //     details: [
+                //         {
+                //             Title: 'Agent Name',
+                //             Value: 'chirag'
+                //         },
+                //         {
+                //             Title: 'Agent ID',
+                //             Value: '55001'
+                //         }
+                //     ],
+                //     snapshotUrl: 'https://image.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg',
+                //     location: {
+                //         x: 12.914142,
+                //         y: 74.855957
+                //     },
+                //     screenshotUrl: 'https://image.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg',
+                //     screenRecordUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
+                // });
+                break;
+            default:
+        }
     }
 }
 

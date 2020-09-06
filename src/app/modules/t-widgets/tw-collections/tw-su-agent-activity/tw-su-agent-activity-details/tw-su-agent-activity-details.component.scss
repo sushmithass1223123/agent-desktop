@@ -1,4 +1,16 @@
+@import 'src/@fuse/scss/fuse';
+
 tw-su-agent-activity-details {
+    > tw-wrapper {
+        position: absolute;
+        top: 0;
+        right: 0;
+
+        @include media-breakpoint('gt-md') {
+            width: 66.66%;
+        }
+    }
+
     margin-bottom: 8px;
     tw-panel {
         min-height: 250px;

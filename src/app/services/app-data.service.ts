@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
+import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
+import { AppNotification } from 'app/interfaces';
 import * as _ from 'lodash';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { MatSnackBar, MatSnackBarVerticalPosition, MatSnackBarHorizontalPosition } from '@angular/material/snack-bar';
-import { AppNotification } from 'app/interfaces';
 import { TUtils } from 'tmac-sdk';
 
 @Injectable({

@@ -1,8 +1,8 @@
 <div fxFlex fxFill fxLayout="row" fxLayoutAlign="start center" *ngIf="agentData.agentName">
-    <button mat-button class="user-button" [matMenuTriggerFor]="userMenu">
+    <button mat-button class="user-button" [matMenuTriggerFor]="userMenu" fxLayout="column" fxLayoutAlign="center center">
         <div fxLayout="row" fxLayoutAlign="center center" class="position-relative">
             <img
-                class="avatar mr-0 mr-16"
+                class="avatar mr-0"
                 [style.backgroundImage]="'url(' + (agentData.profilePicture ? agentData.profilePicture : 'assets/images/avatars/profile.jpg') + ')'"
                 *ngIf="data.Data.ProfilePicture"
                 [ngClass]="
@@ -23,12 +23,13 @@
                         : 'bg-alt-warning'
                 "
             ></span>
-            <div fxLayout="column" fxLayoutAlign="center start" class="agent-details">
-                <span class="username mr-12 line-height-24">{{ agentData.agentName }}</span>
-                <span class="font-size-14 mat-caption agent-status" *ngIf="data.Data.Status">{{ agentData.agentStatus }}</span>
-            </div>
         </div>
     </button>
+
+    <div fxLayout="column" fxLayoutAlign="center start" class="ml-4 agent-details">
+        <span class="mat-body-2 m-0 username mr-12 line-height-24">{{ agentData.agentName }}</span>
+        <span class="mat-caption agent-status" *ngIf="data.Data.Status">{{ agentData.agentStatus }}</span>
+    </div>
 
     <mat-menu #userMenu="matMenu" [overlapTrigger]="false" class="agent-info-menu">
         <button mat-menu-item fxLayout fxLayoutAlign=" center">
@@ -54,11 +55,6 @@
         <button mat-menu-item *ngIf="agentData.isMSAgent" fxLayout fxLayoutAlign=" center">
             <mat-icon>phonelink</mat-icon>
             <span>MS Agent</span>
-        </button>
-
-        <button mat-menu-item [disabled]="!canLogout" (click)="logout()">
-            <mat-icon>exit_to_app</mat-icon>
-            <span>Logout</span>
         </button>
     </mat-menu>
 </div>

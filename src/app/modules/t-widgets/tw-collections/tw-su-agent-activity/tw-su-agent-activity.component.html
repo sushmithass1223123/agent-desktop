@@ -8,7 +8,7 @@
         fusePerfectScrollbar
         [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
     >
-        <ng-container *ngFor="let item of activityWidgets">
+        <ng-container *ngFor="let item of activityWidget">
             <tw-su-agent-activity-details [data]="item" [@animate]="{ value: '*', params: { y: '100%' } }"></tw-su-agent-activity-details>
         </ng-container>
     </div>

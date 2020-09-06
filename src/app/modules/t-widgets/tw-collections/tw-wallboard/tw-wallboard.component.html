@@ -35,7 +35,7 @@
             <mat-row *matRowDef="let row; columns: ['SkillName', 'AgentsStaffed', 'AgentAvailable', 'CallsInQueue']"></mat-row>
         </mat-table>
 
-        <p *ngIf="dataSource.data.length === 0" class="text-center m-0 font-size-16">No Data Available</p>
+        <p *ngIf="dataSource.data.length === 0" class="text-center m-0 mat-title">No Data Available</p>
     </div>
 
     <img *ngIf="data.Data.Source === 'dashboard'" class="vector-image" src="assets/images/vectors/home.svg" width="580" />

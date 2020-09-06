@@ -42,6 +42,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     DataConf: {
         Source: string;
         ByTeam: boolean;
+        ByGroup: boolean;
     };
 
     selectedWorkCodes: any = [];
@@ -115,20 +116,26 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         try {
             const loadWCRes = await SDKClient.loadCallWorkCodes(this.DataConf.ByTeam, null);
             const workGroup = {};
-            const workCodeList = [];
+            let workCodeList = [];
 
-            loadWCRes.response?.forEach((item: any) => {
-                if (item.ParentID === '0') {
-                    workGroup[item.Code] = { i: item.Code, Name: item.Name, Pid: item.ParentID };
-                }
-            });
+            // check to order by group
+            if (this.DataConf.ByGroup) {
+                loadWCRes.response?.forEach((item: any) => {
+                    if (item.ParentID === '0') {
+                        workGroup[item.Code] = { i: item.Code, Name: item.Name, Pid: item.ParentID };
+                    }
+                });
 
-            loadWCRes.response?.forEach((item: any, index: number) => {
-                if (item.ParentID !== '0') {
-                    item.ParentName = workGroup[loadWCRes.response[index].ParentID].Name;
-                    workCodeList.push(item);
-                }
-            });
+                loadWCRes.response?.forEach((item: any, index: number) => {
+                    if (item.ParentID !== '0') {
+                        item.ParentName = workGroup[loadWCRes.response[index].ParentID].Name;
+                        workCodeList.push(item);
+                    }
+                });
+            }
+            else {
+                workCodeList = loadWCRes.response;
+            }
 
             this.loadWorkCodesReq.data = groupBy(workCodeList, 'ParentName');
             this.loadWorkCodesReq.loading = false;
@@ -146,7 +153,10 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     }
 
     private WorkCodeAddedEvent = (workCode: WorkCode) => {
-        this.selectedWorkCodes.push(workCode);
+        // check if the work code is already added
+        if (this.selectedWorkCodes.filter((w: WorkCode) => w.Code === workCode.Code).length <= 0) {
+            this.selectedWorkCodes.push(workCode);
+        }
     }
 
     // -----------------------------------------------------------------------------------------------------
