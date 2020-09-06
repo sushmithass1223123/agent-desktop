@@ -45,6 +45,7 @@ import { TwWallboardComponent } from './tw-wallboard/tw-wallboard.component';
 import { TwAuxStatusChartComponent } from './tw-aux-status-chart/tw-aux-status-chart.component';
 import { TwAhtTcComponent } from './tw-aht-tc/tw-aht-tc.component';
 import { TwSuIntentListComponent } from './tw-su-intent-list/tw-su-intent-list.component';
+import { TwRegisterCallbackComponent } from './tw-register-callback/tw-register-callback.component';
 const collectionComponents = [
     TwCustomComponent,
     TwUnknownComponent,
@@ -89,7 +90,8 @@ const collectionComponents = [
     TwVideoControlsComponent,
     TwAuxStatusChartComponent,
     TwAhtTcComponent,
-    TwSuIntentListComponent
+    TwSuIntentListComponent,
+    TwRegisterCallbackComponent
 ];
 
 @NgModule({

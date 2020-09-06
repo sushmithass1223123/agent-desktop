@@ -1,0 +1,112 @@
+<!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
+<!-- implement following events in your component to access widget wrapper action events -->
+<!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
+
+<!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
+
+<tw-wrapper [data]="data">
+    <!-- your code goes here -->
+    <div *ngIf="getCampaignsReq.loading" fxFill fxLayout="row" fxLayoutAlign="center center">
+        <mat-spinner></mat-spinner>
+    </div>
+
+    <div *ngIf="getCampaignsReq.error" class="h-100-p" fxLayout="column" fxLayoutAlign="center center">
+        <p>{{ getCampaignsReq.msg }}</p>
+        <button mat-raised-button color="primary" (click)="fetchCampaigns()">Retry</button>
+    </div>
+
+    <div *ngIf="!getCampaignsReq.loading && !getCampaignsReq.error" class="w-100-p h-100-p">
+        <ul class="tw-list w-100-p" fusePerfectScrollbar>
+            <li
+                class="tw-list-item selectable"
+                *ngFor="let camp of getCampaignsReq.data"
+                (click)="toggleForm(camp)"
+                fxLayout
+                fxLayoutAlign="space-between center"
+            >
+                <div fxLayout fxLayoutAlign="center center">
+                    <mat-icon class="mr-4"> campaign </mat-icon>
+                    <span> {{ camp.campaignName }} </span>
+                </div>
+                <!-- <button mat-icon-button> -->
+                <mat-icon mat-ripple> plus </mat-icon>
+                <!-- </button> -->
+            </li>
+        </ul>
+    </div>
+
+    <!-- your code goes here -->
+</tw-wrapper>
+
+<ng-template #addContactForm let-data>
+    <div class="dialog-content-wrapper">
+        <mat-toolbar matDialogTitle class="mat-primary m-0">
+            <mat-toolbar-row fxLayout="row" fxLayoutAlign="space-between center">
+                <span class="title dialog-title">{{ data.campaignName }}</span>
+                <button mat-icon-button (click)="toggleForm()" aria-label="Close dialog">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </mat-toolbar-row>
+
+            <mat-toolbar-row class="toolbar-bottom py-16" fxLayout="row" fxLayoutAlign="center center">
+                <img src="assets/images/avatars/profile.jpg" class="avatar w-50 contact-avatar huge m-0" />
+            </mat-toolbar-row>
+        </mat-toolbar>
+
+        <div mat-dialog-content class="p-24 pb-0 m-0" fusePerfectScrollbar>
+            <form [formGroup]="addContactFormGroup" (ngSubmit)="addNewContact()" fxLayout="row wrap" fxLayoutAlign="space-between center" novalidate>
+                <mat-form-field class="form-field mb-8" appearance="outline" fxFlex="100">
+                    <input matInput placeholder="Name" formControlName="name" #nameIp />
+                    <button
+                        mat-button
+                        color="primary"
+                        *ngIf="nameIp.value"
+                        matSuffix
+                        mat-icon-button
+                        aria-label="Clear"
+                        (click)="addContactFormGroup.patchValue({ name: '' })"
+                    >
+                        <mat-icon>close</mat-icon>
+                    </button>
+                    <mat-icon matSuffix  class="secondary-text" >account_circle</mat-icon>
+                    <mat-error> Name Required </mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="form-field mb-8" appearance="outline" fxFlex="100">
+                    <input matInput placeholder="Phone" formControlName="phone" #mobileIp />
+                    <button
+                        mat-button
+                        color="primary"
+                        *ngIf="mobileIp.value"
+                        matSuffix
+                        mat-icon-button
+                        aria-label="Clear"
+                        (click)="addContactFormGroup.patchValue({ phone: '' })"
+                    >
+                        <mat-icon>close</mat-icon>
+                    </button>
+                    <mat-icon matSuffix  class="secondary-text" >phone</mat-icon>
+                    <mat-error> Phone Number Required </mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="form-field mb-8" appearance="outline" fxFlex="100">
+                    <input matInput [matDatepicker]="startDatePicker" formControlName="date" />
+                    <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+                    <mat-datepicker #startDatePicker></mat-datepicker>
+                </mat-form-field>
+
+                <mat-form-field class="form-field mb-8" appearance="outline" fxFlex="100">
+                    <input matInput type="time" formControlName="time" />
+                </mat-form-field>
+
+                <div fxFlex="100" fxLayoutAlign="end" class="mb-12">
+                    <button mat-raised-button color="primary" [disabled]="addCampaingReq.loading">
+                        <span> Add Contact </span>
+                        <mat-icon *ngIf="!addCampaingReq.loading">add</mat-icon>
+                        <mat-icon class="spin" *ngIf="addCampaingReq.loading">loop</mat-icon>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>

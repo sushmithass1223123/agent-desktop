@@ -38,3 +38,8 @@ export const AVATAR_COLORS = [
 ];
 
 export const COMMON_ERR_MESSAGE = 'Something went wrong';
+
+export const GAMIFICATION_METRIC_LABELS = {
+    chat_interactions: 'Chat Interactions',
+    chat_interactions_aht: 'Chat Interactions AHT'
+};

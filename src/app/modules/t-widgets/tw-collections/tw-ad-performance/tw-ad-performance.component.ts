@@ -6,6 +6,7 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { ResStatus } from 'app/interfaces';
 import { BaseChartDirective } from 'ng2-charts';
 import { takeUntil } from 'rxjs/operators';
+import { GAMIFICATION_METRIC_LABELS } from 'app/constants';
 
 const OnLoadMetricsToAgent = {
     SubEventName: 'OnLoadMetricsToAgent',
@@ -46,49 +47,7 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
     // holds all the data related to this widget from the config
     @Input() data: any;
 
-    // performanceChart: TChartConfig = {
-    //     datasets: [],
-    //     labels: [],
-    //     colors: CHART_COLORS,
-    //     options: {
-    //         showLines: false,
-    //         legend: {
-    //             display: false
-    //         },
-    //         scales: {
-    //             xAxes: [
-    //                 {
-    //                     stacked: true,
-    //                     ticks: {
-    //                         maxRotation: 90,
-    //                         minRotation: 90
-    //                     },
-    //                     gridLines: {
-    //                         display: false
-    //                     }
-    //                 }
-    //             ],
-    //             yAxes: [
-    //                 {
-    //                     stacked: true,
-    //                     gridLines: {
-    //                         display: false
-    //                     },
-    //                     ticks: {
-    //                         stepSize: 50
-    //                     }
-    //                 }
-    //             ],
-    //             scaleLabel: {
-    //                 display: false
-    //             }
-    //         }
-    //     },
-    //     refresh: () =>
-    //         setTimeout(() => {
-    //             (this.performanceChartRef as any).refresh();
-    //         }, 10)
-    // };
+    GAMIFICATION_METRIC_LABELS = GAMIFICATION_METRIC_LABELS;
 
     performanceChartProgress = {
         badge: {},

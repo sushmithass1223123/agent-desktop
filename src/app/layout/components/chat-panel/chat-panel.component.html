@@ -15,7 +15,10 @@
                 classes="w-44 h-44 border-radius-100 mx-8"
                 *ngIf="!selectedContact.avatar"
             ></avatar>
-            <h3 class="text-truncate">{{ selectedContact.name }}</h3>
+            <div fxLayout fxLayoutAlign="start center">
+                <h3 class="text-truncate">{{ selectedContact.name }}</h3>
+                <span class="secondary-text ml-4"> | {{ selectedContact.status }} </span>
+            </div>
         </div>
     </ng-container>
 
@@ -34,20 +37,27 @@
         <div
             *ngFor="let contact of contacts"
             class="contacts-list-item"
-            [ngClass]="contact.status"
+            [ngClass]="contact.class"
             [class.active]="contact.id === selectedContact?.id"
             (click)="toggleChat(contact)"
         >
-            <img class="avatar" [src]="contact.avatar" *ngIf="contact.avatar" [matTooltip]="contact.name" matTooltipPosition="left" />
+            <!-- <img class="avatar" [src]="contact.avatar" *ngIf="contact.avatar" [matTooltip]="contact.name" matTooltipPosition="left" /> -->
             <avatar
                 [name]="contact.name"
                 [matTooltip]="contact.name"
                 circleColor="#5A4980"
-                classes="w-44 h-44 border-radius-100"
+                classes="w-44 h-44 circle"
                 *ngIf="!contact.avatar"
             ></avatar>
+            <avatar
+                [photoUrl]="contact.avatar"
+                [matTooltip]="contact.name"
+                circleColor="#5A4980"
+                classes="w-44 h-44 circle"
+                *ngIf="contact.avatar"
+            ></avatar>
             <div class="unread-count" *ngIf="contact.unread">{{ contact.unread }}</div>
-            <div class="status-icon" [ngClass]="contact.status"></div>
+            <div class="status-icon" [ngClass]="contact.class" [matTooltip]="contact.status"></div>
         </div>
     </div>
     <!-- / Contacts -->

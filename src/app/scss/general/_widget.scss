@@ -131,6 +131,32 @@
     }
 }
 
+
+.tw-list {
+    list-style-type: none;
+    padding-left: 0%;
+    padding: 0px 10px;
+    &-item {
+        transition: all 0.3s;
+        border-radius: 10px;
+        padding: 10px;
+        margin: 10px auto;
+        background-color: rgba($tw-secondary, 0.1);
+        width: 100%;
+        &::marker {
+            content: none;
+        }
+        &:hover {
+            background-color: lighten($tw-primary, 20);
+        }
+        &.selectable {
+            cursor: pointer;
+        }
+    }
+}
+
+
+
 .tw-aot-fab {
     position: absolute;
     bottom: 10px;
