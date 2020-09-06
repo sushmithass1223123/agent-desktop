@@ -11,7 +11,7 @@ import {
     ViewChildren,
     ViewEncapsulation
 } from '@angular/core';
-import { FormControl, NgForm } from '@angular/forms';
+import { NgForm } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
@@ -88,6 +88,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     fileUploadUrl: any;
     channel: string;
     isSMM: boolean;
+    showAutoFreeze: boolean;
 
     // myControl = new FormControl();
     // options: string[] = ['One', 'Two', 'Three'];
@@ -149,7 +150,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.status = 'incoming';
 
         // set the start time
-        this.startTime = new Date(Date.parse(this.data.InteractionDetails.CreatedTime)).toLocaleString();
+        this.startTime = new Date(Date.parse(this.data.InteractionDetails.CreatedTime)).toLocaleString() || new Date().toLocaleString();
 
         // listen to TMAC events
         this.registerToEvents();
@@ -199,7 +200,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         SDKClient.events.on('TextChatTranscriptForTransferEvent', this.TextChatTranscriptForTransferEvent);
         SDKClient.events.on('TextChatMessageSentEvent', this.TextChatMessageSentEvent);
         SDKClient.events.on('TextChatMessageTemplateSentEvent', this.TextChatMessageTemplateSentEvent);
-        SDKClient.events.on('TextChatWaitTimerEvent', this.TextChatUserMessageWaitTimerEvent);
+        SDKClient.events.on('TextChatUserMessageWaitTimerEvent', this.TextChatUserMessageWaitTimerEvent);
         SDKClient.events.on('TextChatMessageReceivedEvent', this.TextChatMessageReceivedEvent);
         SDKClient.events.on('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
         SDKClient.events.on('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
@@ -212,7 +213,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         SDKClient.events.off('TextChatTranscriptForTransferEvent', this.TextChatTranscriptForTransferEvent);
         SDKClient.events.off('TextChatMessageSentEvent', this.TextChatMessageSentEvent);
         SDKClient.events.off('TextChatMessageTemplateSentEvent', this.TextChatMessageTemplateSentEvent);
-        SDKClient.events.off('TextChatWaitTimerEvent', this.TextChatUserMessageWaitTimerEvent);
+        SDKClient.events.off('TextChatUserMessageWaitTimerEvent', this.TextChatUserMessageWaitTimerEvent);
         SDKClient.events.off('TextChatMessageReceivedEvent', this.TextChatMessageReceivedEvent);
         SDKClient.events.off('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
         SDKClient.events.off('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
@@ -313,34 +314,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     }
 
     private TextChatMessageSentEvent = (evt: TextChatMessageSentEvent) => {
-        try {
-            // check the interaction
-            if (evt.InteractionID !== this.interactionId) {
-                return;
-            }
-            // check if recovery or template sent then show it
-            if (evt.RecoveryEvent && !evt.IsAppMessage || evt.EventName === 'TextChatMessageTemplateSentEvent') {
-                const formattedMessage = this.isValidJson(evt.Message) ? JSON.parse(evt.Message) : null;
-                const messageId = formattedMessage ? formattedMessage.messageId : evt.EventId;
-                // const type = formattedMessage ? formattedMessage.type : '';
-                const message = formattedMessage ? formattedMessage.message : evt.Message;
-                // const isReply = formattedMessage && formattedMessage.replyId ? formattedMessage.replyId : false;
-                // const replyJson = {};
-
-                // TODO:: implement reply and get the replied message
-
-                // add message to the transcripts
-                this.chatTranscripts.push({
-                    who: this.user.agentName,
-                    messageId,
-                    message,
-                    time: new Date(Date.parse(evt.CreatedTime.toString())).toLocaleString() || new Date().toLocaleString()
-                });
-
-                // set ready to reply
-                this.readyToReply();
-            }
-        } catch (error) { }
+        this.messageSentEvent(evt);
     }
 
     private TextChatMessageTemplateSentEvent = (evt: TextChatMessageTemplateSentEvent) => {
@@ -353,6 +327,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             return;
         }
 
+        // show freeze auto response button
+        this.showAutoFreeze = true;
+
         // get the message template to be sent to customer
         this.sendMessage({
             Text: evt.AutoResponseTemplate
@@ -360,7 +337,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // if this is the final auto response then disconnect the chat
         if (evt.IsFinal) {
-            this.endChat(null);
+            // send end chat to server 
+            this.endChat('AutoResponseTimeout');
+            // hide freeze auto response button
+            this.showAutoFreeze = false;
         }
     }
 
@@ -449,7 +429,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             messageId: data.messageId,
             message: data.message,
             type: data.attachment?.type || 'text',
-            time: new Date(Date.parse(this.data.InteractionDetails.CreatedTime)).toLocaleString() || new Date().toLocaleString(),
+            time: new Date().toLocaleString(),
             attachment: data.attachment
         });
 
@@ -508,6 +488,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.stopTimer.next();
         // close if there is any any AV
         this.avConn?.close();
+        // hide auto response if enabled
+        this.showAutoFreeze = false;
     }
 
     private CannedResposeEvent = (evt: any) => {
@@ -526,14 +508,14 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             if (evt.InteractionID !== this.interactionId) {
                 return;
             }
+
             // check if recovery or template sent then show it
             if (evt.RecoveryEvent && !evt.IsAppMessage || evt.EventName === 'TextChatMessageTemplateSentEvent') {
                 const formattedMessage = this.isValidJson(evt.Message) ? JSON.parse(evt.Message) : null;
                 const messageId = formattedMessage ? formattedMessage.messageId : evt.EventId;
-                // const type = formattedMessage ? formattedMessage.type : '';
+                const type = formattedMessage ? (formattedMessage.type === 'attachment' ? formattedMessage.attachment.type : formattedMessage.type) : '';
                 const message = formattedMessage ? formattedMessage.message : evt.Message;
-                // const isReply = formattedMessage && formattedMessage.replyId ? formattedMessage.replyId : false;
-                // const replyJson = {};
+                const attachment = (formattedMessage && formattedMessage.attachment) ? formattedMessage.attachment : null;
 
                 // TODO:: implement reply and get the replied message
 
@@ -542,7 +524,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     who: this.user.agentName,
                     messageId,
                     message,
-                    time: new Date(Date.parse(evt.CreatedTime.toString())).toLocaleString() || new Date().toLocaleString()
+                    type,
+                    time: (evt.CreatedTime && new Date(Date.parse(evt.CreatedTime.toString())).toLocaleString()) || new Date().toLocaleString(),
+                    attachment
                 });
 
                 // set ready to reply
@@ -631,9 +615,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             });
 
         // Reset the reply form
-        this.replyForm.reset();
+        this.replyForm?.reset();
 
-        // set ready to reply
+        // set ready to reply   
         this.readyToReply();
     }
 
@@ -642,6 +626,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         if (param === 'screenshare') {
             return;
         }
+
+        // freeze auto response if needed
+        this.freezeAutoResponse();
 
         // create a AV channel connection
         const connection = new AVChannel(
@@ -785,7 +772,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         });
     }
 
-    endChat(endBtn: MatButton): void {
+    confirmEndChat(endBtn: MatButton): void {
         // config force login
         const confirmDialogRef = this._dialog.open(ConfirmDialogComponent, {
             disableClose: false
@@ -797,18 +784,27 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 if (endBtn) {
                     endBtn.disabled = true;
                 }
-                // show the progress bar 
-                this._fuseProgressBarService.show();
-                SDKClient.endTextChat({
-                    interactionId: this.interactionId.toString(),
-                    reason: 'AgentChatDisconnected'
-                }, null)
-                    .then(() => {
-                        // hide the progress bar
-                        this._fuseProgressBarService.hide();
-                    });
+                // send end chat to server 
+                this.endChat('AgentChatDisconnected');
             }
         });
+    }
+
+    endChat(reason: string): void {
+        // show the progress bar 
+        this._fuseProgressBarService.show();
+        SDKClient.endTextChat({
+            interactionId: this.interactionId.toString(),
+            reason
+        }, null)
+            .then(() => {
+                // hide the progress bar
+                this._fuseProgressBarService.hide();
+            })
+            .catch(() => {
+                this._fuseProgressBarService.hide();
+                this._appDataService.showMessage('End chat failed!');
+            });
     }
 
     closeInteraction(closeBtn: MatButton): void {
@@ -830,6 +826,36 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     this._appDataService.showMessage('Close interaction failed');
                 }
                 console.log('closeInteraction', dt);
+            })
+            .catch(() => {
+                this._fuseProgressBarService.hide();
+                this._appDataService.showMessage('Close interaction failed!');
+            });
+    }
+
+    freezeAutoResponse(): void {
+        // check if valid to freeze
+        if (!this.showAutoFreeze) {
+            return;
+        }
+        // show the progress bar 
+        this._fuseProgressBarService.show();
+        this.showAutoFreeze = false;
+        SDKClient.freezeTextChatAutoResponse(this.interactionId.toString())
+            .then((dt: IResponse) => {
+                // hide the progress bar
+                this._fuseProgressBarService.hide();
+                // if failed
+                if (!dt.response || dt.response !== 1) {
+                    this.showAutoFreeze = true;
+                    this._appDataService.showMessage('Freeze auto response failed!');
+                }
+            })
+            .catch(() => {
+                // hide the progress bar
+                this._fuseProgressBarService.hide();
+                this.showAutoFreeze = true;
+                this._appDataService.showMessage('Error in freezing auto response failed!');
             });
     }
 

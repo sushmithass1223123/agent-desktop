@@ -7,9 +7,20 @@
 <tw-wrapper [data]="data">
     <!-- your code goes here -->
     <div fxFlex fxFill fxLayout="row" class="p-8">
-        <mat-chip-list *ngIf="nlpCurrentData; else noData">
-            <mat-chip *ngFor="let intent of nlpCurrentData.JsonData.nluResult.intent_ranking" removable (click)="openAssitWidget(intent)">
-                {{ intent.name }}
+        <mat-chip-list *ngIf="nlpData.length > 0; else noData">
+            <mat-chip
+                *ngFor="let intent of nlpData"
+                removable
+                (click)="openAssitWidget(intent.Name)"
+                [ngClass]="{
+                    'bg-secondary': intent.Count < 5,
+                    'bg-primary': intent.Count >= 5,
+                    'bg-success': intent.Count >= 10,
+                    'bg-warning': intent.Count >= 20,
+                    'bg-danger': intent.Count >= 30
+                }"
+            >
+                {{ intent.Name }}
                 <mat-icon matChipRemove>close</mat-icon>
             </mat-chip>
         </mat-chip-list>

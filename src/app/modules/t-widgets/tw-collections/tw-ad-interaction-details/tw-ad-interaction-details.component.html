@@ -2,8 +2,13 @@
 <!-- implement following events in your component to access widget wrapper action events -->
 <!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
 <tw-wrapper [data]="data" (maximizeEvent)="maximizeEvent($event)">
-    <div class="w-100-p bg-inherit" [ngClass]="maximized ? 'h-90-p' : 'h-100-p'" fusePerfectScrollbar>
-        <mat-table [dataSource]="interactionDetailsTable.source" matSort matSortDisableClear [@animateStagger]="{ value: '50' }">
+    <div
+        class="w-100-p bg-inherit"
+        [ngClass]="maximized ? 'h-90-p' : 'h-100-p'"
+        fusePerfectScrollbar
+        [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
+    >
+        <mat-table [dataSource]="interactionDetailsTable.source" matSort matSortDisableClear>
             <ng-container matColumnDef="SessionId">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>SessionId</mat-header-cell>
                 <mat-cell *matCellDef="let element">
@@ -85,7 +90,7 @@
             </ng-container>
 
             <mat-header-row *matHeaderRowDef="interactionDetailsTable.columns; sticky: true"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: interactionDetailsTable.columns" [@animate]="{ value: '*', params: { y: '100%' } }"></mat-row>
+            <mat-row *matRowDef="let row; columns: interactionDetailsTable.columns"></mat-row>
         </mat-table>
 
         <p *ngIf="interactionDetailsTable.source.data.length === 0" class="text-center m-0 font-size-16">No Data Available</p>

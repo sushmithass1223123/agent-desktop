@@ -6,7 +6,7 @@
 
 <tw-wrapper [data]="data">
     <!-- your code goes here -->
-    <div fxFill fxLayout="column" class="px-16" fusePerfectScrollbar>
+    <div fxFill fxLayout="column" class="px-16" fusePerfectScrollbar [fusePerfectScrollbarOptions]="{ suppressScrollX: true }">
         <div fxLayout>
             <p fxFlex="20" fxLayoutAlign=" center" class="px-8">Case ID</p>
             <mat-form-field fxFlex appearance="outline" class="custom case-id">

@@ -4,21 +4,15 @@
 <tw-wrapper [data]="data" (maximizeEvent)="maximizeEvent($event)">
     <!-- your code goes here -->
     <div fxFlex fxFill fxLayout="row" fxLayoutAlign="space-between" class="w-100-p h-100-p p-4">
-        <div class="callbacks" fxFlex="55" fusePerfectScrollbar>
+        <div class="callbacks" fxFlex="55" fusePerfectScrollbar [fusePerfectScrollbarOptions]="{ suppressScrollX: true }">
             <div *ngFor="let x of sample" class="callback mb-20" fxLayout fxLayoutAlign="space-between center">
                 <div fxFlex="65" fxLayout fxLayoutAlign="start center" fxLayoutGap="20px">
                     <button mat-flat-button mat-icon-button>
-                        <mat-icon>
-                            phone
-                        </mat-icon>
+                        <mat-icon> phone </mat-icon>
                     </button>
-                    <span>
-                        Voice with Binny
-                    </span>
+                    <span> Voice with Binny </span>
                 </div>
-                <small fxFlex="30">
-                    Aug 18, 2020, 11:34:34 AM
-                </small>
+                <small fxFlex="30"> Aug 18, 2020, 11:34:34 AM </small>
             </div>
         </div>
         <div
@@ -35,16 +29,10 @@
                     </button>
                 </span>
                 <strong fxFlex="50" class="ml-20">
-                    <small *ngIf="!maximized">
-                        Callbacks Handled
-                    </small>
-                    <span *ngIf="maximized">
-                        Callbacks Handled
-                    </span>
+                    <small *ngIf="!maximized"> Callbacks Handled </small>
+                    <span *ngIf="maximized"> Callbacks Handled </span>
                 </strong>
-                <strong fxFlex="30" class="text-center">
-                    03
-                </strong>
+                <strong fxFlex="30" class="text-center"> 03 </strong>
             </div>
             <div class="missed p-10" fxLayout fxLayoutGap="15" fxLayoutAlign="space-between center">
                 <span fxFlex="20">
@@ -53,16 +41,10 @@
                     </button>
                 </span>
                 <strong fxFlex="50" class="ml-20">
-                    <small *ngIf="!maximized">
-                        Callbacks Missed
-                    </small>
-                    <span *ngIf="maximized">
-                        Callbacks Missed
-                    </span>
+                    <small *ngIf="!maximized"> Callbacks Missed </small>
+                    <span *ngIf="maximized"> Callbacks Missed </span>
                 </strong>
-                <strong fxFlex="30" class="text-center">
-                    03
-                </strong>
+                <strong fxFlex="30" class="text-center"> 03 </strong>
             </div>
         </div>
     </div>

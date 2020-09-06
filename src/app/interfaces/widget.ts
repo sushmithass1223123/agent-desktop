@@ -14,7 +14,8 @@ export interface InteractionWidgets {
     interactionId: number;
     widgets: {
         static: TWidget[];
-        dynamic: TWidget[]
+        dynamic: TWidget[];
+        aot?: TWidget[]
     };
 }
 

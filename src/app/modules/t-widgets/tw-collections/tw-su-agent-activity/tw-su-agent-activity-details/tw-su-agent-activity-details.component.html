@@ -19,6 +19,7 @@
                     *ngIf="activityWidgets[0].Data.Details && activityWidgets[0].Data.Details.length > 0; else noData"
                     class="p-8"
                     fusePerfectScrollbar
+                    [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
                 >
                     <div *ngFor="let item of activityWidgets[0].Data.Details" class="mb-8">
                         <span class="font-weight-700"> {{ item.Title }}: </span>

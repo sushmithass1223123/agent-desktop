@@ -34,7 +34,15 @@
                 </ng-template>
             </mat-form-field>
         </div>
-        <div fxFlex fxLayout="column" fxLayoutAlign=" none" class="agent-list" [@animateStagger]="{ value: '50' }" fusePerfectScrollbar>
+        <div
+            fxFlex
+            fxLayout="column"
+            fxLayoutAlign=" none"
+            class="agent-list"
+            [@animateStagger]="{ value: '50' }"
+            fusePerfectScrollbar
+            [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
+        >
             <div
                 *ngFor="let item of filteredAgents"
                 class="w-100-p p-12 border-radius-20 agent-item"

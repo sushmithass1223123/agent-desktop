@@ -1,8 +1,8 @@
 tw-aux-codes {
-    .tw-aux-codes {
+    .aux-codes-btn {
         &::after {
             position: absolute;
-            bottom: -2px;
+            bottom: -4px;
             left: 20%;
             content: "";
             display: block;

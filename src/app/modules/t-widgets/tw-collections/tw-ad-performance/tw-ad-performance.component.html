@@ -6,17 +6,18 @@
     <div
         *ngIf="!gamificationReqStatus.loading && !gamificationReqStatus.error"
         fusePerfectScrollbar
+        [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
         fxLayout="column"
         class="h-100-p w-100-p px-8 py-20"
     >
         <div *ngFor="let b of performanceChartProgress.badge | keyvalue" class="mb-28">
             <div class="mb-8">{{ b.key }} : {{ b.value.current }} / {{ b.value.max }}</div>
-            <mat-progress-bar [color]="primary" [value]="(b.value.current * 100) / b.value.max"> </mat-progress-bar>
+            <mat-progress-bar color="primary" [value]="(b.value.current * 100) / b.value.max"> </mat-progress-bar>
         </div>
 
-        <div *ngFor="let g of performanceChartProgress.goals | keyvalue" class="mb-28">
+        <div *ngFor="let g of performanceChartProgress.goal | keyvalue" class="mb-28">
             <div class="mb-8">{{ g.key }} : {{ g.value.current }} / {{ g.value.max }}</div>
-            <mat-progress-bar [color]="primary" [value]="(g.value.current * 100) / g.value.max"> </mat-progress-bar>
+            <mat-progress-bar color="primary" [value]="(g.value.current * 100) / g.value.max"> </mat-progress-bar>
         </div>
     </div>
 

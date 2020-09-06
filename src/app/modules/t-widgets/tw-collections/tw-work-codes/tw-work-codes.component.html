@@ -13,7 +13,7 @@
                 </mat-optgroup>
             </mat-autocomplete>
             <mat-chip-list #selectedWorkCodesRef aria-label="WorkCodes">
-                <mat-chip *ngFor="let workCode of selectedWorkCodes" removable (removed)="removeWorkCode(workCode)">
+                <mat-chip *ngFor="let workCode of selectedWorkCodes" removable (removed)="removeWorkCode(workCode)" class="bg-primary">
                     <mat-icon class="mat-icon-mirror mr-4">local_offer</mat-icon>
                     {{ workCode.Name }}
                     <mat-icon matChipRemove>cancel</mat-icon>
@@ -28,16 +28,21 @@
                 />
             </mat-chip-list>
         </mat-form-field>
-        <div *ngIf="DataConf.Source === 'supervisor'" class="w-100-p h-100-p p-12" fusePerfectScrollbar>
+        <div
+            *ngIf="DataConf.Source === 'supervisor'"
+            class="w-100-p h-100-p p-12"
+            fusePerfectScrollbar
+            [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
+        >
             <mat-chip-list aria-label="WorkCodes">
                 <mat-chip
                     *ngFor="let workCode of selectedWorkCodes"
                     [ngClass]="{
-                        'bg-color-5': workCode.Count < 10,
-                        'bg-color-4': workCode.Count >= 10,
-                        'bg-color-3': workCode.Count >= 30,
-                        'bg-color-2': workCode.Count >= 50,
-                        'bg-color-1': workCode.Count >= 70
+                        'bg-secondary': workCode.Count < 10,
+                        'bg-primary': workCode.Count >= 10,
+                        'bg-success': workCode.Count >= 30,
+                        'bg-warning': workCode.Count >= 50,
+                        'bg-danger': workCode.Count >= 70
                     }"
                 >
                     <mat-icon class="mat-icon-mirror mr-4">local_offer</mat-icon>

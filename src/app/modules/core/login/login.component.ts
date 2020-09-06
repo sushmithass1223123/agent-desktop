@@ -160,8 +160,8 @@ export class LoginComponent implements OnInit, OnDestroy {
                     this.stationEnabled = true;
                     this.pbxChecked = true;
                 } else if (config.Login.Modes.Type === 'ms') {
-                    // show hide station and check MS
-                    this.stationEnabled = false;
+                    // show station and check MS
+                    this.stationEnabled = true;
                     this.msChecked = true;
                 } else if (config.Login.Modes.Type === 'pbxms') {
                     // show station and check PBX and MS
@@ -282,7 +282,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         }
     }
 
-    public onPBXToggle(event: any): void {
+    public toggleStation(event: any): void {
         if (event.checked) {
             this.stationEnabled = true;
         } else {

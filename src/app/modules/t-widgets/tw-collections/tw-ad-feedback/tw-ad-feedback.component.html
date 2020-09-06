@@ -27,7 +27,12 @@
     </div>
 
     <div *ngIf="dataConfig.Source === 'supervisor' || wrapper.maximized" class="w-100-p h-100-p">
-        <div class="w-100-p bg-inherit" [ngClass]="wrapper.maximized ? 'h-90-p' : 'h-100-p'" fusePerfectScrollbar>
+        <div
+            class="w-100-p bg-inherit"
+            [ngClass]="wrapper.maximized ? 'h-90-p' : 'h-100-p'"
+            fusePerfectScrollbar
+            [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
+        >
             <mat-table [dataSource]="feedbackDetailsTable.source" matSort matSortDisableClear [@animateStagger]="{ value: '50' }">
                 <ng-container matColumnDef="InteractionID">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>InteractionID</mat-header-cell>

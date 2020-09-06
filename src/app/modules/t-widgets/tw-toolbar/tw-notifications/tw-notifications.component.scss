@@ -1,8 +1,89 @@
+@import 'src/app/scss/shared';
+
+tw-notifications {
+    .notification-btn {
+        &::after {
+            position: absolute;
+            bottom: -4px;
+            left: 20%;
+            content: '';
+            display: block;
+            height: 0;
+            width: 0;
+            border: 12px solid rgba(255, 255, 255, 0);
+            border-bottom-color: $tw-primary;
+            z-index: 1;
+            transition: all 0.1s ease-in 0s;
+            opacity: 0;
+        }
+
+        &.opened {
+            &::after {
+                transition: opacity 300ms cubic-bezier(0.25, 0.8, 0.25, 1);
+                opacity: 1;
+                z-index: 1104;
+            }
+        }
+
+        .mat-badge-content {
+            background: $tw-warning !important;
+            color: $tw-dark !important;
+            right: -4px !important;
+            top: -4px !important;
+            font-size: 11px;
+        }
+    }
+}
+
 .tw-notification-list {
+    width: 360px;
+    max-width: 400px;
+    max-height: 600px;
+    overflow: hidden;
     border-radius: 2rem !important;
 
     button {
         height: 3.2rem;
         line-height: 2rem;
+    }
+
+    .mat-menu-content {
+        padding: 0 !important;
+        height: 100%;
+    }
+
+    .mat-list {
+        height: calc(100% - 64px);
+
+        .mat-subheader {
+            height: 32px;
+        }
+
+        .mat-list-item {
+            height: 64px;
+
+            .mat-line {
+                white-space: normal;
+            }
+        }
+    }
+
+    .notification-list {
+        width: 100%;
+        height: calc(100% - 64px);
+
+        .item {
+            padding: 8px 12px;
+            background: rgb(0 0 0 / 0.1);
+            border-radius: 12px;
+
+            &:not(:last-child) {
+                margin-bottom: 8px;
+            }
+        }
+
+        .message {
+            word-break: break-all;
+        }
     }
 }

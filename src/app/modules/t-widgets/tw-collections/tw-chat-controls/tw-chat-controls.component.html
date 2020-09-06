@@ -139,12 +139,25 @@
                     </button>
 
                     <button
+                        *ngIf="showAutoFreeze"
+                        [disabled]="status !== 'connected'"
+                        mat-mini-fab
+                        color="default"
+                        class="bg-danger"
+                        [ngClass]="status === 'connected' ? 'mat-elevation-z2' : ''"
+                        matTooltip="Freeze Auto Response"
+                        (click)="freezeAutoResponse()"
+                    >
+                        <mat-icon>sync_disabled</mat-icon>
+                    </button>
+
+                    <button
                         [disabled]="status !== 'connected'"
                         [ngClass]="status === 'connected' ? 'mat-elevation-z2' : ''"
                         mat-mini-fab
                         color="warn"
                         #endBtn
-                        (click)="endChat(endBtn)"
+                        (click)="confirmEndChat(endBtn)"
                         matTooltip="End Chat"
                     >
                         <mat-icon>close</mat-icon>

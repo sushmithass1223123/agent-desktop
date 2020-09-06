@@ -3,10 +3,11 @@ import { FuseConfigService } from '@fuse/services/config.service';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient, GenericEvent } from 'tmac-sdk';
+import { SDKClient, GenericEvent, TextChatRemoteUserConnectedEvent } from 'tmac-sdk';
 import { AotWidgetService } from '@services/aot-widget.service';
 import { TwWidgetModel } from 'app/models';
 import { IWidget } from 'app/interfaces';
+import * as _ from 'lodash';
 
 @Component({
     selector: 'tw-agent-assist',
@@ -19,12 +20,9 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
     @Input() data: IWidget;
 
     ucid: string;
-
     interactionId: number;
-
     widgetData: any;
-
-    nlpCurrentData: any = null;
+    nlpData = [];
 
     // -----------------------------------------------------------
     // @ [OPTIONAL] to store the fuse config for theme
@@ -88,6 +86,7 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
 
         // register to the event
         SDKClient.events.on('OnNLPDataEvent', this.OnNLPDataEvent);
+        SDKClient.events.on('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
     }
 
     /**
@@ -99,6 +98,7 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         this.destroyWrapper();
         // de-register from the event
         SDKClient.events.off('OnNLPDataEvent', this.OnNLPDataEvent);
+        SDKClient.events.off('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -111,16 +111,51 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
             const parsedJson = JSON.parse(receivedData.JsonData);
 
             // check for the interaction
-            if (this.interactionId !== parsedJson.interactionID) {
+            if (this.interactionId.toString() !== parsedJson.interactionID) {
                 return;
             }
 
+            // filter for agent only
             if (parsedJson.messageSource === 'agent') {
                 return;
             }
 
-            const parsedNlu = JSON.parse(parsedJson.nluResult);
-            this.nlpCurrentData = { ...receivedData, JsonData: { ...parsedJson, nluResult: parsedNlu } };
+            // get the nlu result
+            const parsedNlu = JSON.parse(parsedJson.nluResult) || null;
+
+            // get the intent
+            const intent = parsedNlu?.intent;
+
+            if (intent && intent.confidence >= (this.widgetData?.Confidence || 0.5)) {
+                const getData = this.nlpData.filter(i => i.Name === intent.name);
+                if (getData.length > 0) {
+                    ++getData[0].Count;
+                }
+                else {
+                    this.nlpData.push({
+                        Name: parsedNlu.intent.name,
+                        Count: 0
+                    });
+                }
+            }
+            // oder by the count
+            this.nlpData = _.orderBy(this.nlpData, ['Count'], ['desc']);
+        }
+    }
+    private TextChatRemoteUserConnectedEvent = (evt: TextChatRemoteUserConnectedEvent) => {
+        // check for the interaction
+        if (this.interactionId !== evt.InteractionID) {
+            return;
+        }
+
+        // get the intent from event
+        const intent = evt.TransferIntent || evt.Intent;
+        // if intent found, add it
+        if (intent) {
+            this.nlpData.push({
+                Name: intent,
+                Count: 0
+            });
         }
     }
 
@@ -128,7 +163,7 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
 
-    public openAssitWidget(intentItem: any): void {
+    public openAssitWidget(intent: string): void {
         let url = this.widgetData.AssistWidgetUrl;
 
         // check if url is provided
@@ -138,7 +173,6 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         }
 
         // get the intent name
-        const intent = intentItem.name;
         const ucid = this.ucid;
 
         const mapObj = {

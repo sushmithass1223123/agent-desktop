@@ -327,12 +327,31 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                             nric: this.data.InteractionDetails.NRIC || '',
                             phone: this.data.InteractionDetails.RegNo1 || '',
                             sessionId: this.sessionID
-                        }, null)
+                        }, { base64 })
                             .then((result: IResponse) => {
                                 this._fuseProgressBarService.hide();
                                 if (result.response && result.response.ImageUrl) {
                                     // snapsot saved sucessfully
                                     this._appDataService.showMessage('Snapshot saved successfully!');
+
+                                    // create the message to emit
+                                    const message = JSON.stringify({
+                                        messageId: TUtils.Generic.uuid(),
+                                        message: '',
+                                        type: 'image',
+                                        attachment: {
+                                            src: result.userObject.base64,
+                                            type: 'image',
+                                            name: ''
+                                        }
+                                    });
+
+                                    // emit a template message sent event to show in UI
+                                    SDKClient.events.emit('TextChatMessageTemplateSentEvent', {
+                                        Message: message,
+                                        InteractionID: this.interactionId,
+                                        EventName: 'TextChatMessageTemplateSentEvent'
+                                    });
                                 }
                                 else {
                                     this._appDataService.showMessage('Snapshot save failed!');

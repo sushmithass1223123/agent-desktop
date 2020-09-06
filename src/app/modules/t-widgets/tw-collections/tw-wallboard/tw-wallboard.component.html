@@ -1,5 +1,10 @@
 <tw-wrapper [data]="data">
-    <div class="w-100-p bg-inherit mat-table-container" [ngClass]="this.source === 'supervisor' ? 'h-100-p' : 'h-50-p'" fusePerfectScrollbar>
+    <div
+        class="w-100-p bg-inherit mat-table-container"
+        [ngClass]="this.source === 'supervisor' ? 'h-100-p' : 'h-50-p'"
+        fusePerfectScrollbar
+        [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
+    >
         <mat-table matSort [dataSource]="dataSource" matSortActive="CallsInQueue" matSortDirection="desc" matSortDisableClear>
             <!-- User name Definition -->
             <ng-container matColumnDef="SkillName">

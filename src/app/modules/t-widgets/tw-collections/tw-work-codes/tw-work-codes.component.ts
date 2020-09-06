@@ -103,7 +103,8 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         // call the wrapper destroy method
         this.destroyWrapper();
 
-        SDKClient.events.on('TeamrWorkCodeDetailsEvent', this.TeamrWorkCodeDetailsEvent);
+        SDKClient.events.off('TeamrWorkCodeDetailsEvent', this.TeamrWorkCodeDetailsEvent);
+        SDKClient.events.off('WorkCodeAddedEvent', this.WorkCodeAddedEvent);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -144,6 +145,10 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         this.selectedWorkCodes = _.orderBy(workCodeList, ['Count'], ['desc']);
     }
 
+    private WorkCodeAddedEvent = (workCode: WorkCode) => {
+        this.selectedWorkCodes.push(workCode);
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
@@ -152,6 +157,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         if (this.DataConf.Source === 'interaction') {
             this.loadWorkCodesReq.loading = true;
             this.getAllWorkCodes();
+            SDKClient.events.on('WorkCodeAddedEvent', this.WorkCodeAddedEvent);
         } else if (this.DataConf.Source === 'supervisor') {
             SDKClient.events.on('TeamrWorkCodeDetailsEvent', this.TeamrWorkCodeDetailsEvent);
         } else {
