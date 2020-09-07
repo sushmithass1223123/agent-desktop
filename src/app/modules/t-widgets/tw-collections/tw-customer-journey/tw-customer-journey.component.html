@@ -16,7 +16,7 @@
 <!-- (collapseEvent)="collapseEvent($event)" (floatEvent)="floatEvent($event)" -->
 <tw-wrapper [data]="data" (maximizeEvent)="maximizeEvent($event)">
     <div *ngIf="!customerJourneyTable.loading" class="customer-journey" [fxLayout]="maximized ? 'column' : 'row wrap'" fxLayoutGap="6px">
-        <div *ngIf="!maximized" class="timeline" fusePerfectScrollbar>
+        <div *ngIf="!maximized" class="timeline" fusePerfectScrollbar [fusePerfectScrollbarOptions]="{ suppressScrollX: true }">
             <div
                 *ngFor="let s of customerJourneyTable.tableData.source.data"
                 fxLayout="row-wrap"
@@ -85,6 +85,7 @@
                     : ''
             "
             fusePerfectScrollbar
+            [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
         >
             <mat-table [dataSource]="customerJourneyTable.tableData.source" matSort>
                 <!--- Note that these columns can be defined in any order.
@@ -169,7 +170,7 @@
             >
             </mat-paginator>
 
-            <p *ngIf="customerJourneyTable.tableData.source.data.length === 0" class="text-center m-0 font-size-16">No Data Available</p>
+            <p *ngIf="customerJourneyTable.tableData.source.data.length === 0" class="text-center m-0 mat-title">No Data Available</p>
         </div>
         <div
             *ngIf="maximized"

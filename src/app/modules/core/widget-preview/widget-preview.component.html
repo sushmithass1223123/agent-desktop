@@ -10,6 +10,7 @@
         fxLayoutGap.gt-md="8px"
         *ngIf="!loading && dynamicWidgets.length > 0; else noWidgets"
         fusePerfectScrollbar
+        [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
         class="widget-grid"
     >
         <tw-template fxFlex.gt-md="33" class="static-widget-grid" *ngIf="staticWidgets.length > 0" [widgets]="staticWidgets"></tw-template>

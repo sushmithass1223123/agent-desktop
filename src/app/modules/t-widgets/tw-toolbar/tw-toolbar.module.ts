@@ -7,6 +7,8 @@ import { TwAuxTimerComponent } from './tw-aux-timer/tw-aux-timer.component';
 import { TwInstantMessagingComponent } from './tw-instant-messaging/tw-instant-messaging.component';
 import { TwNotificationsComponent } from './tw-notifications/tw-notifications.component';
 import { TwToolbarMenuComponent } from './tw-toolbar-menu/tw-toolbar-menu.component';
+import { TwLogoutComponent } from './tw-logout/tw-logout.component';
+import { TwBroadcastComponent } from './tw-broadcast/tw-broadcast.component';
 
 const toolbarComponents = [
     TwActiveInteractionsComponent,
@@ -15,7 +17,9 @@ const toolbarComponents = [
     TwAuxTimerComponent,
     TwToolbarMenuComponent,
     TwNotificationsComponent,
-    TwInstantMessagingComponent
+    TwInstantMessagingComponent,
+    TwLogoutComponent,
+    TwBroadcastComponent
 ];
 
 @NgModule({

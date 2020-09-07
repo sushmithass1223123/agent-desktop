@@ -34,16 +34,9 @@
                     "Data": {
                         "Widgets": [
                             {
-                                "Name": "Agent IM",
+                                "Name": "Broadcast Message",
                                 "Description": "",
-                                "Type": "tw-instant-messaging",
-                                "Config": {},
-                                "Data": {}
-                            },
-                            {
-                                "Name": "Notification",
-                                "Description": "",
-                                "Type": "tw-notifications",
+                                "Type": "tw-broadcast",
                                 "Config": {},
                                 "Data": {}
                             },
@@ -69,6 +62,29 @@
                                 "Name": "Aux Codes Dropdown",
                                 "Description": "",
                                 "Type": "tw-aux-codes",
+                                "Config": {},
+                                "Data": {}
+                            },
+                            {
+                                "Name": "Logout Button",
+                                "Description": "",
+                                "Type": "tw-logout",
+                                "Config": {},
+                                "Data": {
+                                    "LogoutAux": "logout"
+                                }
+                            },
+                            {
+                                "Name": "Agent IM",
+                                "Description": "",
+                                "Type": "tw-instant-messaging",
+                                "Config": {},
+                                "Data": {}
+                            },
+                            {
+                                "Name": "Notification",
+                                "Description": "",
+                                "Type": "tw-notifications",
                                 "Config": {},
                                 "Data": {}
                             }
@@ -424,7 +440,7 @@
                                         "Disabled": false
                                     },
                                     "Data": {
-                                        "GetCallbacksUrl" : "https://dice.tetherfi.cloud/TCM_Proxy/api/Contact/GetContactSessionByAgent"
+                                        "GetCallbacksUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Contact/GetContactSessionByAgent"
                                     }
                                 },
                                 {
@@ -484,6 +500,41 @@
                                         "Disabled": false
                                     },
                                     "Data": {}
+                                }
+                            ],
+                            "AOT": [
+                                {
+                                    "Name": "TRS",
+                                    "Description": "",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "Icon": "dvr",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0,
+                                            "W": 325,
+                                            "H": 740
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "Url": "https://tmac.tetherfilabs.com/tcie-web-appv8/?id=7224",
+                                        "QueryParams": []
+                                    }
                                 }
                             ]
                         }
@@ -561,7 +612,7 @@
                                     }
                                 },
                                 {
-                                    "Name": "Avg. Handle Time",
+                                    "Name": "AHT/Tran./Conf.",
                                     "Description": "",
                                     "Type": "tw-aht-tc",
                                     "Config": {
@@ -791,7 +842,7 @@
                                     "Data": {}
                                 },
                                 {
-                                    "Name": "AHT / Transfer / Conference ",
+                                    "Name": "AHT/Transfer/Conference ",
                                     "Description": "",
                                     "Type": "tw-aht-tc",
                                     "Config": {
@@ -1214,7 +1265,7 @@
                                                     "Disabled": false
                                                 },
                                                 "Data": {
-                                                    "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/index.html?Key=SESSIONID:"
+                                                    "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/version5/index.html?Key=SESSIONID:"
                                                 }
                                             }
                                         ]
@@ -1363,7 +1414,7 @@
                                     "Data": {
                                         "Source": "interaction",
                                         "ByTeam": false,
-                                        "ByGroup": false
+                                        "ByGroup": true
                                     }
                                 },
                                 {
@@ -1392,6 +1443,7 @@
                                         "Disabled": false
                                     },
                                     "Data": {
+                                        "Confidence": 0.5,
                                         "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=_intent&ucid=_ucid",
                                         "Title": "Visual IVR",
                                         "Icon": "assistant",
@@ -1403,6 +1455,41 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore"
+                                    }
+                                }
+                            ],
+                            "AOT": [
+                                {
+                                    "Name": "TAS",
+                                    "Description": "",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "Icon": "integration_instructions",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0,
+                                            "W": 1000,
+                                            "H": 700
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "Url": "https://dice.tetherfi.cloud/TAS/Survey/Index?intentname=DiceIntent2&inSimulation=false&agentid=50020&customerid=12&ucid=Test&flowType=Test&campId=Test&station=42002&phoneNumber=6539284004",
+                                        "QueryParams": []
                                     }
                                 }
                             ]
@@ -1589,7 +1676,7 @@
                                                     "Disabled": false
                                                 },
                                                 "Data": {
-                                                    "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/index.html?Key=SESSIONID:"
+                                                    "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/version5/index.html?Key=SESSIONID:"
                                                 }
                                             }
                                         ]
@@ -1738,7 +1825,7 @@
                                     "Data": {
                                         "Source": "interaction",
                                         "ByTeam": false,
-                                        "ByGroup": false
+                                        "ByGroup": true
                                     }
                                 },
                                 {
@@ -1767,6 +1854,7 @@
                                         "Disabled": false
                                     },
                                     "Data": {
+                                        "Confidence": 0.5,
                                         "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=_intent&ucid=_ucid",
                                         "Title": "Visual IVR",
                                         "Icon": "assistant",
@@ -1778,6 +1866,41 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore"
+                                    }
+                                }
+                            ],
+                            "AOT": [
+                                {
+                                    "Name": "TAS",
+                                    "Description": "",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "Icon": "integration_instructions",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0,
+                                            "W": 1000,
+                                            "H": 700
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "Url": "https://dice.tetherfi.cloud/TAS/Survey/Index?intentname=DiceIntent2&inSimulation=false&agentid=50020&customerid=12&ucid=Test&flowType=Test&campId=Test&station=42002&phoneNumber=6539284004#",
+                                        "QueryParams": []
                                     }
                                 }
                             ]
@@ -1864,7 +1987,7 @@
                     },
                     "Data": {
                         "Path": "/dashboard",
-                        "Url": "https://dice.tetherfi.cloud/tmac_agent_utils/ui/Dashboard.html?agentId=50020",
+                        "Url": "https://dice.tetherfi.cloud/CustomerJourneyDashBoard/",
                         "QueryParams": []
                     }
                 }
@@ -1910,7 +2033,7 @@
                     },
                     "Data": {
                         "AutoOpen": false,
-                        "Url": "https://tmac.tetherfilabs.com/tcie-web-appv8/?id=7224",
+                        "Url": "https://tmac.tetherfilabs.com/tcie-web-appv8",
                         "QueryParams": []
                     }
                 }

@@ -17,6 +17,7 @@ export class TwCardHeaderComponent implements OnInit {
     @Output() maximize = new EventEmitter();
     @Output() float = new EventEmitter();
     @Output() collapse = new EventEmitter();
+    @Output() destroy = new EventEmitter();
 
     constructor(
         private _aotWidgetService: AotWidgetService
@@ -42,6 +43,7 @@ export class TwCardHeaderComponent implements OnInit {
         // check if id is available, then call destroy
         if (id) {
             this._aotWidgetService.destroyWidget(id);
+            this.destroy.emit();
         }
     }
 }

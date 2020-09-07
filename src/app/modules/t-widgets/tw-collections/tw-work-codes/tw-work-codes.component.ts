@@ -44,6 +44,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     DataConf: {
         Source: string;
         ByTeam: boolean;
+        ByGroup: boolean;
     };
 
     selectedWorkCodes: any = [];
@@ -112,6 +113,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         this.destroyWrapper();
 
         SDKClient.events.off('TeamrWorkCodeDetailsEvent', this.TeamrWorkCodeDetailsEvent);
+        SDKClient.events.off('WorkCodeAddedEvent', this.WorkCodeAddedEvent);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -124,18 +126,24 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
             const workGroup = {};
             let workCodeList = [];
 
-            loadWCRes.response?.forEach((item: any) => {
-                if (item.ParentID === '0') {
-                    workGroup[item.Code] = { i: item.Code, Name: item.Name, Pid: item.ParentID };
-                }
-            });
+            // check to order by group
+            if (this.DataConf.ByGroup) {
+                loadWCRes.response?.forEach((item: any) => {
+                    if (item.ParentID === '0') {
+                        workGroup[item.Code] = { i: item.Code, Name: item.Name, Pid: item.ParentID };
+                    }
+                });
 
-            loadWCRes.response?.forEach((item: any, index: number) => {
-                if (item.ParentID !== '0') {
-                    item.ParentName = workGroup[loadWCRes.response[index].ParentID].Name;
-                    workCodeList.push(item);
-                }
-            });
+                loadWCRes.response?.forEach((item: any, index: number) => {
+                    if (item.ParentID !== '0') {
+                        item.ParentName = workGroup[loadWCRes.response[index].ParentID].Name;
+                        workCodeList.push(item);
+                    }
+                });
+            }
+            else {
+                workCodeList = loadWCRes.response;
+            }
 
             workCodeList = uniqBy(workCodeList, 'Name');
 
@@ -151,7 +159,14 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
 
     private TeamrWorkCodeDetailsEvent = (workCodeList: any) => {
         this.selectedWorkCodes = orderBy(workCodeList, ['Count'], ['desc']);
-    };
+    }
+
+    private WorkCodeAddedEvent = (workCode: WorkCode) => {
+        // check if the work code is already added
+        if (this.selectedWorkCodes.filter((w: WorkCode) => w.Code === workCode.Code).length <= 0) {
+            this.selectedWorkCodes.push(workCode);
+        }
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
@@ -161,6 +176,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         if (this.DataConf.Source === 'interaction') {
             this.loadWorkCodesReq.loading = true;
             this.getAllWorkCodes();
+            SDKClient.events.on('WorkCodeAddedEvent', this.WorkCodeAddedEvent);
         } else if (this.DataConf.Source === 'supervisor') {
             SDKClient.events.on('TeamrWorkCodeDetailsEvent', this.TeamrWorkCodeDetailsEvent);
         } else {

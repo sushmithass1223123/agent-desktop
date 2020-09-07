@@ -6,8 +6,8 @@
 <!-- Widget card -->
 <tw-card
     cdkDrag
-    cdkDragBoundary="#container-2"
-    [cdkDragDisabled]="!aot || maximized"
+    cdkDragBoundary="{{ aot ? '#container-2' : '.widget-grid' }}"
+    [cdkDragDisabled]="maximized || (!floating && !aot)"
     [cdkDragFreeDragPosition]="dragPosition"
     class="tw-card animate__animated animate__faster {{
         data.Config.Class + ' ' + (data.Config.Static ? 'tw-static-widget' : '') + ' ' + (maximized ? 'animate__zoomIn' : '')
@@ -17,10 +17,6 @@
 >
     <!-- We are writing a wrapper over material card -->
     <mat-card
-        cdkDrag
-        cdkDragBoundary=".widget-grid"
-        [cdkDragDisabled]="aot || !floating"
-        [cdkDragFreeDragPosition]="dragPosition"
         class="widget-card"
         [ngClass]="
             (fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
@@ -45,6 +41,7 @@
                 (maximize)="maximize()"
                 (float)="float()"
                 (collapse)="collapse()"
+                (destroy)="destroy()"
                 cdkDragHandle
             ></tw-card-header>
 

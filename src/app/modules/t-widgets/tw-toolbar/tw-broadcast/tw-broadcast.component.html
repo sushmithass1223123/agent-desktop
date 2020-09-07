@@ -1,0 +1,8 @@
+<div class="wrap" *ngIf="broadcastMessage">
+    <div fxLayout="row" fxLayoutAlign=" center" class="broadcast">
+        <div class="icon"><img src="assets/images/vectors/broadcast.svg" width="48" height="48" /></div>
+        <div class="message">
+            <marquee direction="left">{{ broadcastMessage }}</marquee>
+        </div>
+    </div>
+</div>

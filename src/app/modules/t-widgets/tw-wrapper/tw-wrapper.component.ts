@@ -19,6 +19,7 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
     @Output() maximizeEvent = new EventEmitter();
     @Output() collapseEvent = new EventEmitter();
     @Output() floatEvent = new EventEmitter();
+    @Output() destroyEvent = new EventEmitter();
 
     fuseConfig: FuseConfig;
 
@@ -101,6 +102,10 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
     collapse(): void {
         this.collapsed = !this.collapsed;
         this.collapseEvent.emit(this.collapsed);
+    }
+
+    destroy(): void {
+        this.destroyEvent.emit();
     }
 
     // -----------------------------------------------------------------------------------------------------

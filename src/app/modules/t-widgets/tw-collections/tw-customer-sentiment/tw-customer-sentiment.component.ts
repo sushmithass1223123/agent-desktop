@@ -173,7 +173,7 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
             const parsedJson = JSON.parse(receivedData.JsonData);
 
             // check for the interaction
-            if (this.interactionId !== parsedJson.interactionID) {
+            if (this.interactionId.toString() !== parsedJson.interactionID) {
                 return;
             }
 

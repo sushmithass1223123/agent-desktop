@@ -1,14 +1,14 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { takeUntil } from 'rxjs/operators';
-import { SDKClient } from 'tmac-sdk';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { ACTIVE_CALL_STATUSES, COMMON_ERR_MESSAGE, PENDING_CALL_STATUSES } from 'app/constants';
 import { ResData } from 'app/interfaces';
 import { sortBy } from 'lodash';
-import { COMMON_ERR_MESSAGE, ACTIVE_CALL_STATUSES, PENDING_CALL_STATUSES } from 'app/constants';
 import * as moment from 'moment';
+import { takeUntil } from 'rxjs/operators';
+import { SDKClient } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-ad-callbacks',
@@ -117,7 +117,7 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
         callback.contact.name = callback.contact.Name;
         callback.contact.directAgentScheduleTime = callback.contact.ScheduleTime;
         this.addNewCallbacks([callback]);
-    };
+    }
 
     addNewCallbacks = (calls: any[]): void => {
         let handled = 0;
@@ -160,7 +160,7 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
                 pending
             }
         };
-    };
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods

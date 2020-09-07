@@ -1,5 +1,10 @@
 <tw-wrapper [data]="data">
-    <div class="w-100-p bg-inherit mat-table-container" [ngClass]="this.source === 'supervisor' ? 'h-100-p' : 'h-50-p'" fusePerfectScrollbar>
+    <div
+        class="w-100-p bg-inherit mat-table-container"
+        [ngClass]="this.source === 'supervisor' ? 'h-100-p' : 'h-50-p'"
+        fusePerfectScrollbar
+        [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
+    >
         <mat-table matSort [dataSource]="dataSource" matSortActive="CallsInQueue" matSortDirection="desc" matSortDisableClear>
             <!-- User name Definition -->
             <ng-container matColumnDef="SkillName">
@@ -30,7 +35,7 @@
             <mat-row *matRowDef="let row; columns: ['SkillName', 'AgentsStaffed', 'AgentAvailable', 'CallsInQueue']"></mat-row>
         </mat-table>
 
-        <p *ngIf="dataSource.data.length === 0" class="text-center m-0 font-size-16">No Data Available</p>
+        <p *ngIf="dataSource.data.length === 0" class="text-center m-0 mat-title">No Data Available</p>
     </div>
 
     <img *ngIf="data.Data.Source === 'dashboard'" class="vector-image" src="assets/images/vectors/home.svg" width="580" />

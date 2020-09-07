@@ -36,6 +36,7 @@ import { TWidget } from '@modules/t-widgets/utils/t-widget';
 import { TwAuxStatusChartComponent } from '@modules/t-widgets/tw-collections/tw-aux-status-chart/tw-aux-status-chart.component';
 import { TwAhtTcComponent } from '@modules/t-widgets/tw-collections/tw-aht-tc/tw-aht-tc.component';
 import { TwSuIntentListComponent } from '@modules/t-widgets/tw-collections/tw-su-intent-list/tw-su-intent-list.component';
+import { TwVoiceBotTranscriptsComponent } from '@modules/t-widgets/tw-collections/tw-voice-bot-transcripts/tw-voice-bot-transcripts.component';
 import { TwRegisterCallbackComponent } from '@modules/t-widgets/tw-collections/tw-register-callback/tw-register-callback.component';
 
 export class TWLibrary {
@@ -75,6 +76,7 @@ export class TWLibrary {
         'tw-aux-status-chart': TwAuxStatusChartComponent,
         'tw-aht-tc': TwAhtTcComponent,
         'tw-su-intent-list': TwSuIntentListComponent,
+        'tw-voice-bot-transcripts': TwVoiceBotTranscriptsComponent,
         'tw-register-callback': TwRegisterCallbackComponent
     };
 

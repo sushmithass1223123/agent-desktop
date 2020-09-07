@@ -11,6 +11,7 @@ import { SharedModule } from '@modules/shared/shared.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { AotWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
+import { AgentFeaturesService } from '@services/agent-features.service';
 import { AppComponent } from 'app/app.component';
 import { fuseConfig } from 'app/constants';
 import { environment } from '../environments/environment';
@@ -20,7 +21,8 @@ import { AppRoutingModule } from './app-routing.module';
     declarations: [AppComponent],
     providers: [
         AotWidgetService,
-        AppDataService 
+        AppDataService,
+        AgentFeaturesService
     ],
     imports: [
         BrowserModule,

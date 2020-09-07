@@ -8,19 +8,16 @@ tw-wrapper {
     tw-card {
         top: 0;
         right: 0;
-        transition-property: height, min-height, max-height;
+        transition-property: transform, height, min-height, max-height;
         transition-duration: 0.3s;
         transition-timing-function: ease-in-out;
-
-        &:not(.aot) {
-            transition-property: transform, height, min-height, max-height;
-        }
 
         &.aot {
             display: grid;
             min-width: 250px;
             max-width: 100vw;
             max-height: 100vh;
+            transition-property: height, min-height, max-height;
 
             &.maximized {
                 position: fixed;
@@ -52,6 +49,7 @@ tw-wrapper {
         &.floating {
             position: relative;
             z-index: 102;
+            transition-property: height, min-height, max-height;
         }
 
         &.collapsed {
@@ -67,7 +65,7 @@ tw-wrapper {
             &.maximized,
             &.floating,
             &.aot {
-                height: 5.8rem !important;
+                height: 5.2rem !important;
                 .card-wrapper {
                     padding: 6px !important;
                 }
@@ -172,8 +170,8 @@ tw-wrapper {
 
                 .mat-card-title {
                     margin: 0 !important;
-                    font-size: 14px;
-                    font-weight: 600;
+                    font-size: 16px;
+                    font-weight: 700;
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;

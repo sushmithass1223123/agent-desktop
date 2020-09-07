@@ -75,3 +75,11 @@ export interface ChatTranscripts {
         name: string;
     };
 }
+
+export interface AppNotification {
+    id?: string;
+    icon?: string;
+    message: string;
+    time?: string | Date;
+    status: string;
+}

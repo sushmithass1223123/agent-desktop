@@ -1,5 +1,7 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, Input } from '@angular/core';
 import { widgetFabAnimations } from './widget-fab.animation';
+import { IWidget } from 'app/interfaces';
+import { AotWidgetService } from '@services/aot-widget.service';
 @Component({
     selector: 'widget-fab',
     templateUrl: './widget-fab.component.html',
@@ -10,34 +12,21 @@ import { widgetFabAnimations } from './widget-fab.animation';
 export class WidgetFabComponent implements OnInit {
 
 
-    fabButtons = [
-        {
-            icon: 'timeline'
-        },
-        {
-            icon: 'view_headline'
-        },
-        {
-            icon: 'room'
-        },
-        {
-            icon: 'lightbulb_outline'
-        },
-        {
-            icon: 'lock'
-        }
-    ];
-    buttons = [];
+    @Input() fabWidgets: IWidget[];
+
+    buttons: IWidget[] = [];
     fabTogglerState = 'inactive';
 
-    constructor() { }
+    constructor(
+        private _aotWidgetService: AotWidgetService
+    ) { }
 
     ngOnInit(): void {
     }
 
     showItems(): void {
         this.fabTogglerState = 'active';
-        this.buttons = this.fabButtons;
+        this.buttons = this.fabWidgets;
     }
 
     hideItems(): void {
@@ -47,6 +36,15 @@ export class WidgetFabComponent implements OnInit {
 
     onToggleFab(): void {
         this.buttons.length ? this.hideItems() : this.showItems();
+    }
+
+    openAOTWidget(widget: IWidget): void {
+        // if widget data is there, then open AOT
+        if (widget) {
+            this._aotWidgetService.addWidget(widget);
+        }
+        // toggle FAB
+        this.onToggleFab();
     }
 
 }

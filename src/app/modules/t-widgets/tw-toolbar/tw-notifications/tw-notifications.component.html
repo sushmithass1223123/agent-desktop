@@ -1,18 +1,73 @@
-<div class="wrap">
+<div class="">
     <button
         mat-icon-button
-        class="tw-aux-codes {{ opened ? 'opened' : '' }}"
+        class="notification-btn animate__animated"
+        [ngClass]="{ opened: opened, animate__headShake: unreadCount > 0 }"
         [matMenuTriggerFor]="menu"
         aria-label="Notification dropdown"
         (menuOpened)="menuOpened(true)"
         (menuClosed)="menuOpened(false)"
+        matBadge="{{ unreadCount || '' }}"
+        matBadgePosition="after"
+        matTooltip="Notifications"
     >
-        <mat-icon class="primary-text">notifications</mat-icon>
+        <mat-icon class="primary-text">{{ notifications.length === 0 ? 'notifications' : 'notifications_active' }}</mat-icon>
     </button>
-    <!-- <div class="toolbar-separator"></div> -->
 </div>
 
 <mat-menu class="tw-notification-list" #menu="matMenu" xPosition="before">
-    <span class="mat-title"></span>
-    <button mat-menu-item>Test</button>
+    <div
+        fxLayout="row"
+        fxLayoutAlign="{{ notifications.length === 0 ? 'center' : 'space-between' }} center"
+        class="mat-title p-16 m-0 w-100-p text-center text-uppercase bg-secondary"
+        (click)="$event.stopPropagation()"
+    >
+        Notifications
+        <button mat-icon-button matTooltip="Clear All" (click)="clearAllNotifications()" *ngIf="notifications.length > 0">
+            <mat-icon>clear_all</mat-icon>
+        </button>
+    </div>
+
+    <div
+        class="notification-list p-8 pb-16"
+        (click)="$event.stopPropagation()"
+        fusePerfectScrollbar
+        [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
+    >
+        <div
+            fxLayout
+            fxLayoutAlign="space-between none"
+            *ngFor="let item of notifications"
+            class="item animate__animated animate__fadeIn animate__faster"
+        >
+            <div fxLayout fxFlex>
+                <div fxLayout fxLayoutAlign="center center" class="mr-12">
+                    <mat-icon mat-list-icon class="text-primary">{{ item.icon || 'announcement' }}</mat-icon>
+                </div>
+                <div fxLayout="column" class="message">
+                    <div class="font-weight-600" [innerHTML]="item.message"></div>
+                    <small>{{ item.time | date: 'shortTime' }}</small>
+                </div>
+            </div>
+            <div fxLayout fxLayoutAlign="center center">
+                <button mat-icon-button matTooltip="Clear" (click)="clearNotification(item)">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+        </div>
+
+        <div
+            fxLayout
+            *ngIf="notifications.length === 0"
+            class="item item animate__animated animate__slideInUp animate__faster"
+            (click)="$event.stopPropagation()"
+        >
+            <div fxLayout fxLayoutAlign="center center" class="p-8 mr-8">
+                <mat-icon mat-list-icon class="text-primary">announcement</mat-icon>
+            </div>
+            <div fxLayout="column" fxLayoutAlign="center none" class="message">
+                <div class="mat-title m-0">No notifications yet!</div>
+            </div>
+        </div>
+    </div>
 </mat-menu>

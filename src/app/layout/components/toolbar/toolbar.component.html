@@ -1,4 +1,4 @@
-<mat-toolbar class="pl-20 pr-20">
+<mat-toolbar class="pl-20 pr-32">
     <div fxFlex fxFill fxLayout="row" fxLayoutAlign="start center">
         <div fxFlex="1 0 auto" fxLayout="row" fxLayoutAlign="start center">
             <button
@@ -36,6 +36,7 @@
             <mat-icon
                 *ngIf="this.connectivityStatus?.status > -1"
                 class="connectivityStatus"
+                [matTooltip]="this.connectivityStatus?.eventMode"
                 [ngClass]="{
                     'color-warning': this.connectivityStatus?.status === 0,
                     'color-alt-success': this.connectivityStatus?.status === 1,
