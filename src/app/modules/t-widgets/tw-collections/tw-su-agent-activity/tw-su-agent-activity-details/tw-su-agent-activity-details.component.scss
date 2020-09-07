@@ -1,4 +1,5 @@
 @import 'src/@fuse/scss/fuse';
+@import 'src/app/scss/shared';
 
 tw-su-agent-activity-details {
     > tw-wrapper {
@@ -19,8 +20,9 @@ tw-su-agent-activity-details {
         img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
             border-radius: 2rem;
+            background-color: $tw-dark;
         }
 
         video {
@@ -28,8 +30,9 @@ tw-su-agent-activity-details {
             width: 100%;
             min-height: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
             border-radius: 2rem;
+            background-color: $tw-dark
         }
     }
 }

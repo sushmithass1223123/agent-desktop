@@ -71,7 +71,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         private _appDataService: AppDataService,
         private _aotWidgetService: AotWidgetService,
         private _dialog: MatDialog,
-        private appUiService: AppUiService
+        private _appUIService: AppUiService
     ) {
         super();
     }
@@ -302,7 +302,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                 confirmDialogRef.componentInstance.message = `<img src="${base64}" width="640" height="320" />`;
                 confirmDialogRef.afterClosed().subscribe((dialogResult) => {
                     if (dialogResult) {
-                        this.appUiService.showSnackbar('Saving ...', 'loading');
+                        this._appUIService.showSnackbar('Saving ...', 'loading');
                         // send snapshot
                         SDKClient.saveVideoSnap({
                             base64,
@@ -314,7 +314,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                             sessionId: this.sessionID
                         }, { base64 })
                             .then((result: IResponse) => {
-                                this.appUiService.showSnackbar('Done', 'success');
+                                this._appUIService.showSnackbar('Done', 'success');
                                 if (result.response && result.response.ImageUrl) {
                                     // snapsot saved sucessfully
                                     this._appDataService.showMessage('Snapshot saved successfully!');
@@ -343,7 +343,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                                 }
                             })
                             .catch(() => {
-                                this.appUiService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
+                                this._appUIService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
                                 this._appDataService.showMessage('Error in saving snapshot!');
                             });
                     }

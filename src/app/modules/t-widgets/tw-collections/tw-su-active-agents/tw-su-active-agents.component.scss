@@ -1,7 +1,7 @@
 @import 'src/app/scss/shared';
 
 tw-su-active-agents {
-    tw-wrapper .active-agent-wrapper {
+    tw-wrapper.active-agent-wrapper {
         mat-card-content {
             &.mat-card-content {
                 position: relative;

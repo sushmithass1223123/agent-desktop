@@ -141,7 +141,7 @@
                                 #agentActionBtn
                                 mat-icon-button
                                 *ngIf="featureCheck(feature, 'agent', '')"
-                                (click)="performAgentAction(item, feature, agentActionBtn)"
+                                (click)="performAgentAction(item, feature)"
                                 [matTooltip]="featureMap[feature.Feature].Label"
                             >
                                 <mat-icon>{{ featureMap[feature.Feature].Icon }}</mat-icon>

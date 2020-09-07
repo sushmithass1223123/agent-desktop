@@ -436,7 +436,9 @@
                                         "Header": true,
                                         "Disabled": false
                                     },
-                                    "Data": {}
+                                    "Data": {
+                                        "GetCallbacksUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Contact/GetContactSessionByAgent"
+                                    }
                                 },
                                 {
                                     "Name": "Feedback",

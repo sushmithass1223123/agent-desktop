@@ -9,6 +9,8 @@ import { AgentFeatures, IAgentData, SDKClient, SuAgentDataModel, SuAgentModel, I
 import { TwWidgetModel } from 'app/models';
 import { IWidget } from 'app/interfaces';
 import { MatButton } from '@angular/material/button';
+import { AppUiService } from '@services/app-ui.service';
+import { COMMON_ERR_MESSAGE } from 'app/constants';
 
 @Component({
     selector: 'tw-su-active-agents',
@@ -115,11 +117,13 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     activityWidget: IWidget;
 
     /**
-     * Constructor
-     * @param {FuseConfigService} _fuseConfigService
-     * @param {AppDataService} _appDataService
+     * Constructor 
      */
-    constructor(private _fuseConfigService: FuseConfigService, private _appDataService: AppDataService) {
+    constructor(
+        private _fuseConfigService: FuseConfigService,
+        private _appDataService: AppDataService,
+        private _appUIService: AppUiService
+    ) {
         super();
 
         this.agentList = [];
@@ -171,8 +175,6 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     // -----------------------------------------------------------------------------------------------------
 
     private SupervisorAgentListEvent = (agentList: SuAgentModel[]) => {
-        console.log('agentList', agentList);
-
         // filter for excpet me
         this.agentList = this.filteredAgents = agentList || [];
         // check any search term is there, then filter
@@ -268,12 +270,9 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         }
     }
 
-    public performAgentAction(agent: SuAgentModel, feature: AgentFeatures, btn: MatButton): void {
+    public performAgentAction(agent: SuAgentModel, feature: AgentFeatures): void {
         console.log('performAgentAction', { agent, feature });
-
-        // disable the button
-        btn.disabled = true;
-
+        this._appUIService.showSnackbar('Please wait, getting information...', 'loading');
         switch (feature.Feature) {
             case 'AllowSupervisorToCapturePicture':
                 SDKClient.getAgentActivity({
@@ -289,11 +288,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                     .then((dt: IResponse) => {
                         const response = dt.response;
                         const agentInfo = dt.userObject.agent;
-
-                        console.log('AgentSnapShotEvent Response: ', dt.response);
-
-                        btn.disabled = false;
-
+                        this._appUIService.showSnackbar('Done', 'success');
                         this.createActivityWidget({
                             header: `Activity - ${agentInfo.AgentName}`,
                             profilePicture: response.ProfilePic,
@@ -318,7 +313,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                         });
                     })
                     .catch((error: string) => {
-                        btn.disabled = false;
+                        this._appUIService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
                         // log the error to server for troubleshooting purpose
                         TUtils.Logger.log('Exception in performAgentAction.AgentSnapShotEvent', error);
                     });
