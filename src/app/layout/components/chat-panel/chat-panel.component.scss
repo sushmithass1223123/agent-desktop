@@ -1,5 +1,7 @@
 @import 'src/@fuse/scss/fuse';
-
+.border-radius-50-p {
+    overflow: hidden;
+}
 chat-panel {
     display: flex;
     flex-direction: column;

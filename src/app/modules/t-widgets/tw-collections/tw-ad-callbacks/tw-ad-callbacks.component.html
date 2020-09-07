@@ -3,16 +3,25 @@
 <!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
 <tw-wrapper [data]="data" (maximizeEvent)="maximizeEvent($event)">
     <!-- your code goes here -->
-    <div fxFlex fxFill fxLayout="row" fxLayoutAlign="space-between" class="w-100-p h-100-p p-4">
-        <div class="callbacks" fxFlex="55" fusePerfectScrollbar [fusePerfectScrollbarOptions]="{ suppressScrollX: true }">
-            <div *ngFor="let x of sample" class="callback mb-20" fxLayout fxLayoutAlign="space-between center">
+    <div
+        *ngIf="!getDashboardDataRes.loading && !getDashboardDataRes.error"
+        fxFlex
+        fxFill
+        fxLayout="row"
+        fxLayoutAlign="space-between"
+        class="w-100-p h-100-p p-4"
+    >
+        <div class="callbacks" fxFlex="55" fusePerfectScrollbar>
+            <div *ngFor="let cb of getDashboardDataRes.data.callbacks" class="callback mb-20" fxLayout fxLayoutAlign="space-between center">
                 <div fxFlex="65" fxLayout fxLayoutAlign="start center" fxLayoutGap="20px">
                     <button mat-flat-button mat-icon-button>
                         <mat-icon> phone </mat-icon>
                     </button>
-                    <span> Voice with Binny </span>
+                    <span> Voice with {{ cb.contact.name }} </span>
                 </div>
-                <small fxFlex="30"> Aug 18, 2020, 11:34:34 AM </small>
+                <small fxFlex="30">
+                    {{ cb.contact.directAgentScheduleTime }}
+                </small>
             </div>
         </div>
         <div
@@ -29,10 +38,10 @@
                     </button>
                 </span>
                 <strong fxFlex="50" class="ml-20">
-                    <small *ngIf="!maximized"> Callbacks Handled </small>
-                    <span *ngIf="maximized"> Callbacks Handled </span>
+                    <small *ngIf="!maximized"> Callbacks Handled / Missed </small>
+                    <span *ngIf="maximized"> Callbacks Handled / Missed </span>
                 </strong>
-                <strong fxFlex="30" class="text-center"> 03 </strong>
+                <strong fxFlex="30" class="text-center"> {{ getDashboardDataRes.data.handled }} </strong>
             </div>
             <div class="missed p-10" fxLayout fxLayoutGap="15" fxLayoutAlign="space-between center">
                 <span fxFlex="20">
@@ -41,12 +50,24 @@
                     </button>
                 </span>
                 <strong fxFlex="50" class="ml-20">
-                    <small *ngIf="!maximized"> Callbacks Missed </small>
-                    <span *ngIf="maximized"> Callbacks Missed </span>
+                    <small *ngIf="!maximized"> Callbacks Pending </small>
+                    <span *ngIf="maximized"> Callbacks Pending </span>
                 </strong>
-                <strong fxFlex="30" class="text-center"> 03 </strong>
+                <strong fxFlex="30" class="text-center"> {{ getDashboardDataRes.data.pending }} </strong>
             </div>
         </div>
     </div>
+
+    <div *ngIf="getDashboardDataRes.loading" class="w-100-p h-100-p" fxLayout fxLayoutAlign="center center">
+        <mat-spinner></mat-spinner>
+    </div>
+
+    <div *ngIf="getDashboardDataRes.error" class="w-100-p h-100-p text-center" fxLayout="column" fxLayoutAlign="center center">
+        <p>
+            {{ getDashboardDataRes.msg }}
+        </p>
+        <button mat-raised-button color="primary">Retry</button>
+    </div>
+
     <!-- your code goes here -->
 </tw-wrapper>

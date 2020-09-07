@@ -9,8 +9,7 @@ import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { ResData } from 'app/interfaces';
-import * as _ from 'lodash';
-import { groupBy } from 'lodash';
+import { groupBy, orderBy, uniqBy } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 import { SDKClient, WorkCode } from 'tmac-sdk';
 
@@ -137,11 +136,12 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
                 workCodeList = loadWCRes.response;
             }
 
+            workCodeList = uniqBy(workCodeList, 'Name');
+
             this.loadWorkCodesReq.data = groupBy(workCodeList, 'ParentName');
             this.loadWorkCodesReq.loading = false;
             this.loadWorkCodesReq.error = false;
-        }
-        catch (e) {
+        } catch (e) {
             this.loadWorkCodesReq.error = true;
             this.loadWorkCodesReq.loading = false;
             this.loadWorkCodesReq.msg = COMMON_ERR_MESSAGE;
@@ -149,7 +149,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     }
 
     private TeamrWorkCodeDetailsEvent = (workCodeList: any) => {
-        this.selectedWorkCodes = _.orderBy(workCodeList, ['Count'], ['desc']);
+        this.selectedWorkCodes = orderBy(workCodeList, ['Count'], ['desc']);
     }
 
     private WorkCodeAddedEvent = (workCode: WorkCode) => {

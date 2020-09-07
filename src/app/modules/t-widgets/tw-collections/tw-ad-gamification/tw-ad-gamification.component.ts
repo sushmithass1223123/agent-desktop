@@ -2,11 +2,10 @@ import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular
 import { FuseConfigService } from '@fuse/services/config.service';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { takeUntil } from 'rxjs/operators';
+import { ResData } from 'app/interfaces';
 import { GamificationService } from 'app/services/gamification.service';
-import { ResStatus } from 'app/interfaces';
+import { takeUntil } from 'rxjs/operators';
 import { SDKClient } from 'tmac-sdk';
-import * as interfaces from 'app/interfaces/interaction-manager';
 
 @Component({
     selector: 'tw-ad-gamification',
@@ -18,7 +17,7 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
     // holds all the data related to this widget from the config
     @Input() data: any;
 
-    gamificationReqStatus: ResStatus = {
+    gamificationReqStatus: ResData<null> = {
         error: false,
         loading: true,
         msg: ''
@@ -114,7 +113,7 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
                 this.gamificationReqStatus = { msg: 'Something went wrong', error: true, loading: false };
             }
         );
-    }
+    };
 
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods

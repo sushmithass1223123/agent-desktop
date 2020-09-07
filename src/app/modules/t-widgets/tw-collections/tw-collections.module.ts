@@ -27,6 +27,7 @@ import { TwCustomerSentimentComponent } from './tw-customer-sentiment/tw-custome
 import { TwHeatMapComponent } from './tw-heat-map/tw-heat-map.component';
 import { TwInteractionSelectorComponent } from './tw-interaction-selector/tw-interaction-selector.component';
 import { TwPanelComponent } from './tw-panel/tw-panel.component';
+import { TwRegisterCallbackComponent } from './tw-register-callback/tw-register-callback.component';
 import { TwSampleComponent } from './tw-sample/tw-sample.component';
 import { TwSuActiveAgentsComponent } from './tw-su-active-agents/tw-su-active-agents.component';
 import { TwSuAgentActivityDetailsComponent } from './tw-su-agent-activity/tw-su-agent-activity-details/tw-su-agent-activity-details.component';
@@ -92,7 +93,8 @@ const collectionComponents = [
     TwAuxStatusChartComponent,
     TwAhtTcComponent,
     TwSuIntentListComponent,
-    TwVoiceBotTranscriptsComponent
+    TwVoiceBotTranscriptsComponent,
+    TwRegisterCallbackComponent
 ];
 
 @NgModule({

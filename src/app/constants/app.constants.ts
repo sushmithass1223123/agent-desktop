@@ -38,3 +38,12 @@ export const AVATAR_COLORS = [
 ];
 
 export const COMMON_ERR_MESSAGE = 'Something went wrong';
+
+export const GAMIFICATION_METRIC_LABELS = {
+    chat_interactions: 'Chat Interactions',
+    chat_interactions_aht: 'Chat Interactions AHT'
+};
+
+export const ACTIVE_CALL_STATUSES = ['AgentConnected', 'DacAccepted'];
+export const FAILED_CALL_STATUSES = ['DacNotificationFailed'];
+export const PENDING_CALL_STATUSES = ['Open', 'QueueConnected'];

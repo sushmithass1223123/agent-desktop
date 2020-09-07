@@ -11,7 +11,9 @@ import { takeUntil } from 'rxjs/operators';
 import { AVChannel, AVEvent, SDKClient, TEnums, TextChatDisconnectedEvent, TUtils, IResponse } from 'tmac-sdk';
 import { ConfirmDialogComponent } from '@modules/shared/confirm-dialog/confirm-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
+// import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
+import { AppUiService } from '@services/app-ui.service';
+import { COMMON_ERR_MESSAGE } from 'app/constants';
 
 @Component({
     selector: 'tw-video-controls',
@@ -21,7 +23,6 @@ import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-b
     animations: fuseAnimations
 })
 export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-
     // holds all the data related to this widget from the config
     @Input() data: IWidget;
 
@@ -44,7 +45,6 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
 
     userList: any[] = [];
 
-
     startTime: Date;
     duration: number;
     mos = '0.00';
@@ -62,9 +62,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
     @ViewChildren('remoteVideo') remoteVideoElements: QueryList<ElementRef>;
 
     /**
-     * Constructor
-     * @param {FuseConfigService} _fuseConfigService
-     * @param {AppDataService} _appDataService
+     * Constructor 
      */
     constructor(
         // @ [OPTIONAL]
@@ -73,7 +71,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         private _appDataService: AppDataService,
         private _aotWidgetService: AotWidgetService,
         private _dialog: MatDialog,
-        private _fuseProgressBarService: FuseProgressBarService
+        private appUiService: AppUiService
     ) {
         super();
     }
@@ -92,24 +90,16 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         // -----------------------------------------------------------
         // @ [OPTIONAL] to get the fuse config
         // -----------------------------------------------------------
-        this._fuseConfigService.config
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(
-                (config: any) => {
-                    this.fuseConfig = config;
-                }
-            );
+        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+            this.fuseConfig = config;
+        });
 
         // -----------------------------------------------------------
         // @ [OPTIONAL] to get the app config
         // -----------------------------------------------------------
-        this._appDataService.config
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(
-                (config: any) => {
-                    this.appConfig = config;
-                }
-            );
+        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+            this.appConfig = config;
+        });
 
         // assign the start time
         this.startTime = new Date();
@@ -158,7 +148,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                 // subscribe to the timer
                 timer(1000, 1000)
                     .pipe(takeUntil(this.unsubscribeAll), takeUntil(this.unsubscribeAll))
-                    .subscribe(val => {
+                    .subscribe((val) => {
                         this.duration = (val + 1) * 1000;
                     });
                 break;
@@ -170,8 +160,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                 // check if the user connected is customer
                 if (evt.data.streamInfo?.user === 'customer') {
                     evt.data.streamInfo.user = this.customerName;
-                }
-                else {
+                } else {
                     // other agent connected
                 }
                 // add the level
@@ -195,8 +184,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                 // show the error
                 if (evt.data.code === TEnums.WrcCodes.Rejected) {
                     this._appDataService.showMessage('Customer has rejected your request');
-                }
-                else {
+                } else {
                     this._appDataService.showMessage('Call failed: ' + evt.data.error);
                 }
                 // close the widget
@@ -259,8 +247,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         if (this.audioMuted) {
             // un mute the call
             this.avConn.unMute(true, false);
-        }
-        else {
+        } else {
             // mute the call
             this.avConn.mute(true, false);
         }
@@ -273,8 +260,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         if (this.videoMuted) {
             // un mute the call
             this.avConn.unMute(false, true);
-        }
-        else {
+        } else {
             // mute the call
             this.avConn.mute(true, true);
         }
@@ -287,8 +273,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         if (this.screenSharing) {
             // stop screen sharing
             this.avConn.stopScreenshare();
-        }
-        else {
+        } else {
             // start screen sharing
             this.avConn.startScreenshare();
         }
@@ -317,7 +302,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                 confirmDialogRef.componentInstance.message = `<img src="${base64}" width="640" height="320" />`;
                 confirmDialogRef.afterClosed().subscribe((dialogResult) => {
                     if (dialogResult) {
-                        this._fuseProgressBarService.show();
+                        this.appUiService.showSnackbar('Saving ...', 'loading');
                         // send snapshot
                         SDKClient.saveVideoSnap({
                             base64,
@@ -329,7 +314,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                             sessionId: this.sessionID
                         }, { base64 })
                             .then((result: IResponse) => {
-                                this._fuseProgressBarService.hide();
+                                this.appUiService.showSnackbar('Done', 'success');
                                 if (result.response && result.response.ImageUrl) {
                                     // snapsot saved sucessfully
                                     this._appDataService.showMessage('Snapshot saved successfully!');
@@ -358,7 +343,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                                 }
                             })
                             .catch(() => {
-                                this._fuseProgressBarService.hide();
+                                this.appUiService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
                                 this._appDataService.showMessage('Error in saving snapshot!');
                             });
                     }
@@ -372,12 +357,11 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         if (this.hold) {
             // un hold the call
             this.avConn.unHold();
-        }
-        else {
+        } else {
             // hold the call
             this.avConn.hold();
         }
-        // set the reference varaible 
+        // set the reference varaible
         this.hold = !this.hold;
     }
 
@@ -386,8 +370,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         // if there is only customer then endCall else dropCall
         if (this.userList.length > 1) {
             this.avConn.dropCall('');
-        }
-        else {
+        } else {
             this.avConn.endCall(TEnums.WrcCallTypes.Audio, '');
         }
         // close the widget

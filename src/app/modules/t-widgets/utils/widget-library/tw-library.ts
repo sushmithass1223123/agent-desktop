@@ -37,6 +37,7 @@ import { TwAuxStatusChartComponent } from '@modules/t-widgets/tw-collections/tw-
 import { TwAhtTcComponent } from '@modules/t-widgets/tw-collections/tw-aht-tc/tw-aht-tc.component';
 import { TwSuIntentListComponent } from '@modules/t-widgets/tw-collections/tw-su-intent-list/tw-su-intent-list.component';
 import { TwVoiceBotTranscriptsComponent } from '@modules/t-widgets/tw-collections/tw-voice-bot-transcripts/tw-voice-bot-transcripts.component';
+import { TwRegisterCallbackComponent } from '@modules/t-widgets/tw-collections/tw-register-callback/tw-register-callback.component';
 
 export class TWLibrary {
     static widgetLibrary: Record<string, Type<any>> = {
@@ -76,6 +77,7 @@ export class TWLibrary {
         'tw-aht-tc': TwAhtTcComponent,
         'tw-su-intent-list': TwSuIntentListComponent,
         'tw-voice-bot-transcripts': TwVoiceBotTranscriptsComponent,
+        'tw-register-callback': TwRegisterCallbackComponent
     };
 
     public static getWidget(type: string, data: any): TWidget {
