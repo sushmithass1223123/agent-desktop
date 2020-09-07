@@ -3,7 +3,7 @@
         <div
             fxLayout="column"
             fxLayoutAlign=" none"
-            class="w-100-p px-12 py-4 border-radius-20 font-size-12 interaction-details"
+            class="w-100-p px-12 py-4 border-radius-20 interaction-details"
             [ngClass]="
                 fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
                     ? fuseConfig.layout.anchorWidget.contentBackground
@@ -26,14 +26,14 @@
 
         <div fxLayout="row" fxLayoutAlign=" none" class="mt-4 chat-container">
             <div fxLayout="column" fxLayoutAlign=" center" class="pt-4 interaction-selector">
-                <button [disabled]="status !== 'connected'" class="more-option-button" mat-mini-fab color="default">
+                <!-- <button [disabled]="status !== 'connected'" class="more-option-button" mat-mini-fab color="default">
                     <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M17 34C13.6377 34 10.3509 33.003 7.55531 31.135C4.75968 29.267 2.58075 26.612 1.29406 23.5056C0.00736582 20.3993 -0.329291 16.9811 0.326658 13.6835C0.982607 10.3858 2.6017 7.35668 4.97919 4.97919C7.35668 2.6017 10.3858 0.982607 13.6835 0.326658C16.9811 -0.329291 20.3993 0.00736582 23.5056 1.29406C26.612 2.58075 29.267 4.75968 31.135 7.55531C33.003 10.3509 34 13.6377 34 17C33.995 21.5071 32.2023 25.8282 29.0153 29.0153C25.8282 32.2023 21.5071 33.995 17 34ZM10.2 15.3C9.74914 15.3 9.31674 15.4791 8.99793 15.7979C8.67911 16.1167 8.50001 16.5491 8.50001 17C8.50001 17.4509 8.67911 17.8833 8.99793 18.2021C9.31674 18.5209 9.74914 18.7 10.2 18.7H15.3V23.8C15.3 24.2509 15.4791 24.6833 15.7979 25.0021C16.1167 25.3209 16.5491 25.5 17 25.5C17.4509 25.5 17.8833 25.3209 18.2021 25.0021C18.5209 24.6833 18.7 24.2509 18.7 23.8V18.7H23.8C24.2509 18.7 24.6833 18.5209 25.0021 18.2021C25.3209 17.8833 25.5 17.4509 25.5 17C25.5 16.5491 25.3209 16.1167 25.0021 15.7979C24.6833 15.4791 24.2509 15.3 23.8 15.3H18.7V10.2C18.7 9.74914 18.5209 9.31674 18.2021 8.99793C17.8833 8.67911 17.4509 8.50001 17 8.50001C16.5491 8.50001 16.1167 8.67911 15.7979 8.99793C15.4791 9.31674 15.3 9.74914 15.3 10.2V15.3H10.2Z"
                             fill="white"
                         ></path>
                     </svg>
-                </button>
+                </button> -->
 
                 <div
                     fxLayout="column"
@@ -195,7 +195,7 @@
                                 *ngIf="!message.divider"
                                 fxLayout="column"
                                 fxLayoutAlign="start start"
-                                class="bubble"
+                                class="bubble mat-elevation-z1"
                                 [ngClass]="
                                     (message.who !== user.agentName &&
                                     message.who !== 'Chatbot' &&

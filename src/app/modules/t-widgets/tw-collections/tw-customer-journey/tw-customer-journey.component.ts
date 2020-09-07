@@ -65,7 +65,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             iframeUrl: '',
             lastId: '',
             tableData: {
-                columns: ['SessionID', 'InteractionDate', 'Channel', 'CIF', 'EmailID', 'NRIC', 'PhoneNumber'],
+                columns: ['SessionID', 'InteractionDate', 'Channel', 'CIF', 'NRIC', 'PhoneNumber'],
                 selection: new SelectionModel<InteractionHistory>(false, []),
                 source: new MatTableDataSource([])
             }
@@ -93,7 +93,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             email: '',
             nric: '',
             phone: '',
-            noOfRecords: (this.customerJourneyTable && this.customerJourneyTable.tableData.source.paginator?.pageSize.toString()) || '5',
+            noOfRecords: this.data.Data.NoOfRecords,
             lastId: '0'
         };
 
@@ -121,7 +121,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             return;
         }
 
-        const noOfRecords = this.customerJourneyTable.tableData.source.paginator?.pageSize.toString() || '5';
+        const noOfRecords = this.customerJourneyTable.tableData.source.paginator?.pageSize.toString() || this.data.Data.NoOfRecords;
         // assign the history params
         this.historyParams = {
             cif: evt.HistoryParameters.CIF,

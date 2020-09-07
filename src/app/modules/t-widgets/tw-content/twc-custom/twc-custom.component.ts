@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, Input, ElementRef, ViewEncapsulation } fr
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { ContentPageService } from 'app/services/content-page.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { AGENT_DATA_MAP } from 'app/constants';
 
 @Component({
     selector: 'twc-custom',
@@ -44,9 +45,22 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
         if (!this.loaded) {
             // check if the url is provided
             if (this.widgetData.Data.Url) {
+                // get the url
+                let url = this.data.Data.Url;
+
+                // get the agent data map
+                const mapObj = AGENT_DATA_MAP();
+
+                // add the query param
+                const reg = new RegExp(Object.keys(mapObj).join('|'), 'gi');
+                url = url.replace(reg, (matched: any) => {
+                    return mapObj[matched];
+                });
+
                 // load the iframe URL
-                this.url = this.transform(this.widgetData.Data.Url);
+                this.url = this.transform(url);
             }
+            
             setTimeout(() => {
                 this.loaded = true;
             }, 3000);

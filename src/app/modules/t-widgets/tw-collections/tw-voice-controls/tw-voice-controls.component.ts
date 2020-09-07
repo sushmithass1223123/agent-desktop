@@ -30,7 +30,9 @@ import {
     MediaServerEvent,
     SDKClient,
     TUtils,
-    TEnums
+    TEnums,
+    IVRDataEvent,
+    CallerIntentEvent
 } from 'tmac-sdk';
 
 @Component({
@@ -57,6 +59,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     callerID = 'NA';
     startTime = '00:00:00';
     sessionID = 'NA';
+    intent = 'NA';
     direction = 'NA';
     duration: any;
     stopTimer = new Subject();
@@ -139,6 +142,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         // set the status
         this.status = 'initial';
 
+        // assign the last 4 IVR, if default is configured
+        this.last4IVR = this.data.Data.IVR?.DefaultMenu || [];
+
         // listen to TMAC events
         this.registerToEvents();
     }
@@ -179,6 +185,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
         SDKClient.events.on('MediaServerEvent', this.MediaServerEvent);
 
+        SDKClient.events.on('CallerIntentEvent', this.CallerIntentEvent);
+        SDKClient.events.on('IVRDataEvent', this.IVRDataEvent);
     }
 
     private deRegisterFromEvents(): void {
@@ -198,6 +206,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         SDKClient.events.off('CallConferenceRemoteConnectedEvent', this.CallConferenceRemoteConnectedEvent);
 
         SDKClient.events.off('MediaServerEvent', this.MediaServerEvent);
+
+        SDKClient.events.off('CallerIntentEvent', this.CallerIntentEvent);
+        SDKClient.events.off('IVRDataEvent', this.IVRDataEvent);
 
     }
 
@@ -388,6 +399,25 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         } catch (error) {
             TUtils.Logger.log('Exception in TwVoiceControlsComponent.MediaServerEvent', error);
         }
+    }
+
+    private CallerIntentEvent = (evt: CallerIntentEvent) => {
+        // check the interaction
+        if (evt.InteractionID !== this.interactionId) {
+            return;
+        }
+
+        // assign the intent name
+        this.intent = evt.IntentName;
+    }
+
+    private IVRDataEvent = (evt: IVRDataEvent) => {
+        // check the interaction
+        if (evt.InteractionID !== this.interactionId) {
+            return;
+        }
+
+        this.last4IVR = [evt.LastMenu_4, evt.LastMenu_3, evt.LastMenu_2, evt.LastMenu];
     }
 
     private createAVConnection(direction: string): AVChannel {

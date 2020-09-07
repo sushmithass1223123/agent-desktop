@@ -13,7 +13,7 @@
                 </mat-optgroup>
             </mat-autocomplete>
             <mat-chip-list #selectedWorkCodesRef aria-label="WorkCodes">
-                <mat-chip *ngFor="let workCode of selectedWorkCodes" removable (removed)="removeWorkCode(workCode)" class="bg-primary">
+                <mat-chip *ngFor="let workCode of selectedWorkCodes" removable (removed)="removeWorkCode(workCode)" class="bg-secondary">
                     <mat-icon class="mat-icon-mirror mr-4">local_offer</mat-icon>
                     {{ workCode.Name }}
                     <mat-icon matChipRemove>cancel</mat-icon>

@@ -41,7 +41,7 @@ export const fuseConfig: FuseConfig = {
         },
         widget: {
             customBackgroundColor: true,
-            bodyBackground: 'grey-50',
+            bodyBackground: 'grey-A100',
             headerBackground: 'grey-100',
             contentBackground: 'grey-100'
         },

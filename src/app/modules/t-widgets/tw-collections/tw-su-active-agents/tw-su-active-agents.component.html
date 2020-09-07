@@ -45,7 +45,7 @@
         >
             <div
                 *ngFor="let item of filteredAgents"
-                class="w-100-p p-12 border-radius-20 agent-item"
+                class="w-100-p p-12 border-radius-20 agent-item mat-elevation-z1"
                 [ngClass]="
                     (fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
                         ? fuseConfig.layout.anchorWidget.contentBackground
@@ -53,7 +53,7 @@
                         ? fuseConfig.layout.widget.contentBackground
                         : '') +
                     ' ' +
-                    (item.AgentLoginID === selectedAgent?.AgentLoginID ? 'border-lg-success mat-elevation-z1' : '')
+                    (item.AgentLoginID === selectedAgent?.AgentLoginID ? 'border-lg-success' : '')
                 "
             >
                 <div

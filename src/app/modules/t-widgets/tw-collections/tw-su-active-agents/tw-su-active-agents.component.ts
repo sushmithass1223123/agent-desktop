@@ -208,7 +208,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
 
     private createActivityWidget(item: any): void {
         // create activity details widget
-        const widget = new TwWidgetModel(item.dateTime, 'tw-su-agent-activity-details', 'local_activity');
+        const widget = new TwWidgetModel(item.title, 'tw-su-agent-activity-details', 'local_activity');
         widget.Config.Actions = ['minimize', 'destroy'];
         widget.Config.ViewState = 'maximize';
         widget.Config.Anchor = true;
@@ -278,19 +278,23 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                 SDKClient.getAgentActivity({
                     agentId: agent.AgentLoginID,
                     consent: false,
-                    location: true,
-                    screenshot: true,
-                    screenvideo: true,
-                    snapshot: true,
+                    location: agent.AgentFeatures.filter(f => f.Feature === 'IsLocationEnabled')?.[0].IsEnabled || false,
+                    screenshot: agent.AgentFeatures.filter(f => f.Feature === 'IsScreenCaptureEnabled')?.[0].IsEnabled || false,
+                    screenvideo: agent.AgentFeatures.filter(f => f.Feature === 'IsScreenCaptureEnabled')?.[0].IsEnabled || false,
+                    snapshot: agent.AgentFeatures.filter(f => f.Feature === 'IsCameraCaptureEnabled')?.[0].IsEnabled || false,
                     source: 'supervisor',
                     sourceId: SDKClient.getAgentData().agentId
                 }, { agent })
                     .then((dt: IResponse) => {
                         const response = dt.response;
                         const agentInfo = dt.userObject.agent;
+                        if (response.Response < 0) {
+                            this._appUIService.showSnackbar('Request timedout!', 'failure');
+                            return;
+                        }
                         this._appUIService.showSnackbar('Done', 'success');
                         this.createActivityWidget({
-                            header: `Activity - ${agentInfo.AgentName}`,
+                            title: `Activity - ${agentInfo.AgentName}`,
                             profilePicture: response.ProfilePic,
                             details: [
                                 {

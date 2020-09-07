@@ -10,7 +10,12 @@
         <div fxLayout="row" fxLayoutAlign="space-between center" class="w-100-p template-selector">
             <div fxFill fxFlex="50" class="mr-4">
                 <mat-form-field fxFill class="custom select-box" appearance="outline">
-                    <mat-select placeholder="Department" [(ngModel)]="selectedDepartment" (selectionChange)="onSelectDepartment($event)">
+                    <mat-select
+                        class="custom"
+                        placeholder="Department"
+                        [(ngModel)]="selectedDepartment"
+                        (selectionChange)="onSelectDepartment($event)"
+                    >
                         <mat-option>None</mat-option>
                         <mat-option *ngFor="let item of departments" [value]="item.ID">{{ item.Name }}</mat-option>
                     </mat-select>

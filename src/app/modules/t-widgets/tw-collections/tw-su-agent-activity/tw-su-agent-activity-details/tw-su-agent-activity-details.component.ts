@@ -72,7 +72,7 @@ export class TwSuAgentActivityDetailsComponent extends TWidgetWrapper implements
         profileWidget.Data.ImageURL = item.profilePicture;
         profileWidget.Data.Details = item.details;
         profileWidget.Config.Class = 'cover panel';
-        profileWidget.Config.Actions = ['maximize'];
+        profileWidget.Config.Actions = [];
 
         // create snapshot widget
         const snapshotWidget = new TwWidgetModel('Snapshot', 'tw-panel', 'camera');

@@ -49,7 +49,7 @@ tw-customer-journey {
         .table {
             width: 100%;
             height: 35%;
-            padding: 8px;
+            padding: 0px 8px;
             background: inherit;
             border-radius: 20px;
         }
@@ -80,6 +80,16 @@ tw-customer-journey {
 
         .none {
             display: none;
+        }
+    }
+}
+
+body.theme-dark {
+    tw-customer-journey {
+        .customer-journey {
+            .step {
+                background-color: rgba(255, 255, 255, 0.04);
+            }
         }
     }
 }

@@ -152,7 +152,8 @@ mat-selection-list {
         border: none;
         min-height: 30px;
         border-radius: 20px;
-        margin-bottom: 4px;
+        margin-bottom: 8px;
+        box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
 
         &.selected {
             background-color: rgb(0 0 0 / 0.2) !important;
@@ -166,6 +167,11 @@ mat-selection-list {
 
         mat-header-cell {
             position: relative;
+
+            // DEMO PURPOSE ONLY
+            font-size: 14px;
+            font-weight: 700;
+            // DEMO PURPOSE ONLY
 
             .mat-sort-header-arrow {
                 margin: 0 6px 0px 6px;
@@ -189,6 +195,11 @@ mat-selection-list {
         justify-content: center;
         text-align: center;
         font-size: 12px;
+
+        // DEMO PURPOSE ONLY
+        font-size: 14px;
+        font-weight: 600;
+        // DEMO PURPOSE ONLY
     }
 }
 // mat table
@@ -231,7 +242,7 @@ mat-form-field {
             }
 
             .mat-form-field-outline-start {
-                border-radius: 2rem 0 0 1.5rem !important;
+                border-radius: 2rem 0 0 2rem !important;
                 min-width: 2rem !important;
                 border-color: transparent;
             }
@@ -244,6 +255,12 @@ mat-form-field {
     }
 }
 // mat form field
+
+// mat-select-panel
+.mat-select-panel {
+    border-radius: 20px !important;
+}
+// mat-select-panel
 
 // mat chip
 mat-chip {

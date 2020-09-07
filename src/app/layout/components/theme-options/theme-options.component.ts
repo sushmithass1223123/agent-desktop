@@ -8,6 +8,7 @@ import { fuseAnimations } from '@fuse/animations';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseNavigationService } from '@fuse/components/navigation/navigation.service';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
+import { FuseConfig } from '@fuse/types';
 
 @Component({
     selector: 'app-theme-options',
@@ -113,7 +114,7 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
         // Subscribe to the config changes
         this._fuseConfigService.config
             .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((config) => {
+            .subscribe((config: FuseConfig) => {
 
                 // Update the stored config
                 this.fuseConfig = config;
@@ -136,7 +137,7 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
         // Subscribe to the form value changes
         this.form.valueChanges
             .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((config) => {
+            .subscribe((config: FuseConfig) => {
 
                 // Update the config
                 this._fuseConfigService.config = config;
@@ -221,7 +222,7 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
                             },
                             widget: {
                                 customBackgroundColor: true,
-                                bodyBackground: 'grey-50',
+                                bodyBackground: 'grey-A100',
                                 headerBackground: 'grey-100',
                                 contentBackground: 'grey-100'
                             },
@@ -273,7 +274,7 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
                             },
                             widget: {
                                 customBackgroundColor: true,
-                                bodyBackground: 'grey-50',
+                                bodyBackground: 'grey-A100',
                                 headerBackground: 'grey-100',
                                 contentBackground: 'grey-100'
                             },

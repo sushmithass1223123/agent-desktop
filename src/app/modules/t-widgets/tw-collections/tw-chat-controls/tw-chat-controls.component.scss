@@ -115,13 +115,13 @@ tw-chat-controls {
                                 justify-content: center;
                                 padding: 6px 7px 8px 9px;
                                 max-width: 95%;
+                                margin-bottom: 2px;
 
                                 &.maximized {
                                     max-width: 60%;
                                 }
 
                                 .right-svg {
-                                    color: #e0e0e0;
                                     position: absolute;
                                     right: -7px;
                                     top: -1px;

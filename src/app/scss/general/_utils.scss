@@ -16,24 +16,31 @@
     }
     &-primary {
         background-color: $tw-primary !important;
+        color: rgba(0, 0, 0, 0.87) !important;
     }
     &-secondary {
         background-color: $tw-secondary !important;
+        color: rgba(0, 0, 0, 0.87) !important;
     }
     &-info {
         background-color: $tw-info !important;
+        color: rgba(0, 0, 0, 0.87) !important;
     }
     &-danger {
         background-color: $tw-danger !important;
+        color: rgba(0, 0, 0, 0.87) !important;
     }
     &-warning {
         background-color: $tw-warning !important;
+        color: rgba(0, 0, 0, 0.87) !important;
     }
     &-success {
         background-color: $tw-success !important;
+        color: rgba(0, 0, 0, 0.87) !important;
     }
     &-dark {
         background-color: $tw-dark !important;
+        color: #ffffff !important;
     }
 }
 
