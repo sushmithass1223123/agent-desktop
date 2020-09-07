@@ -8,6 +8,7 @@ import { takeUntil } from 'rxjs/operators';
 import { AgentFeatures, IAgentData, SDKClient, SuAgentDataModel, SuAgentModel, IResponse, TUtils } from 'tmac-sdk';
 import { TwWidgetModel } from 'app/models';
 import { IWidget } from 'app/interfaces';
+import { MatButton } from '@angular/material/button';
 
 @Component({
     selector: 'tw-su-active-agents',
@@ -208,9 +209,10 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         const widget = new TwWidgetModel(item.dateTime, 'tw-su-agent-activity-details', 'local_activity');
         widget.Config.Actions = ['minimize', 'destroy'];
         widget.Config.ViewState = 'maximize';
+        widget.Config.Anchor = true;
         widget.Config.Position.X = 3;
         widget.Config.Position.Y = 4;
-        widget.Config.Class = 'cover no-restore';
+        widget.Config.Class = 'cover no-restore inherit-header';
         widget.Data.ActivityDetails = item;
 
         // push the widget to list
@@ -266,8 +268,11 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         }
     }
 
-    public performAgentAction(agent: SuAgentModel, feature: AgentFeatures): void {
+    public performAgentAction(agent: SuAgentModel, feature: AgentFeatures, btn: MatButton): void {
         console.log('performAgentAction', { agent, feature });
+
+        // disable the button
+        btn.disabled = true;
 
         switch (feature.Feature) {
             case 'AllowSupervisorToCapturePicture':
@@ -280,36 +285,43 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                     snapshot: true,
                     source: 'supervisor',
                     sourceId: SDKClient.getAgentData().agentId
-                })
+                }, { agent })
                     .then((dt: IResponse) => {
+                        const response = dt.response;
+                        const agentInfo = dt.userObject.agent;
+
                         console.log('AgentSnapShotEvent Response: ', dt.response);
+
+                        btn.disabled = false;
+
+                        this.createActivityWidget({
+                            header: `Activity - ${agentInfo.AgentName}`,
+                            profilePicture: response.ProfilePic,
+                            details: [
+                                {
+                                    Title: 'Agent Name',
+                                    Value: agentInfo.AgentName
+                                },
+                                {
+                                    Title: 'Agent ID',
+                                    Value: agentInfo.AgentLoginID
+                                },
+                                {
+                                    Title: 'Network IP',
+                                    Value: agentInfo.AgentIP
+                                }
+                            ],
+                            snapshot: response.Camera,
+                            location: response.Location ? JSON.parse(response.Location) : '',
+                            screenshot: response.Screenshot,
+                            screenvideo: response.Screenvideo
+                        });
                     })
                     .catch((error: string) => {
+                        btn.disabled = false;
                         // log the error to server for troubleshooting purpose
                         TUtils.Logger.log('Exception in performAgentAction.AgentSnapShotEvent', error);
                     });
-
-                // this.createActivityWidget({
-                //     dateTime: '10/10/10 10:10:10',
-                //     profilePicUrl: 'https://image.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg',
-                //     details: [
-                //         {
-                //             Title: 'Agent Name',
-                //             Value: 'chirag'
-                //         },
-                //         {
-                //             Title: 'Agent ID',
-                //             Value: '55001'
-                //         }
-                //     ],
-                //     snapshotUrl: 'https://image.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg',
-                //     location: {
-                //         x: 12.914142,
-                //         y: 74.855957
-                //     },
-                //     screenshotUrl: 'https://image.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg',
-                //     screenRecordUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
-                // });
                 break;
             default:
         }

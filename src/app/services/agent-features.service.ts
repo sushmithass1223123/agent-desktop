@@ -24,9 +24,7 @@ export class AgentFeaturesService {
         }
     };
 
-    constructor(
-        private _appDataService: AppDataService
-    ) {
+    constructor(private _appDataService: AppDataService) {
         this._agentFeatureInfo = {
             permissions: {
                 camera: false,
@@ -44,57 +42,88 @@ export class AgentFeaturesService {
         SDKClient.events.on('AgentSnapShotEvent', this.AgentSnapShotEvent);
     }
 
-    private AgentSnapShotEvent = (evt: any) => {
+    private AgentSnapShotEvent = async (evt: any) => {
+        // init variables
+        let screenshot = '';
+        let snapshot = '';
+        let screenvideo = '';
+        let location = '';
 
+        // get the snapshot
+        if (evt.Camera) {
+            snapshot = await this.getUrlFromStream('snapshot');
+        }
+
+        // get the screenshot
+        if (evt.ScreenShot) {
+            screenshot = await this.getUrlFromStream('screenshot');
+        }
+
+        // get the screenvideo
+        if (evt.ScreenVideo) {
+            screenvideo = '';
+        }
+
+        // get the location
+        if (evt.Location) {
+            location = JSON.stringify(this._agentFeatureInfo.data.location);
+        }
+
+        // send the response to SDK
         SDKClient.sendAgentActivity({
-            consent: false,
-            location: evt.Location ? JSON.stringify(this._agentFeatureInfo.data.location) : '',
             requestId: evt.RequestId,
-            screenshot: evt.ScreenShot ? this.getUrlFromStream('screenshot') : '',
-            screenvideo: evt.ScreenVideo ? '' : '',
-            snapshot: evt.Camera ? this.getUrlFromStream('snapshot') : ''
+            consent: false,
+            location,
+            screenshot,
+            screenvideo,
+            snapshot
         });
     }
 
-    private getUrlFromStream(type: string): string {
-        try {
-            let stream: MediaStream;
-            let width: number;
-            let height: number;
+    private async getUrlFromStream(type: string): Promise<string> {
+        // media stream reference
+        let stream: MediaStream;
 
-            // check the type
-            if (type === 'screenshot') {
-                stream = this._agentFeatureInfo.data.displayStream;
-                width = screen.width;
-                height = screen.height;
-            }
-            else if (type === 'snapshot') {
-                stream = this._agentFeatureInfo.data.cameraStream;
-                width = 640;
-                height = 320;
-            }
+        // check the type
+        if (type === 'screenshot') {
+            stream = this._agentFeatureInfo.data.displayStream;
+        }
+        else if (type === 'snapshot') {
+            stream = this._agentFeatureInfo.data.cameraStream;
+        }
 
-            // create a video element
-            const video = document.createElement('video');
-            // assign the stream
-            video.srcObject = stream;
-            // create canvas
-            const canvas = document.createElement('canvas');
-            // set width and height of canvas as same as screenshot video
-            canvas.width = screen.width;
-            canvas.height = screen.height;
-            // get context of canvas, used to draw on canvas
-            const ctx = canvas.getContext('2d');
-            // draw screenshot video's current image on canvas
-            ctx.drawImage(video, 0, 0, screen.width, screen.height);
-            // return canvas base64 string having screenshot image
-            return canvas.toDataURL('image/jpeg');
-        }
-        catch (error) {
-            // log the error to server for troubleshooting purpose
-            TUtils.Logger.log('Exception in getUrlFromStream', error);
-        }
-        return '';
+        return new Promise((resolve, reject) => {
+            try {
+                // create a video element
+                const video = document.createElement('video');
+                // autoplay
+                video.autoplay = true;
+                // mte the video
+                video.muted = true;
+                // assign the stream
+                video.srcObject = stream;
+                // listen to play event
+                video.onplay = () => {
+                    // create canvas
+                    const canvas = document.createElement('canvas');
+                    // set canvas width and height
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+
+                    // get context of canvas, used to draw on canvas
+                    const context = canvas.getContext('2d');
+                    // draw video's current image on canvas
+                    context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+
+                    // return the canvas url
+                    resolve(canvas.toDataURL());
+                };
+            } catch (error) {
+                // log the error to server for troubleshooting purpose
+                TUtils.Logger.log('Exception in getUrlFromStream', error);
+                reject(error);
+            }
+        });
     }
 
     private captureCameraStream(): void {

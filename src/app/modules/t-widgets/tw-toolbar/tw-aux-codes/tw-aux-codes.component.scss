@@ -4,7 +4,7 @@ tw-aux-codes {
             position: absolute;
             bottom: -4px;
             left: 20%;
-            content: "";
+            content: '';
             display: block;
             height: 0;
             width: 0;
@@ -40,7 +40,7 @@ tw-aux-codes {
             }
 
             &.logout {
-                color: #dc3545;
+                color: #f44336;
             }
         }
     }

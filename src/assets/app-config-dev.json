@@ -34,6 +34,13 @@
                     "Data": {
                         "Widgets": [
                             {
+                                "Name": "Broadcast Message",
+                                "Description": "",
+                                "Type": "tw-broadcast",
+                                "Config": {},
+                                "Data": {}
+                            },
+                            {
                                 "Name": "Aux Timer",
                                 "Description": "",
                                 "Type": "tw-aux-timer",

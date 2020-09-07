@@ -4,7 +4,7 @@
 
 <!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
 
-<tw-wrapper [data]="data">
+<tw-wrapper [data]="data" class="active-agent-wrapper">
     <!-- your code goes here -->
     <div fxFill fxLayout="column" fxLayoutAlign=" none">
         <div class="w-100-p">
@@ -138,9 +138,10 @@
                     <div fxFlex="50" fxLayout="row wrap" fxLayoutAlign=" start" class="feature-actions border-right-primary px-8">
                         <ng-container *ngFor="let feature of item.AgentFeatures">
                             <button
+                                #agentActionBtn
                                 mat-icon-button
                                 *ngIf="featureCheck(feature, 'agent', '')"
-                                (click)="performAgentAction(item, feature)"
+                                (click)="performAgentAction(item, feature, agentActionBtn)"
                                 [matTooltip]="featureMap[feature.Feature].Label"
                             >
                                 <mat-icon>{{ featureMap[feature.Feature].Icon }}</mat-icon>

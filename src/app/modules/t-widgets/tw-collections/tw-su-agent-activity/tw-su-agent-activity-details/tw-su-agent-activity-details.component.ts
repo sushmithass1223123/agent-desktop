@@ -69,38 +69,41 @@ export class TwSuAgentActivityDetailsComponent extends TWidgetWrapper implements
 
         // create profile widget
         const profileWidget = new TwWidgetModel('Profile', 'tw-panel', 'account_box');
-        profileWidget.Data.ImageURL = item.profilePicUrl;
+        profileWidget.Data.ImageURL = item.profilePicture;
         profileWidget.Data.Details = item.details;
         profileWidget.Config.Class = 'cover panel';
         profileWidget.Config.Actions = ['maximize'];
 
         // create snapshot widget
         const snapshotWidget = new TwWidgetModel('Snapshot', 'tw-panel', 'camera');
-        snapshotWidget.Data.ImageURL = item.snapshotUrl;
+        snapshotWidget.Data.ImageURL = item.snapshot;
         snapshotWidget.Config.Class = 'cover panel';
         snapshotWidget.Config.Actions = ['maximize'];
 
         // create location widget
         const locationWidget = new TwWidgetModel('Location', 'tw-panel', 'location_on');
-        locationWidget.Data.Location = {
-            layers: [
-                tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '...' })
-            ],
-            zoom: 5,
-            center: latLng(item.location.x, item.location.y)
-        };
+        // check if the location is received
+        if (item.location) {
+            locationWidget.Data.Location = {
+                layers: [
+                    tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '...' })
+                ],
+                zoom: 5,
+                center: latLng(item.location.latitude, item.location.longitude)
+            };
+        }
         locationWidget.Config.Class = 'cover panel';
         locationWidget.Config.Actions = ['maximize'];
 
         // create screenshot widget
         const screenshotWidget = new TwWidgetModel('Screenshot', 'tw-panel', 'all_out');
-        screenshotWidget.Data.ImageURL = item.screenshotUrl;
+        screenshotWidget.Data.ImageURL = item.screenshot;
         screenshotWidget.Config.Class = 'cover panel';
         screenshotWidget.Config.Actions = ['maximize'];
 
         // create screenvideo widget
         const screenVideoWidget = new TwWidgetModel('Screen Video', 'tw-panel', 'featured_video');
-        screenVideoWidget.Data.VideoURL = item.screenRecordUrl;
+        screenVideoWidget.Data.VideoURL = item.screenvideo;
         screenVideoWidget.Config.Class = 'cover panel';
         screenVideoWidget.Config.Actions = ['maximize'];
 

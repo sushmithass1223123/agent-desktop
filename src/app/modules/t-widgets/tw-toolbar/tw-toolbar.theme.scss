@@ -18,4 +18,14 @@
     //         }
     //     }
     // }
+
+    tw-broadcast {
+        .broadcast {
+            @if ($is-dark) {
+                background-color: map-get($background, hover);
+            } @else {
+                background-color: #ffffffb0;
+            }
+        }
+    }
 }

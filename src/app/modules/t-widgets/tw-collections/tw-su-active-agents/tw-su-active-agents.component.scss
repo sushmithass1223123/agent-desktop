@@ -1,7 +1,7 @@
 @import 'src/app/scss/shared';
 
 tw-su-active-agents {
-    tw-wrapper {
+    tw-wrapper .active-agent-wrapper {
         mat-card-content {
             &.mat-card-content {
                 position: relative;
@@ -30,13 +30,13 @@ tw-su-active-agents {
 
                         .element-status {
                             &.success {
-                                background: $tw-status-success;
+                                background: $tw-alt-success;
                             }
                             &.warning {
-                                background: $tw-status-warning;
+                                background: $tw-alt-warning;
                             }
                             &.danger {
-                                background: $tw-status-danger;
+                                background: $tw-alt-danger;
                             }
                         }
                     }

@@ -9,6 +9,7 @@
         (menuClosed)="menuOpened(false)"
         matBadge="{{ unreadCount || '' }}"
         matBadgePosition="after"
+        matTooltip="Notifications"
     >
         <mat-icon class="primary-text">{{ notifications.length === 0 ? 'notifications' : 'notifications_active' }}</mat-icon>
     </button>
@@ -18,7 +19,7 @@
     <div
         fxLayout="row"
         fxLayoutAlign="{{ notifications.length === 0 ? 'center' : 'space-between' }} center"
-        class="mat-title p-16 m-0 w-100-p text-center text-uppercase bg-primary"
+        class="mat-title p-16 m-0 w-100-p text-center text-uppercase bg-secondary"
         (click)="$event.stopPropagation()"
     >
         Notifications
