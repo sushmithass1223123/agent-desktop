@@ -1,4 +1,5 @@
 import { Color } from 'ng2-charts';
+import { AppAlertDialogTypes } from 'app/interfaces';
 
 export const CHART_COLORS: Color[] = [
     {
@@ -47,3 +48,22 @@ export const GAMIFICATION_METRIC_LABELS = {
 export const ACTIVE_CALL_STATUSES = ['AgentConnected', 'DacAccepted'];
 export const FAILED_CALL_STATUSES = ['DacNotificationFailed'];
 export const PENDING_CALL_STATUSES = ['Open', 'QueueConnected'];
+
+export const AppAlertDialogConstants: Record<AppAlertDialogTypes, { heading: string; icon: string }> = {
+    info: {
+        heading: 'Info',
+        icon: 'info'
+    },
+    success: {
+        heading: 'Success',
+        icon: 'check'
+    },
+    warning: {
+        heading: 'Warning',
+        icon: 'warning'
+    },
+    error: {
+        heading: 'Error',
+        icon: 'warning'
+    }
+};

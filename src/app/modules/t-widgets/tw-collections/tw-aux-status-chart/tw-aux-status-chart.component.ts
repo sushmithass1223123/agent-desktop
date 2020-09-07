@@ -7,6 +7,7 @@ import { CHART_COLORS } from 'app/constants';
 import { TwChartConfig } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
 import { SDKClient, AgentStateDurationList } from 'tmac-sdk';
+import { sortBy } from 'lodash';
 
 const multiColors: any = {
     backgroundColor: [...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS].map((c) => c.backgroundColor),
@@ -107,18 +108,20 @@ export class TwAuxStatusChartComponent extends TWidgetWrapper implements OnInit,
     AgentStatusDetailsEvent = (evt: AgentStateDurationList) => {
         const datasets = { Duration: [] };
         const labels = [];
-        evt.States.forEach((c) => {
-            const min = Math.floor((c.Duration % 3600) / 60);
-            const sec = c.Duration % 60;
-            datasets.Duration.push(c.Duration);
-            labels.push(`${c.State} - [${min}:${sec}]`);
-        });
+        sortBy(evt.States, 'Duration')
+            .reverse()
+            .forEach((c) => {
+                const min = Math.floor((c.Duration % 3600) / 60);
+                const sec = c.Duration % 60;
+                datasets.Duration.push(c.Duration);
+                labels.push(`${c.State} - [${min}:${sec}]`);
+            });
         this.statusChart.datasets = Object.keys(datasets).map((d) => ({
             data: datasets[d],
             label: d
         }));
         this.statusChart.labels = labels;
-    }
+    };
 
     // -----------------------------------------------------------------------------------------------------
     // @  Private Methods

@@ -276,9 +276,13 @@ export class ChatPanelComponent implements OnInit, AfterViewInit, OnDestroy {
 
         // Reset the reply form
         this._replyForm.reset();
+        this._prepareChatForReplies();
     }
 
     AgentNotificaitonEvent = (evt: AgentNotificaitonEvent): void => {
+        if (evt.Type !== 'IM') {
+            return;
+        }
         if (!this.allChats[evt.FromAgentId]) {
             this.allChats[evt.FromAgentId] = { dialog: [], id: evt.FromAgentId };
         }

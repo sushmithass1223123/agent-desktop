@@ -7,6 +7,7 @@ import { CHART_COLORS } from 'app/constants';
 import { TwChartConfig } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
 import { SDKClient, WallboardRefreshEvent } from 'tmac-sdk';
+import { sortBy } from 'lodash';
 
 const multiColors: any = {
     backgroundColor: [...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS].map((c) => c.backgroundColor),
@@ -108,10 +109,12 @@ export class TwSuCallsInQueueComponent extends TWidgetWrapper implements OnInit,
     TeamWallboardRefreshEvent = (evt: WallboardRefreshEvent) => {
         const datasets = { 'Calls In Queue': [] };
         const labels = [];
-        evt.Skills.forEach((c) => {
-            datasets['Calls In Queue'].push(c.CallsInQueue);
-            labels.push(c.SkillName);
-        });
+        sortBy(evt.Skills, 'CallsInQueue')
+            .reverse()
+            .forEach((c) => {
+                datasets['Calls In Queue'].push(c.CallsInQueue);
+                labels.push(c.SkillName);
+            });
         this.ciqChart.datasets = Object.keys(datasets).map((d) => {
             if (datasets[d].every((x) => x === 0)) {
                 datasets[d] = [];

@@ -23,6 +23,7 @@
                     {{ cb.contact.directAgentScheduleTime }}
                 </small>
             </div>
+            <p *ngIf="!getDashboardDataRes.data.callbacks.length" class="text-center mat-title m-0">No callbacks</p>
         </div>
         <div
             fxFlex="40"
@@ -31,27 +32,27 @@
             [ngClass]="{ maximized: maximized }"
             fxLayoutAlign="{{ maximized ? 'start stretch' : 'center center' }}"
         >
-            <div class="handled p-10" fxLayout fxLayoutGap="15" fxLayoutAlign="space-between center">
+            <div class="handled p-10 mat-elevation-z2" fxLayout fxLayoutGap="15" fxLayoutAlign="space-between center">
                 <span fxFlex="20">
                     <button mat-flat-button mat-icon-button class="bg-success">
                         <mat-icon>phone</mat-icon>
                     </button>
                 </span>
                 <strong fxFlex="50" class="ml-20">
-                    <small *ngIf="!maximized"> Callbacks Handled / Missed </small>
-                    <span *ngIf="maximized"> Callbacks Handled / Missed </span>
+                    <small *ngIf="!maximized"> Handled / Missed </small>
+                    <span *ngIf="maximized"> Handled / Missed </span>
                 </strong>
                 <strong fxFlex="30" class="text-center"> {{ getDashboardDataRes.data.handled }} </strong>
             </div>
-            <div class="missed p-10" fxLayout fxLayoutGap="15" fxLayoutAlign="space-between center">
+            <div class="missed p-10 mat-elevation-z2" fxLayout fxLayoutGap="15" fxLayoutAlign="space-between center">
                 <span fxFlex="20">
                     <button mat-flat-button mat-icon-button class="bg-danger">
                         <mat-icon>call_end</mat-icon>
                     </button>
                 </span>
                 <strong fxFlex="50" class="ml-20">
-                    <small *ngIf="!maximized"> Callbacks Pending </small>
-                    <span *ngIf="maximized"> Callbacks Pending </span>
+                    <small *ngIf="!maximized"> Pending </small>
+                    <span *ngIf="maximized"> Pending </span>
                 </strong>
                 <strong fxFlex="30" class="text-center"> {{ getDashboardDataRes.data.pending }} </strong>
             </div>

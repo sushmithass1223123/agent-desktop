@@ -143,7 +143,7 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
                     ...x,
                     contact: {
                         ...x.contact,
-                        directAgentScheduleTime: moment(x.contact.directAgentScheduleTime, 'YYYYMMDDHHmmss').format('DD MM YYYY hh:mm:ss')
+                        directAgentScheduleTime: moment(x.contact.directAgentScheduleTime, 'YYYYMMDDHHmmss').format('DD-MM-YYYY hh:mm:ss A')
                     }
                 };
             });

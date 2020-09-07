@@ -4,6 +4,7 @@ import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { ChartOptions } from 'chart.js';
 import { takeUntil } from 'rxjs/operators';
+import { CHART_COLORS } from 'app/constants';
 
 @Component({
     selector: 'tw-account-information',
@@ -16,19 +17,37 @@ export class TwAccountInformationComponent extends TWidgetWrapper implements OnI
     @Input() data: any;
 
     maximized = false;
-    // Doughnut
-    doughnutChartLabels = ['Download Sales', 'In-Store Sales', 'Mail-Order Sales'];
-    doughnutChartData = [10, 20];
-    doughnutChartType = 'doughnut';
-    doughnutOptions: ChartOptions = {
-        legend: { display: false },
-        maintainAspectRatio: true,
-        cutoutPercentage: 70,
-        responsive: true
-    };
-    doughnutColors = [
+
+    wirelessData = [
         {
-            backgroundColor: ['purple', 'lightgrey']
+            data: [66, 34],
+            labels: ['Download Sales', 'In-Store Sales', 'Mail-Order Sales'],
+            options: {
+                legend: { display: false },
+                maintainAspectRatio: true,
+                cutoutPercentage: 70,
+                responsive: true
+            },
+            colors: [
+                {
+                    backgroundColor: ['rgba(196, 189, 231, 1)', 'lightgrey']
+                }
+            ]
+        },
+        {
+            data: [50, 50],
+            labels: ['Download Sales', 'In-Store Sales', 'Mail-Order Sales'],
+            options: {
+                legend: { display: false },
+                maintainAspectRatio: true,
+                cutoutPercentage: 70,
+                responsive: true
+            },
+            colors: [
+                {
+                    backgroundColor: ['rgba(196, 189, 231, 1)', 'lightgrey']
+                }
+            ]
         }
     ];
 

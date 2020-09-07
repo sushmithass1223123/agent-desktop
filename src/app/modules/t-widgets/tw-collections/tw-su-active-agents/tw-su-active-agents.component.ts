@@ -281,7 +281,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                     location: true,
                     screenshot: true,
                     screenvideo: true,
-                    snapshot: true,
+                    snapshot:  true,
                     source: 'supervisor',
                     sourceId: SDKClient.getAgentData().agentId
                 }, { agent })
