@@ -7,6 +7,7 @@ import { CHART_COLORS } from 'app/constants';
 import { TwChartConfig } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
 import { AgentChannelDataList, SDKClient } from 'tmac-sdk';
+import { sortBy } from 'lodash';
 
 const multiColors: any = {
     backgroundColor: CHART_COLORS.map((c) => c.backgroundColor),
@@ -119,7 +120,7 @@ export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements On
         }
         const datasets = { Total: [], AHT: [] };
         const labels = [];
-        channelData.Channels.forEach((c) => {
+        sortBy(channelData.Channels, 'Total').forEach((c) => {
             datasets.Total.push(c.Total);
             datasets.AHT.push(c.AverageActiveTime + c.AverageHoldTime);
             labels.push(c.Channel);
@@ -129,11 +130,12 @@ export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements On
             label: d
         }));
         this.allInteractionsChart.labels = labels;
-    }
+    };
 
     TeamChannelListEvent = (evt: AgentChannelDataList) => {
         const datasets = { Duration: [] };
         const labels = [];
+        console.log({ evt });
         evt.Channels.forEach((c) => {
             datasets.Duration.push(c.Total);
             labels.push(c.Channel);
@@ -143,7 +145,7 @@ export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements On
             label: d
         }));
         this.allInteractionsChart.labels = labels;
-    }
+    };
 
     // -----------------------------------------------------------------------------------------------------
     // @  Private Methods

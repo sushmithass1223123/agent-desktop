@@ -6,8 +6,8 @@
     <div *ngIf="!loadWorkCodesReq.loading && !loadWorkCodesReq.error" fxFlex fxFill fxLayout="row" fxLayoutAlign="center" class="p-4">
         <mat-form-field *ngIf="DataConf.Source === 'interaction'" class="w-100-p" appearance="outline">
             <mat-autocomplete class="w-100-p" #allWorkCodesRef (optionSelected)="setWorkCode($event)">
-                <mat-optgroup *ngFor="let group of loadWorkCodesReq.data | keyvalue" [label]="group.key">
-                    <mat-option *ngFor="let workCode of group.value" [value]="workCode">
+                <mat-optgroup *ngFor="let group of filteredOptions | async | keyvalue" [label]="group.key">
+                    <mat-option *ngFor="let workCode of group.value" [value]="getOptionValue(workcode , { ParentName:  group.key })">
                         {{ workCode.Name }}
                     </mat-option>
                 </mat-optgroup>
@@ -28,6 +28,7 @@
                 />
             </mat-chip-list>
         </mat-form-field>
+
         <div *ngIf="DataConf.Source === 'supervisor'" class="w-100-p h-100-p p-12" fusePerfectScrollbar>
             <mat-chip-list aria-label="WorkCodes">
                 <mat-chip

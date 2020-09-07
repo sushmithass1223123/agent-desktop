@@ -7,6 +7,7 @@ import { ResData } from 'app/interfaces';
 import { BaseChartDirective } from 'ng2-charts';
 import { takeUntil } from 'rxjs/operators';
 import { GAMIFICATION_METRIC_LABELS } from 'app/constants';
+import { SDKClient } from 'tmac-sdk';
 
 const OnLoadMetricsToAgent = {
     SubEventName: 'OnLoadMetricsToAgent',
@@ -145,16 +146,16 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
             JsonData: { ...onLoadMetricsToAgent.JsonData, eventdata: JSON.parse(onLoadMetricsToAgent.JsonData.eventdata) }
         };
 
-        this.gamificationService.getAgentProgress(this.data.Data.AgentProgressUrl, '1014').subscribe(
-            (res) => {
+        const { agentId } = SDKClient.getAgentData();
+
+        this.gamificationService.getAgentProgress(this.data.Data.AgentProgressUrl, '50020').subscribe(
+            (metrics) => {
                 try {
-                    this.gamificationReqStatus.loading = false;
-                    const metrics = JSON.parse(res.d);
-                    // let labels = [];
-                    // let datasets = {
-                    //     PointsAssigned: [],
-                    //     RequiredPointsForNextBadge: []
-                    // };
+                    this.gamificationReqStatus = {
+                        loading: false,
+                        error: false,
+                        msg: ''
+                    };
                     metrics.forEach((m: any) => {
                         this.performanceChartProgress.badge[m.MetricName] = {
                             max: m.PointsAssigned + m.RequiredPointsForNextBadge,
@@ -164,16 +165,7 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
                             max: parseInt(m.MetricMaxValue, 10),
                             current: parseInt(m.MetricCurrentValue, 10)
                         };
-                        // labels.push(m.MetricName);
-                        // datasets.PointsAssigned.push(m.PointsAssigned);
-                        // datasets.RequiredPointsForNextBadge.push(m.PointsAssigned + m.RequiredPointsForNextBadge);
                     });
-                    // this.performanceChart.labels = labels;
-                    // this.performanceChart.datasets = Object.values(datasets).map((d) => ({
-                    //     data: d,
-                    //     barThickness: 8
-                    // }));
-                    // this.performanceChart.refresh();
                 } catch (e) {
                     this.gamificationReqStatus = { loading: false, error: true, msg: 'Looks like something went wrong' };
                 }

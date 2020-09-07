@@ -168,7 +168,6 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
     }
 
     OnNLPDataEvent = (evt: GenericEvent): void => {
-        console.log({ evt }, 'NLPDATAEVT');
         const receivedData = evt;
         if (receivedData) {
             const parsedJson = JSON.parse(receivedData.JsonData);
@@ -193,7 +192,7 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
                 y: parsedJson.sentimentResult
             } as any);
         }
-    }
+    };
 
     // -----------------------------------------------------------------------------------------------------
     // @  Private Methods

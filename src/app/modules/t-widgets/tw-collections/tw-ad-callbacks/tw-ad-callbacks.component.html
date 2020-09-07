@@ -23,6 +23,9 @@
                     {{ cb.contact.directAgentScheduleTime }}
                 </small>
             </div>
+            <p *ngIf="!getDashboardDataRes.data.callbacks.length" class="text-center">
+                No callbacks
+            </p>
         </div>
         <div
             fxFlex="40"

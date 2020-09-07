@@ -10,8 +10,10 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { ResData } from 'app/interfaces';
 import { groupBy, orderBy, uniqBy } from 'lodash';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, startWith, map } from 'rxjs/operators';
 import { SDKClient, WorkCode } from 'tmac-sdk';
+import { Observable } from 'rxjs';
+import { AppUiService } from '@services/app-ui.service';
 
 @Component({
     selector: 'tw-work-codes',
@@ -37,6 +39,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         loading: false,
         msg: ''
     };
+    filteredOptions: Observable<Record<string, WorkCode[]>>;
 
     DataConf: {
         Source: string;
@@ -60,7 +63,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         private _fuseConfigService: FuseConfigService,
         // @ [OPTIONAL]
         private _appDataService: AppDataService,
-        private _snackbar: MatSnackBar
+        private appUiService: AppUiService
     ) {
         super();
     }
@@ -91,6 +94,12 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         });
 
         this.DataConf = this.data.Data;
+
+        this.filteredOptions = this.workCodeCtrl.valueChanges.pipe(
+            startWith(''),
+            map((wc) => (typeof wc === 'string' ? wc : '')),
+            map((wc) => (wc ? this._filterOptions(wc) : this.loadWorkCodesReq.data))
+        );
 
         this.setup();
     }
@@ -162,15 +171,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     }
 
     public setWorkCode(option: MatAutocompleteSelectedEvent): void {
-        this._snackbar.openFromComponent(SnackbarComponent, {
-            data: {
-                icon: 'loop',
-                loading: true,
-                color: 'primary',
-                message: 'Setting work code'
-            },
-            verticalPosition: 'top'
-        });
+        this.appUiService.showSnackbar('Setting work code', 'loading');
         SDKClient.setCallWorkCode(
             {
                 code: option.option.value.Code,
@@ -183,44 +184,15 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
                 this.loadWorkCodesReq.data[option.option.group.label] = this.loadWorkCodesReq.data[option.option.group.label].filter(
                     (x) => x.Code !== option.option.value.Code
                 );
-
-                this._snackbar.openFromComponent(SnackbarComponent, {
-                    data: {
-                        icon: 'done',
-                        color: 'success',
-                        message: 'Work code set successfully'
-                    },
-                    verticalPosition: 'top'
-                });
-                setTimeout(() => {
-                    this._snackbar.dismiss();
-                }, 3000);
+                this.appUiService.showSnackbar('Work code set successfully', 'success');
             })
             .catch(() => {
-                this._snackbar.openFromComponent(SnackbarComponent, {
-                    data: {
-                        icon: 'close',
-                        color: 'danger',
-                        message: 'Something went wrong '
-                    },
-                    verticalPosition: 'top'
-                });
-                setTimeout(() => {
-                    this._snackbar.dismiss();
-                }, 3000);
+                this.appUiService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
             });
     }
 
     public removeWorkCode(option: WorkCode): void {
-        this._snackbar.openFromComponent(SnackbarComponent, {
-            data: {
-                icon: 'loop',
-                loading: true,
-                color: 'primary',
-                message: 'Removing work code'
-            },
-            verticalPosition: 'top'
-        });
+        this.appUiService.showSnackbar('Removing work code', 'loading');
 
         SDKClient.removeCallWorkCode(
             {
@@ -231,32 +203,25 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         )
             .then(() => {
                 this.selectedWorkCodes = this.selectedWorkCodes.filter((s: any) => s.Code !== option.Code);
-                this.loadWorkCodesReq.data[option.ParentID].push(option);
-                this._snackbar.openFromComponent(SnackbarComponent, {
-                    data: {
-                        icon: 'done',
-                        color: 'success',
-                        message: 'Work code removed successfully'
-                    },
-                    verticalPosition: 'top'
-                });
-                setTimeout(() => {
-                    this._snackbar.dismiss();
-                }, 3000);
+                this.loadWorkCodesReq.data[(option as any).ParentName].push(option);
+                console.log(this.loadWorkCodesReq.data[(option as any).ParentName]);
+                this.appUiService.showSnackbar('Work code removed successfully', 'success');
             })
             .catch(() => {
-                this._snackbar.openFromComponent(SnackbarComponent, {
-                    data: {
-                        icon: 'close',
-                        color: 'danger',
-                        message: 'Something went wrong '
-                    },
-                    verticalPosition: 'top'
-                });
-                setTimeout(() => {
-                    this._snackbar.dismiss();
-                }, 3000);
+                this.appUiService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
             });
+    }
+
+    _filterOptions(name: string): Record<string, WorkCode[]> {
+        const filteredData: Record<string, WorkCode[]> = {};
+        Object.keys(this.loadWorkCodesReq.data).forEach((c) => {
+            filteredData[c] = this.loadWorkCodesReq.data[c].filter((x) => x.Name.toLowerCase().includes(name.toLowerCase()));
+        });
+        return filteredData;
+    }
+
+    getOptionValue(x: any, y: any): any {
+        return { ...x, ...y };
     }
 }
 

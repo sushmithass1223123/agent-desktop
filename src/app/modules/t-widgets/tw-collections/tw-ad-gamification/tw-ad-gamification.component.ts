@@ -4,6 +4,7 @@ import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { ResData } from 'app/interfaces';
 import { GamificationService } from 'app/services/gamification.service';
+import { forkJoin } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { SDKClient } from 'tmac-sdk';
 
@@ -17,13 +18,17 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
     // holds all the data related to this widget from the config
     @Input() data: any;
 
-    gamificationReqStatus: ResData<null> = {
+    gamificationReqStatus: ResData<{ badges: any[]; goldCoins: number; silverCoins: number; bronzeCoins: number }> = {
         error: false,
         loading: true,
-        msg: ''
+        msg: '',
+        data: {
+            bronzeCoins: 0,
+            goldCoins: 0,
+            silverCoins: 0,
+            badges: []
+        }
     };
-
-    receivedBadges: any[] = [];
 
     maximized = false;
     // -----------------------------------------------------------
@@ -98,18 +103,41 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
         SDKClient.events.on('InteractionClosedEvent', this.setBadges);
     }
 
-    private setBadges = (): void => {
-        if (!this.data.Data.LeaderBoardUrl) {
-            this.gamificationReqStatus = { loading: false, error: true, msg: 'LeaderBoardUrl not provided in app config' };
+    setBadges = (): void => {
+        if (!this.data.Data.LeaderBoardUrl || !this.data.Data.AgentProgressUrl) {
+            this.gamificationReqStatus = { loading: false, error: true, msg: 'LeaderBoardUrl / AgentProgressUrl not provided in app config' };
+            return;
         }
-        this._gamificationService.fetchLeaderBoard(this.data.Data.LeaderBoardUrl).subscribe(
-            (leaders) => {
-                if (leaders && leaders.length) {
-                    this.receivedBadges = leaders[0].TotalBadges;
-                }
-                this.gamificationReqStatus = { loading: false, error: false, msg: '' };
+        forkJoin([
+            this._gamificationService.fetchLeaderBoard(this.data.Data.LeaderBoardUrl),
+            this._gamificationService.getAgentProgress(this.data.Data.AgentProgressUrl, '50020')
+        ]).subscribe(
+            (res) => {
+                const [leaders, metrics] = res;
+                let goldCoins = 0;
+                let silverCoins = 0;
+                let bronzeCoins = 0;
+
+                metrics.forEach((m: any) => {
+                    goldCoins += m.GoldCoins;
+                    silverCoins += m.SilverCoins;
+                    bronzeCoins += m.BronzeCoins;
+                });
+
+                this.gamificationReqStatus = {
+                    loading: false,
+                    error: false,
+                    msg: '',
+                    data: {
+                        goldCoins,
+                        silverCoins,
+                        bronzeCoins,
+                        badges: leaders && leaders.length ? leaders[0].TotalBadges : []
+                    }
+                };
             },
             (err) => {
+                console.error(err);
                 this.gamificationReqStatus = { msg: 'Something went wrong', error: true, loading: false };
             }
         );
