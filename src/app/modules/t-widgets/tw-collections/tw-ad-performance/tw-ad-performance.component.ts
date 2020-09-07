@@ -148,7 +148,7 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
 
         const { agentId } = SDKClient.getAgentData();
 
-        this.gamificationService.getAgentProgress(this.data.Data.AgentProgressUrl, '50020').subscribe(
+        this.gamificationService.getAgentProgress(this.data.Data.AgentProgressUrl, agentId).subscribe(
             (metrics) => {
                 try {
                     this.gamificationReqStatus = {

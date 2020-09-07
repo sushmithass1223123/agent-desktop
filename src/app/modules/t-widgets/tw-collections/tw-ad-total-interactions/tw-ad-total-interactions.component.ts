@@ -118,11 +118,11 @@ export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements On
         if (this.dataConfig.AgentId && this.dataConfig.AgentId !== channelData.AgentId) {
             return;
         }
-        const datasets = { Total: [], AHT: [] };
+        const datasets = { Count: [], Duration: [] };
         const labels = [];
         sortBy(channelData.Channels, 'Total').forEach((c) => {
-            datasets.Total.push(c.Total);
-            datasets.AHT.push(c.AverageActiveTime + c.AverageHoldTime);
+            datasets.Count.push(c.Total);
+            datasets.Duration.push(c.AverageActiveTime + c.AverageHoldTime);
             labels.push(c.Channel);
         });
         this.allInteractionsChart.datasets = Object.keys(datasets).map((d) => ({
@@ -135,7 +135,6 @@ export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements On
     TeamChannelListEvent = (evt: AgentChannelDataList) => {
         const datasets = { Duration: [] };
         const labels = [];
-        console.log({ evt });
         evt.Channels.forEach((c) => {
             datasets.Duration.push(c.Total);
             labels.push(c.Channel);

@@ -8,6 +8,7 @@ import { fuseAnimations } from '@fuse/animations';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseNavigationService } from '@fuse/components/navigation/navigation.service';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
+import { FuseConfig } from '@fuse/types';
 
 @Component({
     selector: 'app-theme-options',
@@ -19,6 +20,8 @@ import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 export class AppThemeOptionsComponent implements OnInit, OnDestroy {
     fuseConfig: any;
     form: FormGroup;
+
+    preservedConfig: FuseConfig;
 
     @HostBinding('class.bar-closed')
     barClosed: boolean;
@@ -111,34 +114,68 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
         });
 
         // Subscribe to the config changes
-        this._fuseConfigService.config
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((config) => {
+        this._fuseConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config) => {
+            // Update the stored config
+            this.fuseConfig = config;
 
-                // Update the stored config
-                this.fuseConfig = config;
-
-                // Set the config form values without emitting an event
-                // so that we don't end up with an infinite loop
-                this.form.setValue(config, { emitEvent: false });
-            });
+            // Set the config form values without emitting an event
+            // so that we don't end up with an infinite loop
+            this.form.setValue(config, { emitEvent: false });
+        });
 
         // Subscribe to the specific form value changes (layout.style)
-        this.form.get('layout.style').valueChanges
-            .pipe(takeUntil(this._unsubscribeAll))
+        this.form
+            .get('layout.style')
+            .valueChanges.pipe(takeUntil(this._unsubscribeAll))
             .subscribe((value) => {
-
                 // Reset the form values based on the
                 // selected layout style
                 this._resetFormValues(value);
             });
 
-        // Subscribe to the form value changes
-        this.form.valueChanges
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((config) => {
+        this.form
+            .get('colorTheme')
+            .valueChanges.pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((colorTheme) => {
+                const config = this.form.value;
+                if (colorTheme === 'theme-dark') {
+                    this.preservedConfig = this.form.value;
+                    config.layout.navbar.customBackgroundColor = false;
+                    config.layout.toolbar.customBackgroundColor = false;
+                    config.layout.content.customBackgroundColor = false;
+                    config.layout.widget.customBackgroundColor = false;
+                    config.layout.anchorWidget.customBackgroundColor = false;
+                }
+                if (colorTheme === 'theme-default' && this.preservedConfig) {
+                    config.layout.navbar.customBackgroundColor = this.preservedConfig.layout.navbar.customBackgroundColor || true;
+                    config.layout.toolbar.customBackgroundColor = this.preservedConfig.layout.toolbar.customBackgroundColor || true;
+                    config.layout.content.customBackgroundColor = this.preservedConfig.layout.content.customBackgroundColor || true;
+                    config.layout.widget.customBackgroundColor = this.preservedConfig.layout.widget.customBackgroundColor || true;
+                    config.layout.anchorWidget.customBackgroundColor = this.preservedConfig.layout.anchorWidget.customBackgroundColor || true;
+                    this.preservedConfig = null;
+                }
+                this._fuseConfigService.config = config;
+            });
 
+        // Subscribe to the form value changes
+        this.form
+            .get('layout')
+            .valueChanges.pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((layout) => {
                 // Update the config
+                const config = this.form.value;
+                config.layout = layout;
+                this._fuseConfigService.config = config;
+            });
+
+        // Subscribe to the form value changes
+        this.form
+            .get('customScrollbars')
+            .valueChanges.pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((customScrollbars) => {
+                // Update the config
+                const config = this.form.value;
+                config.customScrollbars = customScrollbars;
                 this._fuseConfigService.config = config;
             });
 
@@ -190,108 +227,106 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
     private _resetFormValues(value: string): void {
         switch (value) {
             // Vertical Layout #1
-            case 'vertical-layout-1':
-                {
-                    this.form.patchValue({
-                        layout: {
-                            width: 'fullwidth',
-                            navbar: {
-                                background: 'purple-700',
-                                customBackgroundColor: true,
-                                folded: false,
-                                hidden: false,
-                                position: 'left',
-                                variant: 'vertical-style-1'
-                            },
-                            toolbar: {
-                                customBackgroundColor: true,
-                                background: 'grey-200',
-                                hidden: false,
-                                position: 'below-fixed'
-                            },
-                            content: {
-                                customBackgroundColor: true,
-                                background: 'grey-200'
-                            },
-                            anchorWidget: {
-                                customBackgroundColor: true,
-                                bodyBackground: 'purple-A100',
-                                headerBackground: 'grey-100',
-                                contentBackground: 'grey-100'
-                            },
-                            widget: {
-                                customBackgroundColor: true,
-                                bodyBackground: 'grey-50',
-                                headerBackground: 'grey-100',
-                                contentBackground: 'grey-100'
-                            },
-                            footer: {
-                                customBackgroundColor: true,
-                                background: 'grey-400',
-                                hidden: true,
-                                position: 'below-static'
-                            },
-                            sidepanel: {
-                                hidden: true,
-                                position: 'right'
-                            }
+            case 'vertical-layout-1': {
+                this.form.patchValue({
+                    layout: {
+                        width: 'fullwidth',
+                        navbar: {
+                            background: 'purple-700',
+                            customBackgroundColor: true,
+                            folded: false,
+                            hidden: false,
+                            position: 'left',
+                            variant: 'vertical-style-1'
+                        },
+                        toolbar: {
+                            customBackgroundColor: true,
+                            background: 'grey-200',
+                            hidden: false,
+                            position: 'below-fixed'
+                        },
+                        content: {
+                            customBackgroundColor: true,
+                            background: 'grey-200'
+                        },
+                        anchorWidget: {
+                            customBackgroundColor: true,
+                            bodyBackground: 'purple-A100',
+                            headerBackground: 'grey-100',
+                            contentBackground: 'grey-100'
+                        },
+                        widget: {
+                            customBackgroundColor: true,
+                            bodyBackground: 'grey-50',
+                            headerBackground: 'grey-100',
+                            contentBackground: 'grey-100'
+                        },
+                        footer: {
+                            customBackgroundColor: true,
+                            background: 'grey-400',
+                            hidden: true,
+                            position: 'below-static'
+                        },
+                        sidepanel: {
+                            hidden: true,
+                            position: 'right'
                         }
-                    });
+                    }
+                });
 
-                    break;
-                }
+                break;
+            }
 
             // Horizontal Layout #1
-            case 'horizontal-layout-1':
-                {
-                    this.form.patchValue({
-                        layout: {
-                            width: 'fullwidth',
-                            navbar: {
-                                background: 'purple-700',
-                                customBackgroundColor: true,
-                                folded: false,
-                                hidden: false,
-                                position: 'left',
-                                variant: 'vertical-style-1'
-                            },
-                            toolbar: {
-                                customBackgroundColor: true,
-                                background: 'grey-200',
-                                hidden: false,
-                                position: 'below-fixed'
-                            },
-                            content: {
-                                customBackgroundColor: true,
-                                background: 'grey-200'
-                            },
-                            anchorWidget: {
-                                customBackgroundColor: true,
-                                bodyBackground: 'purple-A100',
-                                headerBackground: 'grey-100',
-                                contentBackground: 'grey-100'
-                            },
-                            widget: {
-                                customBackgroundColor: true,
-                                bodyBackground: 'grey-50',
-                                headerBackground: 'grey-100',
-                                contentBackground: 'grey-100'
-                            },
-                            footer: {
-                                customBackgroundColor: true,
-                                background: 'grey-400',
-                                hidden: true,
-                                position: 'below-static'
-                            },
-                            sidepanel: {
-                                hidden: true,
-                                position: 'right'
-                            }
+            case 'horizontal-layout-1': {
+                this.form.patchValue({
+                    layout: {
+                        width: 'fullwidth',
+                        navbar: {
+                            background: 'purple-700',
+                            customBackgroundColor: true,
+                            folded: false,
+                            hidden: false,
+                            position: 'left',
+                            variant: 'vertical-style-1'
+                        },
+                        toolbar: {
+                            customBackgroundColor: true,
+                            background: 'grey-200',
+                            hidden: false,
+                            position: 'below-fixed'
+                        },
+                        content: {
+                            customBackgroundColor: true,
+                            background: 'grey-200'
+                        },
+                        anchorWidget: {
+                            customBackgroundColor: true,
+                            bodyBackground: 'purple-A100',
+                            headerBackground: 'grey-100',
+                            contentBackground: 'grey-100'
+                        },
+                        widget: {
+                            customBackgroundColor: true,
+                            bodyBackground: 'grey-50',
+                            headerBackground: 'grey-100',
+                            contentBackground: 'grey-100'
+                        },
+                        footer: {
+                            customBackgroundColor: true,
+                            background: 'grey-400',
+                            hidden: true,
+                            position: 'below-static'
+                        },
+                        sidepanel: {
+                            hidden: true,
+                            position: 'right'
                         }
-                    });
+                    }
+                });
 
-                    break;
-                }
+                break;
+            }
         }
     }
 

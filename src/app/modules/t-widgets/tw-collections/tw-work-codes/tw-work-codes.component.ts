@@ -2,18 +2,16 @@ import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatAutocomplete, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { FuseConfigService } from '@fuse/services/config.service';
-import { SnackbarComponent } from '@modules/shared/snackbar/snackbar.component';
 import { AppDataService } from '@services/app-data.service';
+import { AppUiService } from '@services/app-ui.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { ResData } from 'app/interfaces';
 import { groupBy, orderBy, uniqBy } from 'lodash';
-import { takeUntil, startWith, map } from 'rxjs/operators';
-import { SDKClient, WorkCode } from 'tmac-sdk';
 import { Observable } from 'rxjs';
-import { AppUiService } from '@services/app-ui.service';
+import { map, startWith, takeUntil } from 'rxjs/operators';
+import { SDKClient, WorkCode } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-work-codes',
@@ -47,7 +45,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         ByGroup: boolean;
     };
 
-    selectedWorkCodes: any = [];
+    selectedWorkCodes: any[] = [];
     separatorKeysCodes: number[] = [ENTER, COMMA];
     workCodeCtrl = new FormControl();
 
@@ -140,14 +138,14 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
                         workCodeList.push(item);
                     }
                 });
-            }
-            else {
+            } else {
                 workCodeList = loadWCRes.response;
             }
 
             workCodeList = uniqBy(workCodeList, 'Name');
 
-            this.loadWorkCodesReq.data = groupBy(workCodeList, 'ParentName');
+            this.loadWorkCodesReq.data = this.DataConf.ByGroup ? groupBy(workCodeList, 'ParentName') : { listData: workCodeList };
+
             this.loadWorkCodesReq.loading = false;
             this.loadWorkCodesReq.error = false;
         } catch (e) {
@@ -159,14 +157,21 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
 
     private TeamrWorkCodeDetailsEvent = (workCodeList: any) => {
         this.selectedWorkCodes = orderBy(workCodeList, ['Count'], ['desc']);
-    }
+    };
 
     private WorkCodeAddedEvent = (workCode: WorkCode) => {
         // check if the work code is already added
         if (this.selectedWorkCodes.filter((w: WorkCode) => w.Code === workCode.Code).length <= 0) {
             this.selectedWorkCodes.push(workCode);
+            if (this.DataConf.ByGroup) {
+                Object.keys(this.loadWorkCodesReq.data).forEach((k) => {
+                    this.loadWorkCodesReq.data[k] = this.loadWorkCodesReq.data[k].filter((x) => x.Code !== workCode.Code);
+                });
+            } else {
+                this.loadWorkCodesReq.data.listData = this.loadWorkCodesReq.data.listData.filter((x) => x.Code !== workCode.Code);
+            }
         }
-    }
+    };
 
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
@@ -197,9 +202,19 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         )
             .then(() => {
                 this.selectedWorkCodes.push(option.option.value);
-                this.loadWorkCodesReq.data[option.option.group.label] = this.loadWorkCodesReq.data[option.option.group.label].filter(
-                    (x) => x.Code !== option.option.value.Code
-                );
+                if (this.DataConf.ByGroup) {
+                    if (!option.option.group.label) {
+                        Object.keys(this.loadWorkCodesReq.data).forEach((k) => {
+                            this.loadWorkCodesReq.data[k] = this.loadWorkCodesReq.data[k].filter((x) => x.Code !== option.option.value.Code);
+                        });
+                    } else {
+                        this.loadWorkCodesReq.data[option.option.group.label] = this.loadWorkCodesReq.data[option.option.group.label].filter(
+                            (x) => x.Code !== option.option.value.Code
+                        );
+                    }
+                } else {
+                    this.loadWorkCodesReq.data.listData = this.loadWorkCodesReq.data.listData.filter((x) => x.Code !== option.option.value.Code);
+                }
                 this.appUiService.showSnackbar('Work code set successfully', 'success');
             })
             .catch(() => {
@@ -219,8 +234,11 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         )
             .then(() => {
                 this.selectedWorkCodes = this.selectedWorkCodes.filter((s: any) => s.Code !== option.Code);
-                this.loadWorkCodesReq.data[(option as any).ParentName].push(option);
-                console.log(this.loadWorkCodesReq.data[(option as any).ParentName]);
+                if (this.DataConf.ByGroup) {
+                    this.loadWorkCodesReq.data[(option as any).ParentName].push(option);
+                } else {
+                    this.loadWorkCodesReq.data.listData.push(option);
+                }
                 this.appUiService.showSnackbar('Work code removed successfully', 'success');
             })
             .catch(() => {
@@ -229,10 +247,15 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     }
 
     _filterOptions(name: string): Record<string, WorkCode[]> {
-        const filteredData: Record<string, WorkCode[]> = {};
-        Object.keys(this.loadWorkCodesReq.data).forEach((c) => {
-            filteredData[c] = this.loadWorkCodesReq.data[c].filter((x) => x.Name.toLowerCase().includes(name.toLowerCase()));
-        });
+        let filteredData: any;
+        if (this.DataConf.ByGroup) {
+            filteredData = {};
+            Object.keys(this.loadWorkCodesReq.data).forEach((c) => {
+                filteredData[c] = this.loadWorkCodesReq.data[c].filter((x) => x.Name.toLowerCase().includes(name.toLowerCase()));
+            });
+        } else {
+            filteredData = this.loadWorkCodesReq.data.listData.filter((x) => x.Name.toLowerCase().includes(name.toLowerCase()));
+        }
         return filteredData;
     }
 

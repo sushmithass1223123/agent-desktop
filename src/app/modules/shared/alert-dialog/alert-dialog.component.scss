@@ -1,0 +1,65 @@
+@import 'src/app/scss/general/_colors';
+
+.alert-dialog {
+    border-radius: 30px;
+    overflow: hidden;
+    filter: drop-shadow(0px 10px 6px rgba(0, 0, 0, 0.2));
+    .mat-dialog-container {
+        padding: 0 0 25px 0 !important;
+        .mat-toolbar {
+            padding-bottom: 30px;
+        }
+    }
+}
+
+alert-dialog {
+    .mat-dialog-title {
+        background-size: 800px 800px;
+        background-position: -400px -500px;
+        background-repeat: no-repeat;
+        color: white;
+
+        .mat-icon {
+            font-size: 50px;
+            height: 50px;
+            width: 50px;
+        }
+    }
+
+    button {
+        color: white !important;
+    }
+
+    .warning {
+        .mat-dialog-title {
+            background-image: radial-gradient($tw-warning 60%, darken($tw-warning, 10) 40%);
+        }
+        button {
+            background-color: $tw-warning !important;
+        }
+    }
+    .info {
+        .mat-dialog-title {
+            background-image: radial-gradient($tw-primary 60%, darken($tw-primary, 10) 40%);
+        }
+        button {
+            background-color: $tw-primary !important;
+        }
+    }
+    .success {
+        .mat-dialog-title {
+            background-image: radial-gradient($tw-alt-success 60%, darken($tw-alt-success, 10) 40%);
+        }
+        button {
+            background-color: $tw-alt-success !important;
+        }
+    }
+    .error {
+        .mat-dialog-title {
+            background-image: radial-gradient($tw-alt-danger 60%, darken($tw-alt-danger, 10) 40%);
+        }
+        button {
+            background-color: $tw-alt-danger !important;
+        }
+    }
+}

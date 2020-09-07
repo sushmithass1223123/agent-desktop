@@ -21,7 +21,7 @@
             </mat-form-field>
         </div>
         <div
-            class="tw-chart w-100-p p-4"
+            class="tw-chart w-100-p p-8"
             [ngClass]="{
                 'h-90-p': wrapper.maximized,
                 'h-100-p': !wrapper.maximized
@@ -30,6 +30,7 @@
         >
             <canvas
                 baseChart
+                class="box-shadow-3d"
                 [colors]="statusChart.colors"
                 [datasets]="statusChart.datasets"
                 [options]="statusChart.options"

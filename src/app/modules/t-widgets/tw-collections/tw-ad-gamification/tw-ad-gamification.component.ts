@@ -108,9 +108,10 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
             this.gamificationReqStatus = { loading: false, error: true, msg: 'LeaderBoardUrl / AgentProgressUrl not provided in app config' };
             return;
         }
+        const { agentId } = SDKClient.getAgentData();
         forkJoin([
             this._gamificationService.fetchLeaderBoard(this.data.Data.LeaderBoardUrl),
-            this._gamificationService.getAgentProgress(this.data.Data.AgentProgressUrl, '50020')
+            this._gamificationService.getAgentProgress(this.data.Data.AgentProgressUrl, agentId)
         ]).subscribe(
             (res) => {
                 const [leaders, metrics] = res;
