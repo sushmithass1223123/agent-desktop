@@ -1,9 +1,12 @@
 .d {
     &-block {
-        display: block;
+        display: block !important;
+    }
+    &-none {
+        display: none !important;
     }
     &-flex {
-        display: flex;
+        display: flex !important;
     }
 }
 
@@ -218,7 +221,6 @@
     bottom: 0;
     margin: auto;
 }
-
 
 .text {
     &-primary {

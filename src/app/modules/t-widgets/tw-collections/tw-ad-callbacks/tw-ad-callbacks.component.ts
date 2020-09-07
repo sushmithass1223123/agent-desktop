@@ -3,6 +3,12 @@ import { FuseConfigService } from '@fuse/services/config.service';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { takeUntil } from 'rxjs/operators';
+import { SDKClient } from 'tmac-sdk';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { ResData } from 'app/interfaces';
+import { sortBy } from 'lodash';
+import { COMMON_ERR_MESSAGE, ACTIVE_CALL_STATUSES, PENDING_CALL_STATUSES } from 'app/constants';
+import * as moment from 'moment';
 
 @Component({
     selector: 'tw-ad-callbacks',
@@ -13,6 +19,20 @@ import { takeUntil } from 'rxjs/operators';
 export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     // holds all the data related to this widget from the config
     @Input() data: any;
+    dataConfig: {
+        GetCallbacksUrl: string;
+    };
+
+    getDashboardDataRes: ResData<{ callbacks: any[]; handled: number; pending: number }> = {
+        error: false,
+        loading: true,
+        msg: '',
+        data: {
+            callbacks: [],
+            handled: 0,
+            pending: 0
+        }
+    };
 
     sample = Array(20).fill(1);
     maximized = false;
@@ -35,7 +55,8 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
         // @ [OPTIONAL]
         private _fuseConfigService: FuseConfigService,
         // @ [OPTIONAL]
-        private _appDataService: AppDataService
+        private _appDataService: AppDataService,
+        private http: HttpClient
     ) {
         super();
     }
@@ -65,6 +86,17 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
         this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
             this.appConfig = config;
         });
+
+        this.dataConfig = this.data.Data;
+        const { agentId } = SDKClient.getAgentData();
+        this.http.get(`${this.dataConfig.GetCallbacksUrl}?agentId=${agentId}`).subscribe(this.addNewCallbacks, () => {
+            this.getDashboardDataRes = {
+                error: true,
+                loading: false,
+                msg: COMMON_ERR_MESSAGE
+            };
+        });
+        SDKClient.events.on('CallbackDataReceivedForAgent', this.CallbackDataReceivedForAgent);
     }
 
     /**
@@ -78,6 +110,57 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
     // -----------------------------------------------------------------------------------------------------
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
+
+    CallbackDataReceivedForAgent = (evt: any) => {
+        const callback = JSON.parse(evt);
+        callback.contact.status = callback.contact.Status;
+        callback.contact.name = callback.contact.Name;
+        callback.contact.directAgentScheduleTime = callback.contact.ScheduleTime;
+        this.addNewCallbacks([callback]);
+    };
+
+    addNewCallbacks = (calls: any[]): void => {
+        let handled = 0;
+        let missed = 0;
+        let pending = 0;
+        let activeCalls = 0;
+
+        const callbacks = sortBy([...this.getDashboardDataRes.data.callbacks, ...calls], 'contact.directAgentScheduleTime')
+            .reverse()
+            .map((x) => {
+                if (PENDING_CALL_STATUSES.includes(x.contact.status)) {
+                    pending += 1;
+                }
+                if (ACTIVE_CALL_STATUSES.includes(x.contact.status)) {
+                    activeCalls += 1;
+                }
+
+                if (parseInt(x.contact.directAgentScheduleTime, 10) < parseInt(moment().format('YYYYMMDDHHmmss'), 10)) {
+                    missed += 1;
+                }
+
+                return {
+                    ...x,
+                    contact: {
+                        ...x.contact,
+                        directAgentScheduleTime: moment(x.contact.directAgentScheduleTime, 'YYYYMMDDHHmmss').format('DD MM YYYY hh:mm:ss')
+                    }
+                };
+            });
+
+        handled = callbacks.length - (pending - (activeCalls > 0 ? 1 : 0));
+
+        this.getDashboardDataRes = {
+            error: false,
+            loading: false,
+            msg: '',
+            data: {
+                callbacks,
+                handled,
+                pending
+            }
+        };
+    };
 
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods

@@ -17,6 +17,7 @@ interface Contact {
     status: string;
     unread: number;
     tmacServer: string;
+    class: string;
 }
 
 interface Chat {
@@ -296,7 +297,8 @@ export class ChatPanelComponent implements OnInit, AfterViewInit, OnDestroy {
             id: x.AgentLoginID,
             mood: '',
             name: x.AgentName,
-            status: this.agentStatusClasses[x.CurrentAgentStatus] || 'away',
+            status: x.CurrentAgentStatus,
+            class: this.agentStatusClasses[x.CurrentAgentStatus] || 'away',
             unread: agents[x.AgentLoginID] ? agents[x.AgentLoginID][0].unread : 0,
             tmacServer: x.TmacServer
         }));
