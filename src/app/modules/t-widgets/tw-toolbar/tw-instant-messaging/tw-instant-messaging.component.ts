@@ -3,7 +3,7 @@ import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { TWidgetWrapper } from '@twidgets/utils';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient } from 'tmac-sdk';
+import { SDKClient, AgentNotificaitonEvent } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-instant-messaging',
@@ -48,8 +48,8 @@ export class TwInstantMessagingComponent extends TWidgetWrapper implements OnIni
         this.unreadMessages = 0;
     }
 
-    AgentNotificaitonEvent = (): void => {
-        if (!this._fuseSidebarService.getSidebar('chatPanel').opened) {
+    AgentNotificaitonEvent = (evt: AgentNotificaitonEvent): void => {
+        if (!this._fuseSidebarService.getSidebar('chatPanel').opened && evt.Type === 'IM') {
             this.unreadMessages += 1;
         }
     };
