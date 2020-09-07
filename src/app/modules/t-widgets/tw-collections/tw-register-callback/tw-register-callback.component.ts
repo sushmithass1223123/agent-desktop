@@ -7,7 +7,7 @@ import { SnackbarComponent } from '@modules/shared/snackbar/snackbar.component';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
-import { ReqCampaignContact, ResCampaign, ResData, ResStatus } from 'app/interfaces';
+import { ReqCampaignContact, ResCampaign, ResData } from 'app/interfaces';
 import * as moment from 'moment';
 import { takeUntil } from 'rxjs/operators';
 import { SDKClient } from 'tmac-sdk';
@@ -38,7 +38,7 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
         msg: ''
     };
 
-    addCampaingReq: ResStatus = {
+    addCampaingReq: ResData<null> = {
         error: false,
         loading: false,
         msg: ''
@@ -168,11 +168,13 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
         directAgentScheduleTime.setSeconds(0);
         directAgentScheduleTime = moment(directAgentScheduleTime).format('YYYYMMDDHHmmss');
 
+        const { agentId } = SDKClient.getAgentData();
+
         const reqPacket: ReqCampaignContact = {
             campaignId: this.selectedCampaign.id,
             campaignName: this.selectedCampaign.campaignName,
             channel: this.selectedCampaign.channel,
-            directAgent: SDKClient.getAgentData().AgentId,
+            directAgent: agentId,
             directAgentScheduleTime,
             dnd: false,
             dynamicValues: '',

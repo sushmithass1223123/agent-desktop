@@ -1,11 +1,5 @@
 import { WorkCode } from 'tmac-sdk';
 
-export interface ResStatus {
-    loading: boolean;
-    error: boolean;
-    msg: string;
-}
-
 export interface ResData<T> {
     loading: boolean;
     error: boolean;

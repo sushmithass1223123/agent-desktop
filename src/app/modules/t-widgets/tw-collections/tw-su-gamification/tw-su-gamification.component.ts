@@ -7,7 +7,7 @@ import { GamificationService } from '@services/gamification.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { sortBy } from 'lodash';
-import { ResStatus } from 'app/interfaces';
+import { ResData } from 'app/interfaces';
 
 @Component({
     selector: 'tw-su-gamification',
@@ -29,7 +29,7 @@ export class TwSuGamificationComponent extends TWidgetWrapper implements OnInit,
     // -----------------------------------------------------------
     appConfig: any;
 
-    gamificationReqStatus: ResStatus = {
+    gamificationReqStatus: ResData<null> = {
         error: false,
         loading: true,
         msg: ''

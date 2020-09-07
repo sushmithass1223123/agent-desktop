@@ -3,7 +3,7 @@ import { FuseConfigService } from '@fuse/services/config.service';
 import { AppDataService } from '@services/app-data.service';
 import { GamificationService } from '@services/gamification.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { ResStatus } from 'app/interfaces';
+import { ResData } from 'app/interfaces';
 import { BaseChartDirective } from 'ng2-charts';
 import { takeUntil } from 'rxjs/operators';
 import { GAMIFICATION_METRIC_LABELS } from 'app/constants';
@@ -54,7 +54,7 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
         goal: {}
     };
 
-    gamificationReqStatus: ResStatus = {
+    gamificationReqStatus: ResData<null> = {
         error: false,
         loading: true,
         msg: ''

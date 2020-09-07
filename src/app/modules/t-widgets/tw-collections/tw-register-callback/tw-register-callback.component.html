@@ -68,7 +68,7 @@
                     >
                         <mat-icon>close</mat-icon>
                     </button>
-                    <mat-icon matSuffix  class="secondary-text" >account_circle</mat-icon>
+                    <mat-icon *ngIf="!nameIp.value" matSuffix class="secondary-text">account_circle</mat-icon>
                     <mat-error> Name Required </mat-error>
                 </mat-form-field>
 
@@ -85,7 +85,7 @@
                     >
                         <mat-icon>close</mat-icon>
                     </button>
-                    <mat-icon matSuffix  class="secondary-text" >phone</mat-icon>
+                    <mat-icon *ngIf="!mobileIp.value" matSuffix class="secondary-text">phone</mat-icon>
                     <mat-error> Phone Number Required </mat-error>
                 </mat-form-field>
 

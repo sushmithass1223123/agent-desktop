@@ -45,22 +45,11 @@ export class TwInstantMessagingComponent extends TWidgetWrapper implements OnIni
      */
     toggleSidebarOpen(key: string): void {
         this._fuseSidebarService.getSidebar(key).toggleOpen();
+        this.unreadMessages = 0;
     }
 
     AgentNotificaitonEvent = (): void => {
-        // Subscribe to the foldedChanged observable
-        //  this._fuseSidebarService
-        //  .getSidebar('chatPanel')
-        //  .foldedChanged.pipe(takeUntil(this._unsubscribeAll))
-        //  .subscribe((folded) => {
-        //      this.sidebarFolded = folded;
-        //      if (!folded) {
-        //          this.unreadMessages = 0;
-        //      }
-        //  });
-        console.log(this._fuseSidebarService.getSidebar('chatPanel'));
-
-        if (this.sidebarFolded) {
+        if (!this._fuseSidebarService.getSidebar('chatPanel').opened) {
             this.unreadMessages += 1;
         }
     };
