@@ -16,6 +16,7 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
 
     staticWidgets = [];
     dynamicWidgets = [];
+    aotWidgets = [];
 
     constructor(
         public hostElement: ElementRef,
@@ -32,8 +33,9 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
         // get the content widgets
         const supervisorWidgets = this.data.Data.Widgets || [];
 
-        this.staticWidgets = supervisorWidgets.Static;
-        this.dynamicWidgets = supervisorWidgets.Dynamic;
+        this.staticWidgets = supervisorWidgets.Static || [];
+        this.dynamicWidgets = supervisorWidgets.Dynamic || [];
+        this.aotWidgets = supervisorWidgets.AOT || [];
     }
 
     ngOnDestroy(): void {

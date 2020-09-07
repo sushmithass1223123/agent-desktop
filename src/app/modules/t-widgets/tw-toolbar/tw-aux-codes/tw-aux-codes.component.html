@@ -1,13 +1,18 @@
-<button
-    mat-icon-button
-    class="tw-aux-codes {{ opened ? 'opened' : '' }}"
-    [matMenuTriggerFor]="menu"
-    aria-label="AUX Codes dropdown"
-    (menuOpened)="menuOpened(true)"
-    (menuClosed)="menuOpened(false)"
->
-    <mat-icon>expand_more</mat-icon>
-</button>
+<div class="">
+    <button
+        mat-icon-button
+        class="aux-codes-btn"
+        [ngClass]="{ opened: opened }"
+        [matMenuTriggerFor]="menu"
+        aria-label="AUX Codes dropdown"
+        (menuOpened)="menuOpened(true)"
+        (menuClosed)="menuOpened(false)"
+        matTooltip="AUX codes"
+    >
+        <mat-icon>expand_more</mat-icon>
+    </button>
+</div>
+
 <mat-menu class="tw-aux-codes-list" #menu="matMenu" xPosition="before">
     <button
         mat-menu-item

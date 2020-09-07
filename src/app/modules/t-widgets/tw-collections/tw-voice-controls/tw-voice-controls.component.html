@@ -4,7 +4,7 @@
     (collapseEvent)="collapseEvent.emit($event)"
     (floatEvent)="floatEvent.emit($event)"
 >
-    <div class="w-100-p h-100-p voice-controls" fusePerfectScrollbar>
+    <div class="w-100-p h-100-p voice-controls" fusePerfectScrollbar [fusePerfectScrollbarOptions]="{ suppressScrollX: true }">
         <div fxFill fxLayout="row" fxLayoutAlign=" none">
             <div
                 fxLayout="column"

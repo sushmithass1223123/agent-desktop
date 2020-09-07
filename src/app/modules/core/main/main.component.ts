@@ -4,6 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { FuseConfigService } from '@fuse/services/config.service';
+import { AgentFeaturesService } from '@services/agent-features.service';
 import { InteractionEventService } from '@services/interaction-event.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -28,6 +29,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
         private _fuseSidebarService: FuseSidebarService,
         private _router: Router,
         private _snackBar: MatSnackBar,
+        private _agentFeaturesService: AgentFeaturesService,
         // this service must not be removed, this will listen to some TMAC events
         private _interactionEventsService: InteractionEventService
     ) {
@@ -116,6 +118,9 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
 
         // register for get events
         SDKClient.getEvents();
+
+        // process the agent features
+        this._agentFeaturesService.processAgentFeatures();
     }
 
     forcedLogoffEvent = (evt: AgentForcedLogoffEvent) => {

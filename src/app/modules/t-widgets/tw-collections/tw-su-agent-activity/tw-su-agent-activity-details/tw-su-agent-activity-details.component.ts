@@ -1,6 +1,8 @@
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewEncapsulation, Output, EventEmitter } from '@angular/core';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { tileLayer, latLng } from 'leaflet';
+import { TwWidgetModel } from 'app/models';
+import { IWidget } from 'app/interfaces';
 
 @Component({
     selector: 'tw-su-agent-activity-details',
@@ -12,7 +14,9 @@ export class TwSuAgentActivityDetailsComponent extends TWidgetWrapper implements
     // holds all the data related to this widget from the config
     @Input() data: any;
 
-    activityWidgets: any;
+    @Output() destroyEvent = new EventEmitter();
+
+    activityWidgets: IWidget[] = [];
 
     options = {
         layers: [
@@ -41,8 +45,8 @@ export class TwSuAgentActivityDetailsComponent extends TWidgetWrapper implements
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        // assign the activity widgets
-        this.activityWidgets = this.data.Data.Widgets || [];
+        // create the activity widgets
+        this.createWidgets(this.data.Data?.ActivityDetails);
     }
 
     /**
@@ -56,6 +60,60 @@ export class TwSuAgentActivityDetailsComponent extends TWidgetWrapper implements
     // -----------------------------------------------------------------------------------------------------
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
+
+    private createWidgets(item: any): void {
+        // check the item
+        if (!item) {
+            return;
+        }
+
+        // create profile widget
+        const profileWidget = new TwWidgetModel('Profile', 'tw-panel', 'account_box');
+        profileWidget.Data.ImageURL = item.profilePicture;
+        profileWidget.Data.Details = item.details;
+        profileWidget.Config.Class = 'cover panel';
+        profileWidget.Config.Actions = ['maximize'];
+
+        // create snapshot widget
+        const snapshotWidget = new TwWidgetModel('Snapshot', 'tw-panel', 'camera');
+        snapshotWidget.Data.ImageURL = item.snapshot;
+        snapshotWidget.Config.Class = 'cover panel';
+        snapshotWidget.Config.Actions = ['maximize'];
+
+        // create location widget
+        const locationWidget = new TwWidgetModel('Location', 'tw-panel', 'location_on');
+        // check if the location is received
+        if (item.location) {
+            locationWidget.Data.Location = {
+                layers: [
+                    tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '...' })
+                ],
+                zoom: 5,
+                center: latLng(item.location.latitude, item.location.longitude)
+            };
+        }
+        locationWidget.Config.Class = 'cover panel';
+        locationWidget.Config.Actions = ['maximize'];
+
+        // create screenshot widget
+        const screenshotWidget = new TwWidgetModel('Screenshot', 'tw-panel', 'all_out');
+        screenshotWidget.Data.ImageURL = item.screenshot;
+        screenshotWidget.Config.Class = 'cover panel';
+        screenshotWidget.Config.Actions = ['maximize'];
+
+        // create screenvideo widget
+        const screenVideoWidget = new TwWidgetModel('Screen Video', 'tw-panel', 'featured_video');
+        screenVideoWidget.Data.VideoURL = item.screenvideo;
+        screenVideoWidget.Config.Class = 'cover panel';
+        screenVideoWidget.Config.Actions = ['maximize'];
+
+        // push all the widgets
+        this.activityWidgets['profileWidget'] = profileWidget;
+        this.activityWidgets['snapshotWidget'] = snapshotWidget;
+        this.activityWidgets['locationWidget'] = locationWidget;
+        this.activityWidgets['screenshotWidget'] = screenshotWidget;
+        this.activityWidgets['screenVideoWidget'] = screenVideoWidget;
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods

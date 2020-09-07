@@ -2,8 +2,8 @@
     <div fxFill fxFlex fxLayout="row wrap" fxLayoutAlign=" none" fxLayoutGap.gt-md="8px">
         <tw-template fxFlex.gt-md="33" class="static-widget-grid" *ngIf="staticWidgets?.length > 0" [widgets]="staticWidgets"></tw-template>
         <tw-template fxFlex.gt-md="66" class="dynamic-widget-grid" *ngIf="dynamicWidgets?.length > 0" [widgets]="dynamicWidgets"></tw-template>
-        <div class="tw-aot-fab" cdkDrag cdkDragBoundary=".tw-widget-container">
-            <widget-fab></widget-fab>
+        <div class="tw-aot-fab" cdkDrag cdkDragBoundary=".tw-widget-container" *ngIf="aotWidgets.length > 0">
+            <widget-fab [fabWidgets]="aotWidgets"></widget-fab>
         </div>
     </div>
     <twc-no-widgets class="twc-card" *ngIf="!dynamicWidgets || dynamicWidgets.length === 0" type="home"></twc-no-widgets>

@@ -123,7 +123,7 @@
                             fxFlex
                             class="mat-primary"
                             [checked]="pbxChecked"
-                            (change)="onPBXToggle($event)"
+                            (change)="toggleStation($event)"
                             aria-label="Notifications"
                             labelPosition="after"
                         >
@@ -136,6 +136,7 @@
                             fxFlex
                             class="mat-primary"
                             [checked]="msChecked"
+                            (change)="toggleStation($event)"
                             (change)="msChecked = $event.checked"
                             labelPosition="after"
                         >

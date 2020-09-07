@@ -1,8 +1,7 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { fuseAnimations } from '@fuse/animations';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { TwWidgetModel } from 'app/models';
-import { tileLayer, latLng } from 'leaflet';
-import { fuseAnimations } from '@fuse/animations';
 
 @Component({
     selector: 'tw-su-agent-activity',
@@ -15,51 +14,9 @@ export class TwSuAgentActivityComponent extends TWidgetWrapper implements OnInit
     // holds all the data related to this widget from the config
     @Input() data: any;
 
-    activityWidgets = [];
+    activityWidget = [];
 
-    sampleData = [
-        {
-            dateTime: '10/10/10 10:10:10',
-            profilePicUrl: 'https://image.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg',
-            details: [
-                {
-                    Title: 'Agent Name',
-                    Value: 'chirag'
-                },
-                {
-                    Title: 'Agent ID',
-                    Value: '55001'
-                }
-            ],
-            snapshotUrl: 'https://image.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg',
-            location: {
-                x: 12.914142,
-                y: 74.855957
-            },
-            screenshotUrl: 'https://image.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg',
-            screenRecordUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
-        },
-        {
-            dateTime: '10/10/10 10:10:10',
-            profilePicUrl: 'https://image.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg',
-            details: [
-                {
-                    Title: 'Agent Name',
-                    Value: 'chirag'
-                },
-                {
-                    Title: 'Agent ID',
-                    Value: '55001'
-                }
-            ],
-            snapshotUrl: 'https://image.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg',
-            location: {
-                x: 12.914142,
-                y: 74.855957
-            },
-            screenshotUrl: 'https://image.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg',
-            screenRecordUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
-        },
+    activityList = [
         {
             dateTime: '10/10/10 10:10:10',
             profilePicUrl: 'https://image.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg',
@@ -102,55 +59,15 @@ export class TwSuAgentActivityComponent extends TWidgetWrapper implements OnInit
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        this.sampleData.forEach((item: any) => {
+        this.activityList.forEach((item: any) => {
             // create activity details widget
             const widget = new TwWidgetModel(item.dateTime, 'tw-su-agent-activity-details', 'local_activity');
             widget.Config.Actions = ['minimize'];
-            widget.Config.ViewState = 'minimize';
-            widget.Data.Widgets = [];
-
-            // create profile widget
-            const profileWidget = new TwWidgetModel('Profile', 'tw-panel', 'account_box');
-            profileWidget.Data.ImageURL = item.profilePicUrl;
-            profileWidget.Data.Details = item.details;
-            profileWidget.Config.Class = 'cover panel';
-            profileWidget.Config.Actions = ['maximize'];
-
-            const snapshotWidget = new TwWidgetModel('Snapshot', 'tw-panel', 'camera');
-            snapshotWidget.Data.ImageURL = item.snapshotUrl;
-            snapshotWidget.Config.Class = 'cover panel';
-            snapshotWidget.Config.Actions = ['maximize'];
-
-            const locationWidget = new TwWidgetModel('Location', 'tw-panel', 'location_on');
-            locationWidget.Data.Location = {
-                layers: [
-                    tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '...' })
-                ],
-                zoom: 5,
-                center: latLng(item.location.x, item.location.y)
-            };
-            locationWidget.Config.Class = 'cover panel';
-            locationWidget.Config.Actions = ['maximize'];
-
-            const screenshotWidget = new TwWidgetModel('Screenshot', 'tw-panel', 'all_out');
-            screenshotWidget.Data.ImageURL = item.screenshotUrl;
-            screenshotWidget.Config.Class = 'cover panel';
-            screenshotWidget.Config.Actions = ['maximize'];
-
-            const screenVideoWidget = new TwWidgetModel('Screen Video', 'tw-panel', 'featured_video');
-            screenVideoWidget.Data.VideoURL = item.screenRecordUrl;
-            screenVideoWidget.Config.Class = 'cover panel';
-            screenVideoWidget.Config.Actions = ['maximize'];
-
-            // push all the widgets
-            widget.Data.Widgets.push(profileWidget);
-            widget.Data.Widgets.push(snapshotWidget);
-            widget.Data.Widgets.push(locationWidget);
-            widget.Data.Widgets.push(screenshotWidget);
-            widget.Data.Widgets.push(screenVideoWidget);
+            widget.Config.ViewState = 'restore';
+            widget.Data.ActivityDetails = item;
 
             // push the widget to list
-            this.activityWidgets.push(widget);
+            this.activityWidget.push(widget);
         });
     }
 

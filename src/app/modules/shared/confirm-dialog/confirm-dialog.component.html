@@ -2,7 +2,7 @@
 <div mat-dialog-content *ngIf="message">
     <p [innerHTML]="message"></p>
 </div>
-<div mat-dialog-actions xLayout="row" fxLayoutAlign="end none" class="pt-24">
+<div mat-dialog-actions xLayout="row" fxLayoutAlign="end none">
     <button mat-button color="warn" (click)="dialogRef.close(false)" tabindex="-1" *ngIf="!isAlert">Cancel</button>
     <button mat-raised-button color="primary" (click)="dialogRef.close(true)" tabindex="-1" *ngIf="!isAlert">Confirm</button>
     <button mat-raised-button color="primary" (click)="dialogRef.close(true)" tabindex="-1" *ngIf="isAlert">Ok</button>

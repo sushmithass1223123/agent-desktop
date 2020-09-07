@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
+import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
+import { AppNotification } from 'app/interfaces';
 import * as _ from 'lodash';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { MatSnackBar, MatSnackBarVerticalPosition, MatSnackBarHorizontalPosition } from '@angular/material/snack-bar';
+import { TUtils } from 'tmac-sdk';
 
 @Injectable({
     providedIn: 'root'
@@ -10,6 +12,7 @@ export class AppDataService {
     // Private
     private _configSubject: BehaviorSubject<any>;
     private _appConfigSubject: BehaviorSubject<any>;
+    private _appNotificationsSubject: BehaviorSubject<AppNotification[]>;
     private _audioInterval: any;
     private _audio: any;
 
@@ -19,6 +22,7 @@ export class AppDataService {
         // Set the config from the default config
         this._configSubject = new BehaviorSubject(new Object());
         this._appConfigSubject = new BehaviorSubject(new Object());
+        this._appNotificationsSubject = new BehaviorSubject([]);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -41,6 +45,59 @@ export class AppDataService {
 
     get config(): any | Observable<any> {
         return this._configSubject.asObservable();
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * Get the appNotifications
+     */
+
+    get appNotifications(): any | Observable<any> {
+        return this._appNotificationsSubject.asObservable();
+    }
+
+    addNotification(notification: AppNotification): string {
+        // Get the value from the behavior subject
+        let notifications = this._appNotificationsSubject.getValue();
+
+        // if id is given, it can be a update
+        if (notification.id) {
+            notifications = _.map(notifications, (item) => {
+                if (item.id === notification.id) {
+                    return { ...item, ...notification };
+                }
+            });
+        }
+        else {
+            // add the id
+            notification.id = TUtils.Generic.uuid();
+            // Merge the new notification
+            notifications = [...notifications, notification];
+            // add the time
+            notification.time = new Date();
+        }
+
+        // Notify the observers
+        this._appNotificationsSubject.next(notifications);
+
+        return notification.id;
+    }
+
+    removeNotification(id: string): void {
+        // Get the value from the behavior subject
+        let notifications = this._appNotificationsSubject.getValue();
+
+        // remove the item
+        notifications = notifications.filter(n => n.id !== id);
+
+        // Notify the observers
+        this._appNotificationsSubject.next(notifications);
+    }
+
+    clearAllNotifications(): void {
+        // Notify the observers
+        this._appNotificationsSubject.next([]);
     }
 
     // -----------------------------------------------------------------------------------------------------

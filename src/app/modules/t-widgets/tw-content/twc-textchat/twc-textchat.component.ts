@@ -73,6 +73,7 @@ export class TwcTextchatComponent extends TWContentWrapper implements OnInit, On
 
         const staticWidgets = textchatWidgets.Static || [];
         const dynamicWidgets = textchatWidgets.Dynamic || [];
+        const aotWidgets = textchatWidgets.AOT || [];
 
         // loop the widgets and add append interaction details
         staticWidgets.forEach((widget: IWidget) => {
@@ -85,12 +86,18 @@ export class TwcTextchatComponent extends TWContentWrapper implements OnInit, On
             widget.Data.Path = this.data.Data.Path;
         });
 
+        aotWidgets.forEach((widget: IWidget) => {
+            widget.InteractionDetails = evt;
+            widget.Data.Path = this.data.Data.Path;
+        });
+
         // push the interaction details with widgets to the list
         this.interactions.push({
             interactionId: evt.InteractionID,
             widgets: {
                 static: staticWidgets,
-                dynamic: dynamicWidgets
+                dynamic: dynamicWidgets,
+                aot: aotWidgets
             }
         });
 

@@ -19,6 +19,10 @@
                 *ngIf="item.widgets.dynamic.length > 0"
                 [widgets]="item.widgets.dynamic"
             ></tw-template>
+
+            <div class="tw-aot-fab" cdkDrag cdkDragBoundary=".tw-widget-container" *ngIf="item.widgets.aot?.length > 0">
+                <widget-fab [fabWidgets]="item.widgets.aot"></widget-fab>
+            </div>
         </div>
     </div>
     <!-- No widget for interaction -->
