@@ -297,7 +297,7 @@
                                 {
                                     "Name": "AHT / Transfer / Conference ",
                                     "Description": "",
-                                    "Type": "tw-account-information",
+                                    "Type": "tw-aht-tc",
                                     "Config": {
                                         "Static": false,
                                         "Anchor": false,
@@ -438,9 +438,7 @@
                                     },
                                     "Data": {
                                         "LeaderBoardUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetLeaderBoard",
-                                        "AgentProgressUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetProgress",
-                                        "GetCampaignsUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Campaign/GetCampaigns",
-                                        "CreateContactCampaignUrl" : "https://dice.tetherfi.cloud/TCM_Proxy/api/Contact/CreateCampaignContact"
+                                        "AgentProgressUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetProgress"
                                     }
                                 },
                                 {

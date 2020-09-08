@@ -39,8 +39,7 @@
                     </button>
                 </span>
                 <strong fxFlex="50" class="ml-20">
-                    <small *ngIf="!maximized"> Handled / Missed </small>
-                    <span *ngIf="maximized"> Handled / Missed </span>
+                    <span> Handled / Missed </span>
                 </strong>
                 <strong fxFlex="30" class="text-center"> {{ getDashboardDataRes.data.handled }} </strong>
             </div>
@@ -51,8 +50,7 @@
                     </button>
                 </span>
                 <strong fxFlex="50" class="ml-20">
-                    <small *ngIf="!maximized"> Pending </small>
-                    <span *ngIf="maximized"> Pending </span>
+                    <span> Pending </span>
                 </strong>
                 <strong fxFlex="30" class="text-center"> {{ getDashboardDataRes.data.pending }} </strong>
             </div>

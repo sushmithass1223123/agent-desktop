@@ -9,7 +9,7 @@ import { TUtils } from 'tmac-sdk';
 // tslint:disable-next-line: directive-class-suffix
 export class TWContentWrapper {
 
-    @HostBinding('class') class = 'twc-card animate__animated animate__zoomIn animate__faster';
+    @HostBinding('class') class = 'twc-card animate__animated animate__fadeIn animate__faster';
     @HostBinding('style') style = '';
     @HostBinding('id') id = '';
 
