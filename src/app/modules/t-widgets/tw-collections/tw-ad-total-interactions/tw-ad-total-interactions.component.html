@@ -1,7 +1,7 @@
 <!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
 <!-- implement following events in your component to access widget wrapper action events -->
 <!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
-<tw-wrapper twChart [data]="data" #wrapper>
+<tw-wrapper twChart [data]="data" #wrapper (maximizeEvent)="maximized = $event">
     <!-- your code goes here -->
     <div
         *ngIf="allInteractionsChart.datasets.length >= 1 && allInteractionsChart.datasets[0].data.length"
@@ -48,10 +48,11 @@
             allInteractionsChart.datasets.length === 0 || (allInteractionsChart.datasets.length >= 1 && !allInteractionsChart.datasets[0].data.length)
         "
         class="w-100-p h-100-p text-center"
-        fxLayout
+        fxLayout="column"
         fxLayoutAlign="center center"
     >
-        <p class="mat-title">No Data Available</p>
+        <img src="assets/images/vectors/no-data-1.svg" class="w-100-p h-85-p box-shadow-3d" />
+        <p class="text-center m-0" [ngClass]="{ 'mat-display-2': maximized, ' mat-title': !maximized }">No Data Available</p>
     </div>
     <!-- your code goes here -->
 </tw-wrapper>

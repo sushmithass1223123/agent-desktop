@@ -70,7 +70,7 @@
                 <div fxLayout="row" fxLayoutAlign="end none" class="chat-actions">
                     <button
                         *ngIf="data.Data.TransferAllowed"
-                        [disabled]="status !== 'connected'"
+                        [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper'"
                         mat-mini-fab
                         color="default"
                         [ngClass]="
@@ -87,7 +87,7 @@
 
                     <button
                         *ngIf="data.Data.ConferenceAllowed"
-                        [disabled]="status !== 'connected'"
+                        [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper'"
                         mat-mini-fab
                         color="default"
                         [ngClass]="
@@ -104,7 +104,7 @@
 
                     <button
                         *ngIf="data.Data.AudioEscalateEnabled"
-                        [disabled]="status !== 'connected' || disableAV"
+                        [disabled]="status !== 'connected' || disableAV || conferenceType === 'silent' || conferenceType === 'whisper'"
                         mat-mini-fab
                         color="default"
                         [ngClass]="
@@ -122,7 +122,7 @@
 
                     <button
                         *ngIf="data.Data.VideoEscalateEnabled"
-                        [disabled]="status !== 'connected' || disableAV"
+                        [disabled]="status !== 'connected' || disableAV || conferenceType === 'silent' || conferenceType === 'whisper'"
                         mat-mini-fab
                         color="default"
                         [ngClass]="
@@ -185,8 +185,8 @@
                             *ngFor="let message of chatTranscripts; let i = index"
                             class="message-row animate__animated animate__slideInUp animate__faster"
                             [ngClass]="{
-                                me: message?.who === user.agentName || message?.who === 'Chatbot',
-                                contact: message?.who !== user.agentName && message?.who !== 'Chatbot',
+                                me: findMe(message),
+                                contact: findContact(message),
                                 'first-of-group': isFirstMessageOfGroup(message, i),
                                 'last-of-group': isLastMessageOfGroup(message, i)
                             }"
@@ -197,37 +197,19 @@
                                 fxLayoutAlign="start start"
                                 class="bubble mat-elevation-z1"
                                 [ngClass]="
-                                    (message.who !== user.agentName &&
-                                    message.who !== 'Chatbot' &&
-                                    fuseConfig.layout.anchorWidget.customBackgroundColor === true &&
-                                    data.Config.Anchor
+                                    (findContact(message) && fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
                                         ? fuseConfig.layout.anchorWidget.bodyBackground
                                         : '') +
                                     ' ' +
                                     (maximized ? 'maximized' : '')
                                 "
                             >
-                                <div
-                                    *ngIf="isFirstMessageOfGroup(message, i)"
-                                    [ngClass]="message.who === user.agentName || message?.who === 'Chatbot' ? 'right-svg' : 'left-svg'"
-                                >
-                                    <svg
-                                        *ngIf="message.who !== user.agentName && message.who !== 'Chatbot'"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 8 13"
-                                        width="8"
-                                        height="13"
-                                    >
+                                <div *ngIf="isFirstMessageOfGroup(message, i)" [ngClass]="findContact(message) ? 'left-svg' : 'right-svg'">
+                                    <svg *ngIf="findContact(message)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 13" width="8" height="13">
                                         <path opacity=".13" fill="#0000000" d="M1.533 3.568L8 12.193V1H2.812C1.042 1 .474 2.156 1.533 3.568z"></path>
                                         <path fill="currentColor" d="M1.533 2.568L8 11.193V0H2.812C1.042 0 .474 1.156 1.533 2.568z"></path>
                                     </svg>
-                                    <svg
-                                        *ngIf="message.who === user.agentName || message.who === 'Chatbot'"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 8 13"
-                                        width="8"
-                                        height="13"
-                                    >
+                                    <svg *ngIf="findMe(message)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 13" width="8" height="13">
                                         <path opacity=".13" d="M5.188 1H0v11.193l6.467-8.625C7.526 2.156 6.958 1 5.188 1z"></path>
                                         <path fill="currentColor" d="M5.188 0H0v11.193l6.467-8.625C7.526 1.156 6.958 0 5.188 0z"></path>
                                     </svg>
@@ -319,7 +301,7 @@
                 <!-- / CHAT CONTENT -->
 
                 <!-- CHAT FOOTER -->
-                <div class="chat-footer" fxFlex="0 0 auto" fxLayout="column">
+                <div class="chat-footer" fxFlex="0 0 auto" fxLayout="column" *ngIf="conferenceType !== 'silent'">
                     <!-- REPLY FORM -->
                     <div class="reply-form" fxFlex="0 0 auto" fxLayout="row" fxLayoutAlign="center center">
                         <form
@@ -338,7 +320,7 @@
                                 aria-label="Select Emoji"
                                 matTooltip="Emoji"
                             >
-                                <mat-icon>emoji_emotions</mat-icon>
+                                <mat-icon>sentiment_satisfied_alt</mat-icon>
                             </button>
 
                             <mat-form-field

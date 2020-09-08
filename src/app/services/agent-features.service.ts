@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { TUtils, SDKClient, AgentFeatures, IResponse } from 'tmac-sdk';
+import { AgentFeatures, SDKClient, TUtils } from 'tmac-sdk';
 import { AppDataService } from './app-data.service';
 declare const navigator: Navigator | any;
 
@@ -7,6 +7,8 @@ declare const navigator: Navigator | any;
     providedIn: 'root'
 })
 export class AgentFeaturesService {
+
+    private _processed: boolean;
 
     private _agentFeatureInfo: {
         permissions: {
@@ -50,12 +52,12 @@ export class AgentFeaturesService {
         let location = '';
 
         // get the snapshot
-        if (evt.Camera) {
+        if (evt.Camera && this._agentFeatureInfo.permissions.camera) {
             snapshot = await this.getUrlFromStream('snapshot');
         }
 
         // get the screenshot
-        if (evt.ScreenShot) {
+        if (evt.ScreenShot && this._agentFeatureInfo.permissions.display) {
             screenshot = await this.getUrlFromStream('screenshot');
         }
 
@@ -65,7 +67,7 @@ export class AgentFeaturesService {
         }
 
         // get the location
-        if (evt.Location) {
+        if (evt.Location && this._agentFeatureInfo.permissions.location) {
             location = JSON.stringify(this._agentFeatureInfo.data.location);
         }
 
@@ -127,6 +129,11 @@ export class AgentFeaturesService {
     }
 
     private captureCameraStream(): void {
+        // check if the permission got
+        if (!SDKClient.getAgentData().isLoggedIn || this._agentFeatureInfo.permissions.camera) {
+            return;
+        }
+
         // capture selfview
         navigator.getUserMedia(
             {
@@ -158,6 +165,11 @@ export class AgentFeaturesService {
     }
 
     private captureDisplayStream(): void {
+        // check if the permission got
+        if (!SDKClient.getAgentData().isLoggedIn || this._agentFeatureInfo.permissions.display) {
+            return;
+        }
+
         // get screen recording stream
         navigator.mediaDevices.getDisplayMedia()
             .then((stream: any) => {
@@ -245,6 +257,31 @@ export class AgentFeaturesService {
                     break;
                 default:
             }
+
+            // set processed
+            this._processed = true;
         });
+    }
+
+    public clearAgentFeatures(): void {
+        // unregister from AgentSnapShotEvent
+        SDKClient.events.off('AgentSnapShotEvent', this.AgentSnapShotEvent);
+
+        // check if processed
+        if (this._processed) {
+            // clear camera stream
+            if (this._agentFeatureInfo.permissions.camera) {
+                this._agentFeatureInfo.data.cameraStream.getTracks().forEach((track: MediaStreamTrack) => {
+                    track.stop();
+                });
+            }
+
+            // clear display stream
+            if (this._agentFeatureInfo.permissions.display) {
+                this._agentFeatureInfo.data.displayStream.getTracks().forEach((track: MediaStreamTrack) => {
+                    track.stop();
+                });
+            }
+        }
     }
 }

@@ -4,12 +4,13 @@ import { FuseConfigService } from '@fuse/services/config.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { COMMON_ERR_MESSAGE } from 'app/constants';
+import { COMMON_ERR_MESSAGE, AGENT_FEATURES_MAP } from 'app/constants';
 import { IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import * as _ from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { AgentFeatures, IAgentData, IResponse, SDKClient, SuAgentDataModel, SuAgentModel, TUtils } from 'tmac-sdk';
+import { AgentFeatures, IAgentData, IResponse, SDKClient, SuAgentDataModel, SuAgentModel, TUtils, AgentTabCount } from 'tmac-sdk';
+import { AotWidgetService } from '@services/aot-widget.service';
 
 @Component({
     selector: 'tw-su-active-agents',
@@ -32,86 +33,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     searchTerm: string;
     selectedAgent = null;
 
-    featureMap = {
-        AllowSupervisorToBargeIn: {
-            Type: 'interaction',
-            SubType: 'voice',
-            Icon: 'call_merge',
-            Label: 'Barge-In'
-        },
-        AllowSupervisorToCapturePicture: {
-            Type: 'agent',
-            SubType: '',
-            Icon: 'fact_check',
-            Label: 'View Activity'
-        },
-        AllowSupervisorToChangeStatus: {
-            Type: 'agent',
-            SubType: '',
-            Icon: 'track_changes',
-            Label: 'Change Status'
-        },
-        AllowSupervisorToChatConference: {
-            Type: 'interaction',
-            SubType: 'textchat',
-            Icon: 'forum',
-            Label: 'Conference'
-        },
-        AllowSupervisorToChatSilentMonitor: {
-            Type: 'interaction',
-            SubType: 'textchat',
-            Icon: 'speaker_notes',
-            Label: 'Silent Monitor'
-        },
-        AllowSupervisorToChatWhisper: {
-            Type: 'interaction',
-            SubType: 'textchat',
-            Icon: 'quickreply',
-            Label: 'Whisper'
-        },
-        AllowSupervisorToFaxTransferAgent: {
-            Type: 'interaction',
-            SubType: 'fax',
-            Icon: 'forward',
-            Label: 'Transfer Fax'
-        },
-        AllowSupervisorToFaxTransferSelf: {
-            Type: 'interaction',
-            SubType: 'fax',
-            Icon: 'play_for_work',
-            Label: 'Self Transfer'
-        },
-        AllowSupervisorToInteractionNotification: {
-            Type: 'interaction',
-            SubType: 'all',
-            Icon: 'notification_important',
-            Label: 'Interaction Notification'
-        },
-        AllowSupervisorToLogout: {
-            Type: 'agent',
-            SubType: '',
-            Icon: 'power_settings_new',
-            Label: 'Logout'
-        },
-        AllowSupervisorToSendNotification: {
-            Type: 'agent',
-            SubType: '',
-            Icon: 'notifications',
-            Label: 'Send Notification'
-        },
-        AllowSupervisorToSilentMonitor: {
-            Type: 'interaction',
-            SubType: 'voice',
-            Icon: 'contactless',
-            Label: 'Silent Monitor'
-        },
-        AllowSupervisorToViewEmailDetails: {
-            Type: 'interaction',
-            SubType: '',
-            Icon: 'email',
-            Label: 'View Details'
-        }
-    };
+    featureMap = AGENT_FEATURES_MAP;
 
     activityWidget: IWidget;
 
@@ -121,7 +43,8 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     constructor(
         private _fuseConfigService: FuseConfigService,
         private _appDataService: AppDataService,
-        private _appUIService: AppUiService
+        private _appUIService: AppUiService,
+        private _aotWidgetService: AotWidgetService
     ) {
         super();
 
@@ -271,7 +194,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
 
     public performAgentAction(agent: SuAgentModel, feature: AgentFeatures): void {
         console.log('performAgentAction', { agent, feature });
-        this._appUIService.showSnackbar('Please wait, getting information...', 'loading');
+        this._appUIService.showSnackbar('Please wait, retrieving information...', 'loading');
         switch (feature.Feature) {
             case 'AllowSupervisorToCapturePicture':
                 SDKClient.getAgentActivity({
@@ -323,6 +246,28 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                 break;
             default:
         }
+    }
+
+    public checkForActiveInteraction(channelItems: AgentTabCount[]): boolean {
+        let isActive = false;
+
+        channelItems.forEach((channelItem: AgentTabCount) => {
+            if (channelItem.CurrentCount > 0) {
+                isActive = true;
+            }
+        });
+
+        return isActive;
+    }
+
+    public viewInteractions(item: SuAgentModel): void {
+        const widget = new TwWidgetModel('Interaction Details - ' + item.AgentName, 'tw-su-agent-interactions');
+        widget.Config.Anchor = true;
+        widget.Config.Position.W = 700;
+        widget.Config.Position.H = 300;
+        widget.Config.Actions = ['maximize', 'minimize', 'destroy'];
+        widget.Data = item;
+        this._aotWidgetService.addWidget(widget);
     }
 }
 

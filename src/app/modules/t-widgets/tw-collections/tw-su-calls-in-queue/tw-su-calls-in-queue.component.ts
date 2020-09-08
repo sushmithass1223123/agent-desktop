@@ -122,7 +122,7 @@ export class TwSuCallsInQueueComponent extends TWidgetWrapper implements OnInit,
             return { data: datasets[d], label: d };
         });
         this.ciqChart.labels = labels;
-    };
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @  Private Methods

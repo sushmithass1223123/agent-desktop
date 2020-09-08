@@ -35,12 +35,11 @@ export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDes
     }
 
     ngOnInit(): void {
+        // call the wrapper init method
         this.initWrapper(this.data);
 
-        // listen for agent status change event
-        SDKClient.events.on('AgentStatusChangeEvent', (evt: AgentStatusChangeEvent) => {
-            this.currentAux = evt.Status;
-        });
+        // register to event
+        SDKClient.events.on('AgentStatusChangeEvent', this.AgentStatusChangeEvent);
 
         // get agent aux codes
         SDKClient.loadAUXCodes(false, null)
@@ -60,7 +59,15 @@ export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDes
     }
 
     ngOnDestroy(): void {
+        // call the wrapper destroy method
         this.destroyWrapper();
+
+        // unregister from event
+        SDKClient.events.off('AgentStatusChangeEvent', this.AgentStatusChangeEvent);
+    }
+
+    private AgentStatusChangeEvent = (evt: AgentStatusChangeEvent) => {
+        this.currentAux = evt.Status;
     }
 
     menuOpened(opened: boolean): void {

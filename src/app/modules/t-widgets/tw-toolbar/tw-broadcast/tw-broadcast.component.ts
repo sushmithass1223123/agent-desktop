@@ -19,14 +19,18 @@ export class TwBroadcastComponent extends TWidgetWrapper implements OnInit, OnDe
     }
 
     ngOnInit(): void {
+        // call the wrapper init method
         this.initWrapper(this.data);
 
+        // register to event
         SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
     }
 
     ngOnDestroy(): void {
+        // call the wrapper destroy method
         this.destroyWrapper();
 
+        // unregister from event
         SDKClient.events.off('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
     }
 

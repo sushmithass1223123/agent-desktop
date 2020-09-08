@@ -7,11 +7,11 @@ import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
-import { ResData } from 'app/interfaces';
+import { IWidget, ResData } from 'app/interfaces';
 import { groupBy, orderBy, uniqBy } from 'lodash';
 import { Observable } from 'rxjs';
 import { map, startWith, takeUntil } from 'rxjs/operators';
-import { SDKClient, WorkCode } from 'tmac-sdk';
+import { SDKClient, WorkCode, WorkCodeAddedEvent } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-work-codes',
@@ -21,7 +21,9 @@ import { SDKClient, WorkCode } from 'tmac-sdk';
 })
 export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     // holds all the data related to this widget from the config
-    @Input() data: any; // -----------------------------------------------------------
+    @Input() data: IWidget;
+
+    // -----------------------------------------------------------
     // @ [OPTIONAL] to store the fuse config for theme
     // -----------------------------------------------------------
     fuseConfig: any;
@@ -30,6 +32,9 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     // @ [OPTIONAL] to store entire app config and get update
     // -----------------------------------------------------------
     appConfig: any;
+
+    @ViewChild('workCodeInput') workCodeInput: ElementRef<HTMLInputElement>;
+    @ViewChild('auto') matAutocomplete: MatAutocomplete;
 
     loadWorkCodesReq: ResData<Record<string, WorkCode[]>> = {
         data: {},
@@ -49,8 +54,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     separatorKeysCodes: number[] = [ENTER, COMMA];
     workCodeCtrl = new FormControl();
 
-    @ViewChild('workCodeInput') workCodeInput: ElementRef<HTMLInputElement>;
-    @ViewChild('auto') matAutocomplete: MatAutocomplete;
+    interactionId: number;
 
     /**
      * Constructor
@@ -100,6 +104,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
             map((wc) => (wc ? this._filterOptions(wc) : this.loadWorkCodesReq.data))
         );
 
+        // do the setup
         this.setup();
     }
 
@@ -157,21 +162,26 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
 
     private TeamrWorkCodeDetailsEvent = (workCodeList: any) => {
         this.selectedWorkCodes = orderBy(workCodeList, ['Count'], ['desc']);
-    };
+    }
 
-    private WorkCodeAddedEvent = (workCode: WorkCode) => {
+    private WorkCodeAddedEvent = (evt: WorkCodeAddedEvent) => {
+        // check for interaction
+        if (evt.InteractionID !== this.interactionId) {
+            return;
+        }
+
         // check if the work code is already added
-        if (this.selectedWorkCodes.filter((w: WorkCode) => w.Code === workCode.Code).length <= 0) {
-            this.selectedWorkCodes.push(workCode);
+        if (this.selectedWorkCodes.filter((w: WorkCode) => w.Code === evt.Code).length <= 0) {
+            this.selectedWorkCodes.push(evt);
             if (this.DataConf.ByGroup) {
                 Object.keys(this.loadWorkCodesReq.data).forEach((k) => {
-                    this.loadWorkCodesReq.data[k] = this.loadWorkCodesReq.data[k].filter((x) => x.Code !== workCode.Code);
+                    this.loadWorkCodesReq.data[k] = this.loadWorkCodesReq.data[k].filter((x) => x.Code !== evt.Code);
                 });
             } else {
-                this.loadWorkCodesReq.data.listData = this.loadWorkCodesReq.data.listData.filter((x) => x.Code !== workCode.Code);
+                this.loadWorkCodesReq.data.listData = this.loadWorkCodesReq.data.listData.filter((x) => x.Code !== evt.Code);
             }
         }
-    };
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
@@ -179,6 +189,8 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
 
     public setup(): void {
         if (this.DataConf.Source === 'interaction') {
+            // assign the interaction id
+            this.interactionId = this.data.InteractionDetails?.InteractionID;
             this.loadWorkCodesReq.loading = true;
             this.getAllWorkCodes();
             SDKClient.events.on('WorkCodeAddedEvent', this.WorkCodeAddedEvent);

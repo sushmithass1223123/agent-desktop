@@ -45,7 +45,11 @@ import {
     TextChatRemoteUserConnectedEvent,
     TextChatTranscriptForTransferEvent,
     TextChatUserMessageWaitTimerEvent,
-    TUtils
+    TUtils,
+    TextChatAgentConnectedEvent,
+    TextChatTypingStateChangedEvent,
+    TextChatAgentMessageReceivedEvent,
+    TextChatAgentDisconnectedEvent
 } from 'tmac-sdk';
 
 @Component({
@@ -79,6 +83,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     stopTimer = new Subject();
     status = 'NA';
     intent = 'NA';
+    conferenceType = '';
+    conferenceAgentList = [];
 
     chatTranscripts: ChatTranscripts[] = [];
     customerName = 'Customer';
@@ -197,26 +203,34 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // register to tmac events
         SDKClient.events.on('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
+        SDKClient.events.on('TextChatAgentConnectedEvent', this.TextChatAgentConnectedEvent);
         SDKClient.events.on('TextChatTranscriptForTransferEvent', this.TextChatTranscriptForTransferEvent);
         SDKClient.events.on('TextChatMessageSentEvent', this.TextChatMessageSentEvent);
         SDKClient.events.on('TextChatMessageTemplateSentEvent', this.TextChatMessageTemplateSentEvent);
         SDKClient.events.on('TextChatUserMessageWaitTimerEvent', this.TextChatUserMessageWaitTimerEvent);
+        SDKClient.events.on('TextChatTypingStateChangedEvent', this.TextChatTypingStateChangedEvent);
         SDKClient.events.on('TextChatMessageReceivedEvent', this.TextChatMessageReceivedEvent);
+        SDKClient.events.on('TextChatAgentMessageReceivedEvent', this.TextChatAgentMessageReceivedEvent);
         SDKClient.events.on('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
         SDKClient.events.on('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
+        SDKClient.events.on('TextChatAgentDisconnectedEvent', this.TextChatAgentDisconnectedEvent);
         SDKClient.events.on('CannedResposeEvent', this.CannedResposeEvent);
     }
 
     private deRegisterFromEvents(): void {
         // deregister from tmac events
         SDKClient.events.off('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
+        SDKClient.events.off('TextChatAgentConnectedEvent', this.TextChatAgentConnectedEvent);
         SDKClient.events.off('TextChatTranscriptForTransferEvent', this.TextChatTranscriptForTransferEvent);
         SDKClient.events.off('TextChatMessageSentEvent', this.TextChatMessageSentEvent);
         SDKClient.events.off('TextChatMessageTemplateSentEvent', this.TextChatMessageTemplateSentEvent);
         SDKClient.events.off('TextChatUserMessageWaitTimerEvent', this.TextChatUserMessageWaitTimerEvent);
+        SDKClient.events.off('TextChatTypingStateChangedEvent', this.TextChatTypingStateChangedEvent);
         SDKClient.events.off('TextChatMessageReceivedEvent', this.TextChatMessageReceivedEvent);
+        SDKClient.events.off('TextChatAgentMessageReceivedEvent', this.TextChatAgentMessageReceivedEvent);
         SDKClient.events.off('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
         SDKClient.events.off('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
+        SDKClient.events.off('TextChatAgentDisconnectedEvent', this.TextChatAgentDisconnectedEvent);
         SDKClient.events.off('CannedResposeEvent', this.CannedResposeEvent);
         this.avConn?.events.off('onAVEvent', this.onAVEvent);
     }
@@ -254,6 +268,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         });
         // update the session ID
         this.sessionID = evt.TextChatSessionID + '|' + evt.InteractionID;
+        // update the conference type
+        this.conferenceType = evt.ConferenceType;
         // check for bot history
         try {
             const botHistory = JSON.parse(evt.ChatHistoryData);
@@ -295,13 +311,20 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 });
             }
         } catch (error) { }
+    }
 
-        // send greeting text
-        if (this.user.chatGreetingText) {
-            this.sendMessage({
-                Text: this.user.chatGreetingText
-            });
+    private TextChatAgentConnectedEvent = (evt: TextChatAgentConnectedEvent) => {
+        // check the interaction
+        if (evt.InteractionID !== this.interactionId) {
+            return;
         }
+
+        // add the user to list
+        this.conferenceAgentList.push({
+            AgentId: evt.AgentId,
+            AgentName: evt.AgentName,
+            ConferenceType: evt.ConferenceType
+        });
     }
 
     private TextChatTranscriptForTransferEvent = (evt: TextChatTranscriptForTransferEvent) => {
@@ -344,11 +367,29 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
     }
 
-    private TextChatMessageReceivedEvent = (evt: TextChatMessageReceivedEvent) => {
+    private TextChatTypingStateChangedEvent = (evt: TextChatTypingStateChangedEvent) => {
         // check the interaction
         if (evt.InteractionID !== this.interactionId) {
             return;
         }
+    }
+
+    private TextChatMessageReceivedEvent = (evt: TextChatMessageReceivedEvent) => {
+        this.chatMessageReceived(evt);
+    }
+
+    private TextChatAgentMessageReceivedEvent = (evt: TextChatAgentMessageReceivedEvent) => {
+        this.chatMessageReceived(evt);
+    }
+
+    private chatMessageReceived = (evt: TextChatMessageReceivedEvent | TextChatAgentMessageReceivedEvent) => {
+        // check the interaction
+        if (evt.InteractionID !== this.interactionId) {
+            return;
+        }
+
+        // check the user
+        const user = (evt as TextChatAgentMessageReceivedEvent).AgentName || this.customerName;
 
         // check if app message 
         if (evt.IsAppMessage) {
@@ -425,7 +466,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // add message to the transcripts
         this.chatTranscripts.push({
-            who: this.customerName,
+            who: user,
             messageId: data.messageId,
             message: data.message,
             type: data.attachment?.type || 'text',
@@ -495,6 +536,16 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.showAutoFreeze = false;
     }
 
+    private TextChatAgentDisconnectedEvent = (evt: TextChatAgentDisconnectedEvent) => {
+        // check the interaction
+        if (evt.InteractionID !== this.interactionId) {
+            return;
+        }
+
+        // remove the agent from list 
+        this.conferenceAgentList = this.conferenceAgentList.filter(c => c.AgentId !== evt.AgentId);
+    }
+
     private CannedResposeEvent = (evt: any) => {
         // check the interaction
         if (evt.InteractionID !== this.interactionId) {
@@ -539,6 +590,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     }
 
     private readyToReply(): void {
+        if (this.conferenceType === 'silent') {
+            // ignore for silent monitoring
+            return;
+        }
+
         setTimeout(() => {
             this.focusReplyInput();
             this.scrollToBottom();
@@ -720,7 +776,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // create a call AOT widget
         const widget = new TwWidgetModel(widgetMode.title, widgetMode.type, widgetMode.icon);
         widget.InteractionDetails = this.data.InteractionDetails;
-        widget.Config.AOT = true;
         widget.Config.Anchor = true;
         widget.Config.Position.W = param === 'audio' ? 600 : 800;
         widget.Config.Position.H = param === 'audio' ? 275 : 550;
@@ -736,6 +791,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.callWidget = widget;
     }
 
+    private findConferenceAgent(agentName: string): boolean {
+        // filter list
+        return this.conferenceAgentList.filter(c => c.AgentName === agentName).length > 0;
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------    
@@ -743,6 +803,14 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     onMaximized(event: boolean): void {
         this.maximizeEvent.emit(event);
         this.maximized = event;
+    }
+
+    findMe(message: any): boolean {
+        return message?.who === this.user.agentName || message?.who === 'Chatbot' || (this.conferenceType === 'silent' && this.findConferenceAgent(message.who));
+    }
+
+    findContact(message: any): boolean {
+        return message?.who !== this.user.agentName && message?.who !== 'Chatbot' && !(this.conferenceType === 'silent' && this.findConferenceAgent(message.who));
     }
 
     isFirstMessageOfGroup(message: any, i: number): boolean {

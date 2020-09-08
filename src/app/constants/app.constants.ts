@@ -5,28 +5,28 @@ import { AppAlertDialogTypes } from 'app/interfaces';
 export const CHART_COLORS: Color[] = [
     {
         backgroundColor: 'rgb(138, 124, 207)',
-        hoverBackgroundColor: 'rgba(196, 189, 231, 0.6)'
+        hoverBackgroundColor: 'rgba(138, 124, 207, 0.6)'
     },
     {
         backgroundColor: 'rgb(161, 120, 159)',
-        hoverBackgroundColor: 'rgba(189, 160, 188, 0.6)'
+        hoverBackgroundColor: 'rgba(161, 120, 159, 0.6)'
     },
     {
         backgroundColor: 'rgb(194, 87, 143)',
-        hoverBackgroundColor: 'rgba(231, 189, 211, 0.6)'
+        hoverBackgroundColor: 'rgba(194, 87, 143, 0.6)'
     },
 
     {
         backgroundColor: 'rgb(171, 162, 221)',
-        hoverBackgroundColor: 'rgba(206, 157, 226, 0.2)'
+        hoverBackgroundColor: 'rgba(171, 162, 221, 0.2)'
     },
     {
         backgroundColor: 'rgb(182, 150, 181)',
-        hoverBackgroundColor: 'rgba(226, 196, 237, 0.2)'
+        hoverBackgroundColor: 'rgba(182, 150, 181, 0.2)'
     },
     {
-        backgroundColor: 'rgb(194, 87, 143)',
-        hoverBackgroundColor: 'rgba(245, 235, 249, 0.2)'
+        backgroundColor: 'rgb(207, 124, 168)',
+        hoverBackgroundColor: 'rgba(207, 124, 168, 0.2)'
     }
 ];
 
@@ -86,5 +86,86 @@ export const AppAlertDialogConstants: Record<AppAlertDialogTypes, { heading: str
     error: {
         heading: 'Error',
         icon: 'warning'
+    }
+};
+
+export const AGENT_FEATURES_MAP = {
+    AllowSupervisorToBargeIn: {
+        Type: 'interaction',
+        SubType: 'voice',
+        Icon: 'call_merge',
+        Label: 'Barge-In'
+    },
+    AllowSupervisorToCapturePicture: {
+        Type: 'agent',
+        SubType: '',
+        Icon: 'fact_check',
+        Label: 'View Activity'
+    },
+    AllowSupervisorToChangeStatus: {
+        Type: 'agent',
+        SubType: '',
+        Icon: 'track_changes',
+        Label: 'Change Status'
+    },
+    AllowSupervisorToChatConference: {
+        Type: 'interaction',
+        SubType: 'textchat',
+        Icon: 'forum',
+        Label: 'Conference'
+    },
+    AllowSupervisorToChatSilentMonitor: {
+        Type: 'interaction',
+        SubType: 'textchat',
+        Icon: 'speaker_notes',
+        Label: 'Silent Monitor'
+    },
+    AllowSupervisorToChatWhisper: {
+        Type: 'interaction',
+        SubType: 'textchat',
+        Icon: 'quickreply',
+        Label: 'Whisper'
+    },
+    AllowSupervisorToFaxTransferAgent: {
+        Type: 'interaction',
+        SubType: 'fax',
+        Icon: 'forward',
+        Label: 'Transfer Fax'
+    },
+    AllowSupervisorToFaxTransferSelf: {
+        Type: 'interaction',
+        SubType: 'fax',
+        Icon: 'play_for_work',
+        Label: 'Self Transfer'
+    },
+    AllowSupervisorToInteractionNotification: {
+        Type: 'interaction',
+        SubType: 'all',
+        Icon: 'notification_important',
+        Label: 'Interaction Notification'
+    },
+    AllowSupervisorToLogout: {
+        Type: 'agent',
+        SubType: '',
+        Icon: 'power_settings_new',
+        Label: 'Logout'
+    },
+    AllowSupervisorToSendNotification: {
+        Type: 'agent',
+        SubType: '',
+        Icon: 'notifications',
+        Label: 'Send Notification'
+    },
+    AllowSupervisorToSilentMonitor: {
+        Type: 'interaction',
+        SubType: 'voice',
+        Icon: 'contactless',
+        Label: 'Silent Monitor'
+    },
+    AllowSupervisorToViewEmailDetails: {
+        Type: 'interaction',
+        SubType: '',
+        Icon: 'email',
+        Label: 'View Details'
     }
 };

@@ -94,11 +94,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
                 }
             );
 
-        SDKClient.events.on('connectivityStatus', (dt) => {
-            setTimeout(() => {
-                this.connectivityStatus = dt;
-            }, 100);
-        });
+        SDKClient.events.on('connectivityStatus', this.connectivityStatusEvent);
     }
 
     /**
@@ -108,6 +104,14 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         // Unsubscribe from all subscriptions
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
+
+        SDKClient.events.off('connectivityStatus', this.connectivityStatusEvent);
+    }
+
+    private connectivityStatusEvent = (data: any) => {
+        setTimeout(() => {
+            this.connectivityStatus = data;
+        }, 100);
     }
 
     // -----------------------------------------------------------------------------------------------------

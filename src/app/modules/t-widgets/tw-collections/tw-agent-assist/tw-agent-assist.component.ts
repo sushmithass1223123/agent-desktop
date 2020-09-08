@@ -195,7 +195,6 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
 
         // create a widget model
         const widget = new TwWidgetModel(title, 'tw-custom', icon);
-        widget.Config.AOT = true;
         widget.Config.Position.W = width;
         widget.Config.Position.H = height;
         widget.Config.Actions = actions;

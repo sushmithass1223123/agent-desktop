@@ -13,7 +13,7 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
 
     @Input() data: any;
 
-    agentData: IAgentData = null;
+    agentData: IAgentData;
 
     constructor() {
         super();
@@ -27,22 +27,28 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
         this.agentData = SDKClient.getAgentData();
 
         if (!environment.production) {
-            console.log('TwAgentDetailsComponent: ', this.agentData);
+            console.log('Agent details: ', this.agentData);
         }
 
-        // listen for agent status changing event
-        SDKClient.events.on('AgentStatusChangingEvent', () => {
-            this.agentData.agentStatus = 'Please wait...';
-        });
-
-        // listen for agent status change event
-        SDKClient.events.on('AgentStatusChangeEvent', (evt: AgentStatusChangeEvent) => {
-            this.agentData.agentStatus = evt.Status;
-        });
+        // register to events
+        SDKClient.events.on('AgentStatusChangingEvent', this.AgentStatusChangingEvent);
+        SDKClient.events.on('AgentStatusChangeEvent', this.AgentStatusChangeEvent);
     }
 
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+
+        // unregister from events
+        SDKClient.events.off('AgentStatusChangingEvent', this.AgentStatusChangingEvent);
+        SDKClient.events.off('AgentStatusChangeEvent', this.AgentStatusChangeEvent);
+    }
+
+    private AgentStatusChangingEvent = () => {
+        this.agentData.agentStatus = 'Please wait...';
+    }
+
+    private AgentStatusChangeEvent = (evt: AgentStatusChangeEvent) => {
+        this.agentData.agentStatus = evt.Status;
     }
 }

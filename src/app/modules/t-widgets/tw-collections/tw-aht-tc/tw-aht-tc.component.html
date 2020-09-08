@@ -1,7 +1,7 @@
 <!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
 <!-- implement following events in your component to access widget wrapper action events -->
 <!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
-<tw-wrapper twChart [data]="data">
+<tw-wrapper twChart [data]="data" (maximizeEvent)="maximized = $event">
     <div *ngIf="dataConfig.Source === 'dashboard'" class="w-100-p h-100-p">
         <div
             class="w-100-p bg-inherit"
@@ -55,7 +55,10 @@
                 <mat-row *matRowDef="let row; columns: interactionDetailsTable.columns"></mat-row>
             </mat-table>
 
-            <p *ngIf="interactionDetailsTable.source.data.length === 0" class="text-center m-0 mat-title">No Data Available</p>
+            <div *ngIf="interactionDetailsTable.source.data.length === 0" class="w-100-p" [ngClass]="{ 'h-90-p': maximized, ' h-65-p': !maximized }">
+                <img src="assets/images/vectors/no-data-2.svg" class="w-100-p h-100-p box-shadow-3d" />
+                <p class="text-center mat-title m-0">No Data Available</p>
+            </div>
         </div>
         <mat-paginator *ngIf="maximized" [pageSizeOptions]="maximized ? [30, 40, 50] : [3, 6, 12]" showFirstLastButtons> </mat-paginator>
     </div>
@@ -86,10 +89,11 @@
         <div
             *ngIf="ahtChart.datasets.length === 0 || (ahtChart.datasets.length >= 1 && !ahtChart.datasets[0].data.length)"
             class="w-100-p h-100-p text-center"
-            fxLayout
+            fxLayout="column"
             fxLayoutAlign="center center"
         >
-            <p class="mat-title">No Data Available</p>
+            <img src="assets/images/vectors/no-data-1.svg" class="w-100-p h-85-p box-shadow-3d" />
+            <p class="text-center m-0" [ngClass]="{ 'mat-display-2': maximized, ' mat-title': !maximized }">No Data Available</p>
         </div>
     </div>
 </tw-wrapper>

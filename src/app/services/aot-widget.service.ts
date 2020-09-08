@@ -56,6 +56,9 @@ export class AotWidgetService {
             return;
         }
 
+        // set AOT true
+        widget.Config.AOT = true;
+
         // get the value from the behavior subject
         const widgetList = this._widgetsSubject.getValue();
 

@@ -7,7 +7,7 @@
 <tw-wrapper [data]="data" class="active-agent-wrapper">
     <!-- your code goes here -->
     <div fxFill fxLayout="column" fxLayoutAlign=" none">
-        <div class="w-100-p">
+        <div class="w-100-p px-4">
             <mat-form-field class="custom form-field w-100-p" appearance="outline">
                 <input class="login-input" matInput placeholder="Search" [(ngModel)]="searchTerm" (input)="filterAgents()" />
                 <button
@@ -38,7 +38,7 @@
             fxFlex
             fxLayout="column"
             fxLayoutAlign=" none"
-            class="agent-list"
+            class="agent-list px-4"
             [@animateStagger]="{ value: '50' }"
             fusePerfectScrollbar
             [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
@@ -134,7 +134,7 @@
                     </div>
                 </div>
 
-                <div fxLayout class="tw-accordion-menu">
+                <div fxLayout class="tw-accordion-menu border-radius-20">
                     <div fxFlex="50" fxLayout="row wrap" fxLayoutAlign=" start" class="feature-actions border-right-primary px-8">
                         <ng-container *ngFor="let feature of item.AgentFeatures">
                             <button
@@ -147,6 +147,15 @@
                                 <mat-icon>{{ featureMap[feature.Feature].Icon }}</mat-icon>
                             </button>
                         </ng-container>
+                        <button
+                            mat-icon-button
+                            mat-raised-button
+                            *ngIf="checkForActiveInteraction(item.ChannelCount)"
+                            matTooltip="View Interactions"
+                            (click)="viewInteractions(item)"
+                        >
+                            <mat-icon>preview</mat-icon>
+                        </button>
                     </div>
                     <div fxFlex="50" fxLayout="row wrap" fxLayoutAlign=" start" class="channel-list px-8">
                         <div

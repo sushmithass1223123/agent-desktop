@@ -31,8 +31,8 @@
         fxLayout="column"
         fxLayoutAlign="center center"
     >
-        <p class="mat-display-2 m-0">0</p>
-        <p class="mat-title m-0">Calls in Queue</p>
+        <img src="assets/images/vectors/no-data-1.svg" class="w-100-p h-85-p box-shadow-3d" />
+        <p class="text-center m-0" [ngClass]="{ 'mat-display-2': ciqChart.legend, ' mat-title': !ciqChart.legend }">No Data Available</p>
     </div>
     <!-- your code goes here -->
 </tw-wrapper>

@@ -29,7 +29,11 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
     }
 
     ngOnInit(): void {
+        // call the wrapper init method
         this.initWrapper(this.data);
+
+        // register to event
+        SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
 
         this._appDataService.appNotifications
             .pipe(takeUntil(this.unsubscribeAll))
@@ -41,13 +45,13 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
                     this.notifications = _.orderBy(notifications, ['time'], ['desc']);
                 }
             );
-
-        SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
     }
 
     ngOnDestroy(): void {
+        // call the wrapper destroy method
         this.destroyWrapper();
 
+        // unregister from event
         SDKClient.events.off('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
     }
 
