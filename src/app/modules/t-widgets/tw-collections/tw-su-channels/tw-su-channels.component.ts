@@ -7,6 +7,7 @@ import { CHART_COLORS } from 'app/constants';
 import { TwChartConfig } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
 import { SDKClient, AgentChannelDataModel, AgentChannelDataList } from 'tmac-sdk';
+import { sortBy } from 'lodash';
 
 const multiColors: any = {
     backgroundColor: [...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS].map((c) => c.backgroundColor),
@@ -105,19 +106,21 @@ export class TwSuChannelsComponent extends TWidgetWrapper implements OnInit, OnD
     }
 
     TeamActiveChannelListEvent = (evt: AgentChannelDataList) => {
-        const datasets = { Duration: [] };
+        const datasets = { Count: [] };
         const labels = [];
-        evt.Channels.forEach((c) => {
-            datasets.Duration.push(c.Total);
-            labels.push(c.Channel);
-        });
+        sortBy(evt.Channels, 'Total')
+            .reverse()
+            .forEach((c) => {
+                datasets.Count.push(c.Total);
+                labels.push(c.Channel);
+            });
 
         this.channelsChart.datasets = Object.keys(datasets).map((d) => ({
             data: datasets[d],
             label: d
         }));
         this.channelsChart.labels = labels;
-    }
+    };
 
     // -----------------------------------------------------------------------------------------------------
     // @  Private Methods

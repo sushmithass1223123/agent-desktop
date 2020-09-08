@@ -2,15 +2,15 @@ import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatAutocomplete, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { FuseConfigService } from '@fuse/services/config.service';
-import { SnackbarComponent } from '@modules/shared/snackbar/snackbar.component';
 import { AppDataService } from '@services/app-data.service';
+import { AppUiService } from '@services/app-ui.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { ResData } from 'app/interfaces';
 import { groupBy, orderBy, uniqBy } from 'lodash';
-import { takeUntil } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map, startWith, takeUntil } from 'rxjs/operators';
 import { SDKClient, WorkCode } from 'tmac-sdk';
 
 @Component({
@@ -37,6 +37,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         loading: false,
         msg: ''
     };
+    filteredOptions: Observable<Record<string, WorkCode[]>>;
 
     DataConf: {
         Source: string;
@@ -44,7 +45,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         ByGroup: boolean;
     };
 
-    selectedWorkCodes: any = [];
+    selectedWorkCodes: any[] = [];
     separatorKeysCodes: number[] = [ENTER, COMMA];
     workCodeCtrl = new FormControl();
 
@@ -61,7 +62,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         private _fuseConfigService: FuseConfigService,
         // @ [OPTIONAL]
         private _appDataService: AppDataService,
-        private _snackbar: MatSnackBar
+        private appUiService: AppUiService
     ) {
         super();
     }
@@ -92,6 +93,12 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         });
 
         this.DataConf = this.data.Data;
+
+        this.filteredOptions = this.workCodeCtrl.valueChanges.pipe(
+            startWith(''),
+            map((wc) => (typeof wc === 'string' ? wc : '')),
+            map((wc) => (wc ? this._filterOptions(wc) : this.loadWorkCodesReq.data))
+        );
 
         this.setup();
     }
@@ -131,14 +138,14 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
                         workCodeList.push(item);
                     }
                 });
-            }
-            else {
+            } else {
                 workCodeList = loadWCRes.response;
             }
 
             workCodeList = uniqBy(workCodeList, 'Name');
 
-            this.loadWorkCodesReq.data = groupBy(workCodeList, 'ParentName');
+            this.loadWorkCodesReq.data = this.DataConf.ByGroup ? groupBy(workCodeList, 'ParentName') : { listData: workCodeList };
+
             this.loadWorkCodesReq.loading = false;
             this.loadWorkCodesReq.error = false;
         } catch (e) {
@@ -150,14 +157,21 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
 
     private TeamrWorkCodeDetailsEvent = (workCodeList: any) => {
         this.selectedWorkCodes = orderBy(workCodeList, ['Count'], ['desc']);
-    }
+    };
 
     private WorkCodeAddedEvent = (workCode: WorkCode) => {
         // check if the work code is already added
         if (this.selectedWorkCodes.filter((w: WorkCode) => w.Code === workCode.Code).length <= 0) {
             this.selectedWorkCodes.push(workCode);
+            if (this.DataConf.ByGroup) {
+                Object.keys(this.loadWorkCodesReq.data).forEach((k) => {
+                    this.loadWorkCodesReq.data[k] = this.loadWorkCodesReq.data[k].filter((x) => x.Code !== workCode.Code);
+                });
+            } else {
+                this.loadWorkCodesReq.data.listData = this.loadWorkCodesReq.data.listData.filter((x) => x.Code !== workCode.Code);
+            }
         }
-    }
+    };
 
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
@@ -178,15 +192,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     }
 
     public setWorkCode(option: MatAutocompleteSelectedEvent): void {
-        this._snackbar.openFromComponent(SnackbarComponent, {
-            data: {
-                icon: 'loop',
-                loading: true,
-                color: 'primary',
-                message: 'Setting work code'
-            },
-            verticalPosition: 'top'
-        });
+        this.appUiService.showSnackbar('Setting work code', 'loading');
         SDKClient.setCallWorkCode(
             {
                 code: option.option.value.Code,
@@ -196,47 +202,28 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         )
             .then(() => {
                 this.selectedWorkCodes.push(option.option.value);
-                this.loadWorkCodesReq.data[option.option.group.label] = this.loadWorkCodesReq.data[option.option.group.label].filter(
-                    (x) => x.Code !== option.option.value.Code
-                );
-
-                this._snackbar.openFromComponent(SnackbarComponent, {
-                    data: {
-                        icon: 'done',
-                        color: 'success',
-                        message: 'Work code set successfully'
-                    },
-                    verticalPosition: 'top'
-                });
-                setTimeout(() => {
-                    this._snackbar.dismiss();
-                }, 3000);
+                if (this.DataConf.ByGroup) {
+                    if (!option.option.group.label) {
+                        Object.keys(this.loadWorkCodesReq.data).forEach((k) => {
+                            this.loadWorkCodesReq.data[k] = this.loadWorkCodesReq.data[k].filter((x) => x.Code !== option.option.value.Code);
+                        });
+                    } else {
+                        this.loadWorkCodesReq.data[option.option.group.label] = this.loadWorkCodesReq.data[option.option.group.label].filter(
+                            (x) => x.Code !== option.option.value.Code
+                        );
+                    }
+                } else {
+                    this.loadWorkCodesReq.data.listData = this.loadWorkCodesReq.data.listData.filter((x) => x.Code !== option.option.value.Code);
+                }
+                this.appUiService.showSnackbar('Work code set successfully', 'success');
             })
             .catch(() => {
-                this._snackbar.openFromComponent(SnackbarComponent, {
-                    data: {
-                        icon: 'close',
-                        color: 'danger',
-                        message: 'Something went wrong '
-                    },
-                    verticalPosition: 'top'
-                });
-                setTimeout(() => {
-                    this._snackbar.dismiss();
-                }, 3000);
+                this.appUiService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
             });
     }
 
     public removeWorkCode(option: WorkCode): void {
-        this._snackbar.openFromComponent(SnackbarComponent, {
-            data: {
-                icon: 'loop',
-                loading: true,
-                color: 'primary',
-                message: 'Removing work code'
-            },
-            verticalPosition: 'top'
-        });
+        this.appUiService.showSnackbar('Removing work code', 'loading');
 
         SDKClient.removeCallWorkCode(
             {
@@ -247,32 +234,33 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         )
             .then(() => {
                 this.selectedWorkCodes = this.selectedWorkCodes.filter((s: any) => s.Code !== option.Code);
-                this.loadWorkCodesReq.data[option.ParentID].push(option);
-                this._snackbar.openFromComponent(SnackbarComponent, {
-                    data: {
-                        icon: 'done',
-                        color: 'success',
-                        message: 'Work code removed successfully'
-                    },
-                    verticalPosition: 'top'
-                });
-                setTimeout(() => {
-                    this._snackbar.dismiss();
-                }, 3000);
+                if (this.DataConf.ByGroup) {
+                    this.loadWorkCodesReq.data[(option as any).ParentName].push(option);
+                } else {
+                    this.loadWorkCodesReq.data.listData.push(option);
+                }
+                this.appUiService.showSnackbar('Work code removed successfully', 'success');
             })
             .catch(() => {
-                this._snackbar.openFromComponent(SnackbarComponent, {
-                    data: {
-                        icon: 'close',
-                        color: 'danger',
-                        message: 'Something went wrong '
-                    },
-                    verticalPosition: 'top'
-                });
-                setTimeout(() => {
-                    this._snackbar.dismiss();
-                }, 3000);
+                this.appUiService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
             });
+    }
+
+    _filterOptions(name: string): Record<string, WorkCode[]> {
+        let filteredData: any;
+        if (this.DataConf.ByGroup) {
+            filteredData = {};
+            Object.keys(this.loadWorkCodesReq.data).forEach((c) => {
+                filteredData[c] = this.loadWorkCodesReq.data[c].filter((x) => x.Name.toLowerCase().includes(name.toLowerCase()));
+            });
+        } else {
+            filteredData = this.loadWorkCodesReq.data.listData.filter((x) => x.Name.toLowerCase().includes(name.toLowerCase()));
+        }
+        return filteredData;
+    }
+
+    getOptionValue(x: any, y: any): any {
+        return { ...x, ...y };
     }
 }
 

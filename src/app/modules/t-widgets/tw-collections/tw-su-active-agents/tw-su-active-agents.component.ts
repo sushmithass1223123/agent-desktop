@@ -2,15 +2,14 @@ import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewEncapsul
 import { fuseAnimations } from '@fuse/animations';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { AppDataService } from '@services/app-data.service';
+import { AppUiService } from '@services/app-ui.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
+import { COMMON_ERR_MESSAGE } from 'app/constants';
+import { IWidget } from 'app/interfaces';
+import { TwWidgetModel } from 'app/models';
 import * as _ from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { AgentFeatures, IAgentData, SDKClient, SuAgentDataModel, SuAgentModel, IResponse, TUtils } from 'tmac-sdk';
-import { TwWidgetModel } from 'app/models';
-import { IWidget } from 'app/interfaces';
-import { MatButton } from '@angular/material/button';
-import { AppUiService } from '@services/app-ui.service';
-import { COMMON_ERR_MESSAGE } from 'app/constants';
+import { AgentFeatures, IAgentData, IResponse, SDKClient, SuAgentDataModel, SuAgentModel, TUtils } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-su-active-agents',

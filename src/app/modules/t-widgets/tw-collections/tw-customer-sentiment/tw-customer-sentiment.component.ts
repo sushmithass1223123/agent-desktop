@@ -192,7 +192,7 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
                 y: parsedJson.sentimentResult
             } as any);
         }
-    }
+    };
 
     // -----------------------------------------------------------------------------------------------------
     // @  Private Methods

@@ -83,3 +83,12 @@ export interface AppNotification {
     time?: string | Date;
     status: string;
 }
+
+export type AppAlertDialogTypes = 'success' | 'info' | 'warning' | 'error';
+
+export interface AppAlertDialogData {
+    heading: string;
+    message: string;
+    close: () => void;
+    type: AppAlertDialogTypes;
+}

@@ -9,9 +9,10 @@
         fxLayoutAlign="center center"
         class="w-100-p h-100-p"
     >
-        <div class="tw-chart w-100-p h-100-p p-4" #chartContainerRef>
+        <div class="tw-chart w-100-p h-100-p p-8" #chartContainerRef>
             <canvas
                 baseChart
+                class="box-shadow-3d"
                 [colors]="ciqChart.colors"
                 [datasets]="ciqChart.datasets"
                 [options]="ciqChart.options"
@@ -30,7 +31,8 @@
         fxLayout
         fxLayoutAlign="center center"
     >
-        <p class="mat-title">No Data Available</p>
+        <p class="mat-display-2">0</p>
+        <p>Calls in Queue</p>
     </div>
     <!-- your code goes here -->
 </tw-wrapper>

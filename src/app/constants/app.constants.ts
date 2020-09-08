@@ -1,5 +1,6 @@
 import { Color } from 'ng2-charts';
 import { SDKClient, TUtils } from 'tmac-sdk';
+import { AppAlertDialogTypes } from 'app/interfaces';
 
 export const CHART_COLORS: Color[] = [
     {
@@ -67,4 +68,23 @@ export const AGENT_DATA_MAP = () => {
         TUtils.Logger.log('Exception in AGENT_DATA_MAP', error);
     }
     return new Object();
+};
+
+export const AppAlertDialogConstants: Record<AppAlertDialogTypes, { heading: string; icon: string }> = {
+    info: {
+        heading: 'Info',
+        icon: 'info'
+    },
+    success: {
+        heading: 'Success',
+        icon: 'check'
+    },
+    warning: {
+        heading: 'Warning',
+        icon: 'warning'
+    },
+    error: {
+        heading: 'Error',
+        icon: 'warning'
+    }
 };

@@ -9,16 +9,16 @@
 
     <div fxLayout fxLayoutAlign="start center" class="p-4 w-100-p h-100-p" fusePerfectScrollbar>
         <div fxLayout="column" fxLayoutAlign="space-around center" class="h-100-p">
-            <button mat-button>
+            <button mat-button matTooltip="Wireless" color="primary">
                 <mat-icon>phonelink_ring</mat-icon>
             </button>
-            <button mat-button>
+            <button mat-button matTooltip="Fixed">
                 <mat-icon>vibration</mat-icon>
             </button>
-            <button mat-button>
+            <button mat-button matTooltip="Broadband">
                 <mat-icon>tap_and_play</mat-icon>
             </button>
-            <button mat-button>
+            <button mat-button matTooltip="TV">
                 <mat-icon>live_tv</mat-icon>
             </button>
         </div>
@@ -28,26 +28,26 @@
                 <div fxFlex="30" class="position-relative">
                     <canvas
                         baseChart
-                        [data]="doughnutChartData"
-                        [options]="doughnutOptions"
-                        [labels]="doughnutChartLabels"
-                        [chartType]="doughnutChartType"
-                        [colors]="doughnutColors"
+                        [data]="wirelessData[0].data"
+                        [options]="wirelessData[0].options"
+                        [labels]="wirelessData[0].labels"
+                        chartType="doughnut"
+                        [colors]="wirelessData[0].colors"
                     >
                     </canvas>
-                    <span fxFlex fxLayoutAlign="center center" class="absolute-center">30%</span>
+                    <span fxFlex fxLayoutAlign="center center" class="absolute-center">66%</span>
                 </div>
                 <div class="h5" fxFlex="70" fxLayout="row" fxLayoutAlign="space-between none">
                     <div fxLayout="column" fxLayoutAlign="center start">
-                        <div class="text-bold">+65-9875-4321</div>
-                        <div>Used: 26GB / 30GB</div>
+                        <div class="text-bold">+6586734993</div>
+                        <div>Used: 20GB / 30GB</div>
                     </div>
                     <div fxLayout fxLayoutAlign="center center" class="ml-16 mr-4 p-12 bg-success border-radius-16">
                         <div class="">$250.50</div>
                     </div>
                     <div fxLayout="column" fxLayoutAlign="center end" class="p-12 bg-danger border-radius-16 text-right w-40-p">
                         <div>Due Date</div>
-                        <div class="text-bold">15 Jun 2020</div>
+                        <div class="text-bold">17 Sep 2020</div>
                     </div>
                 </div>
             </div>
@@ -55,26 +55,26 @@
                 <div fxFlex="30" class="position-relative">
                     <canvas
                         baseChart
-                        [data]="doughnutChartData"
-                        [options]="doughnutOptions"
-                        [labels]="doughnutChartLabels"
-                        [chartType]="doughnutChartType"
-                        [colors]="doughnutColors"
+                        [data]="wirelessData[1].data"
+                        [options]="wirelessData[1].options"
+                        [labels]="wirelessData[1].labels"
+                        chartType="doughnut"
+                        [colors]="wirelessData[1].colors"
                     >
                     </canvas>
-                    <span fxFlex fxLayoutAlign="center center" class="absolute-center">30%</span>
+                    <span fxFlex fxLayoutAlign="center center" class="absolute-center">50%</span>
                 </div>
                 <div class="h5" fxFlex="70" fxLayout="row" fxLayoutAlign="space-between none">
                     <div fxLayout="column" fxLayoutAlign="center start">
-                        <div class="text-bold">+65-9875-4321</div>
-                        <div>Used: 26GB / 30GB</div>
+                        <div class="text-bold">+6596975347</div>
+                        <div>Used: 15GB / 30GB</div>
                     </div>
                     <div fxLayout fxLayoutAlign="center center" class="ml-16 mr-4 p-12 bg-success border-radius-16">
-                        <div class="">$250.50</div>
+                        <div class="">$120.70</div>
                     </div>
                     <div fxLayout="column" fxLayoutAlign="center end" class="p-12 bg-success border-radius-16 text-right w-40-p">
                         <div>Due Date</div>
-                        <div class="text-bold">15 Jun 2020</div>
+                        <div class="text-bold">17 Sep 2020</div>
                     </div>
                 </div>
             </div>
