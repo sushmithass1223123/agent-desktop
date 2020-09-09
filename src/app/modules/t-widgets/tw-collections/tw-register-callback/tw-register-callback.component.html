@@ -16,7 +16,7 @@
     </div>
 
     <div *ngIf="!getCampaignsReq.loading && !getCampaignsReq.error" class="w-100-p h-100-p">
-        <ul class="tw-list w-100-p" fusePerfectScrollbar>
+        <ul class="tw-list w-100-p" fusePerfectScrollbar [fusePerfectScrollbarOptions]="{ suppressScrollX: true }">
             <li
                 class="tw-list-item selectable"
                 *ngFor="let camp of getCampaignsReq.data"
@@ -56,7 +56,7 @@
         <div mat-dialog-content class="p-24 pb-0 m-0" fusePerfectScrollbar>
             <form [formGroup]="addContactFormGroup" (ngSubmit)="addNewContact()" fxLayout="row wrap" fxLayoutAlign="space-between center" novalidate>
                 <mat-form-field class="form-field mb-8" appearance="outline" fxFlex="100">
-                    <input matInput placeholder="Name" formControlName="name" #nameIp />
+                    <input matInput placeholder="Name" formControlName="Name" #nameIp />
                     <button
                         mat-button
                         color="primary"
@@ -64,7 +64,7 @@
                         matSuffix
                         mat-icon-button
                         aria-label="Clear"
-                        (click)="addContactFormGroup.patchValue({ name: '' })"
+                        (click)="addContactFormGroup.patchValue({ Name: '' })"
                     >
                         <mat-icon>close</mat-icon>
                     </button>
@@ -73,7 +73,7 @@
                 </mat-form-field>
 
                 <mat-form-field class="form-field mb-8" appearance="outline" fxFlex="100">
-                    <input matInput placeholder="Phone" formControlName="phone" #mobileIp />
+                    <input matInput placeholder="Phone" formControlName="Phone" #mobileIp />
                     <button
                         mat-button
                         color="primary"
@@ -81,7 +81,7 @@
                         matSuffix
                         mat-icon-button
                         aria-label="Clear"
-                        (click)="addContactFormGroup.patchValue({ phone: '' })"
+                        (click)="addContactFormGroup.patchValue({ Phone: '' })"
                     >
                         <mat-icon>close</mat-icon>
                     </button>
@@ -90,15 +90,15 @@
                 </mat-form-field>
 
                 <mat-form-field class="form-field mb-8" appearance="outline" fxFlex="100">
-                    <input matInput [min]="minDate" [matDatepicker]="datePicker" formControlName="date" />
+                    <input matInput [min]="minDate" [matDatepicker]="datePicker" formControlName="Date" />
                     <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
                     <mat-datepicker #datePicker></mat-datepicker>
-                    <mat-error *ngIf="addContactFormGroup.controls.date.errors?.required"> Date Required </mat-error>
+                    <mat-error *ngIf="addContactFormGroup.controls.Date.errors?.required"> Date Required </mat-error>
                 </mat-form-field>
 
                 <mat-form-field class="form-field mb-8" appearance="outline" fxFlex="100">
-                    <input matInput type="time" formControlName="time" />
-                    <mat-error *ngIf="addContactFormGroup.controls.time.errors?.invalid"> Time Required </mat-error>
+                    <input matInput type="time" formControlName="Time" />
+                    <mat-error *ngIf="addContactFormGroup.controls.Time.errors?.invalid"> Time Required </mat-error>
                 </mat-form-field>
 
                 <div fxFlex="100" fxLayoutAlign="end" class="mb-12">

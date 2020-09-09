@@ -27,7 +27,7 @@
                     [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
                 >
                     <!-- CHAT MESSAGES -->
-                    <div class="chat-messages">
+                    <div class="chat-messages px-12">
                         <!-- MESSAGE -->
                         <div
                             *ngFor="let message of chatTranscripts; let i = index"
@@ -38,16 +38,13 @@
                             }"
                         >
                             <div
-                                *ngIf="!message.divider"
                                 fxLayout="column"
                                 fxLayoutAlign="start start"
                                 class="bubble"
                                 [ngClass]="
                                     (message.who !== user.agentName && fuseConfig.layout.anchorWidget.customBackgroundColor === true
                                         ? fuseConfig.layout.anchorWidget.bodyBackground
-                                        : '') +
-                                    ' ' +
-                                    (maximized ? 'maximized' : '')
+                                        : '') + ' '
                                 "
                             >
                                 <div [ngClass]="message.who === user.agentName ? 'right-svg' : 'left-svg'">
@@ -72,9 +69,11 @@
                                         <path fill="currentColor" d="M5.188 0H0v11.193l6.467-8.625C7.526 1.156 6.958 0 5.188 0z"></path>
                                     </svg>
                                 </div>
+
                                 <div *ngIf="chatTranscripts[i - 1]?.who !== message.who" class="user-label font-size-16 text-bold mb-4">
                                     {{ message.who }}
                                 </div>
+
                                 <div class="message">
                                     <span [innerHTML]="message.message"></span>
                                     <span class="spacer"></span>

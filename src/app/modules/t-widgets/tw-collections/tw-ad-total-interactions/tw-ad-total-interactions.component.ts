@@ -4,7 +4,7 @@ import { FuseConfig } from '@fuse/types';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CHART_COLORS } from 'app/constants';
-import { TwChartConfig } from 'app/interfaces';
+import { TwChartConfig, IWidget } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
 import { AgentChannelDataList, SDKClient } from 'tmac-sdk';
 import { sortBy } from 'lodash';
@@ -22,7 +22,7 @@ const multiColors: any = {
 })
 export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     // holds all the data related to this widget from the config
-    @Input() data: any;
+    @Input() data: IWidget;
 
     // -----------------------------------------------------------
     // @ [OPTIONAL] to store the fuse config for theme
@@ -33,7 +33,10 @@ export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements On
     // @ [OPTIONAL] to store entire app config and get update
     // -----------------------------------------------------------
     appConfig: any;
+
     dataConfig: { Source: string; AgentId: string };
+
+    maximized: boolean;
 
     allInteractionsChart: TwChartConfig = {
         datasets: [{ data: [] }],
@@ -93,7 +96,7 @@ export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements On
             this.appConfig = config;
         });
 
-        if (SDKClient.getAgentData().agentProfile === 'S') {
+        if (this.dataConfig.Source === 'supervisor' && SDKClient.getAgentData().agentProfile === 'S') {
             SDKClient.events.on('TeamChannelListEvent', this.TeamChannelListEvent);
         } else {
             SDKClient.events.on('AgentChannelDetailsEvent', this.AgentChannelDetailsEvent);
@@ -107,17 +110,22 @@ export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements On
         // call the wrapper destroy method
         this.destroyWrapper();
 
-        if (SDKClient.getAgentData().agentProfile === 'S') {
+        if (this.dataConfig.Source === 'supervisor' && SDKClient.getAgentData().agentProfile === 'S') {
             SDKClient.events.off('TeamChannelListEvent', this.TeamChannelListEvent);
         } else {
             SDKClient.events.off('AgentChannelDetailsEvent', this.AgentChannelDetailsEvent);
         }
     }
 
-    AgentChannelDetailsEvent = (channelData: AgentChannelDataList): void => {
-        if (this.dataConfig.AgentId && this.dataConfig.AgentId !== channelData.AgentId) {
+    // -----------------------------------------------------------------------------------------------------
+    // @  Private Methods
+    // -----------------------------------------------------------------------------------------------------
+
+    private AgentChannelDetailsEvent = (channelData: AgentChannelDataList): void => {
+        if (this.dataConfig.Source === 'supervisor' && this.dataConfig.AgentId !== channelData.AgentId) {
             return;
         }
+
         const datasets = { Count: [], Duration: [] };
         const labels = [];
         sortBy(channelData.Channels, 'Total').forEach((c) => {
@@ -130,13 +138,13 @@ export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements On
             label: d
         }));
         this.allInteractionsChart.labels = labels;
-    };
+    }
 
-    TeamChannelListEvent = (evt: AgentChannelDataList) => {
-        const datasets = { Duration: [] };
+    private TeamChannelListEvent = (evt: AgentChannelDataList) => {
+        const datasets = { Total: [] };
         const labels = [];
         evt.Channels.forEach((c) => {
-            datasets.Duration.push(c.Total);
+            datasets.Total.push(c.Total);
             labels.push(c.Channel);
         });
         this.allInteractionsChart.datasets = Object.keys(datasets).map((d) => ({
@@ -144,11 +152,7 @@ export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements On
             label: d
         }));
         this.allInteractionsChart.labels = labels;
-    };
-
-    // -----------------------------------------------------------------------------------------------------
-    // @  Private Methods
-    // -----------------------------------------------------------------------------------------------------
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods

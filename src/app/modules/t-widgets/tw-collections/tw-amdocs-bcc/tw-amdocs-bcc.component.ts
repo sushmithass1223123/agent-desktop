@@ -2,18 +2,18 @@ import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular
 import { FuseConfigService } from '@fuse/services/config.service';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
+import { IWidget } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
-import { CardSeriesComponent } from '@swimlane/ngx-charts';
 
 @Component({
-    selector: 'tw-ad-amdocs-bcc',
+    selector: 'tw-amdocs-bcc',
     templateUrl: './tw-amdocs-bcc.component.html',
     styleUrls: ['./tw-amdocs-bcc.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
 export class TwAmdocsBccComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     // holds all the data related to this widget from the config
-    @Input() data: any;
+    @Input() data: IWidget;
 
     // -----------------------------------------------------------
     // @ [OPTIONAL] to store the fuse config for theme

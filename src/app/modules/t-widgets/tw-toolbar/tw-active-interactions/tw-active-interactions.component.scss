@@ -16,18 +16,6 @@ tw-active-interactions {
                 height: 20px;
                 font-size: 20px;
             }
-
-            &.hold {
-                background: $tw-warning;
-            }
-
-            &.unhold {
-                background: $tw-success;
-            }
-
-            &.drop {
-                background: $tw-danger;
-            }
         }
     }
 

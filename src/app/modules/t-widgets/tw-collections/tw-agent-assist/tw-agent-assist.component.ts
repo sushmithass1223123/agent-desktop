@@ -1,13 +1,13 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { FuseConfigService } from '@fuse/services/config.service';
-import { AppDataService } from '@services/app-data.service';
-import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { takeUntil } from 'rxjs/operators';
-import { SDKClient, GenericEvent, TextChatRemoteUserConnectedEvent, CallerIntentEvent } from 'tmac-sdk';
 import { AotWidgetService } from '@services/aot-widget.service';
-import { TwWidgetModel } from 'app/models';
+import { AppDataService } from '@services/app-data.service';
+import { InteractionEventService } from '@services/interaction-event.service';
+import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
+import { TwWidgetModel } from 'app/models';
 import * as _ from 'lodash';
+import { CallerIntentEvent, GenericEvent, IUIEvent, SDKClient, TextChatRemoteUserConnectedEvent } from 'tmac-sdk';
+import { P } from '@angular/cdk/keycodes';
 
 @Component({
     selector: 'tw-agent-assist',
@@ -35,16 +35,12 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
     appConfig: any;
 
     /**
-     * Constructor
-     * @param {FuseConfigService} _fuseConfigService
-     * @param {AppDataService} _appDataService
+     * Constructor 
      */
     constructor(
-        // @ [OPTIONAL]
-        private _fuseConfigService: FuseConfigService,
-        // @ [OPTIONAL]
         private _appDataService: AppDataService,
-        private _aotWidgetService: AotWidgetService
+        private _aotWidgetService: AotWidgetService,
+        private _interactionEventService: InteractionEventService
     ) {
         super();
     }
@@ -60,19 +56,6 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the fuse config
-        // -----------------------------------------------------------
-        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.fuseConfig = config;
-        });
-
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the app config
-        // -----------------------------------------------------------
-        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.appConfig = config;
-        });
 
         // set the interaction id from data
         this.interactionId = this.data.InteractionDetails.InteractionID;
@@ -82,6 +65,14 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
 
         // assign the UCID
         this.ucid = this.data?.InteractionDetails.UCID || '';
+
+        // get the event from event bag to make sure no events are missed
+        const eventBag = this._interactionEventService.get(this.interactionId);
+
+        // process the events if any
+        eventBag.forEach((evt: IUIEvent) => {
+            this[evt.EventName]?.(evt);
+        });
 
         // register to the event
         SDKClient.events.on('OnNLPDataEvent', this.OnNLPDataEvent);
@@ -141,21 +132,23 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
             // oder by the count
             this.nlpData = _.orderBy(this.nlpData, ['Count'], ['desc']);
         }
-    };
+    }
 
     private CallerIntentEvent = (evt: CallerIntentEvent): void => {
-        const getData = this.nlpData.filter((i) => i.Name === evt.IntentName);
-        if (getData.length > 0) {
-            ++getData[0].Count;
-        } else {
-            this.nlpData.push({
-                Name: evt.IntentName,
-                Count: 0
-            });
+        // check for the interaction
+        if (this.interactionId !== evt.InteractionID) {
+            return;
         }
-        // oder by the count
-        this.nlpData = _.orderBy(this.nlpData, ['Count'], ['desc']);
-    };
+        // get the intent from event
+        const intent = evt.IntentName;
+
+        // check if intent is present
+        if (!intent) {
+            return;
+        }
+
+        this.addIntentToNLPData(intent);
+    }
 
     private TextChatRemoteUserConnectedEvent = (evt: TextChatRemoteUserConnectedEvent) => {
         // check for the interaction
@@ -165,14 +158,29 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
 
         // get the intent from event
         const intent = evt.TransferIntent || evt.Intent;
-        // if intent found, add it
-        if (intent) {
+
+        // check if intent is present
+        if (!intent) {
+            return;
+        }
+
+        this.addIntentToNLPData(intent);
+    }
+
+    private addIntentToNLPData(intent: string): void {
+        const getData = this.nlpData.filter((i) => i.Name === intent);
+        if (getData.length > 0) {
+            ++getData[0].Count;
+        } else {
             this.nlpData.push({
                 Name: intent,
                 Count: 0
             });
         }
-    };
+
+        // oder by the count
+        this.nlpData = _.orderBy(this.nlpData, ['Count'], ['desc']);
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
@@ -210,7 +218,6 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
 
         // create a widget model
         const widget = new TwWidgetModel(title, 'tw-custom', icon);
-        widget.Config.AOT = true;
         widget.Config.Position.W = width;
         widget.Config.Position.H = height;
         widget.Config.Actions = actions;

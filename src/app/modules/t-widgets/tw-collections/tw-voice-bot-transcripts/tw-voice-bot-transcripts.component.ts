@@ -3,8 +3,9 @@ import { FuseConfigService } from '@fuse/services/config.service';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { takeUntil } from 'rxjs/operators';
-import { IAgentData, SDKClient, VoiceBotTranscriptEvent } from 'tmac-sdk';
+import { IAgentData, SDKClient, VoiceBotTranscriptEvent, IUIEvent } from 'tmac-sdk';
 import { ChatTranscripts } from 'app/interfaces';
+import { InteractionEventService } from '@services/interaction-event.service';
 
 @Component({
     selector: 'tw-voice-bot-transcripts',
@@ -31,6 +32,8 @@ export class TwVoiceBotTranscriptsComponent extends TWidgetWrapper implements On
         agentName: 'VoiceBot'
     };
 
+    interactionId: number;
+
     /**
      * Constructor
      * @param {FuseConfigService} _fuseConfigService
@@ -40,7 +43,8 @@ export class TwVoiceBotTranscriptsComponent extends TWidgetWrapper implements On
         // @ [OPTIONAL]
         private _fuseConfigService: FuseConfigService,
         // @ [OPTIONAL]
-        private _appDataService: AppDataService
+        private _appDataService: AppDataService,
+        private _interactionEventService: InteractionEventService
     ) {
         super();
     }
@@ -70,6 +74,17 @@ export class TwVoiceBotTranscriptsComponent extends TWidgetWrapper implements On
             this.appConfig = config;
         });
 
+        // set the interaction id from data
+        this.interactionId = this.data.InteractionDetails.InteractionID;
+
+        // get the event from event bag to make sure no events are missed
+        const eventBag = this._interactionEventService.get(this.interactionId);
+
+        // process the events if any
+        eventBag.forEach((evt: IUIEvent) => {
+            this[evt.EventName]?.(evt);
+        });
+
         SDKClient.events.on('VoiceBotTranscriptEvent', this.VoiceBotTranscriptEvent);
     }
 
@@ -79,6 +94,7 @@ export class TwVoiceBotTranscriptsComponent extends TWidgetWrapper implements On
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+
         SDKClient.events.off('VoiceBotTranscriptEvent', this.VoiceBotTranscriptEvent);
     }
 
@@ -86,11 +102,12 @@ export class TwVoiceBotTranscriptsComponent extends TWidgetWrapper implements On
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
 
-    // -----------------------------------------------------------------------------------------------------
-    // @  Public Methods
-    // -----------------------------------------------------------------------------------------------------
+    private VoiceBotTranscriptEvent = (evt: VoiceBotTranscriptEvent) => {
+        // check for the interaction
+        if (this.interactionId !== evt.InteractionID) {
+            return;
+        }
 
-    VoiceBotTranscriptEvent = (evt: VoiceBotTranscriptEvent) => {
         this.chatTranscripts = JSON.parse(evt.Transcript)
             .map((m: { botTranscription: string; userTranscription: string }) => {
                 const message: ChatTranscripts[] = [];
@@ -109,7 +126,12 @@ export class TwVoiceBotTranscriptsComponent extends TWidgetWrapper implements On
                 return message;
             })
             .flat();
-    };
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+    // @  Public Methods
+    // -----------------------------------------------------------------------------------------------------
+
 }
 
 // for more info visit - https://angular.io/api/core

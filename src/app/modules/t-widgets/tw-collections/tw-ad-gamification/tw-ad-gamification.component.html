@@ -7,34 +7,34 @@
         <mat-spinner></mat-spinner>
     </div>
 
-    <div *ngIf="gamificationReqStatus.error" class="w-100-p h-100-p text-center" fxLayout fxLayoutAlign="center center">
-        <p>{{ gamificationReqStatus.msg }}</p>
-        <button mat-button (click)="setBadges()" color="primary">Retry</button>
+    <div *ngIf="gamificationReqStatus.error" class="w-100-p h-100-p text-center" fxLayout="column" fxLayoutAlign="center center">
+        <p class="mat-title m-0">{{ gamificationReqStatus.msg }}</p>
+        <button mat-raised-button (click)="setBadges()" color="primary">Retry</button>
     </div>
 
     <div
         *ngIf="!gamificationReqStatus.loading && !gamificationReqStatus.error"
-        fxLayout="row wrap"
+        fxLayout="clumn wrap"
         fxLayoutAlign="center center"
         fxFill
         class="badges p-4 h-100-p w-100-p"
     >
         <div fxFlex="33" *ngFor="let badge of gamificationReqStatus.data.badges | slice: 0:3" class="mb-8">
             <img [src]="badge.BadgeUrl" class="w-70-p mx-auto d-block" />
-            <span class="text-truncate text-center my-4"> {{ badge.BadgeName }} </span>
+            <span class="text-truncate text-center my-4" [ngClass]="{ 'mat-title m-0': maximized }"> {{ badge.BadgeName }} </span>
         </div>
 
         <div fxFlex="33" fxLayout fxLayoutAlign="center center">
-            <mat-icon class="gold mr-8 brand-logo"> monetization_on </mat-icon>
-            <span> {{ gamificationReqStatus.data.goldCoins }} </span>
+            <mat-icon class="gold mr-8 brand-logo box-shadow-3d"> monetization_on </mat-icon>
+            <span class="font-size-18" [ngClass]="{ 'mat-title m-0': maximized }"> {{ gamificationReqStatus.data.goldCoins }} </span>
         </div>
         <div fxFlex="33" fxLayout fxLayoutAlign="center center">
-            <mat-icon class="silver mr-8 brand-logo"> monetization_on </mat-icon>
-            <span> {{ gamificationReqStatus.data.silverCoins }} </span>
+            <mat-icon class="silver mr-8 brand-logo box-shadow-3d"> monetization_on </mat-icon>
+            <span class="font-size-18" [ngClass]="{ 'mat-title m-0': maximized }"> {{ gamificationReqStatus.data.silverCoins }} </span>
         </div>
         <div fxFlex="33" fxLayout fxLayoutAlign="center center">
-            <mat-icon class="bronze mr-8 brand-logo"> monetization_on </mat-icon>
-            <span> {{ gamificationReqStatus.data.bronzeCoins }} </span>
+            <mat-icon class="bronze mr-8 brand-logo box-shadow-3d"> monetization_on </mat-icon>
+            <span class="font-size-18" [ngClass]="{ 'mat-title m-0': maximized }"> {{ gamificationReqStatus.data.bronzeCoins }} </span>
         </div>
     </div>
     <!-- your code goes here -->

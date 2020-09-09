@@ -77,6 +77,9 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
 
         // deregister from tmac events
         SDKClient.events.off('AgentForcedLogoffEvent', this.forcedLogoffEvent);
+
+        // remove the processed features
+        this._agentFeaturesService.clearAgentFeatures();
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -130,7 +133,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
                 description = 'You are logged out by the supervisor!';
                 break;
             case 'SessionNotFound':
-                description = 'There is no session found in server, pelase re-login!';
+                description = 'There is no session found in server, please re-login!';
                 break;
             case 'SessionKeyExpired':
                 description = 'Your existing session expired as you are logged in using another session!';

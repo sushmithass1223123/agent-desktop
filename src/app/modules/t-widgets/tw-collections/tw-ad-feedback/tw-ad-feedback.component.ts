@@ -26,6 +26,9 @@ export class TwAdFeedbackComponent extends TWidgetWrapper implements OnInit, OnD
 
     ratings = Array(5).fill(1);
     stars = 4;
+
+    date: number;
+
     // -----------------------------------------------------------
     // @ [OPTIONAL] to store the fuse config for theme
     // -----------------------------------------------------------
@@ -97,6 +100,8 @@ export class TwAdFeedbackComponent extends TWidgetWrapper implements OnInit, OnD
         this.dataConfig = this.data.Data;
         this.feedbackDetailsTable.source.sort = this.sort;
         this.feedbackDetailsTable.source.paginator = this.paginator;
+
+        this.date = new Date().setMinutes(-15);
     }
 
     /**

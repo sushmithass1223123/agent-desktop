@@ -2,16 +2,17 @@ import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { FuseConfigService } from '@fuse/services/config.service';
-import { SnackbarComponent } from '@modules/shared/snackbar/snackbar.component';
-import { AppDataService } from '@services/app-data.service';
+import { AotWidgetService } from '@services/aot-widget.service';
+import { InteractionEventService } from '@services/interaction-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
-import { ReqCampaignContact, ResCampaign, ResData } from 'app/interfaces';
-import * as moment from 'moment';
-import { takeUntil } from 'rxjs/operators';
-import { SDKClient } from 'tmac-sdk';
+import { IWidget, ReqCampaignContact, ResCampaign, ResData } from 'app/interfaces';
 import { AppUiService } from 'app/services/app-ui.service';
+import * as moment from 'moment';
+import { SDKClient, IUIEvent, CCLDataEvent, TextChatRemoteUserConnectedEvent } from 'tmac-sdk';
+import { join } from 'lodash';
+import * as _ from 'lodash';
+import { O } from '@angular/cdk/keycodes';
 
 @Component({
     selector: 'tw-register-callback',
@@ -21,7 +22,8 @@ import { AppUiService } from 'app/services/app-ui.service';
 })
 export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     // holds all the data related to this widget from the config
-    @Input() data: any;
+    @Input() data: IWidget;
+
     @ViewChild('addContactForm') addContactFormDialog: TemplateRef<any>;
 
     dataConfig: {
@@ -47,14 +49,14 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
     minDate = new Date();
 
     addContactFormGroup = new FormGroup({
-        name: new FormControl('', [Validators.required]),
-        phone: new FormControl('', [Validators.required]),
-        date: new FormControl(new Date(), [Validators.required]),
-        time: new FormControl('12:00', [
+        Name: new FormControl('', [Validators.required]),
+        Phone: new FormControl('', [Validators.required]),
+        Date: new FormControl(new Date(), [Validators.required]),
+        Time: new FormControl('12:00', [
             Validators.required,
             (control) => {
                 if (this.addContactFormGroup && control.value) {
-                    const enteredDate = new Date(this.addContactFormGroup.get('date').value);
+                    const enteredDate = new Date(this.addContactFormGroup.get('Date').value);
                     const today = new Date();
                     const [hours, mins] = control.value.split(':');
                     if (
@@ -76,29 +78,24 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
         ])
     });
 
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store the fuse config for theme
-    // -----------------------------------------------------------
-    fuseConfig: any;
+    interactionId: number;
 
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store entire app config and get update
-    // -----------------------------------------------------------
-    appConfig: any;
+    dataMap: {
+        Name: string;
+        Phone: number;
+    };
+
+    dataMapValues = new Object();
 
     /**
      * Constructor
-     * @param {FuseConfigService} _fuseConfigService
-     * @param {AppDataService} _appDataService
      */
     constructor(
-        // @ [OPTIONAL]
-        private _fuseConfigService: FuseConfigService,
-        // @ [OPTIONAL]
-        private _appDataService: AppDataService,
         private http: HttpClient,
         private matDialog: MatDialog,
-        private appUiService: AppUiService
+        private appUiService: AppUiService,
+        private _aotWidgetService: AotWidgetService,
+        private _interactionEventService: InteractionEventService
     ) {
         super();
     }
@@ -114,22 +111,29 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the fuse config
-        // -----------------------------------------------------------
-        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.fuseConfig = config;
-        });
-
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the app config
-        // -----------------------------------------------------------
-        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.appConfig = config;
-        });
 
         this.dataConfig = this.data.Data;
         this.fetchCampaigns();
+
+        this.interactionId = this.data.InteractionDetails?.InteractionID;
+        this.dataMap = this.data.Data?.DataMap || new Object();
+
+        // this.addContactFormGroup.patchValue({});
+
+        // listen to events only if opened in an interaction
+        if (this.interactionId) {
+            // get the event from event bag to make sure no events are missed
+            const eventBag = this._interactionEventService.get(this.interactionId);
+
+            // process the events if any
+            eventBag.forEach((evt: IUIEvent) => {
+                this[evt.EventName]?.(evt);
+            });
+
+            // register to the event 
+            SDKClient.events.on('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
+            SDKClient.events.on('CCLDataEvent', this.CCLDataEvent);
+        }
     }
 
     /**
@@ -138,6 +142,46 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+
+        SDKClient.events.off('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
+        SDKClient.events.off('CCLDataEvent', this.CCLDataEvent);
+    }
+
+    private TextChatRemoteUserConnectedEvent = (evt: TextChatRemoteUserConnectedEvent) => {
+        this.processCustomerDetails(evt);
+    }
+
+    private CCLDataEvent = (evt: CCLDataEvent) => {
+        this.processCustomerDetails(evt);
+    }
+
+    private processCustomerDetails = (evt: IUIEvent) => {
+        // check the interaction
+        if (evt.InteractionID !== this.interactionId) {
+            return;
+        }
+
+        // return if no map found
+        if (!this.dataMap || Object.keys(this.dataMap).length === 0) {
+            return;
+        }
+
+        // check if customer info map is available in this event
+        for (const [key, value] of Object.entries(this.dataMap)) {
+            // split the value source
+            const valueSourceSplit = this.dataMap[key].ValueSource.split('.');
+            // check if the value source event name matches with the current event
+            if (valueSourceSplit[0] !== evt.EventName) {
+                return;
+            }
+            // remove the event name from the array
+            valueSourceSplit.shift();
+            // map the property and get the value from event property
+            const valueMap = join(valueSourceSplit, '.');
+
+            // assign to the map
+            this.dataMapValues[key] = _.get(evt, valueMap, this.dataMap[key].DefaultValue);
+        }
     }
 
     fetchCampaigns(): void {
@@ -180,13 +224,12 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
         if (this.addContactFormGroup.invalid) {
             return;
         }
+
         const contact = this.addContactFormGroup.value;
 
-        console.log(contact);
-
-        let directAgentScheduleTime: any = new Date(contact.date);
-        directAgentScheduleTime.setHours(contact.time.split(':')[0]);
-        directAgentScheduleTime.setMinutes(contact.time.split(':')[1]);
+        let directAgentScheduleTime: any = new Date(contact.Date);
+        directAgentScheduleTime.setHours(contact.Time.split(':')[0]);
+        directAgentScheduleTime.setMinutes(contact.Time.split(':')[1]);
         directAgentScheduleTime.setSeconds(0);
         directAgentScheduleTime = moment(directAgentScheduleTime).format('YYYYMMDDHHmmss');
 
@@ -207,8 +250,8 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
             dnd: false,
             dynamicValues: '',
             email: this.selectedCampaign.emailAccountId,
-            name: contact.name,
-            phoneNumber: contact.phone,
+            name: contact.Name,
+            phoneNumber: contact.Phone,
             retryCount: this.selectedCampaign.retryCount
         };
         this.http.post(this.dataConfig.CreateContactCampaignUrl, reqPacket).subscribe(
@@ -220,6 +263,11 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
                 };
                 this.matDialog.closeAll();
                 this.appUiService.showSnackbar('Added contact successfully', 'success');
+                this.addContactFormGroup.reset();
+                // check if the AOT widget
+                if (this.data.Config.AOT) {
+                    this._aotWidgetService.destroyWidget(this.data.ID);
+                }
             },
             () => {
                 this.addCampaingReq = {
@@ -237,15 +285,18 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
             this.matDialog.closeAll();
         } else {
             this.selectedCampaign = campaign;
+
+            // patch the values if avaialable
+            if (this.dataMapValues && Object.keys(this.dataMapValues).length > 0) {
+                this.addContactFormGroup.patchValue(this.dataMapValues);
+            }
+
             this.matDialog
                 .open(this.addContactFormDialog, {
                     data: campaign,
                     width: '20%',
-                    panelClass: 'new-campaign-contact'
-                })
-                .afterClosed()
-                .subscribe(() => {
-                    this.addContactFormGroup.reset();
+                    panelClass: 'new-campaign-contact',
+                    disableClose: true
                 });
         }
     }

@@ -49,9 +49,8 @@
         <div fxLayout="row" class="mt-4 w-100-p template-items">
             <div
                 *ngIf="templates.length > 0"
-                fxFlex="20"
+                fxFlex="40"
                 fxLayout="column"
-                fxLayoutAlign=" center"
                 class="animate__animated animate__faster animate__slideInLeft"
                 fusePerfectScrollbar
                 [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
@@ -67,7 +66,7 @@
                     {{ template.Name }}
                 </button>
             </div>
-            <mat-form-field [fxFlex]="templates.length > 0 ? 80 : 100" floatLabel="never" appearance="standard" class="custom selected-template">
+            <mat-form-field [fxFlex]="templates.length > 0 ? 60 : 100" floatLabel="never" appearance="standard" class="custom selected-template">
                 <textarea
                     fxFlex
                     matInput

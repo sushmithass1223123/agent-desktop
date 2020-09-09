@@ -46,18 +46,20 @@
                     *ngFor="let workCode of selectedWorkCodes"
                     [ngClass]="{
                         'bg-info': workCode.Count < 10,
-                        'bg-secondary': workCode.Count >= 10,
-                        'bg-success': workCode.Count >= 30,
-                        'bg-warning': workCode.Count >= 50,
-                        'bg-danger': workCode.Count >= 70
+                        'bg-secondary': workCode.Count >= 10 && workCode.Count < 20,
+                        'bg-success': workCode.Count >= 20 && workCode.Count < 30,
+                        'bg-warning': workCode.Count >= 30 && workCode.Count < 50,
+                        'bg-danger': workCode.Count >= 50
                     }"
                 >
                     <mat-icon class="mat-icon-mirror mr-4">local_offer</mat-icon>
-                    {{ workCode.WorkCodeName }}
+                    {{ workCode.WorkCodeName + ' [' + workCode.Count + ']' }}
                 </mat-chip>
             </mat-chip-list>
-            <div *ngIf="selectedWorkCodes.length === 0" class="w-100-p h-100-p" fxLayout fxLayoutAlign="center center">
-                <p class="mat-title">No Data Available</p>
+
+            <div *ngIf="selectedWorkCodes.length === 0" class="w-100-p h-95-p">
+                <img src="assets/images/vectors/no-data-2.svg" class="w-100-p h-100-p box-shadow-3d" />
+                <p class="text-center mat-title m-0">No Data Available</p>
             </div>
         </div>
     </div>

@@ -28,25 +28,31 @@ export class TwAuxTimerComponent extends TWidgetWrapper implements OnInit, OnDes
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
+        
         this.initTimer();
 
-        // listen for agent status change
-        SDKClient.events.on('AgentStatusChangeEvent', (evt: AgentStatusChangeEvent) => {
-            if (!evt.Status.includes('On Call') || !this.lastStatus.includes('On Call')) {
-                // rest the timer
-                this.restartTimer();
-            }
-            // update last status
-            this.lastStatus = evt.Status;
-        });
+        // listen to agent status change
+        SDKClient.events.on('AgentStatusChangeEvent', this.AgentStatusChangeEvent);
     }
 
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+
+        // unregister from event
+        SDKClient.events.off('AgentStatusChangeEvent', this.AgentStatusChangeEvent);
     }
 
-    initTimer(): void {
+    private AgentStatusChangeEvent = (evt: AgentStatusChangeEvent) => {
+        if (!evt.Status.includes('On Call') || !this.lastStatus.includes('On Call')) {
+            // rest the timer
+            this.restartTimer();
+        }
+        // update last status
+        this.lastStatus = evt.Status;
+    }
+
+    private initTimer(): void {
         // subscribe to the timer
         this.timerSub = timer(1000, 1000)
             .pipe(takeUntil(this.unsubscribeAll))
@@ -64,7 +70,7 @@ export class TwAuxTimerComponent extends TWidgetWrapper implements OnInit, OnDes
             });
     }
 
-    restartTimer(): void {
+    private restartTimer(): void {
         this.minutes1 = '0';
         this.minutes2 = '0';
         this.seconds1 = '0';

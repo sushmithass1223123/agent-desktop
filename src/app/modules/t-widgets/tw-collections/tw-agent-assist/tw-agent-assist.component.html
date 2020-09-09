@@ -14,9 +14,9 @@
                 (click)="openAssitWidget(intent.Name)"
                 [ngClass]="{
                     'bg-info': intent.Count < 5,
-                    'bg-secondary': intent.Count >= 5,
-                    'bg-success': intent.Count >= 10,
-                    'bg-warning': intent.Count >= 20,
+                    'bg-secondary': intent.Count >= 5 && intent.Count > 10,
+                    'bg-success': intent.Count >= 10 && intent.Count > 20,
+                    'bg-warning': intent.Count >= 20 && intent.Count > 30,
                     'bg-danger': intent.Count >= 30
                 }"
             >

@@ -1,8 +1,8 @@
 <div fxFlex fxFill fxLayout="row" fxLayoutAlign="start center" *ngIf="agentData.agentName">
-    <button mat-button class="user-button" [matMenuTriggerFor]="userMenu" fxLayout="column" fxLayoutAlign="center center" matTooltip="Agent Info">
+    <button mat-button class="user-button" [matMenuTriggerFor]="userMenu" fxLayout="column" fxLayoutAlign="center center">
         <div fxLayout="row" fxLayoutAlign="center center" class="position-relative">
             <img
-                class="avatar mr-0"
+                class="avatar mr-0 mat-elevation-z3"
                 [style.backgroundImage]="'url(' + (agentData.profilePicture ? agentData.profilePicture : 'assets/images/avatars/profile.jpg') + ')'"
                 *ngIf="data.Data.ProfilePicture"
                 [ngClass]="

@@ -28,11 +28,11 @@
     <div
         *ngIf="ciqChart.datasets.length === 0 || (ciqChart.datasets.length >= 1 && !ciqChart.datasets[0].data.length)"
         class="w-100-p h-100-p text-center"
-        fxLayout
+        fxLayout="column"
         fxLayoutAlign="center center"
     >
-        <p class="mat-display-2">0</p>
-        <p>Calls in Queue</p>
+        <img src="assets/images/vectors/no-data-1.svg" class="w-100-p h-85-p box-shadow-3d" />
+        <p class="text-center m-0" [ngClass]="{ 'mat-display-2': ciqChart.legend, ' mat-title': !ciqChart.legend }">No Data Available</p>
     </div>
     <!-- your code goes here -->
 </tw-wrapper>

@@ -13,6 +13,11 @@ tw-su-active-agents {
                             border: none;
                             padding: 0.5em 0.5rem !important;
                         }
+
+                        .mat-form-field-outline-start,
+                        .mat-form-field-outline-end {
+                            border-color: inherit;
+                        }
                     }
                 }
 

@@ -6,7 +6,8 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { sortBy, uniqBy } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { CallerIntentEvent, IResponse, SDKClient, WorkCodeAddedEvent } from 'tmac-sdk';
+import { CallerIntentEvent, IResponse, SDKClient, WorkCodeAddedEvent, IUIEvent } from 'tmac-sdk';
+import { InteractionEventService } from '@services/interaction-event.service';
 
 @Component({
     selector: 'tw-canned-responses',
@@ -48,7 +49,8 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
         // @ [OPTIONAL]
         private _fuseConfigService: FuseConfigService,
         // @ [OPTIONAL]
-        private _appDataService: AppDataService
+        private _appDataService: AppDataService,
+        private _interactionEventService: InteractionEventService
     ) {
         super();
     }
@@ -83,6 +85,15 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
 
         SDKClient.getTextTemplateDepartments({}).then((result: IResponse) => {
             this.departments = result.response;
+        });
+
+
+        // get the event from event bag to make sure no events are missed
+        const eventBag = this._interactionEventService.get(this.interactionId);
+
+        // process the events if any
+        eventBag.forEach((evt: IUIEvent) => {
+            this[evt.EventName]?.(evt);
         });
 
         SDKClient.events.on('OnNLPDataEvent', this.OnNLPDataEvent);
@@ -145,7 +156,12 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
 
         // get the templates for the group
         SDKClient.getTextTemplates(value, null).then((result: IResponse) => {
-            this.templates = result.response;
+            if (this.responseMode === 'auto') {
+                this.templates = [...result.response, ...this.templates];
+            }
+            else {
+                this.templates = result.response;
+            }
         });
     }
 
@@ -169,27 +185,44 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
             Template: template
         });
 
-        // clear all data
-        this.clearAllData();
+        if (this.responseMode !== 'auto') {
+            // clear all data
+            this.clearAllData();
+        }
     }
 
     WorkCodeAddedEvent = (evt: WorkCodeAddedEvent) => {
+        // check for the interaction
+        if (this.interactionId !== evt.InteractionID) {
+            return;
+        }
+
         const newGroups = sortBy(uniqBy([...this.groups, evt], 'Name'), 'Name');
         this.groups = newGroups;
-    };
+    }
 
-    CallerIntentEvent = (event: CallerIntentEvent) => {
-        const newGroup = { ...event, Name: event.IntentName };
+    CallerIntentEvent = (evt: CallerIntentEvent) => {
+        // check for the interaction
+        if (this.interactionId !== evt.InteractionID) {
+            return;
+        }
+
+        const newGroup = { ...evt, Name: evt.IntentName };
         const newGroups = sortBy(uniqBy([...this.groups, newGroup], 'Name'), 'Name');
         this.groups = newGroups;
-    };
+    }
 
-    OnNLPDataEvent = (event: any): void => {
-        const newGroup = JSON.parse(JSON.parse(event.JsonData).nluResult);
-        newGroup.Name = newGroup.intent.name;
-        const newGroups = sortBy(uniqBy([...this.groups, newGroup], 'Name'), 'Name');
-        this.groups = newGroups;
-    };
+    OnNLPDataEvent = (evt: any): void => {
+        const parsedJson = JSON.parse(evt.JsonData);
+
+        // check for the interaction
+        if (this.interactionId.toString() !== parsedJson.interactionID) {
+            return;
+        }
+
+        const newGroup = JSON.parse(parsedJson.nluResult);
+        this.onSelectGroups({ value: newGroup.intent.name });
+    }
 
     changeMode(event: MatSelectChange): void {
         if (event.value === 'manual') {

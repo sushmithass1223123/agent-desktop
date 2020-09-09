@@ -38,20 +38,15 @@
     </div>
 
     <div *ngIf="caseData.submitted" class="w-100-p h-100-p">
-        <ul class="tw-list w-100-p" fusePerfectScrollbar>
-            <li class="tw-list-item selectable" *ngFor="let case of caseData.cases; let i = index" fxLayout fxLayoutAlign="space-between center">
+        <ul class="tw-list w-100-p border-radius-20" fusePerfectScrollbar [fusePerfectScrollbarOptions]="{ suppressScrollX: true }">
+            <li class="tw-list-item" *ngFor="let case of caseData.cases; let i = index" fxLayout fxLayoutAlign="space-between center">
                 <div fxFlex="50" fxLayout fxLayoutAlign="start center">
                     <mat-icon class="mr-4"> insert_drive_file </mat-icon>
-                    <span class="text-truncate"> {{ case.name }} </span>
+                    <span class="text-truncate font-weight-600"> {{ case.name }} </span>
                 </div>
                 <mat-chip-list>
-                    <mat-chip
-                        [ngClass]="{
-                            'text-primary': i != 2,
-                            'text-danger': i == 2
-                        }"
-                    >
-                        <small> {{ i == 2 ? 'Open' : 'Closed' }} </small>
+                    <mat-chip class="text-danger">
+                        <span>Open</span>
                     </mat-chip>
                 </mat-chip-list>
             </li>

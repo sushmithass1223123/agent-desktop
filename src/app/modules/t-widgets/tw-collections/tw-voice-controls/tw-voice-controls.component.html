@@ -27,7 +27,7 @@
                     fxFlex
                     fxLayout="column"
                     fxLayoutAlign=" none"
-                    class="w-100-p px-12 py-8 border-radius-20 font-size-12 interaction-details"
+                    class="w-100-p px-12 py-8 border-radius-20 interaction-details"
                     [ngClass]="
                         fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
                             ? fuseConfig.layout.anchorWidget.contentBackground
@@ -42,18 +42,21 @@
                             <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>construction</mat-icon> {{ sessionID }}</div>
                         </div>
                         <div fxLayout="row" fxLayoutAlign="space-between none">
-                            <span fxLayout="row" fxLayoutAlign=" center">
+                            <div fxLayout="row" fxLayoutAlign=" center">
                                 <mat-icon>timer</mat-icon> {{ (duration | date: 'H:mm:ss':'UTC') || '00:00:00' }}
-                            </span>
+                            </div>
+                            <div fxLayout="row" fxLayoutAlign=" center">
+                                <mat-icon>grading</mat-icon> <span class="text-bold">{{ intent }}</span>
+                            </div>
                         </div>
                         <div fxLayout="column" fxLayoutAlign=" none">
                             <span fxLayout="row" fxLayoutAlign=" center">
-                                <span>Verification Status: </span>
-                                <span class="title text-bold ml-4">NA</span>
+                                <span>Auth Status: </span>
+                                <span class="title text-bold ml-4"> Caller ID </span>
                             </span>
                             <span fxLayout="row" fxLayoutAlign=" center">
-                                <span>Verification Type: </span>
-                                <span class="title text-bold ml-4">NA</span>
+                                <span>Auth Type: </span>
+                                <span class="title text-bold ml-4"> Authenticated </span>
                             </span>
                         </div>
                     </div>
@@ -61,21 +64,21 @@
                         *ngIf="data.Data.IVR?.MenuEnabled"
                         fxLayout="row"
                         fxLayoutAlign=" none"
-                        class="mt-8 px-12 border-radius-30 font-size-12 position-relative ivr-history"
+                        class="mt-8 px-12 border-radius-30 position-relative ivr-history"
                     >
                         <div class="label">IVR History</div>
                         <ul class="breadcrumbs">
                             <li>
-                                <span>Main Menu</span>
+                                <span>{{ last4IVR[0] || 'NA' }}</span>
                             </li>
                             <li>
-                                <span>Products</span>
+                                <span>{{ last4IVR[1] || 'NA' }}</span>
                             </li>
                             <li>
-                                <span>Mobile</span>
+                                <span>{{ last4IVR[2] || 'NA' }}</span>
                             </li>
                             <li>
-                                <span>Agent</span>
+                                <span>{{ last4IVR[3] || 'NA' }}</span>
                             </li>
                         </ul>
                     </div>
@@ -87,6 +90,7 @@
                         class="success"
                         [disabled]="status !== 'initial'"
                         #answerBtn
+                        matTooltip="Answer"
                         (click)="answerCall(answerBtn)"
                     >
                         <mat-icon>call</mat-icon>
@@ -97,6 +101,7 @@
                         class="danger"
                         [disabled]="status !== 'connected'"
                         #disconnectBtn
+                        matTooltip="Disconnect"
                         (click)="disconnectCall(disconnectBtn)"
                     >
                         <mat-icon>call_end</mat-icon>
@@ -107,20 +112,36 @@
                         class="warning"
                         [disabled]="status !== 'connected'"
                         #holdBtn
+                        matTooltip="Hold"
                         (click)="holdCall(holdBtn)"
                     >
                         <mat-icon>phone_paused</mat-icon>
                     </button>
-                    <button *ngIf="status === 'hold'" mat-flat-button class="success" #unHoldBtn (click)="unHoldCall(unHoldBtn)">
+                    <button *ngIf="status === 'hold'" mat-flat-button class="success" #unHoldBtn matTooltip="Unhold" (click)="unHoldCall(unHoldBtn)">
                         <mat-icon>phone_in_talk</mat-icon>
                     </button>
-                    <button *ngIf="data.Data?.TransferAllowed && status !== 'disconnected'" mat-flat-button [disabled]="status !== 'connected'">
+                    <button
+                        *ngIf="data.Data?.TransferAllowed && status !== 'disconnected'"
+                        mat-flat-button
+                        [disabled]="status !== 'connected'"
+                        matTooltip="Transfer"
+                    >
                         <mat-icon>phone_forwarded</mat-icon>
                     </button>
-                    <button *ngIf="data.Data?.ConferenceAllowed && status !== 'disconnected'" mat-flat-button [disabled]="status !== 'connected'">
+                    <button
+                        *ngIf="data.Data?.ConferenceAllowed && status !== 'disconnected'"
+                        mat-flat-button
+                        [disabled]="status !== 'connected'"
+                        matTooltip="Conference"
+                    >
                         <mat-icon>group</mat-icon>
                     </button>
-                    <button *ngIf="data.Data.IVR?.Transfer?.Allowed && status !== 'disconnected'" mat-flat-button [disabled]="status !== 'connected'">
+                    <button
+                        *ngIf="data.Data.IVR?.Transfer?.Allowed && status !== 'disconnected'"
+                        mat-flat-button
+                        [disabled]="status !== 'connected'"
+                        matTooltip="IVR Transfer"
+                    >
                         <mat-icon>phonelink_ring</mat-icon>
                     </button>
                     <button

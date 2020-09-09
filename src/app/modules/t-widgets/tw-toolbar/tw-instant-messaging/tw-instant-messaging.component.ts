@@ -1,9 +1,7 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { TWidgetWrapper } from '@twidgets/utils';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { SDKClient, AgentNotificaitonEvent } from 'tmac-sdk';
+import { AgentNotificaitonEvent, SDKClient } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-instant-messaging',
@@ -17,21 +15,31 @@ export class TwInstantMessagingComponent extends TWidgetWrapper implements OnIni
     opened = false;
     sidebarFolded: boolean;
     unreadMessages = 0;
-    private _unsubscribeAll: Subject<any>;
 
     constructor(private _fuseSidebarService: FuseSidebarService) {
         super();
-        this._unsubscribeAll = new Subject();
     }
 
     ngOnInit(): void {
+        // call the wrapper init method
         this.initWrapper(this.data);
+
+        // register to event
         SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
     }
 
     ngOnDestroy(): void {
+        // call the wrapper destroy method
         this.destroyWrapper();
+
+        // unregister from event
         SDKClient.events.off('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
+    }
+
+    private AgentNotificaitonEvent = (evt: AgentNotificaitonEvent): void => {
+        if (!this._fuseSidebarService.getSidebar('chatPanel').opened && evt.Type === 'IM') {
+            this.unreadMessages += 1;
+        }
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -47,10 +55,4 @@ export class TwInstantMessagingComponent extends TWidgetWrapper implements OnIni
         this._fuseSidebarService.getSidebar(key).toggleOpen();
         this.unreadMessages = 0;
     }
-
-    AgentNotificaitonEvent = (evt: AgentNotificaitonEvent): void => {
-        if (!this._fuseSidebarService.getSidebar('chatPanel').opened && evt.Type === 'IM') {
-            this.unreadMessages += 1;
-        }
-    };
 }

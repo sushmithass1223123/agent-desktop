@@ -41,7 +41,6 @@ tw-canned-responses {
             background-color: rgb(0 0 0 / 0.1);
             text-overflow: ellipsis;
             max-width: 100%;
-            overflow: hidden;
         }
     }
 
@@ -78,6 +77,22 @@ tw-canned-responses {
             position: absolute;
             bottom: -12px;
             right: 20px;
+        }
+    }
+}
+
+body.theme-dark {
+    tw-canned-responses {
+        .selected-template {
+            .mat-form-field-wrapper {
+                .mat-form-field-flex {
+                    .mat-form-field-infix {
+                        textarea {
+                            background-color: rgba(255, 255, 255, 0.04);
+                        }
+                    }
+                }
+            }
         }
     }
 }

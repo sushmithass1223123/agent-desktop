@@ -4,7 +4,7 @@ import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { FuseSharedModule } from '@fuse/shared.module';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import * as Chart from 'chart.js';
-import 'chartjs-plugin-piechart-outlabels';
+// import 'chartjs-plugin-piechart-outlabels';
 import { ChartsModule } from 'ng2-charts';
 import { AvatarComponent } from './avatar/avatar.component';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
@@ -17,6 +17,7 @@ import { WidgetFabComponent } from './widget-fab/widget-fab.component';
 
 Chart.defaults.global.responsive = true;
 Chart.defaults.global.legend.position = 'right';
+Chart.defaults.global.legend.labels.fontSize = 20;
 Chart.defaults.global.maintainAspectRatio = false;
 Chart.defaults.global.animation = {
     duration: 0
@@ -44,4 +45,4 @@ const sharedComponents = [
     imports: [CommonModule, ...sharedModules],
     exports: [...sharedModules, ...sharedComponents]
 })
-export class SharedModule {}
+export class SharedModule { }

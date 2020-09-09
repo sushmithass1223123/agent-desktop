@@ -3,7 +3,7 @@ import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-b
 import { ConfirmDialogComponent } from '@modules/shared/confirm-dialog/confirm-dialog.component';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils';
-import { IAUXCodes, IResponse, SDKClient } from 'tmac-sdk';
+import { IAUXCodes, IResponse, SDKClient, AgentStatusChangeEvent } from 'tmac-sdk';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -30,23 +30,30 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
     }
 
     ngOnInit(): void {
+        // call the wrapper init method
         this.initWrapper(this.data);
+
+        // listen for agent status change event
+        SDKClient.events.on('AgentStatusChangeEvent', this.AgentStatusChangeEvent);
 
         // assign the logout aux if any
         this.logoutAux = this.data.Data.LogoutAux || '';
         this.canLogout = this.logoutAux === '';
-
-        // listen for agent status change event
-        SDKClient.events.on('AgentStatusChangeEvent', () => {
-            this.findLogoutAux();
-        });
 
         // initial check
         this.findLogoutAux();
     }
 
     ngOnDestroy(): void {
+        // call the wrapper destroy method
         this.destroyWrapper();
+
+        // unregister from event
+        SDKClient.events.off('AgentStatusChangeEvent', this.AgentStatusChangeEvent);
+    }
+
+    private AgentStatusChangeEvent = () => {
+        this.findLogoutAux();
     }
 
     private findLogoutAux(): void {

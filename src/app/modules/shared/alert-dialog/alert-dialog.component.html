@@ -1,11 +1,11 @@
 <div class="dialog-content-wrapper" [ngClass]="data.type">
-    <div class="py-40" matDialogTitle fxLayout="column" fxLayoutAlign="center center">
+    <div class="py-40 m-0" matDialogTitle fxLayout="column" fxLayoutAlign="center center">
         <mat-icon> {{ icon }} </mat-icon>
         <p class="mat-display-2 my-16">{{ data.heading }}</p>
     </div>
 
     <div mat-dialog-content fxLayout="column" fxLayoutAlign="center center" class="p-24 pb-0 m-0">
-        <p class="text-center py-12">{{ data.message }}</p>
-        <button mat-raised-button (click)="data.close()">CLOSE</button>
+        <p class="text-center py-24 mat-title m-0 line-height-28 message">{{ data.message }}</p>
+        <button mat-raised-button class="border-radius-20 mb-4" (click)="data.close()">CLOSE</button>
     </div>
 </div>

@@ -10,7 +10,7 @@
     <mat-icon color="primary" *ngIf="subType.toLowerCase() === 'twitter'">chat</mat-icon>
     <mat-icon color="primary" *ngIf="subType.toLowerCase() === 'textchat'">chat</mat-icon>
     <mat-icon color="primary" *ngIf="subType.toLowerCase() === 'store'">store</mat-icon>
-    <mat-icon color="primary" *ngIf="subType.toLowerCase() === 'feild'">roofing</mat-icon>
+    <mat-icon color="primary" *ngIf="subType.toLowerCase() === 'field'">roofing</mat-icon>
 </ng-template>
 
 <!-- (collapseEvent)="collapseEvent($event)" (floatEvent)="floatEvent($event)" -->
@@ -20,7 +20,7 @@
             <div
                 *ngFor="let s of customerJourneyTable.tableData.source.data"
                 fxLayout="row-wrap"
-                class="step mb-4 p-4"
+                class="step mb-4 p-4 mat-elevation-z1"
                 [ngClass]="
                     fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
                         ? fuseConfig.layout.anchorWidget.contentBackground
@@ -44,6 +44,9 @@
                                 <ng-container *ngTemplateOutlet="interactionBrandType; context: s"></ng-container>
                             </ng-container>
                             <ng-container *ngSwitchCase="'videochat'">
+                                <ng-container *ngTemplateOutlet="interactionBrandType; context: s"></ng-container>
+                            </ng-container>
+                            <ng-container *ngSwitchCase="'services'">
                                 <ng-container *ngTemplateOutlet="interactionBrandType; context: s"></ng-container>
                             </ng-container>
                             <mat-icon color="primary" *ngSwitchCase="'voice'"> call </mat-icon>
@@ -87,7 +90,13 @@
             fusePerfectScrollbar
             [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
         >
-            <mat-table [dataSource]="customerJourneyTable.tableData.source" matSort>
+            <mat-table
+                [dataSource]="customerJourneyTable.tableData.source"
+                matSort
+                matSortActive="InteractionDate"
+                matSortDirection="desc"
+                matSortDisableClear
+            >
                 <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
 
@@ -113,6 +122,9 @@
                             <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>
                         </ng-container>
                         <ng-container *ngSwitchCase="'videochat'">
+                            <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'services'">
                             <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>
                         </ng-container>
                         <mat-icon color="primary" *ngSwitchCase="'voice'"> call </mat-icon>

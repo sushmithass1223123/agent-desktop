@@ -169,22 +169,52 @@
                         }
                     },
                     {
-                        "Name": "Supervisor",
-                        "Description": "",
-                        "Type": "twn-custom",
-                        "Data": {
-                            "Icon": "groups",
-                            "Path": "/tsupervisor",
-                            "Active": false
-                        }
-                    },
-                    {
                         "Name": "Dashboard",
                         "Description": "",
                         "Type": "twn-custom",
                         "Data": {
                             "Icon": "dashboard",
                             "Path": "/dashboard",
+                            "Active": false
+                        }
+                    },
+                    {
+                        "Name": "Sentiment Dashboard",
+                        "Description": "",
+                        "Type": "twn-custom",
+                        "Data": {
+                            "Icon": "sentiment_satisfied_alt",
+                            "Path": "/sentimentdashboard",
+                            "Active": false
+                        }
+                    },
+                    {
+                        "Name": "KPI Dashboard",
+                        "Description": "",
+                        "Type": "twn-custom",
+                        "Data": {
+                            "Icon": "signal_cellular_alt",
+                            "Path": "/kpidashboard",
+                            "Active": false
+                        }
+                    },
+                    {
+                        "Name": "Session Dashboard",
+                        "Description": "",
+                        "Type": "twn-custom",
+                        "Data": {
+                            "Icon": "format_list_bulleted",
+                            "Path": "/sessiondashboard",
+                            "Active": false
+                        }
+                    },
+                    {
+                        "Name": "Realtime Stats",
+                        "Description": "",
+                        "Type": "twn-custom",
+                        "Data": {
+                            "Icon": "analytics",
+                            "Path": "/realtimestats",
                             "Active": false
                         }
                     }
@@ -262,12 +292,14 @@
                                         "Header": true,
                                         "Disabled": false
                                     },
-                                    "Data": {}
+                                    "Data": {
+                                        "Source": "dashboard"
+                                    }
                                 },
                                 {
                                     "Name": "AHT / Transfer / Conference ",
                                     "Description": "",
-                                    "Type": "tw-account-information",
+                                    "Type": "tw-aht-tc",
                                     "Config": {
                                         "Static": false,
                                         "Anchor": false,
@@ -408,9 +440,7 @@
                                     },
                                     "Data": {
                                         "LeaderBoardUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetLeaderBoard",
-                                        "AgentProgressUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetProgress",
-                                        "GetCampaignsUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Campaign/GetCampaigns",
-                                        "CreateContactCampaignUrl" : "https://dice.tetherfi.cloud/TCM_Proxy/api/Contact/CreateCampaignContact"
+                                        "AgentProgressUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetProgress"
                                     }
                                 },
                                 {
@@ -532,7 +562,40 @@
                                     },
                                     "Data": {
                                         "AutoOpen": false,
-                                        "Url": "https://tmac.tetherfilabs.com/tcie-web-appv8/?id=7224",
+                                        "Url": "https://tmac.tetherfilabs.com/tcie-web-appv8/?id=_agentId",
+                                        "QueryParams": []
+                                    }
+                                },
+                                {
+                                    "Name": "Gamification",
+                                    "Description": "",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "Icon": "extension",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0,
+                                            "W": 1500,
+                                            "H": 900
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "Url": "https://demo2.tetherfilabs.com:55443/GamificationUI/?agentId=_agentId",
                                         "QueryParams": []
                                     }
                                 }
@@ -582,7 +645,7 @@
                             ],
                             "Dynamic": [
                                 {
-                                    "Name": "Total Interactions",
+                                    "Name": "All Interactions",
                                     "Description": "",
                                     "Type": "tw-ad-total-interactions",
                                     "Config": {
@@ -608,7 +671,7 @@
                                         "Disabled": false
                                     },
                                     "Data": {
-                                        "LeaderBoardUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetLeaderBoard"
+                                        "Source": "supervisor"
                                     }
                                 },
                                 {
@@ -812,169 +875,28 @@
                                     }
                                 }
                             ],
-                            "Agent": [
+                            "Agent": [],
+                            "AOT": [
                                 {
-                                    "Name": "All Interactions",
+                                    "Name": "Leaderboard",
                                     "Description": "",
-                                    "Type": "tw-ad-total-interactions",
+                                    "Type": "tw-su-gamification",
                                     "Config": {
                                         "Static": false,
                                         "Anchor": false,
-                                        "AOT": false,
-                                        "Icon": "dvr",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 1
-                                        },
-                                        "Actions": [
-                                            "maximize",
-                                            "pin",
-                                            "float"
-                                        ],
-                                        "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
-                                    },
-                                    "Data": {}
-                                },
-                                {
-                                    "Name": "AHT/Transfer/Conference ",
-                                    "Description": "",
-                                    "Type": "tw-aht-tc",
-                                    "Config": {
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "Icon": "phone",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 2
-                                        },
-                                        "Actions": [
-                                            "maximize",
-                                            "pin",
-                                            "float"
-                                        ],
-                                        "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
-                                    },
-                                    "Data": {
-                                        "Source": "dashboard"
-                                    }
-                                },
-                                {
-                                    "Name": "Aux Status",
-                                    "Description": "",
-                                    "Type": "tw-aux-status-chart",
-                                    "Config": {
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "Icon": "",
-                                        "Class": "duo",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 1
-                                        },
-                                        "Actions": [
-                                            "maximize",
-                                            "pin",
-                                            "float"
-                                        ],
-                                        "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
-                                    },
-                                    "Data": {}
-                                },
-                                {
-                                    "Name": "Interaction Details",
-                                    "Description": "",
-                                    "Type": "tw-ad-interaction-details",
-                                    "Config": {
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "Icon": "format_list_bulleted",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 2
-                                        },
-                                        "Actions": [
-                                            "maximize",
-                                            "pin",
-                                            "float"
-                                        ],
-                                        "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
-                                    },
-                                    "Data": {}
-                                },
-                                {
-                                    "Name": "Performance",
-                                    "Description": "",
-                                    "Type": "tw-ad-performance",
-                                    "Config": {
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "Icon": "pie_chart",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 1
-                                        },
-                                        "Actions": [
-                                            "maximize",
-                                            "pin",
-                                            "float"
-                                        ],
-                                        "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
-                                    },
-                                    "Data": {
-                                        "AgentProgressUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetProgress"
-                                    }
-                                },
-                                {
-                                    "Name": "Gamification",
-                                    "Description": "",
-                                    "Type": "tw-ad-gamification",
-                                    "Config": {
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
+                                        "AOT": true,
                                         "Icon": "extension",
                                         "Class": "",
                                         "Position": {
                                             "X": 0,
-                                            "Y": 1
+                                            "Y": 1,
+                                            "W": 500,
+                                            "H": "300"
                                         },
                                         "Actions": [
                                             "maximize",
                                             "pin",
-                                            "float"
+                                            "destroy"
                                         ],
                                         "ViewState": "restore",
                                         "PinState": false,
@@ -986,92 +908,6 @@
                                     "Data": {
                                         "LeaderBoardUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetLeaderBoard"
                                     }
-                                },
-                                {
-                                    "Name": "Call-backs",
-                                    "Description": "phone_callback",
-                                    "Type": "tw-ad-callbacks",
-                                    "Config": {
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "Icon": "",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 2
-                                        },
-                                        "Actions": [
-                                            "maximize",
-                                            "pin",
-                                            "float"
-                                        ],
-                                        "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
-                                    },
-                                    "Data": {}
-                                },
-                                {
-                                    "Name": "Feedback",
-                                    "Description": "",
-                                    "Type": "tw-ad-feedback",
-                                    "Config": {
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "Icon": "feedback",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 1
-                                        },
-                                        "Actions": [
-                                            "maximize",
-                                            "pin",
-                                            "float"
-                                        ],
-                                        "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
-                                    },
-                                    "Data": {
-                                        "Source": "dashboard"
-                                    }
-                                },
-                                {
-                                    "Name": "Score",
-                                    "Description": "",
-                                    "Type": "tw-ad-score",
-                                    "Config": {
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "Icon": "score",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 1
-                                        },
-                                        "Actions": [
-                                            "maximize",
-                                            "pin",
-                                            "float"
-                                        ],
-                                        "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
-                                    },
-                                    "Data": {}
                                 }
                             ]
                         }
@@ -1147,6 +983,12 @@
                                                     "ConferenceAllowed": true,
                                                     "IVR": {
                                                         "MenuEnabled": true,
+                                                        "DefaultMenu": [
+                                                            "Main Menu",
+                                                            "Products",
+                                                            "Mobile",
+                                                            "Agent"
+                                                        ],
                                                         "Transfer": {
                                                             "Allowed": true,
                                                             "Menu": [
@@ -1189,52 +1031,46 @@
                                                 "Data": {
                                                     "CustomerInfo": [
                                                         {
-                                                            "Title": "CallerID",
-                                                            "ValueSource": "IncomingCallEvent.PhoneNumber",
+                                                            "Title": "Mobile",
+                                                            "ValueSource": "CCLDataEvent.RegisteredPhone",
                                                             "Unit": "",
-                                                            "DefaultValue": "NA"
+                                                            "DefaultValue": "6596975347"
                                                         },
                                                         {
                                                             "Title": "Name",
-                                                            "ValueSource": "IncomingCallEvent.Name",
+                                                            "ValueSource": "CCLDataEvent.CallerName",
                                                             "Unit": "",
-                                                            "DefaultValue": "Gary Lim"
-                                                        },
-                                                        {
-                                                            "Title": "Language",
-                                                            "ValueSource": "IncomingCallEvent.Language",
-                                                            "Unit": "",
-                                                            "DefaultValue": "English"
+                                                            "DefaultValue": "Mr. Tan"
                                                         },
                                                         {
                                                             "Title": "Email",
-                                                            "ValueSource": "IncomingCallEvent.Email",
+                                                            "ValueSource": "CCLDataEvent.Email",
                                                             "Unit": "",
-                                                            "DefaultValue": "garylim@tetherfi.com"
+                                                            "DefaultValue": "tan.c@gmail.com"
+                                                        },
+                                                        {
+                                                            "Title": "Address",
+                                                            "ValueSource": "CCLDataEvent.Address",
+                                                            "Unit": "",
+                                                            "DefaultValue": "62 Ubi Road 1 #10-21 Oxley Bizhub 2 Singapore 408734"
                                                         },
                                                         {
                                                             "Title": "NRIC",
-                                                            "ValueSource": "IncomingCallEvent.Email",
+                                                            "ValueSource": "CCLDataEvent.NRIC",
                                                             "Unit": "",
-                                                            "DefaultValue": "S1234567F"
+                                                            "DefaultValue": "S1234567J"
                                                         },
                                                         {
-                                                            "Title": "QueueTime",
-                                                            "ValueSource": "IVRDataEvent.QueueTime",
+                                                            "Title": "Account Number",
+                                                            "ValueSource": "CCLDataEvent.AccountNumber",
                                                             "Unit": "",
+                                                            "DefaultValue": "987654321"
+                                                        },
+                                                        {
+                                                            "Title": "Queue time",
+                                                            "ValueSource": "IVRDataEvent.NA",
+                                                            "Unit": "s",
                                                             "DefaultValue": "00:00:00"
-                                                        },
-                                                        {
-                                                            "Title": "Intent Name",
-                                                            "ValueSource": "CallerIntentEvent.IntentName",
-                                                            "Unit": "",
-                                                            "DefaultValue": "NA"
-                                                        },
-                                                        {
-                                                            "Title": "Intent Status",
-                                                            "ValueSource": "CallerIntentEvent.IntentStatus",
-                                                            "Unit": "",
-                                                            "DefaultValue": "NA"
                                                         }
                                                     ]
                                                 }
@@ -1265,7 +1101,8 @@
                                                     "Disabled": false
                                                 },
                                                 "Data": {
-                                                    "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/version5/index.html?Key=SESSIONID:"
+                                                    "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/version5/index.html?Key=SESSIONID:",
+                                                    "NoOfRecords": 20
                                                 }
                                             }
                                         ]
@@ -1274,21 +1111,20 @@
                             ],
                             "Dynamic": [
                                 {
-                                    "Name": "Canned Responses",
+                                    "Name": "Agent Assist",
                                     "Description": "",
-                                    "Type": "tw-canned-responses",
+                                    "Type": "tw-agent-assist",
                                     "Config": {
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
-                                        "Icon": "",
+                                        "Icon": "verified_user",
                                         "Class": "",
                                         "Position": {
                                             "X": 1,
                                             "Y": 2
                                         },
                                         "Actions": [
-                                            "maximize",
                                             "pin",
                                             "float"
                                         ],
@@ -1299,7 +1135,20 @@
                                         "Header": true,
                                         "Disabled": false
                                     },
-                                    "Data": {}
+                                    "Data": {
+                                        "Confidence": 0.5,
+                                        "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=_intent&ucid=_ucid",
+                                        "Title": "Visual IVR",
+                                        "Icon": "assistant",
+                                        "Width": 450,
+                                        "Height": 800,
+                                        "Actions": [
+                                            "minimize",
+                                            "maximize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore"
+                                    }
                                 },
                                 {
                                     "Name": "Account Information",
@@ -1414,24 +1263,25 @@
                                     "Data": {
                                         "Source": "interaction",
                                         "ByTeam": false,
-                                        "ByGroup": true
+                                        "ByGroup": false
                                     }
                                 },
                                 {
-                                    "Name": "Agent Assist",
+                                    "Name": "Voice-Bot Transcripts",
                                     "Description": "",
-                                    "Type": "tw-agent-assist",
+                                    "Type": "tw-voice-bot-transcripts",
                                     "Config": {
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
-                                        "Icon": "verified_user",
+                                        "Icon": "",
                                         "Class": "",
                                         "Position": {
                                             "X": 1,
                                             "Y": 2
                                         },
                                         "Actions": [
+                                            "maximize",
                                             "pin",
                                             "float"
                                         ],
@@ -1442,23 +1292,52 @@
                                         "Header": true,
                                         "Disabled": false
                                     },
-                                    "Data": {
-                                        "Confidence": 0.5,
-                                        "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=_intent&ucid=_ucid",
-                                        "Title": "Visual IVR",
-                                        "Icon": "assistant",
-                                        "Width": 450,
-                                        "Height": 800,
-                                        "Actions": [
-                                            "minimize",
-                                            "maximize",
-                                            "destroy"
-                                        ],
-                                        "ViewState": "restore"
-                                    }
+                                    "Data": {}
                                 }
                             ],
                             "AOT": [
+                                {
+                                    "Name": "Register Callback",
+                                    "Description": "",
+                                    "Type": "tw-register-callback",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "Icon": "phone_callback",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0,
+                                            "W": 300,
+                                            "H": 300
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
+                                    },
+                                    "Data": {
+                                        "GetCampaignsUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Campaign/GetCampaigns",
+                                        "CreateContactCampaignUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Contact/CreateCampaignContact",
+                                        "DataMap": {
+                                            "Name": {
+                                                "ValueSource": "CCLDataEvent.CallerName",
+                                                "DefaultValue": "Mr. Tan"
+                                            },
+                                            "Phone": {
+                                                "ValueSource": "CCLDataEvent.RegisteredPhone",
+                                                "DefaultValue": "6596975347"
+                                            }
+                                        }
+                                    }
+                                },
                                 {
                                     "Name": "TAS",
                                     "Description": "",
@@ -1489,6 +1368,39 @@
                                     "Data": {
                                         "AutoOpen": false,
                                         "Url": "https://dice.tetherfi.cloud/TAS/Survey/Index?intentname=DiceIntent2&inSimulation=false&agentid=50020&customerid=12&ucid=Test&flowType=Test&campId=Test&station=42002&phoneNumber=6539284004",
+                                        "QueryParams": []
+                                    }
+                                },
+                                {
+                                    "Name": "STPedia",
+                                    "Description": "",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "Icon": "school",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0,
+                                            "W": 1000,
+                                            "H": 700
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "Url": "https://www.tetherfi.com",
                                         "QueryParams": []
                                     }
                                 }
@@ -1630,22 +1542,76 @@
                                                 "Data": {
                                                     "CustomerInfo": [
                                                         {
-                                                            "Title": "Mobile",
-                                                            "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.mobile",
+                                                            "Title": "Email",
+                                                            "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.email",
                                                             "Unit": "",
-                                                            "DefaultValue": "NA"
+                                                            "DefaultValue": "tan.c@gmail.com"
                                                         },
                                                         {
-                                                            "Title": "DNIS",
-                                                            "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.pIntent",
+                                                            "Title": "NRIC",
+                                                            "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.NRIC",
                                                             "Unit": "",
-                                                            "DefaultValue": "NA"
+                                                            "DefaultValue": "S1234567J"
                                                         },
                                                         {
                                                             "Title": "Queue time",
                                                             "ValueSource": "TextChatRemoteUserConnectedEvent.QueueTime",
                                                             "Unit": "s",
-                                                            "DefaultValue": "NA"
+                                                            "DefaultValue": "0"
+                                                        },
+                                                        {
+                                                            "Title": "Mobile",
+                                                            "ValueSource": "CCLDataEvent.RegisteredPhone",
+                                                            "Unit": "",
+                                                            "DefaultValue": "6596975347"
+                                                        },
+                                                        {
+                                                            "Title": "Name",
+                                                            "ValueSource": "CCLDataEvent.CallerName",
+                                                            "Unit": "",
+                                                            "DefaultValue": "Mr. Tan"
+                                                        },
+                                                        {
+                                                            "Title": "Auth Type",
+                                                            "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.authType",
+                                                            "Unit": "",
+                                                            "DefaultValue": "OTP"
+                                                        },
+                                                        {
+                                                            "Title": "Auth Status",
+                                                            "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.authStatus",
+                                                            "Unit": "",
+                                                            "DefaultValue": "Authenticated"
+                                                        },
+                                                        {
+                                                            "Title": "Email",
+                                                            "ValueSource": "CCLDataEvent.Email",
+                                                            "Unit": "",
+                                                            "DefaultValue": "tan.c@gmail.com"
+                                                        },
+                                                        {
+                                                            "Title": "Address",
+                                                            "ValueSource": "CCLDataEvent.Address",
+                                                            "Unit": "",
+                                                            "DefaultValue": "62 Ubi Road 1 #10-21 Oxley Bizhub 2 Singapore 408734"
+                                                        },
+                                                        {
+                                                            "Title": "NRIC",
+                                                            "ValueSource": "CCLDataEvent.NRIC",
+                                                            "Unit": "",
+                                                            "DefaultValue": "S1234567J"
+                                                        },
+                                                        {
+                                                            "Title": "Account Number",
+                                                            "ValueSource": "CCLDataEvent.AccountNumber",
+                                                            "Unit": "",
+                                                            "DefaultValue": "987654321"
+                                                        },
+                                                        {
+                                                            "Title": "Queue time",
+                                                            "ValueSource": "TextChatRemoteUserConnectedEvent.QueueTime",
+                                                            "Unit": "s",
+                                                            "DefaultValue": "0"
                                                         }
                                                     ]
                                                 }
@@ -1676,7 +1642,8 @@
                                                     "Disabled": false
                                                 },
                                                 "Data": {
-                                                    "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/version5/index.html?Key=SESSIONID:"
+                                                    "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/version5/index.html?Key=SESSIONID:",
+                                                    "NoOfRecords": 20
                                                 }
                                             }
                                         ]
@@ -1685,21 +1652,20 @@
                             ],
                             "Dynamic": [
                                 {
-                                    "Name": "Canned Responses",
+                                    "Name": "Agent Assist",
                                     "Description": "",
-                                    "Type": "tw-canned-responses",
+                                    "Type": "tw-agent-assist",
                                     "Config": {
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
-                                        "Icon": "",
+                                        "Icon": "verified_user",
                                         "Class": "",
                                         "Position": {
                                             "X": 1,
                                             "Y": 2
                                         },
                                         "Actions": [
-                                            "maximize",
                                             "pin",
                                             "float"
                                         ],
@@ -1710,7 +1676,20 @@
                                         "Header": true,
                                         "Disabled": false
                                     },
-                                    "Data": {}
+                                    "Data": {
+                                        "Confidence": 0.5,
+                                        "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=_intent&ucid=_ucid",
+                                        "Title": "Agent Assist",
+                                        "Icon": "assistant",
+                                        "Width": 450,
+                                        "Height": 800,
+                                        "Actions": [
+                                            "minimize",
+                                            "maximize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore"
+                                    }
                                 },
                                 {
                                     "Name": "Account Information",
@@ -1741,9 +1720,9 @@
                                     "Data": {}
                                 },
                                 {
-                                    "Name": "AMDOC-BCC",
+                                    "Name": "Canned Responses",
                                     "Description": "",
-                                    "Type": "tw-amdocs-bcc",
+                                    "Type": "tw-canned-responses",
                                     "Config": {
                                         "Static": false,
                                         "Anchor": false,
@@ -1769,7 +1748,7 @@
                                     "Data": {}
                                 },
                                 {
-                                    "Name": "Customer Sentiment",
+                                    "Name": "Realtime Customer Sentiment",
                                     "Description": "feedback",
                                     "Type": "tw-customer-sentiment",
                                     "Config": {
@@ -1825,24 +1804,25 @@
                                     "Data": {
                                         "Source": "interaction",
                                         "ByTeam": false,
-                                        "ByGroup": true
+                                        "ByGroup": false
                                     }
                                 },
                                 {
-                                    "Name": "Agent Assist",
+                                    "Name": "AMDOC-BCC",
                                     "Description": "",
-                                    "Type": "tw-agent-assist",
+                                    "Type": "tw-amdocs-bcc",
                                     "Config": {
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
-                                        "Icon": "verified_user",
+                                        "Icon": "",
                                         "Class": "",
                                         "Position": {
                                             "X": 1,
                                             "Y": 2
                                         },
                                         "Actions": [
+                                            "maximize",
                                             "pin",
                                             "float"
                                         ],
@@ -1853,23 +1833,52 @@
                                         "Header": true,
                                         "Disabled": false
                                     },
-                                    "Data": {
-                                        "Confidence": 0.5,
-                                        "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=_intent&ucid=_ucid",
-                                        "Title": "Visual IVR",
-                                        "Icon": "assistant",
-                                        "Width": 450,
-                                        "Height": 800,
-                                        "Actions": [
-                                            "minimize",
-                                            "maximize",
-                                            "destroy"
-                                        ],
-                                        "ViewState": "restore"
-                                    }
+                                    "Data": {}
                                 }
                             ],
                             "AOT": [
+                                {
+                                    "Name": "Register Callback",
+                                    "Description": "",
+                                    "Type": "tw-register-callback",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "Icon": "phone_callback",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0,
+                                            "W": 300,
+                                            "H": 300
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
+                                    },
+                                    "Data": {
+                                        "GetCampaignsUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Campaign/GetCampaigns",
+                                        "CreateContactCampaignUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Contact/CreateCampaignContact",
+                                        "DataMap": {
+                                            "Name": {
+                                                "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.Name",
+                                                "DefaultValue": "Mr. Tan"
+                                            },
+                                            "Phone": {
+                                                "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.mobile",
+                                                "DefaultValue": "6596975347"
+                                            }
+                                        }
+                                    }
+                                },
                                 {
                                     "Name": "TAS",
                                     "Description": "",
@@ -1900,6 +1909,39 @@
                                     "Data": {
                                         "AutoOpen": false,
                                         "Url": "https://dice.tetherfi.cloud/TAS/Survey/Index?intentname=DiceIntent2&inSimulation=false&agentid=50020&customerid=12&ucid=Test&flowType=Test&campId=Test&station=42002&phoneNumber=6539284004#",
+                                        "QueryParams": []
+                                    }
+                                },
+                                {
+                                    "Name": "STPedia",
+                                    "Description": "",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "Icon": "school",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0,
+                                            "W": 1000,
+                                            "H": 700
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "Url": "https://www.tetherfi.com",
                                         "QueryParams": []
                                     }
                                 }
@@ -1958,7 +2000,7 @@
                     }
                 },
                 {
-                    "Name": "Supervisor",
+                    "Name": "Dashboard",
                     "Description": "",
                     "Type": "twc-custom",
                     "Config": {
@@ -1969,8 +2011,8 @@
                         }
                     },
                     "Data": {
-                        "Path": "/tsupervisor",
-                        "Url": "https://dice.tetherfi.cloud/Supervisor/",
+                        "Path": "/dashboard",
+                        "Url": "https://dice.tetherfi.cloud/CustomerJourneyDashBoard/",
                         "QueryParams": []
                     }
                 },
@@ -1986,8 +2028,59 @@
                         }
                     },
                     "Data": {
-                        "Path": "/dashboard",
-                        "Url": "https://dice.tetherfi.cloud/CustomerJourneyDashBoard/",
+                        "Path": "/sentimentdashboard",
+                        "Url": "https://dice.tetherfi.cloud/SentimentDashboard/?agentid=_agentId",
+                        "QueryParams": []
+                    }
+                },
+                {
+                    "Name": "Dashboard",
+                    "Description": "",
+                    "Type": "twc-custom",
+                    "Config": {
+                        "Class": "",
+                        "Position": {
+                            "X": 3,
+                            "Y": 6
+                        }
+                    },
+                    "Data": {
+                        "Path": "/kpidashboard",
+                        "Url": "https://dice.tetherfi.cloud/IWDashboards/IWDashboard/kpi",
+                        "QueryParams": []
+                    }
+                },
+                {
+                    "Name": "Dashboard",
+                    "Description": "",
+                    "Type": "twc-custom",
+                    "Config": {
+                        "Class": "",
+                        "Position": {
+                            "X": 3,
+                            "Y": 6
+                        }
+                    },
+                    "Data": {
+                        "Path": "/sessiondashboard",
+                        "Url": "https://dice.tetherfi.cloud/IWDashboards/IWDashboard/session",
+                        "QueryParams": []
+                    }
+                },
+                {
+                    "Name": "Dashboard",
+                    "Description": "",
+                    "Type": "twc-custom",
+                    "Config": {
+                        "Class": "",
+                        "Position": {
+                            "X": 3,
+                            "Y": 6
+                        }
+                    },
+                    "Data": {
+                        "Path": "/realtimestats",
+                        "Url": "https://dice.tetherfi.cloud/IWDashboards/VoiceStatsDashboard/RealTimeInteractionStats?dblb=Ivr",
                         "QueryParams": []
                     }
                 }
@@ -2033,7 +2126,7 @@
                     },
                     "Data": {
                         "AutoOpen": false,
-                        "Url": "https://tmac.tetherfilabs.com/tcie-web-appv8",
+                        "Url": "https://tmac.tetherfilabs.com/tcie-web-appv8?id=_agentId",
                         "QueryParams": []
                     }
                 }

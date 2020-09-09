@@ -105,6 +105,8 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+
+        SDKClient.events.off('CallbackDataReceivedForAgent', this.CallbackDataReceivedForAgent);
     }
 
     // -----------------------------------------------------------------------------------------------------

@@ -26,6 +26,10 @@ alert-dialog {
         }
     }
 
+    .message {
+        word-wrap: break-word;
+    }
+
     button {
         color: white !important;
     }
