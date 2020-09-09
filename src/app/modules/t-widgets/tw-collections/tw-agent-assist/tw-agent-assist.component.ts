@@ -1,12 +1,13 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { AotWidgetService } from '@services/aot-widget.service';
+import { AppDataService } from '@services/app-data.service';
+import { InteractionEventService } from '@services/interaction-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import * as _ from 'lodash';
-import { GenericEvent, SDKClient, TextChatRemoteUserConnectedEvent, IUIEvent } from 'tmac-sdk';
-import { InteractionEventService } from '@services/interaction-event.service';
-import { AppDataService } from '@services/app-data.service';
+import { CallerIntentEvent, GenericEvent, IUIEvent, SDKClient, TextChatRemoteUserConnectedEvent } from 'tmac-sdk';
+import { P } from '@angular/cdk/keycodes';
 
 @Component({
     selector: 'tw-agent-assist',
@@ -75,11 +76,12 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
 
         // register to the event
         SDKClient.events.on('OnNLPDataEvent', this.OnNLPDataEvent);
+        SDKClient.events.on('CallerIntentEvent', this.CallerIntentEvent);
         SDKClient.events.on('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
     }
 
     /**
-     * A callback method that performs 
+     * A callback method that performs
      *  clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
      */
     ngOnDestroy(): void {
@@ -88,6 +90,7 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         // de-register from the event
         SDKClient.events.off('OnNLPDataEvent', this.OnNLPDataEvent);
         SDKClient.events.off('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
+        SDKClient.events.off('CallerIntentEvent', this.CallerIntentEvent);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -116,11 +119,10 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
             const intent = parsedNlu?.intent;
 
             if (intent && intent.confidence >= (this.widgetData?.Confidence || 0.5)) {
-                const getData = this.nlpData.filter(i => i.Name === intent.name);
+                const getData = this.nlpData.filter((i) => i.Name === intent.name);
                 if (getData.length > 0) {
                     ++getData[0].Count;
-                }
-                else {
+                } else {
                     this.nlpData.push({
                         Name: parsedNlu.intent.name,
                         Count: 0
@@ -131,6 +133,23 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
             this.nlpData = _.orderBy(this.nlpData, ['Count'], ['desc']);
         }
     }
+
+    private CallerIntentEvent = (evt: CallerIntentEvent): void => {
+        // check for the interaction
+        if (this.interactionId !== evt.InteractionID) {
+            return;
+        }
+        // get the intent from event
+        const intent = evt.IntentName;
+
+        // check if intent is present
+        if (!intent) {
+            return;
+        }
+
+        this.addIntentToNLPData(intent);
+    }
+
     private TextChatRemoteUserConnectedEvent = (evt: TextChatRemoteUserConnectedEvent) => {
         // check for the interaction
         if (this.interactionId !== evt.InteractionID) {
@@ -139,13 +158,28 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
 
         // get the intent from event
         const intent = evt.TransferIntent || evt.Intent;
-        // if intent found, add it
-        if (intent) {
+
+        // check if intent is present
+        if (!intent) {
+            return;
+        }
+
+        this.addIntentToNLPData(intent);
+    }
+
+    private addIntentToNLPData(intent: string): void {
+        const getData = this.nlpData.filter((i) => i.Name === intent);
+        if (getData.length > 0) {
+            ++getData[0].Count;
+        } else {
             this.nlpData.push({
                 Name: intent,
                 Count: 0
             });
         }
+
+        // oder by the count
+        this.nlpData = _.orderBy(this.nlpData, ['Count'], ['desc']);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -165,8 +199,8 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         const ucid = this.ucid;
 
         const mapObj = {
-            '_intent': intent,
-            '_ucid': ucid
+            _intent: intent,
+            _ucid: ucid
         };
 
         const reg = new RegExp(Object.keys(mapObj).join('|'), 'gi');
@@ -175,7 +209,7 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         });
 
         // get assist widget config
-        const title = `${(this.widgetData.Title || 'Custom')} - ${intent}`;
+        const title = `${this.widgetData.Title || 'Custom'} - ${intent}`;
         const icon = this.widgetData.Icon || '';
         const width = this.widgetData.Width || 500;
         const height = this.widgetData.Height || 500;

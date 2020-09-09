@@ -111,15 +111,21 @@ export class TwSuStatusComponent extends TWidgetWrapper implements OnInit, OnDes
         sortBy(evt.States, 'Duration')
             .reverse()
             .forEach((c) => {
+
+                const hours = Math.floor(c.Duration / 3600);
+                const minutes = Math.floor(c.Duration % 3600 / 60);
+                const seconds = Math.floor(c.Duration % 3600 % 60);
+
                 datasets.Duration.push(c.Duration);
-                labels.push(c.State);
+                labels.push(`${c.State} - [${hours}:${minutes}:${seconds}]`);
+
             });
         this.statusChart.datasets = Object.keys(datasets).map((d) => ({
             data: datasets[d],
             label: d
         }));
         this.statusChart.labels = labels;
-    };
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @  Private Methods

@@ -46,14 +46,14 @@
                     *ngFor="let workCode of selectedWorkCodes"
                     [ngClass]="{
                         'bg-info': workCode.Count < 10,
-                        'bg-secondary': workCode.Count >= 10,
-                        'bg-success': workCode.Count >= 30,
-                        'bg-warning': workCode.Count >= 50,
-                        'bg-danger': workCode.Count >= 70
+                        'bg-secondary': workCode.Count >= 10 && workCode.Count < 20,
+                        'bg-success': workCode.Count >= 20 && workCode.Count < 30,
+                        'bg-warning': workCode.Count >= 30 && workCode.Count < 50,
+                        'bg-danger': workCode.Count >= 50
                     }"
                 >
                     <mat-icon class="mat-icon-mirror mr-4">local_offer</mat-icon>
-                    {{ workCode.WorkCodeName }}
+                    {{ workCode.WorkCodeName + ' [' + workCode.Count + ']' }}
                 </mat-chip>
             </mat-chip-list>
 

@@ -37,7 +37,9 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     @ViewChild('auto') matAutocomplete: MatAutocomplete;
 
     loadWorkCodesReq: ResData<Record<string, WorkCode[]>> = {
-        data: {},
+        data: {
+            listData: []
+        },
         error: false,
         loading: false,
         msg: ''
@@ -228,6 +230,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
                     this.loadWorkCodesReq.data.listData = this.loadWorkCodesReq.data.listData.filter((x) => x.Code !== option.option.value.Code);
                 }
                 this.appUiService.showSnackbar('Work code set successfully', 'success');
+                this.workCodeInput.nativeElement.value = '';
             })
             .catch(() => {
                 this.appUiService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
@@ -266,7 +269,10 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
                 filteredData[c] = this.loadWorkCodesReq.data[c].filter((x) => x.Name.toLowerCase().includes(name.toLowerCase()));
             });
         } else {
-            filteredData = this.loadWorkCodesReq.data.listData.filter((x) => x.Name.toLowerCase().includes(name.toLowerCase()));
+            if (!this.loadWorkCodesReq.data.listData) {
+                this.loadWorkCodesReq.data.listData = [];
+            }
+            filteredData = { listData: this.loadWorkCodesReq.data.listData.filter((x) => x.Name.toLowerCase().includes(name.toLowerCase())) };
         }
         return filteredData;
     }

@@ -5,7 +5,7 @@
             "Type": "nonpbx"
         },
         "FaceAuth": {
-            "Enabled": true,
+            "Enabled": false,
             "AuthServerUrl": "https://tmac.tetherfilabs.com/TFaceAuthProxyNew/Proxy.asmx/VerifyFaceImages"
         },
         "DomainListEnabled": false,
@@ -565,6 +565,39 @@
                                         "Url": "https://tmac.tetherfilabs.com/tcie-web-appv8/?id=_agentId",
                                         "QueryParams": []
                                     }
+                                },
+                                {
+                                    "Name": "Gamification",
+                                    "Description": "",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "Icon": "extension",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0,
+                                            "W": 1500,
+                                            "H": 900
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "Url": "https://demo2.tetherfilabs.com:55443/GamificationUI/?agentId=_agentId",
+                                        "QueryParams": []
+                                    }
                                 }
                             ]
                         }
@@ -999,39 +1032,39 @@
                                                     "CustomerInfo": [
                                                         {
                                                             "Title": "Mobile",
-                                                            "ValueSource": "IncomingCallEvent.PhoneNumber",
+                                                            "ValueSource": "CCLDataEvent.RegisteredPhone",
                                                             "Unit": "",
                                                             "DefaultValue": "6596975347"
                                                         },
                                                         {
                                                             "Title": "Name",
-                                                            "ValueSource": "IncomingCallEvent.Name",
+                                                            "ValueSource": "CCLDataEvent.CallerName",
                                                             "Unit": "",
                                                             "DefaultValue": "Mr. Tan"
                                                         },
                                                         {
-                                                            "Title": "Auth Type",
-                                                            "ValueSource": "IncomingCallEvent.AuthType",
-                                                            "Unit": "",
-                                                            "DefaultValue": "Caller ID"
-                                                        },
-                                                        {
-                                                            "Title": "Auth Status",
-                                                            "ValueSource": "IncomingCallEvent.AuthType",
-                                                            "Unit": "",
-                                                            "DefaultValue": "Authenticated"
-                                                        },
-                                                        {
                                                             "Title": "Email",
-                                                            "ValueSource": "IncomingCallEvent.Email",
+                                                            "ValueSource": "CCLDataEvent.Email",
                                                             "Unit": "",
                                                             "DefaultValue": "tan.c@gmail.com"
                                                         },
                                                         {
+                                                            "Title": "Address",
+                                                            "ValueSource": "CCLDataEvent.Address",
+                                                            "Unit": "",
+                                                            "DefaultValue": "62 Ubi Road 1 #10-21 Oxley Bizhub 2 Singapore 408734"
+                                                        },
+                                                        {
                                                             "Title": "NRIC",
-                                                            "ValueSource": "IncomingCallEvent.NRIC",
+                                                            "ValueSource": "CCLDataEvent.NRIC",
                                                             "Unit": "",
                                                             "DefaultValue": "S1234567J"
+                                                        },
+                                                        {
+                                                            "Title": "Account Number",
+                                                            "ValueSource": "CCLDataEvent.AccountNumber",
+                                                            "Unit": "",
+                                                            "DefaultValue": "987654321"
                                                         },
                                                         {
                                                             "Title": "Queue time",
@@ -1078,21 +1111,20 @@
                             ],
                             "Dynamic": [
                                 {
-                                    "Name": "Canned Responses",
+                                    "Name": "Agent Assist",
                                     "Description": "",
-                                    "Type": "tw-canned-responses",
+                                    "Type": "tw-agent-assist",
                                     "Config": {
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
-                                        "Icon": "",
+                                        "Icon": "verified_user",
                                         "Class": "",
                                         "Position": {
                                             "X": 1,
                                             "Y": 2
                                         },
                                         "Actions": [
-                                            "maximize",
                                             "pin",
                                             "float"
                                         ],
@@ -1103,7 +1135,20 @@
                                         "Header": true,
                                         "Disabled": false
                                     },
-                                    "Data": {}
+                                    "Data": {
+                                        "Confidence": 0.5,
+                                        "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=_intent&ucid=_ucid",
+                                        "Title": "Visual IVR",
+                                        "Icon": "assistant",
+                                        "Width": 450,
+                                        "Height": 800,
+                                        "Actions": [
+                                            "minimize",
+                                            "maximize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore"
+                                    }
                                 },
                                 {
                                     "Name": "Account Information",
@@ -1222,20 +1267,21 @@
                                     }
                                 },
                                 {
-                                    "Name": "Agent Assist",
+                                    "Name": "Voice-Bot Transcripts",
                                     "Description": "",
-                                    "Type": "tw-agent-assist",
+                                    "Type": "tw-voice-bot-transcripts",
                                     "Config": {
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
-                                        "Icon": "verified_user",
+                                        "Icon": "",
                                         "Class": "",
                                         "Position": {
                                             "X": 1,
                                             "Y": 2
                                         },
                                         "Actions": [
+                                            "maximize",
                                             "pin",
                                             "float"
                                         ],
@@ -1246,20 +1292,7 @@
                                         "Header": true,
                                         "Disabled": false
                                     },
-                                    "Data": {
-                                        "Confidence": 0.5,
-                                        "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=_intent&ucid=_ucid",
-                                        "Title": "Visual IVR",
-                                        "Icon": "assistant",
-                                        "Width": 450,
-                                        "Height": 800,
-                                        "Actions": [
-                                            "minimize",
-                                            "maximize",
-                                            "destroy"
-                                        ],
-                                        "ViewState": "restore"
-                                    }
+                                    "Data": {}
                                 }
                             ],
                             "AOT": [
@@ -1509,14 +1542,32 @@
                                                 "Data": {
                                                     "CustomerInfo": [
                                                         {
+                                                            "Title": "Email",
+                                                            "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.email",
+                                                            "Unit": "",
+                                                            "DefaultValue": "tan.c@gmail.com"
+                                                        },
+                                                        {
+                                                            "Title": "NRIC",
+                                                            "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.NRIC",
+                                                            "Unit": "",
+                                                            "DefaultValue": "S1234567J"
+                                                        },
+                                                        {
+                                                            "Title": "Queue time",
+                                                            "ValueSource": "TextChatRemoteUserConnectedEvent.QueueTime",
+                                                            "Unit": "s",
+                                                            "DefaultValue": "0"
+                                                        },
+                                                        {
                                                             "Title": "Mobile",
-                                                            "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.mobile",
+                                                            "ValueSource": "CCLDataEvent.RegisteredPhone",
                                                             "Unit": "",
                                                             "DefaultValue": "6596975347"
                                                         },
                                                         {
                                                             "Title": "Name",
-                                                            "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.Name",
+                                                            "ValueSource": "CCLDataEvent.CallerName",
                                                             "Unit": "",
                                                             "DefaultValue": "Mr. Tan"
                                                         },
@@ -1534,15 +1585,27 @@
                                                         },
                                                         {
                                                             "Title": "Email",
-                                                            "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.email",
+                                                            "ValueSource": "CCLDataEvent.Email",
                                                             "Unit": "",
                                                             "DefaultValue": "tan.c@gmail.com"
                                                         },
                                                         {
+                                                            "Title": "Address",
+                                                            "ValueSource": "CCLDataEvent.Address",
+                                                            "Unit": "",
+                                                            "DefaultValue": "62 Ubi Road 1 #10-21 Oxley Bizhub 2 Singapore 408734"
+                                                        },
+                                                        {
                                                             "Title": "NRIC",
-                                                            "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.NRIC",
+                                                            "ValueSource": "CCLDataEvent.NRIC",
                                                             "Unit": "",
                                                             "DefaultValue": "S1234567J"
+                                                        },
+                                                        {
+                                                            "Title": "Account Number",
+                                                            "ValueSource": "CCLDataEvent.AccountNumber",
+                                                            "Unit": "",
+                                                            "DefaultValue": "987654321"
                                                         },
                                                         {
                                                             "Title": "Queue time",

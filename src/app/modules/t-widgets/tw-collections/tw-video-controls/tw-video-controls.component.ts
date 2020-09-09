@@ -158,7 +158,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                 break;
             case 'onRemoteVideoAdded':
                 // check if the user connected is customer
-                if (evt.data.streamInfo?.user === 'customer') {
+                if (evt.data.streamInfo?.user === 'customer' && evt.data.streamInfo?.type !== 'screenshare') {
                     evt.data.streamInfo.user = this.customerName;
                 } else {
                     // other agent connected
@@ -173,12 +173,22 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                 break;
             case 'onScreenshareConnected':
                 this.remoteScreenSharing = true;
+                // check if the user connected is customer
+                if (evt.data.streamInfo?.user === 'customer') {
+                    evt.data.streamInfo.user = this.customerName + 'Presenting';
+                } else {
+                    // other agent connected
+                }
+                // push to the list
+                this.userList.push(evt.data);
                 break;
             case 'onScreenshareEnded':
                 this.screenSharing = false;
                 break;
             case 'onScreenshareDisconnected':
                 this.remoteScreenSharing = false;
+                // remove the screenshare user
+                this.userList = this.userList.filter(u => u.streamInfo.type !== 'screenshare');
                 break;
             case 'onFail':
                 // show the error

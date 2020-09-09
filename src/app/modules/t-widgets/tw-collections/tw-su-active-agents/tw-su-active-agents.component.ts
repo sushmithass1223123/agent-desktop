@@ -11,6 +11,8 @@ import * as _ from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 import { AgentFeatures, IAgentData, IResponse, SDKClient, SuAgentDataModel, SuAgentModel, TUtils, AgentTabCount } from 'tmac-sdk';
 import { AotWidgetService } from '@services/aot-widget.service';
+import { ConfirmDialogComponent } from '@modules/shared/confirm-dialog/confirm-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     selector: 'tw-su-active-agents',
@@ -44,7 +46,8 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         private _fuseConfigService: FuseConfigService,
         private _appDataService: AppDataService,
         private _appUIService: AppUiService,
-        private _aotWidgetService: AotWidgetService
+        private _aotWidgetService: AotWidgetService,
+        private _dialog: MatDialog
     ) {
         super();
 
@@ -243,6 +246,34 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                         // log the error to server for troubleshooting purpose
                         TUtils.Logger.log('Exception in performAgentAction.AgentSnapShotEvent', error);
                     });
+                break;
+            case 'AllowSupervisorToLogout':
+                // // confirm logout 
+                // const confirmDialogRef = this._dialog.open(ConfirmDialogComponent, {
+                //     disableClose: false
+                // });
+                // confirmDialogRef.componentInstance.title = 'Confirm logout';
+                // confirmDialogRef.componentInstance.message = 'Are you sure you want to logout?';
+                // confirmDialogRef.afterClosed().subscribe((dialogResult) => {
+                //     if (dialogResult) {
+                //         // logout error
+                //         this._appDataService.showMessage('Please wait, logging out!');
+                //         // show the progress bar
+                //         this._appUIService.showSnackbar('Please wait, Logging out the user..', 'loading');
+                //         SDKClient.logout('ManualLogout', null)
+                //             .then((dt: IResponse) => {
+                //                 // check if the logout is success
+                //                 if (dt.response && dt.response.ResultCode === 0) {
+                //                     // route back to login page
+                //                     this._appUIService.showSnackbar('Logged out successfully', 'success');
+                //                 }
+                //                 else {
+                //                     // logout error
+                //                     this._appUIService.showSnackbar('Logout failed, please try again', 'failure');
+                //                 }
+                //             });
+                //     }
+                // });
                 break;
             default:
         }

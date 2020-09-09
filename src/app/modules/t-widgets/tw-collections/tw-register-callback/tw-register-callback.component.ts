@@ -46,18 +46,45 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
         msg: ''
     };
 
+    minDate = new Date();
+
     addContactFormGroup = new FormGroup({
         Name: new FormControl('', [Validators.required]),
         Phone: new FormControl('', [Validators.required]),
         Date: new FormControl(new Date(), [Validators.required]),
-        Time: new FormControl('12:00', [Validators.required])
+        Time: new FormControl('12:00', [
+            Validators.required,
+            (control) => {
+                if (this.addContactFormGroup && control.value) {
+                    const enteredDate = new Date(this.addContactFormGroup.get('Date').value);
+                    const today = new Date();
+                    const [hours, mins] = control.value.split(':');
+                    if (
+                        enteredDate.getDate() === today.getDate() &&
+                        enteredDate.getMonth() === today.getMonth() &&
+                        enteredDate.getFullYear() === today.getFullYear()
+                    ) {
+                        if (hours < today.getHours()) {
+                            return { invalid: true };
+                        } else if (parseInt(hours, 10) === today.getHours() && parseInt(mins, 10) - 5 < today.getMinutes()) {
+                            return { invalid: true };
+                        }
+                        return {};
+                    }
+                    return {};
+                }
+                return { invalid: true };
+            }
+        ])
     });
 
     interactionId: number;
+
     dataMap: {
         Name: string;
         Phone: number;
     };
+
     dataMapValues = new Object();
 
     /**
@@ -199,11 +226,6 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
         }
 
         const contact = this.addContactFormGroup.value;
-        this.addCampaingReq = {
-            error: false,
-            loading: true,
-            msg: ''
-        };
 
         let directAgentScheduleTime: any = new Date(contact.Date);
         directAgentScheduleTime.setHours(contact.Time.split(':')[0]);
@@ -212,6 +234,12 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
         directAgentScheduleTime = moment(directAgentScheduleTime).format('YYYYMMDDHHmmss');
 
         const { agentId } = SDKClient.getAgentData();
+
+        this.addCampaingReq = {
+            error: false,
+            loading: true,
+            msg: ''
+        };
 
         const reqPacket: ReqCampaignContact = {
             campaignId: this.selectedCampaign.id,

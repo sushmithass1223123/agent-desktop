@@ -2,11 +2,11 @@ import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular
 import { FuseConfigService } from '@fuse/services/config.service';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { takeUntil } from 'rxjs/operators';
 import { IWidget } from 'app/interfaces';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
-    selector: 'tw-ad-amdocs-bcc',
+    selector: 'tw-amdocs-bcc',
     templateUrl: './tw-amdocs-bcc.component.html',
     styleUrls: ['./tw-amdocs-bcc.component.scss'],
     encapsulation: ViewEncapsulation.None
@@ -19,13 +19,17 @@ export class TwAmdocsBccComponent extends TWidgetWrapper implements OnInit, OnDe
     // @ [OPTIONAL] to store the fuse config for theme
     // -----------------------------------------------------------
     fuseConfig: any;
+    caseData = {
+        cases: [],
+        submitted: false,
+        caseText: '',
+        caseId: ''
+    };
 
     // -----------------------------------------------------------
     // @ [OPTIONAL] to store entire app config and get update
     // -----------------------------------------------------------
     appConfig: any;
-
-    caseId = '';
 
     /**
      * Constructor
@@ -66,8 +70,7 @@ export class TwAmdocsBccComponent extends TWidgetWrapper implements OnInit, OnDe
             this.appConfig = config;
         });
 
-        // assign the case Id
-        this.caseId = this.data.InteractionDetails?.UCID;
+        this.caseData.caseId = this.data.InteractionDetails?.UCID;
     }
 
     /**
@@ -85,6 +88,13 @@ export class TwAmdocsBccComponent extends TWidgetWrapper implements OnInit, OnDe
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
+
+    addCase(): void {
+        this.caseData.cases.push({
+            name: this.caseData.caseText
+        });
+        this.caseData.submitted = true;
+    }
 }
 
 // for more info visit - https://angular.io/api/core

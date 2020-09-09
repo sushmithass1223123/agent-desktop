@@ -666,7 +666,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             type: 'text'
         }, null)
             .then((dt: any) => {
-                console.log('sendTextChat', dt);
             })
             .catch(() => {
                 this._appDataService.showMessage('Message send failed!');
@@ -760,7 +759,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 this.disableAV = false;
                 break;
             default:
-                console.log(evt);
+            // console.log(evt);
 
         }
     }
@@ -898,7 +897,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     closeBtn.disabled = false;
                     this._appDataService.showMessage('Close interaction failed');
                 }
-                console.log('closeInteraction', dt);
             })
             .catch(() => {
                 this._fuseProgressBarService.hide();

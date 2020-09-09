@@ -21,20 +21,20 @@
     >
         <div fxFlex="33" *ngFor="let badge of gamificationReqStatus.data.badges | slice: 0:3" class="mb-8">
             <img [src]="badge.BadgeUrl" class="w-70-p mx-auto d-block" />
-            <span class="text-truncate text-center my-4"> {{ badge.BadgeName }} </span>
+            <span class="text-truncate text-center my-4" [ngClass]="{ 'mat-title m-0': maximized }"> {{ badge.BadgeName }} </span>
         </div>
 
         <div fxFlex="33" fxLayout fxLayoutAlign="center center">
             <mat-icon class="gold mr-8 brand-logo box-shadow-3d"> monetization_on </mat-icon>
-            <span class="font-size-18"> {{ gamificationReqStatus.data.goldCoins }} </span>
+            <span class="font-size-18" [ngClass]="{ 'mat-title m-0': maximized }"> {{ gamificationReqStatus.data.goldCoins }} </span>
         </div>
         <div fxFlex="33" fxLayout fxLayoutAlign="center center">
             <mat-icon class="silver mr-8 brand-logo box-shadow-3d"> monetization_on </mat-icon>
-            <span class="font-size-18"> {{ gamificationReqStatus.data.silverCoins }} </span>
+            <span class="font-size-18" [ngClass]="{ 'mat-title m-0': maximized }"> {{ gamificationReqStatus.data.silverCoins }} </span>
         </div>
         <div fxFlex="33" fxLayout fxLayoutAlign="center center">
             <mat-icon class="bronze mr-8 brand-logo box-shadow-3d"> monetization_on </mat-icon>
-            <span class="font-size-18"> {{ gamificationReqStatus.data.bronzeCoins }} </span>
+            <span class="font-size-18" [ngClass]="{ 'mat-title m-0': maximized }"> {{ gamificationReqStatus.data.bronzeCoins }} </span>
         </div>
     </div>
     <!-- your code goes here -->

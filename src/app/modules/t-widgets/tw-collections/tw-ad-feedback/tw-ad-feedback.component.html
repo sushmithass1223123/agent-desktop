@@ -5,13 +5,13 @@
     <!-- your code goes here -->
     <div *ngIf="dataConfig.Source === 'dashboard' && !wrapper.maximized" fxFill fxLayout="row wrap" class="p-4">
         <div fxFlex="100" fxLayout fxLayoutAlign="space-between center" class="px-16 py-12">
-            <span> 20/7/2020 </span>
-            <span> 09:00:00 </span>
+            <span> {{ date | date: 'mediumDate' }} </span>
+            <span> {{ date | date: 'mediumTime' }} </span>
         </div>
 
         <div fxFlex="100" class="line-height-20">
             <div>Customer Feedback</div>
-            <span> Call Duration : 02:16:33 </span>
+            <span> Call Duration : 00:16:33 </span>
 
             <p>
                 <span *ngFor="let star of ratings | slice: -(stars - ratings.length)" class="rating box-shadow-3d">

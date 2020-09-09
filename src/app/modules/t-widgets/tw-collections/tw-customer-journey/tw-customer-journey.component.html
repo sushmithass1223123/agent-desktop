@@ -90,7 +90,13 @@
             fusePerfectScrollbar
             [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
         >
-            <mat-table [dataSource]="customerJourneyTable.tableData.source" matSort>
+            <mat-table
+                [dataSource]="customerJourneyTable.tableData.source"
+                matSort
+                matSortActive="InteractionDate"
+                matSortDirection="desc"
+                matSortDisableClear
+            >
                 <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
 

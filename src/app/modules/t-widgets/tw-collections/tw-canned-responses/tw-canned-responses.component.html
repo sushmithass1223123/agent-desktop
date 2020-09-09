@@ -10,11 +10,20 @@
         <div fxLayout="row" fxLayoutAlign="space-between center" class="w-100-p template-selector">
             <div fxFill fxFlex="50" class="mr-4">
                 <mat-form-field fxFill class="custom select-box" appearance="outline">
+                    <mat-select placeholder="Mode" [(ngModel)]="responseMode" (selectionChange)="changeMode($event)">
+                        <mat-option value="auto">Auto</mat-option>
+                        <mat-option value="manual">Manual</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <div fxFill fxFlex="50" class="mr-4">
+                <mat-form-field fxFill class="custom select-box" appearance="outline">
                     <mat-select
-                        class="custom"
                         placeholder="Department"
                         [(ngModel)]="selectedDepartment"
                         (selectionChange)="onSelectDepartment($event)"
+                        [disabled]="responseMode === 'auto'"
                     >
                         <mat-option>None</mat-option>
                         <mat-option *ngFor="let item of departments" [value]="item.ID">{{ item.Name }}</mat-option>
@@ -26,12 +35,12 @@
                 <mat-form-field fxFill class="custom select-box" appearance="outline">
                     <mat-select
                         placeholder="Groups"
-                        [disabled]="!selectedDepartment"
+                        [disabled]="!selectedDepartment && responseMode === 'manual'"
                         [(ngModel)]="selectedGroup"
                         (selectionChange)="onSelectGroups($event)"
                     >
                         <mat-option>None</mat-option>
-                        <mat-option *ngFor="let item of groups" [value]="item.ID">{{ item.Name }}</mat-option>
+                        <mat-option *ngFor="let item of groups" [value]="item.Name">{{ item.Name }}</mat-option>
                     </mat-select>
                     <mat-error> Groups is required </mat-error>
                 </mat-form-field>
@@ -40,9 +49,8 @@
         <div fxLayout="row" class="mt-4 w-100-p template-items">
             <div
                 *ngIf="templates.length > 0"
-                fxFlex="20"
+                fxFlex="40"
                 fxLayout="column"
-                fxLayoutAlign=" center"
                 class="animate__animated animate__faster animate__slideInLeft"
                 fusePerfectScrollbar
                 [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
@@ -58,7 +66,7 @@
                     {{ template.Name }}
                 </button>
             </div>
-            <mat-form-field [fxFlex]="templates.length > 0 ? 80 : 100" floatLabel="never" appearance="standard" class="custom selected-template">
+            <mat-form-field [fxFlex]="templates.length > 0 ? 60 : 100" floatLabel="never" appearance="standard" class="custom selected-template">
                 <textarea
                     fxFlex
                     matInput

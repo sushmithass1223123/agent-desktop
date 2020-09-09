@@ -33,7 +33,7 @@ tw-wrapper {
             position: absolute;
             width: 100%;
             height: calc(100vh - 82px);
-            z-index: 101;
+            z-index: 100000;
 
             @include media-breakpoint('gt-md') {
                 width: 66.66%;
@@ -48,7 +48,7 @@ tw-wrapper {
 
         &.floating {
             position: relative;
-            z-index: 102;
+            z-index: 100001;
             transition-property: height, min-height, max-height;
         }
 
