@@ -3,6 +3,7 @@ import { FuseConfigService } from '@fuse/services/config.service';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { takeUntil } from 'rxjs/operators';
+import { CardSeriesComponent } from '@swimlane/ngx-charts';
 
 @Component({
     selector: 'tw-ad-amdocs-bcc',
@@ -18,6 +19,12 @@ export class TwAmdocsBccComponent extends TWidgetWrapper implements OnInit, OnDe
     // @ [OPTIONAL] to store the fuse config for theme
     // -----------------------------------------------------------
     fuseConfig: any;
+    caseData = {
+        cases: [],
+        submitted: false,
+        caseText: '',
+        caseId: ''
+    };
 
     // -----------------------------------------------------------
     // @ [OPTIONAL] to store entire app config and get update
@@ -62,6 +69,8 @@ export class TwAmdocsBccComponent extends TWidgetWrapper implements OnInit, OnDe
         this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
             this.appConfig = config;
         });
+
+        this.caseData.caseId = this.data.InteractionDetails?.UCID;
     }
 
     /**
@@ -79,6 +88,13 @@ export class TwAmdocsBccComponent extends TWidgetWrapper implements OnInit, OnDe
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
+
+    addCase(): void {
+        this.caseData.cases.push({
+            name: this.caseData.caseText
+        });
+        this.caseData.submitted = true;
+    }
 }
 
 // for more info visit - https://angular.io/api/core

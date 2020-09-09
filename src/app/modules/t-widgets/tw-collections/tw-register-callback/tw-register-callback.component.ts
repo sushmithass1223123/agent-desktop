@@ -44,11 +44,36 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
         msg: ''
     };
 
+    minDate = new Date();
+
     addContactFormGroup = new FormGroup({
         name: new FormControl('', [Validators.required]),
         phone: new FormControl('', [Validators.required]),
         date: new FormControl(new Date(), [Validators.required]),
-        time: new FormControl('12:00', [Validators.required])
+        time: new FormControl('12:00', [
+            Validators.required,
+            (control) => {
+                if (this.addContactFormGroup && control.value) {
+                    const enteredDate = new Date(this.addContactFormGroup.get('date').value);
+                    const today = new Date();
+                    const [hours, mins] = control.value.split(':');
+                    if (
+                        enteredDate.getDate() === today.getDate() &&
+                        enteredDate.getMonth() === today.getMonth() &&
+                        enteredDate.getFullYear() === today.getFullYear()
+                    ) {
+                        if (hours < today.getHours()) {
+                            return { invalid: true };
+                        } else if (parseInt(hours, 10) === today.getHours() && parseInt(mins, 10) - 5 < today.getMinutes()) {
+                            return { invalid: true };
+                        }
+                        return {};
+                    }
+                    return {};
+                }
+                return { invalid: true };
+            }
+        ])
     });
 
     // -----------------------------------------------------------
@@ -156,11 +181,8 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
             return;
         }
         const contact = this.addContactFormGroup.value;
-        this.addCampaingReq = {
-            error: false,
-            loading: true,
-            msg: ''
-        };
+
+        console.log(contact);
 
         let directAgentScheduleTime: any = new Date(contact.date);
         directAgentScheduleTime.setHours(contact.time.split(':')[0]);
@@ -169,6 +191,12 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
         directAgentScheduleTime = moment(directAgentScheduleTime).format('YYYYMMDDHHmmss');
 
         const { agentId } = SDKClient.getAgentData();
+
+        this.addCampaingReq = {
+            error: false,
+            loading: true,
+            msg: ''
+        };
 
         const reqPacket: ReqCampaignContact = {
             campaignId: this.selectedCampaign.id,

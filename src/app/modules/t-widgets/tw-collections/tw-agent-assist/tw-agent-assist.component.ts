@@ -3,7 +3,7 @@ import { FuseConfigService } from '@fuse/services/config.service';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient, GenericEvent, TextChatRemoteUserConnectedEvent } from 'tmac-sdk';
+import { SDKClient, GenericEvent, TextChatRemoteUserConnectedEvent, CallerIntentEvent } from 'tmac-sdk';
 import { AotWidgetService } from '@services/aot-widget.service';
 import { TwWidgetModel } from 'app/models';
 import { IWidget } from 'app/interfaces';
@@ -74,7 +74,6 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
             this.appConfig = config;
         });
 
-
         // set the interaction id from data
         this.interactionId = this.data.InteractionDetails.InteractionID;
 
@@ -86,11 +85,12 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
 
         // register to the event
         SDKClient.events.on('OnNLPDataEvent', this.OnNLPDataEvent);
+        SDKClient.events.on('CallerIntentEvent', this.CallerIntentEvent);
         SDKClient.events.on('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
     }
 
     /**
-     * A callback method that performs 
+     * A callback method that performs
      *  clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
      */
     ngOnDestroy(): void {
@@ -99,6 +99,7 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         // de-register from the event
         SDKClient.events.off('OnNLPDataEvent', this.OnNLPDataEvent);
         SDKClient.events.off('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
+        SDKClient.events.off('CallerIntentEvent', this.CallerIntentEvent);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -127,11 +128,10 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
             const intent = parsedNlu?.intent;
 
             if (intent && intent.confidence >= (this.widgetData?.Confidence || 0.5)) {
-                const getData = this.nlpData.filter(i => i.Name === intent.name);
+                const getData = this.nlpData.filter((i) => i.Name === intent.name);
                 if (getData.length > 0) {
                     ++getData[0].Count;
-                }
-                else {
+                } else {
                     this.nlpData.push({
                         Name: parsedNlu.intent.name,
                         Count: 0
@@ -141,7 +141,22 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
             // oder by the count
             this.nlpData = _.orderBy(this.nlpData, ['Count'], ['desc']);
         }
-    }
+    };
+
+    private CallerIntentEvent = (evt: CallerIntentEvent): void => {
+        const getData = this.nlpData.filter((i) => i.Name === evt.IntentName);
+        if (getData.length > 0) {
+            ++getData[0].Count;
+        } else {
+            this.nlpData.push({
+                Name: evt.IntentName,
+                Count: 0
+            });
+        }
+        // oder by the count
+        this.nlpData = _.orderBy(this.nlpData, ['Count'], ['desc']);
+    };
+
     private TextChatRemoteUserConnectedEvent = (evt: TextChatRemoteUserConnectedEvent) => {
         // check for the interaction
         if (this.interactionId !== evt.InteractionID) {
@@ -157,7 +172,7 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
                 Count: 0
             });
         }
-    }
+    };
 
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
@@ -176,8 +191,8 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         const ucid = this.ucid;
 
         const mapObj = {
-            '_intent': intent,
-            '_ucid': ucid
+            _intent: intent,
+            _ucid: ucid
         };
 
         const reg = new RegExp(Object.keys(mapObj).join('|'), 'gi');
@@ -186,7 +201,7 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         });
 
         // get assist widget config
-        const title = `${(this.widgetData.Title || 'Custom')} - ${intent}`;
+        const title = `${this.widgetData.Title || 'Custom'} - ${intent}`;
         const icon = this.widgetData.Icon || '';
         const width = this.widgetData.Width || 500;
         const height = this.widgetData.Height || 500;

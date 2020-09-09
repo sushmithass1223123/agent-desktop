@@ -77,7 +77,8 @@ export class TWLibrary {
         'tw-aht-tc': TwAhtTcComponent,
         'tw-su-intent-list': TwSuIntentListComponent,
         'tw-voice-bot-transcripts': TwVoiceBotTranscriptsComponent,
-        'tw-register-callback': TwRegisterCallbackComponent
+        'tw-register-callback': TwRegisterCallbackComponent,
+        'tw-ad-amdocs-bcc': TwAmdocsBccComponent
     };
 
     public static getWidget(type: string, data: any): TWidget {
