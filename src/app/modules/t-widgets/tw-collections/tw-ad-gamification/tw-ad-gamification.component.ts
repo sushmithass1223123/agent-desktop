@@ -93,6 +93,7 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+        SDKClient.events.off('InteractionClosedEvent', this.setBadges);
     }
 
     // -----------------------------------------------------------------------------------------------------

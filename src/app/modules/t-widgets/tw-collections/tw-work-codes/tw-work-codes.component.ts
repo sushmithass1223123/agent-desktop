@@ -32,7 +32,9 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     appConfig: any;
 
     loadWorkCodesReq: ResData<Record<string, WorkCode[]>> = {
-        data: {},
+        data: {
+            listData: []
+        },
         error: false,
         loading: false,
         msg: ''
@@ -254,7 +256,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
                 filteredData[c] = this.loadWorkCodesReq.data[c].filter((x) => x.Name.toLowerCase().includes(name.toLowerCase()));
             });
         } else {
-            filteredData = this.loadWorkCodesReq.data.listData.filter((x) => x.Name.toLowerCase().includes(name.toLowerCase()));
+            filteredData = this.loadWorkCodesReq.data.listData?.filter((x) => x.Name.toLowerCase().includes(name.toLowerCase())) || [];
         }
         return filteredData;
     }

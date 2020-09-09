@@ -1,10 +1,12 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { MatSelectChange } from '@angular/material/select';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { takeUntil } from 'rxjs/operators';
-import { IResponse, SDKClient } from 'tmac-sdk';
 import { IWidget } from 'app/interfaces';
+import { sortBy, uniqBy } from 'lodash';
+import { takeUntil } from 'rxjs/operators';
+import { CallerIntentEvent, IResponse, SDKClient, WorkCodeAddedEvent } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-canned-responses',
@@ -34,6 +36,8 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
     templates = [];
     selectedTemplate: any;
     templateText: string;
+
+    responseMode = 'auto';
 
     /**
      * Constructor
@@ -80,6 +84,10 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
         SDKClient.getTextTemplateDepartments({}).then((result: IResponse) => {
             this.departments = result.response;
         });
+
+        SDKClient.events.on('OnNLPDataEvent', this.OnNLPDataEvent);
+        SDKClient.events.on('CallerIntentEvent', this.CallerIntentEvent);
+        SDKClient.events.on('WorkCodeAddedEvent', this.WorkCodeAddedEvent);
     }
 
     /**
@@ -88,6 +96,9 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+        SDKClient.events.off('OnNLPDataEvent', this.OnNLPDataEvent);
+        SDKClient.events.on('CallerIntentEvent', this.CallerIntentEvent);
+        SDKClient.events.off('CallerIntentEvent', this.CallerIntentEvent);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -116,10 +127,9 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
         }
 
         // get the groups for the department
-        SDKClient.getTextTemplateGroups(value, null)
-            .then((result: IResponse) => {
-                this.groups = result.response;
-            });
+        SDKClient.getTextTemplateGroups(value, null).then((result: IResponse) => {
+            this.groups = sortBy(result.response, 'Name');
+        });
     }
 
     onSelectGroups(event: any): void {
@@ -134,10 +144,9 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
         }
 
         // get the templates for the group
-        SDKClient.getTextTemplates(value, null)
-            .then((result: IResponse) => {
-                this.templates = result.response;
-            });
+        SDKClient.getTextTemplates(value, null).then((result: IResponse) => {
+            this.templates = result.response;
+        });
     }
 
     onTemplateSelect(template: any): void {
@@ -154,7 +163,7 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
         // modify the tmplate text with typed value
         template.Text = this.templateText;
 
-        // send an event out for the listner to send 
+        // send an event out for the listner to send
         SDKClient.events.emit('CannedResposeEvent', {
             InteractionID: this.interactionId,
             Template: template
@@ -162,6 +171,40 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
 
         // clear all data
         this.clearAllData();
+    }
+
+    WorkCodeAddedEvent = (evt: WorkCodeAddedEvent) => {
+        const newGroups = sortBy(uniqBy([...this.groups, evt], 'Name'), 'Name');
+        this.groups = newGroups;
+    };
+
+    CallerIntentEvent = (event: CallerIntentEvent) => {
+        const newGroup = { ...event, Name: event.IntentName };
+        const newGroups = sortBy(uniqBy([...this.groups, newGroup], 'Name'), 'Name');
+        this.groups = newGroups;
+    };
+
+    OnNLPDataEvent = (event: any): void => {
+        const newGroup = JSON.parse(JSON.parse(event.JsonData).nluResult);
+        newGroup.Name = newGroup.intent.name;
+        const newGroups = sortBy(uniqBy([...this.groups, newGroup], 'Name'), 'Name');
+        this.groups = newGroups;
+    };
+
+    changeMode(event: MatSelectChange): void {
+        if (event.value === 'manual') {
+            console.log('Cancelling listeners');
+            SDKClient.events.off('OnNLPDataEvent', this.OnNLPDataEvent);
+            SDKClient.events.off('CallerIntentEvent', this.CallerIntentEvent);
+            SDKClient.events.off('WorkCodeAddedEvent', this.WorkCodeAddedEvent);
+            this.clearAllData();
+        } else {
+            console.log('Llistening');
+            SDKClient.events.on('OnNLPDataEvent', this.OnNLPDataEvent);
+            SDKClient.events.on('CallerIntentEvent', this.CallerIntentEvent);
+            SDKClient.events.on('WorkCodeAddedEvent', this.WorkCodeAddedEvent);
+            this.clearAllData();
+        }
     }
 }
 
