@@ -5,7 +5,7 @@
             "Type": "nonpbx"
         },
         "FaceAuth": {
-            "Enabled": false,
+            "Enabled": true,
             "AuthServerUrl": "https://tmac.tetherfilabs.com/TFaceAuthProxyNew/Proxy.asmx/VerifyFaceImages"
         },
         "DomainListEnabled": false,
@@ -1292,7 +1292,17 @@
                                     },
                                     "Data": {
                                         "GetCampaignsUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Campaign/GetCampaigns",
-                                        "CreateContactCampaignUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Contact/CreateCampaignContact"
+                                        "CreateContactCampaignUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Contact/CreateCampaignContact",
+                                        "DataMap": {
+                                            "Name": {
+                                                "ValueSource": "CCLDataEvent.CallerName",
+                                                "DefaultValue": "Mr. Tan"
+                                            },
+                                            "Phone": {
+                                                "ValueSource": "CCLDataEvent.RegisteredPhone",
+                                                "DefaultValue": "6596975347"
+                                            }
+                                        }
                                     }
                                 },
                                 {
@@ -1793,7 +1803,17 @@
                                     },
                                     "Data": {
                                         "GetCampaignsUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Campaign/GetCampaigns",
-                                        "CreateContactCampaignUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Contact/CreateCampaignContact"
+                                        "CreateContactCampaignUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Contact/CreateCampaignContact",
+                                        "DataMap": {
+                                            "Name": {
+                                                "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.Name",
+                                                "DefaultValue": "Mr. Tan"
+                                            },
+                                            "Phone": {
+                                                "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.mobile",
+                                                "DefaultValue": "6596975347"
+                                            }
+                                        }
                                     }
                                 },
                                 {

@@ -10,7 +10,7 @@
         <div fxLayout>
             <p fxFlex="20" fxLayoutAlign=" center" class="px-8">Case ID</p>
             <mat-form-field fxFlex appearance="outline" class="custom case-id">
-                <input matInput required placeholder="Case ID" />
+                <input matInput required placeholder="Case ID" [(ngModel)]="caseId" />
                 <mat-error> Case ID is required </mat-error>
             </mat-form-field>
         </div>

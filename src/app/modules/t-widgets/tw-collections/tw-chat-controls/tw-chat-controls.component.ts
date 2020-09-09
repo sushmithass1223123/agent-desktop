@@ -127,7 +127,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // set the interaction id from data
         this.interactionId = this.data.InteractionDetails?.InteractionID;
 
-
         this._appDataService.config
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe(

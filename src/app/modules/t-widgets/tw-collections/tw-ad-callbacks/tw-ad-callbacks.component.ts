@@ -105,6 +105,8 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+
+        SDKClient.events.off('CallbackDataReceivedForAgent', this.CallbackDataReceivedForAgent);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -112,6 +114,8 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
     // -----------------------------------------------------------------------------------------------------
 
     CallbackDataReceivedForAgent = (evt: any) => {
+        console.log('CallbackDataReceivedForAgent', evt);
+
         const callback = JSON.parse(evt);
         callback.contact.status = callback.contact.Status;
         callback.contact.name = callback.contact.Name;

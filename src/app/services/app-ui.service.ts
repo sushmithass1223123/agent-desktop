@@ -9,7 +9,7 @@ import { AppAlertDialogTypes } from 'app/interfaces';
     providedIn: 'root'
 })
 export class AppUiService {
-    constructor(private _matSnackBar: MatSnackBar, private _matDialog: MatDialog) {}
+    constructor(private _matSnackBar: MatSnackBar, private _matDialog: MatDialog) { }
 
     showSnackbar(
         message: string,
@@ -45,7 +45,8 @@ export class AppUiService {
                 close: () => dialogRef.close()
             },
             panelClass: 'alert-dialog',
-            width: '400px'
+            width: '350px',
+            disableClose: true
         });
         return dialogRef;
     }

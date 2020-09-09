@@ -18,6 +18,9 @@
             </div>
             <div fxLayout="row" fxLayoutAlign="space-between none">
                 <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>timer</mat-icon> {{ (duration | date: 'H:mm:ss':'UTC') || '00:00:00' }}</div>
+                <div fxLayout="row" fxLayoutAlign=" center" *ngIf="isSMM">
+                    <img src="assets/images/vectors/{{ channel }}.svg" width="18" class="mr-4" /> {{ channel }}
+                </div>
                 <div fxLayout="row" fxLayoutAlign=" center">
                     <mat-icon>grading</mat-icon> <span class="text-bold">{{ intent }}</span>
                 </div>

@@ -3,7 +3,7 @@ import { InteractionEventService } from '@services/interaction-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import * as _ from 'lodash';
 import { join } from 'lodash';
-import { IUIEvent, SDKClient } from 'tmac-sdk';
+import { IUIEvent, SDKClient, TextChatRemoteUserConnectedEvent, CallerIntentEvent, IncomingCallEvent, IVRDataEvent, UUIDataEvent, CCLDataEvent } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-customer-details',
@@ -49,12 +49,12 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
         });
 
         // register to tmac events
-        SDKClient.events.on('TextChatRemoteUserConnectedEvent', this.CustomerDetailsEvent);
-        SDKClient.events.on('IncomingCallEvent', this.CustomerDetailsEvent);
-        SDKClient.events.on('CallerIntentEvent', this.CustomerDetailsEvent);
-        SDKClient.events.on('IVRDataEvent', this.CustomerDetailsEvent);
-        SDKClient.events.on('UUIDataEvent', this.CustomerDetailsEvent);
-        SDKClient.events.on('CCLDataEvent', this.CustomerDetailsEvent);
+        SDKClient.events.on('IncomingCallEvent', this.IncomingCallEvent);
+        SDKClient.events.on('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
+        SDKClient.events.on('CallerIntentEvent', this.CallerIntentEvent);
+        SDKClient.events.on('IVRDataEvent', this.IVRDataEvent);
+        SDKClient.events.on('UUIDataEvent', this.UUIDataEvent);
+        SDKClient.events.on('CCLDataEvent', this.CCLDataEvent);
     }
 
     ngOnDestroy(): void {
@@ -62,24 +62,44 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
         this.destroyWrapper();
 
         // deregister from tmac events
-        SDKClient.events.off('TextChatRemoteUserConnectedEvent', this.CustomerDetailsEvent);
-        SDKClient.events.off('IncomingCallEvent', this.CustomerDetailsEvent);
-        SDKClient.events.off('CallerIntentEvent', this.CustomerDetailsEvent);
-        SDKClient.events.off('IVRDataEvent', this.CustomerDetailsEvent);
-        SDKClient.events.off('UUIDataEvent', this.CustomerDetailsEvent);
-        SDKClient.events.off('CCLDataEvent', this.CustomerDetailsEvent);
+        SDKClient.events.off('IncomingCallEvent', this.IncomingCallEvent);
+        SDKClient.events.off('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
+        SDKClient.events.off('CallerIntentEvent', this.CallerIntentEvent);
+        SDKClient.events.off('IVRDataEvent', this.IVRDataEvent);
+        SDKClient.events.off('UUIDataEvent', this.UUIDataEvent);
+        SDKClient.events.off('CCLDataEvent', this.CCLDataEvent);
     }
 
-    private CustomerDetailsEvent = (evt: IUIEvent) => {
+    private IncomingCallEvent = (evt: IncomingCallEvent) => {
+        this.processCustomerDetails(evt);
+    }
+
+    private TextChatRemoteUserConnectedEvent = (evt: TextChatRemoteUserConnectedEvent) => {
+        this.processCustomerDetails(evt);
+    }
+
+    private CallerIntentEvent = (evt: CallerIntentEvent) => {
+        this.processCustomerDetails(evt);
+    }
+
+    private IVRDataEvent = (evt: IVRDataEvent) => {
+        this.processCustomerDetails(evt);
+    }
+
+    private UUIDataEvent = (evt: UUIDataEvent) => {
+        this.processCustomerDetails(evt);
+    }
+
+    private CCLDataEvent = (evt: CCLDataEvent) => {
+        this.processCustomerDetails(evt);
+    }
+
+    private processCustomerDetails = (evt: IUIEvent) => {
         // check the interaction
         if (evt.InteractionID !== this.interactionId) {
             return;
         }
-        // check for this event customer info map is there
-        this.checkForCustomerInfo(evt);
-    };
 
-    checkForCustomerInfo(evt: any): void {
         // check if customer info map is available in this event
         this.customerInfo.forEach((item: CustomerInfo) => {
             // split the value source

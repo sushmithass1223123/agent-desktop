@@ -1,13 +1,12 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { FuseConfigService } from '@fuse/services/config.service';
-import { AppDataService } from '@services/app-data.service';
-import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { takeUntil } from 'rxjs/operators';
-import { SDKClient, GenericEvent, TextChatRemoteUserConnectedEvent } from 'tmac-sdk';
 import { AotWidgetService } from '@services/aot-widget.service';
-import { TwWidgetModel } from 'app/models';
+import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
+import { TwWidgetModel } from 'app/models';
 import * as _ from 'lodash';
+import { GenericEvent, SDKClient, TextChatRemoteUserConnectedEvent, IUIEvent } from 'tmac-sdk';
+import { InteractionEventService } from '@services/interaction-event.service';
+import { AppDataService } from '@services/app-data.service';
 
 @Component({
     selector: 'tw-agent-assist',
@@ -35,16 +34,12 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
     appConfig: any;
 
     /**
-     * Constructor
-     * @param {FuseConfigService} _fuseConfigService
-     * @param {AppDataService} _appDataService
+     * Constructor 
      */
     constructor(
-        // @ [OPTIONAL]
-        private _fuseConfigService: FuseConfigService,
-        // @ [OPTIONAL]
         private _appDataService: AppDataService,
-        private _aotWidgetService: AotWidgetService
+        private _aotWidgetService: AotWidgetService,
+        private _interactionEventService: InteractionEventService
     ) {
         super();
     }
@@ -60,20 +55,6 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the fuse config
-        // -----------------------------------------------------------
-        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.fuseConfig = config;
-        });
-
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the app config
-        // -----------------------------------------------------------
-        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.appConfig = config;
-        });
-
 
         // set the interaction id from data
         this.interactionId = this.data.InteractionDetails.InteractionID;
@@ -83,6 +64,14 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
 
         // assign the UCID
         this.ucid = this.data?.InteractionDetails.UCID || '';
+
+        // get the event from event bag to make sure no events are missed
+        const eventBag = this._interactionEventService.get(this.interactionId);
+
+        // process the events if any
+        eventBag.forEach((evt: IUIEvent) => {
+            this[evt.EventName]?.(evt);
+        });
 
         // register to the event
         SDKClient.events.on('OnNLPDataEvent', this.OnNLPDataEvent);

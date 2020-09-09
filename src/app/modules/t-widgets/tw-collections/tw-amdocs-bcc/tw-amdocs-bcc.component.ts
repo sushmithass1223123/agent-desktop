@@ -3,6 +3,7 @@ import { FuseConfigService } from '@fuse/services/config.service';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { takeUntil } from 'rxjs/operators';
+import { IWidget } from 'app/interfaces';
 
 @Component({
     selector: 'tw-ad-amdocs-bcc',
@@ -12,7 +13,7 @@ import { takeUntil } from 'rxjs/operators';
 })
 export class TwAmdocsBccComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     // holds all the data related to this widget from the config
-    @Input() data: any;
+    @Input() data: IWidget;
 
     // -----------------------------------------------------------
     // @ [OPTIONAL] to store the fuse config for theme
@@ -23,6 +24,8 @@ export class TwAmdocsBccComponent extends TWidgetWrapper implements OnInit, OnDe
     // @ [OPTIONAL] to store entire app config and get update
     // -----------------------------------------------------------
     appConfig: any;
+
+    caseId = '';
 
     /**
      * Constructor
@@ -62,6 +65,9 @@ export class TwAmdocsBccComponent extends TWidgetWrapper implements OnInit, OnDe
         this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
             this.appConfig = config;
         });
+
+        // assign the case Id
+        this.caseId = this.data.InteractionDetails?.UCID;
     }
 
     /**

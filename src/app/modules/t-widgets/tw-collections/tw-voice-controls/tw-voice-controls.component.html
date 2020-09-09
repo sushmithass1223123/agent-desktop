@@ -27,7 +27,7 @@
                     fxFlex
                     fxLayout="column"
                     fxLayoutAlign=" none"
-                    class="w-100-p px-12 py-8 border-radius-20 font-size-12 interaction-details"
+                    class="w-100-p px-12 py-8 border-radius-20 interaction-details"
                     [ngClass]="
                         fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
                             ? fuseConfig.layout.anchorWidget.contentBackground
@@ -51,12 +51,12 @@
                         </div>
                         <div fxLayout="column" fxLayoutAlign=" none">
                             <span fxLayout="row" fxLayoutAlign=" center">
-                                <span>Verification Status: </span>
-                                <span class="title text-bold ml-4">NA</span>
+                                <span>Auth Status: </span>
+                                <span class="title text-bold ml-4"> Caller ID </span>
                             </span>
                             <span fxLayout="row" fxLayoutAlign=" center">
-                                <span>Verification Type: </span>
-                                <span class="title text-bold ml-4">NA</span>
+                                <span>Auth Type: </span>
+                                <span class="title text-bold ml-4"> Authenticated </span>
                             </span>
                         </div>
                     </div>
@@ -64,7 +64,7 @@
                         *ngIf="data.Data.IVR?.MenuEnabled"
                         fxLayout="row"
                         fxLayoutAlign=" none"
-                        class="mt-8 px-12 border-radius-30 font-size-12 position-relative ivr-history"
+                        class="mt-8 px-12 border-radius-30 position-relative ivr-history"
                     >
                         <div class="label">IVR History</div>
                         <ul class="breadcrumbs">
