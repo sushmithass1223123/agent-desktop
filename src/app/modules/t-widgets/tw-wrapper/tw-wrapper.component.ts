@@ -68,6 +68,11 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
 
         // assign the AOT config
         this.aot = this.data.Config.AOT;
+
+        // set the drag position for AOT
+        if (this.aot) {
+            this.dragPosition = { x: -(this.data.Config.Position.W / 2), y: -50 };
+        }
     }
 
     ngOnDestroy(): void {

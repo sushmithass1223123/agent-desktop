@@ -81,7 +81,9 @@ tw-canned-responses {
     }
 }
 
-body.theme-dark {
+body.theme-dark,
+body.theme-blue-grey-dark,
+body.theme-pink-grey-dark {
     tw-canned-responses {
         .selected-template {
             .mat-form-field-wrapper {

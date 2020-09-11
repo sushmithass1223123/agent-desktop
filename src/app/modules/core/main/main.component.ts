@@ -1,11 +1,14 @@
 import { DOCUMENT } from '@angular/common';
 import { AfterViewInit, Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { FuseConfigService } from '@fuse/services/config.service';
+import { FuseConfig } from '@fuse/types';
 import { AgentFeaturesService } from '@services/agent-features.service';
+import { AppDataService } from '@services/app-data.service';
+import { AppUiService } from '@services/app-ui.service';
 import { InteractionEventService } from '@services/interaction-event.service';
+import { ThemeSelector } from 'app/layout/utils/theme-selector';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AgentForcedLogoffEvent, SDKClient } from 'tmac-sdk';
@@ -17,7 +20,9 @@ import { AgentForcedLogoffEvent, SDKClient } from 'tmac-sdk';
 })
 export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
 
-    fuseConfig: any;
+    fuseConfig: FuseConfig;
+    appConfig: any;
+
     loaded = false;
 
     // Private
@@ -26,9 +31,10 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
     constructor(
         @Inject(DOCUMENT) private document: any,
         private _fuseConfigService: FuseConfigService,
+        private _appDataService: AppDataService,
         private _fuseSidebarService: FuseSidebarService,
         private _router: Router,
-        private _snackBar: MatSnackBar,
+        private _appUIService: AppUiService,
         private _agentFeaturesService: AgentFeaturesService,
         // this service must not be removed, this will listen to some TMAC events
         private _interactionEventsService: InteractionEventService
@@ -54,6 +60,22 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
             .subscribe((config: any) => {
                 this.fuseConfig = config;
             });
+
+        // Subscribe to app changes
+        this._appDataService.config
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((config: any) => {
+                this.appConfig = config;
+            });
+
+        // apply the theme
+        const themeName = this.appConfig.AppConfigs.Theme || '';
+        if (themeName) {
+            const theme = ThemeSelector.getFuseConfigByTheme(themeName, false);
+            this._fuseConfigService.config = {
+                ...theme
+            };
+        }
     }
 
     /**
@@ -106,12 +128,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     private pollForEvent(): void {
-        this._snackBar.open('Hello, welcome to TMAC', 'x', {
-            duration: 3000,
-            verticalPosition: 'top', // 'top' | 'bottom'
-            horizontalPosition: 'center', // 'start' | 'center' | 'end' | 'left' | 'right'
-            panelClass: ['snackbar']
-        });
+        this._appUIService.showSnackbar('Hello, welcome to TMAC', 'info');
 
         // set the loaded to true
         this.loaded = true;

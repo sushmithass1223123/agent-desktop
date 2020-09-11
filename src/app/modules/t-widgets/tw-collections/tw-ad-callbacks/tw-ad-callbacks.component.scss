@@ -8,7 +8,7 @@ tw-ad-callbacks {
             background-color: white;
             padding: 8px 14px;
             border-radius: 20px;
-            margin: 8px 0px;
+            margin-bottom: 8px;
             &:last-child {
                 margin-bottom: 0px;
             }
@@ -23,7 +23,9 @@ tw-ad-callbacks {
     }
 }
 
-body.theme-dark {
+body.theme-dark,
+body.theme-blue-grey-dark,
+body.theme-pink-grey-dark {
     tw-ad-callbacks {
         .callback-total {
             & > * {

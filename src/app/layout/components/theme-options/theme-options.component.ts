@@ -9,6 +9,7 @@ import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseNavigationService } from '@fuse/components/navigation/navigation.service';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { FuseConfig } from '@fuse/types';
+import { ThemeSelector } from 'app/layout/utils/theme-selector';
 
 @Component({
     selector: 'app-theme-options',
@@ -132,6 +133,16 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
                 // Reset the form values based on the
                 // selected layout style
                 this._resetFormValues(value);
+            });
+
+        // Subscribe to the specific form value changes (colorTheme)
+        this.form.get('colorTheme').valueChanges
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((value) => {
+
+                // Reset the form values based on the
+                // selected layout style
+                this._setTheme(value);
             });
 
         // Subscribe to the form value changes
@@ -294,6 +305,20 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
                     break;
                 }
         }
+    }
+
+    /**
+     * Set the form theme values based on the
+     * selected theme
+     * 
+     * @param value 
+     * @private
+     */
+    private _setTheme(value: string): void {
+        // get FuseConfig for the theme from selector
+        const getTheme = ThemeSelector.getFuseConfigByTheme(value, true);
+        // patch the value to the form
+        this.form.patchValue(getTheme);
     }
 
     // -----------------------------------------------------------------------------------------------------

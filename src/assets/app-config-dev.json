@@ -1486,7 +1486,7 @@
                                                     "CameraCaptureAllowed": false,
                                                     "VoiceNoteAllowed": false,
                                                     "AttachmentAllowed": true,
-                                                    "ScreenShareAllowed": false,
+                                                    "ScreenShareAllowed": true,
                                                     "SnapshotAllowed": true,
                                                     "ShowUserLabel": false,
                                                     "ChatTemplate": {
@@ -2135,6 +2135,7 @@
     },
     "AppConfigs": {
         "TitleName": "TMAC",
+        "Theme": "theme-default-2",
         "Logos": {
             "Favicon": "",
             "Default": {
@@ -2235,8 +2236,9 @@
                 "RemoteThreshold": 15
             },
             "CustomSripts": [
-                "https://tmac.tetherfilabs.com/tmac_client/custom_scripts/collector.min.js",
-                "https://tmac.tetherfilabs.com/tmac_client/custom_scripts/webclientapi-lib.js"
+                "https://dice.tetherfi.cloud/tmaclibs/adapter.js",
+                "https://dice.tetherfi.cloud/tmaclibs/webclientapi-lib.debug.js",
+                "https://dice.tetherfi.cloud/tmaclibs/collector.min.js"
             ]
         }
     }

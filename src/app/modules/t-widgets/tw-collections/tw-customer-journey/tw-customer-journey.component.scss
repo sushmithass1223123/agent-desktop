@@ -84,7 +84,9 @@ tw-customer-journey {
     }
 }
 
-body.theme-dark {
+body.theme-dark,
+body.theme-blue-grey-dark,
+body.theme-pink-grey-dark {
     tw-customer-journey {
         .customer-journey {
             .step {

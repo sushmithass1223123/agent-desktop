@@ -12,13 +12,17 @@ tw-video-controls {
 
             .remote-video {
                 overflow: hidden;
-                position: absolute;
+                position: relative;
                 min-width: 160px;
                 min-height: 120px;
                 max-width: 100%;
-                max-height: 100%;
+                max-height: 44vh;
                 border: 2px solid #ffffff;
                 transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+                &.maximized {
+                    max-height: 85vh;
+                }
 
                 &.vd-1 {
                     width: 100%;

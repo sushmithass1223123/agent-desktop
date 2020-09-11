@@ -153,6 +153,7 @@ $custom_palettes: (
     'fuse-black': $fuse-black,
     'fuse-navy': $fuse-navy,
     'purple': $tetherfi-primary,
+    'red': $tetherfi-secondary,
     'tetherfi-primary': $tetherfi-primary,
     'tetherfi-secondary': $tetherfi-secondary,
     'tetherfi-grey': $tetherfi-grey
@@ -210,35 +211,147 @@ body.theme-default {
     @include fuse-color-classes($palettes);
 }
 
+// Add ".theme-default-2" class to the body to activate this theme.
+// Class name must start with "theme-" !!!
+body.theme-default-2 {
+    // Create an Angular Material theme from the $theme map
+    @include angular-material-theme($theme);
+
+    // Apply the theme to the Fuse Core
+    @include fuse-core-theme($theme);
+
+    // Apply the theme to the user components
+    @include app-core-theme($theme);
+
+    // Generate Fuse color classes for primary, accent and warn colors
+    $palettes: (
+        primary: $default-primary-palette,
+        accent: $default-accent-palette,
+        warn: $default-warn-palette
+    );
+
+    @include fuse-color-classes($palettes);
+}
+
+// Define the primary, accent and warn palettes
+$teal-red-primary-palette: mat-palette($mat-teal);
+$teal-red-accent-palette: mat-palette($mat-red);
+$teal-red-warn-palette: mat-palette($mat-red);
+
+// Create the Material theme object
+$theme: mat-light-theme($teal-red-primary-palette, $teal-red-accent-palette, $teal-red-warn-palette);
+
+// Add ".theme-teal-red" class to the body to activate this theme.
+// Class name must start with "theme-" !!!
+body.theme-teal-red {
+    // Create an Angular Material theme from the $theme map
+    @include angular-material-theme($theme);
+
+    // Apply the theme to the Fuse Core
+    @include fuse-core-theme($theme);
+
+    // Apply the theme to the user components
+    @include app-core-theme($theme);
+
+    // Generate Fuse color classes for primary, accent and warn colors
+    $palettes: (
+        primary: $teal-red-primary-palette,
+        accent: $teal-red-accent-palette,
+        warn: $teal-red-warn-palette
+    );
+
+    @include fuse-color-classes($palettes);
+}
+
 // -----------------------------------------------------------------------------------------------------
 // @ Define a gray dark theme
 // -----------------------------------------------------------------------------------------------------
 
 // Define the primary, accent and warn palettes
-$gray-dark-theme-primary-palette: mat-palette($tetherfi-primary);
-$gray-dark-theme-accent-palette: mat-palette($tetherfi-grey);
-$gray-dark-theme-warn-palette: mat-palette($mat-red);
+$dark-theme-primary-palette: mat-palette($tetherfi-primary);
+$dark-theme-accent-palette: mat-palette($tetherfi-grey);
+$dark-theme-warn-palette: mat-palette($mat-red);
 
 // Create the Material theme object
-$gray-dark-theme: mat-dark-theme($gray-dark-theme-primary-palette, $gray-dark-theme-accent-palette, $gray-dark-theme-warn-palette);
+$dark-theme: mat-dark-theme($dark-theme-primary-palette, $dark-theme-accent-palette, $dark-theme-warn-palette);
 
-// Add ".theme-gray-dark" class to the body to activate this theme.
+// Add "theme-dark" class to the body to activate this theme.
 // Class name must start with "theme-" !!!
 body.theme-dark {
     // Generate the Angular Material theme
-    @include angular-material-theme($gray-dark-theme);
+    @include angular-material-theme($dark-theme);
 
     // Apply the theme to the Fuse Core
-    @include fuse-core-theme($gray-dark-theme);
+    @include fuse-core-theme($dark-theme);
 
     // Apply the theme to the user app core
-    @include app-core-theme($gray-dark-theme);
+    @include app-core-theme($dark-theme);
 
     // Generate Fuse color classes for primary, accent and warn colors
     $palettes: (
-        primary: $gray-dark-theme-primary-palette,
-        accent: $gray-dark-theme-accent-palette,
-        warn: $gray-dark-theme-warn-palette
+        primary: $dark-theme-primary-palette,
+        accent: $dark-theme-accent-palette,
+        warn: $dark-theme-warn-palette
+    );
+
+    @include fuse-color-classes($palettes);
+}
+
+// Define the primary, accent and warn palettes
+$blue-grey-dark-primary-palette: mat-palette($mat-blue-grey);
+$blue-grey-dark-accent-palette: mat-palette($mat-grey);
+$blue-grey-dark-warn-palette: mat-palette($mat-red);
+
+// Create the Material theme object
+$blue-grey-dark: mat-dark-theme($blue-grey-dark-primary-palette, $blue-grey-dark-accent-palette, $blue-grey-dark-warn-palette);
+
+// Add "theme-blue-grey-dark" class to the body to activate this theme.
+// Class name must start with "theme-" !!!
+body.theme-blue-grey-dark {
+    // Generate the Angular Material theme
+    @include angular-material-theme($blue-grey-dark);
+
+    // Apply the theme to the Fuse Core
+    @include fuse-core-theme($blue-grey-dark);
+
+    // Apply the theme to the user app core
+    @include app-core-theme($blue-grey-dark);
+
+    // Generate Fuse color classes for primary, accent and warn colors
+    $palettes: (
+        primary: $blue-grey-dark-primary-palette,
+        accent: $blue-grey-dark-accent-palette,
+        warn: $blue-grey-dark-warn-palette
+    );
+
+    @include fuse-color-classes($palettes);
+}
+
+// Define the primary, accent and warn palettes
+$pink-grey-dark-primary-palette: mat-palette($mat-pink);
+$pink-grey-dark-accent-palette: mat-palette($mat-grey);
+$pink-grey-dark-warn-palette: mat-palette($mat-red);
+
+// Create the Material theme object
+$pink-grey-dark: mat-dark-theme($pink-grey-dark-primary-palette, $pink-grey-dark-accent-palette, $pink-grey-dark-warn-palette);
+
+// Add "theme-pink-grey-dark" class to the body to activate this theme.
+// Class name must start with "theme-" !!!
+body.theme-pink-grey-dark {
+    // Generate the Angular Material theme
+    @include angular-material-theme($pink-grey-dark);
+
+    // Apply the theme to the Fuse Core
+    @include fuse-core-theme($pink-grey-dark);
+
+    // Apply the theme to the user app core
+    @include app-core-theme($pink-grey-dark);
+
+    // Generate Fuse color classes for primary, accent and warn colors
+    $palettes: (
+        primary: $pink-grey-dark-primary-palette,
+        accent: $pink-grey-dark-accent-palette,
+        warn: $pink-grey-dark-warn-palette
     );
 
     @include fuse-color-classes($palettes);

@@ -34,6 +34,7 @@ import {
     IVRDataEvent,
     CallerIntentEvent
 } from 'tmac-sdk';
+import { AppUiService } from '@services/app-ui.service';
 
 @Component({
     selector: 'tw-voice-controls',
@@ -77,7 +78,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         private _fuseProgressBarService: FuseProgressBarService,
         private _appDataService: AppDataService,
         private _interactionManagerService: InteractionManagerService,
-        private _interactionEventService: InteractionEventService
+        private _interactionEventService: InteractionEventService,
+        private _appUIService: AppUiService
     ) {
         super();
     }
@@ -244,7 +246,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         }
 
         // clear audio if any
-        this._appDataService.clearAudio();
+        this._appUIService.clearAudio();
 
         // set the status
         this.status = 'disconnected';
@@ -363,18 +365,18 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     connection = this.createAVConnection('out');
                     connection?.directCall(TEnums.WrcCallTypes.Audio, 'in');
                     // play incoming call sound 
-                    this._appDataService.playAudio('incoming-call', 0.5, true);
+                    this._appUIService.playAudio('incoming-call', 0.5, true);
                     break;
                 case 'call-connecting':
                     // create WebRTC peer connection
                     connection = this.createAVConnection('in');
                     connection?.directCall(TEnums.WrcCallTypes.Audio);
                     // play incoming call sound 
-                    this._appDataService.playAudio('ringing', 0.5, true);
+                    this._appUIService.playAudio('ringing', 0.5, true);
                     break;
                 case 'call-connected':
                     // clear tone of once call connected
-                    this._appDataService.clearAudio();
+                    this._appUIService.clearAudio();
                     break;
                 case 'eventav':
                     // process event av
@@ -475,7 +477,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             case 'onDisconnected':
                 console.log('onAVEvent - onDisconnected');
                 // clear tone of disconnect on dial or incoming
-                this._appDataService.clearAudio();
+                this._appUIService.clearAudio();
                 break;
             case 'onRemoteVideoAdded':
                 // add the stream to reference
@@ -506,7 +508,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 break;
             case 'call-ended':
                 // play call ended tone
-                this._appDataService.playAudio('hung-up', 0.5, false);
+                this._appUIService.playAudio('hung-up', 0.5, false);
                 // close the av connection
                 this.avConns[this.sessionID]?.close();
                 break;
@@ -550,10 +552,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             .then((dt: IResponse) => {
                 this.toggleButton(false, btn);
                 if (dt.response && dt.response.ResultCode === 0) {
-                    this._appDataService.showMessage('Interaction closed sucessfully');
+                    this._appUIService.showSnackbar('Interaction closed sucessfully');
                 }
                 else {
-                    this._appDataService.showMessage('Close interaction failed');
+                    this._appUIService.showSnackbar('Close interaction failed', 'failure');
                 }
             });
     }
@@ -587,7 +589,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     // answer call success
                 }
                 else {
-                    this._appDataService.showMessage('Answer call failed');
+                    this._appUIService.showSnackbar('Answer call failed', 'failure');
                 }
             });
     }
@@ -604,7 +606,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     // disconnect call success
                 }
                 else {
-                    this._appDataService.showMessage('Disconnect call failed');
+                    this._appUIService.showSnackbar('Disconnect call failed', 'failure');
                 }
             });
     }
@@ -631,7 +633,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     // disconnect call success
                 }
                 else {
-                    this._appDataService.showMessage('Hold call failed');
+                    this._appUIService.showSnackbar('Hold call failed', 'failure');
                 }
             });
     }
@@ -658,7 +660,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     // disconnect call success
                 }
                 else {
-                    this._appDataService.showMessage('Unhold call failed');
+                    this._appUIService.showSnackbar('Unhold call failed', 'failure');
                 }
             });
     }

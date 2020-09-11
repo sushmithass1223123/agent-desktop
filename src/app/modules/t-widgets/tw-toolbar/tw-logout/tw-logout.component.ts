@@ -1,11 +1,11 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { ConfirmDialogComponent } from '@modules/shared/confirm-dialog/confirm-dialog.component';
-import { AppDataService } from '@services/app-data.service';
+import { AppUiService } from '@services/app-ui.service';
 import { TWidgetWrapper } from '@twidgets/utils';
-import { IAUXCodes, IResponse, SDKClient, AgentStatusChangeEvent } from 'tmac-sdk';
-import { Router } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
+import { IAUXCodes, IResponse, SDKClient } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-logout',
@@ -22,9 +22,9 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
 
     constructor(
         private _router: Router,
-        private _dialog: MatDialog,
-        private _appDataService: AppDataService,
-        private _fuseProgressBarService: FuseProgressBarService
+        private _dialog: MatDialog, 
+        private _fuseProgressBarService: FuseProgressBarService,
+        private _appUIService: AppUiService
     ) {
         super();
     }
@@ -88,10 +88,12 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
         confirmDialogRef.afterClosed().subscribe((dialogResult) => {
             if (dialogResult) {
                 // logout error
-                this._appDataService.showMessage('Please wait, logging out!');
+                this._appUIService.showSnackbar('Please wait, logging out...', 'loading');
                 // show the progress bar
                 this._fuseProgressBarService.show();
-                SDKClient.logout('ManualLogout', null)
+                SDKClient.logout({
+                    reason: 'ManualLogout'
+                }, null)
                     .then((dt: IResponse) => {
                         // hide the progress bar
                         this._fuseProgressBarService.hide();
@@ -102,7 +104,7 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
                         }
                         else {
                             // logout error
-                            this._appDataService.showMessage('Logout failed, please try again');
+                            this._appUIService.showSnackbar('Logout failed, please try again', 'failure');
                         }
                     });
             }

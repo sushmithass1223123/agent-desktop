@@ -1,14 +1,14 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { fuseAnimations } from '@fuse/animations';
+import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
+import { AppUiService } from '@services/app-ui.service';
 import { ContentPageService } from '@services/content-page.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TWidgetWrapper } from '@twidgets/utils';
 import { InteractionRef } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
-import { MatButton } from '@angular/material/button';
-import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
-import { SDKClient, IResponse, AVChannel } from 'tmac-sdk';
-import { AppDataService } from '@services/app-data.service';
-import { fuseAnimations } from '@fuse/animations';
+import { AVChannel, IResponse, SDKClient } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-active-interactions',
@@ -28,7 +28,7 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
         private _interactionManagerService: InteractionManagerService,
         private _contentPageService: ContentPageService,
         private _fuseProgressBarService: FuseProgressBarService,
-        private _appDataService: AppDataService
+        private _appUIService: AppUiService
     ) {
         super();
     }
@@ -127,7 +127,7 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
                     // disconnect call success
                 }
                 else {
-                    this._appDataService.showMessage('Hold call failed');
+                    this._appUIService.showSnackbar('Hold call failed', 'failure');
                 }
             });
     }
@@ -154,7 +154,7 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
                     // disconnect call success
                 }
                 else {
-                    this._appDataService.showMessage('Unhold call failed');
+                    this._appUIService.showSnackbar('Unhold call failed', 'failure');
                 }
             });
     }
@@ -171,7 +171,7 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
                     // disconnect call success
                 }
                 else {
-                    this._appDataService.showMessage('Disconnect call failed');
+                    this._appUIService.showSnackbar('Disconnect call failed', 'failure');
                 }
             });
     }

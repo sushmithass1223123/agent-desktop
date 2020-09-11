@@ -23,13 +23,14 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
         GetCallbacksUrl: string;
     };
 
-    getDashboardDataRes: ResData<{ callbacks: any[]; handled: number; pending: number }> = {
+    getDashboardDataRes: ResData<{ callbacks: any[]; handled: number; missed: number, pending: number }> = {
         error: false,
         loading: true,
         msg: '',
         data: {
             callbacks: [],
             handled: 0,
+            missed: 0,
             pending: 0
         }
     };
@@ -159,6 +160,7 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
             data: {
                 callbacks,
                 handled,
+                missed,
                 pending
             }
         };

@@ -1,18 +1,18 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewEncapsulation } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseConfigService } from '@fuse/services/config.service';
+import { ConfirmDialogComponent } from '@modules/shared/confirm-dialog/confirm-dialog.component';
+import { AotWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { COMMON_ERR_MESSAGE, AGENT_FEATURES_MAP } from 'app/constants';
+import { AGENT_FEATURES_MAP, COMMON_ERR_MESSAGE } from 'app/constants';
 import { IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import * as _ from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { AgentFeatures, IAgentData, IResponse, SDKClient, SuAgentDataModel, SuAgentModel, TUtils, AgentTabCount } from 'tmac-sdk';
-import { AotWidgetService } from '@services/aot-widget.service';
-import { ConfirmDialogComponent } from '@modules/shared/confirm-dialog/confirm-dialog.component';
-import { MatDialog } from '@angular/material/dialog';
+import { AgentFeatures, AgentTabCount, IAgentData, IAUXCodes, IResponse, SDKClient, SuAgentDataModel, SuAgentModel, TUtils } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-su-active-agents',
@@ -26,6 +26,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     @Input() data: any;
     @Output() selectActiveAgent = new EventEmitter();
 
+
     fuseConfig: any;
     appConfig: any;
 
@@ -38,6 +39,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     featureMap = AGENT_FEATURES_MAP;
 
     activityWidget: IWidget;
+    auxCodesList: IAUXCodes[];
 
     /**
      * Constructor 
@@ -81,6 +83,16 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         // listen to agent list event
         SDKClient.events.on('SupervisorAgentListEvent', this.SupervisorAgentListEvent);
         SDKClient.events.on('TeamAgentListDataEvent', this.TeamAgentListDataEvent);
+
+        // get agent aux codes
+        SDKClient.loadAUXCodes(false, null)
+            .then((result: IResponse) => {
+                // check if the data is null
+                if (result.response && result.response.length > 0) {
+                    // filter and assign the aux codes
+                    this.auxCodesList = result.response.filter((a: IAUXCodes) => a.Display === 1);
+                }
+            });
     }
 
     /**
@@ -173,7 +185,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
 
     public featureCheck(feature: AgentFeatures, type: string, subType: string): boolean {
         // if not allow supervisor or in map the item is not found return false
-        if (!feature.Feature.startsWith('AllowSupervisor') || !this.featureMap[feature.Feature]) {
+        if (!feature.Feature.startsWith('AllowSupervisor') || feature.Feature === 'AllowSupervisorToChangeStatus' || !this.featureMap[feature.Feature]) {
             return false;
         }
 
@@ -197,9 +209,10 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
 
     public performAgentAction(agent: SuAgentModel, feature: AgentFeatures): void {
         console.log('performAgentAction', { agent, feature });
-        this._appUIService.showSnackbar('Please wait, retrieving information...', 'loading');
+
         switch (feature.Feature) {
             case 'AllowSupervisorToCapturePicture':
+                this._appUIService.showSnackbar('Please wait, retrieving information...', 'loading');
                 SDKClient.getAgentActivity({
                     agentId: agent.AgentLoginID,
                     consent: false,
@@ -248,32 +261,36 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                     });
                 break;
             case 'AllowSupervisorToLogout':
-                // // confirm logout 
-                // const confirmDialogRef = this._dialog.open(ConfirmDialogComponent, {
-                //     disableClose: false
-                // });
-                // confirmDialogRef.componentInstance.title = 'Confirm logout';
-                // confirmDialogRef.componentInstance.message = 'Are you sure you want to logout?';
-                // confirmDialogRef.afterClosed().subscribe((dialogResult) => {
-                //     if (dialogResult) {
-                //         // logout error
-                //         this._appDataService.showMessage('Please wait, logging out!');
-                //         // show the progress bar
-                //         this._appUIService.showSnackbar('Please wait, Logging out the user..', 'loading');
-                //         SDKClient.logout('ManualLogout', null)
-                //             .then((dt: IResponse) => {
-                //                 // check if the logout is success
-                //                 if (dt.response && dt.response.ResultCode === 0) {
-                //                     // route back to login page
-                //                     this._appUIService.showSnackbar('Logged out successfully', 'success');
-                //                 }
-                //                 else {
-                //                     // logout error
-                //                     this._appUIService.showSnackbar('Logout failed, please try again', 'failure');
-                //                 }
-                //             });
-                //     }
-                // });
+                // confirm logout 
+                const confirmDialogRef = this._dialog.open(ConfirmDialogComponent, {
+                    disableClose: false
+                });
+                confirmDialogRef.componentInstance.title = 'Confirm logout';
+                confirmDialogRef.componentInstance.message = `Are you sure you want to logout ${agent.AgentName}?`;
+                confirmDialogRef.afterClosed().subscribe((dialogResult) => {
+                    if (dialogResult) {
+                        // show the progress bar
+                        this._appUIService.showSnackbar('Please wait, Logging out the user..', 'loading');
+                        SDKClient.logout({
+                            deviceId: agent.StationID,
+                            reason: 'SupervisorLogout'
+                        }, null)
+                            .then((dt: IResponse) => {
+                                // check if the logout is success
+                                if (dt.response && dt.response.ResultCode === 0) {
+                                    // route back to login page
+                                    this._appUIService.showSnackbar('Logged out successfully', 'success');
+                                }
+                                else {
+                                    // logout error
+                                    this._appUIService.showSnackbar('Logout failed, please try again', 'failure');
+                                }
+                            });
+                    }
+                });
+                break;
+            case 'AllowSupervisorToChangeStatus':
+
                 break;
             default:
         }
@@ -299,6 +316,24 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         widget.Config.Actions = ['maximize', 'minimize', 'destroy'];
         widget.Data = item;
         this._aotWidgetService.addWidget(widget);
+    }
+
+    public changeAgentStatus(agent: SuAgentModel, item: IAUXCodes): void {
+        this._appUIService.showSnackbar('Please wait, changing status...', 'loading');
+        // change the status
+        SDKClient.changeStatus({
+            deviceId: agent.StationID,
+            type: item.Code.toLocaleLowerCase() === 'available' ? 'available' : item.Code.toLocaleLowerCase() === 'acw' ? 'acw' : 'aux',
+            code: item.Value.toString()
+        }, item)
+            .then(() => {
+                // route back to login page
+                this._appUIService.showSnackbar('Status changed successfully', 'success');
+            })
+            .catch(() => {
+                // logout error
+                this._appUIService.showSnackbar('Change status failed, please try again', 'failure');
+            });
     }
 }
 

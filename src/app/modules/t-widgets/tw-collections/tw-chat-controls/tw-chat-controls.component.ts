@@ -21,6 +21,7 @@ import { FuseConfig } from '@fuse/types';
 import { ConfirmDialogComponent } from '@modules/shared/confirm-dialog/confirm-dialog.component';
 import { AotWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
+import { AppUiService } from '@services/app-ui.service';
 import { ContentPageService } from '@services/content-page.service';
 import { InteractionEventService } from '@services/interaction-event.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
@@ -31,25 +32,23 @@ import { Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
 import {
     AVChannel,
-    AVControlMessageReceivedEvent,
-    AVEvent,
     IAgentData,
     IResponse,
     IUIEvent,
     SDKClient,
-    TEnums,
+    AVControlMessageReceivedEvent,
+    TextChatAgentConnectedEvent,
+    TextChatAgentDisconnectedEvent,
+    TextChatAgentMessageReceivedEvent,
     TextChatDisconnectedEvent,
     TextChatMessageReceivedEvent,
     TextChatMessageSentEvent,
     TextChatMessageTemplateSentEvent,
     TextChatRemoteUserConnectedEvent,
     TextChatTranscriptForTransferEvent,
-    TextChatUserMessageWaitTimerEvent,
-    TUtils,
-    TextChatAgentConnectedEvent,
     TextChatTypingStateChangedEvent,
-    TextChatAgentMessageReceivedEvent,
-    TextChatAgentDisconnectedEvent
+    TextChatUserMessageWaitTimerEvent,
+    TUtils
 } from 'tmac-sdk';
 
 @Component({
@@ -64,17 +63,15 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
     appConfig: any;
 
+    fuseConfig: FuseConfig;
+
     @Output() maximizeEvent = new EventEmitter();
     @Output() floatEvent = new EventEmitter();
     @Output() collapseEvent = new EventEmitter();
 
     maximized: boolean;
-
-    fuseConfig: FuseConfig;
-
     interactionList: InteractionRef[];
     interactionId: number;
-
     user: IAgentData;
     replyInput: any;
     sessionID = 'NA';
@@ -85,7 +82,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     intent = 'NA';
     conferenceType = '';
     conferenceAgentList = [];
-
     chatTranscripts: ChatTranscripts[] = [];
     customerName = 'Customer';
     avConn: AVChannel;
@@ -95,9 +91,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     channel: string;
     isSMM: boolean;
     showAutoFreeze: boolean;
-
-    // myControl = new FormControl();
-    // options: string[] = ['One', 'Two', 'Three'];
 
     @ViewChildren(FusePerfectScrollbarDirective) directiveScrolls: QueryList<FusePerfectScrollbarDirective>;
     @ViewChildren('replyInput') replyInputField: any;
@@ -111,7 +104,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         private _appDataService: AppDataService,
         private _fuseProgressBarService: FuseProgressBarService,
         private _contentPageService: ContentPageService,
-        private _aotWidgetService: AotWidgetService
+        private _aotWidgetService: AotWidgetService,
+        private _appUIService: AppUiService
     ) {
         super();
     }
@@ -174,7 +168,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
 
         // play new chat sound 
-        this._appDataService.playAudio('new-chat', 0.5);
+        this._appUIService.playAudio('new-chat', 0.5);
 
         this.replyInput = this.replyInputField.first.nativeElement;
         this.readyToReply();
@@ -231,7 +225,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         SDKClient.events.off('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
         SDKClient.events.off('TextChatAgentDisconnectedEvent', this.TextChatAgentDisconnectedEvent);
         SDKClient.events.off('CannedResposeEvent', this.CannedResposeEvent);
-        this.avConn?.events.off('onAVEvent', this.onAVEvent);
     }
 
     private TextChatRemoteUserConnectedEvent = (evt: TextChatRemoteUserConnectedEvent) => {
@@ -495,7 +488,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.readyToReply();
 
         // freeze auto response if needed
-        this.freezeAutoResponse();
+        this.freezeAutoResponse(false);
 
         // TODO:: show chrome notification if needed
         //        hide freeze auto response button
@@ -510,7 +503,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // check if its a av request
         if (evt.Type === 'requestav') {
-            this.createAVConnection(JSON.parse(evt.Message).type);
+            // check the type
+            const type = JSON.parse(evt.Message).param;
+            // open the call widget
+            this.openCallWidget(type, 'in', evt);
         }
 
         // forward the av messages to av channel
@@ -584,6 +580,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
                 // set ready to reply
                 this.readyToReply();
+
+                // freeze the auto response
+                this.freezeAutoResponse(true);
             }
         } catch (error) { }
     }
@@ -668,7 +667,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             .then((dt: any) => {
             })
             .catch(() => {
-                this._appDataService.showMessage('Message send failed!');
+                this._appUIService.showSnackbar('Message send failed!', 'failure');
             });
 
         // Reset the reply form
@@ -681,95 +680,17 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.showAutoFreeze = true;
     }
 
-    private createAVConnection(param: string): AVChannel {
-        // if screenshare, then ignore and send to av channel
-        if (param === 'screenshare') {
+    private openCallWidget(param: string, direction: string, avEvent?: AVControlMessageReceivedEvent): void {
+        // if the widget is created then ignore
+        if (this.callWidget) {
             return;
         }
 
-        // freeze auto response if needed
-        this.freezeAutoResponse();
-
-        // create a AV channel connection
-        const connection = new AVChannel(
-            SDKClient,
-            this.interactionId.toString(),
-            this.user.agentId,
-            this.user.agentName,
-            this.sessionID.split('|')[0],
-            'chat',
-            this.appConfig.AppConfigs.AV || {}
-        );
-
-        // check if the connection is created
-        if (!connection) {
-            return null;
-        }
-
-        // listen to AV events
-        connection.events.on('onAVEvent', this.onAVEvent);
-
-        // assign the av connection
-        this.avConn = connection;
-
-        // return the connection
-        return connection;
-    }
-
-    private onAVEvent = (evt: AVEvent) => {
-        // swtich the av events
-        switch (evt.event) {
-            case 'onIncoming':
-                // disable av buttons
-                this.disableAV = true;
-                // request param
-                const param = evt.data.param.charAt(0).toUpperCase() + evt.data.param.slice(1);
-                // config incoming call
-                const confirmDialogRef = this._dialog.open(ConfirmDialogComponent, {
-                    disableClose: false
-                });
-                confirmDialogRef.componentInstance.message = param + ' call requested by customer, Do you want to accept it?';
-                confirmDialogRef.afterClosed().subscribe((dialogResult) => {
-                    if (dialogResult) {
-                        // accept request
-                        evt.data.response(true);
-                    }
-                    else {
-                        // enable av buttons
-                        this.disableAV = false;
-                        // reject request
-                        evt.data.response(false);
-                        // close the call widget
-                        this._aotWidgetService.destroyWidget(this.callWidget.ID);
-                        this.callWidget = null;
-                    }
-                });
-                // check if any widget has opened
-                if (!this.callWidget) {
-                    // open the widget
-                    this.openCallWidget(evt.data.param);
-                }
-                break;
-            case 'onConnected':
-                this.disableAV = true;
-                break;
-            case 'onFail':
-            case 'onDisconnected':
-            case 'onEnd':
-                this.disableAV = false;
-                break;
-            default:
-            // console.log(evt);
-
-        }
-    }
-
-    private openCallWidget(param: string): void {
         // get the widget type
         const widgetMode = {
             title: param === 'audio' ? 'Audio Call' : 'Video Call',
             type: param === 'audio' ? 'tw-audio-controls' : 'tw-video-controls',
-            icon: param === 'audio' ? 'duo' : 'phone'
+            icon: param === 'audio' ? 'phone' : 'duo'
         };
         // create a call AOT widget
         const widget = new TwWidgetModel(widgetMode.title, widgetMode.type, widgetMode.icon);
@@ -778,15 +699,19 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         widget.Config.Position.W = param === 'audio' ? 600 : 800;
         widget.Config.Position.H = param === 'audio' ? 275 : 550;
         widget.Config.Actions = param === 'audio' ? ['minimize'] : ['minimize', 'maximize'];
-        widget.Data.AVConn = this.avConn;
+        // widget.Data.AVConn = this.avConn;
         widget.Data.CustomerName = this.customerName;
-        widget.Data.SelfUser = this.user;
+        widget.Data.Direction = direction;
+        widget.Data.AVEvent = avEvent;
         widget.Data.Config = this.data.Data;
+        widget.Data.Opener = this;
 
         // open call widget
         this._aotWidgetService.addWidget(widget);
         // assign to the local variable
         this.callWidget = widget;
+        // disable AV buttons
+        this.disableAV = true;
     }
 
     private findConferenceAgent(agentName: string): boolean {
@@ -875,7 +800,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             })
             .catch(() => {
                 this._fuseProgressBarService.hide();
-                this._appDataService.showMessage('End chat failed!');
+                this._appUIService.showSnackbar('End chat failed!', 'failure');
             });
     }
 
@@ -890,23 +815,23 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 this._fuseProgressBarService.hide();
                 // check the response
                 if (dt.response && dt.response.ResultCode === 0) {
-                    this._appDataService.showMessage('Interaction closed sucessfully');
+                    this._appUIService.showSnackbar('Interaction closed sucessfully');
                 }
                 else {
                     // enable if something goes wrong
                     closeBtn.disabled = false;
-                    this._appDataService.showMessage('Close interaction failed');
+                    this._appUIService.showSnackbar('Close interaction failed', 'failure');
                 }
             })
             .catch(() => {
                 this._fuseProgressBarService.hide();
-                this._appDataService.showMessage('Close interaction failed!');
+                this._appUIService.showSnackbar('Close interaction failed!', 'failure');
             });
     }
 
-    freezeAutoResponse(): void {
+    freezeAutoResponse(force: boolean): void {
         // check if valid to freeze
-        if (!this.showAutoFreeze) {
+        if (!this.showAutoFreeze && !force) {
             return;
         }
         // show the progress bar 
@@ -919,45 +844,23 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 // if failed
                 if (!dt.response || dt.response !== 1) {
                     this.showAutoFreeze = true;
-                    this._appDataService.showMessage('Freeze auto response failed!');
+                    this._appUIService.showSnackbar('Freeze auto response failed!', 'failure');
                 }
             })
             .catch(() => {
                 // hide the progress bar
                 this._fuseProgressBarService.hide();
                 this.showAutoFreeze = true;
-                this._appDataService.showMessage('Error in freezing auto response failed!');
+                this._appUIService.showSnackbar('Error in freezing auto response failed!', 'failure');
             });
     }
 
     escalateToAV(type: string): void {
-        // disable AV buttons
-        this.disableAV = true;
+        // freeze auto response if needed
+        this.freezeAutoResponse(false);
 
-        // create the av connection
-        const connection = this.createAVConnection(type);
-
-        // start call
-        connection.startCall(type === 'video' ? TEnums.WrcCallTypes.Video : TEnums.WrcCallTypes.Audio, null)
-            .then((dt: any) => {
-                // check the response is sucess or timed out
-                if (dt.code === TEnums.WrcCodes.RequestTimeout) {
-                    this._appDataService.showMessage(`Escalate to ${dt.param} request timed out`);
-                    // close the call widget
-                    this._aotWidgetService.destroyWidget(this.callWidget.ID);
-                    this.callWidget = null;
-                    // enable AV buttons 
-                    this.disableAV = false;
-                }
-                else {
-                    this.openCallWidget(dt.param);
-                }
-            })
-            .catch((error) => {
-                // enable AV buttons 
-                this.disableAV = false;
-                this._appDataService.showMessage('Error in starting the call: ' + error);
-            });
+        // open call widget
+        this.openCallWidget(type, 'out');
     }
 
     previewMedia(previewData: ChatTranscripts): void {
@@ -978,5 +881,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             if (dialogResult) {
             }
         });
+    }
+
+    dsiposeCallWidget(): void {
+        // dispose the call widget
+        this.callWidget = null;
+        // enable AV buttons
+        this.disableAV = false;
     }
 }

@@ -53,7 +53,9 @@ tw-amdocs-bcc {
     }
 }
 
-body.theme-dark {
+body.theme-dark,
+body.theme-blue-grey-dark,
+body.theme-pink-grey-dark {
     tw-ad-amdocs-bcc {
         mat-form-field {
             &.custom {
