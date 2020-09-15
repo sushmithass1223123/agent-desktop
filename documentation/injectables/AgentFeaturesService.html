@@ -1,0 +1,917 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>agent-desktop documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	      <link rel="stylesheet" href="../styles/style.css">
+    </head>
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top visible-xs">
+            <a href="../" class="navbar-brand">agent-desktop documentation</a>
+            <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="hidden-xs menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li>Injectables</li>
+  <li>AgentFeaturesService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="active">
+            <a href="#info" role="tab" id="info-tab" data-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li >
+            <a href="#source" role="tab" id="source-tab" data-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="c-info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/services/agent-features.service.ts</code>
+        </p>
+
+
+
+
+            <section>
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#_agentFeatureInfo">_agentFeatureInfo</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#_processed">_processed</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#AgentSnapShotEvent">AgentSnapShotEvent</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#captureCameraStream">captureCameraStream</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#captureDisplayStream">captureDisplayStream</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#captureLocation">captureLocation</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#clearAgentFeatures">clearAgentFeatures</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getUrlFromStream">getUrlFromStream</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#processAgentFeatures">processAgentFeatures</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section>
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(_appDataService: <a href="../injectables/AppDataService.html">AppDataService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="27" class="link-to-prism">src/app/services/agent-features.service.ts:27</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>_appDataService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/AppDataService.html" target="_self" >AppDataService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section>
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="captureCameraStream"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Private</span>
+                            captureCameraStream
+                        </b>
+                        <a href="#captureCameraStream"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>captureCameraStream()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="131"
+                            class="link-to-prism">src/app/services/agent-features.service.ts:131</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="captureDisplayStream"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Private</span>
+                            captureDisplayStream
+                        </b>
+                        <a href="#captureDisplayStream"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>captureDisplayStream()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="167"
+                            class="link-to-prism">src/app/services/agent-features.service.ts:167</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="captureLocation"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Private</span>
+                            captureLocation
+                        </b>
+                        <a href="#captureLocation"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>captureLocation()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="209"
+                            class="link-to-prism">src/app/services/agent-features.service.ts:209</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="clearAgentFeatures"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Public</span>
+                            clearAgentFeatures
+                        </b>
+                        <a href="#clearAgentFeatures"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>clearAgentFeatures()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="266"
+                            class="link-to-prism">src/app/services/agent-features.service.ts:266</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getUrlFromStream"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                            getUrlFromStream
+                        </b>
+                        <a href="#getUrlFromStream"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getUrlFromStream(type: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="85"
+                            class="link-to-prism">src/app/services/agent-features.service.ts:85</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>type</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>    <code>Promise&lt;string&gt;</code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="processAgentFeatures"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Public</span>
+                            processAgentFeatures
+                        </b>
+                        <a href="#processAgentFeatures"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>processAgentFeatures()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="228"
+                            class="link-to-prism">src/app/services/agent-features.service.ts:228</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+            <section>
+    
+        <h3 id="inputs">
+            Properties
+        </h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="_agentFeatureInfo"></a>
+                        <span class="name">
+                            <b>
+                                <span class="modifier">Private</span>
+                            _agentFeatureInfo</b>
+                            <a href="#_agentFeatureInfo"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>    <code>literal type</code>
+
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="13" class="link-to-prism">src/app/services/agent-features.service.ts:13</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="_processed"></a>
+                        <span class="name">
+                            <b>
+                                <span class="modifier">Private</span>
+                            _processed</b>
+                            <a href="#_processed"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="11" class="link-to-prism">src/app/services/agent-features.service.ts:11</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="AgentSnapShotEvent"></a>
+                        <span class="name">
+                            <b>
+                                <span class="modifier">Private</span>
+                            AgentSnapShotEvent</b>
+                            <a href="#AgentSnapShotEvent"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>() &#x3D;&gt; {...}</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="47" class="link-to-prism">src/app/services/agent-features.service.ts:47</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="c-source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &#x27;@angular/core&#x27;;
+import { AgentFeatures, SDKClient, TUtils } from &#x27;tmac-sdk&#x27;;
+import { AppDataService } from &#x27;./app-data.service&#x27;;
+declare const navigator: Navigator | any;
+
+@Injectable({
+    providedIn: &#x27;root&#x27;
+})
+export class AgentFeaturesService {
+
+    private _processed: boolean;
+
+    private _agentFeatureInfo: {
+        permissions: {
+            camera: boolean;
+            display: boolean;
+            location: boolean;
+        },
+        data: {
+            cameraStream: MediaStream,
+            displayStream: MediaStream,
+            location: {
+                latitude: number;
+                longitude: number;
+            };
+        }
+    };
+
+    constructor(private _appDataService: AppDataService) {
+        this._agentFeatureInfo &#x3D; {
+            permissions: {
+                camera: false,
+                display: false,
+                location: false
+            },
+            data: {
+                cameraStream: null,
+                displayStream: null,
+                location: null
+            }
+        };
+
+        // listen to AgentSnapShotEvent
+        SDKClient.events.on(&#x27;AgentSnapShotEvent&#x27;, this.AgentSnapShotEvent);
+    }
+
+    private AgentSnapShotEvent &#x3D; async (evt: any) &#x3D;&gt; {
+        // init variables
+        let screenshot &#x3D; &#x27;&#x27;;
+        let snapshot &#x3D; &#x27;&#x27;;
+        let screenvideo &#x3D; &#x27;&#x27;;
+        let location &#x3D; &#x27;&#x27;;
+
+        // get the snapshot
+        if (evt.Camera &amp;&amp; this._agentFeatureInfo.permissions.camera) {
+            snapshot &#x3D; await this.getUrlFromStream(&#x27;snapshot&#x27;);
+        }
+
+        // get the screenshot
+        if (evt.ScreenShot &amp;&amp; this._agentFeatureInfo.permissions.display) {
+            screenshot &#x3D; await this.getUrlFromStream(&#x27;screenshot&#x27;);
+        }
+
+        // get the screenvideo
+        if (evt.ScreenVideo) {
+            screenvideo &#x3D; &#x27;&#x27;;
+        }
+
+        // get the location
+        if (evt.Location &amp;&amp; this._agentFeatureInfo.permissions.location) {
+            location &#x3D; JSON.stringify(this._agentFeatureInfo.data.location);
+        }
+
+        // send the response to SDK
+        SDKClient.sendAgentActivity({
+            requestId: evt.RequestId,
+            consent: false,
+            location,
+            screenshot,
+            screenvideo,
+            snapshot
+        });
+    }
+
+    private async getUrlFromStream(type: string): Promise&lt;string&gt; {
+        // media stream reference
+        let stream: MediaStream;
+
+        // check the type
+        if (type &#x3D;&#x3D;&#x3D; &#x27;screenshot&#x27;) {
+            stream &#x3D; this._agentFeatureInfo.data.displayStream;
+        }
+        else if (type &#x3D;&#x3D;&#x3D; &#x27;snapshot&#x27;) {
+            stream &#x3D; this._agentFeatureInfo.data.cameraStream;
+        }
+
+        return new Promise((resolve, reject) &#x3D;&gt; {
+            try {
+                // create a video element
+                const video &#x3D; document.createElement(&#x27;video&#x27;);
+                // autoplay
+                video.autoplay &#x3D; true;
+                // mte the video
+                video.muted &#x3D; true;
+                // assign the stream
+                video.srcObject &#x3D; stream;
+                // listen to play event
+                video.onplay &#x3D; () &#x3D;&gt; {
+                    // create canvas
+                    const canvas &#x3D; document.createElement(&#x27;canvas&#x27;);
+                    // set canvas width and height
+                    canvas.width &#x3D; video.videoWidth;
+                    canvas.height &#x3D; video.videoHeight;
+
+                    // get context of canvas, used to draw on canvas
+                    const context &#x3D; canvas.getContext(&#x27;2d&#x27;);
+                    // draw video&#x27;s current image on canvas
+                    context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+
+                    // return the canvas url
+                    resolve(canvas.toDataURL());
+                };
+            } catch (error) {
+                // log the error to server for troubleshooting purpose
+                TUtils.Logger.log(&#x27;Exception in getUrlFromStream&#x27;, error);
+                reject(error);
+            }
+        });
+    }
+
+    private captureCameraStream(): void {
+        // check if the permission got
+        if (!SDKClient.getAgentData().isLoggedIn || this._agentFeatureInfo.permissions.camera) {
+            return;
+        }
+
+        // capture selfview
+        navigator.getUserMedia(
+            {
+                audio: false,
+                video: true
+            },
+            (stream: MediaStream) &#x3D;&gt; {
+                stream.getVideoTracks()[0].onended &#x3D; () &#x3D;&gt; {
+                    this._agentFeatureInfo.permissions.camera &#x3D; false;
+                    this._appDataService.showMessage(&#x27;Ended: Please give access to the camera for supervisor&#x27;);
+                    setTimeout(() &#x3D;&gt; {
+                        this.captureCameraStream();
+                    }, 1000);
+                };
+                this._agentFeatureInfo.permissions.camera &#x3D; true;
+                // save the stream to reference
+                this._agentFeatureInfo.data.cameraStream &#x3D; stream;
+            },
+            (error: MediaStreamError) &#x3D;&gt; {
+                this._agentFeatureInfo.permissions.camera &#x3D; false;
+                this._appDataService.showMessage(&#x27;Error: Please give access to the camera for supervisor&#x27;);
+                setTimeout(() &#x3D;&gt; {
+                    this.captureCameraStream();
+                }, 4000);
+                // log the error to server for troubleshooting purpose
+                TUtils.Logger.log(&#x27;Exception in getUserMedia&#x27;, error);
+            }
+        );
+    }
+
+    private captureDisplayStream(): void {
+        // check if the permission got
+        if (!SDKClient.getAgentData().isLoggedIn || this._agentFeatureInfo.permissions.display) {
+            return;
+        }
+
+        // get screen recording stream
+        navigator.mediaDevices.getDisplayMedia()
+            .then((stream: any) &#x3D;&gt; {
+                stream.getVideoTracks()[0].onended &#x3D; () &#x3D;&gt; {
+                    this._agentFeatureInfo.permissions.display &#x3D; false;
+                    this._appDataService.showMessage(&#x27;Ended: Please share your entire screen for supervisor&#x27;);
+                    setTimeout(() &#x3D;&gt; {
+                        this.captureDisplayStream();
+                    }, 1000);
+                };
+                // get the display surface
+                const displaySurface &#x3D; stream.getVideoTracks()[0].getSettings().displaySurface;
+                // check if the user shared entire screen
+                if (displaySurface !&#x3D;&#x3D; &#x27;monitor&#x27;) {
+                    // get the shared strean video tracks and stop
+                    stream.getVideoTracks().forEach((track: MediaStreamTrack) &#x3D;&gt; {
+                        track.stop();
+                    });
+                    // throw an error
+                    throw new MediaStreamError();
+                }
+                this._agentFeatureInfo.permissions.display &#x3D; true;
+                // save the stream to reference
+                this._agentFeatureInfo.data.displayStream &#x3D; stream;
+            })
+            .catch((error: MediaStreamError) &#x3D;&gt; {
+                this._agentFeatureInfo.permissions.display &#x3D; false;
+                this._appDataService.showMessage(&#x27;Error: Please share your entire screen for supervisor&#x27;);
+                setTimeout(() &#x3D;&gt; {
+                    this.captureDisplayStream();
+                }, 2000);
+                // log the error to server for troubleshooting purpose
+                TUtils.Logger.log(&#x27;Exception in getDisplayMedia&#x27;, error);
+            });
+    }
+
+    private captureLocation(): void {
+        // get geolocation
+        navigator.geolocation.getCurrentPosition(
+            // success
+            (location: Position) &#x3D;&gt; {
+                this._agentFeatureInfo.permissions.location &#x3D; true;
+                // get location from browser and save the stream to reference
+                this._agentFeatureInfo.data.location &#x3D; {
+                    latitude: location.coords.latitude,
+                    longitude: location.coords.longitude
+                };
+            },
+            (error: PositionError) &#x3D;&gt; {
+                this._agentFeatureInfo.permissions.location &#x3D; false;
+                // log the error to server for troubleshooting purpose
+                TUtils.Logger.log(&#x27;Exception in getCurrentPosition&#x27;, error);
+            });
+    }
+
+    public processAgentFeatures(): void {
+        TUtils.Logger.console(&#x27;log&#x27;, &#x27;processAgentFeatures&#x27;);
+        // get the agent features from SDK
+        const agentFeatures &#x3D; SDKClient.getAgentData().featuresList;
+        // check the list
+        if (agentFeatures.length &#x3D;&#x3D;&#x3D; 0) {
+            TUtils.Logger.log(&#x27;processAgentFeatures: agent features are empty!&#x27;);
+            return;
+        }
+        // loop through the features and process
+        agentFeatures.forEach((feature: AgentFeatures) &#x3D;&gt; {
+            switch (feature.Feature) {
+                case &#x27;IsCameraCaptureEnabled&#x27;:
+                    // check if enabled, then capture camera
+                    if (feature.IsEnabled) {
+                        this.captureCameraStream();
+                    }
+                    break;
+                case &#x27;IsScreenCaptureEnabled&#x27;:
+                    // check if enabled, then capture camera
+                    if (feature.IsEnabled) {
+                        this.captureDisplayStream();
+                    }
+                    break;
+                case &#x27;IsLocationEnabled&#x27;:
+                    // check if enabled, then capture camera
+                    if (feature.IsEnabled) {
+                        this.captureLocation();
+                    }
+                    break;
+                default:
+            }
+
+            // set processed
+            this._processed &#x3D; true;
+        });
+    }
+
+    public clearAgentFeatures(): void {
+        // unregister from AgentSnapShotEvent
+        SDKClient.events.off(&#x27;AgentSnapShotEvent&#x27;, this.AgentSnapShotEvent);
+
+        // check if processed
+        if (this._processed) {
+            // clear camera stream
+            if (this._agentFeatureInfo.permissions.camera) {
+                this._agentFeatureInfo.data.cameraStream.getTracks().forEach((track: MediaStreamTrack) &#x3D;&gt; {
+                    track.stop();
+                });
+            }
+
+            // clear display stream
+            if (this._agentFeatureInfo.permissions.display) {
+                this._agentFeatureInfo.data.displayStream.getTracks().forEach((track: MediaStreamTrack) &#x3D;&gt; {
+                    track.stop();
+                });
+            }
+        }
+    }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+                   
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> result-matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'AgentFeaturesService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+       <!-- Required to polyfill modern browsers as code is ES5 for IE... -->
+       <script src="../js/libs/custom-elements-es5-adapter.js" charset="utf-8" defer></script>
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+       <script src="../js/libs/zepto.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

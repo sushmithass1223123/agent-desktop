@@ -1,0 +1,1251 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>agent-desktop documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	      <link rel="stylesheet" href="../styles/style.css">
+    </head>
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top visible-xs">
+            <a href="../" class="navbar-brand">agent-desktop documentation</a>
+            <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="hidden-xs menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+<ol class="breadcrumb">
+  <li>Components</li>
+  <li>TwActiveInteractionsComponent</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="active">
+            <a href="#info" role="tab" id="info-tab" data-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li >
+            <a href="#source" role="tab" id="source-tab" data-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li >
+            <a href="#templateData" role="tab" id="templateData-tab" data-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li >
+            <a href="#styleData" role="tab" id="styleData-tab" data-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li >
+            <a href="#tree" role="tab" id="tree-tab" data-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="c-info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>src/app/modules/t-widgets/tw-toolbar/tw-active-interactions/tw-active-interactions.component.ts</code>
+</p>
+
+
+    <p class="comment">
+        <h3>Extends</h3>
+    </p>
+    <p class="comment">
+                <code><a href="../classes/TWidget.html" target="_self" >TWidgetWrapper</a></code>
+    </p>
+
+    <p class="comment">
+        <h3>Implements</h3>
+    </p>
+    <p class="comment">
+                    <code><a href="https://angular.io/api/core/OnInit" target="_blank" >OnInit</a></code>
+                    <code><a href="https://angular.io/api/core/OnDestroy" target="_blank" >OnDestroy</a></code>
+    </p>
+
+
+<section>
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover">
+        <tbody>
+
+
+            <tr>
+                <td class="col-md-3">encapsulation</td>
+                <td class="col-md-9"><code>ViewEncapsulation.None</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>tw-active-interactions</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./tw-active-interactions.component.scss</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./tw-active-interactions.component.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section>
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#currentViewMode">currentViewMode</a>
+                            </li>
+                            <li>
+                                <a href="#interactionList">interactionList</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#disconnectCall">disconnectCall</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#holdCall">holdCall</a>
+                            </li>
+                            <li>
+                                <a href="#ngOnDestroy">ngOnDestroy</a>
+                            </li>
+                            <li>
+                                <a href="#ngOnInit">ngOnInit</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#openInteraction">openInteraction</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#toggleButton">toggleButton</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#unHoldCall">unHoldCall</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Inputs</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#data">data</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section>
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(_interactionManagerService: <a href="../injectables/InteractionManagerService.html">InteractionManagerService</a>, _contentPageService: <a href="../injectables/ContentPageService.html">ContentPageService</a>, _fuseProgressBarService: <a href="../injectables/FuseProgressBarService.html">FuseProgressBarService</a>, _appDataService: <a href="../injectables/AppDataService.html">AppDataService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">src/app/modules/t-widgets/tw-toolbar/tw-active-interactions/tw-active-interactions.component.ts:25</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>_interactionManagerService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/InteractionManagerService.html" target="_self" >InteractionManagerService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>_contentPageService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/ContentPageService.html" target="_self" >ContentPageService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>_fuseProgressBarService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/FuseProgressBarService.html" target="_self" >FuseProgressBarService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>_appDataService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/AppDataService.html" target="_self" >AppDataService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+    <section>
+    <h3 id="inputs">Inputs</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="data"></a>
+                        <b>data</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">src/app/modules/t-widgets/tw-toolbar/tw-active-interactions/tw-active-interactions.component.ts:22</a></div>
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+</section>
+
+
+
+    <section>
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="disconnectCall"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Public</span>
+                            disconnectCall
+                        </b>
+                        <a href="#disconnectCall"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>disconnectCall(item: <a href="../interfaces/InteractionRef.html">InteractionRef</a>, btn: MatButton)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="162"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-toolbar/tw-active-interactions/tw-active-interactions.component.ts:162</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>item</td>
+                                    <td>
+                                                <code><a href="../interfaces/InteractionRef.html" target="_self" >InteractionRef</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>btn</td>
+                                    <td>
+                                            <code>MatButton</code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="holdCall"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Public</span>
+                            holdCall
+                        </b>
+                        <a href="#holdCall"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>holdCall(item: <a href="../interfaces/InteractionRef.html">InteractionRef</a>, btn: MatButton)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="108"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-toolbar/tw-active-interactions/tw-active-interactions.component.ts:108</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>item</td>
+                                    <td>
+                                                <code><a href="../interfaces/InteractionRef.html" target="_self" >InteractionRef</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>btn</td>
+                                    <td>
+                                            <code>MatButton</code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngOnDestroy"></a>
+                    <span class="name">
+                        <b>
+                            ngOnDestroy
+                        </b>
+                        <a href="#ngOnDestroy"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngOnDestroy()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="59"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-toolbar/tw-active-interactions/tw-active-interactions.component.ts:59</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngOnInit"></a>
+                    <span class="name">
+                        <b>
+                            ngOnInit
+                        </b>
+                        <a href="#ngOnInit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngOnInit()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="36"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-toolbar/tw-active-interactions/tw-active-interactions.component.ts:36</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="openInteraction"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Public</span>
+                            openInteraction
+                        </b>
+                        <a href="#openInteraction"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>openInteraction(item: <a href="../interfaces/InteractionRef.html">InteractionRef</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="79"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-toolbar/tw-active-interactions/tw-active-interactions.component.ts:79</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>item</td>
+                                    <td>
+                                                <code><a href="../interfaces/InteractionRef.html" target="_self" >InteractionRef</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toggleButton"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Private</span>
+                            toggleButton
+                        </b>
+                        <a href="#toggleButton"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>toggleButton(show: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>, btn: MatButton)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="64"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-toolbar/tw-active-interactions/tw-active-interactions.component.ts:64</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>show</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>btn</td>
+                                    <td>
+                                            <code>MatButton</code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="unHoldCall"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Public</span>
+                            unHoldCall
+                        </b>
+                        <a href="#unHoldCall"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>unHoldCall(item: <a href="../interfaces/InteractionRef.html">InteractionRef</a>, btn: MatButton)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="135"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-toolbar/tw-active-interactions/tw-active-interactions.component.ts:135</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>item</td>
+                                    <td>
+                                                <code><a href="../interfaces/InteractionRef.html" target="_self" >InteractionRef</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>btn</td>
+                                    <td>
+                                            <code>MatButton</code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section>
+    
+        <h3 id="inputs">
+            Properties
+        </h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="currentViewMode"></a>
+                        <span class="name">
+                            <b>
+                            currentViewMode</b>
+                            <a href="#currentViewMode"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">src/app/modules/t-widgets/tw-toolbar/tw-active-interactions/tw-active-interactions.component.ts:25</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="interactionList"></a>
+                        <span class="name">
+                            <b>
+                            interactionList</b>
+                            <a href="#interactionList"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="../interfaces/InteractionRef.html" target="_self" >InteractionRef[]</a></code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>[]</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="24" class="link-to-prism">src/app/modules/t-widgets/tw-toolbar/tw-active-interactions/tw-active-interactions.component.ts:24</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+</section>
+
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="c-source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from &#x27;@angular/core&#x27;;
+import { ContentPageService } from &#x27;@services/content-page.service&#x27;;
+import { InteractionManagerService } from &#x27;@services/interaction-manager.service&#x27;;
+import { TWidgetWrapper } from &#x27;@twidgets/utils&#x27;;
+import { InteractionRef } from &#x27;app/interfaces&#x27;;
+import { takeUntil } from &#x27;rxjs/operators&#x27;;
+import { MatButton } from &#x27;@angular/material/button&#x27;;
+import { FuseProgressBarService } from &#x27;@fuse/components/progress-bar/progress-bar.service&#x27;;
+import { SDKClient, IResponse, AVChannel } from &#x27;tmac-sdk&#x27;;
+import { AppDataService } from &#x27;@services/app-data.service&#x27;;
+import { fuseAnimations } from &#x27;@fuse/animations&#x27;;
+
+@Component({
+    selector: &#x27;tw-active-interactions&#x27;,
+    templateUrl: &#x27;./tw-active-interactions.component.html&#x27;,
+    styleUrls: [&#x27;./tw-active-interactions.component.scss&#x27;],
+    encapsulation: ViewEncapsulation.None,
+    animations: fuseAnimations
+})
+export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+
+    @Input() data: any;
+
+    interactionList: InteractionRef[] &#x3D; [];
+    currentViewMode: string;
+
+    constructor(
+        private _interactionManagerService: InteractionManagerService,
+        private _contentPageService: ContentPageService,
+        private _fuseProgressBarService: FuseProgressBarService,
+        private _appDataService: AppDataService
+    ) {
+        super();
+    }
+
+    ngOnInit(): void {
+        // call the wrapper init method
+        this.initWrapper(this.data);
+
+        // subscribe to interactions subject
+        this._interactionManagerService.interactions
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((interactions: InteractionRef[]) &#x3D;&gt; {
+                setTimeout(() &#x3D;&gt; {
+                    // TODO:: check if filter for status is needed
+                    // this.interactionList &#x3D; interactions.filter(i &#x3D;&gt; i.status !&#x3D;&#x3D; &#x27;disconnected&#x27;);
+                    this.interactionList &#x3D; interactions;
+                }, 500);
+            });
+
+        // subscribe to content page subject
+        this._contentPageService.mode
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((mode: string) &#x3D;&gt; {
+                this.currentViewMode &#x3D; mode;
+            });
+    }
+
+    ngOnDestroy(): void {
+        // call the wrapper destroy method
+        this.destroyWrapper();
+    }
+
+    private toggleButton(show: boolean, btn: MatButton): void {
+        if (show) {
+            // show the progress bar 
+            this._fuseProgressBarService.show();
+            // disable the button
+            btn.disabled &#x3D; true;
+        }
+        else {
+            // enable button after response
+            btn.disabled &#x3D; true;
+            // hide the progress bar
+            this._fuseProgressBarService.hide();
+        }
+    }
+
+    public openInteraction(item: InteractionRef): void {
+        const data: any &#x3D; new Object();
+
+        // if the item is already active ignore
+        if (!item.isActive) {
+            data.isActive &#x3D; true;
+        }
+
+        // check the type
+        if (item.type &#x3D;&#x3D;&#x3D; &#x27;textchat&#x27;) {
+            // reset unread count 
+            data.otherData &#x3D; {
+                unreadCount: 0
+            };
+        }
+
+        // if there is data, then update the interaction
+        if (Object.keys(data).length &gt; 0) {
+            // set interaction active
+            this._interactionManagerService.updateInteraction(item.interactionId, data);
+        }
+
+        // if current mode item view mode then ignore
+        if (item.path !&#x3D;&#x3D; this.currentViewMode) {
+            // set the content page active
+            this._contentPageService.mode &#x3D; item.path;
+        }
+    }
+
+    public holdCall(item: InteractionRef, btn: MatButton): void {
+        // toggle the button
+        this.toggleButton(true, btn);
+        // check if ms call then do not call api, invoke webclient api hold
+        if (item.otherData.isMSCall) {
+            // get the connection variable
+            const connection: AVChannel &#x3D; item.otherData.avConn;
+            // check if the connection is there and interaction is not on hold
+            if (connection &amp;&amp; item.status !&#x3D;&#x3D; &#x27;hold&#x27;) {
+                connection.hold();
+            }
+            return;
+        }
+        SDKClient.holdCall(item.interactionId.toString(), null)
+            .then((dt: IResponse) &#x3D;&gt; {
+                // toggle the button
+                this.toggleButton(false, btn);
+                // check for the response
+                if (dt.response &amp;&amp; dt.response.ResultCode &#x3D;&#x3D;&#x3D; 0) {
+                    // disconnect call success
+                }
+                else {
+                    this._appDataService.showMessage(&#x27;Hold call failed&#x27;);
+                }
+            });
+    }
+
+    public unHoldCall(item: InteractionRef, btn: MatButton): void {
+        // toggle the button
+        this.toggleButton(true, btn);
+        // check if ms call then do not call api, invoke webclient api hold
+        if (item.otherData.isMSCall) {
+            // get the connection variable
+            const connection: AVChannel &#x3D; item.otherData.avConn;
+            // check if the connection is there and interaction is on hold
+            if (connection &amp;&amp; item.status &#x3D;&#x3D;&#x3D; &#x27;hold&#x27;) {
+                connection.unHold();
+            }
+            return;
+        }
+        SDKClient.unHoldCall(item.interactionId.toString(), null)
+            .then((dt: IResponse) &#x3D;&gt; {
+                // toggle the button
+                this.toggleButton(false, btn);
+                // check for the response
+                if (dt.response &amp;&amp; dt.response.ResultCode &#x3D;&#x3D;&#x3D; 0) {
+                    // disconnect call success
+                }
+                else {
+                    this._appDataService.showMessage(&#x27;Unhold call failed&#x27;);
+                }
+            });
+    }
+
+    public disconnectCall(item: InteractionRef, btn: MatButton): void {
+        // toggle the button
+        this.toggleButton(true, btn);
+        SDKClient.disconnectCall(item.interactionId.toString(), null)
+            .then((dt: IResponse) &#x3D;&gt; {
+                // toggle the button
+                this.toggleButton(false, btn);
+                // check for the response
+                if (dt.response &amp;&amp; dt.response.ResultCode &#x3D;&#x3D;&#x3D; 0) {
+                    // disconnect call success
+                }
+                else {
+                    this._appDataService.showMessage(&#x27;Disconnect call failed&#x27;);
+                }
+            });
+    }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="c-templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;div fxFlex fxFill fxLayout&#x3D;&quot;row&quot; fxLayoutAlign&#x3D;&quot; center&quot; *ngIf&#x3D;&quot;interactionList.length &gt; 0&quot;&gt;
+    &lt;ng-container *ngFor&#x3D;&quot;let item of interactionList&quot;&gt;
+        &lt;div fxLayout&#x3D;&quot;row&quot; class&#x3D;&quot;voice grey-300 border-radius-30 p-8&quot; *ngIf&#x3D;&quot;item.type &#x3D;&#x3D;&#x3D; &#x27;voice&#x27;&quot;&gt;
+            &lt;div mat-card-avatar class&#x3D;&quot;w-36 h-36&quot; (click)&#x3D;&quot;openInteraction(item)&quot;&gt;
+                &lt;mat-icon&gt;phone&lt;/mat-icon&gt;
+            &lt;/div&gt;
+            &lt;div class&#x3D;&quot;mx-8&quot; fxLayout&#x3D;&quot;row&quot; fxLayoutAlign&#x3D;&quot;center center&quot;&gt;{{ item.user }}&lt;/div&gt;
+            &lt;div&gt;
+                &lt;button
+                    *ngIf&#x3D;&quot;item.status !&#x3D;&#x3D; &#x27;hold&#x27;&quot;
+                    [disabled]&#x3D;&quot;item.status !&#x3D;&#x3D; &#x27;connected&#x27;&quot;
+                    mat-icon-button
+                    class&#x3D;&quot;w-36 h-36 bg-success&quot;
+                    #holdBtn
+                    (click)&#x3D;&quot;holdCall(item, holdBtn)&quot;
+                &gt;
+                    &lt;mat-icon&gt;phone_paused&lt;/mat-icon&gt;
+                &lt;/button&gt;
+                &lt;button *ngIf&#x3D;&quot;item.status &#x3D;&#x3D;&#x3D; &#x27;hold&#x27;&quot; mat-icon-button class&#x3D;&quot;w-36 h-36 bg-warning&quot; #unHoldBtn (click)&#x3D;&quot;unHoldCall(item, unHoldBtn)&quot;&gt;
+                    &lt;mat-icon&gt;phone_in_talk&lt;/mat-icon&gt;
+                &lt;/button&gt;
+                &lt;button
+                    [disabled]&#x3D;&quot;item.status !&#x3D;&#x3D; &#x27;connected&#x27;&quot;
+                    mat-icon-button
+                    class&#x3D;&quot;w-36 h-36 ml-4 bg-danger&quot;
+                    #disconnectBtn
+                    (click)&#x3D;&quot;disconnectCall(item, disconnectBtn)&quot;
+                &gt;
+                    &lt;mat-icon&gt;call_end&lt;/mat-icon&gt;
+                &lt;/button&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;avatar
+            class&#x3D;&quot;mx-4&quot;
+            matIcon&#x3D;&quot;{{ item.user &#x3D;&#x3D;&#x3D; &#x27;Customer&#x27; ? &#x27;person&#x27; : null }}&quot;
+            name&#x3D;&quot;{{ item.user }}&quot;
+            classes&#x3D;&quot;w-44 h-44 border-radius-100&quot;
+            matTooltip&#x3D;&quot;{{ item.user }}&quot;
+            circleColor&#x3D;&quot;#5A4980&quot;
+            matBadge&#x3D;&quot;{{ item.otherData.unreadCount || &#x27;&#x27; }}&quot;
+            matBadgePosition&#x3D;&quot;after&quot;
+            (click)&#x3D;&quot;openInteraction(item)&quot;
+            *ngIf&#x3D;&quot;item.type &#x3D;&#x3D;&#x3D; &#x27;textchat&#x27;&quot;
+        &gt;&lt;/avatar&gt;
+    &lt;/ng-container&gt;
+&lt;/div&gt;
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="c-styleData">
+                <p class="comment">
+                    <code>./tw-active-interactions.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">@import &#x27;src/app/scss/shared&#x27;;
+
+tw-active-interactions {
+    .voice {
+        .mat-card-avatar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #ffffff;
+            cursor: pointer;
+        }
+
+        .mat-icon-button {
+            .mat-icon {
+                width: 20px;
+                height: 20px;
+                font-size: 20px;
+            }
+        }
+    }
+
+    avatar {
+        cursor: pointer;
+
+        .mat-badge-content {
+            background: $tw-warning !important;
+            color: $tw-dark !important;
+        }
+    }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="c-tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><div fxFlex fxFill fxLayout="row" fxLayoutAlign=" center" *ngIf="interactionList.length > 0">    <ng-container *ngFor="let item of interactionList">        <div fxLayout="row" class="voice grey-300 border-radius-30 p-8" *ngIf="item.type === \'voice\'">            <div mat-card-avatar class="w-36 h-36" (click)="openInteraction(item)">                <mat-icon>phone</mat-icon>            </div>            <div class="mx-8" fxLayout="row" fxLayoutAlign="center center">{{ item.user }}</div>            <div>                <button                    *ngIf="item.status !== \'hold\'"                    [disabled]="item.status !== \'connected\'"                    mat-icon-button                    class="w-36 h-36 bg-success"                    #holdBtn                    (click)="holdCall(item, holdBtn)"                >                    <mat-icon>phone_paused</mat-icon>                </button>                <button *ngIf="item.status === \'hold\'" mat-icon-button class="w-36 h-36 bg-warning" #unHoldBtn (click)="unHoldCall(item, unHoldBtn)">                    <mat-icon>phone_in_talk</mat-icon>                </button>                <button                    [disabled]="item.status !== \'connected\'"                    mat-icon-button                    class="w-36 h-36 ml-4 bg-danger"                    #disconnectBtn                    (click)="disconnectCall(item, disconnectBtn)"                >                    <mat-icon>call_end</mat-icon>                </button>            </div>        </div>        <avatar            class="mx-4"            matIcon="{{ item.user === \'Customer\' ? \'person\' : null }}"            name="{{ item.user }}"            classes="w-44 h-44 border-radius-100"            matTooltip="{{ item.user }}"            circleColor="#5A4980"            matBadge="{{ item.otherData.unreadCount || \'\' }}"            matBadgePosition="after"            (click)="openInteraction(item)"            *ngIf="item.type === \'textchat\'"        ></avatar>    </ng-container></div></div>'
+    var COMPONENTS = [{'name': 'AlertDialogComponent', 'selector': 'alert-dialog'},{'name': 'AppComponent', 'selector': 'app'},{'name': 'AppThemeOptionsComponent', 'selector': 'app-theme-options'},{'name': 'AvatarComponent', 'selector': 'avatar'},{'name': 'ChatPanelComponent', 'selector': 'chat-panel'},{'name': 'ConfirmDialogComponent', 'selector': 'confirm-dialog'},{'name': 'ContentComponent', 'selector': 'content'},{'name': 'FooterComponent', 'selector': 'footer'},{'name': 'FuseConfirmDialogComponent', 'selector': 'fuse-confirm-dialog'},{'name': 'FuseCountdownComponent', 'selector': 'fuse-countdown'},{'name': 'FuseDemoContentComponent', 'selector': 'fuse-demo-content'},{'name': 'FuseDemoSidebarComponent', 'selector': 'fuse-demo-sidebar'},{'name': 'FuseHighlightComponent', 'selector': 'fuse-highlight'},{'name': 'FuseMaterialColorPickerComponent', 'selector': 'fuse-material-color-picker'},{'name': 'FuseNavHorizontalCollapsableComponent', 'selector': 'fuse-nav-horizontal-collapsable'},{'name': 'FuseNavHorizontalItemComponent', 'selector': 'fuse-nav-horizontal-item'},{'name': 'FuseNavigationComponent', 'selector': 'fuse-navigation'},{'name': 'FuseNavVerticalCollapsableComponent', 'selector': 'fuse-nav-vertical-collapsable'},{'name': 'FuseNavVerticalGroupComponent', 'selector': 'fuse-nav-vertical-group'},{'name': 'FuseNavVerticalItemComponent', 'selector': 'fuse-nav-vertical-item'},{'name': 'FuseProgressBarComponent', 'selector': 'fuse-progress-bar'},{'name': 'FuseSearchBarComponent', 'selector': 'fuse-search-bar'},{'name': 'FuseShortcutsComponent', 'selector': 'fuse-shortcuts'},{'name': 'FuseSidebarComponent', 'selector': 'fuse-sidebar'},{'name': 'FuseThemeOptionsComponent', 'selector': 'fuse-theme-options'},{'name': 'FuseWidgetComponent', 'selector': 'fuse-widget'},{'name': 'HorizontalLayout1Component', 'selector': 'horizontal-layout-1'},{'name': 'LoginComponent', 'selector': 'login'},{'name': 'MainComponent', 'selector': 'main'},{'name': 'NavbarComponent', 'selector': 'navbar'},{'name': 'QuickPanelComponent', 'selector': 'quick-panel'},{'name': 'ResourceNotFoundComponent', 'selector': 'resource-not-found'},{'name': 'SnackbarComponent', 'selector': 'snackbar'},{'name': 'ToolbarComponent', 'selector': 'toolbar'},{'name': 'TwAccountInformationComponent', 'selector': 'tw-account-information'},{'name': 'TwActiveInteractionsComponent', 'selector': 'tw-active-interactions'},{'name': 'TwAdCallbacksComponent', 'selector': 'tw-ad-callbacks'},{'name': 'TwAdFeedbackComponent', 'selector': 'tw-ad-feedback'},{'name': 'TwAdGamificationComponent', 'selector': 'tw-ad-gamification'},{'name': 'TwAdInteractionDetailsComponent', 'selector': 'tw-ad-interaction-details'},{'name': 'TwAdPerformanceComponent', 'selector': 'tw-ad-performance'},{'name': 'TwAdScoreComponent', 'selector': 'tw-ad-score'},{'name': 'TwAdTotalAvComponent', 'selector': 'tw-ad-total-av'},{'name': 'TwAdTotalCallsComponent', 'selector': 'tw-ad-total-calls'},{'name': 'TwAdTotalChatsComponent', 'selector': 'app-tw-ad-total-chats'},{'name': 'TwAdTotalInteractionsComponent', 'selector': 'tw-ad-total-interactions'},{'name': 'TwAgentAssistComponent', 'selector': 'tw-agent-assist'},{'name': 'TwAgentDetailsComponent', 'selector': 'tw-agent-details'},{'name': 'TwAhtTcComponent', 'selector': 'tw-aht-tc'},{'name': 'TwAmdocsBccComponent', 'selector': 'tw-amdocs-bcc'},{'name': 'TwAudioControlsComponent', 'selector': 'tw-audio-controls'},{'name': 'TwAuxCodesComponent', 'selector': 'tw-aux-codes'},{'name': 'TwAuxStatusChartComponent', 'selector': 'tw-aux-status-chart.component'},{'name': 'TwAuxTimerComponent', 'selector': 'tw-aux-timer'},{'name': 'TwBroadcastComponent', 'selector': 'tw-broadcast'},{'name': 'TwCannedResponsesComponent', 'selector': 'tw-canned-responses'},{'name': 'TwCardComponent', 'selector': 'tw-card'},{'name': 'TwCardHeaderComponent', 'selector': 'tw-card-header'},{'name': 'TwcCustomComponent', 'selector': 'twc-custom'},{'name': 'TwChatControlsComponent', 'selector': 'tw-chat-controls'},{'name': 'TwChatPanelComponent', 'selector': 'tw-chat-panel'},{'name': 'TwcHomeComponent', 'selector': 'twc-home'},{'name': 'TwcNoInteractionComponent', 'selector': 'twc-no-interaction'},{'name': 'TwcNoWidgetsComponent', 'selector': 'twc-no-widgets'},{'name': 'TwcSupervisorComponent', 'selector': 'twc-supervisor'},{'name': 'TwcTextchatComponent', 'selector': 'twc-textchat'},{'name': 'TwcUnknownComponent', 'selector': 'twc-unknown'},{'name': 'TwCustomComponent', 'selector': 'tw-custom'},{'name': 'TwCustomerDetailsComponent', 'selector': 'tw-customer-details'},{'name': 'TwCustomerJourneyComponent', 'selector': 'tw-customer-journey'},{'name': 'TwCustomerSentimentComponent', 'selector': 'tw-customer-sentiment'},{'name': 'TwcVoiceComponent', 'selector': 'twc-voice'},{'name': 'TwHeatMapComponent', 'selector': 'tw-heat-map'},{'name': 'TwInstantMessagingComponent', 'selector': 'tw-instant-messaging'},{'name': 'TwInteractionSelectorComponent', 'selector': 'tw-interaction-selector'},{'name': 'TwLogoutComponent', 'selector': 'tw-logout'},{'name': 'TwNotificationsComponent', 'selector': 'tw-notifications'},{'name': 'TwPanelComponent', 'selector': 'tw-panel'},{'name': 'TwRegisterCallbackComponent', 'selector': 'tw-register-callback'},{'name': 'TwSampleComponent', 'selector': 'tw-sample'},{'name': 'TwSuActiveAgentsComponent', 'selector': 'tw-su-active-agents'},{'name': 'TwSuAgentActivityComponent', 'selector': 'tw-su-agent-activity'},{'name': 'TwSuAgentActivityDetailsComponent', 'selector': 'tw-su-agent-activity-details'},{'name': 'TwSuAgentInteractionsComponent', 'selector': 'tw-su-agent-interactions'},{'name': 'TwSuAverageHandleTimeComponent', 'selector': 'tw-su-average-handle-time'},{'name': 'TwSuCallsInQueueComponent', 'selector': 'tw-su-calls-in-queue.component'},{'name': 'TwSuChannelsComponent', 'selector': 'tw-su-channels.component'},{'name': 'TwSuChannelsStatusComponent', 'selector': 'tw-su-channels-status'},{'name': 'TwSuGamificationComponent', 'selector': 'tw-su-gamification'},{'name': 'TwSuIntentListComponent', 'selector': 'tw-su-intent-list'},{'name': 'TwSuStatusComponent', 'selector': 'tw-su-status.component'},{'name': 'TwSuTotalCallsComponent', 'selector': 'tw-su-total-calls.component'},{'name': 'TwSuTransferredConferencedCallsComponent', 'selector': 'tw-su-transferred-conferenced-calls'},{'name': 'TwTemplateComponent', 'selector': 'tw-template'},{'name': 'TwToolbarMenuComponent', 'selector': 'tw-toolbar-menu'},{'name': 'TwUnknownComponent', 'selector': 'tw-unknown'},{'name': 'TwVideoControlsComponent', 'selector': 'tw-video-controls'},{'name': 'TwVoiceBotTranscriptsComponent', 'selector': 'tw-voice-bot-transcripts'},{'name': 'TwVoiceControlsComponent', 'selector': 'tw-voice-controls'},{'name': 'TwVoicePanelComponent', 'selector': 'tw-voice-panel'},{'name': 'TwWallboardComponent', 'selector': 'tw-wallboard'},{'name': 'TwWorkCodesComponent', 'selector': 'tw-work-codes'},{'name': 'TwWrapperComponent', 'selector': 'tw-wrapper'},{'name': 'VerticalLayout1Component', 'selector': 'vertical-layout-1'},{'name': 'WidgetFabComponent', 'selector': 'widget-fab'},{'name': 'WidgetPreviewComponent', 'selector': 'widget-preview'}];
+    var DIRECTIVES = [{'name': 'FuseIfOnDomDirective', 'selector': '[fuseIfOnDom]'},{'name': 'FuseInnerScrollDirective', 'selector': '.inner-scroll'},{'name': 'FuseMatSidenavHelperDirective', 'selector': '[fuseMatSidenavHelper]'},{'name': 'FuseMatSidenavTogglerDirective', 'selector': '[fuseMatSidenavToggler]'},{'name': 'FusePerfectScrollbarDirective', 'selector': '[fusePerfectScrollbar]'},{'name': 'FuseWidgetToggleDirective', 'selector': '[fuseWidgetToggle]'},{'name': 'TWChartDirective', 'selector': '[twChart]'},{'name': 'TwTemplateDirective', 'selector': '[widgetTemplate]'}];
+    var ACTUAL_COMPONENT = {'name': 'TwActiveInteractionsComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+                   
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> result-matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'TwActiveInteractionsComponent.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+       <!-- Required to polyfill modern browsers as code is ES5 for IE... -->
+       <script src="../js/libs/custom-elements-es5-adapter.js" charset="utf-8" defer></script>
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+       <script src="../js/libs/zepto.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

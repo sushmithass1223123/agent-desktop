@@ -269,7 +269,7 @@
                                 {
                                     "Name": "All Interactions",
                                     "Description": "",
-                                    "Type": "tw-ad-total-interactions",
+                                    "Type": "tw-pie-chart",
                                     "Config": {
                                         "Static": false,
                                         "Anchor": false,
@@ -293,7 +293,8 @@
                                         "Disabled": false
                                     },
                                     "Data": {
-                                        "Source": "dashboard"
+                                        "Source": "tw-ad-total-interactions",
+                                        "Role" :  "dashboard"
                                     }
                                 },
                                 {
@@ -329,7 +330,7 @@
                                 {
                                     "Name": "Aux Status",
                                     "Description": "",
-                                    "Type": "tw-aux-status-chart",
+                                    "Type": "tw-pie-chart",
                                     "Config": {
                                         "Static": false,
                                         "Anchor": false,
@@ -352,7 +353,10 @@
                                         "Header": true,
                                         "Disabled": false
                                     },
-                                    "Data": {}
+                                    "Data": {
+                                        "Source": "tw-aux-status-chart",
+                                        "ChartType" : "pie"
+                                    }
                                 },
                                 {
                                     "Name": "Interaction Details",
@@ -647,7 +651,7 @@
                                 {
                                     "Name": "All Interactions",
                                     "Description": "",
-                                    "Type": "tw-ad-total-interactions",
+                                    "Type": "tw-pie-chart",
                                     "Config": {
                                         "Static": false,
                                         "Anchor": false,
@@ -671,7 +675,8 @@
                                         "Disabled": false
                                     },
                                     "Data": {
-                                        "Source": "supervisor"
+                                        "Source" : "tw-ad-total-interactions",
+                                        "Role": "supervisor"
                                     }
                                 },
                                 {
@@ -707,7 +712,7 @@
                                 {
                                     "Name": "Calls in Queue",
                                     "Description": "",
-                                    "Type": "tw-su-calls-in-queue",
+                                    "Type": "tw-pie-chart",
                                     "Config": {
                                         "Anchor": false,
                                         "AOT": false,
@@ -729,12 +734,15 @@
                                         "Header": true,
                                         "Disabled": false
                                     },
-                                    "Data": {}
+                                    "Data": {
+                                        "Source" : "tw-su-calls-in-queue",
+                                        "ChartType" : "doughnut"
+                                    }
                                 },
                                 {
                                     "Name": "Intent List",
                                     "Description": "",
-                                    "Type": "tw-su-intent-list",
+                                    "Type": "tw-pie-chart",
                                     "Config": {
                                         "Static": false,
                                         "Anchor": false,
@@ -757,7 +765,9 @@
                                         "Header": true,
                                         "Disabled": false
                                     },
-                                    "Data": {}
+                                    "Data": {
+                                        "Source" : "tw-su-intent-list"
+                                    }
                                 },
                                 {
                                     "Name": "Skill Dashboard",
@@ -819,7 +829,7 @@
                                 {
                                     "Name": "Status",
                                     "Description": "",
-                                    "Type": "tw-su-status",
+                                    "Type": "tw-pie-chart",
                                     "Config": {
                                         "Static": false,
                                         "Anchor": false,
@@ -842,7 +852,10 @@
                                         "Header": true,
                                         "Disabled": false
                                     },
-                                    "Data": {}
+                                    "Data": {
+                                        "Source" : "tw-su-status",
+                                        "ChartType" : "doughnut"
+                                    }
                                 },
                                 {
                                     "Name": "Work Codes",
@@ -1486,7 +1499,7 @@
                                                     "CameraCaptureAllowed": false,
                                                     "VoiceNoteAllowed": false,
                                                     "AttachmentAllowed": true,
-                                                    "ScreenShareAllowed": false,
+                                                    "ScreenShareAllowed": true,
                                                     "SnapshotAllowed": true,
                                                     "ShowUserLabel": false,
                                                     "ChatTemplate": {
@@ -2135,6 +2148,7 @@
     },
     "AppConfigs": {
         "TitleName": "TMAC",
+        "Theme": "theme-default-2",
         "Logos": {
             "Favicon": "",
             "Default": {
@@ -2235,8 +2249,9 @@
                 "RemoteThreshold": 15
             },
             "CustomSripts": [
-                "https://tmac.tetherfilabs.com/tmac_client/custom_scripts/collector.min.js",
-                "https://tmac.tetherfilabs.com/tmac_client/custom_scripts/webclientapi-lib.js"
+                "https://dice.tetherfi.cloud/tmaclibs/adapter.js",
+                "https://dice.tetherfi.cloud/tmaclibs/webclientapi-lib.debug.js",
+                "https://dice.tetherfi.cloud/tmaclibs/collector.min.js"
             ]
         }
     }

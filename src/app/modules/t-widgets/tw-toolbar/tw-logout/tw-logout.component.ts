@@ -91,7 +91,9 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
                 this._appDataService.showMessage('Please wait, logging out!');
                 // show the progress bar
                 this._fuseProgressBarService.show();
-                SDKClient.logout('ManualLogout', null)
+                SDKClient.logout({
+                    reason : 'ManualLogout'
+                }, null)
                     .then((dt: IResponse) => {
                         // hide the progress bar
                         this._fuseProgressBarService.hide();
