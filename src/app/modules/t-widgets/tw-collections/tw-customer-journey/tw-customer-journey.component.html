@@ -21,6 +21,7 @@
                 *ngFor="let s of customerJourneyTable.tableData.source.data"
                 fxLayout="row-wrap"
                 class="step mb-4 p-4 mat-elevation-z1"
+                (click)="setIframe(s)"
                 [ngClass]="
                     fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
                         ? fuseConfig.layout.anchorWidget.contentBackground
@@ -170,7 +171,7 @@
                 <mat-header-row *matHeaderRowDef="customerJourneyTable.tableData.columns; sticky: true"></mat-header-row>
                 <mat-row
                     (click)="setIframe(row)"
-                    [ngClass]="{ selected: customerJourneyTable.tableData.selection.isSelected(row) }"
+                    [ngClass]="{ selected: !!customerJourneyTable.tableData.selection.isSelected(row) }"
                     *matRowDef="let row; columns: customerJourneyTable.tableData.columns"
                 ></mat-row>
             </mat-table>

@@ -59,6 +59,7 @@ export interface TwChartConfig {
     options: ChartOptions & { setFeedbackEmoji?: boolean; pieceLabel?: Partial<TWChartPieceLabel> };
     colors?: Color[];
     legend?: boolean;
+    type?: string;
     refresh?: () => void;
 }
 
