@@ -4,7 +4,7 @@
 
 <!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
 
-<tw-wrapper [data]="data">
+<tw-wrapper [data]="data" (maximizeEvent)="maximized = $event" *ngIf="showUI">
     <div fxFill fxFlex fxLayout="column" fxLayoutAlign="space-between none" class="position-relative video-controls">
         <div
             fxFlex
@@ -23,16 +23,16 @@
             <div
                 class="border-radius-20 bg-dark remote-video"
                 *ngFor="let user of userList"
-                [ngClass]="'vd-' + userList.length"
+                [ngClass]="'vd-' + userList.length + ' ' + (maximized ? 'maximized' : '')"
                 [@animate]="{ value: '*', params: { y: '100%' } }"
             >
                 <video autoplay playsinline="true" [srcObject]="user.stream" [id]="user.stream.id" #remoteVideo></video>
 
                 <button
-                    *ngIf="chatConfig.SnapshotAllowed"
+                    *ngIf="this.widgetData.chatConfig.SnapshotAllowed"
                     mat-flat-button
                     mat-icon-button
-                    [disabled]="status !== 'connected'"
+                    [disabled]="!connected"
                     matTooltip="Take Snapshot"
                     (click)="takeSnapShot(user)"
                 >
@@ -63,7 +63,7 @@
                 <button
                     mat-flat-button
                     mat-icon-button
-                    [disabled]="status !== 'connected'"
+                    [disabled]="!connected"
                     [matTooltip]="audioMuted ? 'Un Mute' : 'Mute'"
                     (click)="muteAudioCall()"
                     [ngClass]="{ 'mat-warn': audioMuted }"
@@ -74,7 +74,7 @@
                 <button
                     mat-flat-button
                     mat-icon-button
-                    [disabled]="status !== 'connected'"
+                    [disabled]="!connected"
                     [matTooltip]="videoMuted ? 'Un Mute' : 'Mute'"
                     (click)="muteVideoCall()"
                     [ngClass]="{ 'mat-warn': videoMuted }"
@@ -83,19 +83,20 @@
                 </button>
 
                 <button
-                    *ngIf="chatConfig.ScreenShareAllowed"
+                    *ngIf="this.widgetData.chatConfig.ScreenShareAllowed"
                     mat-flat-button
                     mat-icon-button
-                    [disabled]="status !== 'connected' || this.remoteScreenSharing"
+                    [disabled]="!connected || this.remoteScreenSharing"
                     [matTooltip]="screenSharing ? 'Stop Share' : 'Start Share'"
                     (click)="shareScreen()"
+                    [ngClass]="{ 'bg-alt-danger': screenSharing }"
                 >
                     <mat-icon> {{ screenSharing ? 'stop_screen_share' : 'screen_share' }} </mat-icon>
                 </button>
             </div>
 
             <div fxFlex="60" fxLayout="row" fxLayoutAlign="start center" class="controls">
-                <button [disabled]="status !== 'connected'" *ngIf="!hold" mat-flat-button class="warning" matTooltip="Hold" (click)="holdCall()">
+                <button [disabled]="!connected" *ngIf="!hold" mat-flat-button class="warning" matTooltip="Hold" (click)="holdCall()">
                     <mat-icon>phone_paused</mat-icon>
                 </button>
 
@@ -103,7 +104,7 @@
                     <mat-icon>phone_in_talk</mat-icon>
                 </button>
 
-                <button [disabled]="status !== 'connected'" mat-flat-button class="danger" matTooltip="End Call" (click)="endCall()">
+                <button [disabled]="!connected" mat-flat-button class="danger" matTooltip="End Call" (click)="endCall()">
                     <mat-icon>call_end</mat-icon>
                 </button>
             </div>

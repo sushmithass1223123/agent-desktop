@@ -167,11 +167,8 @@ mat-selection-list {
 
         mat-header-cell {
             position: relative;
-
-            // DEMO PURPOSE ONLY
             font-size: 14px;
             font-weight: 700;
-            // DEMO PURPOSE ONLY
 
             .mat-sort-header-arrow {
                 margin: 0 6px 0px 6px;
@@ -194,12 +191,7 @@ mat-selection-list {
     mat-footer-cell {
         justify-content: center;
         text-align: center;
-        font-size: 12px;
-
-        // DEMO PURPOSE ONLY
-        font-size: 14px;
         font-weight: 600;
-        // DEMO PURPOSE ONLY
     }
 }
 // mat table
@@ -286,3 +278,8 @@ mat-dialog-container {
     font-size: 1.4rem !important;
 }
 // mat tooltip
+
+.mat-badge-content {
+    background: $tw-warning !important;
+    color: $tw-dark !important;
+}

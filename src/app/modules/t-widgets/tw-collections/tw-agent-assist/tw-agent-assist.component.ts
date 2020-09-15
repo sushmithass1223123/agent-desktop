@@ -8,6 +8,7 @@ import { TwWidgetModel } from 'app/models';
 import * as _ from 'lodash';
 import { CallerIntentEvent, GenericEvent, IUIEvent, SDKClient, TextChatRemoteUserConnectedEvent } from 'tmac-sdk';
 import { P } from '@angular/cdk/keycodes';
+import { AppUiService } from '@services/app-ui.service';
 
 @Component({
     selector: 'tw-agent-assist',
@@ -40,7 +41,8 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
     constructor(
         private _appDataService: AppDataService,
         private _aotWidgetService: AotWidgetService,
-        private _interactionEventService: InteractionEventService
+        private _interactionEventService: InteractionEventService,
+        private _appUIService: AppUiService
     ) {
         super();
     }
@@ -191,7 +193,7 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
 
         // check if url is provided
         if (!url) {
-            this._appDataService.showMessage('Assist widget URL not found!');
+            this._appUIService.showSnackbar('Assist widget URL not found!', 'failure');
             return;
         }
 

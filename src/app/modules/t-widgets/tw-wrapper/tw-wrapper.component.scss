@@ -22,10 +22,14 @@ tw-wrapper {
             &.maximized {
                 position: fixed;
                 top: 0;
-                left: 0;
+                right: 0;
                 width: 100% !important;
                 height: 100% !important;
                 transform: translate3d(0px, 0px, 0px) !important;
+
+                @include media-breakpoint('gt-sm') {
+                    width: calc(100% - 72px) !important;
+                }
             }
         }
 

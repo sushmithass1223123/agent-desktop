@@ -11,7 +11,7 @@ tw-notifications {
             height: 0;
             width: 0;
             border: 12px solid rgba(255, 255, 255, 0);
-            border-bottom-color: $tw-primary;
+            border-bottom-color: $tw-secondary;
             z-index: 1;
             transition: all 0.1s ease-in 0s;
             opacity: 0;
@@ -23,14 +23,6 @@ tw-notifications {
                 opacity: 1;
                 z-index: 1104;
             }
-        }
-
-        .mat-badge-content {
-            background: $tw-warning !important;
-            color: $tw-dark !important;
-            right: -4px !important;
-            top: -4px !important;
-            font-size: 11px;
         }
     }
 }

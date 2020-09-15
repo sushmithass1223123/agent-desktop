@@ -3,21 +3,34 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
 import { AlertDialogComponent } from '@modules/shared/alert-dialog/alert-dialog.component';
 import { SnackbarComponent } from '../modules/shared/snackbar/snackbar.component';
-import { AppAlertDialogTypes } from 'app/interfaces';
+import { AppAlertDialogTypes, AppNotification } from 'app/interfaces';
+import { BehaviorSubject, Observable } from 'rxjs';
+import * as _ from 'lodash';
+import { TUtils } from 'tmac-sdk';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AppUiService {
-    constructor(private _matSnackBar: MatSnackBar, private _matDialog: MatDialog) { }
+    private _audioInterval: any;
+    private _audio: any;
+    private _appNotificationsSubject: BehaviorSubject<AppNotification[]>;
 
-    showSnackbar(
+    constructor(
+        private _matSnackBar: MatSnackBar,
+        private _matDialog: MatDialog
+    ) {
+        this._appNotificationsSubject = new BehaviorSubject([]);
+    }
+
+    public showSnackbar(
         message: string,
-        state: 'loading' | 'success' | 'failure' = 'success',
+        state: 'info' | 'loading' | 'success' | 'failure' = 'success',
         duration: number = 5000,
         position: 'top' | 'bottom' = 'top'
     ): MatSnackBarRef<SnackbarComponent> {
         const icons = {
+            info: 'info',
             success: 'done',
             failure: 'close',
             loading: 'loop'
@@ -28,7 +41,7 @@ export class AppUiService {
             data: {
                 icon: icons[state],
                 loading: state === 'loading',
-                color: state === 'success' ? 'success' : 'primary',
+                color: state,
                 message
             },
             verticalPosition: position,
@@ -36,7 +49,7 @@ export class AppUiService {
         });
     }
 
-    showAlertModal(message: string, type: AppAlertDialogTypes = 'success', heading?: string): MatDialogRef<AlertDialogComponent> {
+    public showAlertModal(message: string, type: AppAlertDialogTypes = 'success', heading?: string): MatDialogRef<AlertDialogComponent> {
         const dialogRef = this._matDialog.open(AlertDialogComponent, {
             data: {
                 message,
@@ -50,4 +63,91 @@ export class AppUiService {
         });
         return dialogRef;
     }
+
+    // -----------------------------------------------------------------------------------------------------
+
+    public playAudio(type: string = 'default', volume: number = 1, repeat = false): void {
+        // clear if any interval
+        clearInterval(this._audioInterval);
+        // start dial tone
+        this._audio = new Audio(`assets/sounds/${type}.mp3`);
+        // set the volume 
+        this._audio.volume = volume;
+        // play once
+        this._audio.play();
+        // if repeat then loop it
+        if (repeat) {
+            // start interval
+            this._audioInterval = setInterval((x: any) => {
+                x.play();
+            }, 5000, this._audio);
+        }
+    }
+
+    public clearAudio(): void {
+        // if audio playing 
+        if (this._audio) {
+            // pause the audio
+            this._audio.pause();
+        }
+        // clear interval
+        clearInterval(this._audioInterval);
+        // set the interval to null
+        this._audioInterval = null;
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * Get the appNotifications
+     */
+
+    get appNotifications(): any | Observable<any> {
+        return this._appNotificationsSubject.asObservable();
+    }
+
+    public addNotification(notification: AppNotification): string {
+        // Get the value from the behavior subject
+        let notifications = this._appNotificationsSubject.getValue();
+
+        // if id is given, it can be a update
+        if (notification.id) {
+            notifications = _.map(notifications, (item) => {
+                if (item.id === notification.id) {
+                    return { ...item, ...notification };
+                }
+            });
+        }
+        else {
+            // add the id
+            notification.id = TUtils.Generic.uuid();
+            // Merge the new notification
+            notifications = [...notifications, notification];
+            // add the time
+            notification.time = new Date();
+        }
+
+        // Notify the observers
+        this._appNotificationsSubject.next(notifications);
+
+        return notification.id;
+    }
+
+    public removeNotification(id: string): void {
+        // Get the value from the behavior subject
+        let notifications = this._appNotificationsSubject.getValue();
+
+        // remove the item
+        notifications = notifications.filter(n => n.id !== id);
+
+        // Notify the observers
+        this._appNotificationsSubject.next(notifications);
+    }
+
+    public clearAllNotifications(): void {
+        // Notify the observers
+        this._appNotificationsSubject.next([]);
+    }
+
+    // -----------------------------------------------------------------------------------------------------
 }

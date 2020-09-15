@@ -3,8 +3,7 @@
 <!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
 
 <!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
-
-<tw-wrapper [data]="data">
+<tw-wrapper [data]="data" *ngIf="showUI">
     <div fxFill fxLayout="column" fxLayoutAlign="space-between none" class="px-12">
         <div fxLayout="row wrap" fxLayoutAlign=" none" class="mb-8">
             <avatar
@@ -36,7 +35,7 @@
             </div>
             <div fxLayout="row" fxLayoutAlign="space-between none">
                 <span fxLayout="row" fxLayoutAlign=" center">
-                    <mat-icon>timer</mat-icon> {{ (duration * 1000 | date: 'H:mm:ss':'UTC') || '00:00:00' }}
+                    <mat-icon>timer</mat-icon> {{ (duration | date: 'H:mm:ss':'UTC') || '00:00:00' }}
                 </span>
                 <span fxLayout="row" fxLayoutAlign=" center"> <mat-icon>offline_bolt</mat-icon> {{ status }} </span>
             </div>
@@ -47,7 +46,7 @@
                 <button
                     mat-flat-button
                     mat-icon-button
-                    [disabled]="status !== 'connected'"
+                    [disabled]="!connected"
                     [matTooltip]="muted ? 'Un Mute' : 'Mute'"
                     (click)="muteCall()"
                     [ngClass]="{ 'mat-warn': muted }"
@@ -55,17 +54,19 @@
                     <mat-icon> mic_off </mat-icon>
                 </button>
                 <button
+                    *ngIf="this.widgetData.chatConfig.ScreenShareAllowed"
                     mat-flat-button
                     mat-icon-button
-                    [disabled]="status !== 'connected' || this.remoteScreenSharing"
+                    [disabled]="!connected || this.remoteScreenSharing"
                     [matTooltip]="screenSharing ? 'Stop Share' : 'Start Share'"
+                    [ngClass]="{ 'bg-alt-danger': screenSharing }"
                     (click)="shareScreen()"
                 >
                     <mat-icon> {{ screenSharing ? 'stop_screen_share' : 'screen_share' }} </mat-icon>
                 </button>
             </div>
             <div fxLayout="row" fxLayoutAlign="start center" class="controls">
-                <button [disabled]="status !== 'connected'" *ngIf="!hold" mat-flat-button class="warning" matTooltip="Hold" (click)="holdCall()">
+                <button [disabled]="!connected" *ngIf="!hold" mat-flat-button class="warning" matTooltip="Hold" (click)="holdCall()">
                     <mat-icon>phone_paused</mat-icon>
                 </button>
 
@@ -73,15 +74,17 @@
                     <mat-icon>phone_in_talk</mat-icon>
                 </button>
 
-                <button [disabled]="status !== 'connected'" mat-flat-button class="danger" matTooltip="End Call" (click)="endCall()">
+                <button [disabled]="!connected" mat-flat-button class="danger" matTooltip="End Call" (click)="endCall()">
                     <mat-icon>call_end</mat-icon>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- For web phone -->
+    <!-- For audio call -->
     <div hidden>
-        <audio *ngFor="let item of userList" autoplay playsinline="true" [srcObject]="item.stream" id="{{ item.stream.id }}"></audio>
+        <ng-container *ngFor="let item of userList">
+            <audio *ngIf="item.streamInfo.type === 'audio'" autoplay playsinline="true" [srcObject]="item.stream" id="{{ item.stream.id }}"></audio>
+        </ng-container>
     </div>
 </tw-wrapper>

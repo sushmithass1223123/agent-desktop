@@ -7,11 +7,11 @@
         aria-label="Notification dropdown"
         (menuOpened)="menuOpened(true)"
         (menuClosed)="menuOpened(false)"
-        matBadge="{{ unreadCount || '' }}"
-        matBadgePosition="after"
         matTooltip="Notifications"
     >
-        <mat-icon class="primary-text">{{ notifications.length === 0 ? 'notifications' : 'notifications_active' }}</mat-icon>
+        <mat-icon class="primary-text" [matBadge]="unreadCount || ''" matBadgePosition="after">{{
+            notifications.length === 0 ? 'notifications' : 'notifications_active'
+        }}</mat-icon>
     </button>
 </div>
 

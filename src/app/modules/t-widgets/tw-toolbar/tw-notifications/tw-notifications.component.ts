@@ -1,11 +1,11 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { TWidgetWrapper } from '@twidgets/utils';
-import { AppDataService } from '@services/app-data.service';
-import { takeUntil } from 'rxjs/operators';
-import { AppNotification } from 'app/interfaces';
-import { SDKClient, AgentNotificaitonEvent } from 'tmac-sdk';
 import { fuseAnimations } from '@fuse/animations';
+import { AppUiService } from '@services/app-ui.service';
+import { TWidgetWrapper } from '@twidgets/utils';
+import { AppNotification } from 'app/interfaces';
 import * as _ from 'lodash';
+import { takeUntil } from 'rxjs/operators';
+import { AgentNotificaitonEvent, SDKClient } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-notifications',
@@ -23,7 +23,7 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
     notifications: AppNotification[];
 
     constructor(
-        private _appDataService: AppDataService
+        private _appUIService: AppUiService
     ) {
         super();
     }
@@ -35,7 +35,7 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
         // register to event
         SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
 
-        this._appDataService.appNotifications
+        this._appUIService.appNotifications
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe(
                 (notifications: AppNotification[]) => {
@@ -58,7 +58,7 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
     private AgentNotificaitonEvent = (evt: AgentNotificaitonEvent) => {
         // check the type
         if (evt.Type !== 'IM' && evt.Type !== 'InteractionIM') {
-            this._appDataService.addNotification({
+            this._appUIService.addNotification({
                 icon: evt.Type === 'Broadcast' ? 'announcement' : evt.Type === 'Notify' ? 'notification_important' : 'info',
                 message: this.urlify(evt.Message),
                 status: 'new'
@@ -81,10 +81,10 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
     }
 
     clearNotification(item: AppNotification): void {
-        this._appDataService.removeNotification(item.id);
+        this._appUIService.removeNotification(item.id);
     }
 
     clearAllNotifications(): void {
-        this._appDataService.clearAllNotifications();
+        this._appUIService.clearAllNotifications();
     }
 }

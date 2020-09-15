@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AgentFeatures, SDKClient, TUtils } from 'tmac-sdk';
 import { AppDataService } from './app-data.service';
+import { AppUiService } from './app-ui.service';
 declare const navigator: Navigator | any;
 
 @Injectable({
@@ -26,7 +27,10 @@ export class AgentFeaturesService {
         }
     };
 
-    constructor(private _appDataService: AppDataService) {
+    constructor(
+        private _appDataService: AppDataService,
+        private _appUIService: AppUiService
+    ) {
         this._agentFeatureInfo = {
             permissions: {
                 camera: false,
@@ -143,7 +147,7 @@ export class AgentFeaturesService {
             (stream: MediaStream) => {
                 stream.getVideoTracks()[0].onended = () => {
                     this._agentFeatureInfo.permissions.camera = false;
-                    this._appDataService.showMessage('Ended: Please give access to the camera for supervisor');
+                    this._appUIService.showSnackbar('Ended: Please give access to the camera for supervisor', 'failure');
                     setTimeout(() => {
                         this.captureCameraStream();
                     }, 1000);
@@ -154,7 +158,7 @@ export class AgentFeaturesService {
             },
             (error: MediaStreamError) => {
                 this._agentFeatureInfo.permissions.camera = false;
-                this._appDataService.showMessage('Error: Please give access to the camera for supervisor');
+                this._appUIService.showSnackbar('Error: Please give access to the camera for supervisor', 'failure');
                 setTimeout(() => {
                     this.captureCameraStream();
                 }, 4000);
@@ -175,7 +179,7 @@ export class AgentFeaturesService {
             .then((stream: any) => {
                 stream.getVideoTracks()[0].onended = () => {
                     this._agentFeatureInfo.permissions.display = false;
-                    this._appDataService.showMessage('Ended: Please share your entire screen for supervisor');
+                    this._appUIService.showSnackbar('Ended: Please share your entire screen for supervisor', 'failure');
                     setTimeout(() => {
                         this.captureDisplayStream();
                     }, 1000);
@@ -197,7 +201,7 @@ export class AgentFeaturesService {
             })
             .catch((error: MediaStreamError) => {
                 this._agentFeatureInfo.permissions.display = false;
-                this._appDataService.showMessage('Error: Please share your entire screen for supervisor');
+                this._appUIService.showSnackbar('Error: Please share your entire screen for supervisor', 'failure');
                 setTimeout(() => {
                     this.captureDisplayStream();
                 }, 2000);

@@ -80,19 +80,3 @@ tw-canned-responses {
         }
     }
 }
-
-body.theme-dark {
-    tw-canned-responses {
-        .selected-template {
-            .mat-form-field-wrapper {
-                .mat-form-field-flex {
-                    .mat-form-field-infix {
-                        textarea {
-                            background-color: rgba(255, 255, 255, 0.04);
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
