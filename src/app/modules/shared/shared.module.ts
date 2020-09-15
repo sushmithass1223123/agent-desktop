@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { FuseSharedModule } from '@fuse/shared.module';
-import { NgxChartsModule } from '@swimlane/ngx-charts';
+// import { NgxChartsModule } from '@swimlane/ngx-charts';
 import * as Chart from 'chart.js';
 // import 'chartjs-plugin-piechart-outlabels';
 import { ChartsModule } from 'ng2-charts';
@@ -28,7 +28,7 @@ Chart.defaults.global.plugins = {
     outlabels: { display: false, backgroundColor: null, font: { size: 15 }, color: 'black' }
 };
 
-const sharedModules = [MaterialModule, FuseSharedModule, LeafletModule, ChartsModule, NgxChartsModule];
+const sharedModules = [MaterialModule, FuseSharedModule, LeafletModule, ChartsModule];
 
 const sharedComponents = [
     ResourceNotFoundComponent,

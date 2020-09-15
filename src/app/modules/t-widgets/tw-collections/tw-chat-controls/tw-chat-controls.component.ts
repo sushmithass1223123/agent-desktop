@@ -574,7 +574,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     messageId,
                     message,
                     type,
-                    time: (evt.CreatedTime && new Date(Date.parse(evt.CreatedTime.toString())).toLocaleString()) || new Date().toLocaleString(),
+                    time: evt.CreatedTime ? new Date(Date.parse(evt.CreatedTime.toString())).toLocaleString() : new Date().toLocaleString(),
                     attachment
                 });
 

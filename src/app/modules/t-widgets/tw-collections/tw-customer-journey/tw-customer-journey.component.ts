@@ -11,6 +11,8 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { sortBy, uniqBy } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 import { IGetInteractionHistory, InteractionHistoryReadyEvent, IUIEvent, SDKClient, InteractionHistory } from 'tmac-sdk';
+import { TwWrapperComponent } from '@modules/t-widgets/tw-wrapper/tw-wrapper.component';
+import { FusePerfectScrollbarDirective } from '@fuse/directives/fuse-perfect-scrollbar/fuse-perfect-scrollbar.directive';
 
 @Component({
     selector: 'tw-customer-journey',
@@ -36,6 +38,10 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             this.customerJourneyTable.tableData.source.sort = content;
         }
     }
+
+    @ViewChild(TwWrapperComponent) wrapperComponent: TwWrapperComponent;
+
+    @ViewChild(FusePerfectScrollbarDirective) fuseDirective: FusePerfectScrollbarDirective;
 
     interactionId: number;
     historyParams: IGetInteractionHistory;
@@ -105,7 +111,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             this[evt.EventName]?.(evt);
         });
 
-        SDKClient.events.on('InteractionHistoryReadyEvent', (this.InteractionHistoryReadyEvent));
+
+        SDKClient.events.on('InteractionHistoryReadyEvent', this.InteractionHistoryReadyEvent);
     }
 
     ngOnDestroy(): void {
@@ -140,9 +147,12 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             .then((res: any) => {
                 let tableData = [];
                 if (lastId) {
-                    tableData = uniqBy([...this.customerJourneyTable.tableData.source.data, ...sortBy(res.response, 'ItemID')], 'SessionID');
+                    tableData = uniqBy(
+                        sortBy([...this.customerJourneyTable.tableData.source.data, ...res.response], 'InteractionDate').reverse(),
+                        'SessionID'
+                    );
                 } else {
-                    tableData = uniqBy([...sortBy(res.response, 'ItemID')], 'SessionID');
+                    tableData = uniqBy([...sortBy(res.response, 'InteractionDate').reverse()], 'SessionID');
                 }
                 this.customerJourneyTable.tableData.source.data = tableData;
                 this.customerJourneyTable.lastId = res.response[0]?.LastIndex;
@@ -155,6 +165,10 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     }
 
     public setIframe(row: InteractionHistory): void {
+        if (!this.maximized) {
+            this.maximized = true;
+            this.wrapperComponent.maximize();
+        }
         this.customerJourneyTable.tableData.selection.toggle(row);
         this.customerJourneyTable.iframeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(`${this.data.Data.IframeBaseUrl}${row.SessionID}`);
     }
