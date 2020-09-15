@@ -1,6 +1,9 @@
 // Material components custom theming
 @import 'themes/material.theme';
 
+// Common theming
+@import 'themes/common.theme';
+
 // Layout components theming
 @import 'src/app/layout/components/chat-panel/chat-panel.theme';
 @import 'src/app/layout/components/toolbar/toolbar.theme';
@@ -16,6 +19,10 @@
 @import 'src/app/modules/t-widgets/tw-collections/tw-voice-controls/tw-voice-controls.theme';
 @import 'src/app/modules/t-widgets/tw-collections/tw-chat-controls/tw-chat-controls.theme';
 @import 'src/app/modules/t-widgets/tw-collections/tw-su-active-agents/tw-su-active-agents.theme';
+@import 'src/app/modules/t-widgets/tw-collections/tw-ad-callbacks/tw-ad-callbacks.theme';
+@import 'src/app/modules/t-widgets/tw-collections/tw-amdocs-bcc/tw-amdocs-bcc.theme';
+@import 'src/app/modules/t-widgets/tw-collections/tw-canned-responses/tw-canned-responses.theme';
+@import 'src/app/modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.theme';
 
 // Define a mixin for easier access
 @mixin app-core-theme($theme) {
@@ -39,6 +46,9 @@
     // Material custom
     @include matarial-theme($theme);
 
+    // Common theme
+    @include common-theme($theme);
+
     // Layout components
     @include chat-panel-theme($theme);
     @include toolbar-theme($theme);
@@ -54,4 +64,8 @@
     @include tw-voice-controls-theme($theme);
     @include tw-chat-controls-theme($theme);
     @include tw-su-active-agents-theme($theme);
+    @include tw-ad-callbacks-theme($theme);
+    @include tw-amdocs-bcc-theme($theme);
+    @include tw-canned-responses-theme($theme);
+    @include tw-customer-journey-theme($theme);
 }

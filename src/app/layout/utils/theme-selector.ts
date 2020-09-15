@@ -78,7 +78,7 @@ export class ThemeSelector {
                     break;
                 }
 
-            case 'theme-dark':
+            case 'theme-default-dark':
                 {
                     selectedTheme = {
                         layout: {

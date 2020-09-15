@@ -41,11 +41,11 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
         this._interactionManagerService.interactions
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((interactions: InteractionRef[]) => {
-                setTimeout(() => {
-                    // TODO:: check if filter for status is needed
-                    // this.interactionList = interactions.filter(i => i.status !== 'disconnected');
-                    this.interactionList = interactions;
-                }, 500);
+                // setTimeout(() => {
+                // TODO:: check if filter for status is needed
+                // this.interactionList = interactions.filter(i => i.status !== 'disconnected');
+                this.interactionList = interactions;
+                // }, 500);
             });
 
         // subscribe to content page subject

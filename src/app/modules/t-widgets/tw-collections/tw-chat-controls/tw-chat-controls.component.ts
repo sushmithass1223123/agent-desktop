@@ -164,7 +164,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             this._contentPageService.getCurrentMode() !== this.data.Data.Path) {
             setTimeout(() => {
                 this._contentPageService.mode = this.data.Data.Path;
-            }, 500);
+            });
         }
 
         // play new chat sound 

@@ -16,13 +16,15 @@ import { AppComponent } from 'app/app.component';
 import { fuseConfig } from 'app/constants';
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
+import { InteractionManagerService } from '@services/interaction-manager.service';
 
 @NgModule({
     declarations: [AppComponent],
     providers: [
         AotWidgetService,
         AppDataService,
-        AgentFeaturesService
+        AgentFeaturesService,
+        InteractionManagerService
     ],
     imports: [
         BrowserModule,

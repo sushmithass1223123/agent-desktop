@@ -22,15 +22,3 @@ tw-ad-callbacks {
         }
     }
 }
-
-body.theme-dark,
-body.theme-blue-grey-dark,
-body.theme-pink-grey-dark {
-    tw-ad-callbacks {
-        .callback-total {
-            & > * {
-                background-color: rgba(255, 255, 255, 0.04);
-            }
-        }
-    }
-}

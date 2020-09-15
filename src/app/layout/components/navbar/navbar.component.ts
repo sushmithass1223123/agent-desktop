@@ -2,11 +2,12 @@ import { Component, Input, OnDestroy, OnInit, QueryList, ViewChildren, ViewEncap
 import { MatListOption } from '@angular/material/list';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { FuseConfigService } from '@fuse/services/config.service';
-import { IWidget } from 'app/interfaces/';
+import { IWidget, InteractionRef } from 'app/interfaces/';
 import { AppDataService } from 'app/services/app-data.service';
 import { ContentPageService } from 'app/services/content-page.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { InteractionManagerService } from '@services/interaction-manager.service';
 
 @Component({
     selector: 'navbar',
@@ -37,12 +38,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
      * @param {AppDataService} _appDataService 
      * @param {ContentPageService} _contentPageService 
      * @param {FuseSidebarService} _fuseSidebarService 
+     * @param {InteractionManagerService} _interactionManagerService 
      */
     constructor(
         private _fuseConfigService: FuseConfigService,
         private _appDataService: AppDataService,
         private _contentPageService: ContentPageService,
-        private _fuseSidebarService: FuseSidebarService
+        private _fuseSidebarService: FuseSidebarService,
+        private _interactionManagerService: InteractionManagerService
     ) {
         // Set the private defaults
         this._unsubscribeAll = new Subject();
@@ -87,6 +90,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
                         // check if any item is set to active
                         this.topWidgets.forEach((item: IWidget) => {
+                            item.Data.Count = 0;
                             if (item.Data.Active === true) {
                                 this.selectTab(item);
                                 selected = true;
@@ -113,6 +117,22 @@ export class NavbarComponent implements OnInit, OnDestroy {
                 this.sidebarListOptions?.forEach((option: MatListOption) => {
                     if (option.value === viewMode && !option.selected) {
                         option.selected = true;
+                    }
+                });
+            });
+
+        this._interactionManagerService.interactions
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((interactions: InteractionRef[]) => {
+                this.topWidgets.forEach((item) => {
+                    // set the count to 0
+                    item.Data.Count = 0;
+                    if (interactions.length > 0) {
+                        // match the path and add the count
+                        const interaction = interactions.filter((i: InteractionRef) => i.path === item.Data.Path);
+                        if (interaction.length > 0) {
+                            item.Data.Count = interaction.length;
+                        }
                     }
                 });
             });

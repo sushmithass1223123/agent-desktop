@@ -83,15 +83,3 @@ tw-customer-journey {
         }
     }
 }
-
-body.theme-dark,
-body.theme-blue-grey-dark,
-body.theme-pink-grey-dark {
-    tw-customer-journey {
-        .customer-journey {
-            .step {
-                background-color: rgba(255, 255, 255, 0.04);
-            }
-        }
-    }
-}

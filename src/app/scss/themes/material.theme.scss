@@ -56,15 +56,9 @@
             }
         }
 
-        // DEMO PURPOSE ONLY
         mat-header-cell {
-            @if ($is-dark) {
-                color: white;
-            } @else {
-                color: rgba(0, 0, 0, 0.87);
-            }
+            color: mat-color($foreground, text);
         }
-        // DEMO PURPOSE ONLY
 
         mat-row {
             @if ($is-dark) {

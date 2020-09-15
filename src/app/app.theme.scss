@@ -189,30 +189,9 @@ $default-warn-palette: mat-palette($mat-red);
 // Create the Material theme object
 $theme: mat-light-theme($default-primary-palette, $default-accent-palette, $default-warn-palette);
 
-// Add ".theme-default" class to the body to activate this theme.
+// Add ".theme-default/theme-default-2" class to the body to activate this theme.
 // Class name must start with "theme-" !!!
-body.theme-default {
-    // Create an Angular Material theme from the $theme map
-    @include angular-material-theme($theme);
-
-    // Apply the theme to the Fuse Core
-    @include fuse-core-theme($theme);
-
-    // Apply the theme to the user components
-    @include app-core-theme($theme);
-
-    // Generate Fuse color classes for primary, accent and warn colors
-    $palettes: (
-        primary: $default-primary-palette,
-        accent: $default-accent-palette,
-        warn: $default-warn-palette
-    );
-
-    @include fuse-color-classes($palettes);
-}
-
-// Add ".theme-default-2" class to the body to activate this theme.
-// Class name must start with "theme-" !!!
+body.theme-default,
 body.theme-default-2 {
     // Create an Angular Material theme from the $theme map
     @include angular-material-theme($theme);
@@ -275,9 +254,9 @@ $dark-theme-warn-palette: mat-palette($mat-red);
 // Create the Material theme object
 $dark-theme: mat-dark-theme($dark-theme-primary-palette, $dark-theme-accent-palette, $dark-theme-warn-palette);
 
-// Add "theme-dark" class to the body to activate this theme.
+// Add "theme-default-dark" class to the body to activate this theme.
 // Class name must start with "theme-" !!!
-body.theme-dark {
+body.theme-default-dark {
     // Generate the Angular Material theme
     @include angular-material-theme($dark-theme);
 

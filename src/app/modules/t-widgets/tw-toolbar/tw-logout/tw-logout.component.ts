@@ -22,7 +22,7 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
 
     constructor(
         private _router: Router,
-        private _dialog: MatDialog, 
+        private _dialog: MatDialog,
         private _fuseProgressBarService: FuseProgressBarService,
         private _appUIService: AppUiService
     ) {
@@ -99,6 +99,7 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
                         this._fuseProgressBarService.hide();
                         // check if the logout is success
                         if (dt.response && dt.response.ResultCode === 0) {
+                            this._appUIService.showSnackbar('Logged out successfully');
                             // route back to login page
                             this._router.navigate(['login']);
                         }
@@ -106,6 +107,9 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
                             // logout error
                             this._appUIService.showSnackbar('Logout failed, please try again', 'failure');
                         }
+                    })
+                    .catch(() => {
+                        this._appUIService.showSnackbar('Logout failed, please try again', 'failure');
                     });
             }
         });
