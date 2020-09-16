@@ -4,7 +4,7 @@ import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-b
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
 import { AppDataService } from '@services/app-data.service';
-import { InteractionEventService } from '@services/interaction-event.service';
+import { TMACEventService } from '@services/tmac-event.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { InteractionRef, IWidget } from 'app/interfaces';
@@ -78,7 +78,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         private _fuseProgressBarService: FuseProgressBarService,
         private _appDataService: AppDataService,
         private _interactionManagerService: InteractionManagerService,
-        private _interactionEventService: InteractionEventService,
+        private _interactionEventService: TMACEventService,
         private _appUIService: AppUiService
     ) {
         super();

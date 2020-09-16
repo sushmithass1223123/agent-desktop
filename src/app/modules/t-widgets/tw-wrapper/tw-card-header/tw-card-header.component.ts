@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { FuseConfig } from '@fuse/types';
 import { IWidget } from 'app/interfaces';
-import { AotWidgetService } from '@services/aot-widget.service';
+import { AOTWidgetService } from '@services/aot-widget.service';
 
 @Component({
     selector: 'tw-card-header',
@@ -20,7 +20,7 @@ export class TwCardHeaderComponent implements OnInit {
     @Output() destroy = new EventEmitter();
 
     constructor(
-        private _aotWidgetService: AotWidgetService
+        private _aotWidgetService: AOTWidgetService
     ) { }
 
     ngOnInit(): void { }

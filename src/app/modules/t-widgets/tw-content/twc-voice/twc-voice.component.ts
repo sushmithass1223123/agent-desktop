@@ -1,5 +1,5 @@
 import { Component, ElementRef, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { InteractionEventService } from '@services/interaction-event.service';
+import { TMACEventService } from '@services/tmac-event.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { InteractionWidgets, IWidget, InteractionRef } from 'app/interfaces';
@@ -23,7 +23,7 @@ export class TwcVoiceComponent extends TWContentWrapper implements OnInit, OnDes
     constructor(
         public hostElement: ElementRef,
         public contentPageService: ContentPageService,
-        private _interactionEventService: InteractionEventService,
+        private _interactionEventService: TMACEventService,
         private _interactionManagerService: InteractionManagerService
     ) {
         super(hostElement, contentPageService);

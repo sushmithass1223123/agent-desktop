@@ -30,6 +30,9 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
         // call the wrapper init method
         this.initWrapper(this.data);
 
+        // subscribe to dashboard service
+        this._dashboardService.subscribe();
+
         // get the home content widgets
         const homeWidgets = this.data.Data.Widgets || [];
 
@@ -41,5 +44,8 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+
+        // unsubscribe to dashboard service
+        this._dashboardService.unsubscribe();
     }
 }

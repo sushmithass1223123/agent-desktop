@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { AotWidgetService } from '@services/aot-widget.service';
-import { InteractionEventService } from '@services/interaction-event.service';
+import { AOTWidgetService } from '@services/aot-widget.service';
+import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { IWidget, ReqCampaignContact, ResCampaign, ResData } from 'app/interfaces';
@@ -93,9 +93,9 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
     constructor(
         private http: HttpClient,
         private matDialog: MatDialog,
-        private appUiService: AppUiService,
-        private _aotWidgetService: AotWidgetService,
-        private _interactionEventService: InteractionEventService
+        private _appUiService: AppUiService,
+        private _aotWidgetService: AOTWidgetService,
+        private _interactionEventService: TMACEventService
     ) {
         super();
     }
@@ -262,7 +262,7 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
                     msg: ''
                 };
                 this.matDialog.closeAll();
-                this.appUiService.showSnackbar('Added contact successfully', 'success');
+                this._appUiService.showSnackbar('Added contact successfully', 'success');
                 this.addContactFormGroup.reset();
                 // check if the AOT widget
                 if (this.data.Config.AOT) {
@@ -275,7 +275,7 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
                     loading: false,
                     msg: COMMON_ERR_MESSAGE
                 };
-                this.appUiService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
+                this._appUiService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
             }
         );
     }

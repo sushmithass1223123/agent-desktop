@@ -7,7 +7,7 @@ import { IWidget } from 'app/interfaces';
 import { sortBy, uniqBy } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 import { CallerIntentEvent, IResponse, SDKClient, WorkCodeAddedEvent, IUIEvent } from 'tmac-sdk';
-import { InteractionEventService } from '@services/interaction-event.service';
+import { TMACEventService } from '@services/tmac-event.service';
 
 @Component({
     selector: 'tw-canned-responses',
@@ -50,7 +50,7 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
         private _fuseConfigService: FuseConfigService,
         // @ [OPTIONAL]
         private _appDataService: AppDataService,
-        private _interactionEventService: InteractionEventService
+        private _interactionEventService: TMACEventService
     ) {
         super();
     }

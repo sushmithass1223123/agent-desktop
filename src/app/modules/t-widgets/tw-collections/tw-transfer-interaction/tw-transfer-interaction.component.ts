@@ -1,31 +1,50 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { MatTableDataSource } from '@angular/material/table';
+import { fuseAnimations } from '@fuse/animations';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
-import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
-    selector: 'tw-sample', // make sure you set the selector starts with tw-<widget-name>
-    templateUrl: './tw-sample.component.html',
-    styleUrls: ['./tw-sample.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    selector: 'tw-transfer-interaction',
+    templateUrl: './tw-transfer-interaction.component.html',
+    styleUrls: ['./tw-transfer-interaction.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    animations: fuseAnimations
 })
-export class TwSampleComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+export class TwTransferInteractionComponent extends TWidgetWrapper implements OnInit, OnDestroy {
 
     // holds all the data related to this widget from the config
     @Input() data: IWidget;
 
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store the fuse config for theme
-    // -----------------------------------------------------------
     fuseConfig: FuseConfig;
 
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store entire app config and get update
-    // -----------------------------------------------------------
-    appConfig: any;
+    mainLabel = 'Agent ID';
+    switcherList = [
+        {
+            key: 'agentList',
+            label: 'Agent List',
+            textLabel: 'Agent ID'
+        },
+        {
+            key: 'skillList',
+            label: 'Skill List',
+            textLabel: 'Skill'
+        }
+    ];
+    activeSwitcher = 'agentList';
+    searchTerm = '';
+    agentListTable = {
+        source: new MatTableDataSource([]),
+        columns: ['FirstName', 'LastName', 'AgentID', 'Status']
+    };
+
+    skillListTable = {
+        source: new MatTableDataSource([]),
+        columns: ['Name', 'VDN', 'ID', 'Stf', 'Avl', 'CIQ']
+    };
 
     /**
      * Constructor
@@ -33,10 +52,7 @@ export class TwSampleComponent extends TWidgetWrapper implements OnInit, OnDestr
      * @param {AppDataService} _appDataService
      */
     constructor(
-        // @ [OPTIONAL]
-        private _fuseConfigService: FuseConfigService,
-        // @ [OPTIONAL]
-        private _appDataService: AppDataService,
+        private _fuseConfigService: FuseConfigService
     ) {
         super();
     }
@@ -52,9 +68,7 @@ export class TwSampleComponent extends TWidgetWrapper implements OnInit, OnDestr
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the fuse config
-        // -----------------------------------------------------------
+
         this._fuseConfigService.config
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe(
@@ -63,16 +77,6 @@ export class TwSampleComponent extends TWidgetWrapper implements OnInit, OnDestr
                 }
             );
 
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the app config
-        // -----------------------------------------------------------
-        this._appDataService.config
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(
-                (config: any) => {
-                    this.appConfig = config;
-                }
-            );
     }
 
     /**
@@ -93,6 +97,13 @@ export class TwSampleComponent extends TWidgetWrapper implements OnInit, OnDestr
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
 
+    public switchTab(item: { key: string }): void {
+        this.activeSwitcher = item.key;
+    }
+
+    public filterAgents(): void {
+
+    }
 }
 
 // for more info visit - https://angular.io/api/core

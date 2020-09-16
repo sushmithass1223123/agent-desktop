@@ -27,8 +27,11 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
     }
 
     ngOnInit(): void {
-        this.initWrapper(this.data);
         // call the wrapper init method
+        this.initWrapper(this.data);
+
+        // subscribe to dashboard service
+        this._dashboardService.subscribe();
 
         // get the content widgets
         const supervisorWidgets = this.data.Data.Widgets || [];
@@ -41,5 +44,8 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+
+        // unsubscribe to dashboard service
+        this._dashboardService.unsubscribe();
     }
 }

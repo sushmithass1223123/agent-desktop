@@ -1,3 +1,5 @@
+@import 'src/@fuse/scss/fuse';
+
 // mat icon
 .mat-icon-button {
     .mat-button-wrapper {
@@ -173,6 +175,21 @@ mat-selection-list {
             .mat-sort-header-arrow {
                 margin: 0 6px 0px 6px;
             }
+
+            span {
+                max-width: 75px;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
+
+                @include media-breakpoint('gt-sm') {
+                    max-width: 100%;
+                }
+            }
+        }
+
+        mat-header-cell:not(:first-child) {
+            padding: 0 8px;
         }
 
         mat-header-cell:not(:last-child)::after {

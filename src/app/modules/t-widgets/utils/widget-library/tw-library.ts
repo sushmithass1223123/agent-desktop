@@ -34,6 +34,7 @@ import { TwVoiceBotTranscriptsComponent } from '@modules/t-widgets/tw-collection
 import { TwRegisterCallbackComponent } from '@modules/t-widgets/tw-collections/tw-register-callback/tw-register-callback.component';
 import { TwSuAgentInteractionsComponent } from '@modules/t-widgets/tw-collections/tw-su-agent-interactions/tw-su-agent-interactions.component';
 import { TwPieChartComponent } from '@modules/t-widgets/tw-collections/tw-pie-chart/tw-pie-chart.component';
+import { TwTransferInteractionComponent } from '@modules/t-widgets/tw-collections/tw-transfer-interaction/tw-transfer-interaction.component';
 
 export class TWLibrary {
     static widgetLibrary: Record<string, Type<any>> = {
@@ -73,7 +74,8 @@ export class TWLibrary {
         'tw-voice-bot-transcripts': TwVoiceBotTranscriptsComponent, //
         'tw-register-callback': TwRegisterCallbackComponent, //
         'tw-su-agent-interactions': TwSuAgentInteractionsComponent,
-        'tw-pie-chart': TwPieChartComponent
+        'tw-pie-chart': TwPieChartComponent, //
+        'tw-transfer-interaction': TwTransferInteractionComponent, //
     };
 
     public static getWidget(type: string, data: any): TWidget {

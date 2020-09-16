@@ -9,7 +9,7 @@ import { FuseSharedModule } from '@fuse/shared.module';
 import { CoreModule } from '@modules/core/core.module';
 import { SharedModule } from '@modules/shared/shared.module';
 import { TranslateModule } from '@ngx-translate/core';
-import { AotWidgetService } from '@services/aot-widget.service';
+import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
 import { AgentFeaturesService } from '@services/agent-features.service';
 import { AppComponent } from 'app/app.component';
@@ -21,7 +21,7 @@ import { InteractionManagerService } from '@services/interaction-manager.service
 @NgModule({
     declarations: [AppComponent],
     providers: [
-        AotWidgetService,
+        AOTWidgetService,
         AppDataService,
         AgentFeaturesService,
         InteractionManagerService

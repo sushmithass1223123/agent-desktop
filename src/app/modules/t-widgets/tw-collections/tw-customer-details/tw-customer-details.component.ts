@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewEncapsulation } from '@angular/core';
-import { InteractionEventService } from '@services/interaction-event.service';
+import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import * as _ from 'lodash';
 import { join } from 'lodash';
@@ -22,7 +22,7 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
     @Output() floatEvent = new EventEmitter();
     @Output() collapseEvent = new EventEmitter();
 
-    constructor(private _interactionEventService: InteractionEventService) {
+    constructor(private _interactionEventService: TMACEventService) {
         super();
     }
 

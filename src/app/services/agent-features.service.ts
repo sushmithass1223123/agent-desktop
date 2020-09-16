@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { AgentFeatures, SDKClient, TUtils } from 'tmac-sdk';
-import { AppDataService } from './app-data.service';
 import { AppUiService } from './app-ui.service';
 declare const navigator: Navigator | any;
 
@@ -28,7 +27,6 @@ export class AgentFeaturesService {
     };
 
     constructor(
-        private _appDataService: AppDataService,
         private _appUIService: AppUiService
     ) {
         this._agentFeatureInfo = {

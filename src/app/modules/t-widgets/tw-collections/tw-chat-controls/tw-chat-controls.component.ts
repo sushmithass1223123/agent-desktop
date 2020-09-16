@@ -19,11 +19,11 @@ import { FusePerfectScrollbarDirective } from '@fuse/directives/fuse-perfect-scr
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
 import { ConfirmDialogComponent } from '@modules/shared/confirm-dialog/confirm-dialog.component';
-import { AotWidgetService } from '@services/aot-widget.service';
+import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { ContentPageService } from '@services/content-page.service';
-import { InteractionEventService } from '@services/interaction-event.service';
+import { TMACEventService } from '@services/tmac-event.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { ChatTranscripts, InteractionRef, IWidget } from 'app/interfaces';
@@ -99,12 +99,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     constructor(
         private _fuseConfigService: FuseConfigService,
         private _interactionManagerService: InteractionManagerService,
-        private _interactionEventService: InteractionEventService,
+        private _interactionEventService: TMACEventService,
         private _dialog: MatDialog,
         private _appDataService: AppDataService,
         private _fuseProgressBarService: FuseProgressBarService,
         private _contentPageService: ContentPageService,
-        private _aotWidgetService: AotWidgetService,
+        private _aotWidgetService: AOTWidgetService,
         private _appUIService: AppUiService
     ) {
         super();

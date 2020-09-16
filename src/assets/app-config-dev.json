@@ -294,11 +294,11 @@
                                     },
                                     "Data": {
                                         "Source": "tw-ad-total-interactions",
-                                        "Role" :  "dashboard"
+                                        "Role": "dashboard"
                                     }
                                 },
                                 {
-                                    "Name": "AHT / Transfer / Conference ",
+                                    "Name": "AHT/Transfer/Conference ",
                                     "Description": "",
                                     "Type": "tw-aht-tc",
                                     "Config": {
@@ -355,7 +355,7 @@
                                     },
                                     "Data": {
                                         "Source": "tw-aux-status-chart",
-                                        "ChartType" : "pie"
+                                        "ChartType": "pie"
                                     }
                                 },
                                 {
@@ -675,7 +675,7 @@
                                         "Disabled": false
                                     },
                                     "Data": {
-                                        "Source" : "tw-ad-total-interactions",
+                                        "Source": "tw-ad-total-interactions",
                                         "Role": "supervisor"
                                     }
                                 },
@@ -735,8 +735,8 @@
                                         "Disabled": false
                                     },
                                     "Data": {
-                                        "Source" : "tw-su-calls-in-queue",
-                                        "ChartType" : "doughnut"
+                                        "Source": "tw-su-calls-in-queue",
+                                        "ChartType": "doughnut"
                                     }
                                 },
                                 {
@@ -766,7 +766,7 @@
                                         "Disabled": false
                                     },
                                     "Data": {
-                                        "Source" : "tw-su-intent-list"
+                                        "Source": "tw-su-intent-list"
                                     }
                                 },
                                 {
@@ -853,8 +853,8 @@
                                         "Disabled": false
                                     },
                                     "Data": {
-                                        "Source" : "tw-su-status",
-                                        "ChartType" : "doughnut"
+                                        "Source": "tw-su-status",
+                                        "ChartType": "doughnut"
                                     }
                                 },
                                 {

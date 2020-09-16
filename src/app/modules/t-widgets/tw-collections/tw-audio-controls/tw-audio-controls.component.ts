@@ -2,7 +2,7 @@ import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular
 import { MatDialog } from '@angular/material/dialog';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { ConfirmDialogComponent } from '@modules/shared/confirm-dialog/confirm-dialog.component';
-import { AotWidgetService } from '@services/aot-widget.service';
+import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
@@ -55,7 +55,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
     constructor(
         private _fuseConfigService: FuseConfigService,
         private _appDataService: AppDataService,
-        private _aotWidgetService: AotWidgetService,
+        private _aotWidgetService: AOTWidgetService,
         private _appUIService: AppUiService,
         private _dialog: MatDialog
     ) {

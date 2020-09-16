@@ -8,25 +8,25 @@
         <mat-table matSort [dataSource]="dataSource" matSortActive="CallsInQueue" matSortDirection="desc" matSortDisableClear>
             <!-- User name Definition -->
             <ng-container matColumnDef="SkillName">
-                <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="40"> Skill Name </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="40"> <span> Skill Name </span> </mat-header-cell>
                 <mat-cell *matCellDef="let row" fxFlex="40"> {{ row.SkillName }} </mat-cell>
             </ng-container>
 
             <!-- Age Definition -->
             <ng-container matColumnDef="AgentsStaffed">
-                <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="20" class="px-8"> Stf </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="20"> <span> Stf </span> </mat-header-cell>
                 <mat-cell *matCellDef="let row" fxFlex="20"> {{ row.AgentsStaffed }} </mat-cell>
             </ng-container>
 
             <!-- Title Definition -->
             <ng-container matColumnDef="AgentAvailable">
-                <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="20" class="px-8"> Avl </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="20"> <span> Avl </span> </mat-header-cell>
                 <mat-cell *matCellDef="let row" fxFlex="20"> {{ row.AgentAvailable }} </mat-cell>
             </ng-container>
 
             <!-- Title Definition -->
             <ng-container matColumnDef="CallsInQueue">
-                <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="20"> CIQ </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="20"> <span> CIQ </span> </mat-header-cell>
                 <mat-cell *matCellDef="let row" fxFlex="20"> {{ row.CallsInQueue }} </mat-cell>
             </ng-container>
 
@@ -35,12 +35,7 @@
             <mat-row *matRowDef="let row; columns: ['SkillName', 'AgentsStaffed', 'AgentAvailable', 'CallsInQueue']"></mat-row>
         </mat-table>
 
-        <p *ngIf="source === 'dashboard' && dataSource.data.length === 0" class="text-center m-0 mat-title">No Data Available</p>
-
-        <div *ngIf="source === 'supervisor' && dataSource.data.length === 0" class="w-100-p h-80-p">
-            <img src="assets/images/vectors/no-data-2.svg" class="w-100-p h-100-p box-shadow-3d" />
-            <p class="text-center mat-title m-0">No Data Available</p>
-        </div>
+        <p *ngIf="dataSource.data.length === 0" class="text-center m-0 mat-title">No Data Available</p>
     </div>
 
     <img *ngIf="data.Data.Source === 'dashboard'" class="vector-image" src="assets/images/vectors/home.svg" width="580" />

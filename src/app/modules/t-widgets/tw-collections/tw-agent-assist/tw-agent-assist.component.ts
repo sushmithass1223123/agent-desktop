@@ -1,7 +1,7 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { AotWidgetService } from '@services/aot-widget.service';
+import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
-import { InteractionEventService } from '@services/interaction-event.service';
+import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
@@ -40,8 +40,8 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
      */
     constructor(
         private _appDataService: AppDataService,
-        private _aotWidgetService: AotWidgetService,
-        private _interactionEventService: InteractionEventService,
+        private _aotWidgetService: AOTWidgetService,
+        private _interactionEventService: TMACEventService,
         private _appUIService: AppUiService
     ) {
         super();

@@ -24,14 +24,7 @@
         <div fxFlex fxLayout>
             <p fxFlex="20" fxLayoutAlign=" flex-start" class="px-8 mt-16">Case Notes</p>
             <mat-form-field fxFlex floatLabel="never" appearance="standard" class="custom case-note">
-                <textarea
-                    fxFlex
-                    matInput
-                    placeholder="Enter case notes here..."
-                    matAutosizeMinRows="1"
-                    [(ngModel)]="caseData.caseText"
-                    [matTextareaAutosize]="true"
-                ></textarea>
+                <textarea fxFlex matInput placeholder="Enter case notes here..." [(ngModel)]="caseData.caseText"></textarea>
                 <button class="submit-btn bg-success border-radius-20" (click)="addCase()" mat-button>Submit</button>
             </mat-form-field>
         </div>
