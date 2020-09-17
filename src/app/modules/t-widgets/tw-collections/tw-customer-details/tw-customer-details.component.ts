@@ -3,7 +3,7 @@ import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import * as _ from 'lodash';
 import { join } from 'lodash';
-import { IUIEvent, SDKClient, TextChatRemoteUserConnectedEvent, CallerIntentEvent, IncomingCallEvent, IVRDataEvent, UUIDataEvent, CCLDataEvent } from 'tmac-sdk';
+import { IUIEvent, SDKClient, TextChatRemoteUserConnectedEvent, CallerIntentEvent, IncomingCallEvent, IVRDataEvent, UUIDataEvent, CCLDataEvent, OutgoingCallEvent } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-customer-details',
@@ -50,6 +50,7 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
 
         // register to tmac events
         SDKClient.events.on('IncomingCallEvent', this.IncomingCallEvent);
+        SDKClient.events.on('OutgoingCallEvent', this.OutgoingCallEvent);
         SDKClient.events.on('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
         SDKClient.events.on('CallerIntentEvent', this.CallerIntentEvent);
         SDKClient.events.on('IVRDataEvent', this.IVRDataEvent);
@@ -63,6 +64,7 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
 
         // deregister from tmac events
         SDKClient.events.off('IncomingCallEvent', this.IncomingCallEvent);
+        SDKClient.events.off('OutgoingCallEvent', this.OutgoingCallEvent);
         SDKClient.events.off('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
         SDKClient.events.off('CallerIntentEvent', this.CallerIntentEvent);
         SDKClient.events.off('IVRDataEvent', this.IVRDataEvent);
@@ -71,6 +73,10 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
     }
 
     private IncomingCallEvent = (evt: IncomingCallEvent) => {
+        this.processCustomerDetails(evt);
+    }
+
+    private OutgoingCallEvent = (evt: OutgoingCallEvent) => {
         this.processCustomerDetails(evt);
     }
 

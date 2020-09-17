@@ -2249,8 +2249,7 @@
                 "RemoteThreshold": 15
             },
             "CustomSripts": [
-                "https://dice.tetherfi.cloud/tmaclibs/adapter.js",
-                "https://dice.tetherfi.cloud/tmaclibs/webclientapi-lib.debug.js",
+                "https://tmac.tetherfilabs.com/tmac_client/custom_scripts/webclientapi-lib.js",
                 "https://dice.tetherfi.cloud/tmaclibs/collector.min.js"
             ]
         }

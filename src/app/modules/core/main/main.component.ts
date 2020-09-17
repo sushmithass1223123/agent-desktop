@@ -101,7 +101,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
         SDKClient.events.off('AgentForcedLogoffEvent', this.forcedLogoffEvent);
 
         // remove the processed features
-        this._agentFeaturesService.clearAgentFeatures();
+        this._agentFeaturesService.unsubscribe();
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -140,7 +140,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
         SDKClient.getEvents();
 
         // process the agent features
-        this._agentFeaturesService.processAgentFeatures();
+        this._agentFeaturesService.subscribe();
     }
 
     forcedLogoffEvent = (evt: AgentForcedLogoffEvent) => {

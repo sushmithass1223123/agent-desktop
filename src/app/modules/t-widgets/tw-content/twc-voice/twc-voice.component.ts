@@ -5,7 +5,7 @@ import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { InteractionWidgets, IWidget, InteractionRef } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
 import { takeUntil } from 'rxjs/operators';
-import { IncomingCallEvent, InteractionClosedEvent } from 'tmac-sdk';
+import { IncomingCallEvent, InteractionClosedEvent, OutgoingCallEvent } from 'tmac-sdk';
 
 @Component({
     selector: 'twc-voice',
@@ -38,8 +38,8 @@ export class TwcVoiceComponent extends TWContentWrapper implements OnInit, OnDes
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((evt: any) => {
                 // filter the event name
-                if (evt.EventName === 'IncomingCallEvent') {
-                    this.incomingCallEvent(evt);
+                if (evt.EventName === 'IncomingCallEvent' || evt.EventName === 'OutgoingCallEvent') {
+                    this.incomingOutgoingCallEvent(evt);
                 }
                 else if (evt.EventName === 'InteractionClosedEvent') {
                     this.interactionClosed(evt);
@@ -66,7 +66,7 @@ export class TwcVoiceComponent extends TWContentWrapper implements OnInit, OnDes
         this.destroyWrapper();
     }
 
-    private incomingCallEvent = (evt: IncomingCallEvent) => {
+    private incomingOutgoingCallEvent = (evt: IncomingCallEvent | OutgoingCallEvent) => {
 
         // get the content widgets
         const voiceWidgets = this.data.Data.Widgets || [];
@@ -105,7 +105,7 @@ export class TwcVoiceComponent extends TWContentWrapper implements OnInit, OnDes
         this._interactionManagerService.addInteraction({
             interactionId: evt.InteractionID,
             type: 'voice',
-            status: 'incoming',
+            status: evt.EventName === 'IncomingCallEvent' ? 'incoming' : 'outgoing',
             isActive: this.interactions.length === 1,
             user: evt.PhoneNumber,
             path: this.data.Data.Path,

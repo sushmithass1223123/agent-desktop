@@ -1,6 +1,6 @@
 import { Color } from 'ng2-charts';
 import { SDKClient, TUtils } from 'tmac-sdk';
-import { AppAlertDialogTypes } from 'app/interfaces';
+import { AppAlertDialogTypes, ReminderTaskDialogTypes } from 'app/interfaces';
 
 export const CHART_COLORS: Color[] = [
     {
@@ -86,6 +86,21 @@ export const AppAlertDialogConstants: Record<AppAlertDialogTypes, { heading: str
     error: {
         heading: 'Error',
         icon: 'warning'
+    }
+};
+
+export const RemiderTaskDialogConstants: Record<ReminderTaskDialogTypes, { message: string, type: string }> = {
+    makecall: {
+        message: 'Do you want to make this call?',
+        type: 'makecall'
+    },
+    meeting: {
+        message: 'Do you want to accept the scheduled meeting?',
+        type: 'meeting'
+    },
+    changestate: {
+        message: 'Do you want to change you status?',
+        type: 'changestate'
     }
 };
 

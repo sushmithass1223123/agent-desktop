@@ -65,6 +65,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     duration: any;
     stopTimer = new Subject();
     last4IVR = [];
+    authentication: { Status: string; Type: string; } = {
+        Status: 'NA',
+        Type: 'NA'
+    };
     status = 'NA';
     isMSCall = false;
     isManualAnswer = false;
@@ -130,7 +134,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             // update the session ID
             this.sessionID = (interactionDetails.UCID || 'NA') + '|' + this.interactionId;
             // set the manual anser flag
-            this.isManualAnswer = interactionDetails.IsManualAnswer;
+            this.isManualAnswer = interactionDetails.IsManualAnswer || false;
             // set the process media messages flag
             this.processMediaMessages = !this.isManualAnswer;
             // set the direct
@@ -142,10 +146,19 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         }
 
         // set the status
-        this.status = 'initial';
+        this.status = this.direction === 'in' ? 'incoming' : 'outgoing';
 
         // assign the last 4 IVR, if default is configured
-        this.last4IVR = this.data.Data.IVR?.DefaultMenu || [];
+        this.last4IVR = this.direction === 'in' && this.data.Data.IVR?.DefaultMenu || [];
+
+        // set the authentication and last 4 IVR for incoming call only
+        if (this.direction === 'in') {
+            this.authentication.Status = 'Caller ID';
+            this.authentication.Type = 'Authenticated';
+
+            // assign the last 4 IVR, if default is configured
+            this.last4IVR = this.data.Data.IVR?.DefaultMenu || [];
+        }
 
         // listen to TMAC events
         this.registerToEvents();
@@ -362,14 +375,14 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             switch (evt.Type) {
                 case 'call-received':
                     // create WebRTC peer connection
-                    connection = this.createAVConnection('out');
+                    connection = this.createAVConnection('in');
                     connection?.directCall(TEnums.WrcCallTypes.Audio, 'in');
                     // play incoming call sound 
                     this._appUIService.playAudio('incoming-call', 0.5, true);
                     break;
                 case 'call-connecting':
                     // create WebRTC peer connection
-                    connection = this.createAVConnection('in');
+                    connection = this.createAVConnection('out');
                     connection?.directCall(TEnums.WrcCallTypes.Audio);
                     // play incoming call sound 
                     this._appUIService.playAudio('ringing', 0.5, true);
@@ -387,6 +400,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
             // get the connection based on session id
             connection = this.avConns[this.sessionID];
+
             // check if the connection is added
             if (connection) {
                 // check if the messages can be processed by WebRTC API, if not add to the reference and process after answer call

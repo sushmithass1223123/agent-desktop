@@ -41,9 +41,6 @@ export class AgentFeaturesService {
                 location: null
             }
         };
-
-        // listen to AgentSnapShotEvent
-        SDKClient.events.on('AgentSnapShotEvent', this.AgentSnapShotEvent);
     }
 
     private AgentSnapShotEvent = async (evt: any) => {
@@ -227,13 +224,15 @@ export class AgentFeaturesService {
             });
     }
 
-    public processAgentFeatures(): void {
-        TUtils.Logger.console('log', 'processAgentFeatures');
+    public subscribe(): void {
+        TUtils.Logger.console('log', 'AgentFeaturesService.subscribe');
+        // listen to AgentSnapShotEvent
+        SDKClient.events.on('AgentSnapShotEvent', this.AgentSnapShotEvent);
         // get the agent features from SDK
         const agentFeatures = SDKClient.getAgentData().featuresList;
         // check the list
         if (agentFeatures.length === 0) {
-            TUtils.Logger.log('processAgentFeatures: agent features are empty!');
+            TUtils.Logger.log('AgentFeaturesService.subscribe: agent features are empty!');
             return;
         }
         // loop through the features and process
@@ -265,7 +264,9 @@ export class AgentFeaturesService {
         });
     }
 
-    public clearAgentFeatures(): void {
+    public unsubscribe(): void {
+        TUtils.Logger.console('log', 'AgentFeaturesService.unsubscribe');
+
         // unregister from AgentSnapShotEvent
         SDKClient.events.off('AgentSnapShotEvent', this.AgentSnapShotEvent);
 

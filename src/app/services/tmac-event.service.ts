@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { IWidget } from 'app/interfaces';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AgentNotificaitonEvent, IUIEvent, SDKClient, TUtils } from 'tmac-sdk';
+import { AgentNotificaitonEvent, AgentReminder, AgentStatusChangeEvent, CommandResultEvent, IResponse, IUIEvent, SDKClient, TUtils } from 'tmac-sdk';
 import { AOTWidgetService } from './aot-widget.service';
 import { AppDataService } from './app-data.service';
 import { AppUiService } from './app-ui.service';
@@ -69,32 +69,151 @@ export class TMACEventService {
     }
 
     private onAgentNotificaitonEvent = (evt: AgentNotificaitonEvent) => {
-        // get the type
-        const type = evt.Type.toLowerCase();
-        // handle alerts
-        if (type === 'alert' && evt.Message) {
-            this._appUIService.showAlertModal(evt.Message, 'error', 'Alert');
-        }
-        else if (type === 'executeaction') {
-            // parse the action
-            const parsedMessage: { Action: string, Data: string } = JSON.parse(evt.Message);
-            // get the action
-            switch (parsedMessage.Action.toLowerCase()) {
-                case 'registercallback':
-                    // check if AOT cofngured for register callback
-                    const widget = this._aotWidgets.filter((w: IWidget) => w.Type === 'tw-register-callback')?.[0];
-                    // check if widget is found
-                    if (widget) {
-                        this._aotWidgetService.addWidget(widget);
-                        // listen to on destroy event
-                        // widget.OnDestroy = () => {
-                        //     SDKClient.updateAgentReminder({
-                        //     });
-                        // };
-                    }
-                    break;
-                default:
+        try {
+            // get the type
+            const type = evt.Type.toLowerCase();
+            // handle alerts
+            if (type === 'alert' && evt.Message) {
+                this._appUIService.showAlertModal(evt.Message, 'error', 'Alert');
             }
+            else if (type === 'executeaction') {
+                // parse the action
+                const parsedMessage: { Action: string, Data: string } = JSON.parse(evt.Message);
+                // get the action
+                switch (parsedMessage.Action.toLowerCase()) {
+                    case 'registercallback':
+                        // check if AOT cofngured for register callback
+                        const widget = this._aotWidgets.filter((w: IWidget) => w.Type === 'tw-register-callback')?.[0];
+                        // check if widget is found
+                        if (widget) {
+                            this._aotWidgetService.addWidget(widget);
+                        }
+                        break;
+                    default:
+                }
+            }
+            else if (type === 'executetask') {
+                // parse the notification message
+                const parsedMessage: AgentReminder = JSON.parse(evt.Message);
+                // parse then remider message
+                const remiderMessage: { Action: string, Data: string, Comment: string } = JSON.parse(parsedMessage.Message);
+                // make a rejected and compelted flag to handle it once
+                let status = '';
+                // get the action
+                switch (remiderMessage.Action.toLowerCase()) {
+                    case 'makecall':
+                        {
+                            this._appUIService.showRemiderTaskModal('makecall', remiderMessage.Comment || null)
+                                .afterClosed().subscribe((resp) => {
+                                    if (resp === 'accept') {
+                                        // make call to the provided number and complete the reminder
+                                        SDKClient.makeCall({
+                                            interactionId: '0',
+                                            number: remiderMessage.Data,
+                                            source: '',
+                                            sourceId: ''
+                                        })
+                                            .then((dt: IResponse) => {
+                                                // get the response
+                                                const result: CommandResultEvent = dt.response;
+                                                // check the response
+                                                if (result.ResultCode === 0) {
+                                                    // make call success
+                                                    this._appUIService.showSnackbar(`Make call to ${remiderMessage.Data} successful`);
+                                                }
+                                                else {
+                                                    // make call failed
+                                                    this._appUIService.showSnackbar('Make call failed, please try manually', 'failure');
+                                                }
+                                            })
+                                            .catch(() => {
+                                                // make call error
+                                                this._appUIService.showSnackbar('Make call error, please try manually', 'failure');
+                                            });
+
+                                        // complete the reminder
+                                        status = 'Completed';
+                                    }
+                                    else if (resp === 'reject') {
+                                        // reject the reminder
+                                        status = 'Rejected';
+                                    }
+                                    else {
+                                        // show an alert for auto snooze
+                                        this._appUIService.showSnackbar('Make call task is snoozed', 'info');
+                                    }
+                                });
+                            break;
+                        }
+                    case 'meeting':
+                        {
+
+                            // TODO:: handle meeting task
+
+                            break;
+                        }
+                    case 'changestate':
+                        {
+                            this._appUIService.showRemiderTaskModal('changestate', remiderMessage.Comment || null)
+                                .afterClosed().subscribe((resp) => {
+                                    if (resp === 'accept') {
+                                        // parse the data and get the aux code and value
+                                        const auxCode = remiderMessage.Data.split(',');
+                                        // make call to the provided number and complete the reminder
+                                        SDKClient.changeStatus({
+                                            type: auxCode[0],
+                                            code: auxCode[1]
+                                        })
+                                            .then((dt: IResponse) => {
+                                                // get the response
+                                                let result: AgentStatusChangeEvent | CommandResultEvent = dt.response;
+                                                // check the response
+                                                if (result.ResultCode === 1) {
+                                                    // parse the result to AgentStatusChangeEvent
+                                                    result = result as AgentStatusChangeEvent;
+                                                    // make call success
+                                                    this._appUIService.showSnackbar(`Status changed to ${result.Status} successfully`);
+                                                }
+                                                else {
+                                                    // make call failed
+                                                    this._appUIService.showSnackbar('Change status failed, please try manually', 'failure');
+                                                }
+                                            })
+                                            .catch(() => {
+                                                // make call error
+                                                this._appUIService.showSnackbar('Error in change status, please try manually', 'failure');
+                                            });
+
+                                        // complete the reminder 
+                                        status = 'Completed';
+                                    }
+                                    else if (resp === 'reject') {
+                                        // reject the reminder
+                                        status = 'Rejected';
+                                    }
+                                    else {
+                                        // show an alert for auto snooze
+                                        this._appUIService.showSnackbar('Change status task is snoozed', 'info');
+                                    }
+                                });
+                            break;
+                        }
+                    default:
+                }
+
+                // check if completed or rejected
+                if (status) {
+                    SDKClient.updateAgentReminder(
+                        {
+                            id: parsedMessage.ID,
+                            message: '',
+                            status
+                        }
+                    );
+                }
+            }
+        } catch (error) {
+            TUtils.Logger.log('Exception in AgentNotificaitonEvent', error);
         }
     }
 

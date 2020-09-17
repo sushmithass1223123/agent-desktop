@@ -6,13 +6,14 @@ import { FuseSharedModule } from '@fuse/shared.module';
 import * as Chart from 'chart.js';
 // import 'chartjs-plugin-piechart-outlabels';
 import { ChartsModule } from 'ng2-charts';
+import { AlertDialogComponent } from './alert-dialog/alert-dialog.component';
 import { AvatarComponent } from './avatar/avatar.component';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { TWChartDirective } from './directives/tw-chart.directive';
 import { MaterialModule } from './material.module';
+import { RemiderTaskDialogComponent } from './remider-task-dialog/remider-task-dialog.component';
 import { ResourceNotFoundComponent } from './resource-not-found/resource-not-found.component';
 import { SnackbarComponent } from './snackbar/snackbar.component';
-import { AlertDialogComponent } from './alert-dialog/alert-dialog.component';
 import { WidgetFabComponent } from './widget-fab/widget-fab.component';
 
 Chart.defaults.global.responsive = true;
@@ -37,7 +38,8 @@ const sharedComponents = [
     TWChartDirective,
     SnackbarComponent,
     WidgetFabComponent,
-    AlertDialogComponent
+    AlertDialogComponent,
+    RemiderTaskDialogComponent
 ];
 
 @NgModule({
