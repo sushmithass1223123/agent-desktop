@@ -1,0 +1,113 @@
+workbench-email {
+    .email-list {
+        background-color: darken(whitesmoke, 5);
+        .tw-list-item {
+            background-color: darken(whitesmoke, 5);
+            &:hover {
+                background-color: darken(whitesmoke, 8);
+            }
+        }
+    }
+
+    .mat-form-field.custom .mat-form-field-wrapper {
+        padding: 0 !important;
+        margin: 0;
+    }
+    .mat-form-field-infinix {
+        padding: 2px 0px !important;
+    }
+    .email-open {
+        background-color: darken(whitesmoke, 5);
+        &__body {
+            background-color: whitesmoke;
+        }
+    }
+
+    .search-input {
+        position: relative;
+        background-color: whitesmoke;
+        margin: auto;
+        z-index: 1;
+        width: calc(100% - 20px);
+    }
+
+    .loader {
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        z-index: 5;
+        background-color: rgba(black, 0.1);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .advanced-search-form {
+        border-radius: 10px;
+        width: 100%;
+        padding-bottom: 20px;
+        background-color: white;
+        top: -1000%;
+        opacity: 0;
+        margin-top: 10px;
+        transition: opacity, top 0.3s;
+        &.show {
+            top: 100%;
+            opacity: 1;
+        }
+    }
+
+    .email-tree-invisible {
+        display: none;
+        // &.ul {
+        //     border: none !important;
+        // }
+    }
+
+    mat-nested-tree-node {
+        &.active li {
+            position: relative;
+            overflow: hidden;
+            &::before {
+                content: '';
+                width: 2px;
+                height: 100%;
+                position: absolute;
+                left: 0;
+                background: rgba(purple, 0.2);
+                // background-color: purple;
+                // transform: translateX(0);
+            }
+        }
+    }
+
+    .email-tree {
+        background: transparent !important;
+    }
+
+    .email-tree ul,
+    .email-tree li {
+        margin-bottom: 0;
+        list-style-type: none;
+    }
+
+    mat-tree-node {
+        cursor: pointer;
+        padding-left: 0 !important;
+        ul {
+            padding-inline-start: 0px !important;
+        }
+    }
+
+    .email-tree ul {
+        padding-inline-start: 15px;
+        margin-top: 0;
+    }
+
+    .email-tree li {
+        margin-top: 0;
+        background-color: whitesmoke;
+        border-radius: 10px;
+    }
+}

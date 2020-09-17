@@ -41,6 +41,8 @@ import { TwVoiceControlsComponent } from './tw-voice-controls/tw-voice-controls.
 import { TwVoicePanelComponent } from './tw-voice-panel/tw-voice-panel.component';
 import { TwWallboardComponent } from './tw-wallboard/tw-wallboard.component';
 import { TwWorkCodesComponent } from './tw-work-codes/tw-work-codes.component';
+import { TwWorkbenchPanelComponent } from './tw-workbench-panel/tw-workbench-panel.component';
+import { WorkbenchEmailComponent } from './tw-workbench-panel/workbench-email/workbench-email.component';
 
 const collectionComponents = [
     TwCustomComponent,
@@ -82,7 +84,9 @@ const collectionComponents = [
     TwVoiceBotTranscriptsComponent,
     TwRegisterCallbackComponent,
     TwSuAgentInteractionsComponent,
-    TwPieChartComponent
+    TwPieChartComponent,
+    TwWorkbenchPanelComponent,
+    WorkbenchEmailComponent
 ];
 
 @NgModule({
