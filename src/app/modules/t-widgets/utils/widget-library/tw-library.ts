@@ -35,6 +35,7 @@ import { TwRegisterCallbackComponent } from '@modules/t-widgets/tw-collections/t
 import { TwSuAgentInteractionsComponent } from '@modules/t-widgets/tw-collections/tw-su-agent-interactions/tw-su-agent-interactions.component';
 import { TwPieChartComponent } from '@modules/t-widgets/tw-collections/tw-pie-chart/tw-pie-chart.component';
 import { TwTransferInteractionComponent } from '@modules/t-widgets/tw-collections/tw-transfer-interaction/tw-transfer-interaction.component';
+import { TwVoiceCannedResponsesComponent } from '@modules/t-widgets/tw-collections/tw-voice-canned-responses/tw-voice-canned-responses.component';
 
 export class TWLibrary {
     static widgetLibrary: Record<string, Type<any>> = {
@@ -43,11 +44,7 @@ export class TWLibrary {
         'tw-wallboard': TwWallboardComponent, //
         'tw-voice-panel': TwVoicePanelComponent, //
         'tw-chat-panel': TwChatPanelComponent, //
-        'tw-ad-total-interactions': TwAdTotalInteractionsComponent, //
-        // 'tw-ad-total-calls': TwAdTotalCallsComponent,
-        // 'tw-ad-total-av': TwAdTotalAvComponent,
-        // 'tw-ad-total-chats': TwAdTotalChatsComponent,
-        // 'tw-su-total-calls': TwSuTotalCallsComponent,
+        'tw-ad-total-interactions': TwAdTotalInteractionsComponent, // 
         'tw-ad-interaction-details': TwAdInteractionDetailsComponent, //
         'tw-ad-callbacks': TwAdCallbacksComponent, //
         'tw-su-calls-in-queue': TwSuCallsInQueueComponent, //
@@ -76,6 +73,7 @@ export class TWLibrary {
         'tw-su-agent-interactions': TwSuAgentInteractionsComponent,
         'tw-pie-chart': TwPieChartComponent, //
         'tw-transfer-interaction': TwTransferInteractionComponent, //
+        'tw-voice-canned-responses': TwVoiceCannedResponsesComponent, //
     };
 
     public static getWidget(type: string, data: any): TWidget {

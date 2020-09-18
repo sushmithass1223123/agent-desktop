@@ -42,6 +42,7 @@ import { TwVoicePanelComponent } from './tw-voice-panel/tw-voice-panel.component
 import { TwWallboardComponent } from './tw-wallboard/tw-wallboard.component';
 import { TwWorkCodesComponent } from './tw-work-codes/tw-work-codes.component';
 import { TwTransferInteractionComponent } from './tw-transfer-interaction/tw-transfer-interaction.component';
+import { TwVoiceCannedResponsesComponent } from './tw-voice-canned-responses/tw-voice-canned-responses.component';
 
 const collectionComponents = [
     TwCustomComponent,
@@ -85,6 +86,7 @@ const collectionComponents = [
     TwSuAgentInteractionsComponent,
     TwPieChartComponent,
     TwTransferInteractionComponent,
+    TwVoiceCannedResponsesComponent,
 ];
 
 @NgModule({

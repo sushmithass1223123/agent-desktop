@@ -36,28 +36,48 @@
                             : ''
                     "
                 >
-                    <div fxFlex fxLayout="column" fxLayoutAlign="space-between none">
+                    <div fxFlex fxLayout="column" fxLayoutAlign="start none">
                         <div fxLayout="row" fxLayoutAlign="space-between none">
                             <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>alarm_on</mat-icon> {{ startTime }}</div>
                             <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>construction</mat-icon> {{ sessionID }}</div>
                         </div>
-                        <div fxLayout="row" fxLayoutAlign="space-between none">
+                        <div fxLayout="row" fxLayoutAlign="space-between none" class="mt-4">
                             <div fxLayout="row" fxLayoutAlign=" center">
-                                <mat-icon>timer</mat-icon> {{ (duration | date: 'H:mm:ss':'UTC') || '00:00:00' }}
+                                <mat-icon>timer</mat-icon>
+                                <div>
+                                    {{ (duration | date: 'H:mm:ss':'UTC') || '00:00:00' }}
+                                </div>
+                            </div>
+                            <div fxLayout="row" fxLayoutAlign=" center">
+                                <mat-icon>directions</mat-icon> <span class="text-bold">{{ direction }}</span>
                             </div>
                             <div fxLayout="row" fxLayoutAlign=" center">
                                 <mat-icon>grading</mat-icon> <span class="text-bold">{{ intent }}</span>
                             </div>
                         </div>
-                        <div fxLayout="column" fxLayoutAlign=" none">
-                            <span fxLayout="row" fxLayoutAlign=" center">
-                                <span>Auth Status: </span>
-                                <span class="title text-bold ml-4"> {{ authentication.Status }} </span>
-                            </span>
-                            <span fxLayout="row" fxLayoutAlign=" center">
-                                <span>Auth Type: </span>
-                                <span class="title text-bold ml-4"> {{ authentication.Type }} </span>
-                            </span>
+                        <div fxFlex *ngIf="audioPlayer" fxLayout="row" fxLayoutAlign=" center" class="w-100-p">
+                            <button
+                                *ngIf="audioPlayer._adpState === 'paused'"
+                                mat-icon-button
+                                class="mr-4 bg-success player-button"
+                                matTooltip="Play"
+                                (click)="playerAction(1)"
+                            >
+                                <mat-icon>play_circle_outline</mat-icon>
+                            </button>
+                            <button
+                                *ngIf="audioPlayer._adpState === 'playing'"
+                                mat-icon-button
+                                class="mr-4 bg-warning player-button"
+                                matTooltip="Pause"
+                                (click)="playerAction(2)"
+                            >
+                                <mat-icon>pause_circle_outline</mat-icon>
+                            </button>
+                            <button mat-icon-button class="mr-4 bg-danger player-button" matTooltip="Stop" (click)="playerAction(3)">
+                                <mat-icon>stop</mat-icon>
+                            </button>
+                            <marquee direction="left">Currently playing '{{ audioPlayer.fileName }}'</marquee>
                         </div>
                     </div>
                     <div

@@ -19,7 +19,7 @@
             <ng-container matColumnDef="Channel">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Channel</mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <mat-icon class="channel-icon text-primary">
+                    <mat-icon class="channel-icon" color="primary">
                         {{
                             element.Channel === 'Voice'
                                 ? 'phone'
@@ -36,7 +36,7 @@
             <ng-container matColumnDef="Direction">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Direction</mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <mat-icon class="channel-icon color-secondary">
+                    <mat-icon class="channel-icon" color="accent">
                         {{ element.Direction === 'In' ? 'south' : 'north' }}
                     </mat-icon>
                 </mat-cell>

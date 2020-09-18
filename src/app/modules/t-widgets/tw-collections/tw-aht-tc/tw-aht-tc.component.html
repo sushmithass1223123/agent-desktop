@@ -13,7 +13,7 @@
                 <ng-container matColumnDef="Channel">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>Channel</mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-icon class="channel-icon text-primary" [matTooltip]="element.Channel">
+                        <mat-icon class="channel-icon" color="primary" [matTooltip]="element.Channel">
                             {{
                                 element.Channel === 'Voice'
                                     ? 'phone'

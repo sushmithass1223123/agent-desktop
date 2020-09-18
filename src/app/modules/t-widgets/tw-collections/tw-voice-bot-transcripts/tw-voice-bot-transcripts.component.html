@@ -47,7 +47,7 @@
                                         : '') + ' '
                                 "
                             >
-                                <div [ngClass]="message.who === user.agentName ? 'right-svg' : 'left-svg'">
+                                <!-- <div [ngClass]="message.who === user.agentName ? 'right-svg' : 'left-svg'">
                                     <svg
                                         *ngIf="message.who !== user.agentName"
                                         xmlns="http://www.w3.org/2000/svg"
@@ -68,7 +68,7 @@
                                         <path opacity=".13" d="M5.188 1H0v11.193l6.467-8.625C7.526 2.156 6.958 1 5.188 1z"></path>
                                         <path fill="currentColor" d="M5.188 0H0v11.193l6.467-8.625C7.526 1.156 6.958 0 5.188 0z"></path>
                                     </svg>
-                                </div>
+                                </div> -->
 
                                 <div *ngIf="chatTranscripts[i - 1]?.who !== message.who" class="user-label font-size-16 text-bold mb-4">
                                     {{ message.who }}
@@ -76,7 +76,7 @@
 
                                 <div class="message">
                                     <span [innerHTML]="message.message"></span>
-                                    <span class="spacer"></span>
+                                    <!-- <span class="spacer"></span> -->
                                 </div>
                             </div>
                         </div>

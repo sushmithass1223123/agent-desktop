@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
+import { RemiderTaskDialogComponent } from '@modules/shared/remider-task-dialog/remider-task-dialog.component';
 import { IWidget } from 'app/interfaces';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -17,6 +19,11 @@ export class TMACEventService {
     private _tmacEventArray: any[];
     private _constructDisposeEventSubject: BehaviorSubject<any>;
     private _aotWidgets: IWidget[];
+    private _remiderTaskDialog: {
+        makeCall: MatDialogRef<RemiderTaskDialogComponent, any>,
+        meeting: MatDialogRef<RemiderTaskDialogComponent, any>,
+        changeState: MatDialogRef<RemiderTaskDialogComponent, any>
+    };
 
     constructor(
         private _appDataService: AppDataService,
@@ -28,6 +35,11 @@ export class TMACEventService {
         this._unsubscribeAll = new Subject();
         this._constructDisposeEventSubject = new BehaviorSubject({});
         this._tmacEventArray = new Array();
+        this._remiderTaskDialog = {
+            makeCall: null,
+            meeting: null,
+            changeState: null
+        };
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -97,52 +109,59 @@ export class TMACEventService {
                 const parsedMessage: AgentReminder = JSON.parse(evt.Message);
                 // parse then remider message
                 const remiderMessage: { Action: string, Data: string, Comment: string } = JSON.parse(parsedMessage.Message);
-                // make a rejected and compelted flag to handle it once
-                let status = '';
+
                 // get the action
                 switch (remiderMessage.Action.toLowerCase()) {
                     case 'makecall':
                         {
-                            this._appUIService.showRemiderTaskModal('makecall', remiderMessage.Comment || null)
-                                .afterClosed().subscribe((resp) => {
-                                    if (resp === 'accept') {
-                                        // make call to the provided number and complete the reminder
-                                        SDKClient.makeCall({
-                                            interactionId: '0',
-                                            number: remiderMessage.Data,
-                                            source: '',
-                                            sourceId: ''
-                                        })
-                                            .then((dt: IResponse) => {
-                                                // get the response
-                                                const result: CommandResultEvent = dt.response;
-                                                // check the response
-                                                if (result.ResultCode === 0) {
-                                                    // make call success
-                                                    this._appUIService.showSnackbar(`Make call to ${remiderMessage.Data} successful`);
-                                                }
-                                                else {
-                                                    // make call failed
-                                                    this._appUIService.showSnackbar('Make call failed, please try manually', 'failure');
-                                                }
-                                            })
-                                            .catch(() => {
-                                                // make call error
-                                                this._appUIService.showSnackbar('Make call error, please try manually', 'failure');
-                                            });
+                            // check if the dialog is already opened
+                            if (this._remiderTaskDialog.makeCall) {
+                                return;
+                            }
 
-                                        // complete the reminder
-                                        status = 'Completed';
-                                    }
-                                    else if (resp === 'reject') {
-                                        // reject the reminder
-                                        status = 'Rejected';
-                                    }
-                                    else {
-                                        // show an alert for auto snooze
-                                        this._appUIService.showSnackbar('Make call task is snoozed', 'info');
-                                    }
-                                });
+                            this._remiderTaskDialog.makeCall = this._appUIService.showRemiderTaskModal('makecall', remiderMessage.Comment || null);
+                            this._remiderTaskDialog.makeCall.afterClosed().subscribe((resp) => {
+                                if (resp === 'accept') {
+                                    // make call to the provided number and complete the reminder
+                                    SDKClient.makeCall({
+                                        interactionId: '0',
+                                        number: remiderMessage.Data,
+                                        source: '',
+                                        sourceId: ''
+                                    })
+                                        .then((dt: IResponse) => {
+                                            // get the response
+                                            const result: CommandResultEvent = dt.response;
+                                            // check the response
+                                            if (result.ResultCode === 0) {
+                                                // make call success
+                                                this._appUIService.showSnackbar(`Make call to ${remiderMessage.Data} successful`);
+                                            }
+                                            else {
+                                                // make call failed
+                                                this._appUIService.showSnackbar('Make call failed, please try manually', 'failure');
+                                            }
+                                        })
+                                        .catch(() => {
+                                            // make call error
+                                            this._appUIService.showSnackbar('Make call error, please try manually', 'failure');
+                                        });
+
+                                    // complete the reminder
+                                    this.reminderActionExecuted('Completed', parsedMessage.ID);
+                                }
+                                else if (resp === 'reject') {
+                                    // reject the reminder
+                                    this.reminderActionExecuted('Rejected', parsedMessage.ID);
+                                }
+                                else {
+                                    // show an alert for auto snooze
+                                    this._appUIService.showSnackbar('Make call task is snoozed', 'info');
+                                }
+
+                                // set the dialogRef to null
+                                this._remiderTaskDialog.makeCall = null;
+                            });
                             break;
                         }
                     case 'meeting':
@@ -154,67 +173,75 @@ export class TMACEventService {
                         }
                     case 'changestate':
                         {
-                            this._appUIService.showRemiderTaskModal('changestate', remiderMessage.Comment || null)
-                                .afterClosed().subscribe((resp) => {
-                                    if (resp === 'accept') {
-                                        // parse the data and get the aux code and value
-                                        const auxCode = remiderMessage.Data.split(',');
-                                        // make call to the provided number and complete the reminder
-                                        SDKClient.changeStatus({
-                                            type: auxCode[0],
-                                            code: auxCode[1]
-                                        })
-                                            .then((dt: IResponse) => {
-                                                // get the response
-                                                let result: AgentStatusChangeEvent | CommandResultEvent = dt.response;
-                                                // check the response
-                                                if (result.ResultCode === 1) {
-                                                    // parse the result to AgentStatusChangeEvent
-                                                    result = result as AgentStatusChangeEvent;
-                                                    // make call success
-                                                    this._appUIService.showSnackbar(`Status changed to ${result.Status} successfully`);
-                                                }
-                                                else {
-                                                    // make call failed
-                                                    this._appUIService.showSnackbar('Change status failed, please try manually', 'failure');
-                                                }
-                                            })
-                                            .catch(() => {
-                                                // make call error
-                                                this._appUIService.showSnackbar('Error in change status, please try manually', 'failure');
-                                            });
+                            // check if the dialog is already opened
+                            if (this._remiderTaskDialog.changeState) {
+                                return;
+                            }
 
-                                        // complete the reminder 
-                                        status = 'Completed';
-                                    }
-                                    else if (resp === 'reject') {
-                                        // reject the reminder
-                                        status = 'Rejected';
-                                    }
-                                    else {
-                                        // show an alert for auto snooze
-                                        this._appUIService.showSnackbar('Change status task is snoozed', 'info');
-                                    }
-                                });
+                            this._remiderTaskDialog.changeState = this._appUIService.showRemiderTaskModal('changestate', remiderMessage.Comment || null);
+                            this._remiderTaskDialog.changeState.afterClosed().subscribe((resp) => {
+                                if (resp === 'accept') {
+                                    // parse the data and get the aux code and value
+                                    const auxCode = remiderMessage.Data.split(',');
+                                    // make call to the provided number and complete the reminder
+                                    SDKClient.changeStatus({
+                                        type: auxCode[0],
+                                        code: auxCode[1]
+                                    })
+                                        .then((dt: IResponse) => {
+                                            // get the response
+                                            let result: AgentStatusChangeEvent | CommandResultEvent = dt.response;
+                                            // check the response
+                                            if (result.ResultCode === 1) {
+                                                // parse the result to AgentStatusChangeEvent
+                                                result = result as AgentStatusChangeEvent;
+                                                // make call success
+                                                this._appUIService.showSnackbar(`Status changed to ${result.Status} successfully`);
+                                            }
+                                            else {
+                                                // make call failed
+                                                this._appUIService.showSnackbar('Change status failed, please try manually', 'failure');
+                                            }
+                                        })
+                                        .catch(() => {
+                                            // make call error
+                                            this._appUIService.showSnackbar('Error in change status, please try manually', 'failure');
+                                        });
+
+                                    // complete the reminder 
+                                    this.reminderActionExecuted('Completed', parsedMessage.ID);
+                                }
+                                else if (resp === 'reject') {
+                                    // reject the reminder
+                                    this.reminderActionExecuted('Rejected', parsedMessage.ID);
+                                }
+                                else {
+                                    // show an alert for auto snooze
+                                    this._appUIService.showSnackbar('Change status task is snoozed', 'info');
+                                }
+
+                                // set the dialogRef to null
+                                this._remiderTaskDialog.changeState = null;
+                            });
                             break;
                         }
                     default:
-                }
-
-                // check if completed or rejected
-                if (status) {
-                    SDKClient.updateAgentReminder(
-                        {
-                            id: parsedMessage.ID,
-                            message: '',
-                            status
-                        }
-                    );
                 }
             }
         } catch (error) {
             TUtils.Logger.log('Exception in AgentNotificaitonEvent', error);
         }
+    }
+
+    private reminderActionExecuted(status: string, id: string): void {
+        // check if completed or rejected
+        SDKClient.updateAgentReminder(
+            {
+                id,
+                message: '',
+                status
+            }
+        );
     }
 
     // -----------------------------------------------------------------------------------------------------

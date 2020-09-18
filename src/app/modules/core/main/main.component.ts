@@ -9,6 +9,7 @@ import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { ThemeSelector } from 'app/layout/utils/theme-selector';
+import { environment } from 'environments/environment';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AgentForcedLogoffEvent, SDKClient } from 'tmac-sdk';
@@ -124,6 +125,11 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
         }
         else {
             this.pollForEvent();
+        }
+
+        // print the agent data and sdk client
+        if (!environment.production) {
+            console.log('LoginData: ', loginData);
         }
     }
 

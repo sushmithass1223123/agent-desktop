@@ -815,7 +815,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 this._fuseProgressBarService.hide();
                 // check the response
                 if (dt.response && dt.response.ResultCode === 0) {
-                    this._appUIService.showSnackbar('Interaction closed sucessfully');
+                    this._appUIService.showSnackbar('Interaction closed successfully');
                 }
                 else {
                     // enable if something goes wrong

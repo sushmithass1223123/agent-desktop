@@ -17,6 +17,13 @@ import { IResponse, SDKClient, TEnums, TUtils } from 'tmac-sdk';
 import { environment } from '../environments/environment';
 import { AppDataService } from './services/app-data.service';
 
+// declare global
+declare global {
+    interface Window {
+        SDKClient: typeof SDKClient;
+    }
+}
+
 @Component({
     selector: 'app',
     templateUrl: './app.component.html',
@@ -254,6 +261,10 @@ export class AppComponent implements OnInit, OnDestroy {
         // get the login json from proxy
         const loginJson: IResponse = await TUtils.HttpClient.sendRequest({
             url: `${data.ProxyUrl}/GetTmacLoginJson`,
+            header: {
+                'Content-Type': 'application/json'
+            },
+            responseType: 'json',
             requestArgs: { id: '' },
             method: 'POST',
             retry: 3
@@ -301,6 +312,12 @@ export class AppComponent implements OnInit, OnDestroy {
                 customScripts:
                     [...config.AppConfigs.SDK.CustomSripts]
             });
+
+            // check the environment and set window variable
+            if (!environment.production) {
+                // set a global variable to access SDK client on development mode
+                window.SDKClient = SDKClient;
+            }
         }
         else {
             // we will route to not-found page
@@ -317,5 +334,4 @@ export class AppComponent implements OnInit, OnDestroy {
                 });
         }
     }
-
 }

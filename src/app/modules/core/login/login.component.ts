@@ -235,6 +235,10 @@ export class LoginComponent implements OnInit, OnDestroy {
                 ppdata: `${this.loginForm.get('lanId').value}.png`,
                 isrealface: 1
             },
+            header: {
+                'Content-Type': 'application/json'
+            },
+            responseType: 'json',
             method: 'POST'
         });
 

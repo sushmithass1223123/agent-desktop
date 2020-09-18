@@ -42,6 +42,7 @@
 
     @include media-breakpoint('gt-md') {
         margin-bottom: 0;
+        margin-right: 8px;
         height: calc(100vh - 94px);
     }
 }
@@ -55,6 +56,7 @@
     grid-auto-rows: minmax(275px, 1fr);
     margin-bottom: 16px;
     max-width: calc(100vw - 20px);
+    height: 100vh;
 
     @include media-breakpoint('gt-xs') {
         max-width: calc(100vw - 112px);
@@ -131,7 +133,6 @@
     }
 }
 
-
 .tw-list {
     list-style-type: none;
     padding-left: 0%;
@@ -154,8 +155,6 @@
         }
     }
 }
-
-
 
 .tw-aot-fab {
     position: absolute;

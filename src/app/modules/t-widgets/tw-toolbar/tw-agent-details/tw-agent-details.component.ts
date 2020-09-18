@@ -1,6 +1,5 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TWidgetWrapper } from '@twidgets/utils';
-import { environment } from 'environments/environment';
 import { AgentStatusChangeEvent, IAgentData, SDKClient } from 'tmac-sdk';
 
 @Component({
@@ -25,10 +24,6 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
 
         // get agent details
         this.agentData = SDKClient.getAgentData();
-
-        if (!environment.production) {
-            console.log('Agent details: ', this.agentData);
-        }
 
         // register to events
         SDKClient.events.on('AgentStatusChangingEvent', this.AgentStatusChangingEvent);
