@@ -3,7 +3,7 @@ import { WorkCode } from 'tmac-sdk';
 export interface ResData<T> {
     loading: boolean;
     error: boolean;
-    msg: string;
+    msg?: string;
     data?: T;
 }
 

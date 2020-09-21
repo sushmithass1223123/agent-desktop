@@ -1,0 +1,19 @@
+tw-workbench-panel {
+    .mat-tab-body-wrapper {
+        height: 100%;
+        border-bottom-left-radius: 20px;
+        border-bottom-right-radius: 20px;
+        border-top-right-radius: 20px;
+    }
+    .mat-tab-label {
+        background-color: white;
+        border-top-right-radius: 30px;
+        border-top-left-radius: 10px;
+        &-active {
+            background-color: #bda0bc !important;
+        }
+    }
+    .mat-ink-bar {
+        height: 0;
+    }
+}

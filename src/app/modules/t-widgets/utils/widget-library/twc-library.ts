@@ -7,9 +7,10 @@ import { TwcHomeComponent } from '@modules/t-widgets/tw-content/twc-home/twc-hom
 import { TwcSupervisorComponent } from '@modules/t-widgets/tw-content/twc-supervisor/twc-supervisor.component';
 import { TwcVoiceComponent } from '@modules/t-widgets/tw-content/twc-voice/twc-voice.component';
 import { TwcTextchatComponent } from '@modules/t-widgets/tw-content/twc-textchat/twc-textchat.component';
+import { TwcWorkbenchComponent } from '@modules/t-widgets/tw-content/twc-workbench/twc-workbench.component';
+import { TwcEmailComponent } from '@modules/t-widgets/tw-content/twc-email/twc-email.component';
 
 export class TWContentLibrary {
-
     static widgetLibrary: Record<string, Type<any>> = {
         // 'twc-sample': SampleContentComponent,
         'twc-home': TwcHomeComponent,
@@ -17,7 +18,9 @@ export class TWContentLibrary {
         'twc-supervisor': TwcSupervisorComponent,
         'twc-textchat': TwcTextchatComponent,
         // 'twc-email': EmailComponent,
-        'twc-custom': TwcCustomComponent
+        'twc-custom': TwcCustomComponent,
+        'twc-workbench': TwcWorkbenchComponent,
+        'twc-email': TwcEmailComponent
     };
 
     public static getAllWidgets(): Record<string, Type<any>> {
@@ -35,5 +38,3 @@ export class TWContentLibrary {
         return new TWidget(TwcUnknownComponent, data);
     }
 }
-
-

@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { FuseSidebarModule } from '@fuse/components';
 import { SharedModule } from '@modules/shared/shared.module';
-import { ChatPanelModule } from 'app/layout/components/chat-panel/chat-panel.module';
+import { InstantMessagingModule } from 'app/layout/components/instant-messaging/instant-messaging.module';
 import { ContentModule } from 'app/layout/components/content/content.module';
 import { FooterModule } from 'app/layout/components/footer/footer.module';
 import { NavbarModule } from 'app/layout/components/navbar/navbar.module';
@@ -20,7 +20,7 @@ import { VerticalLayout1Component } from 'app/layout/vertical/layout-1/layout-1.
         QuickPanelModule,
         ToolbarModule,
         AppThemeOptionsModule,
-        ChatPanelModule,
+        InstantMessagingModule,
         SharedModule
     ],
     exports: [VerticalLayout1Component]

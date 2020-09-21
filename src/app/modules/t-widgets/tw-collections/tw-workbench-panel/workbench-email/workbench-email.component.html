@@ -1,0 +1,167 @@
+<div fxLayout fxLayoutAlign="space-evenly center" class="w-100-p h-100-p bg-secondary">
+    <div fxFlex="32" (click)="advancedSearchMenu.classList.remove('show')" class="email-list h-95-p border-radius-20" fusePerfectScrollbar>
+        <div fxLayout fxLayoutAlign="center center" (click)="$event.stopPropagation()" class="search-input my-8 border-radius-20 position-relative">
+            <mat-form-field class="custom form-field w-100-p" appearance="outline">
+                <input class="login-input" matInput placeholder="Search" [(ngModel)]="searchTerm" (input)="filterEmails()" />
+                <button *ngIf="!searchTerm; else clearBtn" mat-icon-button matSuffix disabled>
+                    <mat-icon matSuffix>search</mat-icon>
+                </button>
+                <ng-template #clearBtn>
+                    <button
+                        mat-button
+                        color="primary"
+                        matSuffix
+                        mat-icon-button
+                        aria-label="Clear"
+                        [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
+                        (click)="searchTerm = ''; filterEmails()"
+                    >
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </ng-template>
+            </mat-form-field>
+            <button mat-icon-button (click)="advancedSearchMenu.classList.toggle('show')">
+                <mat-icon>more_vert</mat-icon>
+            </button>
+            <div #advancedSearchMenu class="advanced-search-form mat-elevation-z2 position-absolute">
+                <p class="text-center">Advanced Search</p>
+                <form
+                    [formGroup]="advancedSearchForm"
+                    class="px-12"
+                    (ngSubmit)="advancedSearch(); advancedSearchMenu.classList.toggle('show')"
+                    novalidate
+                    fxLayout="row wrap"
+                    fxLayoutAlign="space-evenly"
+                >
+                    <mat-form-field class="form-field" fxFlex="48" appearance="outline">
+                        <mat-label>Email</mat-label>
+                        <input matInput formControlName="email" type="text" />
+                    </mat-form-field>
+                    <mat-form-field class="form-field" fxFlex="48" appearance="outline">
+                        <mat-label>Queue</mat-label>
+                        <input matInput formControlName="queue" type="text" />
+                    </mat-form-field>
+
+                    <mat-form-field class="form-field" fxFlex="48" appearance="outline">
+                        <mat-label>From Date </mat-label>
+                        <input matInput formControlName="fromDate" [matDatepicker]="fromDatePicker" />
+                        <mat-datepicker-toggle matSuffix [for]="fromDatePicker"></mat-datepicker-toggle>
+                        <mat-datepicker #fromDatePicker></mat-datepicker>
+                    </mat-form-field>
+                    <mat-form-field class="form-field" fxFlex="48" appearance="outline">
+                        <mat-label>From Time </mat-label>
+                        <input matInput formControlName="fromTime" type="time" />
+                    </mat-form-field>
+
+                    <mat-form-field class="form-field" fxFlex="48" appearance="outline">
+                        <mat-label>To Date </mat-label>
+                        <input matInput formControlName="toDate" [matDatepicker]="toDatePicker" />
+                        <mat-datepicker-toggle matSuffix [for]="toDatePicker"></mat-datepicker-toggle>
+                        <mat-datepicker #toDatePicker></mat-datepicker>
+                    </mat-form-field>
+
+                    <mat-form-field class="form-field" fxFlex="48" appearance="outline">
+                        <mat-label>To Time </mat-label>
+                        <input matInput formControlName="toTime" type="time" />
+                    </mat-form-field>
+
+                    <mat-form-field class="form-field" fxFlex="48" appearance="outline">
+                        <mat-label>Subject</mat-label>
+                        <input matInput formControlName="subject" type="text" />
+                    </mat-form-field>
+                    <mat-form-field class="form-field" fxFlex="48" appearance="outline">
+                        <mat-label>Content</mat-label>
+                        <input matInput formControlName="content" type="text" />
+                    </mat-form-field>
+                    <button mat-raised-button color="primary" class="w-100-p mb-8">Search</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="email-list-groups">
+            <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="tw-list-item border-radius-10 email-tree">
+                <mat-tree-node *matTreeNodeDef="let node" class="tw-list pb-8" matTreeNodeToggle>
+                    <li class="mat-tree-node tw-list-item selectable" (click)="emailSearchRes.data.selected = node" mat-ripple>
+                        <div fxLayout fxLayoutAlign="space-between" class="w-100-p">
+                            <div fxFlex="70">
+                                <p class="font-weight-600 my-4">{{ node.From }}</p>
+                                <p class="my-4">Subject: {{ node.Subject }}</p>
+                                <!-- <div [innerHtml]="node.body" class="my-4 text-truncate"></div> -->
+                            </div>
+                            <div fxFlex="20">
+                                <span> {{ node.addedTime | date: 'mediumDate' }} </span>
+                                <br />
+                                <span> {{ node.addedTime | date: 'shortTime' }} </span>
+                            </div>
+                        </div>
+                    </li>
+                </mat-tree-node>
+                <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild" [ngClass]="{ active: treeControl.isExpanded(node) }">
+                    <li matTreeNodeToggle class="mb-8">
+                        <div class="mat-tree-node">
+                            <button mat-icon-button [attr.aria-label]="'Toggle ' + node.name">
+                                <mat-icon class="mat-icon-rtl-mirror">
+                                    {{ treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right' }}
+                                </mat-icon>
+                            </button>
+                            <span class="font-weight-700">
+                                {{ node.name }}
+                            </span>
+                        </div>
+                        <ul [class.email-tree-invisible]="!treeControl.isExpanded(node)">
+                            <ng-container matTreeNodeOutlet></ng-container>
+                        </ul>
+                    </li>
+                </mat-nested-tree-node>
+            </mat-tree>
+        </div>
+
+        <div
+            *ngIf="dataSource.data.length === 0 && !emailSearchRes.loading && !emailSearchRes.error"
+            (click)="advancedSearchMenu.classList.remove('show')"
+            class="w-100-p h-50-p"
+            fxLayout
+            fxLayoutAlign="center center"
+        >
+            <span>You have no emails</span>
+        </div>
+
+        <div *ngIf="emailSearchRes.error" class="loader">
+            <span>
+                {{ emailSearchRes.msg }}
+            </span>
+        </div>
+
+        <div *ngIf="emailSearchRes.loading" class="loader">
+            <mat-spinner></mat-spinner>
+        </div>
+    </div>
+
+    <div fxFlex="65" class="email-open h-95-p border-radius-20" fusePerfectScrollbar>
+        <div *ngIf="emailSearchRes.data.selected" fxLayout fxLayoutAlign="end" fxLayoutGap="10px" class="my-20 w-95-p">
+            <button mat-flat-button class="border-radius-20">Transfer</button>
+            <button mat-flat-button class="border-radius-20">Advance</button>
+            <button mat-flat-button class="border-radius-20" (click)="pullEmail()">Pull</button>
+            <button mat-flat-button class="border-radius-20">Push</button>
+        </div>
+
+        <div *ngIf="emailSearchRes.data.selected" class="email-open__body w-95-p mx-auto border-radius-20 pt-20 pb-40 px-28">
+            <div fxLayout fxLayoutAlign="space-between">
+                <div fxFlex="80">
+                    <p class="font-weight-600 my-4">To : {{ emailSearchRes.data.selected.To }}</p>
+                    <p class="my-4">From : {{ emailSearchRes.data.selected.From }}</p>
+                </div>
+                <div fxFlex="15">
+                    <p class="my-4">{{ emailSearchRes.data.selected.addedTime | date: 'longDate' }}</p>
+                    <p class="my-4">{{ emailSearchRes.data.selected.addedTime | date: 'shortTime' }}</p>
+                </div>
+            </div>
+            <span>Subject : {{ emailSearchRes.data.selected.Subject }}</span>
+            <div [innerHtml]="emailSearchRes.data.selected.body"></div>
+        </div>
+
+        <div *ngIf="!emailSearchRes.data.selected" fxLayoutAlign fxLayoutAlign="center center" class="w-100-p h-100-p">
+            <p class="mat-display-1">Select an email</p>
+        </div>
+    </div>
+</div>

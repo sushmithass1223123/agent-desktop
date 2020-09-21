@@ -1,0 +1,35 @@
+<!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
+<!-- implement following events in your component to access widget wrapper action events -->
+<!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
+
+<!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
+
+<tw-wrapper [data]="data">
+    <!-- your code goes here -->
+    <div class="w-100-p h-100-p">
+        <mat-tab-group class="w-100-p h-100-p" animationDuration="0ms">
+            <mat-tab label="Email">
+                <ng-template mat-tab-label>
+                    <mat-icon>email</mat-icon>
+                    <span class="ml-4"> Email </span>
+                </ng-template>
+                <workbench-email [data]="data" ></workbench-email>
+            </mat-tab>
+            <mat-tab label="Voice">
+                <ng-template mat-tab-label>
+                    <mat-icon>phone</mat-icon>
+                    <span class="ml-4"> Voice </span>
+                </ng-template>
+                Voice
+            </mat-tab>
+            <mat-tab label="Chat">
+                <ng-template mat-tab-label>
+                    <mat-icon>chat</mat-icon>
+                    <span class="ml-4">Chat</span>
+                </ng-template>
+                Chat
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+    <!-- your code goes here -->
+</tw-wrapper>

@@ -42,6 +42,7 @@
 
     @include media-breakpoint('gt-md') {
         margin-bottom: 0;
+        margin-right: 8px;
         height: calc(100vh - 94px);
     }
 }
