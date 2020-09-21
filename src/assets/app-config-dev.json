@@ -103,7 +103,7 @@
                         "Data": {
                             "Icon": "home",
                             "Path": "/home",
-                            "Active": true
+                            "Active": false
                         }
                     },
                     {
@@ -144,6 +144,16 @@
                             "Icon": "email",
                             "Path": "/email",
                             "Active": false
+                        }
+                    },
+                    {
+                        "Name": "Workbench",
+                        "Description": "",
+                        "Type": "twc-workbench",
+                        "Data": {
+                            "Icon": "library_books",
+                            "Path": "/workbench",
+                            "Active": true
                         }
                     }
                 ],
@@ -601,6 +611,51 @@
                                         "AutoOpen": false,
                                         "Url": "https://demo2.tetherfilabs.com:55443/GamificationUI/?agentId=_agentId",
                                         "QueryParams": []
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "Name": "Workbench",
+                    "Description": "",
+                    "Type": "twc-workbench",
+                    "Config": {
+                        "Class": "",
+                        "Position": {
+                            "X": 3,
+                            "Y": 6
+                        }
+                    },
+                    "Data": {
+                        "Path": "/workbench",
+                        "Widgets": {
+                            "Static": [
+                                {
+                                    "Name": "Workbench Panel",
+                                    "Description": "",
+                                    "Type": "tw-workbench-panel",
+                                    "Config": {
+                                        "Static": true,
+                                        "Anchor": true,
+                                        "AOT": false,
+                                        "Icon": "dvr",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 3,
+                                            "Y": 2
+                                        },
+                                        "Actions": [],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": false,
+                                        "Disabled": false
+                                    },
+                                    "Data": {
+                                        "EmailSearchUrl": "http://dice.tetherfi.cloud:55005/api/workbench/email/search"
                                     }
                                 }
                             ]

@@ -4,13 +4,7 @@
             fxLayout="column"
             fxLayoutAlign=" none"
             class="w-100-p px-12 py-4 border-radius-20 interaction-details"
-            [ngClass]="
-                fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
-                    ? fuseConfig.layout.anchorWidget.contentBackground
-                    : fuseConfig.layout.widget.customBackgroundColor === true
-                    ? fuseConfig.layout.widget.contentBackground
-                    : ''
-            "
+       
         >
             <div fxLayout="row" fxLayoutAlign="space-between none">
                 <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>alarm_on</mat-icon> {{ startTime | date: 'medium' }}</div>

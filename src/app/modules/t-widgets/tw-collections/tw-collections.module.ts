@@ -21,6 +21,8 @@ import { TwCustomComponent } from './tw-custom/tw-custom.component';
 import { TwCustomerDetailsComponent } from './tw-customer-details/tw-customer-details.component';
 import { TwCustomerJourneyComponent } from './tw-customer-journey/tw-customer-journey.component';
 import { TwCustomerSentimentComponent } from './tw-customer-sentiment/tw-customer-sentiment.component';
+import { TwEmailControlsComponent } from './tw-email-controls/tw-email-controls.component';
+import { TwEmailPanelComponent } from './tw-email-panel/tw-email-panel.component';
 import { TwPanelComponent } from './tw-panel/tw-panel.component';
 import { TwPieChartComponent } from './tw-pie-chart/tw-pie-chart.component';
 import { TwRegisterCallbackComponent } from './tw-register-callback/tw-register-callback.component';
@@ -34,15 +36,17 @@ import { TwSuChannelsComponent } from './tw-su-channels/tw-su-channels.component
 import { TwSuGamificationComponent } from './tw-su-gamification/tw-su-gamification.component';
 import { TwSuIntentListComponent } from './tw-su-intent-list/tw-su-intent-list.component';
 import { TwSuStatusComponent } from './tw-su-status/tw-su-status.component';
+import { TwTransferInteractionComponent } from './tw-transfer-interaction/tw-transfer-interaction.component';
 import { TwUnknownComponent } from './tw-unknown/tw-unknown.component';
 import { TwVideoControlsComponent } from './tw-video-controls/tw-video-controls.component';
 import { TwVoiceBotTranscriptsComponent } from './tw-voice-bot-transcripts/tw-voice-bot-transcripts.component';
+import { TwVoiceCannedResponsesComponent } from './tw-voice-canned-responses/tw-voice-canned-responses.component';
 import { TwVoiceControlsComponent } from './tw-voice-controls/tw-voice-controls.component';
 import { TwVoicePanelComponent } from './tw-voice-panel/tw-voice-panel.component';
 import { TwWallboardComponent } from './tw-wallboard/tw-wallboard.component';
 import { TwWorkCodesComponent } from './tw-work-codes/tw-work-codes.component';
-import { TwTransferInteractionComponent } from './tw-transfer-interaction/tw-transfer-interaction.component';
-import { TwVoiceCannedResponsesComponent } from './tw-voice-canned-responses/tw-voice-canned-responses.component';
+import { TwWorkbenchPanelComponent } from './tw-workbench-panel/tw-workbench-panel.component';
+import { WorkbenchEmailComponent } from './tw-workbench-panel/workbench-email/workbench-email.component';
 
 const collectionComponents = [
     TwCustomComponent,
@@ -87,6 +91,10 @@ const collectionComponents = [
     TwPieChartComponent,
     TwTransferInteractionComponent,
     TwVoiceCannedResponsesComponent,
+    TwWorkbenchPanelComponent,
+    WorkbenchEmailComponent,
+    TwEmailPanelComponent,
+    TwEmailControlsComponent
 ];
 
 @NgModule({

@@ -3,7 +3,7 @@ import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, QueryList, Vie
 import { NgForm } from '@angular/forms';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { FusePerfectScrollbarDirective } from '@fuse/directives/fuse-perfect-scrollbar/fuse-perfect-scrollbar.directive';
-import { ChatPanelService } from 'app/layout/components/chat-panel/chat-panel.service';
+import { InstantMessagingService } from 'app/layout/components/instant-messaging/instant-messaging.service';
 import { groupBy, sortBy } from 'lodash';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -26,12 +26,12 @@ interface Chat {
 }
 
 @Component({
-    selector: 'chat-panel',
-    templateUrl: './chat-panel.component.html',
-    styleUrls: ['./chat-panel.component.scss'],
+    selector: 'instant-messaging',
+    templateUrl: './instant-messaging.component.html',
+    styleUrls: ['./instant-messaging.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class ChatPanelComponent implements OnInit, AfterViewInit, OnDestroy {
+export class InstantMessagingComponent implements OnInit, AfterViewInit, OnDestroy {
     contacts: Contact[] = [];
 
     allChats: Record<string, Chat> = {};
@@ -62,11 +62,11 @@ export class ChatPanelComponent implements OnInit, AfterViewInit, OnDestroy {
     /**
      * Constructor
      *
-     * @param {ChatPanelService} _chatPanelService
+     * @param {InstantMessagingService} _InstantMessagingService
      * @param {HttpClient} _httpClient
      * @param {FuseSidebarService} _fuseSidebarService
      */
-    constructor(private _chatPanelService: ChatPanelService, private _httpClient: HttpClient, private _fuseSidebarService: FuseSidebarService) {
+    constructor(private _InstantMessagingService: InstantMessagingService, private _httpClient: HttpClient, private _fuseSidebarService: FuseSidebarService) {
         // Set the defaults
         this.selectedContact = null;
         this.sidebarFolded = true;

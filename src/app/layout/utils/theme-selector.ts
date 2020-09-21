@@ -95,8 +95,8 @@ export class ThemeSelector {
                                 background: 'grey-900'
                             },
                             anchorWidget: {
-                                customBackgroundColor: false,
-                                bodyBackground: '',
+                                customBackgroundColor: true,
+                                bodyBackground: 'grey-800',
                                 headerBackground: '',
                                 contentBackground: ''
                             },

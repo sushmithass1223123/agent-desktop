@@ -227,10 +227,15 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
             datasets.Total.push(c.Total);
             labels.push(c.Channel);
         });
-        this.chart.datasets = Object.keys(datasets).map((d) => ({
-            data: datasets[d],
-            label: d
-        }));
+        this.chart.datasets = Object.keys(datasets)
+            .map((d) => ({
+                data: datasets[d],
+                label: d
+            }))
+            .filter((x) => {
+                const sum = x.data.reduce((a, b) => a + b);
+                return !!sum;
+            });
         this.chart.labels = labels;
     };
 

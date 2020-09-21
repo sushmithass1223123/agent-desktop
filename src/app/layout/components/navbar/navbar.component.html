@@ -10,15 +10,10 @@
     </div>
 </div>
 
-<div
-    class="navbar-content"
-    fusePerfectScrollbar
-    [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
-    [ngClass]="fuseConfig.layout.navbar.customBackgroundColor === true ? fuseConfig.layout.navbar.background : ''"
->
+<div class="navbar-content" [ngClass]="fuseConfig.layout.navbar.customBackgroundColor === true ? fuseConfig.layout.navbar.background : ''">
     <div class="twn-list">
         <mat-selection-list #sidebarList [multiple]="false">
-            <div class="top">
+            <div class="top mat-elevation-z1">
                 <mat-list-option
                     *ngFor="let item of topWidgets"
                     [value]="item.Data.Path"
@@ -35,7 +30,7 @@
                 <mat-divider *ngIf="topWidgets.length > 0"></mat-divider>
             </div>
 
-            <div class="bottom">
+            <div class="bottom mat-elevation-z1" fusePerfectScrollbar [fusePerfectScrollbarOptions]="{ suppressScrollX: true }">
                 <mat-divider *ngIf="bottomWidgets.length > 0"></mat-divider>
 
                 <mat-list-option
