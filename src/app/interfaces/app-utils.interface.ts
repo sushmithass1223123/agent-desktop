@@ -93,3 +93,23 @@ export interface AppAlertDialogData {
     close: () => void;
     type: AppAlertDialogTypes;
 }
+
+export type ReminderTaskDialogTypes = 'makecall' | 'meeting' | 'changestate';
+
+export interface ReminderTaskDialogData {
+    title: string;
+    message: string;
+    accept: () => void;
+    reject: () => void;
+    snooze: () => void;
+    type: AppAlertDialogTypes;
+}
+
+export type ConfirmDialogTypes = 'takeoverSession' | 'endInteraction' | 'closeInteraction';
+
+export interface ConfirmDialogData {
+    title: string;
+    message: string;
+    type: ConfirmDialogTypes;
+    confirm: () => void;
+}

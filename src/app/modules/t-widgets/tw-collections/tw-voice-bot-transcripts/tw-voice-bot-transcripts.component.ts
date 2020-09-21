@@ -5,7 +5,7 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { takeUntil } from 'rxjs/operators';
 import { IAgentData, SDKClient, VoiceBotTranscriptEvent, IUIEvent } from 'tmac-sdk';
 import { ChatTranscripts } from 'app/interfaces';
-import { InteractionEventService } from '@services/interaction-event.service';
+import { TMACEventService } from '@services/tmac-event.service';
 
 @Component({
     selector: 'tw-voice-bot-transcripts',
@@ -44,7 +44,7 @@ export class TwVoiceBotTranscriptsComponent extends TWidgetWrapper implements On
         private _fuseConfigService: FuseConfigService,
         // @ [OPTIONAL]
         private _appDataService: AppDataService,
-        private _interactionEventService: InteractionEventService
+        private _interactionEventService: TMACEventService
     ) {
         super();
     }

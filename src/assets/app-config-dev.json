@@ -145,6 +145,16 @@
                             "Path": "/email",
                             "Active": false
                         }
+                    },
+                    {
+                        "Name": "Workbench",
+                        "Description": "",
+                        "Type": "twc-workbench",
+                        "Data": {
+                            "Icon": "library_books",
+                            "Path": "/workbench",
+                            "Active": true
+                        }
                     }
                 ],
                 "Bottom": [
@@ -216,16 +226,6 @@
                             "Icon": "analytics",
                             "Path": "/realtimestats",
                             "Active": false
-                        }
-                    },
-                    {
-                        "Name": "Workbench",
-                        "Description": "",
-                        "Type": "twc-workbench",
-                        "Data": {
-                            "Icon": "mail",
-                            "Path": "/workbench",
-                            "Active": true
                         }
                     }
                 ]
@@ -304,11 +304,11 @@
                                     },
                                     "Data": {
                                         "Source": "tw-ad-total-interactions",
-                                        "Role" :  "dashboard"
+                                        "Role": "dashboard"
                                     }
                                 },
                                 {
-                                    "Name": "AHT / Transfer / Conference ",
+                                    "Name": "AHT/Transfer/Conference ",
                                     "Description": "",
                                     "Type": "tw-aht-tc",
                                     "Config": {
@@ -365,7 +365,7 @@
                                     },
                                     "Data": {
                                         "Source": "tw-aux-status-chart",
-                                        "ChartType" : "pie"
+                                        "ChartType": "pie"
                                     }
                                 },
                                 {
@@ -654,7 +654,9 @@
                                         "Header": false,
                                         "Disabled": false
                                     },
-                                    "Data": {}
+                                    "Data": {
+                                        "EmailSearchUrl": "http://dice.tetherfi.cloud:55005/api/workbench/email/search"
+                                    }
                                 }
                             ]
                         }
@@ -728,7 +730,7 @@
                                         "Disabled": false
                                     },
                                     "Data": {
-                                        "Source" : "tw-ad-total-interactions",
+                                        "Source": "tw-ad-total-interactions",
                                         "Role": "supervisor"
                                     }
                                 },
@@ -788,8 +790,8 @@
                                         "Disabled": false
                                     },
                                     "Data": {
-                                        "Source" : "tw-su-calls-in-queue",
-                                        "ChartType" : "doughnut"
+                                        "Source": "tw-su-calls-in-queue",
+                                        "ChartType": "doughnut"
                                     }
                                 },
                                 {
@@ -819,7 +821,7 @@
                                         "Disabled": false
                                     },
                                     "Data": {
-                                        "Source" : "tw-su-intent-list"
+                                        "Source": "tw-su-intent-list"
                                     }
                                 },
                                 {
@@ -906,8 +908,8 @@
                                         "Disabled": false
                                     },
                                     "Data": {
-                                        "Source" : "tw-su-status",
-                                        "ChartType" : "doughnut"
+                                        "Source": "tw-su-status",
+                                        "ChartType": "doughnut"
                                     }
                                 },
                                 {
@@ -1469,6 +1471,35 @@
                                         "Url": "https://www.tetherfi.com",
                                         "QueryParams": []
                                     }
+                                },
+                                {
+                                    "Name": "Voice Canned Responses",
+                                    "Description": "",
+                                    "Type": "tw-voice-canned-responses",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "Icon": "audiotrack",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0,
+                                            "W": 300,
+                                            "H": 300
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "PinState": false,
+                                        "FloatState": false,
+                                        "Resizable": false,
+                                        "Header": true,
+                                        "Disabled": false
+                                    },
+                                    "Data": {}
                                 }
                             ]
                         }
@@ -2195,6 +2226,69 @@
                         "Url": "https://tmac.tetherfilabs.com/tcie-web-appv8?id=_agentId",
                         "QueryParams": []
                     }
+                },
+                {
+                    "Name": "Register Callback",
+                    "Description": "",
+                    "Type": "tw-register-callback",
+                    "Config": {
+                        "Static": false,
+                        "Anchor": true,
+                        "AOT": true,
+                        "Icon": "phone_callback",
+                        "Class": "",
+                        "Position": {
+                            "X": 0,
+                            "Y": 0,
+                            "W": 300,
+                            "H": 300
+                        },
+                        "Actions": [
+                            "minimize",
+                            "destroy"
+                        ],
+                        "ViewState": "restore",
+                        "PinState": false,
+                        "FloatState": false,
+                        "Resizable": false,
+                        "Header": true,
+                        "Disabled": false
+                    },
+                    "Data": {
+                        "AutoOpen": false,
+                        "GetCampaignsUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Campaign/GetCampaigns",
+                        "CreateContactCampaignUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Contact/CreateCampaignContact"
+                    }
+                },
+                {
+                    "Name": "Agent Assist",
+                    "Description": "",
+                    "Type": "tw-custom",
+                    "Config": {
+                        "Static": false,
+                        "Anchor": true,
+                        "AOT": true,
+                        "Icon": "",
+                        "Class": "",
+                        "Position": {
+                            "X": 0,
+                            "Y": 0
+                        },
+                        "Actions": [
+                            "minimize",
+                            "destroy"
+                        ],
+                        "ViewState": "restore",
+                        "PinState": false,
+                        "FloatState": false,
+                        "Resizable": false,
+                        "Header": true,
+                        "Disabled": false
+                    },
+                    "Data": {
+                        "AutoOpen": false,
+                        "Url": ""
+                    }
                 }
             ]
         }
@@ -2270,9 +2364,15 @@
                 "offerToReceiveVideo": true,
                 "iceRestart": true
             },
+            "answerOptions": {
+                "iceRestart": false
+            },
             "recordingOptions": {
                 "enabled": false,
-                "recordLocal": false
+                "codec": "vp9",
+                "recordLocal": false,
+                "audioKbps": 32,
+                "videoKbps": 512
             },
             "audioLevelCheck": {
                 "enabled": true,
@@ -2281,7 +2381,10 @@
             "connectionBandwidthUpperLimit": 1024,
             "audioTrackBandwidthUpperLimit": 16,
             "videoTrackBandwidthUpperLimit": 128,
-            "audioMixerEnabled": true
+            "audioMixerEnabled": true,
+            "audioVideoConnectionMode": 0,
+            "enableCdcAutoSelection": false,
+            "tryToMergeSingleTrackStreamsFromDifferentSources": false
         },
         "SDK": {
             "Proxy": {

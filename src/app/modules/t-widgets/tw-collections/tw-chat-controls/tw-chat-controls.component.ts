@@ -19,11 +19,11 @@ import { FusePerfectScrollbarDirective } from '@fuse/directives/fuse-perfect-scr
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
 import { ConfirmDialogComponent } from '@modules/shared/confirm-dialog/confirm-dialog.component';
-import { AotWidgetService } from '@services/aot-widget.service';
+import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { ContentPageService } from '@services/content-page.service';
-import { InteractionEventService } from '@services/interaction-event.service';
+import { TMACEventService } from '@services/tmac-event.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { ChatTranscripts, InteractionRef, IWidget } from 'app/interfaces';
@@ -99,12 +99,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     constructor(
         private _fuseConfigService: FuseConfigService,
         private _interactionManagerService: InteractionManagerService,
-        private _interactionEventService: InteractionEventService,
+        private _interactionEventService: TMACEventService,
         private _dialog: MatDialog,
         private _appDataService: AppDataService,
         private _fuseProgressBarService: FuseProgressBarService,
         private _contentPageService: ContentPageService,
-        private _aotWidgetService: AotWidgetService,
+        private _aotWidgetService: AOTWidgetService,
         private _appUIService: AppUiService
     ) {
         super();
@@ -353,7 +353,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // if this is the final auto response then disconnect the chat
         if (evt.IsFinal) {
             // send end chat to server 
-            this.endChat('AutoResponseTimeout');
+            this.endChat('AutoResponseTimeout', null);
             // hide freeze auto response button
             this.showAutoFreeze = false;
         }
@@ -719,32 +719,82 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         return this.conferenceAgentList.filter(c => c.AgentName === agentName).length > 0;
     }
 
+    private endChat(reason: string, btn: MatButton): void {
+        // show the progress bar 
+        this._fuseProgressBarService.show();
+        // disable the button
+        if (btn) {
+            btn.disabled = true;
+        }
+        SDKClient.endTextChat({
+            interactionId: this.interactionId.toString(),
+            reason
+        }, null)
+            .then(() => {
+                // hide the progress bar
+                this._fuseProgressBarService.hide();
+            })
+            .catch(() => {
+                // enable if something goes wrong
+                if (btn) {
+                    btn.disabled = false;
+                }
+                this._fuseProgressBarService.hide();
+                this._appUIService.showSnackbar('End chat failed!', 'failure');
+            });
+    }
+
+    private closeInteraction(btn: MatButton): void {
+        // show the progress bar 
+        this._fuseProgressBarService.show();
+        // disable the button
+        btn.disabled = true;
+        SDKClient.closeInteraction(this.interactionId.toString(), null)
+            .then((dt: IResponse) => {
+                // hide the progress bar
+                this._fuseProgressBarService.hide();
+                // check the response
+                if (dt.response && dt.response.ResultCode === 0) {
+                    this._appUIService.showSnackbar('Interaction closed successfully');
+                }
+                else {
+                    // enable if something goes wrong
+                    btn.disabled = false;
+                    this._appUIService.showSnackbar('Close interaction failed', 'failure');
+                }
+            })
+            .catch(() => {
+                this._fuseProgressBarService.hide();
+                this._appUIService.showSnackbar('Close interaction failed!', 'failure');
+            });
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------    
 
-    onMaximized(event: boolean): void {
+    public onMaximized(event: boolean): void {
         this.maximizeEvent.emit(event);
         this.maximized = event;
     }
 
-    findMe(message: any): boolean {
+    public findMe(message: any): boolean {
         return message?.who === this.user.agentName || message?.who === 'Chatbot' || (this.conferenceType === 'silent' && this.findConferenceAgent(message.who));
     }
 
-    findContact(message: any): boolean {
+    public findContact(message: any): boolean {
         return message?.who !== this.user.agentName && message?.who !== 'Chatbot' && !(this.conferenceType === 'silent' && this.findConferenceAgent(message.who));
     }
 
-    isFirstMessageOfGroup(message: any, i: number): boolean {
+    public isFirstMessageOfGroup(message: any, i: number): boolean {
         return (i === 0 || this.chatTranscripts[i - 1] && this.chatTranscripts[i - 1].who !== message.who);
     }
 
-    isLastMessageOfGroup(message: any, i: number): boolean {
+    public isLastMessageOfGroup(message: any, i: number): boolean {
         return (i === this.chatTranscripts.length - 1 || this.chatTranscripts[i + 1] && this.chatTranscripts[i + 1].who !== message.who);
     }
 
-    reply(event: any): void {
+    public reply(event: any): void {
         event.preventDefault();
 
         if (!this.replyForm.form.value.message.trim()) {
@@ -755,7 +805,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.sendMessage(null);
     }
 
-    selectInteraction(item: InteractionRef): void {
+    public selectInteraction(item: InteractionRef): void {
         // if same interaction is seleted then return
         if (this.interactionId === item.interactionId) {
             return;
@@ -769,7 +819,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         });
     }
 
-    confirmEndChat(endBtn: MatButton): void {
+    public confirmEndChat(btn: MatButton): void {
         // config force login
         const confirmDialogRef = this._dialog.open(ConfirmDialogComponent, {
             disableClose: false
@@ -777,59 +827,27 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         confirmDialogRef.componentInstance.message = 'Are you sure to end this chat?';
         confirmDialogRef.afterClosed().subscribe((dialogResult) => {
             if (dialogResult) {
-                // disable the button
-                if (endBtn) {
-                    endBtn.disabled = true;
-                }
                 // send end chat to server 
-                this.endChat('AgentChatDisconnected');
+                this.endChat('AgentChatDisconnected', btn);
             }
         });
     }
 
-    endChat(reason: string): void {
-        // show the progress bar 
-        this._fuseProgressBarService.show();
-        SDKClient.endTextChat({
-            interactionId: this.interactionId.toString(),
-            reason
-        }, null)
-            .then(() => {
-                // hide the progress bar
-                this._fuseProgressBarService.hide();
-            })
-            .catch(() => {
-                this._fuseProgressBarService.hide();
-                this._appUIService.showSnackbar('End chat failed!', 'failure');
-            });
+    public confirmCloseInteraction(btn: MatButton): void {
+        // config force login
+        const confirmDialogRef = this._dialog.open(ConfirmDialogComponent, {
+            disableClose: false
+        });
+        confirmDialogRef.componentInstance.message = 'Are you sure to close this interaction?';
+        confirmDialogRef.afterClosed().subscribe((dialogResult) => {
+            if (dialogResult) {
+                // send end chat to server 
+                this.closeInteraction(btn);
+            }
+        });
     }
 
-    closeInteraction(closeBtn: MatButton): void {
-        // show the progress bar 
-        this._fuseProgressBarService.show();
-        // disable the button
-        closeBtn.disabled = true;
-        SDKClient.closeInteraction(this.interactionId.toString(), null)
-            .then((dt: IResponse) => {
-                // hide the progress bar
-                this._fuseProgressBarService.hide();
-                // check the response
-                if (dt.response && dt.response.ResultCode === 0) {
-                    this._appUIService.showSnackbar('Interaction closed sucessfully');
-                }
-                else {
-                    // enable if something goes wrong
-                    closeBtn.disabled = false;
-                    this._appUIService.showSnackbar('Close interaction failed', 'failure');
-                }
-            })
-            .catch(() => {
-                this._fuseProgressBarService.hide();
-                this._appUIService.showSnackbar('Close interaction failed!', 'failure');
-            });
-    }
-
-    freezeAutoResponse(force: boolean): void {
+    public freezeAutoResponse(force: boolean): void {
         // check if valid to freeze
         if (!this.showAutoFreeze && !force) {
             return;
@@ -855,7 +873,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             });
     }
 
-    escalateToAV(type: string): void {
+    public escalateToAV(type: string): void {
         // freeze auto response if needed
         this.freezeAutoResponse(false);
 
@@ -863,7 +881,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.openCallWidget(type, 'out');
     }
 
-    previewMedia(previewData: ChatTranscripts): void {
+    public previewMedia(previewData: ChatTranscripts): void {
         const confirmDialogRef = this._dialog.open(ConfirmDialogComponent, {
             disableClose: false
         });
@@ -883,7 +901,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         });
     }
 
-    dsiposeCallWidget(): void {
+    public dsiposeCallWidget(): void {
         // dispose the call widget
         this.callWidget = null;
         // enable AV buttons

@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TWidget } from '@modules/t-widgets/utils';
-import { AotWidgetService } from '@services/aot-widget.service';
+import { AOTWidgetService } from '@services/aot-widget.service';
 import { IWidget } from 'app/interfaces';
 import { AppDataService } from 'app/services/app-data.service';
 import { ContentPageService } from 'app/services/content-page.service';
@@ -28,12 +28,12 @@ export class ContentComponent implements OnInit, OnDestroy {
      *
      * @param {AppDataService} _appDataService
      * @param {ContentPageService} _contentPageService
-     * @param {AotWidgetService} _aotWidgetService
+     * @param {AOTWidgetService} _aotWidgetService
      */
     constructor(
         private _appDataService: AppDataService,
         private _contentPageService: ContentPageService,
-        private _aotWidgetService: AotWidgetService
+        private _aotWidgetService: AOTWidgetService
     ) {
         // Set the private defaults
         this._unsubscribeAll = new Subject();
@@ -57,7 +57,10 @@ export class ContentComponent implements OnInit, OnDestroy {
                 }
             );
 
-        // subscribe to AOT widget
+        // subscribe to the AOT widget service
+        this._aotWidgetService.subscribe();
+
+        // subscribe to AOT widgets
         this._aotWidgetService.widgets
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe(
@@ -74,6 +77,9 @@ export class ContentComponent implements OnInit, OnDestroy {
         // Unsubscribe from all subscriptions
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
+
+        // unsubscribe to the AOT widget service
+        this._aotWidgetService.unsubscribe();
     }
 
     // -----------------------------------------------------------------------------------------------------

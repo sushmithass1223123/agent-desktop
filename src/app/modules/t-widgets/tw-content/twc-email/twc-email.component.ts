@@ -1,12 +1,11 @@
 import { Component, ElementRef, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { InteractionEventService } from '@services/interaction-event.service';
+import { TMACEventService } from '@services/tmac-event.service';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { InteractionRef, InteractionWidgets, IWidget } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
 import { InteractionManagerService } from 'app/services/interaction-manager.service';
-import { random } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { InteractionClosedEvent, SDKClient } from 'tmac-sdk';
+import { InteractionClosedEvent } from 'tmac-sdk';
 
 @Component({
     selector: 'twc-email',
@@ -24,7 +23,7 @@ export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDes
         public hostElement: ElementRef,
         public contentPageService: ContentPageService,
         private _interactionManagerService: InteractionManagerService,
-        private _interactionEventService: InteractionEventService
+        private _tmacEventService: TMACEventService
     ) {
         super(hostElement, contentPageService);
     }
@@ -46,7 +45,7 @@ export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDes
         });
 
         // subscribe to interaction events observable
-        this._interactionEventService.constructDisposeEvents.pipe(takeUntil(this.unsubscribeAll)).subscribe((evt: any) => {
+        this._tmacEventService.constructDisposeEvents.pipe(takeUntil(this.unsubscribeAll)).subscribe((evt: any) => {
             // filter the event name
             if (evt.EventName === 'IncomingEmailEvent') {
                 this.EmailIncomingEvent(evt);

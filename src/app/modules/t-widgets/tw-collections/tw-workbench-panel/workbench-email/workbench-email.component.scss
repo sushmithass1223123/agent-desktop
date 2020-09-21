@@ -1,6 +1,7 @@
 workbench-email {
     .email-list {
-        background-color: darken(whitesmoke, 5);
+        height: 98%;
+        box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
         .tw-list-item {
             background-color: darken(whitesmoke, 5);
             &:hover {
@@ -17,15 +18,15 @@ workbench-email {
         padding: 2px 0px !important;
     }
     .email-open {
-        background-color: darken(whitesmoke, 5);
+        height: 98%;
+        box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
         &__body {
-            background-color: whitesmoke;
+            background-color: white;
         }
     }
 
     .search-input {
         position: relative;
-        background-color: whitesmoke;
         margin: auto;
         z-index: 1;
         width: calc(100% - 20px);
@@ -47,7 +48,6 @@ workbench-email {
         border-radius: 10px;
         width: 100%;
         padding-bottom: 20px;
-        background-color: white;
         top: -1000%;
         opacity: 0;
         margin-top: 10px;
@@ -109,5 +109,10 @@ workbench-email {
         margin-top: 0;
         background-color: whitesmoke;
         border-radius: 10px;
+    }
+
+    .hint-mail-text {
+        font-size: 28px;
+        font-weight: 500;
     }
 }

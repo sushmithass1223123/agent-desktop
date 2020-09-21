@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { ConfirmDialogComponent } from '@modules/shared/confirm-dialog/confirm-dialog.component';
-import { AotWidgetService } from '@services/aot-widget.service';
+import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
 // import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { AppUiService } from '@services/app-ui.service';
@@ -64,7 +64,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
     constructor(
         private _fuseConfigService: FuseConfigService,
         private _appDataService: AppDataService,
-        private _aotWidgetService: AotWidgetService,
+        private _aotWidgetService: AOTWidgetService,
         private _dialog: MatDialog,
         private _appUIService: AppUiService
     ) {
@@ -192,7 +192,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
     }
 
     private onAVEvent = (evt: AVEvent) => {
-        // console.log('##### onAVEvent #####', evt);
+        console.log('##### onAVEvent #####', evt);
 
         // swtich the av events
         switch (evt.event) {

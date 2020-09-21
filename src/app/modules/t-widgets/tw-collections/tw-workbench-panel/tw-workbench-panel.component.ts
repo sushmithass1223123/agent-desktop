@@ -4,6 +4,8 @@ import { AppDataService } from '@services/app-data.service';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { takeUntil } from 'rxjs/operators';
 import { SDKClient } from 'tmac-sdk';
+import { FuseConfig } from '@fuse/types';
+import { IWidget } from 'app/interfaces';
 
 @Component({
     selector: 'tw-workbench-panel', // make sure you set the selector starts with tw-<widget-name>
@@ -12,18 +14,30 @@ import { SDKClient } from 'tmac-sdk';
     encapsulation: ViewEncapsulation.None
 })
 export class TwWorkbenchPanelComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-    // holds all the data related to this widget from the config
-    @Input() data: any;
+    /**
+     * holds all the data related to this widget from the config
+     */
+    @Input() data: IWidget;
 
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store the fuse config for theme
-    // -----------------------------------------------------------
-    fuseConfig: any;
+    /**
+     * to store the fuse config for theme
+     */
+    fuseConfig: FuseConfig;
 
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store entire app config and get update
-    // -----------------------------------------------------------
+    /**
+     * to store entire app config and get update
+     */
     appConfig: any;
+
+    /**
+     * active class for the tab
+     */
+    tabActiveClass = '';
+
+    /**
+     * inactive class for the tab
+     */
+    tabInactiveClass = '';
 
     /**
      * Constructor
@@ -55,6 +69,20 @@ export class TwWorkbenchPanelComponent extends TWidgetWrapper implements OnInit,
         // -----------------------------------------------------------
         this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
             this.fuseConfig = config;
+
+            // set the active tab class
+            this.tabActiveClass = this.fuseConfig.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor
+                ? this.fuseConfig.layout.anchorWidget.bodyBackground
+                : this.fuseConfig.layout.widget.customBackgroundColor === true
+                    ? this.fuseConfig.layout.widget.bodyBackground
+                    : '';
+
+            // set the inactive tab class
+            this.tabInactiveClass = this.fuseConfig.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor
+                ? this.fuseConfig.layout.anchorWidget.contentBackground
+                : this.fuseConfig.layout.widget.customBackgroundColor === true
+                    ? this.fuseConfig.layout.widget.contentBackground
+                    : '';
         });
 
         // -----------------------------------------------------------

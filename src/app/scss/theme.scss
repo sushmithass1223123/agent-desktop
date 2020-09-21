@@ -23,6 +23,7 @@
 @import 'src/app/modules/t-widgets/tw-collections/tw-amdocs-bcc/tw-amdocs-bcc.theme';
 @import 'src/app/modules/t-widgets/tw-collections/tw-canned-responses/tw-canned-responses.theme';
 @import 'src/app/modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.theme';
+@import 'src/app/modules/t-widgets/tw-collections/tw-workbench-panel/tw-workbench-panel.theme';
 
 // Define a mixin for easier access
 @mixin app-core-theme($theme) {
@@ -68,4 +69,5 @@
     @include tw-amdocs-bcc-theme($theme);
     @include tw-canned-responses-theme($theme);
     @include tw-customer-journey-theme($theme);
+    @include tw-workbench-panel-theme($theme);
 }

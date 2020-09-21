@@ -11,7 +11,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { AGENT_FEATURES_MAP, COMMON_ERR_MESSAGE } from 'app/constants';
 import { AppUiService } from '@services/app-ui.service';
-import { AotWidgetService } from '@services/aot-widget.service';
+import { AOTWidgetService } from '@services/aot-widget.service';
 
 @Component({
     selector: 'tw-su-agent-interactions',
@@ -62,7 +62,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
         private _appDataService: AppDataService,
         private _dashboardService: DashboardService,
         private _appUIService: AppUiService,
-        private _aotWidgetService: AotWidgetService
+        private _aotWidgetService: AOTWidgetService
     ) {
         super();
 

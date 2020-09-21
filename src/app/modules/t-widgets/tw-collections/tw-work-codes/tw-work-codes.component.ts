@@ -68,7 +68,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         private _fuseConfigService: FuseConfigService,
         // @ [OPTIONAL]
         private _appDataService: AppDataService,
-        private appUiService: AppUiService
+        private _appUiService: AppUiService
     ) {
         super();
     }
@@ -206,7 +206,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     }
 
     public setWorkCode(option: MatAutocompleteSelectedEvent): void {
-        this.appUiService.showSnackbar('Setting work code', 'loading');
+        this._appUiService.showSnackbar('Setting work code', 'loading');
         SDKClient.setCallWorkCode(
             {
                 code: option.option.value.Code,
@@ -229,16 +229,16 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
                 } else {
                     this.loadWorkCodesReq.data.listData = this.loadWorkCodesReq.data.listData.filter((x) => x.Code !== option.option.value.Code);
                 }
-                this.appUiService.showSnackbar('Work code set successfully', 'success');
+                this._appUiService.showSnackbar('Work code set successfully', 'success');
                 this.workCodeInput.nativeElement.value = '';
             })
             .catch(() => {
-                this.appUiService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
+                this._appUiService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
             });
     }
 
     public removeWorkCode(option: WorkCode): void {
-        this.appUiService.showSnackbar('Removing work code', 'loading');
+        this._appUiService.showSnackbar('Removing work code', 'loading');
 
         SDKClient.removeCallWorkCode(
             {
@@ -254,10 +254,10 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
                 } else {
                     this.loadWorkCodesReq.data.listData.push(option);
                 }
-                this.appUiService.showSnackbar('Work code removed successfully', 'success');
+                this._appUiService.showSnackbar('Work code removed successfully', 'success');
             })
             .catch(() => {
-                this.appUiService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
+                this._appUiService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
             });
     }
 

@@ -1,5 +1,28 @@
-<div fxLayout fxLayoutAlign="space-evenly center" class="w-100-p h-100-p bg-secondary">
-    <div fxFlex="32" (click)="advancedSearchMenu.classList.remove('show')" class="email-list h-95-p border-radius-20" fusePerfectScrollbar>
+<div
+    fxLayout
+    fxLayoutAlign="space-evenly center"
+    class="email-workbench w-100-p h-100-p"
+    [ngClass]="
+        fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+            ? fuseConfig.layout.anchorWidget.bodyBackground
+            : fuseConfig.layout.widget.customBackgroundColor === true
+            ? fuseConfig.layout.widget.bodyBackground
+            : ''
+    "
+>
+    <div
+        fxFlex="33"
+        (click)="advancedSearchMenu.classList.remove('show')"
+        class="email-list border-radius-20"
+        fusePerfectScrollbar
+        [ngClass]="
+            fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                ? fuseConfig.layout.anchorWidget.contentBackground
+                : fuseConfig.layout.widget.customBackgroundColor === true
+                ? fuseConfig.layout.widget.contentBackground
+                : ''
+        "
+    >
         <div fxLayout fxLayoutAlign="center center" (click)="$event.stopPropagation()" class="search-input my-8 border-radius-20 position-relative">
             <mat-form-field class="custom form-field w-100-p" appearance="outline">
                 <input class="login-input" matInput placeholder="Search" [(ngModel)]="searchTerm" (input)="filterEmails()" />
@@ -9,7 +32,7 @@
                 <ng-template #clearBtn>
                     <button
                         mat-button
-                        color="primary"
+                        color="accent"
                         matSuffix
                         mat-icon-button
                         aria-label="Clear"
@@ -73,7 +96,7 @@
                         <mat-label>Content</mat-label>
                         <input matInput formControlName="content" type="text" />
                     </mat-form-field>
-                    <button mat-raised-button color="primary" class="w-100-p mb-8">Search</button>
+                    <button mat-raised-button class="w-100-p mb-8">Search</button>
                 </form>
             </div>
         </div>
@@ -123,7 +146,9 @@
             fxLayout
             fxLayoutAlign="center center"
         >
-            <span>You have no emails</span>
+            <span class="hint-mail-text hint-text">
+                <span>There are no emails</span>
+            </span>
         </div>
 
         <div *ngIf="emailSearchRes.error" class="loader">
@@ -137,7 +162,18 @@
         </div>
     </div>
 
-    <div fxFlex="65" class="email-open h-95-p border-radius-20" fusePerfectScrollbar>
+    <div
+        fxFlex="66"
+        class="email-open border-radius-20"
+        fusePerfectScrollbar
+        [ngClass]="
+            fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                ? fuseConfig.layout.anchorWidget.contentBackground
+                : fuseConfig.layout.widget.customBackgroundColor === true
+                ? fuseConfig.layout.widget.contentBackground
+                : ''
+        "
+    >
         <div *ngIf="emailSearchRes.data.selected" fxLayout fxLayoutAlign="end" fxLayoutGap="10px" class="my-20 w-95-p">
             <button mat-flat-button class="border-radius-20">Transfer</button>
             <button mat-flat-button class="border-radius-20">Advance</button>
@@ -160,8 +196,11 @@
             <div [innerHtml]="emailSearchRes.data.selected.body"></div>
         </div>
 
-        <div *ngIf="!emailSearchRes.data.selected" fxLayoutAlign fxLayoutAlign="center center" class="w-100-p h-100-p">
-            <p class="mat-display-1">Select an email</p>
+        <div *ngIf="!emailSearchRes.data.selected" fxLayout="column" fxLayoutAlign="center center" class="w-100-p h-100-p">
+            <mat-icon class="s-128 mb-16 select-message-icon hint-text"> email </mat-icon>
+            <span class="hint-mail-text">
+                <span>Select an email to read</span>
+            </span>
         </div>
     </div>
 </div>

@@ -84,21 +84,26 @@ export class WidgetPreviewComponent implements OnInit {
             const result: IResponse = await TUtils.HttpClient.sendRequest({
                 url: `${this.appConfig.ProxyUrl}/GetWidgetPreviewJson`,
                 requestArgs: { id: templateName },
+                header: {
+                    'Content-Type': 'application/json'
+                },
+                responseType: 'json',
                 method: 'POST'
             });
-            setTimeout(() => {
+
+            setTimeout((x) => {
                 this._fuseProgressBarService.hide();
                 // check the response
-                if (result.response) {
+                if (x.response) {
                     // set loading false
                     this.loading = false;
                     // assign the widgets
-                    this.dynamicWidgets = result.response.d ? JSON.parse(result.response.d) : [];
+                    this.dynamicWidgets = x.response.d ? JSON.parse(x.response.d) : [];
                 }
                 else {
                     this.routeToNotFound('Template name is not found!');
                 }
-            }, 1000);
+            }, 1000, result);
         } catch (error) {
             TUtils.Logger.log('Exception in getTemplateJson', error);
             this.routeToNotFound('Error in getting template');

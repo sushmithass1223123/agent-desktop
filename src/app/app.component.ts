@@ -2,7 +2,7 @@ import { Platform } from '@angular/cdk/platform';
 import { DOCUMENT } from '@angular/common';
 import { Component, HostListener, Inject, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FuseNavigationService } from '@fuse/components/navigation/navigation.service';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseSplashScreenService } from '@fuse/services/splash-screen.service';
@@ -16,6 +16,13 @@ import { takeUntil } from 'rxjs/operators';
 import { IResponse, SDKClient, TEnums, TUtils } from 'tmac-sdk';
 import { environment } from '../environments/environment';
 import { AppDataService } from './services/app-data.service';
+
+// declare global
+declare global {
+    interface Window {
+        SDKClient: typeof SDKClient;
+    }
+}
 
 @Component({
     selector: 'app',
@@ -145,14 +152,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
         // Set the private defaults
         this._unsubscribeAll = new Subject();
-
-        // do not load config for preview page
-        if (this._router.url === '/preview') {
-            return;
-        }
-
-        // Get the app config
-        this.getConfig();
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -163,6 +162,15 @@ export class AppComponent implements OnInit, OnDestroy {
      * On init
      */
     ngOnInit(): void {
+
+        // do not load config for preview page
+        if (this._router.url === '/preview') {
+            return;
+        }
+
+        // Get the app config
+        this.getConfig();
+
         // Subscribe to config changes
         this._fuseConfigService.config
             .pipe(takeUntil(this._unsubscribeAll))
@@ -253,6 +261,10 @@ export class AppComponent implements OnInit, OnDestroy {
         // get the login json from proxy
         const loginJson: IResponse = await TUtils.HttpClient.sendRequest({
             url: `${data.ProxyUrl}/GetTmacLoginJson`,
+            header: {
+                'Content-Type': 'application/json'
+            },
+            responseType: 'json',
             requestArgs: { id: '' },
             method: 'POST',
             retry: 3
@@ -300,6 +312,12 @@ export class AppComponent implements OnInit, OnDestroy {
                 customScripts:
                     [...config.AppConfigs.SDK.CustomSripts]
             });
+
+            // check the environment and set window variable
+            if (!environment.production) {
+                // set a global variable to access SDK client on development mode
+                window.SDKClient = SDKClient;
+            }
         }
         else {
             // we will route to not-found page
@@ -316,5 +334,4 @@ export class AppComponent implements OnInit, OnDestroy {
                 });
         }
     }
-
 }

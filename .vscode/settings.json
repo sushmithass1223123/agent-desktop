@@ -1,5 +1,9 @@
 {
     "search.exclude": {
-        "**/documentation": true
+        "**/.git": true,
+        "**/node_modules": true,
+        "**/documentation": true,
+        "**/bower_components": true,
+        "**/tmp": true
     }
 }

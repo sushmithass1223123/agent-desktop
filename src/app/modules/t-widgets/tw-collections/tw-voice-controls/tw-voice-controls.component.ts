@@ -4,7 +4,7 @@ import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-b
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
 import { AppDataService } from '@services/app-data.service';
-import { InteractionEventService } from '@services/interaction-event.service';
+import { TMACEventService } from '@services/tmac-event.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { InteractionRef, IWidget } from 'app/interfaces';
@@ -32,9 +32,13 @@ import {
     TUtils,
     TEnums,
     IVRDataEvent,
-    CallerIntentEvent
+    CallerIntentEvent,
+    AgentInteractionTemplate
 } from 'tmac-sdk';
 import { AppUiService } from '@services/app-ui.service';
+import { arch } from 'os';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '@modules/shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
     selector: 'tw-voice-controls',
@@ -72,14 +76,16 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     msAudioStreams = [];
     processMediaMessages = false;
     mediaServerMessages = [];
+    audioPlayer: any;
 
     constructor(
         private _fuseConfigService: FuseConfigService,
         private _fuseProgressBarService: FuseProgressBarService,
         private _appDataService: AppDataService,
         private _interactionManagerService: InteractionManagerService,
-        private _interactionEventService: InteractionEventService,
-        private _appUIService: AppUiService
+        private _interactionEventService: TMACEventService,
+        private _appUIService: AppUiService,
+        private _dialog: MatDialog
     ) {
         super();
     }
@@ -130,22 +136,30 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             // update the session ID
             this.sessionID = (interactionDetails.UCID || 'NA') + '|' + this.interactionId;
             // set the manual anser flag
-            this.isManualAnswer = interactionDetails.IsManualAnswer;
+            this.isManualAnswer = interactionDetails.IsManualAnswer || false;
             // set the process media messages flag
             this.processMediaMessages = !this.isManualAnswer;
-            // set the direct
-            this.direction = interactionDetails.EventName === 'IncomingCallEvent' ? 'In' : 'Out';
+            // check the event name
+            if (interactionDetails.EventName === 'IncomingCallEvent') {
+                // set the direction
+                this.direction = 'In';
+                // set the status
+                this.status = 'incoming';
+
+                // assign the last 4 IVR, if default is configured
+                this.last4IVR = this.data.Data.IVR?.DefaultMenu || [];
+            }
+            else {
+                // set direction
+                this.direction = 'Out';
+                // set status
+                this.status = 'outgoing';
+            }
         }
         else {
             console.warn('Interaction details are not available for voice');
             return;
         }
-
-        // set the status
-        this.status = 'initial';
-
-        // assign the last 4 IVR, if default is configured
-        this.last4IVR = this.data.Data.IVR?.DefaultMenu || [];
 
         // listen to TMAC events
         this.registerToEvents();
@@ -186,6 +200,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         SDKClient.events.on('CallConferenceRemoteConnectedEvent', this.CallConferenceRemoteConnectedEvent);
 
         SDKClient.events.on('MediaServerEvent', this.MediaServerEvent);
+        SDKClient.events.on('VoiceCannedResponseEvent', this.VoiceCannedResponseEvent);
 
         SDKClient.events.on('CallerIntentEvent', this.CallerIntentEvent);
         SDKClient.events.on('IVRDataEvent', this.IVRDataEvent);
@@ -208,6 +223,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         SDKClient.events.off('CallConferenceRemoteConnectedEvent', this.CallConferenceRemoteConnectedEvent);
 
         SDKClient.events.off('MediaServerEvent', this.MediaServerEvent);
+        SDKClient.events.off('VoiceCannedResponseEvent', this.VoiceCannedResponseEvent);
 
         SDKClient.events.off('CallerIntentEvent', this.CallerIntentEvent);
         SDKClient.events.off('IVRDataEvent', this.IVRDataEvent);
@@ -362,14 +378,14 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             switch (evt.Type) {
                 case 'call-received':
                     // create WebRTC peer connection
-                    connection = this.createAVConnection('out');
+                    connection = this.createAVConnection('in');
                     connection?.directCall(TEnums.WrcCallTypes.Audio, 'in');
                     // play incoming call sound 
                     this._appUIService.playAudio('incoming-call', 0.5, true);
                     break;
                 case 'call-connecting':
                     // create WebRTC peer connection
-                    connection = this.createAVConnection('in');
+                    connection = this.createAVConnection('out');
                     connection?.directCall(TEnums.WrcCallTypes.Audio);
                     // play incoming call sound 
                     this._appUIService.playAudio('ringing', 0.5, true);
@@ -387,6 +403,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
             // get the connection based on session id
             connection = this.avConns[this.sessionID];
+
             // check if the connection is added
             if (connection) {
                 // check if the messages can be processed by WebRTC API, if not add to the reference and process after answer call
@@ -401,6 +418,51 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         } catch (error) {
             TUtils.Logger.log('Exception in TwVoiceControlsComponent.MediaServerEvent', error);
         }
+    }
+
+    private VoiceCannedResponseEvent = (evt: { AudioBuffer: ArrayBuffer, InteractionID: number, Item: AgentInteractionTemplate }) => {
+        // check the interaction
+        if (evt.InteractionID !== this.interactionId) {
+            return;
+        }
+
+        // check if audio is playing already
+        this.audioPlayer?.stop();
+
+        // check the status of call
+        if (this.status !== 'connected') {
+            this._appUIService.showSnackbar(`Cannot play canned audio in ${this.status} state`, 'failure');
+            return;
+        }
+
+        // get the connection based on session id and play the buffer
+        this.audioPlayer = this.avConns[this.sessionID]?.playAudio(evt.AudioBuffer);
+
+        // check if played
+        if (!this.audioPlayer) {
+            this._appUIService.showSnackbar(`Error in playing canned audio '${evt.Item.Name}'`, 'failure');
+            return;
+        }
+
+        // append the name to audio player
+        this.audioPlayer.fileName = evt.Item.Name;
+
+        // set the state to playing
+        this.audioPlayer._adpState = 'playing';
+
+        // listen to onEnd
+        this.audioPlayer.onEnd = () => {
+            this.audioPlayer = null;
+        };
+
+        // show a success alert
+        this._appUIService.showSnackbar(`Canned audio '${evt.Item.Name}' started playing`);
+
+        // create custom event and send  
+        SDKClient.events.emit('VoiceCannedResponseAckEvent', {
+            SAudioPlayer: this.audioPlayer,
+            Item: evt.Item
+        });
     }
 
     private CallerIntentEvent = (evt: CallerIntentEvent) => {
@@ -479,6 +541,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 // clear tone of disconnect on dial or incoming
                 this._appUIService.clearAudio();
                 break;
+            case 'onCollectorStats':
+                // TODO:: handle MOS
+                break;
             case 'onRemoteVideoAdded':
                 // add the stream to reference
                 this.msAudioStreams.push(evt.data);
@@ -531,6 +596,37 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         }
     }
 
+    private closeInteraction(btn: MatButton): void {
+        this.toggleButton(true, btn);
+        SDKClient.closeInteraction(this.interactionId.toString(), null)
+            .then((dt: IResponse) => {
+                this.toggleButton(false, btn);
+                if (dt.response && dt.response.ResultCode === 0) {
+                    this._appUIService.showSnackbar('Interaction closed successfully');
+                }
+                else {
+                    this._appUIService.showSnackbar('Close interaction failed', 'failure');
+                }
+            });
+    }
+
+    private disconnectCall(btn: MatButton): void {
+        // toggle the button
+        this.toggleButton(true, btn);
+        SDKClient.disconnectCall(this.interactionId.toString(), null)
+            .then((dt: IResponse) => {
+                // toggle the button
+                this.toggleButton(false, btn);
+                // check for the response
+                if (dt.response && dt.response.ResultCode === 0) {
+                    // disconnect call success
+                }
+                else {
+                    this._appUIService.showSnackbar('Disconnect call failed', 'failure');
+                }
+            });
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
@@ -544,20 +640,6 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         this._interactionManagerService.updateInteraction(item.interactionId, {
             isActive: true
         });
-    }
-
-    public closeInteraction(btn: MatButton): void {
-        this.toggleButton(true, btn);
-        SDKClient.closeInteraction(this.interactionId.toString(), null)
-            .then((dt: IResponse) => {
-                this.toggleButton(false, btn);
-                if (dt.response && dt.response.ResultCode === 0) {
-                    this._appUIService.showSnackbar('Interaction closed sucessfully');
-                }
-                else {
-                    this._appUIService.showSnackbar('Close interaction failed', 'failure');
-                }
-            });
     }
 
     public answerCall(btn: MatButton): void {
@@ -594,21 +676,18 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             });
     }
 
-    public disconnectCall(btn: MatButton): void {
-        // toggle the button
-        this.toggleButton(true, btn);
-        SDKClient.disconnectCall(this.interactionId.toString(), null)
-            .then((dt: IResponse) => {
-                // toggle the button
-                this.toggleButton(false, btn);
-                // check for the response
-                if (dt.response && dt.response.ResultCode === 0) {
-                    // disconnect call success
-                }
-                else {
-                    this._appUIService.showSnackbar('Disconnect call failed', 'failure');
-                }
-            });
+    public confirmDisconnectCall(btn: MatButton): void {
+        // config force login
+        const confirmDialogRef = this._dialog.open(ConfirmDialogComponent, {
+            disableClose: false
+        });
+        confirmDialogRef.componentInstance.message = 'Are you sure to end this call?';
+        confirmDialogRef.afterClosed().subscribe((dialogResult) => {
+            if (dialogResult) {
+                // send end chat to server 
+                this.disconnectCall(btn);
+            }
+        });
     }
 
     public holdCall(btn: MatButton): void {
@@ -663,5 +742,37 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     this._appUIService.showSnackbar('Unhold call failed', 'failure');
                 }
             });
+    }
+
+    public playerAction(action: number): void {
+        if (action === 1) {
+            // play
+            this.audioPlayer.resume();
+            this.audioPlayer._adpState = 'playing';
+        }
+        else if (action === 2) {
+            // pause
+            this.audioPlayer.pause();
+            this.audioPlayer._adpState = 'paused';
+        }
+        else {
+            // stop
+            this.audioPlayer.stop();
+            this.audioPlayer = null;
+        }
+    }
+
+    public confirmCloseInteraction(btn: MatButton): void {
+        // config force login
+        const confirmDialogRef = this._dialog.open(ConfirmDialogComponent, {
+            disableClose: false
+        });
+        confirmDialogRef.componentInstance.message = 'Are you sure to close this interaction?';
+        confirmDialogRef.afterClosed().subscribe((dialogResult) => {
+            if (dialogResult) {
+                // send end chat to server 
+                this.closeInteraction(btn);
+            }
+        });
     }
 }

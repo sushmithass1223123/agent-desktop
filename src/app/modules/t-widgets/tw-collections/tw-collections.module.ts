@@ -36,9 +36,11 @@ import { TwSuChannelsComponent } from './tw-su-channels/tw-su-channels.component
 import { TwSuGamificationComponent } from './tw-su-gamification/tw-su-gamification.component';
 import { TwSuIntentListComponent } from './tw-su-intent-list/tw-su-intent-list.component';
 import { TwSuStatusComponent } from './tw-su-status/tw-su-status.component';
+import { TwTransferInteractionComponent } from './tw-transfer-interaction/tw-transfer-interaction.component';
 import { TwUnknownComponent } from './tw-unknown/tw-unknown.component';
 import { TwVideoControlsComponent } from './tw-video-controls/tw-video-controls.component';
 import { TwVoiceBotTranscriptsComponent } from './tw-voice-bot-transcripts/tw-voice-bot-transcripts.component';
+import { TwVoiceCannedResponsesComponent } from './tw-voice-canned-responses/tw-voice-canned-responses.component';
 import { TwVoiceControlsComponent } from './tw-voice-controls/tw-voice-controls.component';
 import { TwVoicePanelComponent } from './tw-voice-panel/tw-voice-panel.component';
 import { TwWallboardComponent } from './tw-wallboard/tw-wallboard.component';
@@ -87,6 +89,8 @@ const collectionComponents = [
     TwRegisterCallbackComponent,
     TwSuAgentInteractionsComponent,
     TwPieChartComponent,
+    TwTransferInteractionComponent,
+    TwVoiceCannedResponsesComponent,
     TwWorkbenchPanelComponent,
     WorkbenchEmailComponent,
     TwEmailPanelComponent,
@@ -98,4 +102,4 @@ const collectionComponents = [
     imports: [SharedModule, TwWrapperModule],
     exports: collectionComponents
 })
-export class TwCollectionsModule {}
+export class TwCollectionsModule { }

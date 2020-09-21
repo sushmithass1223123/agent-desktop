@@ -8,6 +8,7 @@ export interface IWidget {
     Config: IWidgetConfig;
     Data: any;
     InteractionDetails?: any;
+    OnDestroy?: () => void;
 }
 
 export interface InteractionWidgets {

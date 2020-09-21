@@ -1,23 +1,47 @@
 import { Injectable } from '@angular/core';
 import { IWidget } from 'app/interfaces';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { TUtils } from 'tmac-sdk';
 import { AppDataService } from './app-data.service';
 
 @Injectable({
     providedIn: 'root'
 })
-export class AotWidgetService {
+export class AOTWidgetService {
 
     // Private
+    private _unsubscribeAll: Subject<any>;
     private _widgetsSubject: BehaviorSubject<IWidget[]>;
 
     constructor(
-        _appDataService: AppDataService
+        private _appDataService: AppDataService
     ) {
         // init the subject
+        this._unsubscribeAll = new Subject();
         this._widgetsSubject = new BehaviorSubject([]);
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+    // @ Accessors
+    // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * Getter for widgets
+     */
+    get widgets(): any | Observable<any> {
+        return this._widgetsSubject.asObservable();
+    }
+
+    /**
+     * To subscribe to the service
+     */
+    public subscribe(): void {
+        TUtils.Logger.console('info', 'AOTWidgetService.subscribe');
+
         // get the config and check for AOT widgets
-        _appDataService.config
+        this._appDataService.config
+            .pipe(takeUntil(this._unsubscribeAll))
             .subscribe(
                 (config: any) => {
                     // get the AOT widgets
@@ -34,22 +58,11 @@ export class AotWidgetService {
             );
     }
 
-    // -----------------------------------------------------------------------------------------------------
-    // @ Accessors
-    // -----------------------------------------------------------------------------------------------------
-
-    /**
-     * Getter for widgets
-     */
-    get widgets(): any | Observable<any> {
-        return this._widgetsSubject.asObservable();
-    }
-
     /**
      * To add a new AOT widget
      * @param widget widget model
      */
-    addWidget(widget: IWidget): void {
+    public addWidget(widget: IWidget): void {
 
         // check if the widget is null
         if (!widget) {
@@ -89,6 +102,14 @@ export class AotWidgetService {
             return;
         }
 
+        // get the widget
+        const widget = widgetList.filter((w) => w.ID === id)?.[0];
+
+        // get the widget and call on destroy
+        if (widget && typeof widget.OnDestroy === 'function') {
+            widget.OnDestroy();
+        }
+
         // remove the widget
         widgetList = this._widgetsSubject.getValue().filter(w => w.ID !== id);
 
@@ -104,5 +125,17 @@ export class AotWidgetService {
      */
     public getWidgets(): IWidget[] {
         return { ...this._widgetsSubject.getValue() };
+    }
+
+    /**
+     * To unsubscribe from the service
+     */
+    public unsubscribe(): void {
+        TUtils.Logger.console('info', 'AOTWidgetService.unsubscribe');
+
+        // unsubscribe from all subscriptions
+        this._unsubscribeAll.next();
+        this._unsubscribeAll.complete();
+        this._widgetsSubject = new BehaviorSubject([]);
     }
 }

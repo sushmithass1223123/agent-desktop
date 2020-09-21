@@ -19,7 +19,7 @@
             <ng-container matColumnDef="Channel">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Channel</mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <mat-icon class="channel-icon text-primary">
+                    <mat-icon class="channel-icon" color="primary">
                         {{
                             element.Channel === 'Voice'
                                 ? 'phone'
@@ -36,7 +36,7 @@
             <ng-container matColumnDef="Direction">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Direction</mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <mat-icon class="channel-icon color-secondary">
+                    <mat-icon class="channel-icon" color="accent">
                         {{ element.Direction === 'In' ? 'south' : 'north' }}
                     </mat-icon>
                 </mat-cell>
@@ -93,10 +93,7 @@
             <mat-row *matRowDef="let row; columns: interactionDetailsTable.columns"></mat-row>
         </mat-table>
 
-        <div *ngIf="interactionDetailsTable.source.data.length === 0" class="w-100-p" [ngClass]="{ 'h-90-p': maximized, ' h-65-p': !maximized }">
-            <img src="assets/images/vectors/no-data-2.svg" class="w-100-p h-100-p box-shadow-3d" />
-            <p class="text-center mat-title m-0">No Data Available</p>
-        </div>
+        <p *ngIf="interactionDetailsTable.source.data.length === 0" class="text-center m-0 mat-title">No Data Available</p>
     </div>
     <mat-paginator *ngIf="maximized" [pageSizeOptions]="maximized ? [30, 40, 50] : [3, 6, 12]" showFirstLastButtons> </mat-paginator>
 </tw-wrapper>

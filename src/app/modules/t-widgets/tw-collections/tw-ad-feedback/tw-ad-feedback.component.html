@@ -15,7 +15,7 @@
 
             <p>
                 <span *ngFor="let star of ratings | slice: -(stars - ratings.length)" class="rating box-shadow-3d">
-                    <mat-icon class="text-primary"> star_rating</mat-icon>
+                    <mat-icon color="primary"> star_rating</mat-icon>
                 </span>
                 <span *ngFor="let star of ratings | slice: stars" class="rating box-shadow-3d">
                     <mat-icon> star_border </mat-icon>
@@ -52,7 +52,7 @@
                     <mat-header-cell *matHeaderCellDef mat-sort-header>Feedback</mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <span *ngFor="let star of ratings | slice: -(element.Feedback - ratings.length)" class="rating box-shadow-3d">
-                            <mat-icon class="text-primary"> star_rating</mat-icon>
+                            <mat-icon color="primary"> star_rating</mat-icon>
                         </span>
                         <span *ngFor="let star of ratings | slice: element.Feedback" class="rating box-shadow-3d">
                             <mat-icon> star_border </mat-icon>

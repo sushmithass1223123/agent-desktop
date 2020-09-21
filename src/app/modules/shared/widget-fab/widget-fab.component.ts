@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewEncapsulation, Input } from '@angular/core';
 import { widgetFabAnimations } from './widget-fab.animation';
 import { IWidget } from 'app/interfaces';
-import { AotWidgetService } from '@services/aot-widget.service';
+import { AOTWidgetService } from '@services/aot-widget.service';
 @Component({
     selector: 'widget-fab',
     templateUrl: './widget-fab.component.html',
@@ -18,7 +18,7 @@ export class WidgetFabComponent implements OnInit {
     fabTogglerState = 'inactive';
 
     constructor(
-        private _aotWidgetService: AotWidgetService
+        private _aotWidgetService: AOTWidgetService
     ) { }
 
     ngOnInit(): void {

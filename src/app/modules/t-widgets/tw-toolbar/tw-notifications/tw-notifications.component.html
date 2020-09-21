@@ -19,7 +19,7 @@
     <div
         fxLayout="row"
         fxLayoutAlign="{{ notifications.length === 0 ? 'center' : 'space-between' }} center"
-        class="mat-title p-16 m-0 w-100-p text-center text-uppercase bg-secondary"
+        class="mat-title p-16 m-0 w-100-p text-center text-uppercase notification-header"
         (click)="$event.stopPropagation()"
     >
         Notifications
@@ -42,7 +42,7 @@
         >
             <div fxLayout fxFlex>
                 <div fxLayout fxLayoutAlign="center center" class="mr-12">
-                    <mat-icon mat-list-icon class="text-primary">{{ item.icon || 'announcement' }}</mat-icon>
+                    <mat-icon mat-list-icon color="primary">{{ item.icon || 'announcement' }}</mat-icon>
                 </div>
                 <div fxLayout="column" class="message">
                     <div class="font-weight-600" [innerHTML]="item.message"></div>
@@ -63,7 +63,7 @@
             (click)="$event.stopPropagation()"
         >
             <div fxLayout fxLayoutAlign="center center" class="p-8 mr-8">
-                <mat-icon mat-list-icon class="text-primary">announcement</mat-icon>
+                <mat-icon mat-list-icon color="primary">announcement</mat-icon>
             </div>
             <div fxLayout="column" fxLayoutAlign="center none" class="message">
                 <div class="mat-title m-0">No notifications yet!</div>

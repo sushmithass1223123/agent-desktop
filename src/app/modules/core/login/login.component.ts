@@ -2,7 +2,7 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { ConfirmDialogComponent } from '@modules/shared/confirm-dialog/confirm-dialog.component';
@@ -60,6 +60,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         private _router: Router,
         private _dialog: MatDialog,
         private _snackBar: MatSnackBar,
+        private _activatedRouter: ActivatedRoute
     ) {
         // Configure the layout
         this._fuseConfigService.config = {
@@ -91,6 +92,13 @@ export class LoginComponent implements OnInit, OnDestroy {
      * On init
      */
     ngOnInit(): void {
+
+        this._activatedRouter.paramMap.subscribe(paramMap => {
+            // check if lanId in param
+            if (paramMap.has('lanId')) {
+            }
+        });
+
         this.loginForm = this._formBuilder.group({
             domain: ['', Validators.required],
             lanId: ['', Validators.required],
@@ -227,6 +235,10 @@ export class LoginComponent implements OnInit, OnDestroy {
                 ppdata: `${this.loginForm.get('lanId').value}.png`,
                 isrealface: 1
             },
+            header: {
+                'Content-Type': 'application/json'
+            },
+            responseType: 'json',
             method: 'POST'
         });
 
@@ -282,12 +294,8 @@ export class LoginComponent implements OnInit, OnDestroy {
         }
     }
 
-    public toggleStation(event: any): void {
-        if (event.checked) {
-            this.stationEnabled = true;
-        } else {
-            this.stationEnabled = false;
-        }
+    public toggleStation(): void {
+        this.stationEnabled = this.pbxChecked || this.msChecked;
     }
 
     public async login(force: boolean): Promise<void> {
@@ -330,7 +338,7 @@ export class LoginComponent implements OnInit, OnDestroy {
                 this.loginResponse(result);
             }, 1000);
         })
-            .catch((err: string) => {
+            .catch(() => {
                 // set loading to true
                 this.loading = false;
                 // login error

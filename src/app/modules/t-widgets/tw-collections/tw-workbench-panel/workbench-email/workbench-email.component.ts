@@ -4,7 +4,9 @@ import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { DomSanitizer } from '@angular/platform-browser';
+import { fuseAnimations } from '@fuse/animations';
 import { FuseConfigService } from '@fuse/services/config.service';
+import { FuseConfig } from '@fuse/types';
 import { TWidgetWrapper } from '@modules/t-widgets/utils';
 import { AppDataService } from '@services/app-data.service';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
@@ -18,11 +20,23 @@ import { SDKClient } from 'tmac-sdk';
     selector: 'workbench-email', // make sure you set the selector starts with <widget-name>
     templateUrl: './workbench-email.component.html',
     styleUrls: ['./workbench-email.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    animations: fuseAnimations
 })
 export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     // holds all the data related to this widget from the config
     @Input() data: IWidget;
+
+    // -----------------------------------------------------------
+    // @ [OPTIONAL] to store the fuse config for theme
+    // -----------------------------------------------------------
+    fuseConfig: FuseConfig;
+
+    // -----------------------------------------------------------
+    // @ [OPTIONAL] to store entire app config and get update
+    // -----------------------------------------------------------
+    appConfig: any;
+
     searchTerm = '';
     selectedMail: number;
     emailSearchRes: ResData<{ selected: any }> = {
@@ -46,16 +60,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
 
     treeControl = new NestedTreeControl<any>((node) => node.children);
     dataSource = new MatTreeNestedDataSource<any>();
-
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store the fuse config for theme
-    // -----------------------------------------------------------
-    fuseConfig: any;
-
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store entire app config and get update
-    // -----------------------------------------------------------
-    appConfig: any;
 
     /**
      * Constructor
@@ -124,7 +128,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
 
-    filterEmails(): void {}
+    filterEmails(): void { }
 
     hasChild = (_: number, node: any) => !!node.children && node.children.length > 0;
 
@@ -169,7 +173,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
             .post(this.data.Data.EmailSearchUrl, {
                 skills: searchFields.skills ? [searchFields.skills] : [],
                 email: searchFields.email,
-                agent: agentId,
+                agent: '',
                 startDate,
                 endDate,
                 subject: searchFields.subject,

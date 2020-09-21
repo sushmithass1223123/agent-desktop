@@ -8,15 +8,17 @@ tw-su-active-agents {
                 background: inherit !important;
 
                 mat-form-field {
-                    .mat-form-field-wrapper {
-                        .mat-form-field-infix {
-                            border: none;
-                            padding: 0.5em 0.5rem !important;
-                        }
+                    &.custom {
+                        .mat-form-field-wrapper {
+                            .mat-form-field-infix {
+                                border: none;
+                                padding: 0.5em 0.5rem !important;
+                            }
 
-                        .mat-form-field-outline-start,
-                        .mat-form-field-outline-end {
-                            border-color: inherit;
+                            .mat-form-field-outline-start,
+                            .mat-form-field-outline-end {
+                                border-color: inherit;
+                            }
                         }
                     }
                 }

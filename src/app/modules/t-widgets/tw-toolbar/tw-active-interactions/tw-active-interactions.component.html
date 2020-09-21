@@ -10,20 +10,29 @@
                     *ngIf="item.status !== 'hold'"
                     [disabled]="item.status !== 'connected'"
                     mat-icon-button
-                    class="w-36 h-36 bg-success"
+                    class="w-36 h-36 bg-warning"
                     #holdBtn
+                    matTooltip="Hold"
                     (click)="holdCall(item, holdBtn)"
                 >
                     <mat-icon>phone_paused</mat-icon>
                 </button>
-                <button *ngIf="item.status === 'hold'" mat-icon-button class="w-36 h-36 bg-warning" #unHoldBtn (click)="unHoldCall(item, unHoldBtn)">
+                <button
+                    *ngIf="item.status === 'hold'"
+                    mat-icon-button
+                    class="w-36 h-36 bg-success"
+                    #unHoldBtn
+                    matTooltip="Unhold"
+                    (click)="unHoldCall(item, unHoldBtn)"
+                >
                     <mat-icon>phone_in_talk</mat-icon>
                 </button>
                 <button
-                    [disabled]="item.status !== 'connected'"
+                    [disabled]="item.status !== 'connected' && item.status !== 'outgoing'"
                     mat-icon-button
                     class="w-36 h-36 ml-4 bg-danger"
                     #disconnectBtn
+                    matTooltip="Disconnect"
                     (click)="disconnectCall(item, disconnectBtn)"
                 >
                     <mat-icon>call_end</mat-icon>

@@ -1,0 +1,216 @@
+<!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
+<!-- implement following events in your component to access widget wrapper action events -->
+<!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
+
+<!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
+
+<tw-wrapper [data]="data">
+    <div fxFlex fxFill fxLayout="column">
+        <div
+            class="w-100-p py-8 px-16 border-radius-20"
+            fxLayout="row"
+            [ngClass]="
+                fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                    ? fuseConfig.layout.anchorWidget.contentBackground
+                    : fuseConfig.layout.widget.customBackgroundColor === true
+                    ? fuseConfig.layout.widget.contentBackground
+                    : ''
+            "
+        >
+            <div fxFlex fxLayout="column">
+                <div fxLayout>
+                    <p fxFlex="20" fxLayoutAlign=" center" class="px-8">{{ mainLabel }}</p>
+                    <mat-form-field fxFlex appearance="outline" class="custom">
+                        <input matInput required [placeholder]="mainLabel" />
+                        <mat-error> {{ mainLabel }} is required </mat-error>
+                    </mat-form-field>
+                </div>
+                <div fxFlex fxLayout>
+                    <p fxFlex="20" fxLayoutAlign=" flex-start" class="px-8 mt-16">Comments</p>
+                    <mat-form-field fxFlex floatLabel="never" appearance="standard" class="comments">
+                        <textarea
+                            matInput
+                            placeholder="Enter comments here..."
+                            matTextareaAutosize
+                            matAutosizeMinRows="4"
+                            matAutosizeMaxRows="4"
+                        ></textarea>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="pl-8 py-8">
+                <button mat-raised-button class="transfer-btn bg-success border-radius-20">
+                    <mat-icon>swap_horiz</mat-icon>
+                </button>
+            </div>
+        </div>
+        <div
+            fxFlex
+            class="w-100-p py-8 px-16 border-radius-20 grid-layout"
+            [ngClass]="
+                fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                    ? fuseConfig.layout.anchorWidget.contentBackground
+                    : fuseConfig.layout.widget.customBackgroundColor === true
+                    ? fuseConfig.layout.widget.contentBackground
+                    : ''
+            "
+        >
+            <div fxLayout="column">
+                <div fxLayout class="switcher">
+                    <div
+                        fxFlex
+                        class="switch-item"
+                        *ngFor="let item of switcherList"
+                        [ngClass]="{ 'bg-success': activeSwitcher === item.key }"
+                        (click)="switchTab(item)"
+                    >
+                        {{ item.label }}
+                    </div>
+                </div>
+                <div fxLayout="column">
+                    <div *ngIf="activeSwitcher === 'agentList'">
+                        <div>
+                            <mat-form-field class="custom form-field w-100-p" appearance="outline">
+                                <input class="login-input" matInput placeholder="Search" [(ngModel)]="searchTerm" (input)="filterAgents()" />
+                                <button
+                                    *ngIf="!searchTerm; else clearBtn"
+                                    mat-icon-button
+                                    matSuffix
+                                    [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
+                                    disabled
+                                >
+                                    <mat-icon matSuffix>search</mat-icon>
+                                </button>
+                                <ng-template #clearBtn>
+                                    <button
+                                        mat-button
+                                        color="primary"
+                                        matSuffix
+                                        mat-icon-button
+                                        aria-label="Clear"
+                                        [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
+                                        (click)="searchTerm = ''; filterAgents()"
+                                    >
+                                        <mat-icon>close</mat-icon>
+                                    </button>
+                                </ng-template>
+                            </mat-form-field>
+                        </div>
+                        <div class="w-100-p h-100-p">
+                            <mat-table class="h-100-p" matSort matSortDisableClear [dataSource]="agentListTable.source">
+                                <ng-container matColumnDef="FirstName">
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header>
+                                        <span> First Name </span>
+                                    </mat-header-cell>
+                                    <mat-cell *matCellDef="let row"> {{ row.FirstName }} </mat-cell>
+                                </ng-container>
+
+                                <ng-container matColumnDef="LastName">
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header>
+                                        <span> Last Name </span>
+                                    </mat-header-cell>
+                                    <mat-cell *matCellDef="let row"> {{ row.LastName }} </mat-cell>
+                                </ng-container>
+
+                                <ng-container matColumnDef="AgentID">
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header> <span> ID </span> </mat-header-cell>
+                                    <mat-cell *matCellDef="let row"> {{ row.LoginID }} </mat-cell>
+                                </ng-container>
+
+                                <ng-container matColumnDef="Status">
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
+                                    <mat-cell *matCellDef="let row"> {{ row.CurrentAgentStatus }} </mat-cell>
+                                </ng-container>
+
+                                <ng-container matColumnDef="InteractionCounts">
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header>
+                                        <span>
+                                            Interaction
+                                            <br />
+                                            Counts
+                                        </span>
+                                    </mat-header-cell>
+                                    <mat-cell *matCellDef="let row"> {{ row.InteractionCounts }} </mat-cell>
+                                </ng-container>
+
+                                <mat-header-row *matHeaderRowDef="agentListTable.columns; sticky: true"></mat-header-row>
+                                <mat-row *matRowDef="let row; columns: agentListTable.columns"></mat-row>
+                            </mat-table>
+                            <p *ngIf="agentListTable.source.data.length === 0" class="text-center m-0 mat-title">No Data Available</p>
+                        </div>
+                    </div>
+                    <div *ngIf="activeSwitcher === 'skillList'">
+                        <div>
+                            <mat-form-field class="custom form-field w-100-p" appearance="outline">
+                                <input class="login-input" matInput placeholder="Search" [(ngModel)]="searchTerm" (input)="filterAgents()" />
+                                <button
+                                    *ngIf="!searchTerm; else clearBtn"
+                                    mat-icon-button
+                                    matSuffix
+                                    [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
+                                    disabled
+                                >
+                                    <mat-icon matSuffix>search</mat-icon>
+                                </button>
+                                <ng-template #clearBtn>
+                                    <button
+                                        mat-button
+                                        color="primary"
+                                        matSuffix
+                                        mat-icon-button
+                                        aria-label="Clear"
+                                        [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
+                                        (click)="searchTerm = ''; filterAgents()"
+                                    >
+                                        <mat-icon>close</mat-icon>
+                                    </button>
+                                </ng-template>
+                            </mat-form-field>
+                        </div>
+                        <div class="w-100-p h-100-p">
+                            <mat-table class="h-100-p" matSort matSortDisableClear [dataSource]="skillListTable.source">
+                                <ng-container matColumnDef="Name">
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header>
+                                        <span> Name </span>
+                                    </mat-header-cell>
+                                    <mat-cell *matCellDef="let row"> {{ row.Name }} </mat-cell>
+                                </ng-container>
+
+                                <ng-container matColumnDef="VDN">
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header>
+                                        <span> VDN </span>
+                                    </mat-header-cell>
+                                    <mat-cell *matCellDef="let row"> {{ row.VDN }} </mat-cell>
+                                </ng-container>
+
+                                <ng-container matColumnDef="ID">
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header> <span> ID </span> </mat-header-cell>
+                                    <mat-cell *matCellDef="let row"> {{ row.ID }} </mat-cell>
+                                </ng-container>
+
+                                <ng-container matColumnDef="Stf">
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header> Stf </mat-header-cell>
+                                    <mat-cell *matCellDef="let row"> {{ row.Staff }} </mat-cell>
+                                </ng-container>
+
+                                <ng-container matColumnDef="Avl">
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header> Avl </mat-header-cell>
+                                    <mat-cell *matCellDef="let row"> {{ row.Avail }} </mat-cell>
+                                </ng-container>
+
+                                <ng-container matColumnDef="CIQ">
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header> CIQ </mat-header-cell>
+                                    <mat-cell *matCellDef="let row"> {{ row.CIQ }} </mat-cell>
+                                </ng-container>
+
+                                <mat-header-row *matHeaderRowDef="skillListTable.columns; sticky: true"></mat-header-row>
+                                <mat-row *matRowDef="let row; columns: skillListTable.columns"></mat-row>
+                            </mat-table>
+                            <p *ngIf="skillListTable.source.data.length === 0" class="text-center m-0 mat-title">No Data Available</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</tw-wrapper>

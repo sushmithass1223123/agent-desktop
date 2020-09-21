@@ -1,3 +1,5 @@
+@import 'src/@fuse/scss/fuse';
+
 // mat icon
 .mat-icon-button {
     .mat-button-wrapper {
@@ -30,6 +32,28 @@
     -o-transform: rotate(180deg);
     transform: rotate(180deg);
 }
+.rotate-animation {
+    -webkit-animation: spin 4s linear infinite;
+    -moz-animation: spin 4s linear infinite;
+    animation: spin 4s linear infinite;
+}
+
+@-moz-keyframes spin {
+    100% {
+        -moz-transform: rotate(360deg);
+    }
+}
+@-webkit-keyframes spin {
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+@keyframes spin {
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
 // mat icon
 
 // mat selection list
@@ -57,7 +81,7 @@ mat-selection-list {
 
     .mat-list-item {
         width: 70px !important;
-        height: 48px !important;
+        height: 44px !important;
         margin-bottom: 8px !important;
     }
     .mat-list-single-selected-option,
@@ -173,6 +197,21 @@ mat-selection-list {
             .mat-sort-header-arrow {
                 margin: 0 6px 0px 6px;
             }
+
+            span {
+                max-width: 75px;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
+
+                @include media-breakpoint('gt-sm') {
+                    max-width: 100%;
+                }
+            }
+        }
+
+        mat-header-cell:not(:first-child) {
+            padding: 0 8px;
         }
 
         mat-header-cell:not(:last-child)::after {

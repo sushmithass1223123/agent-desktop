@@ -83,8 +83,8 @@ export class ThemeSelector {
                     selectedTheme = {
                         layout: {
                             navbar: {
-                                background: '',
-                                customBackgroundColor: true
+                                background: 'grey-900',
+                                customBackgroundColor: false
                             },
                             toolbar: {
                                 customBackgroundColor: true,
@@ -96,12 +96,12 @@ export class ThemeSelector {
                             },
                             anchorWidget: {
                                 customBackgroundColor: true,
-                                bodyBackground: '',
+                                bodyBackground: 'grey-800',
                                 headerBackground: '',
                                 contentBackground: ''
                             },
                             widget: {
-                                customBackgroundColor: true,
+                                customBackgroundColor: false,
                                 bodyBackground: '',
                                 headerBackground: '',
                                 contentBackground: ''

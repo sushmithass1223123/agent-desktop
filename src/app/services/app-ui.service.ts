@@ -3,10 +3,11 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
 import { AlertDialogComponent } from '@modules/shared/alert-dialog/alert-dialog.component';
 import { SnackbarComponent } from '../modules/shared/snackbar/snackbar.component';
-import { AppAlertDialogTypes, AppNotification } from 'app/interfaces';
+import { AppAlertDialogTypes, AppNotification, ReminderTaskDialogTypes } from 'app/interfaces';
 import { BehaviorSubject, Observable } from 'rxjs';
 import * as _ from 'lodash';
 import { TUtils } from 'tmac-sdk';
+import { RemiderTaskDialogComponent } from '@modules/shared/remider-task-dialog/remider-task-dialog.component';
 
 @Injectable({
     providedIn: 'root'
@@ -59,6 +60,23 @@ export class AppUiService {
             },
             panelClass: 'alert-dialog',
             width: '350px',
+            disableClose: true
+        });
+        return dialogRef;
+    }
+
+    public showRemiderTaskModal(type: ReminderTaskDialogTypes, message?: string): MatDialogRef<RemiderTaskDialogComponent> {
+        const dialogRef = this._matDialog.open(RemiderTaskDialogComponent, {
+            data: {
+                type,
+                message,
+                accept: () => dialogRef.close('accept'),
+                reject: () => dialogRef.close('reject'),
+                snooze: () => dialogRef.close('snooze')
+            },
+            panelClass: 'reminder-task-dialog',
+            width: '350px',
+            autoFocus: false,
             disableClose: true
         });
         return dialogRef;

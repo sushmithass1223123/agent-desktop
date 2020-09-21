@@ -7,8 +7,9 @@ import { FuseConfig } from '@fuse/types';
 import { AgentFeaturesService } from '@services/agent-features.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
-import { InteractionEventService } from '@services/interaction-event.service';
+import { TMACEventService } from '@services/tmac-event.service';
 import { ThemeSelector } from 'app/layout/utils/theme-selector';
+import { environment } from 'environments/environment';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AgentForcedLogoffEvent, SDKClient } from 'tmac-sdk';
@@ -37,7 +38,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
         private _appUIService: AppUiService,
         private _agentFeaturesService: AgentFeaturesService,
         // this service must not be removed, this will listen to some TMAC events
-        private _interactionEventsService: InteractionEventService
+        private _tmacEventsService: TMACEventService
     ) {
         // Set the private defaults
         this._unsubscribeAll = new Subject();
@@ -52,7 +53,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
      */
     ngOnInit(): void {
         // register to all the tmac events in service
-        this._interactionEventsService.registerTMACEvents();
+        this._tmacEventsService.subscribe();
 
         // Subscribe to config changes
         this._fuseConfigService.config
@@ -95,13 +96,13 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
         this._unsubscribeAll.complete();
 
         // de-register the TMAC events in service
-        this._interactionEventsService.deReigsterTMACEvents();
+        this._tmacEventsService.unsubscribe();
 
         // deregister from tmac events
         SDKClient.events.off('AgentForcedLogoffEvent', this.forcedLogoffEvent);
 
         // remove the processed features
-        this._agentFeaturesService.clearAgentFeatures();
+        this._agentFeaturesService.unsubscribe();
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -125,6 +126,11 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
         else {
             this.pollForEvent();
         }
+
+        // print the agent data and sdk client
+        if (!environment.production) {
+            console.log('LoginData: ', loginData);
+        }
     }
 
     private pollForEvent(): void {
@@ -140,7 +146,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
         SDKClient.getEvents();
 
         // process the agent features
-        this._agentFeaturesService.processAgentFeatures();
+        this._agentFeaturesService.subscribe();
     }
 
     forcedLogoffEvent = (evt: AgentForcedLogoffEvent) => {
@@ -162,6 +168,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
                 description = 'Agent information not found, please re-login!';
                 break;
             default:
+                description = 'Your existing session expired as you are logged in using another session!';
         }
         // we will route to not-found page
         this._router.navigate(['not-found'],

@@ -1,9 +1,10 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AppDataService } from '@services/app-data.service';
 import { FuseConfigService } from '@fuse/services/config.service';
+import { FuseConfig } from '@fuse/types';
+import { AppDataService } from '@services/app-data.service';
+import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
+import { IWidget } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-sample', // make sure you set the selector starts with tw-<widget-name>
@@ -14,12 +15,12 @@ import { SDKClient } from 'tmac-sdk';
 export class TwSampleComponent extends TWidgetWrapper implements OnInit, OnDestroy {
 
     // holds all the data related to this widget from the config
-    @Input() data: any;
+    @Input() data: IWidget;
 
     // -----------------------------------------------------------
     // @ [OPTIONAL] to store the fuse config for theme
     // -----------------------------------------------------------
-    fuseConfig: any;
+    fuseConfig: FuseConfig;
 
     // -----------------------------------------------------------
     // @ [OPTIONAL] to store entire app config and get update

@@ -1,5 +1,5 @@
 import { Component, ElementRef, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { InteractionEventService } from '@services/interaction-event.service';
+import { TMACEventService } from '@services/tmac-event.service';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { InteractionRef, InteractionWidgets, IWidget } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
@@ -24,7 +24,7 @@ export class TwcTextchatComponent extends TWContentWrapper implements OnInit, On
         public hostElement: ElementRef,
         public contentPageService: ContentPageService,
         private _interactionManagerService: InteractionManagerService,
-        private _interactionEventService: InteractionEventService
+        private _interactionEventService: TMACEventService
     ) {
         super(hostElement, contentPageService);
     }

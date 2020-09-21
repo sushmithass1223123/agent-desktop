@@ -6,7 +6,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
-import { InteractionEventService } from '@services/interaction-event.service';
+import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { sortBy, uniqBy } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
@@ -61,7 +61,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
 
     constructor(
         private _fuseConfigService: FuseConfigService,
-        private _interactionEventService: InteractionEventService,
+        private _interactionEventService: TMACEventService,
         private sanitizer: DomSanitizer
     ) {
         super();

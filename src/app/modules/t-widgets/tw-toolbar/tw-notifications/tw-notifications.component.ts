@@ -53,13 +53,21 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
 
         // unregister from event
         SDKClient.events.off('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
+
+        // clear all the notifications in the service
+        this.clearAllNotifications();
     }
 
     private AgentNotificaitonEvent = (evt: AgentNotificaitonEvent) => {
+        // get the type
+        const type = evt.Type.toLowerCase();
         // check the type
-        if (evt.Type !== 'IM' && evt.Type !== 'InteractionIM') {
+        if (type !== 'im' &&
+            type !== 'interactionim' &&
+            type !== 'executeaction' &&
+            type !== 'executetask') {
             this._appUIService.addNotification({
-                icon: evt.Type === 'Broadcast' ? 'announcement' : evt.Type === 'Notify' ? 'notification_important' : 'info',
+                icon: type === 'broadcast' ? 'announcement' : type === 'notify' ? 'notification_important' : 'info',
                 message: this.urlify(evt.Message),
                 status: 'new'
             });

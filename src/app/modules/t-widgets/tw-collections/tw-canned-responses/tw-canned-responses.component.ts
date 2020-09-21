@@ -1,13 +1,10 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
-import { FuseConfigService } from '@fuse/services/config.service';
-import { AppDataService } from '@services/app-data.service';
+import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { sortBy, uniqBy } from 'lodash';
-import { takeUntil } from 'rxjs/operators';
-import { CallerIntentEvent, IResponse, SDKClient, WorkCodeAddedEvent, IUIEvent } from 'tmac-sdk';
-import { InteractionEventService } from '@services/interaction-event.service';
+import { CallerIntentEvent, IResponse, IUIEvent, SDKClient, WorkCodeAddedEvent } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-canned-responses',
@@ -19,16 +16,6 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
     // holds all the data related to this widget from the config
     @Input() data: IWidget;
 
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store the fuse config for theme
-    // -----------------------------------------------------------
-    fuseConfig: any;
-
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store entire app config and get update
-    // -----------------------------------------------------------
-    appConfig: any;
-
     interactionId: number;
     departments = [];
     selectedDepartment: any;
@@ -37,20 +24,13 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
     templates = [];
     selectedTemplate: any;
     templateText: string;
-
     responseMode = 'auto';
 
     /**
-     * Constructor
-     * @param {FuseConfigService} _fuseConfigService
-     * @param {AppDataService} _appDataService
+     * Constructor 
      */
     constructor(
-        // @ [OPTIONAL]
-        private _fuseConfigService: FuseConfigService,
-        // @ [OPTIONAL]
-        private _appDataService: AppDataService,
-        private _interactionEventService: InteractionEventService
+        private _interactionEventService: TMACEventService
     ) {
         super();
     }
@@ -66,19 +46,6 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the fuse config
-        // -----------------------------------------------------------
-        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.fuseConfig = config;
-        });
-
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the app config
-        // -----------------------------------------------------------
-        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.appConfig = config;
-        });
 
         // assign the interaction id
         this.interactionId = this.data.InteractionDetails?.InteractionID;
@@ -107,6 +74,7 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+
         SDKClient.events.off('OnNLPDataEvent', this.OnNLPDataEvent);
         SDKClient.events.on('CallerIntentEvent', this.CallerIntentEvent);
         SDKClient.events.off('CallerIntentEvent', this.CallerIntentEvent);
@@ -115,6 +83,39 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
     // -----------------------------------------------------------------------------------------------------
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
+
+    private WorkCodeAddedEvent = (evt: WorkCodeAddedEvent) => {
+        // check for the interaction
+        if (this.interactionId !== evt.InteractionID) {
+            return;
+        }
+
+        const newGroups = sortBy(uniqBy([...this.groups, evt], 'Name'), 'Name');
+        this.groups = newGroups;
+    }
+
+    private CallerIntentEvent = (evt: CallerIntentEvent) => {
+        // check for the interaction
+        if (this.interactionId !== evt.InteractionID) {
+            return;
+        }
+
+        const newGroup = { ...evt, Name: evt.IntentName };
+        const newGroups = sortBy(uniqBy([...this.groups, newGroup], 'Name'), 'Name');
+        this.groups = newGroups;
+    }
+
+    private OnNLPDataEvent = (evt: any): void => {
+        const parsedJson = JSON.parse(evt.JsonData);
+
+        // check for the interaction
+        if (this.interactionId.toString() !== parsedJson.interactionID) {
+            return;
+        }
+
+        const newGroup = JSON.parse(parsedJson.nluResult);
+        this.onSelectGroups({ value: newGroup.intent.name });
+    }
 
     private clearAllData(): void {
         this.selectedDepartment = null;
@@ -189,39 +190,6 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
             // clear all data
             this.clearAllData();
         }
-    }
-
-    WorkCodeAddedEvent = (evt: WorkCodeAddedEvent) => {
-        // check for the interaction
-        if (this.interactionId !== evt.InteractionID) {
-            return;
-        }
-
-        const newGroups = sortBy(uniqBy([...this.groups, evt], 'Name'), 'Name');
-        this.groups = newGroups;
-    }
-
-    CallerIntentEvent = (evt: CallerIntentEvent) => {
-        // check for the interaction
-        if (this.interactionId !== evt.InteractionID) {
-            return;
-        }
-
-        const newGroup = { ...evt, Name: evt.IntentName };
-        const newGroups = sortBy(uniqBy([...this.groups, newGroup], 'Name'), 'Name');
-        this.groups = newGroups;
-    }
-
-    OnNLPDataEvent = (evt: any): void => {
-        const parsedJson = JSON.parse(evt.JsonData);
-
-        // check for the interaction
-        if (this.interactionId.toString() !== parsedJson.interactionID) {
-            return;
-        }
-
-        const newGroup = JSON.parse(parsedJson.nluResult);
-        this.onSelectGroups({ value: newGroup.intent.name });
     }
 
     changeMode(event: MatSelectChange): void {
