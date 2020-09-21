@@ -104,3 +104,12 @@ export interface ReminderTaskDialogData {
     snooze: () => void;
     type: AppAlertDialogTypes;
 }
+
+export type ConfirmDialogTypes = 'takeoverSession' | 'endInteraction' | 'closeInteraction';
+
+export interface ConfirmDialogData {
+    title: string;
+    message: string;
+    type: ConfirmDialogTypes;
+    confirm: () => void;
+}

@@ -53,6 +53,9 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
 
         // unregister from event
         SDKClient.events.off('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
+
+        // clear all the notifications in the service
+        this.clearAllNotifications();
     }
 
     private AgentNotificaitonEvent = (evt: AgentNotificaitonEvent) => {

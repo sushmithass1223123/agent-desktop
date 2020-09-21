@@ -37,6 +37,8 @@ import {
 } from 'tmac-sdk';
 import { AppUiService } from '@services/app-ui.service';
 import { arch } from 'os';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '@modules/shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
     selector: 'tw-voice-controls',
@@ -82,7 +84,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         private _appDataService: AppDataService,
         private _interactionManagerService: InteractionManagerService,
         private _interactionEventService: TMACEventService,
-        private _appUIService: AppUiService
+        private _appUIService: AppUiService,
+        private _dialog: MatDialog
     ) {
         super();
     }
@@ -593,6 +596,37 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         }
     }
 
+    private closeInteraction(btn: MatButton): void {
+        this.toggleButton(true, btn);
+        SDKClient.closeInteraction(this.interactionId.toString(), null)
+            .then((dt: IResponse) => {
+                this.toggleButton(false, btn);
+                if (dt.response && dt.response.ResultCode === 0) {
+                    this._appUIService.showSnackbar('Interaction closed successfully');
+                }
+                else {
+                    this._appUIService.showSnackbar('Close interaction failed', 'failure');
+                }
+            });
+    }
+
+    private disconnectCall(btn: MatButton): void {
+        // toggle the button
+        this.toggleButton(true, btn);
+        SDKClient.disconnectCall(this.interactionId.toString(), null)
+            .then((dt: IResponse) => {
+                // toggle the button
+                this.toggleButton(false, btn);
+                // check for the response
+                if (dt.response && dt.response.ResultCode === 0) {
+                    // disconnect call success
+                }
+                else {
+                    this._appUIService.showSnackbar('Disconnect call failed', 'failure');
+                }
+            });
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
@@ -606,20 +640,6 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         this._interactionManagerService.updateInteraction(item.interactionId, {
             isActive: true
         });
-    }
-
-    public closeInteraction(btn: MatButton): void {
-        this.toggleButton(true, btn);
-        SDKClient.closeInteraction(this.interactionId.toString(), null)
-            .then((dt: IResponse) => {
-                this.toggleButton(false, btn);
-                if (dt.response && dt.response.ResultCode === 0) {
-                    this._appUIService.showSnackbar('Interaction closed successfully');
-                }
-                else {
-                    this._appUIService.showSnackbar('Close interaction failed', 'failure');
-                }
-            });
     }
 
     public answerCall(btn: MatButton): void {
@@ -656,21 +676,18 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             });
     }
 
-    public disconnectCall(btn: MatButton): void {
-        // toggle the button
-        this.toggleButton(true, btn);
-        SDKClient.disconnectCall(this.interactionId.toString(), null)
-            .then((dt: IResponse) => {
-                // toggle the button
-                this.toggleButton(false, btn);
-                // check for the response
-                if (dt.response && dt.response.ResultCode === 0) {
-                    // disconnect call success
-                }
-                else {
-                    this._appUIService.showSnackbar('Disconnect call failed', 'failure');
-                }
-            });
+    public confirmDisconnectCall(btn: MatButton): void {
+        // config force login
+        const confirmDialogRef = this._dialog.open(ConfirmDialogComponent, {
+            disableClose: false
+        });
+        confirmDialogRef.componentInstance.message = 'Are you sure to end this call?';
+        confirmDialogRef.afterClosed().subscribe((dialogResult) => {
+            if (dialogResult) {
+                // send end chat to server 
+                this.disconnectCall(btn);
+            }
+        });
     }
 
     public holdCall(btn: MatButton): void {
@@ -743,5 +760,19 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             this.audioPlayer.stop();
             this.audioPlayer = null;
         }
+    }
+
+    public confirmCloseInteraction(btn: MatButton): void {
+        // config force login
+        const confirmDialogRef = this._dialog.open(ConfirmDialogComponent, {
+            disableClose: false
+        });
+        confirmDialogRef.componentInstance.message = 'Are you sure to close this interaction?';
+        confirmDialogRef.afterClosed().subscribe((dialogResult) => {
+            if (dialogResult) {
+                // send end chat to server 
+                this.closeInteraction(btn);
+            }
+        });
     }
 }

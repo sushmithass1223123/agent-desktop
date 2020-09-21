@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { TUtils, IAgentData, SDKClient, AgentStateDurationList, SignalRWrapper } from 'tmac-sdk';
 import { AppDataService } from './app-data.service';
@@ -13,9 +13,11 @@ export class DashboardService {
     private _subscribed: boolean;
     private _serviceUrls: string[];
     private _signalRInstance: SignalRWrapper;
+    private _dashboardServiceSubject: BehaviorSubject<string>;
 
     constructor(private _appDataService: AppDataService) {
         this._unsubscribeAll = new Subject();
+        this._dashboardServiceSubject = new BehaviorSubject('');
     }
 
     private startService(): void {
@@ -106,12 +108,12 @@ export class DashboardService {
 
             // connection connected event
             signalR.events.on('onConnected', () => {
-                signalR.hub.invoke('GetAgentData', signalR.hub.connection.id, agentData.agentId, true, 100);
+                this._dashboardServiceSubject.next('connected');
+            });
 
-                // check for the profile
-                if (agentData.agentProfile === 'S') {
-                    signalR.hub.invoke('GetActiveAgentList', signalR.hub.connection.id, agentData.agentId, agentData.teamId, true, 100);
-                }
+            // connection disconnected event
+            signalR.events.on('onDisconnected', () => {
+                this._dashboardServiceSubject.next('disconnected');
             });
 
             // connect to the server
@@ -120,6 +122,10 @@ export class DashboardService {
             // assign to local variable
             this._signalRInstance = signalR;
         }
+    }
+
+    get connectionState(): any | Observable<string> {
+        return this._dashboardServiceSubject.asObservable();
     }
 
     public subscribe(): void {
@@ -160,8 +166,18 @@ export class DashboardService {
         this._subscribed = false;
     }
 
+    public triggerAgentData(agentId: string, start: boolean, duration: number): void {
+        TUtils.Logger.console('info', `DashboardService.triggerAgentData: start=${start}`);
+        this._signalRInstance.hub.invoke('GetAgentData', this._signalRInstance.hub.connection.id, agentId, start, duration);
+    }
+
+    public triggerActiveAgents(agentId: string, teamId: string, start: boolean, duration: number): void {
+        TUtils.Logger.console('info', `DashboardService.triggerActiveAgents: start=${start}`);
+        this._signalRInstance.hub.invoke('GetActiveAgentList', this._signalRInstance.hub.connection.id, agentId, teamId, start, duration);
+    }
+
     public triggerAgentInteractions(agentId: string, start: boolean): void {
-        // invoke data server to start/stop sending interaction data
+        TUtils.Logger.console('info', `DashboardService.triggerAgentInteractions: agentId=${agentId}, start=${start}`);
         this._signalRInstance.hub.invoke('GetActiveInteractionList', this._signalRInstance.hub.connection.id, agentId, start);
     }
 }

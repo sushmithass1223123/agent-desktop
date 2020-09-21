@@ -122,7 +122,7 @@
                         [disabled]="status !== 'connected' && status !== 'outgoing'"
                         #disconnectBtn
                         matTooltip="Disconnect"
-                        (click)="disconnectCall(disconnectBtn)"
+                        (click)="confirmDisconnectCall(disconnectBtn)"
                     >
                         <mat-icon>call_end</mat-icon>
                     </button>
@@ -170,7 +170,7 @@
                         class="border-radius-20 animate__animated animate__slideInRight animate__faster"
                         color="warn"
                         #closeBtn
-                        (click)="closeInteraction(closeBtn)"
+                        (click)="confirmCloseInteraction(closeBtn)"
                         matTooltip="Close Interaction"
                     >
                         Close

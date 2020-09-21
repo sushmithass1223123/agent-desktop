@@ -90,10 +90,13 @@ export class TMACEventService {
             }
             else if (type === 'executeaction') {
                 // parse the action
+
+                // TODO:: add Mandatory property
+                
                 const parsedMessage: { Action: string, Data: string } = JSON.parse(evt.Message);
                 // get the action
                 switch (parsedMessage.Action.toLowerCase()) {
-                    case 'registercallback':
+                    case 'registercallback': {
                         // check if AOT cofngured for register callback
                         const widget = this._aotWidgets.filter((w: IWidget) => w.Type === 'tw-register-callback')?.[0];
                         // check if widget is found
@@ -101,6 +104,20 @@ export class TMACEventService {
                             this._aotWidgetService.addWidget(widget);
                         }
                         break;
+                    }
+                    case 'visualivr':
+                        {
+                            // check if AOT cofngured for custom
+                            const widget = this._aotWidgets.filter((w: IWidget) => w.Type === 'tw-custom')?.[0];
+                            // check if widget is found
+                            if (widget) {
+                                
+                                // TODO:: change the config
+
+                                this._aotWidgetService.addWidget(widget);
+                            }
+                            break;
+                        }
                     default:
                 }
             }

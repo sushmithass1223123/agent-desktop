@@ -2171,6 +2171,69 @@
                         "Url": "https://tmac.tetherfilabs.com/tcie-web-appv8?id=_agentId",
                         "QueryParams": []
                     }
+                },
+                {
+                    "Name": "Register Callback",
+                    "Description": "",
+                    "Type": "tw-register-callback",
+                    "Config": {
+                        "Static": false,
+                        "Anchor": true,
+                        "AOT": true,
+                        "Icon": "phone_callback",
+                        "Class": "",
+                        "Position": {
+                            "X": 0,
+                            "Y": 0,
+                            "W": 300,
+                            "H": 300
+                        },
+                        "Actions": [
+                            "minimize",
+                            "destroy"
+                        ],
+                        "ViewState": "restore",
+                        "PinState": false,
+                        "FloatState": false,
+                        "Resizable": false,
+                        "Header": true,
+                        "Disabled": false
+                    },
+                    "Data": {
+                        "AutoOpen": false,
+                        "GetCampaignsUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Campaign/GetCampaigns",
+                        "CreateContactCampaignUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Contact/CreateCampaignContact"
+                    }
+                },
+                {
+                    "Name": "Agent Assist",
+                    "Description": "",
+                    "Type": "tw-custom",
+                    "Config": {
+                        "Static": false,
+                        "Anchor": true,
+                        "AOT": true,
+                        "Icon": "",
+                        "Class": "",
+                        "Position": {
+                            "X": 0,
+                            "Y": 0
+                        },
+                        "Actions": [
+                            "minimize",
+                            "destroy"
+                        ],
+                        "ViewState": "restore",
+                        "PinState": false,
+                        "FloatState": false,
+                        "Resizable": false,
+                        "Header": true,
+                        "Disabled": false
+                    },
+                    "Data": {
+                        "AutoOpen": false,
+                        "Url": ""
+                    }
                 }
             ]
         }

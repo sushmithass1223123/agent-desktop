@@ -294,12 +294,8 @@ export class LoginComponent implements OnInit, OnDestroy {
         }
     }
 
-    public toggleStation(event: any): void {
-        if (event.checked) {
-            this.stationEnabled = true;
-        } else {
-            this.stationEnabled = false;
-        }
+    public toggleStation(): void {
+        this.stationEnabled = this.pbxChecked || this.msChecked;
     }
 
     public async login(force: boolean): Promise<void> {
@@ -342,7 +338,7 @@ export class LoginComponent implements OnInit, OnDestroy {
                 this.loginResponse(result);
             }, 1000);
         })
-            .catch((err: string) => {
+            .catch(() => {
                 // set loading to true
                 this.loading = false;
                 // login error
