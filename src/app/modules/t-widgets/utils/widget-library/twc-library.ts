@@ -8,6 +8,7 @@ import { TwcSupervisorComponent } from '@modules/t-widgets/tw-content/twc-superv
 import { TwcVoiceComponent } from '@modules/t-widgets/tw-content/twc-voice/twc-voice.component';
 import { TwcTextchatComponent } from '@modules/t-widgets/tw-content/twc-textchat/twc-textchat.component';
 import { TwcWorkbenchComponent } from '@modules/t-widgets/tw-content/twc-workbench/twc-workbench.component';
+import { TwcEmailComponent } from '@modules/t-widgets/tw-content/twc-email/twc-email.component';
 
 export class TWContentLibrary {
     static widgetLibrary: Record<string, Type<any>> = {
@@ -18,7 +19,8 @@ export class TWContentLibrary {
         'twc-textchat': TwcTextchatComponent,
         // 'twc-email': EmailComponent,
         'twc-custom': TwcCustomComponent,
-        'twc-workbench': TwcWorkbenchComponent
+        'twc-workbench': TwcWorkbenchComponent,
+        'twc-email': TwcEmailComponent
     };
 
     public static getAllWidgets(): Record<string, Type<any>> {

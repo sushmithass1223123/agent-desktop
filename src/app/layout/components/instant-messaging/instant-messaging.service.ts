@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { FuseUtils } from '@fuse/utils';
 
 @Injectable()
-export class ChatPanelService
+export class InstantMessagingService
 {
     contacts: any[];
     chats: any[];

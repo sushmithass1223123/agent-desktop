@@ -2,7 +2,7 @@
 .border-radius-50-p {
     overflow: hidden;
 }
-chat-panel {
+instant-messaging {
     display: flex;
     flex-direction: column;
     flex: 1 1 auto;
@@ -367,7 +367,7 @@ chat-panel {
 }
 
 fuse-sidebar {
-    &.chat-panel {
+    &.instant-messaging {
         width: 360px;
         min-width: 360px;
         max-width: 360px;
@@ -378,7 +378,7 @@ fuse-sidebar {
             width: 100vw !important;
         }
 
-        &.left-chat-panel {
+        &.left-instant-messaging {
             .header {
                 .toggle-sidebar-folded,
                 .toggle-sidebar-open {
@@ -391,7 +391,7 @@ fuse-sidebar {
 
         // Folded
         &.folded {
-            chat-panel {
+            instant-messaging {
                 .header {
                     .title {
                         h3 {
@@ -403,7 +403,7 @@ fuse-sidebar {
 
             // Folded unfolded
             &.unfolded {
-                chat-panel {
+                instant-messaging {
                     .header {
                         .title {
                             h3 {

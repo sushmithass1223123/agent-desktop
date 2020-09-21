@@ -8,7 +8,7 @@ import { FuseConfigService } from '@fuse/services/config.service';
 import { TWidgetWrapper } from '@modules/t-widgets/utils';
 import { AppDataService } from '@services/app-data.service';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
-import { ResData } from 'app/interfaces';
+import { IWidget, ResData } from 'app/interfaces';
 import { groupBy } from 'lodash';
 import * as moment from 'moment';
 import { takeUntil } from 'rxjs/operators';
@@ -22,7 +22,7 @@ import { SDKClient } from 'tmac-sdk';
 })
 export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     // holds all the data related to this widget from the config
-    @Input() data: any;
+    @Input() data: IWidget;
     searchTerm = '';
     selectedMail: number;
     emailSearchRes: ResData<{ selected: any }> = {
@@ -91,8 +91,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
      * and before any of the view or content children have been checked. It is invoked only once when the directive is instantiated.
      */
     ngOnInit(): void {
-        // call the wrapper init method
-        this.initWrapper(this.data);
         // -----------------------------------------------------------
         // @ [OPTIONAL] to get the fuse config
         // -----------------------------------------------------------
@@ -131,8 +129,18 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
     hasChild = (_: number, node: any) => !!node.children && node.children.length > 0;
 
     advancedSearch(): void {
-        // const { agentId } = SDKClient.getAgentData();
-        const agentId = '';
+        if (!this.data.Data.EmailSearchUrl) {
+            this.emailSearchRes = {
+                loading: false,
+                error: true,
+                msg: 'EmailSearchUrl not provided',
+                data: { selected: this.emailSearchRes.data.selected || false }
+            };
+            return;
+        }
+
+        const { agentId } = SDKClient.getAgentData();
+        // const agentId = '';
 
         const searchFields = this.advancedSearchForm.value;
 
@@ -158,7 +166,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
         this.emailSearchRes.loading = true;
 
         this.http
-            .post('http://dice.tetherfi.cloud:55005/api/workbench/email/search', {
+            .post(this.data.Data.EmailSearchUrl, {
                 skills: searchFields.skills ? [searchFields.skills] : [],
                 email: searchFields.email,
                 agent: agentId,
@@ -171,10 +179,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                 (res: any) => {
                     if (res.status === 'SUCCESS') {
                         const mails = res.result.map((x: any) => {
-                            const res = JSON.parse(x.data);
-                            res.addedTime = x.addedTime;
-                            res.body = this.domSanitizer.bypassSecurityTrustHtml(res.body);
-                            return res;
+                            const mailRes = JSON.parse(x.data);
+                            mailRes.addedTime = x.addedTime;
+                            mailRes.body = this.domSanitizer.bypassSecurityTrustHtml(mailRes.body);
+                            return mailRes;
                         });
                         const byMailList = groupBy(mails, 'To');
                         const nodes = Object.keys(byMailList).map((name) => {
@@ -204,6 +212,34 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                         msg: COMMON_ERR_MESSAGE,
                         data: { selected: this.emailSearchRes.data.selected || false }
                     };
+                }
+            );
+    }
+
+    pullEmail(): void {
+        const { agentId } = SDKClient.getAgentData();
+        const { SessionId, RouteId } = this.emailSearchRes.data.selected;
+        this.http
+            .post('http://dice.tetherfi.cloud:55005/api/workbench/email/pull', {
+                tmacServer: '',
+                agentId,
+                items: [
+                    {
+                        sessionId: SessionId,
+                        routeId: RouteId,
+                        conversationId: ''
+                    }
+                ]
+            })
+            .subscribe(
+                (res: any) => {
+                    if (res.status === 'FAILED') {
+                        console.log({ err: res });
+                        return;
+                    }
+                },
+                (err) => {
+                    console.log(err);
                 }
             );
     }

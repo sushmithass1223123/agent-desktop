@@ -1,0 +1,84 @@
+<!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
+<!-- implement following events in your component to access widget wrapper action events -->
+<!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
+
+<!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
+
+<tw-wrapper [data]="data">
+    <div fxLayout="column" fxFill class="w-100-p h-100-p email-controls">
+        <!-- your code goes here -->
+        <div class="header-controls my-12">
+            <div fxLayout fxLayoutGap="10px" fxLayoutAlign="end center">
+                <button mat-icon-button (click)="closeEmail($event)" matTooltip="Close">
+                    <mat-icon>clear</mat-icon>
+                </button>
+                <button mat-icon-button>
+                    <mat-icon>forward</mat-icon>
+                </button>
+                <button mat-icon-button>
+                    <mat-icon>delete</mat-icon>
+                </button>
+                <button mat-icon-button>
+                    <mat-icon>add</mat-icon>
+                </button>
+            </div>
+        </div>
+
+        <div fxFlex="100" fxLayout="column" class="email-content position-relative bg-secondary p-12 border-radius-20">
+            <div class="email-content p-8">
+                <div fxLayout fxLayoutAlign="space-between" class="font-weight-700">
+                    <span>{{ getInboxMessageReq.data.AgentName }} ({{ getInboxMessageReq.data.From }}) </span>
+                    <div>
+                        <span>{{ getInboxMessageReq.data.CreatedTime | date: 'mediumDate' }}</span>
+                        <br />
+                        <span>{{ getInboxMessageReq.data.CreatedTime | date: 'shortTime' }}</span>
+                    </div>
+                </div>
+                <div fxLayout fxLayoutAlign="end" fxLayoutGap="5px" class="mt-12">
+                    <button mat-flat-button class="border-radius-20">Transfer</button>
+                    <button mat-flat-button class="border-radius-20">Reply</button>
+                    <button mat-flat-button class="border-radius-20">Reply All</button>
+                    <button mat-flat-button class="border-radius-20">Forward</button>
+                </div>
+            </div>
+            <div fxFlex fusePerfectScrollbar>
+                <span class="my-8">Subject : {{ getInboxMessageReq.data.Subject }}</span>
+                <div class="email-content-body py-8">
+                    <div *ngIf="!getInboxMessageReq.loading && !getInboxMessageReq.error" [innerHtml]="getInboxMessageReq.data?.Body"></div>
+
+                    <div *ngIf="getInboxMessageReq.loading" fxLayout fxLayoutAlign="center center" class="w-100-p h-100-p">
+                        <mat-spinner></mat-spinner>
+                    </div>
+
+                    <div *ngIf="getInboxMessageReq.error" fxLayout="column" fxLayoutAlign="center center" class="w-100-p h-100-p">
+                        <p>{{ getInboxMessageReq.msg }}</p>
+                        <button mat-button color="primary" (click)="getFullEmail()">Retry</button>
+                    </div>
+                </div>
+            </div>
+            <div fxLayout fxLayoutAlign="space-between center" class="email-bottom-controls bg-secondary">
+                <div class="left-controls">
+                    <button mat-icon-button matTooltip="Attach file">
+                        <mat-icon> attachment </mat-icon>
+                    </button>
+                    <button mat-icon-button matTooltip="Underline">
+                        <mat-icon> format_underline </mat-icon>
+                    </button>
+                    <button mat-icon-button matTooltip="Highlight">
+                        <mat-icon> font_download </mat-icon>
+                    </button>
+                    <button mat-icon-button matTooltip="Emoji">
+                        <mat-icon> emoji_emotions </mat-icon>
+                    </button>
+                </div>
+
+                <div class="right-controls">
+                    <button mat-icon-button matTooltip="Send">
+                        <mat-icon>send</mat-icon>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- your code goes here -->
+</tw-wrapper>

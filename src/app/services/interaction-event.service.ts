@@ -11,9 +11,7 @@ export class InteractionEventService {
     private _tmacEventArray: any[];
     private _constructDisposeEventSubject: BehaviorSubject<any>;
 
-    constructor(
-        private _interactionManagerService: InteractionManagerService
-    ) {
+    constructor(private _interactionManagerService: InteractionManagerService) {
         // intialize all the subject
         this._constructDisposeEventSubject = new BehaviorSubject({});
         this._tmacEventArray = new Array();
@@ -32,7 +30,7 @@ export class InteractionEventService {
 
     // -----------------------------------------------------------------------------------------------------
     // @ Private Methods
-    // -----------------------------------------------------------------------------------------------------    
+    // -----------------------------------------------------------------------------------------------------
 
     private onTMACEvents = (evt: IUIEvent) => {
         if (evt.InteractionID > 0) {
@@ -44,17 +42,17 @@ export class InteractionEventService {
                 if (evt.IsInteractionDisposeEvent) {
                     // remove the events for the ID
                     this.remove(evt.InteractionID);
-                    // remove the interaction reference 
+                    // remove the interaction reference
                     this._interactionManagerService.removeInteraction(evt.InteractionID);
                 }
                 // notify the observers
                 this._constructDisposeEventSubject.next(evt);
             }
         }
-    }
+    };
 
     private remove(interactionId: number): void {
-        this._tmacEventArray = this._tmacEventArray.filter(i => i.InteractionID !== interactionId);
+        this._tmacEventArray = this._tmacEventArray.filter((i) => i.InteractionID !== interactionId);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -71,7 +69,7 @@ export class InteractionEventService {
 
     public get(interactionId: number): any {
         // get the events based on interaction Id
-        const events = this._tmacEventArray.filter(i => i.InteractionID === interactionId);
+        const events = this._tmacEventArray.filter((i) => i.InteractionID === interactionId);
         if (events.length > 0) {
             return events;
         }

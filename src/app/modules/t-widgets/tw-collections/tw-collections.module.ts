@@ -21,6 +21,8 @@ import { TwCustomComponent } from './tw-custom/tw-custom.component';
 import { TwCustomerDetailsComponent } from './tw-customer-details/tw-customer-details.component';
 import { TwCustomerJourneyComponent } from './tw-customer-journey/tw-customer-journey.component';
 import { TwCustomerSentimentComponent } from './tw-customer-sentiment/tw-customer-sentiment.component';
+import { TwEmailControlsComponent } from './tw-email-controls/tw-email-controls.component';
+import { TwEmailPanelComponent } from './tw-email-panel/tw-email-panel.component';
 import { TwPanelComponent } from './tw-panel/tw-panel.component';
 import { TwPieChartComponent } from './tw-pie-chart/tw-pie-chart.component';
 import { TwRegisterCallbackComponent } from './tw-register-callback/tw-register-callback.component';
@@ -86,7 +88,9 @@ const collectionComponents = [
     TwSuAgentInteractionsComponent,
     TwPieChartComponent,
     TwWorkbenchPanelComponent,
-    WorkbenchEmailComponent
+    WorkbenchEmailComponent,
+    TwEmailPanelComponent,
+    TwEmailControlsComponent
 ];
 
 @NgModule({

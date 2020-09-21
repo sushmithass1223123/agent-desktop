@@ -117,7 +117,7 @@
         </div>
 
         <div
-            *ngIf="dataSource.data.length === 0 && !emailSearchRes.loading"
+            *ngIf="dataSource.data.length === 0 && !emailSearchRes.loading && !emailSearchRes.error"
             (click)="advancedSearchMenu.classList.remove('show')"
             class="w-100-p h-50-p"
             fxLayout
@@ -141,7 +141,7 @@
         <div *ngIf="emailSearchRes.data.selected" fxLayout fxLayoutAlign="end" fxLayoutGap="10px" class="my-20 w-95-p">
             <button mat-flat-button class="border-radius-20">Transfer</button>
             <button mat-flat-button class="border-radius-20">Advance</button>
-            <button mat-flat-button class="border-radius-20">Pull</button>
+            <button mat-flat-button class="border-radius-20" (click)="pullEmail()">Pull</button>
             <button mat-flat-button class="border-radius-20">Push</button>
         </div>
 

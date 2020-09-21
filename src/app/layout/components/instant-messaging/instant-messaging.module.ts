@@ -9,13 +9,13 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { FuseSharedModule } from '@fuse/shared.module';
 
-import { ChatPanelComponent } from 'app/layout/components/chat-panel/chat-panel.component';
-import { ChatPanelService } from 'app/layout/components/chat-panel/chat-panel.service';
+import { InstantMessagingComponent } from './instant-messaging.component';
+import { InstantMessagingService } from './instant-messaging.service';
 import { SharedModule } from '@modules/shared/shared.module';
 
 @NgModule({
-    declarations: [ChatPanelComponent],
-    providers: [ChatPanelService],
+    declarations: [InstantMessagingComponent],
+    providers: [InstantMessagingService],
     imports: [
         MatButtonModule,
         MatFormFieldModule,
@@ -27,6 +27,6 @@ import { SharedModule } from '@modules/shared/shared.module';
         FuseSharedModule,
         SharedModule
     ],
-    exports: [ChatPanelComponent]
+    exports: [InstantMessagingComponent]
 })
-export class ChatPanelModule {}
+export class InstantMessagingModule {}

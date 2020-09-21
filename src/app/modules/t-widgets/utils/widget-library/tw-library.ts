@@ -16,6 +16,8 @@ import { TwCannedResponsesComponent } from '@modules/t-widgets/tw-collections/tw
 import { TwChatPanelComponent } from '@modules/t-widgets/tw-collections/tw-chat-panel/tw-chat-panel.component';
 import { TwCustomComponent } from '@modules/t-widgets/tw-collections/tw-custom/tw-custom.component';
 import { TwCustomerSentimentComponent } from '@modules/t-widgets/tw-collections/tw-customer-sentiment/tw-customer-sentiment.component';
+import { TwEmailControlsComponent } from '@modules/t-widgets/tw-collections/tw-email-controls/tw-email-controls.component';
+import { TwEmailPanelComponent } from '@modules/t-widgets/tw-collections/tw-email-panel/tw-email-panel.component';
 import { TwPieChartComponent } from '@modules/t-widgets/tw-collections/tw-pie-chart/tw-pie-chart.component';
 import { TwRegisterCallbackComponent } from '@modules/t-widgets/tw-collections/tw-register-callback/tw-register-callback.component';
 import { TwSampleComponent } from '@modules/t-widgets/tw-collections/tw-sample/tw-sample.component';
@@ -35,6 +37,7 @@ import { TwWallboardComponent } from '@modules/t-widgets/tw-collections/tw-wallb
 import { TwWorkCodesComponent } from '@modules/t-widgets/tw-collections/tw-work-codes/tw-work-codes.component';
 import { TwWorkbenchPanelComponent } from '@modules/t-widgets/tw-collections/tw-workbench-panel/tw-workbench-panel.component';
 import { TWidget } from '@modules/t-widgets/utils/t-widget';
+
 
 export class TWLibrary {
     static widgetLibrary: Record<string, Type<any>> = {
@@ -75,7 +78,9 @@ export class TWLibrary {
         'tw-register-callback': TwRegisterCallbackComponent, //
         'tw-su-agent-interactions': TwSuAgentInteractionsComponent,
         'tw-pie-chart': TwPieChartComponent,
-        'tw-workbench-panel': TwWorkbenchPanelComponent
+        'tw-workbench-panel': TwWorkbenchPanelComponent,
+        'tw-email-panel': TwEmailPanelComponent,
+        'tw-email-controls': TwEmailControlsComponent
     };
 
     public static getWidget(type: string, data: any): TWidget {
