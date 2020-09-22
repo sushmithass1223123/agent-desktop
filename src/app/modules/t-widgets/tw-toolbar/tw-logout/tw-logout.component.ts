@@ -80,11 +80,7 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
 
     logout(): void {
         // confirm logout 
-        const confirmDialogRef = this._dialog.open(ConfirmDialogComponent, {
-            disableClose: false
-        });
-        confirmDialogRef.componentInstance.title = 'Confirm logout';
-        confirmDialogRef.componentInstance.message = 'Are you sure you want to logout?';
+        const confirmDialogRef = this._appUIService.showAppConfirmDialog('logout')
         confirmDialogRef.afterClosed().subscribe((dialogResult) => {
             if (dialogResult) {
                 // logout error

@@ -4,14 +4,15 @@ import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-b
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
 import { AppDataService } from '@services/app-data.service';
-import { TMACEventService } from '@services/tmac-event.service';
+import { AppUiService } from '@services/app-ui.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
+import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { InteractionRef, IWidget } from 'app/interfaces';
 import { Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
-    AVChannel,
+    AgentInteractionTemplate, AVChannel,
     AVEvent,
     CallConferenceCompletedEvent,
     CallConferenceInitiatedEvent,
@@ -19,7 +20,20 @@ import {
     CallConferenceRemoteConnectedEvent,
     CallConnectedEvent,
     CallDisconnectedEvent,
-    CallHoldEvent,
+
+
+
+
+
+
+
+
+
+
+
+
+
+    CallerIntentEvent, CallHoldEvent,
     CallHoldReconnectEvent,
     CallTransferInitiatedEvent,
     CallTransferLineDisconnectEvent,
@@ -27,18 +41,15 @@ import {
     IAgentData,
     IResponse,
     IUIEvent,
-    MediaServerEvent,
+
+
+
+
+    IVRDataEvent, MediaServerEvent,
     SDKClient,
-    TUtils,
-    TEnums,
-    IVRDataEvent,
-    CallerIntentEvent,
-    AgentInteractionTemplate
+
+    TEnums, TUtils
 } from 'tmac-sdk';
-import { AppUiService } from '@services/app-ui.service';
-import { arch } from 'os';
-import { MatDialog } from '@angular/material/dialog';
-import { ConfirmDialogComponent } from '@modules/shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
     selector: 'tw-voice-controls',
@@ -84,8 +95,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         private _appDataService: AppDataService,
         private _interactionManagerService: InteractionManagerService,
         private _interactionEventService: TMACEventService,
-        private _appUIService: AppUiService,
-        private _dialog: MatDialog
+        private _appUIService: AppUiService
     ) {
         super();
     }
@@ -678,10 +688,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
     public confirmDisconnectCall(btn: MatButton): void {
         // config force login
-        const confirmDialogRef = this._dialog.open(ConfirmDialogComponent, {
-            disableClose: false
-        });
-        confirmDialogRef.componentInstance.message = 'Are you sure to end this call?';
+        const confirmDialogRef = this._appUIService.showAppConfirmDialog('endInteraction');
         confirmDialogRef.afterClosed().subscribe((dialogResult) => {
             if (dialogResult) {
                 // send end chat to server 
@@ -764,10 +771,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
     public confirmCloseInteraction(btn: MatButton): void {
         // config force login
-        const confirmDialogRef = this._dialog.open(ConfirmDialogComponent, {
-            disableClose: false
-        });
-        confirmDialogRef.componentInstance.message = 'Are you sure to close this interaction?';
+        const confirmDialogRef = this._appUIService.showAppConfirmDialog('closeInteraction');
         confirmDialogRef.afterClosed().subscribe((dialogResult) => {
             if (dialogResult) {
                 // send end chat to server 

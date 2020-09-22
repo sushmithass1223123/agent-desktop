@@ -262,11 +262,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                 break;
             case 'AllowSupervisorToLogout':
                 // confirm logout 
-                const confirmDialogRef = this._dialog.open(ConfirmDialogComponent, {
-                    disableClose: false
-                });
-                confirmDialogRef.componentInstance.title = 'Confirm logout';
-                confirmDialogRef.componentInstance.message = `Are you sure you want to logout ${agent.AgentName}?`;
+                const confirmDialogRef = this._appUIService.showAppConfirmDialog('logout', null, `Are you sure you want to logout ${agent.AgentName}?`);
                 confirmDialogRef.afterClosed().subscribe((dialogResult) => {
                     if (dialogResult) {
                         // show the progress bar

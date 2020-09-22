@@ -1,4 +1,5 @@
 import { ChartDataSets, ChartOptions } from 'chart.js';
+import { Moment } from 'moment';
 import { Color, SingleOrMultiDataSet } from 'ng2-charts';
 
 export interface TWChartPieceLabel {
@@ -65,10 +66,11 @@ export interface TwChartConfig {
 
 export interface ChatTranscripts {
     who?: string;
+    isAgent?: boolean;
     messageId?: string;
     message?: string;
     type?: string;
-    time?: string;
+    time?: string | Date | Moment;
     divider?: boolean;
     attachment?: {
         src: string;
@@ -105,11 +107,12 @@ export interface ReminderTaskDialogData {
     type: AppAlertDialogTypes;
 }
 
-export type ConfirmDialogTypes = 'takeoverSession' | 'endInteraction' | 'closeInteraction';
+export type AppConfirmDialogTypes = 'takeoverSession' | 'endInteraction' | 'closeInteraction' | 'logout';
 
-export interface ConfirmDialogData {
+export interface AppConfirmDialogData {
     title: string;
     message: string;
-    type: ConfirmDialogTypes;
+    type: AppConfirmDialogTypes;
     confirm: () => void;
+    cancel: () => void;
 }

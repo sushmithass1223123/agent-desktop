@@ -144,7 +144,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
         }
 
         const { agentId } = SDKClient.getAgentData();
-        // const agentId = '';
 
         const searchFields = this.advancedSearchForm.value;
 

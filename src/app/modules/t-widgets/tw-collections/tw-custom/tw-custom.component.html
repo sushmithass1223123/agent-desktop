@@ -4,7 +4,7 @@
 
 <!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
 
-<tw-wrapper [data]="data">
+<tw-wrapper [data]="data" *ngIf="show">
     <!-- your code goes here -->
     <div fxFlex fxFill fxLayout="row" fxLayoutAlign="center center">
         <div class="spinner" *ngIf="!loaded">

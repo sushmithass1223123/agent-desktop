@@ -60,9 +60,39 @@
                     background-color: map-get($background, hover);
                 }
 
+                mat-nested-tree-node {
+                    &.active li {
+                        &::before {
+                            background: map-get($primary, 300);
+                        }
+                    }
+                }
+
                 .email-list {
                     @if ($is-dark == true) {
                         background-color: #303030;
+                    } @else {
+                        background-color: #fafafa;
+                    }
+
+                    .tw-list-item {
+                        &:hover {
+                            background-color: map-get($background, hover);
+                        }
+                    }
+                }
+
+                .email-open {
+                    @if ($is-dark == true) {
+                        background-color: #303030;
+                    } @else {
+                        background-color: #fafafa;
+                    }
+
+                    &__body {
+                        @if ($is-dark == true) {
+                            background-color: map-get($background, hover);
+                        }
                     }
                 }
 

@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarRef, MatSnackBarVerticalPosition, MatSnackBarHorizontalPosition } from '@angular/material/snack-bar';
 import { AlertDialogComponent } from '@modules/shared/alert-dialog/alert-dialog.component';
 import { SnackbarComponent } from '../modules/shared/snackbar/snackbar.component';
-import { AppAlertDialogTypes, AppNotification, ReminderTaskDialogTypes } from 'app/interfaces';
+import { AppAlertDialogTypes, AppConfirmDialogTypes, AppNotification, ReminderTaskDialogTypes } from 'app/interfaces';
 import { BehaviorSubject, Observable } from 'rxjs';
 import * as _ from 'lodash';
 import { TUtils } from 'tmac-sdk';
 import { RemiderTaskDialogComponent } from '@modules/shared/remider-task-dialog/remider-task-dialog.component';
+import { AppConfirmDialogComponent } from '@modules/shared/app-confirm-dialog/app-confirm-dialog.component';
 
 @Injectable({
     providedIn: 'root'
@@ -27,8 +28,9 @@ export class AppUiService {
     public showSnackbar(
         message: string,
         state: 'info' | 'loading' | 'success' | 'failure' = 'success',
-        duration: number = 5000,
-        position: 'top' | 'bottom' = 'top'
+        vPos: MatSnackBarVerticalPosition = 'top',
+        hPos: MatSnackBarHorizontalPosition = 'center',
+        duration: number = 5000
     ): MatSnackBarRef<SnackbarComponent> {
         const icons = {
             info: 'info',
@@ -45,7 +47,8 @@ export class AppUiService {
                 color: state,
                 message
             },
-            verticalPosition: position,
+            verticalPosition: vPos,
+            horizontalPosition: hPos,
             ...durationField
         });
     }
@@ -75,6 +78,30 @@ export class AppUiService {
                 snooze: () => dialogRef.close('snooze')
             },
             panelClass: 'reminder-task-dialog',
+            width: '350px',
+            autoFocus: false,
+            disableClose: true
+        });
+        return dialogRef;
+    }
+
+    /**
+     * Method to show app confirmation dialog
+     * @param type Type of dialog
+     * 
+     * @param title [Optional] Title for the confirmation
+     * @param message [Optional] Message for the confirmation
+     */
+    public showAppConfirmDialog(type: AppConfirmDialogTypes, title?: string, message?: string): MatDialogRef<AppConfirmDialogComponent> {
+        const dialogRef = this._matDialog.open(AppConfirmDialogComponent, {
+            data: {
+                title,
+                type,
+                message,
+                confirm: () => dialogRef.close(true),
+                cancel: () => dialogRef.close(false)
+            },
+            panelClass: 'app-confirm-dialog',
             width: '350px',
             autoFocus: false,
             disableClose: true

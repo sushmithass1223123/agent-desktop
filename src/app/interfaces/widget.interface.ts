@@ -24,16 +24,13 @@ export interface IWidgetConfig {
     Static: boolean;
     Anchor: boolean;
     AOT: boolean;
+    OIN: boolean;
     Icon: string;
     Class: string;
     Position: IWidgetPosition;
-    Actions: any[];
-    ViewState: string;
-    PinState: boolean;
-    FloatState: boolean;
-    Resizable: boolean;
+    Actions: ('restore' | 'maximize' | 'minimize' | 'destroy' | 'float')[];
+    ViewState: 'restore' | 'maximize' | 'minimize' | 'hidden' | 'float';
     Header: boolean;
-    Disabled: boolean;
 }
 
 export interface IWidgetPosition {

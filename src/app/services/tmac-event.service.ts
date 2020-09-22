@@ -15,13 +15,42 @@ import { InteractionManagerService } from './interaction-manager.service';
 })
 export class TMACEventService {
     // Private
+
+    /**
+     * Unsubscribe all subject
+     */
     private _unsubscribeAll: Subject<any>;
+
+    /**
+     * TMAC events storage array 
+     */
     private _tmacEventArray: any[];
+
+    /**
+     * Construct and Dispose TMAC event subject
+     */
     private _constructDisposeEventSubject: BehaviorSubject<any>;
+
+    /**
+     * Array to store the list AOT widgets for AgentNotificaitonEvent's ExecuteAction and ExecuteTask
+     */
     private _aotWidgets: IWidget[];
+
+    /**
+     * Remider task dialog reference
+     */
     private _remiderTaskDialog: {
+        /**
+         * Make call task dialog ref
+         */
         makeCall: MatDialogRef<RemiderTaskDialogComponent, any>,
+        /**
+         * Meeting task dialog ref
+         */
         meeting: MatDialogRef<RemiderTaskDialogComponent, any>,
+        /**
+         * Change status task dialog ref
+         */
         changeState: MatDialogRef<RemiderTaskDialogComponent, any>
     };
 
@@ -57,6 +86,10 @@ export class TMACEventService {
     // @ Private Methods
     // -----------------------------------------------------------------------------------------------------    
 
+    /**
+     * TMAC event listener function
+     * @param evt TMAC event
+     */
     private onTMACEvents = (evt: IUIEvent) => {
         if (evt.InteractionID > 0) {
             // add all the interaction events to the array
@@ -92,7 +125,7 @@ export class TMACEventService {
                 // parse the action
 
                 // TODO:: add Mandatory property
-                
+
                 const parsedMessage: { Action: string, Data: string } = JSON.parse(evt.Message);
                 // get the action
                 switch (parsedMessage.Action.toLowerCase()) {
@@ -111,7 +144,7 @@ export class TMACEventService {
                             const widget = this._aotWidgets.filter((w: IWidget) => w.Type === 'tw-custom')?.[0];
                             // check if widget is found
                             if (widget) {
-                                
+
                                 // TODO:: change the config
 
                                 this._aotWidgetService.addWidget(widget);

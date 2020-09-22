@@ -100,18 +100,22 @@
                         "Name": "Home",
                         "Description": "",
                         "Type": "twn-home",
+                        "Config": {
+                            "Icon": "home"
+                        },
                         "Data": {
-                            "Icon": "home",
                             "Path": "/home",
-                            "Active": false
+                            "Active": true
                         }
                     },
                     {
                         "Name": "Supervisor",
                         "Description": "",
                         "Type": "twn-supervisor",
+                        "Config": {
+                            "Icon": "supervised_user_circle"
+                        },
                         "Data": {
-                            "Icon": "supervised_user_circle",
                             "Path": "/supervisor",
                             "Active": false
                         }
@@ -120,8 +124,10 @@
                         "Name": "Voice",
                         "Description": "",
                         "Type": "twn-voice",
+                        "Config": {
+                            "Icon": "phone"
+                        },
                         "Data": {
-                            "Icon": "phone",
                             "Path": "/voice",
                             "Active": false
                         }
@@ -130,8 +136,10 @@
                         "Name": "TextChat",
                         "Description": "",
                         "Type": "twn-textchat",
+                        "Config": {
+                            "Icon": "chat"
+                        },
                         "Data": {
-                            "Icon": "chat",
                             "Path": "/textchat",
                             "Active": false
                         }
@@ -140,8 +148,10 @@
                         "Name": "Email",
                         "Description": "",
                         "Type": "twn-email",
+                        "Config": {
+                            "Icon": "email"
+                        },
                         "Data": {
-                            "Icon": "email",
                             "Path": "/email",
                             "Active": false
                         }
@@ -150,10 +160,12 @@
                         "Name": "Workbench",
                         "Description": "",
                         "Type": "twc-workbench",
+                        "Config": {
+                            "Icon": "library_books"
+                        },
                         "Data": {
-                            "Icon": "library_books",
                             "Path": "/workbench",
-                            "Active": true
+                            "Active": false
                         }
                     }
                 ],
@@ -162,8 +174,10 @@
                         "Name": "TDM",
                         "Description": "",
                         "Type": "twn-custom",
+                        "Config": {
+                            "Icon": "tv"
+                        },
                         "Data": {
-                            "Icon": "tv",
                             "Path": "/tdm-client",
                             "Active": false
                         }
@@ -172,8 +186,10 @@
                         "Name": "TMeet",
                         "Description": "",
                         "Type": "twn-custom",
+                        "Config": {
+                            "Icon": "meeting_room"
+                        },
                         "Data": {
-                            "Icon": "meeting_room",
                             "Path": "/tmeet",
                             "Active": false
                         }
@@ -182,8 +198,10 @@
                         "Name": "Dashboard",
                         "Description": "",
                         "Type": "twn-custom",
+                        "Config": {
+                            "Icon": "dashboard"
+                        },
                         "Data": {
-                            "Icon": "dashboard",
                             "Path": "/dashboard",
                             "Active": false
                         }
@@ -192,8 +210,10 @@
                         "Name": "Sentiment Dashboard",
                         "Description": "",
                         "Type": "twn-custom",
+                        "Config": {
+                            "Icon": "sentiment_satisfied_alt"
+                        },
                         "Data": {
-                            "Icon": "sentiment_satisfied_alt",
                             "Path": "/sentimentdashboard",
                             "Active": false
                         }
@@ -202,8 +222,10 @@
                         "Name": "KPI Dashboard",
                         "Description": "",
                         "Type": "twn-custom",
+                        "Config": {
+                            "Icon": "signal_cellular_alt"
+                        },
                         "Data": {
-                            "Icon": "signal_cellular_alt",
                             "Path": "/kpidashboard",
                             "Active": false
                         }
@@ -212,8 +234,10 @@
                         "Name": "Session Dashboard",
                         "Description": "",
                         "Type": "twn-custom",
+                        "Config": {
+                            "Icon": "format_list_bulleted"
+                        },
                         "Data": {
-                            "Icon": "format_list_bulleted",
                             "Path": "/sessiondashboard",
                             "Active": false
                         }
@@ -222,8 +246,10 @@
                         "Name": "Realtime Stats",
                         "Description": "",
                         "Type": "twn-custom",
+                        "Config": {
+                            "Icon": "analytics"
+                        },
                         "Data": {
-                            "Icon": "analytics",
                             "Path": "/realtimestats",
                             "Active": false
                         }
@@ -264,11 +290,7 @@
                                         },
                                         "Actions": [],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "Source": "dashboard"
@@ -296,11 +318,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "Source": "tw-ad-total-interactions",
@@ -327,11 +345,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "Source": "dashboard"
@@ -357,11 +371,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "Source": "tw-aux-status-chart",
@@ -388,11 +398,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {}
                                 },
@@ -416,11 +422,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "AgentProgressUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetProgress"
@@ -446,11 +448,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "LeaderBoardUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetLeaderBoard",
@@ -477,11 +475,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "GetCallbacksUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Contact/GetContactSessionByAgent"
@@ -507,11 +501,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "Source": "dashboard"
@@ -537,11 +527,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {}
                                 }
@@ -568,16 +554,12 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "AutoOpen": false,
-                                        "Url": "https://tmac.tetherfilabs.com/tcie-web-appv8/?id=_agentId",
-                                        "QueryParams": []
+                                        "OpenInNew": false,
+                                        "Url": "https://tmac.tetherfilabs.com/tcie-web-appv8/?id=_agentId"
                                     }
                                 },
                                 {
@@ -601,16 +583,36 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "AutoOpen": false,
-                                        "Url": "https://demo2.tetherfilabs.com:55443/GamificationUI/?agentId=_agentId",
-                                        "QueryParams": []
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/GamificationUI/?agentId=_agentId"
+                                    }
+                                },
+                                {
+                                    "Name": "Chat Test App",
+                                    "Description": "",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "chat",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0
+                                        },
+                                        "Actions": [],
+                                        "ViewState": "restore",
+                                        "Header": false
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "OpenInNew": true,
+                                        "Url": "https://dice.tetherfi.cloud:8443/api/testapp_UOB.jsp"
                                     }
                                 }
                             ]
@@ -647,12 +649,7 @@
                                             "Y": 2
                                         },
                                         "Actions": [],
-                                        "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": false,
-                                        "Disabled": false
+                                        "ViewState": "restore"
                                     },
                                     "Data": {
                                         "EmailSearchUrl": "http://dice.tetherfi.cloud:55005/api/workbench/email/search"
@@ -693,11 +690,7 @@
                                         },
                                         "Actions": [],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {}
                                 }
@@ -723,11 +716,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "Source": "tw-ad-total-interactions",
@@ -754,11 +743,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "Source": "supervisor"
@@ -783,11 +768,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "Source": "tw-su-calls-in-queue",
@@ -814,11 +795,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "Source": "tw-su-intent-list"
@@ -843,11 +820,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "Source": "supervisor"
@@ -873,11 +846,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {}
                                 },
@@ -901,11 +870,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "Source": "tw-su-status",
@@ -931,11 +896,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "Source": "supervisor",
@@ -967,11 +928,7 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "LeaderBoardUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetLeaderBoard"
@@ -1012,11 +969,7 @@
                                         },
                                         "Actions": [],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": false,
-                                        "Disabled": false
+                                        "Header": false
                                     },
                                     "Data": {
                                         "Widgets": [
@@ -1043,8 +996,7 @@
                                                     "PinState": false,
                                                     "FloatState": false,
                                                     "Resizable": false,
-                                                    "Header": true,
-                                                    "Disabled": false
+                                                    "Header": true
                                                 },
                                                 "Data": {
                                                     "TransferAllowed": true,
@@ -1093,8 +1045,7 @@
                                                     "PinState": false,
                                                     "FloatState": false,
                                                     "Resizable": false,
-                                                    "Header": true,
-                                                    "Disabled": false
+                                                    "Header": true
                                                 },
                                                 "Data": {
                                                     "CustomerInfo": [
@@ -1165,8 +1116,7 @@
                                                     "PinState": false,
                                                     "FloatState": false,
                                                     "Resizable": false,
-                                                    "Header": true,
-                                                    "Disabled": false
+                                                    "Header": true
                                                 },
                                                 "Data": {
                                                     "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/version5/index.html?Key=SESSIONID:",
@@ -1197,11 +1147,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "Confidence": 0.5,
@@ -1238,11 +1184,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {}
                                 },
@@ -1266,11 +1208,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {}
                                 },
@@ -1294,11 +1232,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {}
                                 },
@@ -1322,11 +1256,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "Source": "interaction",
@@ -1354,11 +1284,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {}
                                 }
@@ -1385,11 +1311,7 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "GetCampaignsUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Campaign/GetCampaigns",
@@ -1427,16 +1349,12 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "AutoOpen": false,
-                                        "Url": "https://dice.tetherfi.cloud/TAS/Survey/Index?intentname=DiceIntent2&inSimulation=false&agentid=50020&customerid=12&ucid=Test&flowType=Test&campId=Test&station=42002&phoneNumber=6539284004",
-                                        "QueryParams": []
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/TAS/Survey/Index?intentname=DiceIntent2&inSimulation=false&agentid=50020&customerid=12&ucid=Test&flowType=Test&campId=Test&station=42002&phoneNumber=6539284004"
                                     }
                                 },
                                 {
@@ -1460,16 +1378,12 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "AutoOpen": false,
-                                        "Url": "https://www.tetherfi.com",
-                                        "QueryParams": []
+                                        "OpenInNew": false,
+                                        "Url": "https://www.tetherfi.com"
                                     }
                                 },
                                 {
@@ -1493,11 +1407,7 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {}
                                 }
@@ -1536,11 +1446,7 @@
                                         },
                                         "Actions": [],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": false,
-                                        "Disabled": false
+                                        "Header": false
                                     },
                                     "Data": {
                                         "Widgets": [
@@ -1567,8 +1473,7 @@
                                                     "PinState": false,
                                                     "FloatState": false,
                                                     "Resizable": false,
-                                                    "Header": true,
-                                                    "Disabled": false
+                                                    "Header": true
                                                 },
                                                 "Data": {
                                                     "TransferAllowed": true,
@@ -1633,8 +1538,7 @@
                                                     "PinState": false,
                                                     "FloatState": false,
                                                     "Resizable": false,
-                                                    "Header": true,
-                                                    "Disabled": false
+                                                    "Header": true
                                                 },
                                                 "Data": {
                                                     "CustomerInfo": [
@@ -1735,8 +1639,7 @@
                                                     "PinState": false,
                                                     "FloatState": false,
                                                     "Resizable": false,
-                                                    "Header": true,
-                                                    "Disabled": false
+                                                    "Header": true
                                                 },
                                                 "Data": {
                                                     "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/version5/index.html?Key=SESSIONID:",
@@ -1767,11 +1670,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "Confidence": 0.5,
@@ -1808,11 +1707,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {}
                                 },
@@ -1836,11 +1731,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {}
                                 },
@@ -1864,11 +1755,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {}
                                 },
@@ -1892,11 +1779,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "Source": "interaction",
@@ -1924,11 +1807,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {}
                                 }
@@ -1955,11 +1834,7 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "GetCampaignsUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Campaign/GetCampaigns",
@@ -1997,16 +1872,12 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "AutoOpen": false,
-                                        "Url": "https://dice.tetherfi.cloud/TAS/Survey/Index?intentname=DiceIntent2&inSimulation=false&agentid=50020&customerid=12&ucid=Test&flowType=Test&campId=Test&station=42002&phoneNumber=6539284004#",
-                                        "QueryParams": []
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/TAS/Survey/Index?intentname=DiceIntent2&inSimulation=false&agentid=50020&customerid=12&ucid=Test&flowType=Test&campId=Test&station=42002&phoneNumber=6539284004#"
                                     }
                                 },
                                 {
@@ -2030,16 +1901,12 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "AutoOpen": false,
-                                        "Url": "https://www.tetherfi.com",
-                                        "QueryParams": []
+                                        "OpenInNew": false,
+                                        "Url": "https://www.tetherfi.com"
                                     }
                                 }
                             ]
@@ -2075,8 +1942,7 @@
                     },
                     "Data": {
                         "Path": "/tdm-client",
-                        "Url": "https://dice.tetherfi.cloud/TDM_Client/",
-                        "QueryParams": []
+                        "Url": "https://dice.tetherfi.cloud/TDM_Client/"
                     }
                 },
                 {
@@ -2092,8 +1958,7 @@
                     },
                     "Data": {
                         "Path": "/tmeet",
-                        "Url": "https://dice.tetherfi.cloud/t-meet/",
-                        "QueryParams": []
+                        "Url": "https://dice.tetherfi.cloud/t-meet/"
                     }
                 },
                 {
@@ -2109,8 +1974,7 @@
                     },
                     "Data": {
                         "Path": "/dashboard",
-                        "Url": "https://dice.tetherfi.cloud/CustomerJourneyDashBoard/",
-                        "QueryParams": []
+                        "Url": "https://dice.tetherfi.cloud/CustomerJourneyDashBoard/"
                     }
                 },
                 {
@@ -2126,8 +1990,7 @@
                     },
                     "Data": {
                         "Path": "/sentimentdashboard",
-                        "Url": "https://dice.tetherfi.cloud/SentimentDashboard/?agentid=_agentId",
-                        "QueryParams": []
+                        "Url": "https://dice.tetherfi.cloud/SentimentDashboard/?agentid=_agentId"
                     }
                 },
                 {
@@ -2143,8 +2006,7 @@
                     },
                     "Data": {
                         "Path": "/kpidashboard",
-                        "Url": "https://dice.tetherfi.cloud/IWDashboards/IWDashboard/kpi",
-                        "QueryParams": []
+                        "Url": "https://dice.tetherfi.cloud/IWDashboards/IWDashboard/kpi"
                     }
                 },
                 {
@@ -2160,8 +2022,7 @@
                     },
                     "Data": {
                         "Path": "/sessiondashboard",
-                        "Url": "https://dice.tetherfi.cloud/IWDashboards/IWDashboard/session",
-                        "QueryParams": []
+                        "Url": "https://dice.tetherfi.cloud/IWDashboards/IWDashboard/session"
                     }
                 },
                 {
@@ -2177,8 +2038,7 @@
                     },
                     "Data": {
                         "Path": "/realtimestats",
-                        "Url": "https://dice.tetherfi.cloud/IWDashboards/VoiceStatsDashboard/RealTimeInteractionStats?dblb=Ivr",
-                        "QueryParams": []
+                        "Url": "https://dice.tetherfi.cloud/IWDashboards/VoiceStatsDashboard/RealTimeInteractionStats?dblb=Ivr"
                     }
                 }
             ],
@@ -2218,13 +2078,12 @@
                         "PinState": false,
                         "FloatState": false,
                         "Resizable": false,
-                        "Header": true,
-                        "Disabled": false
+                        "Header": true
                     },
                     "Data": {
                         "AutoOpen": false,
-                        "Url": "https://tmac.tetherfilabs.com/tcie-web-appv8?id=_agentId",
-                        "QueryParams": []
+                        "OpenInNew": false,
+                        "Url": "https://tmac.tetherfilabs.com/tcie-web-appv8?id=_agentId"
                     }
                 },
                 {
@@ -2251,8 +2110,7 @@
                         "PinState": false,
                         "FloatState": false,
                         "Resizable": false,
-                        "Header": true,
-                        "Disabled": false
+                        "Header": true
                     },
                     "Data": {
                         "AutoOpen": false,
@@ -2282,11 +2140,11 @@
                         "PinState": false,
                         "FloatState": false,
                         "Resizable": false,
-                        "Header": true,
-                        "Disabled": false
+                        "Header": true
                     },
                     "Data": {
                         "AutoOpen": false,
+                        "OpenInNew": false,
                         "Url": ""
                     }
                 }

@@ -136,6 +136,5 @@ export class AOTWidgetService {
         // unsubscribe from all subscriptions
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
-        this._widgetsSubject = new BehaviorSubject([]);
     }
 }

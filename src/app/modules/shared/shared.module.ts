@@ -15,6 +15,7 @@ import { RemiderTaskDialogComponent } from './remider-task-dialog/remider-task-d
 import { ResourceNotFoundComponent } from './resource-not-found/resource-not-found.component';
 import { SnackbarComponent } from './snackbar/snackbar.component';
 import { WidgetFabComponent } from './widget-fab/widget-fab.component';
+import { AppConfirmDialogComponent } from './app-confirm-dialog/app-confirm-dialog.component';
 
 Chart.defaults.global.responsive = true;
 Chart.defaults.global.legend.position = 'right';
@@ -39,7 +40,8 @@ const sharedComponents = [
     SnackbarComponent,
     WidgetFabComponent,
     AlertDialogComponent,
-    RemiderTaskDialogComponent
+    RemiderTaskDialogComponent,
+    AppConfirmDialogComponent
 ];
 
 @NgModule({

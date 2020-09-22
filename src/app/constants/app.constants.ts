@@ -1,6 +1,6 @@
 import { Color } from 'ng2-charts';
 import { SDKClient, TUtils } from 'tmac-sdk';
-import { AppAlertDialogTypes, ReminderTaskDialogTypes } from 'app/interfaces';
+import { AppAlertDialogTypes, AppConfirmDialogTypes, ReminderTaskDialogTypes } from 'app/interfaces';
 
 export const CHART_COLORS: Color[] = [
     {
@@ -101,6 +101,29 @@ export const RemiderTaskDialogConstants: Record<ReminderTaskDialogTypes, { messa
     changestate: {
         message: 'Do you want to change you status?',
         type: 'changestate'
+    }
+};
+
+export const AppConfirmDialogConstants: Record<AppConfirmDialogTypes, { title: string, message: string, type: string }> = {
+    takeoverSession: {
+        title: 'Confirm Login',
+        message: 'Another session detected. Do you want to take it over?',
+        type: 'takeoverSession'
+    },
+    endInteraction: {
+        title: 'Confirm End',
+        message: 'Are you sure to end this interaction?',
+        type: 'endInteraction'
+    },
+    closeInteraction: {
+        title: 'Confirm Close',
+        message: 'Are you sure to close this interaction?',
+        type: 'closeInteraction'
+    },
+    'logout': {
+        title: 'Confirm Logout',
+        message: 'Are you sure you want to logout?',
+        type: 'logout'
     }
 };
 

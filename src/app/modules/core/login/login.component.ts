@@ -1,11 +1,9 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseConfigService } from '@fuse/services/config.service';
-import { ConfirmDialogComponent } from '@modules/shared/confirm-dialog/confirm-dialog.component';
+import { AppUiService } from '@services/app-ui.service';
 import { AppDataService } from 'app/services/app-data.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -47,10 +45,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     msChecked = false;
 
     domainList = [];
-
     loading = false;
     version = '';
-
     selfVideo: MediaStream;
 
     constructor(
@@ -58,8 +54,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         private _formBuilder: FormBuilder,
         private _appDataService: AppDataService,
         private _router: Router,
-        private _dialog: MatDialog,
-        private _snackBar: MatSnackBar,
+        private _appUIService: AppUiService,
         private _activatedRouter: ActivatedRoute
     ) {
         // Configure the layout
@@ -198,7 +193,7 @@ export class LoginComponent implements OnInit, OnDestroy {
                 this.selfVideo = stream;
             },
             (error: MediaStreamError) => {
-                this.showMessage(error.message);
+                this._appUIService.showSnackbar(error.message, 'failure');
             }
         );
     }
@@ -218,9 +213,11 @@ export class LoginComponent implements OnInit, OnDestroy {
 
         if (!base64) {
             // face authentication failed
-            this.showMessage('Login failed, Unable to capture image, make sure you provide access to camera');
+            this._appUIService.showSnackbar('Login failed, Unable to capture image, make sure you provide access to camera', 'failure');
             return false;
         }
+
+        this._appUIService.showSnackbar('Please wait, Face authentication in progress', 'loading', 'top', 'right');
 
         // send request to face auth server
         // get the login json from proxy
@@ -244,7 +241,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
         // check for valid response from server
         if (!result) {
-            this.showMessage('Login failed, Unable to reach face authentication server. Please contact the administrator.');
+            this._appUIService.showSnackbar('Login failed, Unable to reach face authentication server. Please contact the administrator', 'failure');
             return false;
         }
 
@@ -256,25 +253,25 @@ export class LoginComponent implements OnInit, OnDestroy {
             if (!response.hasOwnProperty('face_found_in_image') ||
                 !response.hasOwnProperty('face_authenticated_percentage')) {
                 // login error
-                this.showMessage('Error in face authentication');
+                this._appUIService.showSnackbar('Error in face authentication', 'failure', 'top', 'right');
                 return false;
             }
 
             // check if the response
             if (response.face_found_in_image === true && response.face_authenticated_percentage >= 80 && response.face_isreal === 1) {
                 // face authentication sucess
-                this.showMessage('Face authentication success, trying to login');
+                this._appUIService.showSnackbar('Face authentication success, trying to login', 'success', 'top', 'right');
                 return true;
             }
             else {
                 // face authentication failed
-                this.showMessage('Face authentication failed');
+                this._appUIService.showSnackbar('Face authentication failed', 'failure', 'top', 'right');
                 return false;
             }
         }
         else {
             // login error
-            this.showMessage('Face authentication: Invalid response from server');
+            this._appUIService.showSnackbar('Face authentication: Invalid response from server', 'failure', 'top', 'right');
             return false;
         }
     }
@@ -342,10 +339,13 @@ export class LoginComponent implements OnInit, OnDestroy {
                 // set loading to true
                 this.loading = false;
                 // login error
-                this.showMessage('Login failed, Please try again');
+                this._appUIService.showSnackbar('Login failed, Please try again', 'failure', 'top', 'right');
             });
     }
 
+    /**
+     * Login done response
+     */
     private loginResponse(result: IResponse): void {
         try {
             // get the response
@@ -354,12 +354,8 @@ export class LoginComponent implements OnInit, OnDestroy {
             if (response) {
                 if (response.ResultCode > 0) {
                     if (response.ResultCode === 3) {
-                        // config force login
-                        const confirmDialogRef = this._dialog.open(ConfirmDialogComponent, {
-                            disableClose: false
-                        });
-                        confirmDialogRef.componentInstance.title = 'Confirm Login';
-                        confirmDialogRef.componentInstance.message = 'Another session detected. Do you want to take it over?';
+                        // confirm force login
+                        const confirmDialogRef = this._appUIService.showAppConfirmDialog('takeoverSession');
                         confirmDialogRef.afterClosed().subscribe((dialogResult) => {
                             if (dialogResult) {
                                 this.login(true);
@@ -391,34 +387,29 @@ export class LoginComponent implements OnInit, OnDestroy {
                 } else if (response.ResultCode === -3) {
                     // invalid Lan id check whether to prompt agent Id
                     if (this.promptAgentIdOnInvalidLanId) {
-                        this.showMessage('Invalid LAN ID detected. Please provide agent id');
+                        this._appUIService.showSnackbar('Invalid LAN ID detected. Please provide agent id', 'failure', 'top', 'right');
                         this.agentIdEnabled = true;
                     } else {
                         // login failed, invalid lan Id
-                        this.showMessage('Invalid LAN ID detected. Please contact administrator for TMAC access');
+                        this._appUIService.showSnackbar('Invalid LAN ID detected. Please contact administrator for TMAC access', 'failure', 'top', 'right');
                     }
                 } else {
                     // login failed
-                    this.showMessage(response.ResultMessage ? response.ResultMessage : 'Login failed, Unknown response from server');
+                    this._appUIService.showSnackbar(response.ResultMessage ? response.ResultMessage : 'Login failed, Unknown response from server', 'failure', 'top', 'right');
                 }
             } else {
                 // login error
-                this.showMessage('Login failed, Please contact the administrator');
+                this._appUIService.showSnackbar('Login failed, Please contact the administrator', 'failure', 'top', 'right');
             }
         } catch (error) {
             TUtils.Logger.log('Exception in login', error);
         }
     }
 
-    private showMessage(message: string, style?: string): void {
-        this._snackBar.open(message, 'x', {
-            duration: 2000,
-            verticalPosition: 'top', // 'top' | 'bottom'
-            horizontalPosition: 'right', // 'start' | 'center' | 'end' | 'left' | 'right'
-            panelClass: style ? [style] : ['snackbar']
-        });
-    }
-
+    /**
+     * To check for number only
+     * @param event input event
+     */
     public numberOnly(event: any): boolean {
         const charCode = event.which ? event.which : event.keyCode;
         if (charCode > 31 && (charCode < 48 || charCode > 57)) {
@@ -427,6 +418,10 @@ export class LoginComponent implements OnInit, OnDestroy {
         return true;
     }
 
+    /**
+     * To reset form field value
+     * @param field Form field 
+     */
     resetField(field: string): void {
         this.loginForm.patchValue({ [field]: '' });
     }

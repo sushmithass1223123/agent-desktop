@@ -1,11 +1,6 @@
 <tw-wrapper [data]="data" (maximizeEvent)="onMaximized($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)">
     <div class="w-100-p h-100-p chat-controls">
-        <div
-            fxLayout="column"
-            fxLayoutAlign=" none"
-            class="w-100-p px-12 py-4 border-radius-20 interaction-details"
-       
-        >
+        <div fxLayout="column" fxLayoutAlign=" none" class="w-100-p px-12 py-4 border-radius-20 interaction-details">
             <div fxLayout="row" fxLayoutAlign="space-between none">
                 <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>alarm_on</mat-icon> {{ startTime | date: 'medium' }}</div>
                 <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>construction</mat-icon> {{ sessionID }}</div>
@@ -65,6 +60,25 @@
                 "
             >
                 <div fxLayout="row" fxLayoutAlign="end none" class="chat-actions">
+                    <button
+                        *ngIf="supervisorInit && (conferenceType === 'silent' || conferenceType === 'whisper' || conferenceType === 'conf')"
+                        mat-mini-fab
+                        color="default"
+                        [ngClass]="
+                            (fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                                ? fuseConfig.layout.anchorWidget.bodyBackground
+                                : '') +
+                            ' ' +
+                            (status === 'connected' ? 'mat-elevation-z2' : '')
+                        "
+                        [matTooltip]="
+                            conferenceType === 'silent' ? 'Convert to Whisper' : conferenceType === 'whisper' ? 'Convert to Conference' : 'Takeover'
+                        "
+                        (click)="convertChat()"
+                    >
+                        <mat-icon>play_for_work</mat-icon>
+                    </button>
+
                     <button
                         *ngIf="data.Data.TransferAllowed"
                         [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper'"
@@ -182,8 +196,8 @@
                             *ngFor="let message of chatTranscripts; let i = index"
                             class="message-row animate__animated animate__slideInUp animate__faster"
                             [ngClass]="{
-                                me: findMe(message),
-                                contact: findContact(message),
+                                me: message.isAgent,
+                                contact: !message.isAgent,
                                 'first-of-group': isFirstMessageOfGroup(message, i),
                                 'last-of-group': isLastMessageOfGroup(message, i)
                             }"
@@ -194,23 +208,24 @@
                                 fxLayoutAlign="start start"
                                 class="bubble mat-elevation-z1"
                                 [ngClass]="
-                                    (findContact(message) && fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                                    (!message.isAgent && fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
                                         ? fuseConfig.layout.anchorWidget.bodyBackground
                                         : '') +
                                     ' ' +
                                     (maximized ? 'maximized' : '')
                                 "
                             >
-                                <div *ngIf="isFirstMessageOfGroup(message, i)" [ngClass]="findContact(message) ? 'left-svg' : 'right-svg'">
-                                    <!-- <svg *ngIf="findContact(message)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 13" width="8" height="13">
+                                <div *ngIf="isFirstMessageOfGroup(message, i)" [ngClass]="!message.isAgent ? 'left-svg' : 'right-svg'">
+                                    <!-- <svg *ngIf="!message.isAgent" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 13" width="8" height="13">
                                         <path opacity=".13" fill="#0000000" d="M1.533 3.568L8 12.193V1H2.812C1.042 1 .474 2.156 1.533 3.568z"></path>
                                         <path fill="currentColor" d="M1.533 2.568L8 11.193V0H2.812C1.042 0 .474 1.156 1.533 2.568z"></path>
                                     </svg>
-                                    <svg *ngIf="findMe(message)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 13" width="8" height="13">
+                                    <svg *ngIf="message.isAgent" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 13" width="8" height="13">
                                         <path opacity=".13" d="M5.188 1H0v11.193l6.467-8.625C7.526 2.156 6.958 1 5.188 1z"></path>
                                         <path fill="currentColor" d="M5.188 0H0v11.193l6.467-8.625C7.526 1.156 6.958 0 5.188 0z"></path>
                                     </svg> -->
                                 </div>
+
                                 <div *ngIf="isFirstMessageOfGroup(message, i)" class="user-label font-size-16 text-bold mb-4">{{ message.who }}</div>
                                 <div class="message">
                                     <ng-container *ngIf="!message.attachment?.src">

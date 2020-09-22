@@ -50,6 +50,7 @@ import {
     TextChatUserMessageWaitTimerEvent,
     TUtils
 } from 'tmac-sdk';
+import * as moment from 'moment';
 
 @Component({
     selector: 'tw-chat-controls',
@@ -75,7 +76,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     user: IAgentData;
     replyInput: any;
     sessionID = 'NA';
-    startTime = 'NA';
+    startTime: string | Date = 'NA';
     duration: number;
     stopTimer = new Subject();
     status = 'NA';
@@ -91,6 +92,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     channel: string;
     isSMM: boolean;
     showAutoFreeze: boolean;
+    supervisorInit: boolean;
 
     @ViewChildren(FusePerfectScrollbarDirective) directiveScrolls: QueryList<FusePerfectScrollbarDirective>;
     @ViewChildren('replyInput') replyInputField: any;
@@ -131,7 +133,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this._fuseConfigService.config
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe(
-                (config: any) => {
+                (config: FuseConfig) => {
                     this.fuseConfig = config;
                 });
 
@@ -149,13 +151,16 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.status = 'incoming';
 
         // set the start time
-        this.startTime = new Date(Date.parse(this.data.InteractionDetails.CreatedTime)).toLocaleString() || new Date().toLocaleString();
+        this.startTime = new Date(Date.parse(this.data.InteractionDetails.CreatedTime)) || new Date();
 
         // listen to TMAC events
         this.registerToEvents();
 
         // get the file upload Url
         this.fileUploadUrl = this.appConfig.Main.Content.Urls?.FileServerUrl || null;
+
+        // check if this chat is init by supervisor
+        this.supervisorInit = this.data.InteractionDetails.RecoveryData.lineid === 'bargein';
     }
 
     ngAfterViewInit(): void {
@@ -288,6 +293,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     if (message) {
                         this.chatTranscripts.push({
                             who,
+                            isAgent: who === 'Chatbot',
                             messageId: TUtils.Generic.uuid(),
                             message,
                             time: item.timestamp
@@ -325,7 +331,66 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             return;
         }
 
-        // TODO:: handle transfer/conference transcripts
+        // loop through the data
+        evt.Transcript
+            .forEach((item:
+                // tslint:disable-next-line: completed-docs
+                { Id: string, Type: string, Message: string, AgentID: string, DateTime: string, AgentName: string }
+            ) => {
+
+                // is agent flag
+                const isAgent = item.Type.toLowerCase() === 'agent';
+
+                // check the user
+                const user =
+                    item.Type.toLowerCase() === 'agent' ?
+                        (item.AgentName.split(' ')[0]) :
+                        item.Type.toLowerCase() === 'user' ?
+                            this.customerName : '';
+
+                // format the message get the message data
+                const formattedMessage =
+                    this.isValidJson(item.Message) ? JSON.parse(item.Message) : null;
+                const messageId = formattedMessage ?
+                    formattedMessage.messageId :
+                    item.Id;
+
+                const type =
+                    formattedMessage ?
+                        (formattedMessage.type === 'attachment' ?
+                            formattedMessage.attachment.type :
+                            formattedMessage.type) :
+                        '';
+
+                const message =
+                    formattedMessage ?
+                        formattedMessage.message :
+                        item.Message;
+
+                const attachment =
+                    (formattedMessage && formattedMessage.attachment) ?
+                        formattedMessage.attachment : null;
+
+                // TODO:: implement reply and get the replied message
+
+                // add message to the transcripts
+                if (user) {
+                    this.chatTranscripts.push({
+                        who: user,
+                        isAgent,
+                        messageId,
+                        message,
+                        type,
+                        time: moment(item.DateTime, 'dd/MM/yyyy HH:mm:ss'),
+                        attachment
+                    });
+                }
+                else {
+                    this.chatTranscripts.push({
+                        divider: true
+                    });
+                }
+            });
     }
 
     private TextChatMessageSentEvent = (evt: TextChatMessageSentEvent) => {
@@ -436,6 +501,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
                     // get the file upload url
                     const fileServerUrl: string = this.fileUploadUrl?.MediaProxy;
+
                     // check if we need to get full path of attachment
                     if (data.attachment && // check if attachment is there
                         !data.attachment.src && // check if src is not found
@@ -459,10 +525,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // add message to the transcripts
         this.chatTranscripts.push({
             who: user,
+            isAgent: user !== this.customerName,
             messageId: data.messageId,
             message: data.message,
             type: data.attachment?.type || 'text',
-            time: new Date().toLocaleString(),
+            time: new Date(),
             attachment: data.attachment
         });
 
@@ -571,10 +638,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 // add message to the transcripts
                 this.chatTranscripts.push({
                     who: this.user.agentName,
+                    isAgent: true,
                     messageId,
                     message,
                     type,
-                    time: evt.CreatedTime ? new Date(Date.parse(evt.CreatedTime.toString())).toLocaleString() : new Date().toLocaleString(),
+                    time: evt.CreatedTime ? new Date(Date.parse(evt.CreatedTime.toString())) : new Date(),
                     attachment
                 });
 
@@ -632,8 +700,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // Message
         const message = {
             who: this.user.agentName,
+            isAgent: true,
             message: inputMessage,
-            time: new Date().toLocaleString()
+            time: new Date()
         };
 
         // check if reply feature is enabled or not social media
@@ -664,7 +733,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             templateId: template?.ID || '',
             type: 'text'
         }, null)
-            .then((dt: any) => {
+            .then(() => {
             })
             .catch(() => {
                 this._appUIService.showSnackbar('Message send failed!', 'failure');
@@ -712,11 +781,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.callWidget = widget;
         // disable AV buttons
         this.disableAV = true;
-    }
-
-    private findConferenceAgent(agentName: string): boolean {
-        // filter list
-        return this.conferenceAgentList.filter(c => c.AgentName === agentName).length > 0;
     }
 
     private endChat(reason: string, btn: MatButton): void {
@@ -778,14 +842,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.maximized = event;
     }
 
-    public findMe(message: any): boolean {
-        return message?.who === this.user.agentName || message?.who === 'Chatbot' || (this.conferenceType === 'silent' && this.findConferenceAgent(message.who));
-    }
-
-    public findContact(message: any): boolean {
-        return message?.who !== this.user.agentName && message?.who !== 'Chatbot' && !(this.conferenceType === 'silent' && this.findConferenceAgent(message.who));
-    }
-
     public isFirstMessageOfGroup(message: any, i: number): boolean {
         return (i === 0 || this.chatTranscripts[i - 1] && this.chatTranscripts[i - 1].who !== message.who);
     }
@@ -821,10 +877,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
     public confirmEndChat(btn: MatButton): void {
         // config force login
-        const confirmDialogRef = this._dialog.open(ConfirmDialogComponent, {
-            disableClose: false
-        });
-        confirmDialogRef.componentInstance.message = 'Are you sure to end this chat?';
+        const confirmDialogRef = this._appUIService.showAppConfirmDialog('endInteraction');
         confirmDialogRef.afterClosed().subscribe((dialogResult) => {
             if (dialogResult) {
                 // send end chat to server 
@@ -835,10 +888,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
     public confirmCloseInteraction(btn: MatButton): void {
         // config force login
-        const confirmDialogRef = this._dialog.open(ConfirmDialogComponent, {
-            disableClose: false
-        });
-        confirmDialogRef.componentInstance.message = 'Are you sure to close this interaction?';
+        const confirmDialogRef = this._appUIService.showAppConfirmDialog('closeInteraction');
         confirmDialogRef.afterClosed().subscribe((dialogResult) => {
             if (dialogResult) {
                 // send end chat to server 
@@ -901,10 +951,25 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         });
     }
 
+    /**
+     * To dispose call widget
+     */
     public dsiposeCallWidget(): void {
         // dispose the call widget
         this.callWidget = null;
         // enable AV buttons
         this.disableAV = false;
+    }
+
+    /**
+     * To convert chat to whisper/conference/takeover for supervisor
+     */
+    public convertChat(): void {
+        // TODO:: change the conference type of the chat
+
+        // call server to change the conference type
+        this.conferenceType = this.conferenceType === 'silent' ?
+            'whisper' : this.conferenceType === 'whisper' ?
+                'conf' : 'takeover';
     }
 }

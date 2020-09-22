@@ -1,8 +1,10 @@
-import { Component, OnInit, Input, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, ViewEncapsulation, AfterViewInit, AfterContentInit } from '@angular/core';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { DomSanitizer } from '@angular/platform-browser';
 import { IAgentData, SDKClient } from 'tmac-sdk';
 import { AGENT_DATA_MAP } from 'app/constants';
+import { IWidget } from 'app/interfaces';
+import { AOTWidgetService } from '@services/aot-widget.service';
 
 @Component({
     selector: 'tw-custom',
@@ -10,19 +12,23 @@ import { AGENT_DATA_MAP } from 'app/constants';
     styleUrls: ['./tw-custom.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-
-    @Input() data: any;
+export class TwCustomComponent extends TWidgetWrapper implements OnInit, AfterContentInit, OnDestroy {
+    @Input() data: IWidget;
 
     loaded = false;
     url: any;
     agentData: IAgentData;
     queryParamMap: any[];
+    show: boolean;
 
-    constructor(private sanitizer: DomSanitizer) {
+    constructor(
+        private sanitizer: DomSanitizer,
+        private _aotWidgetService: AOTWidgetService
+    ) {
         super();
     }
 
+    // tslint:disable-next-line: completed-docs
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
@@ -41,15 +47,42 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                 return mapObj[matched];
             });
 
+            // check 'Open In New' widget
+            if (this.data.Data.OpenInNew) {
+                const widget = window.open(
+                    url,
+                    this.data.Name,
+                    `menubar=no,resizable=yes,location=no,scrollbars=no,
+                    width=${this.data.Config.Position.W || screen.width},
+                    height=${this.data.Config.Position.H || screen.height}`
+                );
+
+                // listen to widget close event
+                widget.onunload = () => {
+                    // destroy the widget
+                    this._aotWidgetService.destroyWidget(this.data.ID);
+                };
+
+                return;
+            }
+
             // load the iframe URL
             this.url = this.transform(url);
+
+            // set show to true
+            this.show = true;
         }
-        
+
         setTimeout(() => {
             this.loaded = true;
         }, 3000);
     }
 
+    ngAfterContentInit(): void {
+        // check if the widget is 
+    }
+
+    // tslint:disable-next-line: completed-docs
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
@@ -58,5 +91,4 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
     transform(url: string): any {
         return this.sanitizer.bypassSecurityTrustResourceUrl(url);
     }
-
 }

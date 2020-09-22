@@ -20,11 +20,11 @@
                     (click)="selectTab(item)"
                     #sidebarListOption
                     [selected]="item.Data.Active"
-                    matTooltip="{{ item.Name }}"
+                    [matTooltip]="item.Name"
                     matTooltipPosition="after"
                     matTooltipClass="tooltip"
                 >
-                    <mat-icon class="icon" mat-list-icon [matBadge]="item.Data.Count || ''">{{ item.Data.Icon }}</mat-icon>
+                    <mat-icon class="icon" mat-list-icon [matBadge]="item.Data.Count || ''">{{ item.Config.Icon || 'widgets' }}</mat-icon>
                 </mat-list-option>
 
                 <mat-divider *ngIf="topWidgets.length > 0"></mat-divider>
@@ -39,11 +39,11 @@
                     (click)="selectTab(item)"
                     #sidebarListOption
                     [selected]="item.Data.Active"
-                    matTooltip="{{ item.Name }}"
+                    [matTooltip]="item.Name"
                     matTooltipPosition="after"
                     matTooltipClass="tooltip"
                 >
-                    <mat-icon class="icon" mat-list-icon>{{ item.Data.Icon }}</mat-icon>
+                    <mat-icon class="icon" mat-list-icon>{{ item.Config.Icon || 'widgets' }}</mat-icon>
                 </mat-list-option>
             </div>
 
