@@ -225,10 +225,6 @@ export class LoginComponent implements OnInit, OnDestroy {
         }
 
         this.getData();
-
-        setTimeout(() => {
-            this._appUIService.showRemiderTaskModal('dacrequest');
-        }, 1000);
     }
 
     /**
