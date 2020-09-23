@@ -1040,12 +1040,19 @@
             </g>
         </svg>
 
-        <p class="text-center mat-title m-0 line-height-28 message">Task Reminder</p>
+        <p class="text-center mat-title m-0 line-height-28 message">{{ data.title }}</p>
     </div>
     <div mat-dialog-content fxLayout="column" fxLayoutAlign="center center" class="m-0">
         <p class="text-center m-0 line-height-28 mat-subheading-2 message">{{ data.message }}</p>
         <div fxLayoutAlign="center center" class="p-12 pb-12">
-            <button mat-raised-button mat-icon-button class="bg-success mr-12" matTooltip="Accept" (click)="data.accept()">
+            <button
+                *ngIf="data.type !== 'dacrequest'"
+                mat-raised-button
+                mat-icon-button
+                class="bg-success mr-12"
+                matTooltip="Accept"
+                (click)="data.accept()"
+            >
                 <mat-icon>done</mat-icon>
             </button>
             <button mat-raised-button mat-icon-button class="bg-danger mr-12" matTooltip="Reject" (click)="data.reject()">

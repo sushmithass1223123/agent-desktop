@@ -89,18 +89,26 @@ export const AppAlertDialogConstants: Record<AppAlertDialogTypes, { heading: str
     }
 };
 
-export const RemiderTaskDialogConstants: Record<ReminderTaskDialogTypes, { message: string, type: string }> = {
+export const RemiderTaskDialogConstants: Record<ReminderTaskDialogTypes, { title: string, message: string, type: string }> = {
     makecall: {
+        title: 'Task Reminder',
         message: 'Do you want to make this call?',
         type: 'makecall'
     },
     meeting: {
+        title: 'Task Reminder',
         message: 'Do you want to accept the scheduled meeting?',
         type: 'meeting'
     },
     changestate: {
+        title: 'Task Reminder',
         message: 'Do you want to change you status?',
         type: 'changestate'
+    },
+    dacrequest: {
+        title: 'DAC request',
+        message: 'Do you to accept this DAC request?',
+        type: 'dacrequest'
     }
 };
 

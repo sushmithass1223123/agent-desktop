@@ -11,10 +11,10 @@
         <div id="login-form" class="{{ loading ? 'blur' : null }}">
             <div class="logo" [@animate]="{ value: '*', params: { scale: '0.5' } }">
                 <img
-                    [src]="logoSrc || 'assets/images/logos/tetherfi.png'"
-                    [width]="logoWidth || 180"
-                    [height]="logoHeight || 90"
-                    alt="{{ logoAlt || 'Tetherfi' }}"
+                    [src]="appCustomerLogo?.Large.Src || 'assets/images/logos/tetherfi.png'"
+                    [alt]="appCustomerLogo?.Alt || 'Tetherfi'"
+                    [width]="appCustomerLogo?.Large.Width || 180"
+                    [height]="appCustomerLogo?.Large.Height || 90"
                 />
             </div>
 

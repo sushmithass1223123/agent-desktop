@@ -23,17 +23,132 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     @ViewChild('video', { static: false }) videoElement: ElementRef;
 
+    /**
+     * App configuration
+     */
     appConfig: any;
-    brandLogo = null;
+    /**
+     * Brand logo
+     */
+    brandLogo: {
+        /**
+         * Logo alt
+         */
+        Alt: string;
+        /**
+         * Small logo reference
+         */
+        Small: {
+            /**
+             * logo source
+             */
+            Src: string;
+            /**
+             * Logo width
+             */
+            Width: number;
+            /**
+             * Logo height
+             */
+            Height: number;
+        };
+        /**
+         * Large logo reference
+         */
+        Large: {
+            /**
+             * logo source
+             */
+            Src: string;
+            /**
+             * Logo width
+             */
+            Width: number;
+            /**
+             * Logo height
+             */
+            Height: number;
+        }
+    } = null;
+    /**
+     * Login form
+     */
     loginForm: FormGroup;
+    /**
+     * Login configuration
+     */
     loginConfig = null;
+    /**
+     * App customer logo
+     */
+    appCustomerLogo: {
+        /**
+         * Logo alt
+         */
+        Alt: string;
+        /**
+         * Small logo reference
+         */
+        Small: {
+            /**
+             * logo source
+             */
+            Src: string;
+            /**
+             * Logo width
+             */
+            Width: number;
+            /**
+             * Logo height
+             */
+            Height: number;
+        };
+        /**
+         * Large logo reference
+         */
+        Large: {
+            /**
+             * logo source
+             */
+            Src: string;
+            /**
+             * Logo width
+             */
+            Width: number;
+            /**
+             * Logo height
+             */
+            Height: number;
+        }
+    } = null;
+    /**
+     * App logo source
+     */
     logoSrc = '';
+    /**
+     * App logo Alt
+     */
     logoAlt = '';
+    /**
+     * App logo width
+     */
     logoWidth = 0;
+    /**
+     * App logo height
+     */
     logoHeight = 0;
 
+    /**
+     * Face authentication enabled flag from config
+     */
     faceAuthEnabled = false;
+    /**
+     * Face authentication server URL
+     */
     faceAuthServerUrl = '';
+    /**
+     * Domain list enabled flag from config
+     */
     domainListEnabled = false;
     promptAgentIdOnInvalidLanId = false;
     agentIdEnabled = false;
@@ -110,6 +225,10 @@ export class LoginComponent implements OnInit, OnDestroy {
         }
 
         this.getData();
+
+        setTimeout(() => {
+            this._appUIService.showRemiderTaskModal('dacrequest');
+        }, 1000);
     }
 
     /**
@@ -140,10 +259,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         // check if the config is not null
         if (config !== null) {
             this.loginConfig = config.Login;
-            this.logoSrc = config.AppConfigs.Logos.Customer.Large.Src;
-            this.logoAlt = config.AppConfigs.Logos.Customer.Alt;
-            this.logoWidth = config.AppConfigs.Logos.Customer.Large.Width;
-            this.logoHeight = config.AppConfigs.Logos.Customer.Large.Height;
+            this.appCustomerLogo = config.AppConfigs.Logos.Customer || null;
 
             this.faceAuthEnabled = config.Login.FaceAuth?.Enabled;
             this.faceAuthServerUrl = config.Login.FaceAuth?.AuthServerUrl;

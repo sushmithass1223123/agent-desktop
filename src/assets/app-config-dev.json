@@ -2159,7 +2159,6 @@
             "Default": {
                 "Large": {
                     "Src": "https://tmac.tetherfilabs.com/tcie-web-app/assets/img/main-logo.png",
-                    "Alt": "Tetherfi",
                     "Width": 180,
                     "Height": 90
                 },
@@ -2172,9 +2171,9 @@
             },
             "Customer": {
                 "Large": {
-                    "Src": "",
-                    "Width": null,
-                    "Height": null
+                    "Src": "https://tmac.tetherfilabs.com/Images/singtel_large.png",
+                    "Width": 160,
+                    "Height": 88
                 },
                 "Small": {
                     "Src": "https://tmac.tetherfilabs.com/Images/singtel_small.png",

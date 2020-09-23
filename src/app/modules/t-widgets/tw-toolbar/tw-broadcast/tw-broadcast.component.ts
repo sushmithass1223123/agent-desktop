@@ -35,6 +35,11 @@ export class TwBroadcastComponent extends TWidgetWrapper implements OnInit, OnDe
     }
 
     private AgentNotificaitonEvent = (evt: AgentNotificaitonEvent) => {
+        // check if the interaction id is there then return
+        if (evt.InteractionID > 0) {
+            return;
+        }
+
         // check the type
         if (evt.Type === 'Broadcast' && evt.Message) {
             this.broadcastMessage = evt.Message;

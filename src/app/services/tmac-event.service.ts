@@ -52,6 +52,10 @@ export class TMACEventService {
          * Change status task dialog ref
          */
         changeState: MatDialogRef<RemiderTaskDialogComponent, any>
+        /**
+         * DAC request dialog ref
+         */
+        dacRequest: MatDialogRef<RemiderTaskDialogComponent, any>
     };
 
     constructor(
@@ -67,7 +71,8 @@ export class TMACEventService {
         this._remiderTaskDialog = {
             makeCall: null,
             meeting: null,
-            changeState: null
+            changeState: null,
+            dacRequest: null
         };
     }
 
@@ -115,6 +120,11 @@ export class TMACEventService {
 
     private onAgentNotificaitonEvent = (evt: AgentNotificaitonEvent) => {
         try {
+            // check if the interaction id is there then return
+            if (evt.InteractionID > 0) {
+                return;
+            }
+
             // get the type
             const type = evt.Type.toLowerCase();
             // handle alerts
@@ -123,10 +133,25 @@ export class TMACEventService {
             }
             else if (type === 'executeaction') {
                 // parse the action
+                const parsedMessage: {
+                    /**
+                     * Type of action
+                     */
+                    Action: string,
+                    /**
+                     * Data for the notification
+                     */
+                    Data: string,
+                    /**
+                     * Mandatory action to be taken
+                     */
+                    IsMandatory: boolean,
+                    /**
+                     * [Optional] Work queue ID
+                     */
+                    WQId?: string
+                } = JSON.parse(evt.Message);
 
-                // TODO:: add Mandatory property
-
-                const parsedMessage: { Action: string, Data: string } = JSON.parse(evt.Message);
                 // get the action
                 switch (parsedMessage.Action.toLowerCase()) {
                     case 'registercallback': {
@@ -138,17 +163,37 @@ export class TMACEventService {
                         }
                         break;
                     }
-                    case 'visualivr':
+                    case 'dacrequest':
                         {
-                            // check if AOT cofngured for custom
-                            const widget = this._aotWidgets.filter((w: IWidget) => w.Type === 'tw-custom')?.[0];
-                            // check if widget is found
-                            if (widget) {
-
-                                // TODO:: change the config
-
-                                this._aotWidgetService.addWidget(widget);
+                            // check if the dialog is already opened
+                            if (this._remiderTaskDialog.dacRequest) {
+                                return;
                             }
+
+                            // parse the data and get info
+                            const {
+                                // ItemID,
+                                CustomerIdentifier,
+                                Channel,
+                                // Key
+                            } = JSON.parse(parsedMessage.Data);
+
+                            this._remiderTaskDialog.dacRequest =
+                                this._appUIService.showRemiderTaskModal(
+                                    'dacrequest',
+                                    `Direct agent request from ${CustomerIdentifier || 'NA'} on channel ${Channel}`
+                                );
+
+                            this._remiderTaskDialog.makeCall.afterClosed().subscribe((resp) => {
+                                // since we do not have accept for DAC request, we will handle 'reject' | 'snooze'
+                                if (resp === 'reject') {
+                                    // inform server about the reject
+                                    // SDKClient.respondToWqDacRequest({});
+                                }
+                                else if (resp === 'snooze') {
+                                    // inform server about snooze
+                                }
+                            });
                             break;
                         }
                     default:
@@ -158,7 +203,20 @@ export class TMACEventService {
                 // parse the notification message
                 const parsedMessage: AgentReminder = JSON.parse(evt.Message);
                 // parse then remider message
-                const remiderMessage: { Action: string, Data: string, Comment: string } = JSON.parse(parsedMessage.Message);
+                const remiderMessage: {
+                    /**
+                     * Type of action
+                     */
+                    Action: string,
+                    /**
+                     * Data for the reminder
+                     */
+                    Data: string,
+                    /**
+                     * Comment to be alerted
+                     */
+                    Comment: string
+                } = JSON.parse(parsedMessage.Message);
 
                 // get the action
                 switch (remiderMessage.Action.toLowerCase()) {
@@ -216,9 +274,7 @@ export class TMACEventService {
                         }
                     case 'meeting':
                         {
-
                             // TODO:: handle meeting task
-
                             break;
                         }
                     case 'changestate':

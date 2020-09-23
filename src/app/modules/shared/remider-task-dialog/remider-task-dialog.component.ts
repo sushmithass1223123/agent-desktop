@@ -15,7 +15,8 @@ export class RemiderTaskDialogComponent implements OnInit {
     constructor(@Inject(MAT_DIALOG_DATA) public data: ReminderTaskDialogData) { }
 
     ngOnInit(): void {
-        const { message, type } = RemiderTaskDialogConstants[this.data.type];
+        const { title, message, type } = RemiderTaskDialogConstants[this.data.type];
+        this.data.title = title;
         this.data.message = this.data.message || message;
         this.type = type;
     }

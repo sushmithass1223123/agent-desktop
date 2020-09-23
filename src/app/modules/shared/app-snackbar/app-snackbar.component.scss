@@ -1,0 +1,45 @@
+@import 'src/app/scss/shared';
+
+snack-bar-container {
+    &.mat-snack-bar-container {
+        &.app-snackbar {
+            color: #323232;
+            background: #ffffff;
+            border-radius: 16px;
+            min-height: 56px;
+            padding: 0;
+
+            .icon {
+                border-top-left-radius: 14px;
+                border-bottom-left-radius: 14px;
+            }
+
+            &.info-snackbar {
+                .icon {
+                    background: $tw-info;
+                }
+            }
+
+            &.success-snackbar {
+                .icon {
+                    color: #ffffff;
+                    background: $tw-alt-success;
+                }
+            }
+
+            &.warning-snackbar {
+                .icon {
+                    color: #ffffff;
+                    background: $tw-alt-warning;
+                }
+            }
+
+            &.danger-snackbar {
+                .icon {
+                    color: #ffffff;
+                    background: $tw-alt-danger;
+                }
+            }
+        }
+    }
+}

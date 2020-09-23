@@ -59,6 +59,11 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
     }
 
     private AgentNotificaitonEvent = (evt: AgentNotificaitonEvent) => {
+        // check if the interaction id is there then return
+        if (evt.InteractionID > 0) {
+            return;
+        }
+
         // get the type
         const type = evt.Type.toLowerCase();
         // check the type

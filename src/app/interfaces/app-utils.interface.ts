@@ -1,3 +1,4 @@
+import { MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
 import { ChartDataSets, ChartOptions } from 'chart.js';
 import { Moment } from 'moment';
 import { Color, SingleOrMultiDataSet } from 'ng2-charts';
@@ -80,39 +81,126 @@ export interface ChatTranscripts {
 }
 
 export interface AppNotification {
+    /**
+     * ID of the app notification
+     */
     id?: string;
+    /**
+     * Icon of the app notification
+     */
     icon?: string;
+    /**
+     * Message of app notification
+     */
     message: string;
+    /**
+     * Time of the app notification
+     */
     time?: string | Date;
-    status: string;
+    /**
+     * Status of the app notification 
+     */
+    status: 'new' | 'read';
 }
 
 export type AppAlertDialogTypes = 'success' | 'info' | 'warning' | 'error';
 
 export interface AppAlertDialogData {
+    /**
+     * Heading of app alert
+     */
     heading: string;
+    /**
+     * Message of app alert
+     */
     message: string;
+    /**
+     * Method to close the app alert
+     */
     close: () => void;
+    /**
+     * Type of app alert which is of type AppAlertDialogTypes
+     */
     type: AppAlertDialogTypes;
 }
 
-export type ReminderTaskDialogTypes = 'makecall' | 'meeting' | 'changestate';
+export type ReminderTaskDialogTypes = 'makecall' | 'meeting' | 'changestate' | 'dacrequest';
 
 export interface ReminderTaskDialogData {
+    /**
+     * Title of the reminder task dialog
+     */
     title: string;
+    /**
+     * Message of the reminder task dialog
+     */
     message: string;
+    /**
+     * Method to accept the reminder task
+     */
     accept: () => void;
+    /**
+     * Method to reject the reminder task
+     */
     reject: () => void;
+    /**
+     * Method to snooze the reminder task
+     */
     snooze: () => void;
+    /**
+     * Type of reminder task of type AppAlertDialogTypes
+     */
     type: AppAlertDialogTypes;
 }
 
 export type AppConfirmDialogTypes = 'takeoverSession' | 'endInteraction' | 'closeInteraction' | 'logout';
 
 export interface AppConfirmDialogData {
+    /**
+     * Title of the confirmation dialog
+     */
     title: string;
+    /**
+     * Message of the confirmation dialog
+     */
     message: string;
+    /**
+     * Type of confirmation of type AppConfirmDialogTypes
+     */
     type: AppConfirmDialogTypes;
+    /**
+     * Method to confirm
+     */
     confirm: () => void;
+    /**
+     * Method to cancel
+     */
     cancel: () => void;
+}
+
+export interface AppSnackBarArgs {
+    /**
+     * Type of app snackbar
+     */
+    type: string;
+    /**
+     * Message to show in snackbar
+     */
+    message: string;
+    /**
+     * State of snackbar of [ 'info' | 'success' | 'warning' | 'error'], info by default
+     */
+    state?: 'info' | 'success' | 'warning' | 'danger';
+    /**
+     * Vertical Postion of snackbar of type MatSnackBarVerticalPosition, default 'top'
+     */
+    vPos?: MatSnackBarVerticalPosition;
+    /**
+     * Horizontal Postion of snackbar of type MatSnackBarVerticalPosition, default 'center'
+     */
+    hPos?: MatSnackBarHorizontalPosition;
+    /**
+     * Duration of snackbar, 5000 by default
+     */
+    duration?: number;
 }

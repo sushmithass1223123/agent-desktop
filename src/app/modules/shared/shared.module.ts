@@ -16,6 +16,7 @@ import { ResourceNotFoundComponent } from './resource-not-found/resource-not-fou
 import { SnackbarComponent } from './snackbar/snackbar.component';
 import { WidgetFabComponent } from './widget-fab/widget-fab.component';
 import { AppConfirmDialogComponent } from './app-confirm-dialog/app-confirm-dialog.component';
+import { AppSnackbarComponent } from './app-snackbar/app-snackbar.component';
 
 Chart.defaults.global.responsive = true;
 Chart.defaults.global.legend.position = 'right';
@@ -41,7 +42,8 @@ const sharedComponents = [
     WidgetFabComponent,
     AlertDialogComponent,
     RemiderTaskDialogComponent,
-    AppConfirmDialogComponent
+    AppConfirmDialogComponent,
+    AppSnackbarComponent
 ];
 
 @NgModule({
