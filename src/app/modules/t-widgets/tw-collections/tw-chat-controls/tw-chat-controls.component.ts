@@ -48,7 +48,7 @@ import {
     TextChatTranscriptForTransferEvent,
     TextChatTypingStateChangedEvent,
     TextChatUserMessageWaitTimerEvent,
-    TUtils
+    TUtils, IResponseData
 } from 'tmac-sdk';
 import * as moment from 'moment';
 
@@ -525,7 +525,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // add message to the transcripts
         this.chatTranscripts.push({
             who: user,
-            isAgent: user !== this.customerName,
+            isAgent: user !== this.customerName && this.conferenceType === 'silent',
             messageId: data.messageId,
             message: data.message,
             type: data.attachment?.type || 'text',
@@ -828,6 +828,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 }
             })
             .catch(() => {
+                // enable if something goes wrong
+                btn.disabled = false;
                 this._fuseProgressBarService.hide();
                 this._appUIService.showSnackbar('Close interaction failed!', 'failure');
             });
@@ -962,14 +964,36 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     }
 
     /**
-     * To convert chat to whisper/conference/takeover for supervisor
+     * To change conference type of chat to whisper/conference/takeover for supervisor
      */
-    public convertChat(): void {
-        // TODO:: change the conference type of the chat
-
-        // call server to change the conference type
-        this.conferenceType = this.conferenceType === 'silent' ?
+    public changeConferenceType(btn: MatButton): void {
+        // show the progress bar 
+        this._fuseProgressBarService.show();
+        // disable the button
+        btn.disabled = true;
+        // get new conference  type
+        const type = this.conferenceType === 'silent' ?
             'whisper' : this.conferenceType === 'whisper' ?
                 'conf' : 'takeover';
+
+        // change the conference type of the chat
+        SDKClient.changeTextChatConferenceType({
+            interactionId: this.interactionId.toString(),
+            type
+        })
+            .then((resp) => {
+                btn.disabled = false;
+                // hide the progress bar
+                this._fuseProgressBarService.hide();
+                // get the response from server and change the local conference type
+                this.conferenceType = resp.response;
+                this._appUIService.showSnackbar(`Chat mode changed to ${resp.response} successfully`);
+            })
+            .catch(() => {
+                // enable if something goes wrong
+                btn.disabled = false;
+                this._fuseProgressBarService.hide();
+                this._appUIService.showSnackbar('Convert chat mode failed!', 'failure');
+            });
     }
 }

@@ -84,9 +84,9 @@
                             <span
                                 class=""
                                 [ngClass]="{
-                                    'color-alt-success': item.CurrentStatusDuration > 0 && item.CurrentStatusDuration <= 60,
-                                    'color-alt-warning': item.CurrentStatusDuration > 60 && item.CurrentStatusDuration <= 120,
-                                    'color-alt-danger': item.CurrentStatusDuration > 120
+                                    'text-alt-success': item.CurrentStatusDuration > 0 && item.CurrentStatusDuration <= 60,
+                                    'text-alt-warning': item.CurrentStatusDuration > 60 && item.CurrentStatusDuration <= 120,
+                                    'text-alt-danger': item.CurrentStatusDuration > 120
                                 }"
                                 >{{ (item.CurrentStatusDuration * 1000 | date: 'H:mm:ss':'UTC') || '00:00:00' }}</span
                             >

@@ -74,7 +74,8 @@
                         [matTooltip]="
                             conferenceType === 'silent' ? 'Convert to Whisper' : conferenceType === 'whisper' ? 'Convert to Conference' : 'Takeover'
                         "
-                        (click)="convertChat()"
+                        #changeModeBtn
+                        (click)="changeConferenceType(changeModeBtn)"
                     >
                         <mat-icon>play_for_work</mat-icon>
                     </button>

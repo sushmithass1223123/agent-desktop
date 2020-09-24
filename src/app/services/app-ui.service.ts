@@ -3,7 +3,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarRef, MatSnackBarVerticalPosition, MatSnackBarHorizontalPosition } from '@angular/material/snack-bar';
 import { AlertDialogComponent } from '@modules/shared/alert-dialog/alert-dialog.component';
 import { SnackbarComponent } from '../modules/shared/snackbar/snackbar.component';
-import { AppAlertDialogTypes, AppConfirmDialogTypes, AppNotification, AppSnackBarArgs, ReminderTaskDialogTypes } from 'app/interfaces';
+import { AppAlertDialogTypes, AppConfirmDialogTypes, AppNotification, AppSnackBarArgs, ReminderTaskDialogTypes, SnackbarStateTypes } from 'app/interfaces';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import * as _ from 'lodash';
 import { TUtils } from 'tmac-sdk';
@@ -38,6 +38,12 @@ export class AppUiService {
      */
     private _unsubscribeAll: Subject<any>;
 
+    /**
+     * Constructor
+     * @param {MatSnackBar} _matSnackBar
+     * @param {MatDialog} _matDialog
+     * @param {AppDataService} _appDataService
+     */
     constructor(
         private _matSnackBar: MatSnackBar,
         private _matDialog: MatDialog,
@@ -55,14 +61,14 @@ export class AppUiService {
     /**
      * To show snackbar
      * @param message Snackbar message
-     * @param state Snackbar state of type ['info' | 'loading' | 'success' | 'failure']
+     * @param state Snackbar state of type SnackbarStateTypes
      * @param vPos Snackbar vertical position
      * @param hPos Snackbar horizontal position
      * @param duration Duration of the snackbar
      */
     public showSnackbar(
         message: string,
-        state: 'info' | 'loading' | 'success' | 'failure' = 'success',
+        state: SnackbarStateTypes = 'success',
         vPos: MatSnackBarVerticalPosition = 'top',
         hPos: MatSnackBarHorizontalPosition = 'center',
         duration: number = this._appConfig.AppConfigs.AppNotificationTimeout || 5000
@@ -70,6 +76,7 @@ export class AppUiService {
         const icons = {
             info: 'info',
             success: 'done',
+            warning: 'warning',
             failure: 'close',
             loading: 'loop'
         };
@@ -79,7 +86,7 @@ export class AppUiService {
             data: {
                 icon: icons[state],
                 loading: state === 'loading',
-                color: state,
+                state,
                 message
             },
             verticalPosition: vPos,
@@ -98,9 +105,7 @@ export class AppUiService {
             warning: 'warning',
             danger: 'error'
         };
-
         this._matSnackBar.dismiss();
-
         return this._matSnackBar.openFromComponent(AppSnackbarComponent, {
             data: {
                 type: snackBarArgs.type,

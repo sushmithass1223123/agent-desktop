@@ -58,6 +58,13 @@ export class TMACEventService {
         dacRequest: MatDialogRef<RemiderTaskDialogComponent, any>
     };
 
+    /**
+     * Constructor
+     * @param {AppDataService} _appDataService
+     * @param {InteractionManagerService} _interactionManagerService
+     * @param {AppUiService} _appUIService
+     * @param {AOTWidgetService} _aotWidgetService
+     */
     constructor(
         private _appDataService: AppDataService,
         private _interactionManagerService: InteractionManagerService,
@@ -114,14 +121,21 @@ export class TMACEventService {
         }
     }
 
+    /**
+     * To remove all the events from reference which related to an interaction
+     */
     private remove(interactionId: number): void {
         this._tmacEventArray = this._tmacEventArray.filter(i => i.InteractionID !== interactionId);
     }
 
+    /**
+     * To process AgentNotificaitonEvent
+     */
     private onAgentNotificaitonEvent = (evt: AgentNotificaitonEvent) => {
         try {
             // check if the interaction id is there then return
             if (evt.InteractionID > 0) {
+                TUtils.Logger.console('info', 'TMACEventService.AgentNotificaitonEvent: event for an interaction, return');
                 return;
             }
 
@@ -147,9 +161,13 @@ export class TMACEventService {
                      */
                     IsMandatory: boolean,
                     /**
-                     * [Optional] Work queue ID
+                     * [Optional] Work queue ID for DacRequest action
                      */
-                    WQId?: string
+                    WQId?: string,
+                    /**
+                     * [Optional] Request Id for DacRequest action
+                     */
+                    RequestId?: string;
                 } = JSON.parse(evt.Message);
 
                 // get the action
@@ -167,32 +185,40 @@ export class TMACEventService {
                         {
                             // check if the dialog is already opened
                             if (this._remiderTaskDialog.dacRequest) {
+                                TUtils.Logger.console('info', 'TMACEventService.AgentNotificaitonEvent: dacRequest dialog is already opened!');
                                 return;
                             }
 
                             // parse the data and get info
                             const {
-                                // ItemID,
+                                ItemID,
                                 CustomerIdentifier,
                                 Channel,
-                                // Key
+                                Key
                             } = JSON.parse(parsedMessage.Data);
 
                             this._remiderTaskDialog.dacRequest =
                                 this._appUIService.showRemiderTaskModal(
                                     'dacrequest',
-                                    `Direct agent request from ${CustomerIdentifier || 'NA'} on channel ${Channel}`
+                                    `Direct agent request from ${CustomerIdentifier || 'NA'} on channel ${Channel || 'NA'}`
                                 );
 
-                            this._remiderTaskDialog.makeCall.afterClosed().subscribe((resp) => {
+                            this._remiderTaskDialog.dacRequest.afterClosed().subscribe((resp) => {
                                 // since we do not have accept for DAC request, we will handle 'reject' | 'snooze'
-                                if (resp === 'reject') {
+                                if (resp === 'reject' || resp === 'snooze') {
                                     // inform server about the reject
-                                    // SDKClient.respondToWqDacRequest({});
+                                    SDKClient.respondToWqDacRequest({
+                                        comment: '',
+                                        itemId: ItemID || '',
+                                        requestId: parsedMessage.RequestId || '',
+                                        response: resp,
+                                        wqId: parsedMessage.WQId || '',
+                                        wqKey: Key || ''
+                                    });
                                 }
-                                else if (resp === 'snooze') {
-                                    // inform server about snooze
-                                }
+
+                                // set the dialogRef to null
+                                this._remiderTaskDialog.dacRequest = null;
                             });
                             break;
                         }
@@ -224,6 +250,7 @@ export class TMACEventService {
                         {
                             // check if the dialog is already opened
                             if (this._remiderTaskDialog.makeCall) {
+                                TUtils.Logger.console('info', 'TMACEventService.AgentNotificaitonEvent: makeCall dialog is already opened!');
                                 return;
                             }
 
@@ -281,6 +308,7 @@ export class TMACEventService {
                         {
                             // check if the dialog is already opened
                             if (this._remiderTaskDialog.changeState) {
+                                TUtils.Logger.console('info', 'TMACEventService.AgentNotificaitonEvent: changeState dialog is already opened!');
                                 return;
                             }
 
@@ -339,6 +367,9 @@ export class TMACEventService {
         }
     }
 
+    /**
+     * Remider action executed method to update agent reminder
+     */
     private reminderActionExecuted(status: string, id: string): void {
         // check if completed or rejected
         SDKClient.updateAgentReminder(
@@ -354,6 +385,9 @@ export class TMACEventService {
     // @ Public Methods
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * To subscribe to TMACEventService service
+     */
     public subscribe(): void {
         TUtils.Logger.console('info', 'TMACEventService.subscribe');
 
@@ -371,6 +405,9 @@ export class TMACEventService {
         SDKClient.events.on('AgentNotificaitonEvent', this.onAgentNotificaitonEvent);
     }
 
+    /**
+     * To unsubscribe to TMACEventService service
+     */
     public unsubscribe(): void {
         TUtils.Logger.console('info', 'TMACEventService.unsubscribe');
 
@@ -382,6 +419,12 @@ export class TMACEventService {
         this._unsubscribeAll.complete();
     }
 
+    /**
+     * To get all the received events for an interaction.
+     * Sometimes interaction events may be received by SDK before
+     * app is finishing up with components creation.
+     * @param interactionId ID of the interaction
+     */
     public get(interactionId: number): any {
         // get the events based on interaction Id
         const events = this._tmacEventArray.filter(i => i.InteractionID === interactionId);

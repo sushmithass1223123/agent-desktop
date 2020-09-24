@@ -103,6 +103,8 @@ export interface AppNotification {
     status: 'new' | 'read';
 }
 
+export type SnackbarStateTypes = 'info' | 'loading' | 'warning' | 'success' | 'failure';
+
 export type AppAlertDialogTypes = 'success' | 'info' | 'warning' | 'error';
 
 export interface AppAlertDialogData {
