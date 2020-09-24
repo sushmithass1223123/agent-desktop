@@ -42,6 +42,10 @@
         background-color: $tw-dark !important;
         color: #ffffff !important;
     }
+    &-light {
+        background-color: #ffffff !important;
+        color: $tw-dark !important;
+    }
 }
 
 .bg-alt {
@@ -251,4 +255,8 @@
     &-dark {
         color: $tw-dark !important;
     }
+}
+
+.mat-ripple {
+    cursor: pointer;
 }

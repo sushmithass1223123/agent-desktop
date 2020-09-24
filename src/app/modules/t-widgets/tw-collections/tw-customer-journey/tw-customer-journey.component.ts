@@ -1,19 +1,27 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { FusePerfectScrollbarDirective } from '@fuse/directives/fuse-perfect-scrollbar/fuse-perfect-scrollbar.directive';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
+import { TwWrapperComponent } from '@modules/t-widgets/tw-wrapper/tw-wrapper.component';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
+import { COMMON_ERR_MESSAGE } from 'app/constants';
+import { IWidget, ResData } from 'app/interfaces';
 import { sortBy, uniqBy } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { IGetInteractionHistory, InteractionHistoryReadyEvent, IUIEvent, SDKClient, InteractionHistory } from 'tmac-sdk';
-import { TwWrapperComponent } from '@modules/t-widgets/tw-wrapper/tw-wrapper.component';
-import { FusePerfectScrollbarDirective } from '@fuse/directives/fuse-perfect-scrollbar/fuse-perfect-scrollbar.directive';
+import { IGetInteractionHistory, InteractionAction, InteractionHistory, InteractionHistoryReadyEvent, IUIEvent, SDKClient } from 'tmac-sdk';
 
+/**
+ * Customer journey component
+ * Shows up during interactions
+ * timeline when minimized and Table when maximised
+ */
 @Component({
     selector: 'tw-customer-journey',
     templateUrl: './tw-customer-journey.component.html',
@@ -21,10 +29,40 @@ import { FusePerfectScrollbarDirective } from '@fuse/directives/fuse-perfect-scr
     encapsulation: ViewEncapsulation.None
 })
 export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-    @Input() data: any;
+    /**
+     * Input data from app config json
+     */
+    @Input() data: IWidget;
 
+    /**
+     * Fuse confi
+     */
     fuseConfig: FuseConfig;
 
+    /**
+     * Search for record in table
+     */
+    searchForm = new FormGroup({
+        SessionID: new FormControl(''),
+        InteractionDate: new FormControl(''),
+        Channel: new FormControl(''),
+        CIF: new FormControl(''),
+        NRIC: new FormControl(''),
+        PhoneNumber: new FormControl(''),
+        OverallSentiment: new FormControl('')
+    });
+
+    /**
+     * session actions timeline
+     */
+    sessionActions: ResData<InteractionAction[]> = {
+        error: false,
+        loading: false
+    };
+
+    /**
+     * Paginator ref
+     */
     @ViewChild(MatPaginator) set paginatorContent(content: MatPaginator) {
         if (content) {
             // initially setter gets called with undefined
@@ -32,6 +70,9 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         }
     }
 
+    /**
+     * Sorting Ref
+     */
     @ViewChild(MatSort) set sortContent(content: MatSort) {
         if (content) {
             // initially setter gets called with undefined
@@ -39,13 +80,25 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         }
     }
 
+    /**
+     * Wrapper component Ref
+     */
     @ViewChild(TwWrapperComponent) wrapperComponent: TwWrapperComponent;
 
+    /**
+     * Fuse Perfect scrollbar ref
+     */
     @ViewChild(FusePerfectScrollbarDirective) fuseDirective: FusePerfectScrollbarDirective;
 
+    /**
+     * Current interaction Id
+     */
     interactionId: number;
     historyParams: IGetInteractionHistory;
 
+    /**
+     * Customer journey table Info
+     */
     customerJourneyTable: {
         loading: boolean;
         lastId: string;
@@ -59,11 +112,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
 
     maximized = false;
 
-    constructor(
-        private _fuseConfigService: FuseConfigService,
-        private _interactionEventService: TMACEventService,
-        private sanitizer: DomSanitizer
-    ) {
+    constructor(private _fuseConfigService: FuseConfigService, private _interactionEventService: TMACEventService, private sanitizer: DomSanitizer) {
         super();
 
         this.customerJourneyTable = {
@@ -71,7 +120,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             iframeUrl: '',
             lastId: '',
             tableData: {
-                columns: ['SessionID', 'InteractionDate', 'Channel', 'CIF', 'NRIC', 'PhoneNumber'],
+                columns: ['SessionID', 'InteractionDate', 'Channel', 'CIF', 'NRIC', 'PhoneNumber', 'OverallSentiment', 'Actions'],
                 selection: new SelectionModel<InteractionHistory>(false, []),
                 source: new MatTableDataSource([])
             }
@@ -111,8 +160,59 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             this[evt.EventName]?.(evt);
         });
 
+        // this.customerJourneyTable.tableData.source.filter = JSON.stringify({ SessionID: 'dev200922183239_1055' });
 
+        this.customerJourneyTable.tableData.source.filterPredicate = this.createFilter();
+        this.searchForm.valueChanges.subscribe((res) => {
+            const searchKey = {};
+            Object.keys(res).forEach((k) => {
+                if (res[k]) {
+                    searchKey[k] = res[k].trim().toLowerCase();
+                }
+            });
+            const stringifiedSearch = JSON.stringify(searchKey);
+            this.customerJourneyTable.tableData.source.filter = stringifiedSearch === '{}' ? '' : stringifiedSearch;
+        });
         SDKClient.events.on('InteractionHistoryReadyEvent', this.InteractionHistoryReadyEvent);
+    }
+
+    // Custom filter method fot Angular Material Datatable
+    createFilter() {
+        let filterFunction = (data: any, filter: string): boolean => {
+            let searchTerms = JSON.parse(filter);
+            let isFilterSet = false;
+            for (const col in searchTerms) {
+                if (searchTerms[col].toString() !== '') {
+                    isFilterSet = true;
+                } else {
+                    delete searchTerms[col];
+                }
+            }
+
+            let nameSearch = () => {
+                let found = false;
+                if (isFilterSet) {
+                    Object.keys(searchTerms).map((col) => {
+                        // for (const col in searchTerms) {
+                        searchTerms[col]
+                            .trim()
+                            .toLowerCase()
+                            .split(' ')
+                            .forEach((word: any) => {
+                                if (data[col].toString().toLowerCase().indexOf(word) !== -1 && isFilterSet) {
+                                    found = true;
+                                }
+                            });
+                        // }
+                    });
+                    return found;
+                } else {
+                    return true;
+                }
+            };
+            return nameSearch();
+        };
+        return filterFunction;
     }
 
     ngOnDestroy(): void {
@@ -140,7 +240,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         };
         // get history
         this.getInteractionHistory();
-    }
+    };
 
     private getInteractionHistory(lastId?: string): void {
         SDKClient.getInteractionHistory(lastId ? { ...this.historyParams, lastId } : this.historyParams, null)
@@ -179,7 +279,30 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         }
     }
 
+    /**
+     * Maximize event from Wrapper
+     * @param {Boolean} state
+     */
     public maximizeEvent(state: boolean): void {
         this.maximized = state;
+    }
+
+    /**
+     * Get actions of selected sessionId
+     * @param {String} sessionId selected Session Id
+     */
+    public async getSessionActions(sessionId: string): Promise<void> {
+        try {
+            this.sessionActions = { loading: true, error: false };
+            const res = await SDKClient.getInteractionActions(sessionId);
+            this.sessionActions = {
+                loading: false,
+                error: false,
+                data: res.response.map((x) => ({ ...x, ActionTime: new Date(parseInt(x.ActionTime.toString().split('(')[1].split(')')[0], 10)) }))
+            };
+        } catch (e) {
+            this.sessionActions = { loading: false, error: true, msg: COMMON_ERR_MESSAGE };
+            console.error(e);
+        }
     }
 }
