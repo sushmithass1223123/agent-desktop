@@ -24,7 +24,7 @@ export class TwcTextchatComponent extends TWContentWrapper implements OnInit, On
         public hostElement: ElementRef,
         public contentPageService: ContentPageService,
         private _interactionManagerService: InteractionManagerService,
-        private _interactionEventService: TMACEventService
+        private _tmacEventService: TMACEventService
     ) {
         super(hostElement, contentPageService);
     }
@@ -34,7 +34,7 @@ export class TwcTextchatComponent extends TWContentWrapper implements OnInit, On
         this.initWrapper(this.data);
 
         // subscribe to interaction events observable
-        this._interactionEventService.constructDisposeEvents
+        this._tmacEventService.constructDisposeEvents
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((evt: any) => {
                 // filter the event name

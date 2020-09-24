@@ -8,7 +8,8 @@ export interface IWidget {
     Config: IWidgetConfig;
     Data: any;
     InteractionDetails?: any;
-    OnDestroy?: () => void;
+    destroy?: () => void;
+    OnDestroy?: () => boolean;
 }
 
 export interface InteractionWidgets {
@@ -24,7 +25,6 @@ export interface IWidgetConfig {
     Static: boolean;
     Anchor: boolean;
     AOT: boolean;
-    OIN: boolean;
     Icon: string;
     Class: string;
     Position: IWidgetPosition;

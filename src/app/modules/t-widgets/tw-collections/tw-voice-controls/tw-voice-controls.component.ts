@@ -94,7 +94,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         private _fuseProgressBarService: FuseProgressBarService,
         private _appDataService: AppDataService,
         private _interactionManagerService: InteractionManagerService,
-        private _interactionEventService: TMACEventService,
+        private _tmacEventService: TMACEventService,
         private _appUIService: AppUiService
     ) {
         super();
@@ -187,7 +187,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
     private registerToEvents(): void {
         // get the event from event bag to make sure no events are missed
-        const eventBag = this._interactionEventService.get(this.interactionId);
+        const eventBag = this._tmacEventService.get(this.interactionId);
 
         // process the events if any
         eventBag.forEach((evt: IUIEvent) => {

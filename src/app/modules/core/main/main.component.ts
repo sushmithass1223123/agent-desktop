@@ -55,9 +55,6 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
         // register to all the tmac events in service
         this._tmacEventsService.subscribe();
 
-        // subscribe to app ui service
-        this._appUIService.subscribe();
-
         // Subscribe to config changes
         this._fuseConfigService.config
             .pipe(takeUntil(this._unsubscribeAll))
@@ -106,9 +103,6 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
 
         // remove the processed features
         this._agentFeaturesService.unsubscribe();
-
-        // subscribe to app ui service
-        this._appUIService.unsubscribe();
     }
 
     // -----------------------------------------------------------------------------------------------------

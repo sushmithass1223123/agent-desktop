@@ -112,7 +112,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
 
     maximized = false;
 
-    constructor(private _fuseConfigService: FuseConfigService, private _interactionEventService: TMACEventService, private sanitizer: DomSanitizer) {
+    constructor(private _fuseConfigService: FuseConfigService, private _tmacEventService: TMACEventService, private sanitizer: DomSanitizer) {
         super();
 
         this.customerJourneyTable = {
@@ -153,7 +153,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         };
 
         // get the event from event bag to make sure no events are missed
-        const eventBag = this._interactionEventService.get(this.interactionId);
+        const eventBag = this._tmacEventService.get(this.interactionId);
 
         // process the events if any
         eventBag.forEach((evt: IUIEvent) => {

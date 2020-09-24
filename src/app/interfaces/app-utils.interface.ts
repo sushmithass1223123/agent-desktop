@@ -155,7 +155,7 @@ export interface ReminderTaskDialogData {
     type: AppAlertDialogTypes;
 }
 
-export type AppConfirmDialogTypes = 'takeoverSession' | 'endInteraction' | 'closeInteraction' | 'logout';
+export type AppConfirmDialogTypes = 'takeoverSession' | 'endInteraction' | 'closeInteraction' | 'logout' | 'generic';
 
 export interface AppConfirmDialogData {
     /**

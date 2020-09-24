@@ -22,7 +22,7 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
     @Output() floatEvent = new EventEmitter();
     @Output() collapseEvent = new EventEmitter();
 
-    constructor(private _interactionEventService: TMACEventService) {
+    constructor(private _tmacEventService: TMACEventService) {
         super();
     }
 
@@ -41,7 +41,7 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
         this.customerInfo = this.data.Data.CustomerInfo || [];
 
         // get the event from event bag to make sure no events are missed
-        const eventBag = this._interactionEventService.get(this.interactionId);
+        const eventBag = this._tmacEventService.get(this.interactionId);
 
         // process the events if any
         eventBag.forEach((evt: IUIEvent) => {

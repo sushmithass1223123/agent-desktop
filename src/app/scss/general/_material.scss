@@ -75,14 +75,11 @@ mat-selection-list {
         background: rgba(0, 0, 0, 0.12);
     }
 
-    .bottom .mat-list-option {
-        margin-top: 8px;
-    }
-
     .mat-list-item {
         width: 70px !important;
         height: 44px !important;
-        margin-bottom: 8px !important;
+        margin-top: 4px !important;
+        margin-bottom: 4px !important;
     }
     .mat-list-single-selected-option,
     .mat-list-single-selected-option:hover,
@@ -283,6 +280,25 @@ mat-form-field {
                 border-color: transparent;
             }
         }
+    }
+
+    &.with-border {
+        .mat-form-field-wrapper {
+            .mat-form-field-outline-start {
+                border-color: currentColor;
+            }
+
+            .mat-form-field-outline-end {
+                border-color: currentColor;
+            }
+        }
+    }
+
+    .btn-time {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 13px auto;
     }
 }
 // mat form field

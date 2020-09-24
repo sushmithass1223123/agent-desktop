@@ -34,6 +34,6 @@ export class AppConfirmDialogComponent implements OnInit {
         this.data.title = this.data.title || title;
         this.data.message = this.data.message || message;
         this.type = type;
-        this.vector = ['endInteraction', 'closeInteraction'].includes(type) ? 'vector-1' : 'vector-2';
+        this.vector = ['endInteraction', 'closeInteraction', 'generic'].includes(type) ? 'vector-1' : 'vector-2';
     }
 }

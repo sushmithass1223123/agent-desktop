@@ -23,7 +23,7 @@ export class TwcVoiceComponent extends TWContentWrapper implements OnInit, OnDes
     constructor(
         public hostElement: ElementRef,
         public contentPageService: ContentPageService,
-        private _interactionEventService: TMACEventService,
+        private _tmacEventService: TMACEventService,
         private _interactionManagerService: InteractionManagerService
     ) {
         super(hostElement, contentPageService);
@@ -34,7 +34,7 @@ export class TwcVoiceComponent extends TWContentWrapper implements OnInit, OnDes
         this.initWrapper(this.data);
 
         // subscribe to interaction events observable
-        this._interactionEventService.constructDisposeEvents
+        this._tmacEventService.constructDisposeEvents
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((evt: any) => {
                 // filter the event name

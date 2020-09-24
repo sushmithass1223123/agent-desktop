@@ -14,6 +14,8 @@
     <div class="twn-list">
         <mat-selection-list #sidebarList [multiple]="false">
             <div class="top mat-elevation-z1">
+                <mat-divider *ngIf="topWidgets.length > 0"></mat-divider>
+
                 <mat-list-option
                     *ngFor="let item of topWidgets"
                     [value]="item.Data.Path"
@@ -26,8 +28,6 @@
                 >
                     <mat-icon class="icon" mat-list-icon [matBadge]="item.Data.Count || ''">{{ item.Config.Icon || 'widgets' }}</mat-icon>
                 </mat-list-option>
-
-                <mat-divider *ngIf="topWidgets.length > 0"></mat-divider>
             </div>
 
             <div class="bottom mat-elevation-z1" fusePerfectScrollbar [fusePerfectScrollbarOptions]="{ suppressScrollX: true }">

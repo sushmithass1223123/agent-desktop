@@ -141,6 +141,7 @@ export class TMACEventService {
 
             // get the type
             const type = evt.Type.toLowerCase();
+
             // handle alerts
             if (type === 'alert' && evt.Message) {
                 this._appUIService.showAlertModal(evt.Message, 'error', 'Alert');
@@ -161,26 +162,27 @@ export class TMACEventService {
                      */
                     IsMandatory: boolean,
                     /**
-                     * [Optional] Work queue ID for DacRequest action
+                     * [OPTIONAL] Work queue ID for DacRequest action
                      */
                     WQId?: string,
                     /**
-                     * [Optional] Request Id for DacRequest action
+                     * [OPTIONAL] Request Id for DacRequest action
                      */
                     RequestId?: string;
                 } = JSON.parse(evt.Message);
 
                 // get the action
                 switch (parsedMessage.Action.toLowerCase()) {
-                    case 'registercallback': {
-                        // check if AOT cofngured for register callback
-                        const widget = this._aotWidgets.filter((w: IWidget) => w.Type === 'tw-register-callback')?.[0];
-                        // check if widget is found
-                        if (widget) {
-                            this._aotWidgetService.addWidget(widget);
+                    case 'registercallback':
+                        {
+                            // check if AOT cofngured for register callback
+                            const widget = this._aotWidgets.filter((w: IWidget) => w.Type === 'tw-register-callback')?.[0];
+                            // check if widget is found
+                            if (widget) {
+                                this._aotWidgetService.addWidget(widget);
+                            }
+                            break;
                         }
-                        break;
-                    }
                     case 'dacrequest':
                         {
                             // check if the dialog is already opened

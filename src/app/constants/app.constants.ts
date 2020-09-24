@@ -132,6 +132,11 @@ export const AppConfirmDialogConstants: Record<AppConfirmDialogTypes, { title: s
         title: 'Confirm Logout',
         message: 'Are you sure you want to logout?',
         type: 'logout'
+    },
+    'generic': {
+        title: 'Confirm',
+        message: 'Are you sure?',
+        type: 'generic'
     }
 };
 

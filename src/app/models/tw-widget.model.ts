@@ -32,6 +32,14 @@ export class TwWidgetModel {
      * [OPTIONAL] For interaction widget to pass interaction details
      */
     InteractionDetails?: any;
+    /**
+     * [OPTIONAL] To destory the widget
+     */
+    destroy: () => void;
+    /**
+     * [OPTIONAL] To trigger an event before destroying the widget
+     */
+    OnDestroy?: () => boolean;
 
     constructor(name: string, type: string, icon?: string) {
         this.Name = name || 'Widget';
@@ -42,7 +50,6 @@ export class TwWidgetModel {
             Static: false,
             Anchor: false,
             AOT: false,
-            OIN: false,
             Icon: icon || 'widgets',
             Class: '',
             Position: {

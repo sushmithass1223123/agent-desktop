@@ -19,5 +19,9 @@ widget-fab {
     .fab-toggler {
         float: right;
         z-index: 1000;
+
+        .mat-button-wrapper {
+            padding: 0;
+        }
     }
 }

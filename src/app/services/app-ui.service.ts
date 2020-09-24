@@ -129,13 +129,15 @@ export class AppUiService {
      * To show app alerts
      * @param message Message for the app alert
      * @param type Type of app alert
-     * @param heading [Optional] Heading for app alert
+     * @param heading [OPTIONAL] Heading for app alert
      */
     public showAlertModal(
         message: string,
         type: AppAlertDialogTypes = 'success',
         heading?: string
     ): MatDialogRef<AlertDialogComponent> {
+        // play new chat sound 
+        this.playAudio('alert', 0.5);
         const dialogRef = this._matDialog.open(AlertDialogComponent, {
             data: {
                 message,
@@ -153,12 +155,14 @@ export class AppUiService {
     /**
      * To show Remider task dialog
      * @param type Type of reminder task dialog
-     * @param message [Optional] Message to show in reminder task dialog
+     * @param message [OPTIONAL] Message to show in reminder task dialog
      */
     public showRemiderTaskModal(
         type: ReminderTaskDialogTypes,
         message?: string
     ): MatDialogRef<RemiderTaskDialogComponent> {
+        // play new chat sound 
+        this.playAudio('alert', 0.5);
         const dialogRef = this._matDialog.open(RemiderTaskDialogComponent, {
             data: {
                 type,
@@ -179,8 +183,8 @@ export class AppUiService {
      * Method to show app confirmation dialog
      * @param type Type of dialog
      * 
-     * @param title [Optional] Title for the confirmation
-     * @param message [Optional] Message for the confirmation
+     * @param title [OPTIONAL] Title for the confirmation
+     * @param message [OPTIONAL] Message for the confirmation
      */
     public showAppConfirmDialog(
         type: AppConfirmDialogTypes,
@@ -261,6 +265,8 @@ export class AppUiService {
      * @param notification Notification of type AppNotification
      */
     public addNotification(notification: AppNotification): string {
+        // play new chat sound 
+        this.playAudio('alert', 0.5);
         // Get the value from the behavior subject
         let notifications = this._appNotificationsSubject.getValue();
 

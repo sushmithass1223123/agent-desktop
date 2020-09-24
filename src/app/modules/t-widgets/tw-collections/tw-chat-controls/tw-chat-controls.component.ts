@@ -23,20 +23,25 @@ import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { ContentPageService } from '@services/content-page.service';
-import { TMACEventService } from '@services/tmac-event.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
+import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { ChatTranscripts, InteractionRef, IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
+import * as moment from 'moment';
 import { Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
 import {
     AVChannel,
-    IAgentData,
+
+
+
+
+    AVControlMessageReceivedEvent, IAgentData,
     IResponse,
     IUIEvent,
     SDKClient,
-    AVControlMessageReceivedEvent,
+
     TextChatAgentConnectedEvent,
     TextChatAgentDisconnectedEvent,
     TextChatAgentMessageReceivedEvent,
@@ -45,12 +50,14 @@ import {
     TextChatMessageSentEvent,
     TextChatMessageTemplateSentEvent,
     TextChatRemoteUserConnectedEvent,
-    TextChatTranscriptForTransferEvent,
+
+
+
+    TextChatSelfServiceDestinationEvent, TextChatTranscriptForTransferEvent,
     TextChatTypingStateChangedEvent,
     TextChatUserMessageWaitTimerEvent,
-    TUtils, IResponseData
+    TUtils
 } from 'tmac-sdk';
-import * as moment from 'moment';
 
 @Component({
     selector: 'tw-chat-controls',
@@ -98,10 +105,22 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     @ViewChildren('replyInput') replyInputField: any;
     @ViewChild('replyForm') replyForm: NgForm;
 
+    /**
+     * Constructor
+     * @param {FuseConfigService} _fuseConfigService 
+     * @param {InteractionManagerService} _interactionManagerService 
+     * @param {TMACEventService} _tmacEventService 
+     * @param {MatDialog} _dialog 
+     * @param {AppDataService} _appDataService 
+     * @param {FuseProgressBarService} _fuseProgressBarService 
+     * @param {ContentPageService} _contentPageService 
+     * @param {AOTWidgetService} _aotWidgetService 
+     * @param {AppUiService} _appUIService 
+     */
     constructor(
         private _fuseConfigService: FuseConfigService,
         private _interactionManagerService: InteractionManagerService,
-        private _interactionEventService: TMACEventService,
+        private _tmacEventService: TMACEventService,
         private _dialog: MatDialog,
         private _appDataService: AppDataService,
         private _fuseProgressBarService: FuseProgressBarService,
@@ -116,6 +135,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     // @ Lifecycle hooks
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
+     */
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
@@ -163,6 +185,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.supervisorInit = this.data.InteractionDetails.RecoveryData.lineid === 'bargein';
     }
 
+    /**
+     * A lifecycle hook that is called after Angular has fully initialized a component's view. 
+     * Define an ngAfterViewInit() method to handle any additional initialization tasks.
+     */
     ngAfterViewInit(): void {
         // check if the current page is textchat page
         if (this._interactionManagerService.getInteractionCount().active <= 1 &&
@@ -179,6 +205,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.readyToReply();
     }
 
+    /**
+     * A callback method that is invoked immediately after the default change detector has checked the directive's data-bound properties for the first time,
+     * and before any of the view or content children have been checked. It is invoked only once when the directive is instantiated.
+     */
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
@@ -190,9 +220,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     // @ Private methods
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * To register to all related TMAC events
+     */
     private registerToEvents(): void {
         // get the event from event bag to make sure no events are missed
-        const eventBag = this._interactionEventService.get(this.interactionId);
+        const eventBag = this._tmacEventService.get(this.interactionId);
 
         // process the events if any
         eventBag.forEach((evt: IUIEvent) => {
@@ -201,6 +234,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // register to tmac events
         SDKClient.events.on('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
+        SDKClient.events.on('TextChatSelfServiceDestinationEvent', this.TextChatSelfServiceDestinationEvent);
         SDKClient.events.on('TextChatAgentConnectedEvent', this.TextChatAgentConnectedEvent);
         SDKClient.events.on('TextChatTranscriptForTransferEvent', this.TextChatTranscriptForTransferEvent);
         SDKClient.events.on('TextChatMessageSentEvent', this.TextChatMessageSentEvent);
@@ -215,9 +249,13 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         SDKClient.events.on('CannedResposeEvent', this.CannedResposeEvent);
     }
 
+    /**
+     * To de register from all related TMAC events
+     */
     private deRegisterFromEvents(): void {
         // deregister from tmac events
         SDKClient.events.off('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
+        SDKClient.events.off('TextChatSelfServiceDestinationEvent', this.TextChatSelfServiceDestinationEvent);
         SDKClient.events.off('TextChatAgentConnectedEvent', this.TextChatAgentConnectedEvent);
         SDKClient.events.off('TextChatTranscriptForTransferEvent', this.TextChatTranscriptForTransferEvent);
         SDKClient.events.off('TextChatMessageSentEvent', this.TextChatMessageSentEvent);
@@ -232,6 +270,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         SDKClient.events.off('CannedResposeEvent', this.CannedResposeEvent);
     }
 
+    /**
+     * To process TextChatRemoteUserConnectedEvent
+     * @param evt TextChatRemoteUserConnectedEvent data
+     */
     private TextChatRemoteUserConnectedEvent = (evt: TextChatRemoteUserConnectedEvent) => {
         // check the interaction
         if (evt.InteractionID !== this.interactionId) {
@@ -311,6 +353,22 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         } catch (error) { }
     }
 
+    /**
+     * To process TextChatSelfServiceDestinationEvent
+     * @param evt TextChatSelfServiceDestinationEvent data
+     */
+    private TextChatSelfServiceDestinationEvent = (evt: TextChatSelfServiceDestinationEvent) => {
+        // check the interaction
+        if (evt.InteractionID !== this.interactionId) {
+            return;
+        }
+
+    }
+
+    /**
+     * To process TextChatAgentConnectedEvent
+     * @param evt TextChatAgentConnectedEvent data
+     */
     private TextChatAgentConnectedEvent = (evt: TextChatAgentConnectedEvent) => {
         // check the interaction
         if (evt.InteractionID !== this.interactionId) {
@@ -325,6 +383,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         });
     }
 
+    /**
+     * To process TextChatTranscriptForTransferEvent
+     * @param evt TextChatTranscriptForTransferEvent data
+     */
     private TextChatTranscriptForTransferEvent = (evt: TextChatTranscriptForTransferEvent) => {
         // check the interaction
         if (evt.InteractionID !== this.interactionId) {
@@ -393,14 +455,26 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             });
     }
 
+    /**
+     * To process TextChatMessageSentEvent
+     * @param evt TextChatMessageSentEvent data
+     */
     private TextChatMessageSentEvent = (evt: TextChatMessageSentEvent) => {
         this.messageSentEvent(evt);
     }
 
+    /**
+     * To process TextChatMessageTemplateSentEvent
+     * @param evt TextChatMessageTemplateSentEvent data
+     */
     private TextChatMessageTemplateSentEvent = (evt: TextChatMessageTemplateSentEvent) => {
         this.messageSentEvent(evt);
     }
 
+    /**
+     * To process TextChatUserMessageWaitTimerEvent
+     * @param evt TextChatUserMessageWaitTimerEvent data
+     */
     private TextChatUserMessageWaitTimerEvent = (evt: TextChatUserMessageWaitTimerEvent) => {
         // check the interaction and the interaction status
         if (evt.InteractionID !== this.interactionId || this.status !== 'connected') {
@@ -418,12 +492,16 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // if this is the final auto response then disconnect the chat
         if (evt.IsFinal) {
             // send end chat to server 
-            this.endChat('AutoResponseTimeout', null);
+            this.endChat('AutoResponseTimeout');
             // hide freeze auto response button
             this.showAutoFreeze = false;
         }
     }
 
+    /**
+     * To process TextChatTypingStateChangedEvent
+     * @param evt TextChatTypingStateChangedEvent data
+     */
     private TextChatTypingStateChangedEvent = (evt: TextChatTypingStateChangedEvent) => {
         // check the interaction
         if (evt.InteractionID !== this.interactionId) {
@@ -431,14 +509,26 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
     }
 
+    /**
+     * To process TextChatMessageReceivedEvent
+     * @param evt TextChatMessageReceivedEvent data
+     */
     private TextChatMessageReceivedEvent = (evt: TextChatMessageReceivedEvent) => {
         this.chatMessageReceived(evt);
     }
 
+    /**
+     * To process TextChatAgentMessageReceivedEvent
+     * @param evt TextChatAgentMessageReceivedEvent data
+     */
     private TextChatAgentMessageReceivedEvent = (evt: TextChatAgentMessageReceivedEvent) => {
         this.chatMessageReceived(evt);
     }
 
+    /**
+     * To proccess both TextChatMessageReceivedEvent and TextChatAgentMessageReceivedEvent
+     * @param evt TextChatMessageReceivedEvent | TextChatAgentMessageReceivedEvent data
+     */
     private chatMessageReceived = (evt: TextChatMessageReceivedEvent | TextChatAgentMessageReceivedEvent) => {
         // check the interaction
         if (evt.InteractionID !== this.interactionId) {
@@ -543,6 +633,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         if (!isActive || this._contentPageService.getCurrentMode() !== this.data.Data.Path) {
             const currentInteraction = this.interactionList.filter(i => i.interactionId === this.interactionId)[0];
             const unreadCount = ++currentInteraction.otherData.unreadCount;
+            // play new chat sound 
+            this._appUIService.playAudio('message', 0.5);
             // update the interaction other data
             this._interactionManagerService.updateInteraction(evt.InteractionID, {
                 otherData: {
@@ -562,6 +654,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
     }
 
+    /**
+     * To process AVControlMessageReceivedEvent
+     * @param evt AVControlMessageReceivedEvent data
+     */
     private AVControlMessageReceivedEvent = (evt: AVControlMessageReceivedEvent) => {
         // check the interaction
         if (evt.InteractionID !== this.interactionId) {
@@ -580,6 +676,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.avConn?.onMessage(evt.Message);
     }
 
+    /**
+     * To process TextChatDisconnectedEvent
+     * @param evt TextChatDisconnectedEvent data
+     */
     private TextChatDisconnectedEvent = (evt: TextChatDisconnectedEvent) => {
         // check the interaction
         if (evt.InteractionID !== this.interactionId) {
@@ -598,6 +698,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.showAutoFreeze = false;
     }
 
+    /**
+     * To process TextChatAgentDisconnectedEvent
+     * @param evt TextChatAgentDisconnectedEvent data
+     */
     private TextChatAgentDisconnectedEvent = (evt: TextChatAgentDisconnectedEvent) => {
         // check the interaction
         if (evt.InteractionID !== this.interactionId) {
@@ -608,6 +712,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.conferenceAgentList = this.conferenceAgentList.filter(c => c.AgentId !== evt.AgentId);
     }
 
+    /**
+     * To process custom CannedResposeEvent
+     * @param evt CannedResposeEvent data
+     */
     private CannedResposeEvent = (evt: any) => {
         // check the interaction
         if (evt.InteractionID !== this.interactionId) {
@@ -618,6 +726,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.sendMessage(evt.Template);
     }
 
+    /**
+     * To process both TextChatMessageSentEvent and TextChatMessageTemplateSentEvent
+     * @param evt TextChatMessageSentEvent | TextChatMessageTemplateSentEvent data
+     */
     private messageSentEvent(evt: TextChatMessageSentEvent | TextChatMessageTemplateSentEvent): void {
         try {
             // check the interaction
@@ -655,6 +767,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         } catch (error) { }
     }
 
+    /**
+     * Ready to reply function to focus reply textbox and to scroll to bottom
+     */
     private readyToReply(): void {
         if (this.conferenceType === 'silent') {
             // ignore for silent monitoring
@@ -667,6 +782,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         });
     }
 
+    /**
+     * To scroll to bottom of transcript
+     * @param speed Speed of scroll
+     */
     private scrollToBottom(speed?: number): void {
         speed = speed || 400;
         if (this.directiveScrolls.last) {
@@ -678,12 +797,19 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
     }
 
+    /**
+     * To focus the reply textbox
+     */
     private focusReplyInput(): void {
         setTimeout(() => {
             this.replyInput.focus();
         });
     }
 
+    /**
+     * To check if the given string is a JSON
+     * @param str Json string
+     */
     private isValidJson(str: string): boolean {
         try {
             return typeof (JSON.parse(str)) === 'object';
@@ -691,6 +817,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         return false;
     }
 
+    /**
+     * To send reply to customer message
+     * @param template Message template
+     */
     private sendMessage(template: any): void {
         // get the typed message
         const inputMessage = template ? template.Text : this.replyForm.form.value.message;
@@ -749,7 +879,13 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.showAutoFreeze = true;
     }
 
-    private openCallWidget(param: string, direction: string, avEvent?: AVControlMessageReceivedEvent): void {
+    /**
+     * To open voice or video call widget
+     * @param {'audio' | 'video'} param Type of call 
+     * @param {'in' | 'out'} direction Direction of the call
+     * @param {AVControlMessageReceivedEvent} avEvent [OPTIONAL] For incoming requestav to process AVControlMessageReceivedEvent 
+     */
+    private openCallWidget(param: 'audio' | 'video', direction: 'in' | 'out', avEvent?: AVControlMessageReceivedEvent): void {
         // if the widget is created then ignore
         if (this.callWidget) {
             return;
@@ -783,7 +919,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.disableAV = true;
     }
 
-    private endChat(reason: string, btn: MatButton): void {
+    /**
+     * To end the current chat interaction
+     * @param reason Reson of chat end
+     * @param btn [OPTIONAL] End button to disable/enable
+     */
+    private endChat(reason: string, btn?: MatButton): void {
         // show the progress bar 
         this._fuseProgressBarService.show();
         // disable the button
@@ -808,6 +949,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             });
     }
 
+    /**
+     * To close the current interaction
+     * @param btn Close interaction button to disable/enable
+     */
     private closeInteraction(btn: MatButton): void {
         // show the progress bar 
         this._fuseProgressBarService.show();
@@ -925,7 +1070,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             });
     }
 
-    public escalateToAV(type: string): void {
+    public escalateToAV(type: 'audio' | 'video'): void {
         // freeze auto response if needed
         this.freezeAutoResponse(false);
 

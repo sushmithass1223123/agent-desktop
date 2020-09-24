@@ -1,14 +1,12 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { AOTWidgetService } from '@services/aot-widget.service';
-import { AppDataService } from '@services/app-data.service';
+import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import * as _ from 'lodash';
-import { CallerIntentEvent, GenericEvent, IUIEvent, SDKClient, TextChatRemoteUserConnectedEvent } from 'tmac-sdk';
-import { P } from '@angular/cdk/keycodes';
-import { AppUiService } from '@services/app-ui.service';
+import { AgentNotificaitonEvent, CallerIntentEvent, GenericEvent, IUIEvent, SDKClient, TextChatRemoteUserConnectedEvent } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-agent-assist',
@@ -17,31 +15,36 @@ import { AppUiService } from '@services/app-ui.service';
     encapsulation: ViewEncapsulation.None
 })
 export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-    // holds all the data related to this widget from the config
+    /**
+     * To hold all the data related to this widget from the config
+     */
     @Input() data: IWidget;
-
+    /**
+     * UCID of an interaction
+     */
     ucid: string;
+    /**
+     * ID of an interaction
+     */
     interactionId: number;
+    /**
+     * Widget custom data
+     */
     widgetData: any;
+    /**
+     * NLP data from event
+     */
     nlpData = [];
-
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store the fuse config for theme
-    // -----------------------------------------------------------
-    fuseConfig: any;
-
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store entire app config and get update
-    // -----------------------------------------------------------
-    appConfig: any;
 
     /**
      * Constructor 
+     * @param {AOTWidgetService} _aotWidgetService
+     * @param {TMACEventService} _tmacEventService
+     * @param {AppUiService} _appUIService
      */
     constructor(
-        private _appDataService: AppDataService,
         private _aotWidgetService: AOTWidgetService,
-        private _interactionEventService: TMACEventService,
+        private _tmacEventService: TMACEventService,
         private _appUIService: AppUiService
     ) {
         super();
@@ -69,7 +72,7 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         this.ucid = this.data?.InteractionDetails.UCID || '';
 
         // get the event from event bag to make sure no events are missed
-        const eventBag = this._interactionEventService.get(this.interactionId);
+        const eventBag = this._tmacEventService.get(this.interactionId);
 
         // process the events if any
         eventBag.forEach((evt: IUIEvent) => {
@@ -80,6 +83,7 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         SDKClient.events.on('OnNLPDataEvent', this.OnNLPDataEvent);
         SDKClient.events.on('CallerIntentEvent', this.CallerIntentEvent);
         SDKClient.events.on('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
+        SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
     }
 
     /**
@@ -91,14 +95,19 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         this.destroyWrapper();
         // de-register from the event
         SDKClient.events.off('OnNLPDataEvent', this.OnNLPDataEvent);
-        SDKClient.events.off('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
         SDKClient.events.off('CallerIntentEvent', this.CallerIntentEvent);
+        SDKClient.events.off('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
+        SDKClient.events.off('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
     }
 
     // -----------------------------------------------------------------------------------------------------
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * To process OnNLPDataEvent
+     * @param evt GenericEvent event data
+     */
     private OnNLPDataEvent = (evt?: GenericEvent): void => {
         const receivedData = evt;
         if (receivedData) {
@@ -136,6 +145,10 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         }
     }
 
+    /**
+     * To process CallerIntentEvent
+     * @param evt CallerIntentEvent event data
+     */
     private CallerIntentEvent = (evt: CallerIntentEvent): void => {
         // check for the interaction
         if (this.interactionId !== evt.InteractionID) {
@@ -152,6 +165,10 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         this.addIntentToNLPData(intent);
     }
 
+    /**
+     * To process TextChatRemoteUserConnectedEvent
+     * @param evt TextChatRemoteUserConnectedEvent event data
+     */
     private TextChatRemoteUserConnectedEvent = (evt: TextChatRemoteUserConnectedEvent) => {
         // check for the interaction
         if (this.interactionId !== evt.InteractionID) {
@@ -169,6 +186,58 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         this.addIntentToNLPData(intent);
     }
 
+    /**
+     * To process AgentNotificaitonEvent
+     * @param evt AgentNotificaitonEvent event data
+     */
+    private AgentNotificaitonEvent = (evt: AgentNotificaitonEvent) => {
+        // check if the event for the interaction
+        if (evt.InteractionID !== this.interactionId) {
+            return;
+        }
+
+        // check the type
+        if (evt.Type.toLowerCase() === 'executeaction') {
+            // parse the action
+            const parsedMessage: {
+                /**
+                 * Type of action
+                 */
+                Action: string,
+                /**
+                 * Data for the notification
+                 */
+                Data: string,
+                /**
+                 * Mandatory action to be taken
+                 */
+                IsMandatory: boolean,
+                /**
+                 * Comment for the notification
+                 */
+                Comment: string;
+                /**
+                 * Header for the assist widget
+                 */
+                Header: string,
+            } = JSON.parse(evt.Message);
+
+            // get the action
+            switch (parsedMessage.Action.toLowerCase()) {
+                case 'vivr':
+                    {
+                        this.openAssitWidget(parsedMessage.Header, parsedMessage.IsMandatory, parsedMessage.Data);
+                        break;
+                    }
+            }
+        }
+
+    }
+
+    /**
+     * To add intent to NLP data
+     * @param intent Intent to be added
+     */
     private addIntentToNLPData(intent: string): void {
         const getData = this.nlpData.filter((i) => i.Name === intent);
         if (getData.length > 0) {
@@ -188,8 +257,15 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
 
-    public openAssitWidget(intent: string): void {
-        let url = this.widgetData.AssistWidgetUrl;
+    /**
+     * To open assist widget
+     * @param intent Intent to be passed to assist widgetData
+     * @param isMandatory [OPTIONAL] Falg to pop confirmation before the widget close
+     * @param assistUrl [OPTIONAL] Assist url to be opened
+     */
+    public openAssitWidget(intent: string, isMandatory?: boolean, assistUrl?: string): void {
+        // check if the url to be taken from param
+        let url = assistUrl ? assistUrl : this.widgetData.AssistWidgetUrl;
 
         // check if url is provided
         if (!url) {
@@ -197,18 +273,23 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
             return;
         }
 
-        // get the intent name
-        const ucid = this.ucid;
+        // if the url is provided with the method then do not process it query params
+        if (!assistUrl) {
+            // get the intent name
+            const ucid = this.ucid;
 
-        const mapObj = {
-            _intent: intent,
-            _ucid: ucid
-        };
+            // get the map object
+            const mapObj = {
+                _intent: intent,
+                _ucid: ucid
+            };
 
-        const reg = new RegExp(Object.keys(mapObj).join('|'), 'gi');
-        url = url.replace(reg, (matched: any) => {
-            return mapObj[matched];
-        });
+            // check the regex and replace the item in the url
+            const reg = new RegExp(Object.keys(mapObj).join('|'), 'gi');
+            url = url.replace(reg, (matched: any) => {
+                return mapObj[matched];
+            });
+        }
 
         // get assist widget config
         const title = `${this.widgetData.Title || 'Custom'} - ${intent}`;
@@ -224,7 +305,21 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         widget.Config.Position.H = height;
         widget.Config.Actions = actions;
         widget.Config.ViewState = viewState;
-        widget.Data.Url = url;
+
+        // if mandatory, pop a confiration and destroy
+        if (isMandatory) {
+            widget.Data.Url = url;
+            widget.OnDestroy = () => {
+                // get confiration before close
+                const confirmDialogRef = this._appUIService.showAppConfirmDialog('generic', 'Confirm Close', 'Are you sure to close?');
+                confirmDialogRef.afterClosed().subscribe((resp) => {
+                    if (resp) {
+                        widget.destroy();
+                    }
+                });
+                return false;
+            };
+        }
 
         // add to AOT widget service
         this._aotWidgetService.addWidget(widget);
