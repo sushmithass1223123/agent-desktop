@@ -83,7 +83,9 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         SDKClient.events.on('OnNLPDataEvent', this.OnNLPDataEvent);
         SDKClient.events.on('CallerIntentEvent', this.CallerIntentEvent);
         SDKClient.events.on('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
-        SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
+
+        // TODO:: To implement interaction based AOT
+        // SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
     }
 
     /**
@@ -97,7 +99,9 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         SDKClient.events.off('OnNLPDataEvent', this.OnNLPDataEvent);
         SDKClient.events.off('CallerIntentEvent', this.CallerIntentEvent);
         SDKClient.events.off('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
-        SDKClient.events.off('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
+
+        // TODO:: To implement interaction based AOT
+        // SDKClient.events.off('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -190,49 +194,49 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
      * To process AgentNotificaitonEvent
      * @param evt AgentNotificaitonEvent event data
      */
-    private AgentNotificaitonEvent = (evt: AgentNotificaitonEvent) => {
-        // check if the event for the interaction
-        if (evt.InteractionID !== this.interactionId) {
-            return;
-        }
+    // private AgentNotificaitonEvent = (evt: AgentNotificaitonEvent) => {
+    //     // check if the event for the interaction
+    //     if (evt.InteractionID !== this.interactionId) {
+    //         return;
+    //     }
 
-        // check the type
-        if (evt.Type.toLowerCase() === 'executeaction') {
-            // parse the action
-            const parsedMessage: {
-                /**
-                 * Type of action
-                 */
-                Action: string,
-                /**
-                 * Data for the notification
-                 */
-                Data: string,
-                /**
-                 * Mandatory action to be taken
-                 */
-                IsMandatory: boolean,
-                /**
-                 * Comment for the notification
-                 */
-                Comment: string;
-                /**
-                 * Header for the assist widget
-                 */
-                Header: string,
-            } = JSON.parse(evt.Message);
+    //     // check the type
+    //     if (evt.Type.toLowerCase() === 'executeaction') {
+    //         // parse the action
+    //         const parsedMessage: {
+    //             /**
+    //              * Type of action
+    //              */
+    //             Action: string,
+    //             /**
+    //              * Data for the notification
+    //              */
+    //             Data: string,
+    //             /**
+    //              * Mandatory action to be taken
+    //              */
+    //             IsMandatory: boolean,
+    //             /**
+    //              * Comment for the notification
+    //              */
+    //             Comment: string;
+    //             /**
+    //              * Header for the assist widget
+    //              */
+    //             Header: string,
+    //         } = JSON.parse(evt.Message);
 
-            // get the action
-            switch (parsedMessage.Action.toLowerCase()) {
-                case 'vivr':
-                    {
-                        this.openAssitWidget(parsedMessage.Header, parsedMessage.IsMandatory, parsedMessage.Data);
-                        break;
-                    }
-            }
-        }
+    //         // get the action
+    //         switch (parsedMessage.Action.toLowerCase()) {
+    //             case 'vivr':
+    //                 {
+    //                     this.openAssitWidget(parsedMessage.Header, parsedMessage.IsMandatory, parsedMessage.Data);
+    //                     break;
+    //                 }
+    //         }
+    //     }
 
-    }
+    // }
 
     /**
      * To add intent to NLP data
@@ -306,9 +310,10 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         widget.Config.Actions = actions;
         widget.Config.ViewState = viewState;
 
+        widget.Data.Url = url;
+
         // if mandatory, pop a confiration and destroy
         if (isMandatory) {
-            widget.Data.Url = url;
             widget.OnDestroy = () => {
                 // get confiration before close
                 const confirmDialogRef = this._appUIService.showAppConfirmDialog('generic', 'Confirm Close', 'Are you sure to close?');

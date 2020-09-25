@@ -2117,36 +2117,6 @@
                         "GetCampaignsUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Campaign/GetCampaigns",
                         "CreateContactCampaignUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Contact/CreateCampaignContact"
                     }
-                },
-                {
-                    "Name": "Agent Assist",
-                    "Description": "",
-                    "Type": "tw-custom",
-                    "Config": {
-                        "Static": false,
-                        "Anchor": true,
-                        "AOT": true,
-                        "Icon": "",
-                        "Class": "",
-                        "Position": {
-                            "X": 0,
-                            "Y": 0
-                        },
-                        "Actions": [
-                            "minimize",
-                            "destroy"
-                        ],
-                        "ViewState": "restore",
-                        "PinState": false,
-                        "FloatState": false,
-                        "Resizable": false,
-                        "Header": true
-                    },
-                    "Data": {
-                        "AutoOpen": false,
-                        "OpenInNew": false,
-                        "Url": ""
-                    }
                 }
             ]
         }

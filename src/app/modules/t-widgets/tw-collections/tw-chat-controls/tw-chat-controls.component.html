@@ -61,7 +61,21 @@
             >
                 <div fxLayout="row" fxLayoutAlign="end none" class="chat-actions">
                     <button
+                        *ngIf="showAutoFreeze"
+                        [disabled]="status !== 'connected'"
+                        mat-mini-fab
+                        color="default"
+                        class="bg-danger"
+                        [ngClass]="status === 'connected' ? 'mat-elevation-z2' : ''"
+                        matTooltip="Freeze Auto Response"
+                        (click)="freezeAutoResponse()"
+                    >
+                        <mat-icon>sync_disabled</mat-icon>
+                    </button>
+
+                    <button
                         *ngIf="supervisorInit && (conferenceType === 'silent' || conferenceType === 'whisper' || conferenceType === 'conf')"
+                        [disabled]="status !== 'connected'"
                         mat-mini-fab
                         color="default"
                         [ngClass]="
@@ -148,19 +162,6 @@
                         (click)="escalateToAV('video')"
                     >
                         <mat-icon>video_call</mat-icon>
-                    </button>
-
-                    <button
-                        *ngIf="showAutoFreeze"
-                        [disabled]="status !== 'connected'"
-                        mat-mini-fab
-                        color="default"
-                        class="bg-danger"
-                        [ngClass]="status === 'connected' ? 'mat-elevation-z2' : ''"
-                        matTooltip="Freeze Auto Response"
-                        (click)="freezeAutoResponse()"
-                    >
-                        <mat-icon>sync_disabled</mat-icon>
                     </button>
 
                     <button

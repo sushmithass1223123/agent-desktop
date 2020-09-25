@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { RemiderTaskDialogComponent } from '@modules/shared/remider-task-dialog/remider-task-dialog.component';
 import { IWidget } from 'app/interfaces';
+import { TwWidgetModel } from 'app/models';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AgentNotificaitonEvent, AgentReminder, AgentStatusChangeEvent, CommandResultEvent, IResponse, IUIEvent, SDKClient, TUtils } from 'tmac-sdk';
@@ -133,11 +134,12 @@ export class TMACEventService {
      */
     private onAgentNotificaitonEvent = (evt: AgentNotificaitonEvent) => {
         try {
-            // check if the interaction id is there then return
-            if (evt.InteractionID > 0) {
-                TUtils.Logger.console('info', 'TMACEventService.AgentNotificaitonEvent: event for an interaction, return');
-                return;
-            }
+            // TODO:: check if the interaction id is there then return 
+            // and to handle interaction AgentNotificaitonEvent separatly
+            // if (evt.InteractionID > 0) {
+            //     TUtils.Logger.console('info', 'TMACEventService.AgentNotificaitonEvent: event for an interaction, return');
+            //     return;
+            // }
 
             // get the type
             const type = evt.Type.toLowerCase();
@@ -169,6 +171,10 @@ export class TMACEventService {
                      * [OPTIONAL] Request Id for DacRequest action
                      */
                     RequestId?: string;
+                    /**
+                     * [OPTIONAL] Header for the assist widget
+                     */
+                    Header?: string,
                 } = JSON.parse(evt.Message);
 
                 // get the action
@@ -222,6 +228,34 @@ export class TMACEventService {
                                 // set the dialogRef to null
                                 this._remiderTaskDialog.dacRequest = null;
                             });
+                            break;
+                        }
+                    case 'vivr':
+                        {
+                            // check if AOT cofngured for VIVR
+                            const widget: IWidget = new TwWidgetModel(`Agent Assist - ${parsedMessage.Header}`, 'tw-custom', 'assistance');
+                            widget.Config.Actions = ['minimize', 'destroy'];
+                            widget.Config.Position.W = 450;
+                            widget.Config.Position.H = 800;
+                            widget.Data.Url = parsedMessage.Data;
+
+                            // if mandatory, pop a confiration and destroy
+                            if (parsedMessage.IsMandatory) {
+                                widget.OnDestroy = () => {
+                                    // get confiration before close
+                                    const confirmDialogRef = this._appUIService.showAppConfirmDialog('generic', 'Confirm Close', 'Are you sure you want to close this widget?');
+                                    confirmDialogRef.afterClosed().subscribe((resp) => {
+                                        if (resp) {
+                                            widget.destroy();
+                                        }
+                                    });
+                                    return false;
+                                };
+                            }
+                            // check if widget is found
+                            if (widget) {
+                                this._aotWidgetService.addWidget(widget);
+                            }
                             break;
                         }
                     default:

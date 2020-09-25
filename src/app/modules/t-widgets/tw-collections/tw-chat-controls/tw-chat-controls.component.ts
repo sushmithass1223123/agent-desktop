@@ -83,7 +83,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     user: IAgentData;
     replyInput: any;
     sessionID = 'NA';
-    startTime: string | Date = 'NA';
+    startTime: Date;
     duration: number;
     stopTimer = new Subject();
     status = 'NA';
@@ -832,7 +832,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             who: this.user.agentName,
             isAgent: true,
             message: inputMessage,
-            time: new Date()
+            time: moment(new Date())
         };
 
         // check if reply feature is enabled or not social media

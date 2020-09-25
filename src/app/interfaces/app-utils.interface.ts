@@ -71,7 +71,7 @@ export interface ChatTranscripts {
     messageId?: string;
     message?: string;
     type?: string;
-    time?: string | Date | Moment;
+    time?: Date | Moment;
     divider?: boolean;
     attachment?: {
         src: string;

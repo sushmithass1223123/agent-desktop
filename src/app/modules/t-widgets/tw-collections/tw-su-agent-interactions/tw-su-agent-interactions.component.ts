@@ -174,12 +174,12 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
             .then((resp: IResponse) => {
                 // check the response
                 if (resp.response && resp.response.ResultCode >= 0) {
-                    this._appUIService.showSnackbar('Chat silent barge-in successful', 'success');
+                    this._appUIService.showSnackbar(`Chat ${type === 'conf' ? 'conference' : type} barge-in successful`, 'success');
                     // close the widget
                     this._aotWidgetService.destroyWidget(this.data.ID);
                 }
                 else {
-                    this._appUIService.showSnackbar('Chat silent barge-in failed', 'failure');
+                    this._appUIService.showSnackbar(`Chat ${type === 'conf' ? 'conference' : type} barge-in failed`, 'failure');
                 }
             })
             .catch(() => {
