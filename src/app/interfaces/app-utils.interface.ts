@@ -150,9 +150,9 @@ export interface ReminderTaskDialogData {
      */
     snooze: () => void;
     /**
-     * Type of reminder task of type AppAlertDialogTypes
+     * Type of reminder task of type ReminderTaskDialogTypes
      */
-    type: AppAlertDialogTypes;
+    type: ReminderTaskDialogTypes;
 }
 
 export type AppConfirmDialogTypes = 'takeoverSession' | 'endInteraction' | 'closeInteraction' | 'logout' | 'generic';
