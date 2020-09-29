@@ -16,42 +16,52 @@
         "PromptAgentIdOnInvalidLanId": false
     },
     "Main": {
-        "Navbar": {
+        "Toolbar": {
             "Height": 50,
             "Widgets": [
                 {
                     "Name": "Interaction indicators",
                     "Description": "",
                     "Type": "tw-active-interaction",
-                    "Config": {},
+                    "Config": {
+                        "Enabled": true
+                    },
                     "Data": {}
                 },
                 {
-                    "Name": "Navbar Menu",
+                    "Name": "Toolbar Menu",
                     "Description": "",
                     "Type": "tw-toolbar-menu",
-                    "Config": {},
+                    "Config": {
+                        "Enabled": true
+                    },
                     "Data": {
                         "Widgets": [
                             {
                                 "Name": "Broadcast Message",
                                 "Description": "",
                                 "Type": "tw-broadcast",
-                                "Config": {},
+                                "Config": {
+                                    "Enabled": true
+                                },
                                 "Data": {}
                             },
                             {
                                 "Name": "Aux Timer",
                                 "Description": "",
                                 "Type": "tw-aux-timer",
-                                "Config": {},
+                                "Config": {
+                                    "Enabled": true
+                                },
                                 "Data": {}
                             },
                             {
                                 "Name": "Agent Details",
                                 "Description": "",
                                 "Type": "tw-agent-details",
-                                "Config": {},
+                                "Config": {
+                                    "Enabled": true
+                                },
                                 "Data": {
                                     "ProfilePicture": true,
                                     "Status": true,
@@ -62,14 +72,18 @@
                                 "Name": "Aux Codes Dropdown",
                                 "Description": "",
                                 "Type": "tw-aux-codes",
-                                "Config": {},
+                                "Config": {
+                                    "Enabled": true
+                                },
                                 "Data": {}
                             },
                             {
                                 "Name": "Logout Button",
                                 "Description": "",
                                 "Type": "tw-logout",
-                                "Config": {},
+                                "Config": {
+                                    "Enabled": true
+                                },
                                 "Data": {
                                     "LogoutAux": "logout"
                                 }
@@ -78,14 +92,18 @@
                                 "Name": "Agent IM",
                                 "Description": "",
                                 "Type": "tw-instant-messaging",
-                                "Config": {},
+                                "Config": {
+                                    "Enabled": true
+                                },
                                 "Data": {}
                             },
                             {
                                 "Name": "Notification",
                                 "Description": "",
                                 "Type": "tw-notifications",
-                                "Config": {},
+                                "Config": {
+                                    "Enabled": true
+                                },
                                 "Data": {}
                             }
                         ]
@@ -93,7 +111,7 @@
                 }
             ]
         },
-        "Sidebar": {
+        "Navbar": {
             "Widgets": {
                 "Top": [
                     {
@@ -101,6 +119,7 @@
                         "Description": "",
                         "Type": "twn-home",
                         "Config": {
+                            "Enabled": true,
                             "Icon": "home"
                         },
                         "Data": {
@@ -113,6 +132,7 @@
                         "Description": "",
                         "Type": "twn-supervisor",
                         "Config": {
+                            "Enabled": true,
                             "Icon": "supervised_user_circle"
                         },
                         "Data": {
@@ -125,6 +145,7 @@
                         "Description": "",
                         "Type": "twn-voice",
                         "Config": {
+                            "Enabled": true,
                             "Icon": "phone"
                         },
                         "Data": {
@@ -137,6 +158,7 @@
                         "Description": "",
                         "Type": "twn-textchat",
                         "Config": {
+                            "Enabled": true,
                             "Icon": "chat"
                         },
                         "Data": {
@@ -149,6 +171,7 @@
                         "Description": "",
                         "Type": "twn-email",
                         "Config": {
+                            "Enabled": true,
                             "Icon": "email"
                         },
                         "Data": {
@@ -161,6 +184,7 @@
                         "Description": "",
                         "Type": "twc-workbench",
                         "Config": {
+                            "Enabled": true,
                             "Icon": "library_books"
                         },
                         "Data": {
@@ -175,6 +199,7 @@
                         "Description": "",
                         "Type": "twn-custom",
                         "Config": {
+                            "Enabled": true,
                             "Icon": "tv"
                         },
                         "Data": {
@@ -187,6 +212,7 @@
                         "Description": "",
                         "Type": "twn-custom",
                         "Config": {
+                            "Enabled": true,
                             "Icon": "meeting_room"
                         },
                         "Data": {
@@ -199,6 +225,7 @@
                         "Description": "",
                         "Type": "twn-custom",
                         "Config": {
+                            "Enabled": true,
                             "Icon": "dashboard"
                         },
                         "Data": {
@@ -211,6 +238,7 @@
                         "Description": "",
                         "Type": "twn-custom",
                         "Config": {
+                            "Enabled": true,
                             "Icon": "sentiment_satisfied_alt"
                         },
                         "Data": {
@@ -223,6 +251,7 @@
                         "Description": "",
                         "Type": "twn-custom",
                         "Config": {
+                            "Enabled": true,
                             "Icon": "signal_cellular_alt"
                         },
                         "Data": {
@@ -235,6 +264,7 @@
                         "Description": "",
                         "Type": "twn-custom",
                         "Config": {
+                            "Enabled": true,
                             "Icon": "format_list_bulleted"
                         },
                         "Data": {
@@ -247,6 +277,7 @@
                         "Description": "",
                         "Type": "twn-custom",
                         "Config": {
+                            "Enabled": true,
                             "Icon": "analytics"
                         },
                         "Data": {
@@ -264,6 +295,7 @@
                     "Description": "",
                     "Type": "twc-home",
                     "Config": {
+                        "Enabled": true,
                         "Class": "",
                         "Position": {
                             "X": 3,
@@ -279,6 +311,7 @@
                                     "Description": "",
                                     "Type": "tw-wallboard",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": true,
                                         "AOT": false,
@@ -303,6 +336,7 @@
                                     "Description": "",
                                     "Type": "tw-pie-chart",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -330,6 +364,7 @@
                                     "Description": "",
                                     "Type": "tw-aht-tc",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -356,6 +391,7 @@
                                     "Description": "",
                                     "Type": "tw-pie-chart",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -383,6 +419,7 @@
                                     "Description": "",
                                     "Type": "tw-ad-interaction-details",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -407,6 +444,7 @@
                                     "Description": "",
                                     "Type": "tw-ad-performance",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -433,6 +471,7 @@
                                     "Description": "",
                                     "Type": "tw-ad-gamification",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -460,6 +499,7 @@
                                     "Description": "phone_callback",
                                     "Type": "tw-ad-callbacks",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -486,6 +526,7 @@
                                     "Description": "",
                                     "Type": "tw-ad-feedback",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -512,6 +553,7 @@
                                     "Description": "",
                                     "Type": "tw-ad-score",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -538,6 +580,7 @@
                                     "Description": "",
                                     "Type": "tw-custom",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": true,
                                         "AOT": true,
@@ -567,6 +610,7 @@
                                     "Description": "",
                                     "Type": "tw-custom",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": true,
                                         "AOT": true,
@@ -596,6 +640,7 @@
                                     "Description": "",
                                     "Type": "tw-custom",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -620,50 +665,11 @@
                     }
                 },
                 {
-                    "Name": "Workbench",
-                    "Description": "",
-                    "Type": "twc-workbench",
-                    "Config": {
-                        "Class": "",
-                        "Position": {
-                            "X": 3,
-                            "Y": 6
-                        }
-                    },
-                    "Data": {
-                        "Path": "/workbench",
-                        "Widgets": {
-                            "Static": [
-                                {
-                                    "Name": "Workbench Panel",
-                                    "Description": "",
-                                    "Type": "tw-workbench-panel",
-                                    "Config": {
-                                        "Static": true,
-                                        "Anchor": true,
-                                        "AOT": false,
-                                        "Icon": "dvr",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 3,
-                                            "Y": 2
-                                        },
-                                        "Actions": [],
-                                        "ViewState": "restore"
-                                    },
-                                    "Data": {
-                                        "EmailSearchUrl": "http://dice.tetherfi.cloud:55005/api/workbench/email/search"
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                },
-                {
                     "Name": "Supervisor",
                     "Description": "",
                     "Type": "twc-supervisor",
                     "Config": {
+                        "Enabled": true,
                         "Class": "",
                         "Position": {
                             "X": 3,
@@ -679,6 +685,7 @@
                                     "Description": "",
                                     "Type": "tw-su-active-agents",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -701,6 +708,7 @@
                                     "Description": "",
                                     "Type": "tw-pie-chart",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -728,6 +736,7 @@
                                     "Description": "",
                                     "Type": "tw-aht-tc",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -754,6 +763,7 @@
                                     "Description": "",
                                     "Type": "tw-pie-chart",
                                     "Config": {
+                                        "Enabled": true,
                                         "Anchor": false,
                                         "AOT": false,
                                         "Icon": "",
@@ -780,6 +790,7 @@
                                     "Description": "",
                                     "Type": "tw-pie-chart",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -806,6 +817,7 @@
                                     "Description": "",
                                     "Type": "tw-wallboard",
                                     "Config": {
+                                        "Enabled": true,
                                         "Anchor": false,
                                         "AOT": false,
                                         "Icon": "",
@@ -831,6 +843,7 @@
                                     "Description": "",
                                     "Type": "tw-su-channels",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -855,6 +868,7 @@
                                     "Description": "",
                                     "Type": "tw-pie-chart",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -882,6 +896,7 @@
                                     "Description": "",
                                     "Type": "tw-work-codes",
                                     "Config": {
+                                        "Enabled": true,
                                         "Anchor": false,
                                         "AOT": false,
                                         "Icon": "",
@@ -911,6 +926,7 @@
                                     "Description": "",
                                     "Type": "tw-su-gamification",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": true,
@@ -943,6 +959,7 @@
                     "Description": "",
                     "Type": "twc-voice",
                     "Config": {
+                        "Enabled": true,
                         "Class": "",
                         "Position": {
                             "X": 3,
@@ -958,6 +975,7 @@
                                     "Description": "",
                                     "Type": "tw-voice-panel",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": true,
                                         "Anchor": false,
                                         "AOT": false,
@@ -978,6 +996,7 @@
                                                 "Description": "",
                                                 "Type": "tw-voice-controls",
                                                 "Config": {
+                                                    "Enabled": true,
                                                     "Static": false,
                                                     "Anchor": true,
                                                     "AOT": false,
@@ -1028,6 +1047,7 @@
                                                 "Description": "",
                                                 "Type": "tw-customer-details",
                                                 "Config": {
+                                                    "Enabled": true,
                                                     "Static": false,
                                                     "Anchor": true,
                                                     "AOT": false,
@@ -1099,6 +1119,7 @@
                                                 "Description": "",
                                                 "Type": "tw-customer-journey",
                                                 "Config": {
+                                                    "Enabled": true,
                                                     "Static": false,
                                                     "Anchor": true,
                                                     "AOT": false,
@@ -1133,6 +1154,7 @@
                                     "Description": "",
                                     "Type": "tw-agent-assist",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -1169,6 +1191,7 @@
                                     "Description": "",
                                     "Type": "tw-account-information",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -1193,6 +1216,7 @@
                                     "Description": "",
                                     "Type": "tw-amdocs-bcc",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -1217,6 +1241,7 @@
                                     "Description": "feedback",
                                     "Type": "tw-customer-sentiment",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -1241,6 +1266,7 @@
                                     "Description": "",
                                     "Type": "tw-work-codes",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -1269,6 +1295,7 @@
                                     "Description": "",
                                     "Type": "tw-voice-bot-transcripts",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -1295,6 +1322,7 @@
                                     "Description": "",
                                     "Type": "tw-register-callback",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": true,
                                         "AOT": true,
@@ -1333,6 +1361,7 @@
                                     "Description": "",
                                     "Type": "tw-custom",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": true,
                                         "AOT": true,
@@ -1362,6 +1391,7 @@
                                     "Description": "",
                                     "Type": "tw-custom",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": true,
                                         "AOT": true,
@@ -1391,6 +1421,7 @@
                                     "Description": "",
                                     "Type": "tw-voice-canned-responses",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": true,
                                         "AOT": true,
@@ -1420,6 +1451,7 @@
                     "Description": "",
                     "Type": "twc-textchat",
                     "Config": {
+                        "Enabled": true,
                         "Class": "",
                         "Position": {
                             "X": 3,
@@ -1435,6 +1467,7 @@
                                     "Description": "",
                                     "Type": "tw-chat-panel",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": true,
                                         "Anchor": false,
                                         "AOT": false,
@@ -1455,6 +1488,7 @@
                                                 "Description": "",
                                                 "Type": "tw-chat-controls",
                                                 "Config": {
+                                                    "Enabled": true,
                                                     "Static": false,
                                                     "Anchor": true,
                                                     "AOT": false,
@@ -1521,6 +1555,7 @@
                                                 "Description": "",
                                                 "Type": "tw-customer-details",
                                                 "Config": {
+                                                    "Enabled": true,
                                                     "Static": false,
                                                     "Anchor": true,
                                                     "AOT": false,
@@ -1622,6 +1657,7 @@
                                                 "Description": "",
                                                 "Type": "tw-customer-journey",
                                                 "Config": {
+                                                    "Enabled": true,
                                                     "Static": false,
                                                     "Anchor": true,
                                                     "AOT": false,
@@ -1656,6 +1692,7 @@
                                     "Description": "",
                                     "Type": "tw-agent-assist",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -1692,6 +1729,7 @@
                                     "Description": "",
                                     "Type": "tw-account-information",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -1716,6 +1754,7 @@
                                     "Description": "",
                                     "Type": "tw-canned-responses",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -1740,6 +1779,7 @@
                                     "Description": "feedback",
                                     "Type": "tw-customer-sentiment",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -1764,6 +1804,7 @@
                                     "Description": "",
                                     "Type": "tw-work-codes",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -1792,6 +1833,7 @@
                                     "Description": "",
                                     "Type": "tw-amdocs-bcc",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -1818,6 +1860,7 @@
                                     "Description": "",
                                     "Type": "tw-register-callback",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": true,
                                         "AOT": true,
@@ -1856,6 +1899,7 @@
                                     "Description": "",
                                     "Type": "tw-custom",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": true,
                                         "AOT": true,
@@ -1885,6 +1929,7 @@
                                     "Description": "",
                                     "Type": "tw-custom",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": true,
                                         "AOT": true,
@@ -1918,6 +1963,7 @@
                     "Description": "",
                     "Type": "twc-email",
                     "Config": {
+                        "Enabled": true,
                         "Class": "",
                         "Position": {
                             "X": 3,
@@ -1926,7 +1972,403 @@
                     },
                     "Data": {
                         "Path": "/email",
-                        "Widgets": []
+                        "Widgets": {
+                            "Static": [
+                                {
+                                    "Name": "Email-Panel",
+                                    "Description": "",
+                                    "Type": "tw-email-panel",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": true,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 3,
+                                            "Y": 2
+                                        },
+                                        "Actions": [],
+                                        "ViewState": "restore",
+                                        "Header": false
+                                    },
+                                    "Data": {
+                                        "Widgets": [
+                                            {
+                                                "Name": "Email Controls",
+                                                "Description": "",
+                                                "Type": "tw-email-controls",
+                                                "Config": {
+                                                    "Enabled": true,
+                                                    "Static": false,
+                                                    "Anchor": true,
+                                                    "AOT": false,
+                                                    "Icon": "chat",
+                                                    "Class": "",
+                                                    "Position": {
+                                                        "X": 1,
+                                                        "Y": 2
+                                                    },
+                                                    "Actions": [
+                                                        "maximize",
+                                                        "minimize",
+                                                        "float"
+                                                    ],
+                                                    "ViewState": "restore",
+                                                    "PinState": false,
+                                                    "FloatState": false,
+                                                    "Resizable": false,
+                                                    "Header": true
+                                                },
+                                                "Data": {}
+                                            },
+                                            {
+                                                "Name": "Customer Journey",
+                                                "Description": "",
+                                                "Type": "tw-customer-journey",
+                                                "Config": {
+                                                    "Enabled": true,
+                                                    "Static": false,
+                                                    "Anchor": true,
+                                                    "AOT": false,
+                                                    "Icon": "storage",
+                                                    "Class": "",
+                                                    "Position": {
+                                                        "X": 1,
+                                                        "Y": 2
+                                                    },
+                                                    "Actions": [
+                                                        "maximize",
+                                                        "minimize"
+                                                    ],
+                                                    "ViewState": "restore",
+                                                    "PinState": false,
+                                                    "FloatState": false,
+                                                    "Resizable": false,
+                                                    "Header": true
+                                                },
+                                                "Data": {
+                                                    "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/version5/index.html?Key=SESSIONID:",
+                                                    "NoOfRecords": 20
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "Dynamic": [
+                                {
+                                    "Name": "Agent Assist",
+                                    "Description": "",
+                                    "Type": "tw-agent-assist",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "verified_user",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {
+                                        "Confidence": 0.5,
+                                        "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=_intent&ucid=_ucid",
+                                        "Title": "Agent Assist",
+                                        "Icon": "assistant",
+                                        "Width": 450,
+                                        "Height": 800,
+                                        "Actions": [
+                                            "minimize",
+                                            "maximize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore"
+                                    }
+                                },
+                                {
+                                    "Name": "Account Information",
+                                    "Description": "",
+                                    "Type": "tw-account-information",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {}
+                                },
+                                {
+                                    "Name": "Canned Responses",
+                                    "Description": "",
+                                    "Type": "tw-canned-responses",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {}
+                                },
+                                {
+                                    "Name": "Realtime Customer Sentiment",
+                                    "Description": "feedback",
+                                    "Type": "tw-customer-sentiment",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "sentiment_satisfied_alt",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {}
+                                },
+                                {
+                                    "Name": "Work Codes",
+                                    "Description": "",
+                                    "Type": "tw-work-codes",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {
+                                        "Source": "interaction",
+                                        "ByTeam": false,
+                                        "ByGroup": false
+                                    }
+                                },
+                                {
+                                    "Name": "AMDOC-BCC",
+                                    "Description": "",
+                                    "Type": "tw-amdocs-bcc",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {}
+                                }
+                            ],
+                            "AOT": [
+                                {
+                                    "Name": "Register Callback",
+                                    "Description": "",
+                                    "Type": "tw-register-callback",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "Icon": "phone_callback",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0,
+                                            "W": 300,
+                                            "H": 300
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {
+                                        "GetCampaignsUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Campaign/GetCampaigns",
+                                        "CreateContactCampaignUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Contact/CreateCampaignContact",
+                                        "DataMap": {
+                                            "Name": {
+                                                "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.Name",
+                                                "DefaultValue": "Mr. Tan"
+                                            },
+                                            "Phone": {
+                                                "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.mobile",
+                                                "DefaultValue": "6596975347"
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "Name": "TAS",
+                                    "Description": "",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "Icon": "integration_instructions",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0,
+                                            "W": 1000,
+                                            "H": 700
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/TAS/Survey/Index?intentname=DiceIntent2&inSimulation=false&agentid=50020&customerid=12&ucid=Test&flowType=Test&campId=Test&station=42002&phoneNumber=6539284004#"
+                                    }
+                                },
+                                {
+                                    "Name": "STPedia",
+                                    "Description": "",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "Icon": "school",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0,
+                                            "W": 1000,
+                                            "H": 700
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "OpenInNew": false,
+                                        "Url": "https://www.tetherfi.com"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "Name": "Workbench",
+                    "Description": "",
+                    "Type": "twc-workbench",
+                    "Config": {
+                        "Enabled": true,
+                        "Class": "",
+                        "Position": {
+                            "X": 3,
+                            "Y": 6
+                        }
+                    },
+                    "Data": {
+                        "Path": "/workbench",
+                        "Widgets": {
+                            "Static": [
+                                {
+                                    "Name": "Workbench Panel",
+                                    "Description": "",
+                                    "Type": "tw-workbench-panel",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": true,
+                                        "Anchor": true,
+                                        "AOT": false,
+                                        "Icon": "dvr",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 3,
+                                            "Y": 2
+                                        },
+                                        "Actions": [],
+                                        "ViewState": "restore"
+                                    },
+                                    "Data": {
+                                        "EmailSearchUrl": "https://dice.tetherfi.cloud:55005/api/workbench/email/search"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 },
                 {
@@ -1934,6 +2376,7 @@
                     "Description": "",
                     "Type": "twc-custom",
                     "Config": {
+                        "Enabled": true,
                         "Class": "",
                         "Position": {
                             "X": 3,
@@ -1950,6 +2393,7 @@
                     "Description": "",
                     "Type": "twc-custom",
                     "Config": {
+                        "Enabled": true,
                         "Class": "",
                         "Position": {
                             "X": 3,
@@ -1966,6 +2410,7 @@
                     "Description": "",
                     "Type": "twc-custom",
                     "Config": {
+                        "Enabled": true,
                         "Class": "",
                         "Position": {
                             "X": 3,
@@ -1982,6 +2427,7 @@
                     "Description": "",
                     "Type": "twc-custom",
                     "Config": {
+                        "Enabled": true,
                         "Class": "",
                         "Position": {
                             "X": 3,
@@ -1998,6 +2444,7 @@
                     "Description": "",
                     "Type": "twc-custom",
                     "Config": {
+                        "Enabled": true,
                         "Class": "",
                         "Position": {
                             "X": 3,
@@ -2014,6 +2461,7 @@
                     "Description": "",
                     "Type": "twc-custom",
                     "Config": {
+                        "Enabled": true,
                         "Class": "",
                         "Position": {
                             "X": 3,
@@ -2030,6 +2478,7 @@
                     "Description": "",
                     "Type": "twc-custom",
                     "Config": {
+                        "Enabled": true,
                         "Class": "",
                         "Position": {
                             "X": 3,
@@ -2059,6 +2508,7 @@
                     "Description": "",
                     "Type": "tw-custom",
                     "Config": {
+                        "Enabled": true,
                         "Static": false,
                         "Anchor": true,
                         "AOT": true,
@@ -2091,6 +2541,7 @@
                     "Description": "",
                     "Type": "tw-register-callback",
                     "Config": {
+                        "Enabled": true,
                         "Static": false,
                         "Anchor": true,
                         "AOT": true,

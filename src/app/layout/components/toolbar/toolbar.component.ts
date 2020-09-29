@@ -79,14 +79,13 @@ export class ToolbarComponent implements OnInit, OnDestroy {
                     // check if the config is not null
                     if (config !== null) {
                         // get the content widgets
-                        this.navbarWidgets = config.Main.Navbar.Widgets || [];
-
+                        this.navbarWidgets = config.Main.Toolbar.Widgets || [];
                         // loop and get the widgets
                         this.navbarWidgets.forEach((widget: IWidget) => {
-                            if (widget.Type === 'tw-active-interaction') {
+                            if (widget.Type === 'tw-active-interaction' && widget.Config.Enabled) {
                                 this.activeInteractionWidget = widget;
                             }
-                            else if (widget.Type === 'tw-toolbar-menu') {
+                            else if (widget.Type === 'tw-toolbar-menu' && widget.Config.Enabled) {
                                 this.toolbarMenuWidget = widget;
                             }
                         });

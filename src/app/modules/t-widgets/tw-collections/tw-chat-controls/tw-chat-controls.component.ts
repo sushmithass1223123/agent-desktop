@@ -13,7 +13,7 @@ import {
 } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { FusePerfectScrollbarDirective } from '@fuse/directives/fuse-perfect-scrollbar/fuse-perfect-scrollbar.directive';
 import { FuseConfigService } from '@fuse/services/config.service';
@@ -28,20 +28,17 @@ import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { ChatTranscripts, InteractionRef, IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
+import * as _ from 'lodash';
 import * as moment from 'moment';
 import { Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
 import {
     AVChannel,
-
-
-
-
-    AVControlMessageReceivedEvent, IAgentData,
+    AVControlMessageReceivedEvent,
+    IAgentData,
     IResponse,
     IUIEvent,
     SDKClient,
-
     TextChatAgentConnectedEvent,
     TextChatAgentDisconnectedEvent,
     TextChatAgentMessageReceivedEvent,
@@ -50,10 +47,8 @@ import {
     TextChatMessageSentEvent,
     TextChatMessageTemplateSentEvent,
     TextChatRemoteUserConnectedEvent,
-
-
-
-    TextChatSelfServiceDestinationEvent, TextChatTranscriptForTransferEvent,
+    TextChatSelfServiceDestinationEvent,
+    TextChatTranscriptForTransferEvent,
     TextChatTypingStateChangedEvent,
     TextChatUserMessageWaitTimerEvent,
     TUtils
@@ -89,7 +84,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     status = 'NA';
     intent = 'NA';
     conferenceType = '';
-    conferenceAgentList = [];
+    conferenceAgentList: {
+        AgentId: string;
+        AgentName: string;
+        ConferenceType: string;
+        TmacServer: string;
+    }[] = [];
     chatTranscripts: ChatTranscripts[] = [];
     customerName = 'Customer';
     avConn: AVChannel;
@@ -100,6 +100,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     isSMM: boolean;
     showAutoFreeze: boolean;
     supervisorInit: boolean;
+    confirmDialogRef: MatDialogRef<any, any>;
 
     @ViewChildren(FusePerfectScrollbarDirective) directiveScrolls: QueryList<FusePerfectScrollbarDirective>;
     @ViewChildren('replyInput') replyInputField: any;
@@ -306,7 +307,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             'user': this.customerName
         });
         // update the session ID
-        this.sessionID = evt.TextChatSessionID + '|' + evt.InteractionID;
+        this.sessionID = evt.TextChatSessionID;
         // update the conference type
         this.conferenceType = evt.ConferenceType;
         // check for bot history
@@ -375,11 +376,19 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             return;
         }
 
+        // to store connected agent's TmacServer
+        let tmacServer = '';
+        try {
+            tmacServer = JSON.parse(JSON.parse(evt.AgentInfoJson).extraparam).serverName;
+        } catch (error) {
+        }
+
         // add the user to list
         this.conferenceAgentList.push({
             AgentId: evt.AgentId,
             AgentName: evt.AgentName,
-            ConferenceType: evt.ConferenceType
+            ConferenceType: evt.ConferenceType,
+            TmacServer: tmacServer
         });
     }
 
@@ -599,7 +608,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         fileServerUrl // check if file server URL is configured
                     ) {
                         // get the attachment src
-                        data.attachment.src = `${fileServerUrl}/${this.sessionID.split('|')[0]}/${data.attachment.name}`;
+                        data.attachment.src = `${fileServerUrl}/${this.sessionID}/${data.attachment.name}`;
                     }
                 }
             }
@@ -696,6 +705,34 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.avConn?.close();
         // hide auto response if enabled
         this.showAutoFreeze = false;
+        // get the alert message by reason
+        let alertMessage = '';
+        // show an alert based on reason
+        if (evt.ConferenceType !== 'silent') {
+            switch (evt.Reason.toLowerCase()) {
+                case 'remoteendclosed':
+                    alertMessage = 'Interaction disconnected by customer';
+                    break;
+                case 'agentchatdisconnected':
+                    alertMessage = 'Interaction disconnected by agent';
+                    break;
+                case 'agentchattransfercompleted':
+                    alertMessage = 'Interaction transferred to agent successfully';
+                    break;
+                case 'agentinitiatedcallback':
+                    alertMessage = 'Interaction disconnected by agent - Callback Initiated';
+                    break;
+                case 'customerinitiatedcallback':
+                    alertMessage = 'Interaction disconnected by customer - Callback Initiated';
+                    break;
+                case 'queuetransfercompleted':
+                    alertMessage = 'Interaction transferred to queue successfully';
+                    break;
+                case 'supervisortakeover':
+                    alertMessage = 'Interaction disconnected by supervisor - Supervisor Takeover';
+                    break;
+            }
+        }
     }
 
     /**
@@ -760,9 +797,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
                 // set ready to reply
                 this.readyToReply();
-
-                // freeze the auto response
-                this.freezeAutoResponse(true);
             }
         } catch (error) { }
     }
@@ -948,55 +982,45 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 this._appUIService.showSnackbar('End chat failed!', 'failure');
             });
     }
-
-    /**
-     * To close the current interaction
-     * @param btn Close interaction button to disable/enable
-     */
-    private closeInteraction(btn: MatButton): void {
-        // show the progress bar 
-        this._fuseProgressBarService.show();
-        // disable the button
-        btn.disabled = true;
-        SDKClient.closeInteraction(this.interactionId.toString(), null)
-            .then((dt: IResponse) => {
-                // hide the progress bar
-                this._fuseProgressBarService.hide();
-                // check the response
-                if (dt.response && dt.response.ResultCode === 0) {
-                    this._appUIService.showSnackbar('Interaction closed successfully');
-                }
-                else {
-                    // enable if something goes wrong
-                    btn.disabled = false;
-                    this._appUIService.showSnackbar('Close interaction failed', 'failure');
-                }
-            })
-            .catch(() => {
-                // enable if something goes wrong
-                btn.disabled = false;
-                this._fuseProgressBarService.hide();
-                this._appUIService.showSnackbar('Close interaction failed!', 'failure');
-            });
-    }
-
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------    
 
-    public onMaximized(event: boolean): void {
-        this.maximizeEvent.emit(event);
-        this.maximized = event;
+    /**
+     * On widget maximzed event
+     */
+    public onMaximized(isMax: boolean): void {
+        this.maximizeEvent.emit(isMax);
+        this.maximized = isMax;
     }
 
+    /**
+     * Check if the given message is the first message of a group
+     *
+     * @param message
+     * @param i
+     * @returns {boolean}
+     */
     public isFirstMessageOfGroup(message: any, i: number): boolean {
         return (i === 0 || this.chatTranscripts[i - 1] && this.chatTranscripts[i - 1].who !== message.who);
     }
 
+    /**
+     * Check if the given message is the last message of a group
+     *
+     * @param message
+     * @param i
+     * @returns {boolean}
+     */
     public isLastMessageOfGroup(message: any, i: number): boolean {
         return (i === this.chatTranscripts.length - 1 || this.chatTranscripts[i + 1] && this.chatTranscripts[i + 1].who !== message.who);
     }
 
+    /**
+     * To send a message to the remote end
+     * 
+     * @param event Input event
+     */
     public reply(event: any): void {
         event.preventDefault();
 
@@ -1008,6 +1032,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.sendMessage(null);
     }
 
+    /**
+     * To select an interaction from interaction list
+     * 
+     * @param {InteractionRef} item Interaction item
+     */
     public selectInteraction(item: InteractionRef): void {
         // if same interaction is seleted then return
         if (this.interactionId === item.interactionId) {
@@ -1022,28 +1051,64 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         });
     }
 
+    /**
+     * To confirm end chat
+     * 
+     * @param {MatButton} btn End chat button reference
+     */
     public confirmEndChat(btn: MatButton): void {
         // config force login
-        const confirmDialogRef = this._appUIService.showAppConfirmDialog('endInteraction');
-        confirmDialogRef.afterClosed().subscribe((dialogResult) => {
+        this.confirmDialogRef = this._appUIService.showAppConfirmDialog('endInteraction');
+        this.confirmDialogRef.afterClosed().subscribe((dialogResult: boolean) => {
             if (dialogResult) {
-                // send end chat to server 
                 this.endChat('AgentChatDisconnected', btn);
             }
         });
     }
 
+    /**
+     * To confirm close interaction
+     * 
+     * @param {MatButton} btn Close interaction button reference
+     */
     public confirmCloseInteraction(btn: MatButton): void {
-        // config force login
-        const confirmDialogRef = this._appUIService.showAppConfirmDialog('closeInteraction');
-        confirmDialogRef.afterClosed().subscribe((dialogResult) => {
+        // confirm close interaction
+        this.confirmDialogRef = this._appUIService.showAppConfirmDialog('closeInteraction');
+        this.confirmDialogRef.afterClosed().subscribe((dialogResult: boolean) => {
             if (dialogResult) {
                 // send end chat to server 
-                this.closeInteraction(btn);
+                // show the progress bar 
+                this._fuseProgressBarService.show();
+                // disable the button
+                btn.disabled = true;
+                SDKClient.closeInteraction(this.interactionId.toString(), null)
+                    .then((dt: IResponse) => {
+                        // hide the progress bar
+                        this._fuseProgressBarService.hide();
+                        // check the response
+                        if (dt.response && dt.response.ResultCode === 0) {
+                            this._appUIService.showSnackbar('Interaction closed successfully');
+                        }
+                        else {
+                            // enable if something goes wrong
+                            btn.disabled = false;
+                            this._appUIService.showSnackbar('Close interaction failed', 'failure');
+                        }
+                    })
+                    .catch(() => {
+                        // enable if something goes wrong
+                        btn.disabled = false;
+                        this._fuseProgressBarService.hide();
+                        this._appUIService.showSnackbar('Close interaction failed!', 'failure');
+                    });
             }
         });
     }
 
+    /**
+     * To free auto response to the customer
+     * @param force Force freeze flag
+     */
     public freezeAutoResponse(force: boolean): void {
         // check if valid to freeze
         if (!this.showAutoFreeze && !force) {
@@ -1070,6 +1135,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             });
     }
 
+    /**
+     * To escalate the chat to audio/video
+     * @param {'audio' | 'video'} type Type of escalation
+     */
     public escalateToAV(type: 'audio' | 'video'): void {
         // freeze auto response if needed
         this.freezeAutoResponse(false);
@@ -1078,24 +1147,24 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.openCallWidget(type, 'out');
     }
 
+    /**
+     * To preview the media sent by customer or agent
+     * @param {ChatTranscripts} previewData Chat transcript data
+     */
     public previewMedia(previewData: ChatTranscripts): void {
-        const confirmDialogRef = this._dialog.open(ConfirmDialogComponent, {
+        this.confirmDialogRef = this._dialog.open(ConfirmDialogComponent, {
             disableClose: false
         });
 
         if (previewData.attachment.type === 'image') {
-            confirmDialogRef.componentInstance.message = `<img src=${previewData.attachment.src} width="100%" width="100%" />`;
+            this.confirmDialogRef.componentInstance.message = `<img src=${previewData.attachment.src} width="100%" width="100%" />`;
         }
         else if (previewData.attachment.type === 'video') {
-            confirmDialogRef.componentInstance.message = `<video controls autoplay src=${previewData.attachment.src} width="100%" width="100%"></video>`;
+            this.confirmDialogRef.componentInstance.message = `<video controls autoplay src=${previewData.attachment.src} width="100%" width="100%"></video>`;
         }
 
-        confirmDialogRef.componentInstance.title = 'Preview';
-        confirmDialogRef.componentInstance.isAlert = true;
-        confirmDialogRef.afterClosed().subscribe((dialogResult) => {
-            if (dialogResult) {
-            }
-        });
+        this.confirmDialogRef.componentInstance.title = 'Preview';
+        this.confirmDialogRef.componentInstance.isAlert = true;
     }
 
     /**
@@ -1112,33 +1181,46 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * To change conference type of chat to whisper/conference/takeover for supervisor
      */
     public changeConferenceType(btn: MatButton): void {
-        // show the progress bar 
-        this._fuseProgressBarService.show();
-        // disable the button
-        btn.disabled = true;
         // get new conference  type
         const type = this.conferenceType === 'silent' ?
             'whisper' : this.conferenceType === 'whisper' ?
                 'conf' : 'takeover';
+        const confirmType = type === 'conf' ? 'conference' : type;
+        // get confirmation
+        this.confirmDialogRef = this._appUIService.showAppConfirmDialog('generic', 'Confirm Mode Change', `Are you sure to change chat to ${confirmType}?`);
+        this.confirmDialogRef.afterClosed().subscribe((dialogResult: boolean) => {
+            if (dialogResult) {
+                this._appUIService.showSnackbar(`Chaiging the chat mode to ${confirmType}, please wait...`, 'loading');
+                // show the progress bar 
+                this._fuseProgressBarService.show();
+                // disable the button
+                btn.disabled = true;
+                // change the conference type of the chat
+                SDKClient.changeTextChatConferenceType({
+                    interactionId: this.interactionId.toString(),
+                    type,
+                    sessionId: this.sessionID,
+                    conferenceAgents: _.map(this.conferenceAgentList, (item) => ({
+                        AgentId: item.AgentId,
+                        TmacServer: item.TmacServer
+                    }))
+                })
+                    .then((resp) => {
+                        btn.disabled = false;
+                        // hide the progress bar
+                        this._fuseProgressBarService.hide();
+                        // get the response from server and change the local conference type
+                        this.conferenceType = resp.response;
+                        this._appUIService.showSnackbar(`Chat mode changed to ${resp.response} successfully`);
+                    })
+                    .catch(() => {
+                        // enable if something goes wrong
+                        btn.disabled = false;
+                        this._fuseProgressBarService.hide();
+                        this._appUIService.showSnackbar(`Change chat mode to ${confirmType} failed!`, 'failure');
+                    });
+            }
+        });
 
-        // change the conference type of the chat
-        SDKClient.changeTextChatConferenceType({
-            interactionId: this.interactionId.toString(),
-            type
-        })
-            .then((resp) => {
-                btn.disabled = false;
-                // hide the progress bar
-                this._fuseProgressBarService.hide();
-                // get the response from server and change the local conference type
-                this.conferenceType = resp.response;
-                this._appUIService.showSnackbar(`Chat mode changed to ${resp.response} successfully`);
-            })
-            .catch(() => {
-                // enable if something goes wrong
-                btn.disabled = false;
-                this._fuseProgressBarService.hide();
-                this._appUIService.showSnackbar('Convert chat mode failed!', 'failure');
-            });
     }
 }

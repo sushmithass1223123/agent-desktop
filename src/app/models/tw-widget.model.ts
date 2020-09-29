@@ -47,6 +47,7 @@ export class TwWidgetModel {
         this.Description = '';
         this.Type = type || '';
         this.Config = {
+            Enabled: true,
             Static: false,
             Anchor: false,
             AOT: false,

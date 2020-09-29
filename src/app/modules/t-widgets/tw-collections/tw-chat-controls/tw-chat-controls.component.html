@@ -3,7 +3,7 @@
         <div fxLayout="column" fxLayoutAlign=" none" class="w-100-p px-12 py-4 border-radius-20 interaction-details">
             <div fxLayout="row" fxLayoutAlign="space-between none">
                 <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>alarm_on</mat-icon> {{ startTime | date: 'medium' }}</div>
-                <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>construction</mat-icon> {{ sessionID }}</div>
+                <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>construction</mat-icon> {{ sessionID + '|' + interactionId }}</div>
             </div>
             <div fxLayout="row" fxLayoutAlign="space-between none">
                 <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>timer</mat-icon> {{ (duration | date: 'H:mm:ss':'UTC') || '00:00:00' }}</div>

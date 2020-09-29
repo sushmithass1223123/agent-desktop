@@ -22,6 +22,7 @@ export interface InteractionWidgets {
 }
 
 export interface IWidgetConfig {
+    Enabled: boolean;
     Static: boolean;
     Anchor: boolean;
     AOT: boolean;

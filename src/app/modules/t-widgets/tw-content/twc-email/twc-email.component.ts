@@ -33,26 +33,30 @@ export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDes
         this.initWrapper(this.data);
 
         // subscribe to active interaction observable
-        this._interactionManagerService.interactions.pipe(takeUntil(this.unsubscribeAll)).subscribe((interactions: InteractionRef[]) => {
-            // check if there are email interactions first
-            if (this.interactions.length > 0) {
-                const emailInteractions = interactions.filter((i) => i.type === 'email');
-                // filter and get the active emailchat interaction if any
-                emailInteractions.forEach((interaction: InteractionRef) => {
-                    this.activeInteraction = interaction.isActive ? interaction.interactionId : this.activeInteraction;
-                });
-            }
-        });
+        this._interactionManagerService.interactions
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((interactions: InteractionRef[]) => {
+                // check if there are email interactions first
+                if (this.interactions.length > 0) {
+                    const emailInteractions = interactions.filter((i) => i.type === 'email');
+                    // filter and get the active emailchat interaction if any
+                    emailInteractions.forEach((interaction: InteractionRef) => {
+                        this.activeInteraction = interaction.isActive ? interaction.interactionId : this.activeInteraction;
+                    });
+                }
+            });
 
         // subscribe to interaction events observable
-        this._tmacEventService.constructDisposeEvents.pipe(takeUntil(this.unsubscribeAll)).subscribe((evt: any) => {
-            // filter the event name
-            if (evt.EventName === 'IncomingEmailEvent') {
-                this.EmailIncomingEvent(evt);
-            } else if (evt.EventName === 'InteractionClosedEvent') {
-                this.interactionClosed(evt);
-            }
-        });
+        this._tmacEventService.constructDisposeEvents
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((evt: any) => {
+                // filter the event name
+                if (evt.EventName === 'IncomingEmailEvent') {
+                    this.EmailIncomingEvent(evt);
+                } else if (evt.EventName === 'InteractionClosedEvent') {
+                    this.interactionClosed(evt);
+                }
+            });
     }
 
     ngOnDestroy(): void {
@@ -62,11 +66,11 @@ export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDes
 
     private EmailIncomingEvent = (evt: any) => {
         // get the content widgets
-        const textchatWidgets = this.data.Data.Widgets || [];
+        const emailWidgets = this.data.Data.Widgets || [];
 
-        const staticWidgets = textchatWidgets.Static || [];
-        const dynamicWidgets = textchatWidgets.Dynamic || [];
-        const aotWidgets = textchatWidgets.AOT || [];
+        const staticWidgets = emailWidgets.Static || [];
+        const dynamicWidgets = emailWidgets.Dynamic || [];
+        const aotWidgets = emailWidgets.AOT || [];
 
         // loop the widgets and add append interaction details
         staticWidgets.forEach((widget: IWidget) => {
@@ -104,7 +108,7 @@ export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDes
             path: this.data.Data.Path,
             otherData: evt
         });
-    };
+    }
 
     private interactionClosed = (evt: InteractionClosedEvent) => {
         this.interactions = this.interactions.filter((i: InteractionWidgets) => i.interactionId !== evt.InteractionID);
@@ -114,5 +118,5 @@ export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDes
                 isActive: true
             });
         }
-    };
+    }
 }

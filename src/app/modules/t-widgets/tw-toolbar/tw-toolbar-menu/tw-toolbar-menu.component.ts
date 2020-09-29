@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, Input, ViewEncapsulation } from '@angular/core';
 import { TWidgetWrapper } from '@twidgets/utils';
+import { IWidget } from 'app/interfaces';
 
 @Component({
     selector: 'tw-toolbar-menu',
@@ -9,9 +10,9 @@ import { TWidgetWrapper } from '@twidgets/utils';
 })
 export class TwToolbarMenuComponent extends TWidgetWrapper implements OnInit, OnDestroy {
 
-    @Input() data: any;
+    @Input() data: IWidget;
 
-    toolbarMenuWidget = [];
+    toolbarMenuWidget: IWidget[] = [];
 
     constructor() {
         super();
