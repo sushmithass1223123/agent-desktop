@@ -5,8 +5,10 @@
     </button>
     <div [@widgetStagger]="buttons.length">
         <!-- and here -->
-        <button mat-mini-fab color="secondary" *ngFor="let btn of buttons" class="fab-secondary" (click)="openAOTWidget(btn)">
-            <mat-icon [matTooltip]="btn.Name || 'Widget'">{{ btn.Config.Icon || 'widget' }}</mat-icon>
-        </button>
+        <ng-container *ngFor="let btn of buttons">
+            <button mat-mini-fab color="secondary" *ngIf="btn.Config.Enabled" class="fab-secondary" (click)="openAOTWidget(btn)">
+                <mat-icon [matTooltip]="btn.Name || 'Widget'">{{ btn.Config.Icon || 'widget' }}</mat-icon>
+            </button>
+        </ng-container>
     </div>
 </div>

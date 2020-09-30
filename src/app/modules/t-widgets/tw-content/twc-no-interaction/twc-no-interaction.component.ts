@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewEncapsulation, Input } from '@angular/core';
+import { IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 
 @Component({
@@ -9,12 +10,21 @@ import { TwWidgetModel } from 'app/models';
 })
 export class TwcNoInteractionComponent implements OnInit {
 
+    /**
+     * Type of content page
+     */
     @Input() type: string;
 
-    data: any;
+    /**
+     * Holds all the data related to this widget from the config
+     */
+    data: IWidget;
 
     constructor() { }
 
+    /**
+     * OnInit
+     */
     ngOnInit(): void {
         // assing the widget model to data
         this.data = new TwWidgetModel('No Interaction', 'twc-no-interaction');

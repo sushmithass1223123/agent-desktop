@@ -1,8 +1,6 @@
-import { Component, ElementRef, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
-import { IWidget } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
-import { DashboardService } from '@services/dashboard.service';
 
 @Component({
     selector: 'twc-workbench',
@@ -11,16 +9,34 @@ import { DashboardService } from '@services/dashboard.service';
     encapsulation: ViewEncapsulation.None
 })
 export class TwcWorkbenchComponent extends TWContentWrapper implements OnInit, OnDestroy {
-    @Input() data: IWidget;
-
+    /**
+     * To hold static widgets
+     */
     staticWidgets = [];
+    /**
+     * To hold dynamic widgets
+     */
     dynamicWidgets = [];
+    /**
+     * To hold AOT widgets
+     */
     aotWidgets = [];
 
-    constructor(public hostElement: ElementRef, public contentPageService: ContentPageService, private _dashboardService: DashboardService) {
+    /**
+     * Constructor
+     * 
+     * @param {ElementRef} hostElement
+     * @param {contentPageService} ContentPageService
+     */
+    constructor(
+        hostElement: ElementRef,
+        contentPageService: ContentPageService) {
         super(hostElement, contentPageService);
     }
 
+    /**
+     * OnInit
+     */
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);

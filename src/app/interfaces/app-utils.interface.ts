@@ -101,6 +101,10 @@ export interface AppNotification {
      * Status of the app notification 
      */
     status: 'new' | 'read';
+    /**
+     * To show alert or not
+     */
+    showAlert?: boolean;
 }
 
 export type SnackbarStateTypes = 'info' | 'loading' | 'warning' | 'success' | 'failure';
@@ -182,10 +186,6 @@ export interface AppConfirmDialogData {
 
 export interface AppSnackBarArgs {
     /**
-     * Type of app snackbar
-     */
-    type: string;
-    /**
      * Message to show in snackbar
      */
     message: string;
@@ -205,4 +205,27 @@ export interface AppSnackBarArgs {
      * Duration of snackbar, 5000 by default
      */
     duration?: number;
+}
+
+export interface CustomDialogData {
+    /**
+     * Type of custom dialog
+     */
+    type: 'alert' | 'prompt' | 'confirm';
+    /**
+     * Title of custom dialog
+     */
+    title?: string;
+    /**
+     * Message for the dialog
+     */
+    message: any;
+    /**
+     * Done callback
+     */
+    done: (data?: any) => void;
+    /**
+     * Cancel callback
+     */
+    cancel: () => void;
 }

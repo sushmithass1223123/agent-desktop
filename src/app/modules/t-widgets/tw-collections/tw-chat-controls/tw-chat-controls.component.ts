@@ -18,7 +18,6 @@ import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-b
 import { FusePerfectScrollbarDirective } from '@fuse/directives/fuse-perfect-scrollbar/fuse-perfect-scrollbar.directive';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
-import { ConfirmDialogComponent } from '@modules/shared/confirm-dialog/confirm-dialog.component';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
@@ -183,7 +182,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.fileUploadUrl = this.appConfig.Main.Content.Urls?.FileServerUrl || null;
 
         // check if this chat is init by supervisor
-        this.supervisorInit = this.data.InteractionDetails.RecoveryData.lineid === 'bargein';
+        this.supervisorInit = this.data.InteractionDetails?.RecoveryData?.lineid === 'bargein';
     }
 
     /**
@@ -1071,7 +1070,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * 
      * @param {MatButton} btn Close interaction button reference
      */
-    public confirmCloseInteraction(btn: MatButton): void {
+    public closeInteraction(btn: MatButton): void {
         // confirm close interaction
         this.confirmDialogRef = this._appUIService.showAppConfirmDialog('closeInteraction');
         this.confirmDialogRef.afterClosed().subscribe((dialogResult: boolean) => {
@@ -1152,19 +1151,17 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * @param {ChatTranscripts} previewData Chat transcript data
      */
     public previewMedia(previewData: ChatTranscripts): void {
-        this.confirmDialogRef = this._dialog.open(ConfirmDialogComponent, {
-            disableClose: false
-        });
+        // get the message to display
+        let message = '';
 
         if (previewData.attachment.type === 'image') {
-            this.confirmDialogRef.componentInstance.message = `<img src=${previewData.attachment.src} width="100%" width="100%" />`;
+            message = `<img src=${previewData.attachment.src} width="100%" width="100%" />`;
         }
         else if (previewData.attachment.type === 'video') {
-            this.confirmDialogRef.componentInstance.message = `<video controls autoplay src=${previewData.attachment.src} width="100%" width="100%"></video>`;
+            message = `<video controls autoplay src=${previewData.attachment.src} width="100%" width="100%"></video>`;
         }
 
-        this.confirmDialogRef.componentInstance.title = 'Preview';
-        this.confirmDialogRef.componentInstance.isAlert = true;
+        this.confirmDialogRef = this._appUIService.showCustomDialog('alert', message, 'Preview');
     }
 
     /**
@@ -1221,6 +1218,62 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     });
             }
         });
+    }
 
+    /**
+     * To conference Bot with the session
+     */
+    public conferenceWithBot(): void {
+        this._fuseProgressBarService.show();
+        // send the request to server
+        SDKClient.textChatConferenceToBot({
+            destination: '',
+            interactionId: this.interactionId.toString()
+        })
+            .then((resp) => {
+                // check the response
+                if (resp.response > 0) {
+                    this._appUIService.showSnackbar(`Chat conferenced with bot successfully`);
+                }
+                else {
+                    this._appUIService.showSnackbar(`Conference with bot failed!`, 'failure');
+                }
+                // hide the progress bar
+                this._fuseProgressBarService.hide();
+            })
+            .catch(() => {
+                this._fuseProgressBarService.hide();
+                this._appUIService.showSnackbar(`Error in conferencing with bot`, 'failure');
+            });
+    }
+
+    /**
+     * To save interaction comments to server
+     */
+    public saveInteractionComments(): void {
+        const dialogRef = this._appUIService.showCustomDialog('prompt', 'Enter the comments', 'Interaction Comment');
+        dialogRef.afterClosed().subscribe((resp1) => {
+            if (resp1) {
+                this._fuseProgressBarService.show();
+                SDKClient.saveInteractionComment({
+                    comment: resp1,
+                    interactionId: this.interactionId.toString()
+                })
+                    .then((resp2) => {
+                        if (resp2.response > 0) {
+                            this._appUIService.showSnackbar('Interaction comment saved successfully');
+                        }
+                        else {
+                            this._appUIService.showSnackbar('Interaction comment save failed', 'failure');
+                        }
+
+                        this._fuseProgressBarService.hide();
+                    })
+                    .catch(() => {
+                        this._fuseProgressBarService.hide();
+                        this._appUIService.showSnackbar('Error in saving interaction comment', 'failure');
+                    });
+            }
+        });
     }
 }

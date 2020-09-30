@@ -8,8 +8,8 @@ tw-email-panel {
         .tw-email-controls,
         .tw-customer-journey {
             flex: 1;
+            height: 33.3%;
             transition: all 0.6s ease-in-out;
-            height: 50%;
             &.maximized {
                 flex: 0;
                 &.collapsed {
@@ -20,11 +20,16 @@ tw-email-panel {
                 flex: 0;
             }
             &.floating {
-                flex: 1;
+                flex: 100%;
                 &.collapsed {
                     flex: inherit;
                 }
             }
+        }
+
+        .tw-email-controls {
+            flex: 2;
+            height: 66.6%;
         }
 
         @include media-breakpoint('gt-md') {

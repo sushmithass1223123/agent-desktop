@@ -1,8 +1,6 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewEncapsulation } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseConfigService } from '@fuse/services/config.service';
-import { ConfirmDialogComponent } from '@modules/shared/confirm-dialog/confirm-dialog.component';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
@@ -24,8 +22,6 @@ import { AgentFeatures, AgentTabCount, IAgentData, IAUXCodes, IResponse, SDKClie
 export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     // holds all the data related to this widget from the config
     @Input() data: any;
-    @Output() selectActiveAgent = new EventEmitter();
-
 
     fuseConfig: any;
     appConfig: any;
@@ -34,10 +30,8 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     agentList: SuAgentModel[];
     filteredAgents: SuAgentModel[];
     searchTerm: string;
-    selectedAgent = null;
-
+    selectedAgent: string
     featureMap = AGENT_FEATURES_MAP;
-
     activityWidget: IWidget;
     auxCodesList: IAUXCodes[];
 
@@ -48,8 +42,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         private _fuseConfigService: FuseConfigService,
         private _appDataService: AppDataService,
         private _appUIService: AppUiService,
-        private _aotWidgetService: AOTWidgetService,
-        private _dialog: MatDialog
+        private _aotWidgetService: AOTWidgetService
     ) {
         super();
 
@@ -83,6 +76,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         // listen to agent list event
         SDKClient.events.on('SupervisorAgentListEvent', this.SupervisorAgentListEvent);
         SDKClient.events.on('TeamAgentListDataEvent', this.TeamAgentListDataEvent);
+        SDKClient.events.on('AutoSelectSupervisorAgentEvent', this.AutoSelectSupervisorAgentEvent);
 
         // get agent aux codes
         SDKClient.loadAUXCodes(false, null)
@@ -105,6 +99,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         // listen off agent list event
         SDKClient.events.off('SupervisorAgentListEvent', this.SupervisorAgentListEvent);
         SDKClient.events.off('TeamAgentListDataEvent', this.TeamAgentListDataEvent);
+        SDKClient.events.off('AutoSelectSupervisorAgentEvent', this.AutoSelectSupervisorAgentEvent);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -142,6 +137,9 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             this.filterAgents();
         }
     }
+    private AutoSelectSupervisorAgentEvent = (evt: any) => {
+        this.selectedAgent = evt.AgentId;
+    }
 
     private createActivityWidget(item: any): void {
         // create activity details widget
@@ -175,12 +173,11 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     }
 
     public selectAgent(agent: any): void {
-        if (this.selectedAgent?.AgentLoginID === agent.AgentLoginID) {
+        if (this.selectedAgent === agent.AgentLoginID) {
             this.selectedAgent = null;
         } else {
-            this.selectedAgent = agent;
+            this.selectedAgent = agent.AgentLoginID;
         }
-        this.selectActiveAgent.emit(this.selectedAgent);
     }
 
     public featureCheck(feature: AgentFeatures, type: string, subType: string): boolean {
@@ -307,7 +304,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     public viewInteractions(item: SuAgentModel): void {
         const widget = new TwWidgetModel('Interaction Details - ' + item.AgentName, 'tw-su-agent-interactions');
         widget.Config.Anchor = true;
-        widget.Config.Position.W = 700;
+        widget.Config.Position.W = 800;
         widget.Config.Position.H = 300;
         widget.Config.Actions = ['maximize', 'minimize', 'destroy'];
         widget.Data = item;

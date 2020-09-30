@@ -1,11 +1,23 @@
 import { Injectable } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { RemiderTaskDialogComponent } from '@modules/shared/remider-task-dialog/remider-task-dialog.component';
+import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AgentNotificaitonEvent, AgentReminder, AgentStatusChangeEvent, CommandResultEvent, IResponse, IUIEvent, SDKClient, TUtils } from 'tmac-sdk';
+import {
+    ACWTimerEvent,
+    AgentNotificaitonEvent,
+    AgentReminder,
+    AgentStatusChangeEvent,
+    CommandResultEvent,
+    HoldTimerEvent,
+    IResponse,
+    IUIEvent,
+    SDKClient,
+    TUtils
+} from 'tmac-sdk';
 import { AOTWidgetService } from './aot-widget.service';
 import { AppDataService } from './app-data.service';
 import { AppUiService } from './app-ui.service';
@@ -131,8 +143,10 @@ export class TMACEventService {
 
     /**
      * To process AgentNotificaitonEvent
+     * 
+     * @param {AgentNotificaitonEvent} evt
      */
-    private onAgentNotificaitonEvent = (evt: AgentNotificaitonEvent) => {
+    private AgentNotificaitonEvent = (evt: AgentNotificaitonEvent) => {
         try {
             // TODO:: check if the interaction id is there then return 
             // and to handle interaction AgentNotificaitonEvent separatly
@@ -398,6 +412,55 @@ export class TMACEventService {
                     default:
                 }
             }
+            else if (type === 'agentsentimentdetected') {
+                // parse the message
+                const {
+                    AgentName,
+                    AgentId,
+                    DeviceId,
+                    Channel,
+                    TmacServer,
+                    SessionId,
+                    InteractionId
+                } = JSON.parse(evt.Message);
+                // get cofirmation
+                const confrimationDialogRef = this._appUIService.showAppConfirmDialog('generic',
+                    'Negative Sentiment Detected',
+                    `Negative sentiment has been detected for ${AgentName}. Do you want to monitor?`);
+                // route to supervisor page and select the agent if confirmed
+                confrimationDialogRef.afterClosed().subscribe((resp1) => {
+                    if (resp1) {
+                        this._appUIService.showSnackbar('Please wait, connecting to the interaction...', 'loading');
+                        // send request to server
+                        SDKClient.transferTextChat({
+                            agentId: AgentId,
+                            deviceId: DeviceId,
+                            tmacServer: TmacServer,
+                            chatMode: Channel === 'audiochat' ? 'audio' : Channel === 'videochat' ? 'video' : 'text',
+                            comment: '',
+                            conferenceType: 'silent',
+                            interactionId: InteractionId.toString(),
+                            lineId: 'bargein',
+                            sessionId: SessionId,
+                            toAgentId: SDKClient.getAgentData().agentId,
+                            toTmacServer: SDKClient.getAgentData().tmacServer
+                        })
+                            .then((resp2: IResponse) => {
+                                // check the response
+                                if (resp2.response && resp2.response.ResultCode >= 0) {
+                                    this._appUIService.showSnackbar(`Chat silent barge-in successful`, 'success');
+                                }
+                                else {
+                                    this._appUIService.showSnackbar(`Chat silent barge-in failed`, 'failure');
+                                }
+                            })
+                            .catch(() => {
+                                this._appUIService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
+                            });
+                    }
+                });
+
+            }
         } catch (error) {
             TUtils.Logger.log('Exception in AgentNotificaitonEvent', error);
         }
@@ -415,6 +478,31 @@ export class TMACEventService {
                 status
             }
         );
+    }
+
+    /**
+     * To process ACWTimerEvent
+     * 
+     * @param {ACWTimerEvent} evt
+     */
+    private ACWTimerEvent = (evt: ACWTimerEvent) => {
+        this._appUIService.showAppSnackbar({
+            message: `ACW timer alert for ${evt.ACWTimeString}`,
+            state: evt.ColorCode,
+            duration: 10000
+        });
+    }
+
+    /**
+     * To process HoldTimerEvent
+     * 
+     * @param {HoldTimerEvent} evt
+     */
+    private HoldTimerEvent = (evt: HoldTimerEvent) => {
+        this._appUIService.showAppSnackbar({
+            message: `Interaction is on hold for ${evt.HoldTimeString}`,
+            state: evt.ColorCode
+        });
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -438,7 +526,9 @@ export class TMACEventService {
             );
 
         SDKClient.events.on('onTMACEvent', this.onTMACEvents);
-        SDKClient.events.on('AgentNotificaitonEvent', this.onAgentNotificaitonEvent);
+        SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
+        SDKClient.events.on('ACWTimerEvent', this.ACWTimerEvent);
+        SDKClient.events.on('HoldTimerEvent', this.HoldTimerEvent);
     }
 
     /**
@@ -448,7 +538,9 @@ export class TMACEventService {
         TUtils.Logger.console('info', 'TMACEventService.unsubscribe');
 
         SDKClient.events.off('onTMACEvent', this.onTMACEvents);
-        SDKClient.events.off('AgentNotificaitonEvent', this.onAgentNotificaitonEvent);
+        SDKClient.events.off('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
+        SDKClient.events.off('ACWTimerEvent', this.ACWTimerEvent);
+        SDKClient.events.off('HoldTimerEvent', this.HoldTimerEvent);
 
         // unsubscribe from all subscriptions
         this._unsubscribeAll.next();

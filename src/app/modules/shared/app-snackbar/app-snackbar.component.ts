@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, ViewEncapsulation } from '@angular/core';
-import { MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
+import { MatSnackBar, MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
 
 @Component({
     selector: 'app-snackbar',
@@ -9,20 +9,12 @@ import { MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
 })
 export class AppSnackbarComponent implements OnInit {
 
-    constructor(@Inject(MAT_SNACK_BAR_DATA) public data:
+    constructor(private _snackbar: MatSnackBar, @Inject(MAT_SNACK_BAR_DATA) public data:
         {
-            /**
-             * Snackbar type
-             */
-            type: string
             /**
              * Snackbar message
              */
             message: string;
-            /**
-             * Snackbar state
-             */
-            state: string;
             /**
              * Snackbar icon
              */
@@ -31,7 +23,17 @@ export class AppSnackbarComponent implements OnInit {
 
     }
 
+    /**
+     * OnInit
+     */
     ngOnInit(): void {
+    }
+
+    /**
+     * To dismiss the snackbar
+     */
+    public dismiss(): void {
+        this._snackbar.dismiss();
     }
 
 }

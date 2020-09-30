@@ -20,19 +20,6 @@ import {
     CallConferenceRemoteConnectedEvent,
     CallConnectedEvent,
     CallDisconnectedEvent,
-
-
-
-
-
-
-
-
-
-
-
-
-
     CallerIntentEvent, CallHoldEvent,
     CallHoldReconnectEvent,
     CallTransferInitiatedEvent,
@@ -41,13 +28,8 @@ import {
     IAgentData,
     IResponse,
     IUIEvent,
-
-
-
-
     IVRDataEvent, MediaServerEvent,
     SDKClient,
-
     TEnums, TUtils
 } from 'tmac-sdk';
 
@@ -776,6 +758,36 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             if (dialogResult) {
                 // send end chat to server 
                 this.closeInteraction(btn);
+            }
+        });
+    }
+
+    /**
+     * To save interaction comments to server
+     */
+    public saveInteractionComments(): void {
+        const dialogRef = this._appUIService.showCustomDialog('prompt', 'Enter the comments', 'Interaction Comment');
+        dialogRef.afterClosed().subscribe((resp1) => {
+            if (resp1) {
+                this._fuseProgressBarService.show();
+                SDKClient.saveInteractionComment({
+                    comment: resp1,
+                    interactionId: this.interactionId.toString()
+                })
+                    .then((resp2) => {
+                        if (resp2.response > 0) {
+                            this._appUIService.showSnackbar('Interaction comment saved successfully');
+                        }
+                        else {
+                            this._appUIService.showSnackbar('Interaction comment save failed', 'failure');
+                        }
+
+                        this._fuseProgressBarService.hide();
+                    })
+                    .catch(() => {
+                        this._fuseProgressBarService.hide();
+                        this._appUIService.showSnackbar('Error in saving interaction comment', 'failure');
+                    });
             }
         });
     }

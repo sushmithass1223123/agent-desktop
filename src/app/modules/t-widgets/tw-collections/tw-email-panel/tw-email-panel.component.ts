@@ -9,30 +9,39 @@ import { IWidget } from 'app/interfaces';
     encapsulation: ViewEncapsulation.None
 })
 export class TwEmailPanelComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+    /**
+     * Holds widget data
+     */
     @Input() data: IWidget;
 
+    /**
+     * Holds all the email panel widgets
+     */
     emailPanelWidgets = [];
-
+    /**
+     * Maxmized referenece for widgets
+     */
     maximized = [
         {
-            'tw-voice-controls': false,
-            'tw-customer-details': false,
+            'tw-email-controls': false,
             'tw-customer-journey': false
         }
     ];
-
+    /**
+     * Collapsed referenece for widgets
+     */
     collapsed = [
         {
-            'tw-voice-controls': false,
-            'tw-customer-details': false,
+            'tw-email-controls': false,
             'tw-customer-journey': false
         }
     ];
-
+    /**
+     * Floating referenece for widgets
+     */
     floating = [
         {
-            'tw-voice-controls': false,
-            'tw-customer-details': false,
+            'tw-email-controls': false,
             'tw-customer-journey': false
         }
     ];
@@ -45,6 +54,9 @@ export class TwEmailPanelComponent extends TWidgetWrapper implements OnInit, OnD
     // @ Lifecycle hooks
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * OnInit
+     */
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
@@ -59,23 +71,14 @@ export class TwEmailPanelComponent extends TWidgetWrapper implements OnInit, OnD
         });
     }
 
+    /**
+     * OnDestroy
+     */
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
 
         this.unsubscribeAll.next();
         this.unsubscribeAll.complete();
-    }
-
-    onmaximized(ismaximized: boolean, type: string): void {
-        this.maximized[type] = ismaximized;
-    }
-
-    onCollapsed(isCollapsed: boolean, type: string): void {
-        this.collapsed[type] = isCollapsed;
-    }
-
-    onFloating(isFloating: boolean, type: string): void {
-        this.floating[type] = isFloating;
     }
 }

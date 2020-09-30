@@ -43,7 +43,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
     maximized = false;
     interactionList: any;
 
-    mindisplayedColumns: string[] = ['InteractionID', 'Channel', 'LastStatus', 'User', 'Actions'];
+    mindisplayedColumns: string[] = ['InteractionID', 'Channel', 'LastStatus', 'User', 'ActiveTime', 'HoldTime', 'Actions'];
 
     featureMap = AGENT_FEATURES_MAP;
     agentData: IAgentData;
@@ -162,6 +162,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
         SDKClient.transferTextChat({
             agentId: this.configData.AgentLoginID,
             deviceId: this.configData.StationID,
+            tmacServer: this.configData.TmacServer,
             chatMode: item.Channel === 'audiochat' ? 'audio' : item.Channel === 'videochat' ? 'video' : 'text',
             comment: '',
             conferenceType: type,

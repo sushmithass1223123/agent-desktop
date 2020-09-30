@@ -13,13 +13,21 @@ import { IAgentData, SDKClient } from 'tmac-sdk';
     encapsulation: ViewEncapsulation.None
 })
 export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, OnDestroy {
-
-    @Input() data: IWidget;
-
+    /**
+     * To hold agent data
+     */
     agentData: IAgentData;
-
+    /**
+     * To hold static widgets
+     */
     staticWidgets = [];
+    /**
+     * To hold dynamic widgets
+     */
     dynamicWidgets = [];
+    /**
+     * To hold AOT widgets
+     */
     aotWidgets = [];
 
     constructor(
@@ -30,6 +38,9 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
         super(hostElement, contentPageService);
     }
 
+    /**
+     * OnInit
+     */
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
@@ -62,6 +73,9 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
         }
     }
 
+    /**
+     * OnDestroy
+     */
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();

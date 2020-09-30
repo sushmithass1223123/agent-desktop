@@ -13,8 +13,12 @@
     <mat-icon color="primary" *ngIf="subType.toLowerCase() === 'field'">roofing</mat-icon>
 </ng-template>
 
-<!-- (collapseEvent)="collapseEvent($event)" (floatEvent)="floatEvent($event)" -->
-<tw-wrapper [data]="data" (maximizeEvent)="maximizeEvent($event)">
+<tw-wrapper
+    [data]="data"
+    (maximizeEvent)="onMaximizeEvent($event)"
+    (collapseEvent)="collapseEvent.emit($event)"
+    (floatEvent)="floatEvent.emit($event)"
+>
     <div *ngIf="!customerJourneyTable.loading" class="customer-journey" [fxLayout]="maximized ? 'column' : 'row wrap'" fxLayoutGap="6px">
         <div *ngIf="!maximized" class="timeline" fusePerfectScrollbar [fusePerfectScrollbarOptions]="{ suppressScrollX: true }">
             <div

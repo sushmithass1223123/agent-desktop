@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, QueryList, ViewChildren, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, QueryList, ViewChildren, ViewEncapsulation } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { DomSanitizer } from '@angular/platform-browser';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
@@ -20,7 +20,7 @@ import { TwEmailControlsMachine } from './tw-email-controls.machine';
     styleUrls: ['./tw-email-controls.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, OnDestroy, AfterViewInit {
+export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     /**
      * data from widget
      */
@@ -110,9 +110,10 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // set the user info
         this.user = SDKClient.getAgentData() || null;
-    }
 
-    ngAfterViewInit(): void {}
+        // play new email sound
+        this._appUIService.playAudio('new-email', 0.5);
+    }
 
     ngOnDestroy(): void {
         // call the wrapper destroy method
@@ -143,23 +144,34 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             });
     }
 
-    closeEmail(closeBtn: MatButton): void {
-        SDKClient.changeEmailStatus({
-            routeId: this.getInboxMessageReq.data.RouteId,
-            sessionId: this.getInboxMessageReq.data.SessionId,
-            status: 'Close'
-        })
-            .then(() => this.closeInteraction(closeBtn))
-            .catch(() => {
-                this._appUIService.showSnackbar('Close interaction failed!', 'failure');
-            });
+    closeEmail(btn: MatButton): void {
+        // confirm close interaction
+        const confirmDialogRef = this._appUIService.showAppConfirmDialog('closeInteraction');
+        confirmDialogRef.afterClosed().subscribe((dialogResult: boolean) => {
+            if (dialogResult) {
+                // send end chat to server 
+                // show the progress bar 
+                this._fuseProgressBarService.show();
+                // disable the button
+                btn.disabled = true;
+                SDKClient.changeEmailStatus({
+                    routeId: this.getInboxMessageReq.data.RouteId,
+                    sessionId: this.getInboxMessageReq.data.SessionId,
+                    status: 'Close'
+                })
+                    .then(() => this.closeInteraction(btn))
+                    .catch(() => {
+                        this._appUIService.showSnackbar('Close interaction failed!', 'failure');
+                    });
+            }
+        });
     }
 
-    closeInteraction(closeBtn: MatButton): void {
+    closeInteraction(btn: MatButton): void {
         // show the progress bar
         this._fuseProgressBarService.show();
         // disable the button
-        closeBtn.disabled = true;
+        btn.disabled = true;
         SDKClient.closeInteraction(this.interactionId.toString(), null)
             .then((dt: IResponse) => {
                 // hide the progress bar
@@ -169,7 +181,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                     this._appUIService.showSnackbar('Interaction closed sucessfully');
                 } else {
                     // enable if something goes wrong
-                    closeBtn.disabled = false;
+                    btn.disabled = false;
                     this._appUIService.showSnackbar('Close interaction failed', 'failure');
                 }
             })

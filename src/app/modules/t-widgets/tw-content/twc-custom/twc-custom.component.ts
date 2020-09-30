@@ -11,10 +11,13 @@ import { AGENT_DATA_MAP } from 'app/constants';
     encapsulation: ViewEncapsulation.None
 })
 export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDestroy {
-
-    @Input() data: any;
-
+    /**
+     * Frame loaded flag
+     */
     loaded = false;
+    /**
+     * Url to load the frame
+     */
     url: any;
 
     /**
@@ -31,16 +34,25 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
         super(hostElement, contentPageService);
     }
 
+    /**
+     * OnInit
+     */
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
     }
 
+    /**
+     * OnDestroy
+     */
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
     }
 
+    /**
+     * On page active
+     */
     onActive = () => {
         if (!this.loaded) {
             // check if the url is provided
@@ -60,13 +72,18 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
                 // load the iframe URL
                 this.url = this.transform(url);
             }
-            
+
             setTimeout(() => {
                 this.loaded = true;
             }, 3000);
         }
     }
 
+    /**
+     * To sanitize the URL to load URL safely
+     * 
+     * @param url Url to transform
+     */
     private transform(url: string): any {
         return this._sanitizer.bypassSecurityTrustResourceUrl(url);
     }

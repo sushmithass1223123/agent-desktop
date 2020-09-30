@@ -1,5 +1,5 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -95,6 +95,10 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      */
     interactionId: number;
     historyParams: IGetInteractionHistory;
+
+    @Output() maximizeEvent = new EventEmitter();
+    @Output() floatEvent = new EventEmitter();
+    @Output() collapseEvent = new EventEmitter();
 
     /**
      * Customer journey table Info
@@ -283,7 +287,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      * Maximize event from Wrapper
      * @param {Boolean} state
      */
-    public maximizeEvent(state: boolean): void {
+    public onMaximizeEvent(state: boolean): void {
+        this.maximizeEvent.emit(state);
         this.maximized = state;
     }
 

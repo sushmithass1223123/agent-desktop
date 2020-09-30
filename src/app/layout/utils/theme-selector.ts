@@ -1,6 +1,11 @@
 
 export class ThemeSelector {
-
+    /**
+     * To get fuse theme by theme name
+     * 
+     * @param themeName Name of the theme
+     * @param selector From the selector flag
+     */
     public static getFuseConfigByTheme(themeName: string, selector: boolean): any {
         let selectedTheme = null;
         switch (themeName) {
@@ -40,7 +45,6 @@ export class ThemeSelector {
                     };
                     break;
                 }
-
             case 'theme-teal-red':
                 {
                     selectedTheme = {
@@ -77,7 +81,6 @@ export class ThemeSelector {
                     };
                     break;
                 }
-
             case 'theme-default-dark':
                 {
                     selectedTheme = {
@@ -114,7 +117,6 @@ export class ThemeSelector {
                     };
                     break;
                 }
-
             case 'theme-blue-grey-dark':
                 {
                     selectedTheme = {
@@ -151,7 +153,6 @@ export class ThemeSelector {
                     };
                     break;
                 }
-
             case 'theme-pink-grey-dark':
                 {
                     selectedTheme = {
@@ -188,7 +189,6 @@ export class ThemeSelector {
                     };
                     break;
                 }
-
             default:
                 {
                     selectedTheme = {

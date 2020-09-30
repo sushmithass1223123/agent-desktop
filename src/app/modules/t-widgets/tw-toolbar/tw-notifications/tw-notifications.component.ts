@@ -70,15 +70,19 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
         if (type !== 'im' &&
             type !== 'interactionim' &&
             type !== 'executeaction' &&
-            type !== 'executetask') {
+            type !== 'executetask' &&
+            type !== 'agentsentimentdetected') {
             this._appUIService.addNotification({
                 icon: type === 'broadcast' ? 'announcement' : type === 'notify' ? 'notification_important' : 'info',
                 message: this.urlify(evt.Message),
-                status: 'new'
+                status: 'new',
+                showAlert: type !== 'broadcast'
             });
         }
     }
-
+    /**
+     * To convert link to a tag
+     */
     private urlify(text: string): string {
         const urlRegex = /(https?:\/\/[^\s]+)/g;
         return text.replace(urlRegex, (url: string) => {

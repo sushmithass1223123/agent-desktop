@@ -11,7 +11,7 @@
     >
         <mat-table [dataSource]="interactionDetailsTable.source" matSort matSortDisableClear>
             <ng-container matColumnDef="InteractionID">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Interaction ID</mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     {{ element.InteractionID || 'NA' }}
                 </mat-cell>
@@ -45,6 +45,20 @@
                 <mat-header-cell *matHeaderCellDef mat-sort-header>User</mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     {{ element.InteractionData.User || 'NA' }}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="ActiveTime">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Active Time</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{ (element.ActiveTime * 1000 | date: 'H:mm:ss':'UTC') || '00:00:00' }}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="HoldTime">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Hold Time</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{ (element.HoldTime * 1000 | date: 'H:mm:ss':'UTC') || '00:00:00' }}
                 </mat-cell>
             </ng-container>
 

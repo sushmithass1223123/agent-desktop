@@ -1,21 +1,50 @@
-import { HostBinding, ElementRef, Directive } from '@angular/core';
+import { HostBinding, ElementRef, Directive, Input } from '@angular/core';
 import { ContentPageService } from '@services/content-page.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { IWidget } from 'app/interfaces';
+import { InteractionWidgets, IWidget } from 'app/interfaces';
 import { TUtils } from 'tmac-sdk';
 
 @Directive()
 // tslint:disable-next-line: directive-class-suffix
 export class TWContentWrapper {
-
+    /**
+     * Host binding for class
+     */
     @HostBinding('class') class = 'twc-card animate__animated animate__fadeIn animate__faster';
+    /**
+     * Host binding for style
+     */
     @HostBinding('style') style = '';
+    /**
+     * Host binding for id
+     */
     @HostBinding('id') id = '';
 
-    widgetData: any;
+    /**
+     * Holds all the data related to this widget from the config
+     */
+    @Input() data: IWidget;
 
+    /**
+     * Holds all the interaction related widgets and process on new interacion for interaction content page
+     */
+    interactions: InteractionWidgets[] = [];
+    /**
+     * Currently active email interaction
+     */
+    activeInteraction: number;
+    /**
+     * Holds all widget's custom data
+     */
+    widgetData: any;
+    /**
+     * Subject to unsubscribe
+     */
     unsubscribeAll: Subject<any>;
+    /**
+     * Page active flag
+     */
     pageActive: boolean;
 
     constructor(
@@ -27,6 +56,11 @@ export class TWContentWrapper {
         this.pageActive = false;
     }
 
+    /**
+     * On widget init
+     *  
+     * @param {IWidget} data Widget data
+     */
     initWrapper(data: IWidget): void {
         // check if the data is null
         if (!data) {
@@ -86,13 +120,22 @@ export class TWContentWrapper {
             });
     }
 
+    /**
+     * On widget destroy
+     */
     destroyWrapper(): void {
         // Unsubscribe from all subscriptions
         this.unsubscribeAll.next();
         this.unsubscribeAll.complete();
     }
 
+    /**
+     * On page active callback
+     */
     onActive = () => { };
 
+    /**
+     * On page inactive callback
+     */
     onInactive = () => { };
 }

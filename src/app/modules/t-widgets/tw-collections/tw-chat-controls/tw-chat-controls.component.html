@@ -61,6 +61,22 @@
             >
                 <div fxLayout="row" fxLayoutAlign="end none" class="chat-actions">
                     <button
+                        mat-mini-fab
+                        color="default"
+                        [ngClass]="
+                            (fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                                ? fuseConfig.layout.anchorWidget.bodyBackground
+                                : '') +
+                            ' ' +
+                            (status === 'connected' ? 'mat-elevation-z2' : '')
+                        "
+                        matTooltip="Interaction Comment"
+                        (click)="saveInteractionComments()"
+                    >
+                        <mat-icon>comment</mat-icon>
+                    </button>
+
+                    <button
                         *ngIf="showAutoFreeze"
                         [disabled]="status !== 'connected'"
                         mat-mini-fab
@@ -109,6 +125,24 @@
                         matTooltip="Transfer"
                     >
                         <mat-icon>forward</mat-icon>
+                    </button>
+
+                    <button
+                        *ngIf="data.Data.ConferenceAllowed"
+                        [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper'"
+                        mat-mini-fab
+                        color="default"
+                        [ngClass]="
+                            (fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                                ? fuseConfig.layout.anchorWidget.bodyBackground
+                                : '') +
+                            ' ' +
+                            (status === 'connected' ? 'mat-elevation-z2' : '')
+                        "
+                        matTooltip="Conference Bot"
+                        (click)="conferenceWithBot()"
+                    >
+                        <mat-icon>android</mat-icon>
                     </button>
 
                     <button
@@ -182,7 +216,7 @@
                         class="border-radius-20 animate__animated animate__slideInRight animate__faster"
                         color="warn"
                         #closeBtn
-                        (click)="confirmCloseInteraction(closeBtn)"
+                        (click)="closeInteraction(closeBtn)"
                         matTooltip="Close Interaction"
                     >
                         Close

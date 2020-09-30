@@ -164,6 +164,9 @@
                     >
                         <mat-icon>phonelink_ring</mat-icon>
                     </button>
+                    <button mat-flat-button matTooltip="Interaction Comment" (click)="saveInteractionComments()">
+                        <mat-icon>comment</mat-icon>
+                    </button>
                     <button
                         *ngIf="status === 'disconnected'"
                         mat-flat-button

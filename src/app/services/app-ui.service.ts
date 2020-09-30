@@ -1,17 +1,18 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatSnackBar, MatSnackBarRef, MatSnackBarVerticalPosition, MatSnackBarHorizontalPosition } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarRef, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
 import { AlertDialogComponent } from '@modules/shared/alert-dialog/alert-dialog.component';
-import { SnackbarComponent } from '../modules/shared/snackbar/snackbar.component';
-import { AppAlertDialogTypes, AppConfirmDialogTypes, AppNotification, AppSnackBarArgs, ReminderTaskDialogTypes, SnackbarStateTypes } from 'app/interfaces';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import * as _ from 'lodash';
-import { TUtils } from 'tmac-sdk';
-import { RemiderTaskDialogComponent } from '@modules/shared/remider-task-dialog/remider-task-dialog.component';
 import { AppConfirmDialogComponent } from '@modules/shared/app-confirm-dialog/app-confirm-dialog.component';
 import { AppSnackbarComponent } from '@modules/shared/app-snackbar/app-snackbar.component';
-import { AppDataService } from './app-data.service';
+import { CustomDialogComponent } from '@modules/shared/custom-dialog/custom-dialog.component';
+import { RemiderTaskDialogComponent } from '@modules/shared/remider-task-dialog/remider-task-dialog.component';
+import { AppAlertDialogTypes, AppConfirmDialogTypes, AppNotification, AppSnackBarArgs, ReminderTaskDialogTypes, SnackbarStateTypes } from 'app/interfaces';
+import * as _ from 'lodash';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { TUtils } from 'tmac-sdk';
+import { SnackbarComponent } from '../modules/shared/snackbar/snackbar.component';
+import { AppDataService } from './app-data.service';
 
 @Injectable({
     providedIn: 'root'
@@ -106,13 +107,18 @@ export class AppUiService {
             danger: 'error'
         };
         this._matSnackBar.dismiss();
+
+        // add to the notifications
+        this.addNotification({
+            icon: 'notification_important',
+            message: snackBarArgs.message,
+            status: 'new'
+        });
+
         return this._matSnackBar.openFromComponent(AppSnackbarComponent, {
             data: {
-                type: snackBarArgs.type,
                 message: snackBarArgs.message,
-                state: snackBarArgs.state || 'info',
-                icon: icons[snackBarArgs.state || 'info'],
-
+                icon: icons[snackBarArgs.state || 'info']
             },
             verticalPosition: snackBarArgs.vPos || 'top',
             horizontalPosition: snackBarArgs.hPos || 'center',
@@ -206,6 +212,30 @@ export class AppUiService {
         return dialogRef;
     }
 
+    /**
+     * To show custom dialog
+     * 
+     * @param {'alert' | 'prompt' | 'confirm'} type 
+     * @param message 
+     * @param title 
+     */
+    public showCustomDialog(type: 'alert' | 'prompt' | 'confirm', message: any, title?: string): MatDialogRef<CustomDialogComponent> {
+        const dialogRef = this._matDialog.open(CustomDialogComponent, {
+            data: {
+                type,
+                title,
+                message,
+                done: (data?: any) => dialogRef.close(data || true),
+                cancel: () => dialogRef.close(false)
+            },
+            panelClass: 'custom-dialog',
+            minWidth: '350px',
+            autoFocus: false,
+            disableClose: true
+        });
+        return dialogRef;
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // Audio methods
     // -----------------------------------------------------------------------------------------------------
@@ -267,6 +297,7 @@ export class AppUiService {
     public addNotification(notification: AppNotification): string {
         // play new chat sound 
         this.playAudio('alert', 0.5);
+
         // Get the value from the behavior subject
         let notifications = this._appNotificationsSubject.getValue();
 
@@ -285,6 +316,11 @@ export class AppUiService {
             notifications = [...notifications, notification];
             // add the time
             notification.time = new Date();
+        }
+
+        // check whether to show an alert
+        if (notification.showAlert) {
+            this.showSnackbar(notification.message, 'info');
         }
 
         // Notify the observers

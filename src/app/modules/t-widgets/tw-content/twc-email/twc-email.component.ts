@@ -5,7 +5,7 @@ import { InteractionRef, InteractionWidgets, IWidget } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
 import { InteractionManagerService } from 'app/services/interaction-manager.service';
 import { takeUntil } from 'rxjs/operators';
-import { InteractionClosedEvent } from 'tmac-sdk';
+import { IncomingEmailEvent, InteractionClosedEvent } from 'tmac-sdk';
 
 @Component({
     selector: 'twc-email',
@@ -14,10 +14,6 @@ import { InteractionClosedEvent } from 'tmac-sdk';
     encapsulation: ViewEncapsulation.None
 })
 export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDestroy {
-    @Input() data: IWidget;
-
-    interactions: InteractionWidgets[] = [];
-    activeInteraction: number;
 
     constructor(
         public hostElement: ElementRef,
@@ -28,6 +24,9 @@ export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDes
         super(hostElement, contentPageService);
     }
 
+    /**
+     * OnInit
+     */
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
@@ -52,24 +51,32 @@ export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDes
             .subscribe((evt: any) => {
                 // filter the event name
                 if (evt.EventName === 'IncomingEmailEvent') {
-                    this.EmailIncomingEvent(evt);
+                    this.incomingEmailEvent(evt);
                 } else if (evt.EventName === 'InteractionClosedEvent') {
                     this.interactionClosed(evt);
                 }
             });
     }
 
+    /**
+     * OnDestroy
+     */
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
     }
 
-    private EmailIncomingEvent = (evt: any) => {
+    /**
+     * To process IncomingEmailEvent
+     * 
+     * @param {IncomingEmailEvent} evt
+     */
+    private incomingEmailEvent = (evt: IncomingEmailEvent) => {
         // get the content widgets
         const emailWidgets = this.data.Data.Widgets || [];
 
         const staticWidgets = emailWidgets.Static || [];
-        const dynamicWidgets = emailWidgets.Dynamic || [];
+        const dynamicWidgets = JSON.parse(evt.WidgetConfigData) || emailWidgets.Dynamic || [];
         const aotWidgets = emailWidgets.AOT || [];
 
         // loop the widgets and add append interaction details
@@ -110,6 +117,9 @@ export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDes
         });
     }
 
+    /**
+     * To process interaction closed event for voice
+     */
     private interactionClosed = (evt: InteractionClosedEvent) => {
         this.interactions = this.interactions.filter((i: InteractionWidgets) => i.interactionId !== evt.InteractionID);
         // if there are other item in the list auto select fist chat after closing current
