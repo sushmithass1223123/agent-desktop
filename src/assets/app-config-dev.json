@@ -48,6 +48,17 @@
                                 "Data": {}
                             },
                             {
+                                "Name": "Create Interaction",
+                                "Description": "",
+                                "Type": "tw-create-interaction",
+                                "Config": {},
+                                "Data": {
+                                    "Channels" : [
+                                        { "Name" : "SMS" , "Type" : "sms" , "Icon" : "sms" , "Enable" : true }
+                                    ]
+                                }
+                            },
+                            {
                                 "Name": "Agent Details",
                                 "Description": "",
                                 "Type": "tw-agent-details",
@@ -103,7 +114,7 @@
                         "Data": {
                             "Icon": "home",
                             "Path": "/home",
-                            "Active": false
+                            "Active": true
                         }
                     },
                     {
@@ -153,7 +164,7 @@
                         "Data": {
                             "Icon": "library_books",
                             "Path": "/workbench",
-                            "Active": true
+                            "Active": false
                         }
                     }
                 ],
@@ -277,9 +288,9 @@
                             ],
                             "Dynamic": [
                                 {
-                                    "Name": "All Interactions",
+                                    "Name": "Gamification",
                                     "Description": "",
-                                    "Type": "tw-pie-chart",
+                                    "Type": "tw-gamification",
                                     "Config": {
                                         "Static": false,
                                         "Anchor": false,
@@ -287,8 +298,8 @@
                                         "Icon": "dvr",
                                         "Class": "",
                                         "Position": {
-                                            "X": 0,
-                                            "Y": 1
+                                            "X": 2,
+                                            "Y": 4
                                         },
                                         "Actions": [
                                             "maximize",
@@ -303,8 +314,8 @@
                                         "Disabled": false
                                     },
                                     "Data": {
-                                        "Source": "tw-ad-total-interactions",
-                                        "Role": "dashboard"
+                                        "LeaderBoardUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetLeaderBoard",
+                                        "AgentProgressUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetProgress"
                                     }
                                 },
                                 {
@@ -1219,9 +1230,9 @@
                                     }
                                 },
                                 {
-                                    "Name": "Account Information",
+                                    "Name": "Pending Callbacks",
                                     "Description": "",
-                                    "Type": "tw-account-information",
+                                    "Type": "tw-pending-callbacks",
                                     "Config": {
                                         "Static": false,
                                         "Anchor": false,
@@ -1244,7 +1255,10 @@
                                         "Header": true,
                                         "Disabled": false
                                     },
-                                    "Data": {}
+                                    "Data": {
+                                        "GetPendingCallbacksUrl" : "https://dice.tetherfi.cloud/TCM_Proxy/api/Contact/GetContactsByPhoneNumber",
+                                        "ChangeContactStatusUrl" : "https://dice.tetherfi.cloud/TCM_Proxy/api/Contact/ChangeContactstatus"
+                                    }
                                 },
                                 {
                                     "Name": "AMDOC-BCC",
@@ -1789,9 +1803,9 @@
                                     }
                                 },
                                 {
-                                    "Name": "Account Information",
+                                    "Name": "Pending Callbacks",
                                     "Description": "",
-                                    "Type": "tw-account-information",
+                                    "Type": "tw-pending-callbacks",
                                     "Config": {
                                         "Static": false,
                                         "Anchor": false,
@@ -1814,7 +1828,10 @@
                                         "Header": true,
                                         "Disabled": false
                                     },
-                                    "Data": {}
+                                    "Data": {
+                                        "GetPendingCallbacksUrl" : "https://dice.tetherfi.cloud/TCM_Proxy/api/Contact/GetContactsByPhoneNumber",
+                                        "ChangeContactStatusUrl" : "https://dice.tetherfi.cloud/TCM_Proxy/api/Contact/ChangeContactstatus"
+                                    }
                                 },
                                 {
                                     "Name": "Canned Responses",

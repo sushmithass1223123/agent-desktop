@@ -24,8 +24,12 @@
         <div fxFlex="20">
             <p class="mat-title mb-8">Top Performers</p>
             <div *ngFor="let p of leaderBoardRes.data | slice: 0:3; let i = index" fxLayout fxLayoutAlign="start center" class="mb-16">
-                <div class="w-20 h-20 text-center border-radius-100 position-absolute rank font-weight-700">{{ i + 1 }}</div>
-                <avatar [name]="p.AgentName || p.AgentId" classes="w-44 h-44 border-radius-100 mx-12" [photoUrl]="p.ProfilePic"></avatar>
+                <div class="w-20 h-20 text-center mat-elevation-z1 border-radius-100 position-absolute rank font-weight-700">{{ i + 1 }}</div>
+                <avatar
+                    [name]="p.AgentName || p.AgentId"
+                    classes="w-44 mat-elevation-z2 h-44 border-radius-100 mx-12"
+                    [photoUrl]="p.ProfilePic"
+                ></avatar>
                 <div>
                     <span>{{ p.AgentName || p.AgentId }}</span>
                     <br />
@@ -112,19 +116,17 @@
                     <span>
                         +
                         {{
-                            getAgentLevelsRes.data[currentUser.level + 1]
-                                ? getAgentLevelsRes.data[currentUser.level + 1].Points - currentUser.totalPoints
-                                : getAgentLevelsRes.data[currentUser.level].Points
+                            getAgentLevelsRes.data[currentUser.level]
                                 ? getAgentLevelsRes.data[currentUser.level].Points - currentUser.totalPoints
-                                : 0
+                                : 'NA'
                         }}
-                        for L{{ currentUser.level + 1 }}
+                        for Level {{ currentUser.level + 1 }}
                     </span>
                 </div>
             </div>
             <p class="mat-title mb-8">Earned Badges</p>
             <div fxLayout="row" fxLayoutAlign="start center" class="mb-12">
-                <div *ngFor="let b of currentUser.badges | slice: 0:2" fxFlex="30">
+                <div *ngFor="let b of currentUser.badges | slice: 0:2; trackBy: badgeName" fxFlex="30">
                     <img
                         [src]="b.BadgeUrl"
                         class="mx-auto mb-4 d-block"
@@ -144,7 +146,7 @@
         <div fxFlex="30">
             <p class="mat-title mb-8">Coins and Points</p>
             <div fxLayout="row wrap" fxLayoutAlign="start center">
-                <div *ngFor="let c of currentUser.coins | slice: 0:5" fxFlex="30" class="mb-8">
+                <div *ngFor="let c of currentUser.coins | slice: 0:5; trackBy: valueField" fxFlex="30" class="mb-8">
                     <img [src]="c.image" class="mx-auto mb-4 d-block" [alt]="c.name" />
                     <div class="text-center">
                         {{ c.name }}
@@ -157,13 +159,15 @@
 
         <div fxFlex="40">
             <p class="mat-title mb-8">My Performance</p>
-            <div *ngFor="let p of getAgentProgressRes.data | slice: 0:6" fxLayout fxLayoutAlign="space-between center" class="mb-16">
-                <span fxFlex="20" class="text-center border-right-secondary">
-                    {{ p.MetricName | json }}
-                    {{ p.MetricName }}</span
-                >
+            <div
+                *ngFor="let p of getAgentProgressRes.data | slice: 0:6; trackBy: pointsAssigned"
+                fxLayout
+                fxLayoutAlign="space-between center"
+                class="mb-16"
+            >
+                <span fxFlex="30" class="text-center border-right-secondary"> {{ p.Channel }}{{ p.Channel ? '_' : '' }}{{ p.MetricName }}</span>
                 <mat-slider
-                    fxFlex="100"
+                    fxFlex="50"
                     [value]="(p.PointsAssigned * 100) / (p.PointsAssigned + p.RequiredPointsForNextBadge) - 1"
                     step="1"
                     color="primary"
@@ -202,7 +206,7 @@
     >
         <div class="w-70-p text-center">
             <p class="mat-title mb-40">{{ dashboardState.msg }}</p>
-            <button mat-button color="primary" (click)="setupDashboard()">Retry</button>
+            <button mat-raised-button color="primary" class="w-20-p" (click)="setupDashboard()">Retry</button>
         </div>
     </div>
 
