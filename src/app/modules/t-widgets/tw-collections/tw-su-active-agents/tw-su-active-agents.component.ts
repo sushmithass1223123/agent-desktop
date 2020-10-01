@@ -26,7 +26,6 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     @Input() data: any;
     @Output() selectActiveAgent = new EventEmitter();
 
-
     fuseConfig: any;
     appConfig: any;
 
@@ -41,8 +40,14 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     activityWidget: IWidget;
     auxCodesList: IAUXCodes[];
 
+    availableQuizIntents = [
+        { name: 'General Quiz', intent: 'GeneralQuiz' },
+        { name: 'Product Quiz', intent: 'ProductQuiz' },
+        { name: 'Learning Quiz', intent: 'LearningQuiz' }
+    ];
+
     /**
-     * Constructor 
+     * Constructor
      */
     constructor(
         private _fuseConfigService: FuseConfigService,
@@ -85,14 +90,13 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         SDKClient.events.on('TeamAgentListDataEvent', this.TeamAgentListDataEvent);
 
         // get agent aux codes
-        SDKClient.loadAUXCodes(false, null)
-            .then((result: IResponse) => {
-                // check if the data is null
-                if (result.response && result.response.length > 0) {
-                    // filter and assign the aux codes
-                    this.auxCodesList = result.response.filter((a: IAUXCodes) => a.Display === 1);
-                }
-            });
+        SDKClient.loadAUXCodes(false, null).then((result: IResponse) => {
+            // check if the data is null
+            if (result.response && result.response.length > 0) {
+                // filter and assign the aux codes
+                this.auxCodesList = result.response.filter((a: IAUXCodes) => a.Display === 1);
+            }
+        });
     }
 
     /**
@@ -118,10 +122,9 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         if (this.searchTerm) {
             this.filterAgents();
         }
-    }
+    };
 
     private TeamAgentListDataEvent = (agentListData: SuAgentDataModel[]) => {
-
         if (this.agentList.length === 0) {
             return;
         }
@@ -141,7 +144,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         if (this.searchTerm) {
             this.filterAgents();
         }
-    }
+    };
 
     private createActivityWidget(item: any): void {
         // create activity details widget
@@ -185,7 +188,11 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
 
     public featureCheck(feature: AgentFeatures, type: string, subType: string): boolean {
         // if not allow supervisor or in map the item is not found return false
-        if (!feature.Feature.startsWith('AllowSupervisor') || feature.Feature === 'AllowSupervisorToChangeStatus' || !this.featureMap[feature.Feature]) {
+        if (
+            !feature.Feature.startsWith('AllowSupervisor') ||
+            feature.Feature === 'AllowSupervisorToChangeStatus' ||
+            !this.featureMap[feature.Feature]
+        ) {
             return false;
         }
 
@@ -201,8 +208,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         // check if interaction action
         else if (type === 'interaction' && this.featureMap[feature.Feature].Type === type && this.featureMap[feature.Feature].SubType === subType) {
             return feature.IsEnabled;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -213,16 +219,19 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         switch (feature.Feature) {
             case 'AllowSupervisorToCapturePicture':
                 this._appUIService.showSnackbar('Please wait, retrieving information...', 'loading');
-                SDKClient.getAgentActivity({
-                    agentId: agent.AgentLoginID,
-                    consent: false,
-                    location: agent.AgentFeatures.filter(f => f.Feature === 'IsLocationEnabled')?.[0].IsEnabled || false,
-                    screenshot: agent.AgentFeatures.filter(f => f.Feature === 'IsScreenCaptureEnabled')?.[0].IsEnabled || false,
-                    screenvideo: agent.AgentFeatures.filter(f => f.Feature === 'IsScreenCaptureEnabled')?.[0].IsEnabled || false,
-                    snapshot: agent.AgentFeatures.filter(f => f.Feature === 'IsCameraCaptureEnabled')?.[0].IsEnabled || false,
-                    source: 'supervisor',
-                    sourceId: SDKClient.getAgentData().agentId
-                }, { agent })
+                SDKClient.getAgentActivity(
+                    {
+                        agentId: agent.AgentLoginID,
+                        consent: false,
+                        location: agent.AgentFeatures.filter((f) => f.Feature === 'IsLocationEnabled')?.[0].IsEnabled || false,
+                        screenshot: agent.AgentFeatures.filter((f) => f.Feature === 'IsScreenCaptureEnabled')?.[0].IsEnabled || false,
+                        screenvideo: agent.AgentFeatures.filter((f) => f.Feature === 'IsScreenCaptureEnabled')?.[0].IsEnabled || false,
+                        snapshot: agent.AgentFeatures.filter((f) => f.Feature === 'IsCameraCaptureEnabled')?.[0].IsEnabled || false,
+                        source: 'supervisor',
+                        sourceId: SDKClient.getAgentData().agentId
+                    },
+                    { agent }
+                )
                     .then((dt: IResponse) => {
                         const response = dt.response;
                         const agentInfo = dt.userObject.agent;
@@ -261,7 +270,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                     });
                 break;
             case 'AllowSupervisorToLogout':
-                // confirm logout 
+                // confirm logout
                 const confirmDialogRef = this._dialog.open(ConfirmDialogComponent, {
                     disableClose: false
                 });
@@ -271,26 +280,26 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                     if (dialogResult) {
                         // show the progress bar
                         this._appUIService.showSnackbar('Please wait, Logging out the user..', 'loading');
-                        SDKClient.logout({
-                            deviceId: agent.StationID,
-                            reason: 'SupervisorLogout'
-                        }, null)
-                            .then((dt: IResponse) => {
-                                // check if the logout is success
-                                if (dt.response && dt.response.ResultCode === 0) {
-                                    // route back to login page
-                                    this._appUIService.showSnackbar('Logged out successfully', 'success');
-                                }
-                                else {
-                                    // logout error
-                                    this._appUIService.showSnackbar('Logout failed, please try again', 'failure');
-                                }
-                            });
+                        SDKClient.logout(
+                            {
+                                deviceId: agent.StationID,
+                                reason: 'SupervisorLogout'
+                            },
+                            null
+                        ).then((dt: IResponse) => {
+                            // check if the logout is success
+                            if (dt.response && dt.response.ResultCode === 0) {
+                                // route back to login page
+                                this._appUIService.showSnackbar('Logged out successfully', 'success');
+                            } else {
+                                // logout error
+                                this._appUIService.showSnackbar('Logout failed, please try again', 'failure');
+                            }
+                        });
                     }
                 });
                 break;
             case 'AllowSupervisorToChangeStatus':
-
                 break;
             default:
         }
@@ -321,11 +330,14 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     public changeAgentStatus(agent: SuAgentModel, item: IAUXCodes): void {
         this._appUIService.showSnackbar('Please wait, changing status...', 'loading');
         // change the status
-        SDKClient.changeStatus({
-            deviceId: agent.StationID,
-            type: item.Code.toLocaleLowerCase() === 'available' ? 'available' : item.Code.toLocaleLowerCase() === 'acw' ? 'acw' : 'aux',
-            code: item.Value.toString()
-        }, item)
+        SDKClient.changeStatus(
+            {
+                deviceId: agent.StationID,
+                type: item.Code.toLocaleLowerCase() === 'available' ? 'available' : item.Code.toLocaleLowerCase() === 'acw' ? 'acw' : 'aux',
+                code: item.Value.toString()
+            },
+            item
+        )
             .then(() => {
                 // route back to login page
                 this._appUIService.showSnackbar('Status changed successfully', 'success');
@@ -334,6 +346,13 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                 // logout error
                 this._appUIService.showSnackbar('Change status failed, please try again', 'failure');
             });
+    }
+
+    sendIntent(intent: string): void {
+        // SDKClient.addEventToAgentSession({
+        //     agentId : this.selectActiveAgent.
+        // })
+        console.log({ intent });
     }
 }
 

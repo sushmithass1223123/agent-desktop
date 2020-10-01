@@ -295,6 +295,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         try {
             this.sessionActions = { loading: true, error: false };
             const res = await SDKClient.getInteractionActions(sessionId);
+            console.log({ res });
             this.sessionActions = {
                 loading: false,
                 error: false,

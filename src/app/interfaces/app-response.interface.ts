@@ -1,6 +1,6 @@
 import { WorkCode } from 'tmac-sdk';
 
-export interface ResData<T> {
+export interface ResData<T = any> {
     loading: boolean;
     error: boolean;
     msg?: string;
@@ -17,6 +17,9 @@ export interface ResGamification {
     TeamName: string;
     TotalBadges: ResGamificationBadge[];
     TotalPoints: number;
+    GoldCoins: number;
+    BronzeCoins: number;
+    SilverCoins: number;
 }
 
 export interface ResGamificationBadge {

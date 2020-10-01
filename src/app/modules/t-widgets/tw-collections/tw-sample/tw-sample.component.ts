@@ -6,6 +6,9 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
 
+/**
+ * Sample Component for T-widgets
+ */
 @Component({
     selector: 'tw-sample', // make sure you set the selector starts with tw-<widget-name>
     templateUrl: './tw-sample.component.html',
@@ -13,18 +16,25 @@ import { takeUntil } from 'rxjs/operators';
     encapsulation: ViewEncapsulation.None
 })
 export class TwSampleComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-
-    // holds all the data related to this widget from the config
+    /**
+     * holds all the data related to this widget from the config
+     */
     @Input() data: IWidget;
 
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store the fuse config for theme
-    // -----------------------------------------------------------
+    
+    /**
+     * --------------------------------------------------
+     *  @ [OPTIONAL] to store the fuse config for theme
+     * --------------------------------------------------
+     */
     fuseConfig: FuseConfig;
 
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store entire app config and get update
-    // -----------------------------------------------------------
+    
+    /**
+     * --------------------------------------------------
+     *  @ [OPTIONAL] to store entire app config and get update
+     * --------------------------------------------------
+     */
     appConfig: any;
 
     /**
@@ -36,7 +46,7 @@ export class TwSampleComponent extends TWidgetWrapper implements OnInit, OnDestr
         // @ [OPTIONAL]
         private _fuseConfigService: FuseConfigService,
         // @ [OPTIONAL]
-        private _appDataService: AppDataService,
+        private _appDataService: AppDataService
     ) {
         super();
     }
@@ -55,24 +65,16 @@ export class TwSampleComponent extends TWidgetWrapper implements OnInit, OnDestr
         // -----------------------------------------------------------
         // @ [OPTIONAL] to get the fuse config
         // -----------------------------------------------------------
-        this._fuseConfigService.config
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(
-                (config: any) => {
-                    this.fuseConfig = config;
-                }
-            );
+        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+            this.fuseConfig = config;
+        });
 
         // -----------------------------------------------------------
         // @ [OPTIONAL] to get the app config
         // -----------------------------------------------------------
-        this._appDataService.config
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(
-                (config: any) => {
-                    this.appConfig = config;
-                }
-            );
+        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+            this.appConfig = config;
+        });
     }
 
     /**
@@ -87,12 +89,9 @@ export class TwSampleComponent extends TWidgetWrapper implements OnInit, OnDestr
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
 
-
-
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
-
 }
 
 // for more info visit - https://angular.io/api/core

@@ -1,0 +1,112 @@
+<!-- We are writing a wrapper over material card -->
+<mat-card
+    class="widget-card"
+    [ngClass]="
+        fuseConfig.layout.anchorWidget.customBackgroundColor === true
+            ? fuseConfig.layout.anchorWidget.bodyBackground
+            : fuseConfig.layout.widget.customBackgroundColor === true
+            ? fuseConfig.layout.widget.bodyBackground
+            : ''
+    "
+>
+    <!-- Wrapper to wrap header and body -->
+    <div fxLayout="column" fxLayoutAlign=" none" class="card-wrapper">
+        <!-- Enabled header if enabled in config -->
+        <!-- [data]="data" -->
+        <!-- <tw-card-header [fuseConfig]="fuseConfig"></tw-card-header> -->
+        <mat-card-header
+            class="border-radius-20 mb-16"
+            [ngClass]="
+                fuseConfig.layout.anchorWidget.customBackgroundColor === true
+                    ? fuseConfig.layout.anchorWidget.headerBackground
+                    : fuseConfig.layout.widget.customBackgroundColor === true
+                    ? fuseConfig.layout.widget.headerBackground
+                    : ''
+            "
+        >
+            <div fxLayout fxLayoutAlign="start center" class="py-12">
+                <mat-icon>sms</mat-icon>
+                <mat-card-title class="mb-0 ml-8">Create SMS</mat-card-title>
+            </div>
+        </mat-card-header>
+        <!-- Card content -->
+        <mat-card-content
+            class="border-radius-20"
+            [ngClass]="
+                fuseConfig.layout.anchorWidget.customBackgroundColor === true
+                    ? fuseConfig.layout.anchorWidget.contentBackground
+                    : fuseConfig.layout.widget.customBackgroundColor === true
+                    ? fuseConfig.layout.widget.contentBackground
+                    : ''
+            "
+        >
+            <!-- <h1 mat-dialog-title>Compose SMS</h1> -->
+            <div mat-dialog-content>
+                <div fxLayout="row wrap" fxLayoutAlign="space-between" class="w-95-p py-20 mx-auto">
+                    <div fxFlex="100">
+                        <mat-form-field fxFill class="" appearance="outline">
+                            <mat-select placeholder="From Number">
+                                <mat-option>None</mat-option>
+                                <mat-option *ngFor="let item of contacts" [value]="item.ID">{{ item.Name }}</mat-option>
+                            </mat-select>
+                            <mat-error> Contact is required </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <div fxFlex="100">
+                        <mat-form-field fxFill class="" appearance="outline">
+                            <input matInput placeholder="To Number" />
+                            <mat-error> Contact is required </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <div fxFlex="30">
+                        <mat-form-field fxFill class="" appearance="outline">
+                            <mat-select placeholder="Type">
+                                <mat-option>None</mat-option>
+                                <mat-option *ngFor="let item of contacts" [value]="item.ID">{{ item.Name }}</mat-option>
+                            </mat-select>
+                            <mat-error> Contact is required </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <div fxFlex="30">
+                        <mat-form-field fxFill class="" appearance="outline">
+                            <mat-select placeholder="Department">
+                                <mat-option>None</mat-option>
+                                <mat-option *ngFor="let item of contacts" [value]="item.ID">{{ item.Name }}</mat-option>
+                            </mat-select>
+                            <mat-error> Contact is required </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <div fxFlex="30">
+                        <mat-form-field fxFill class="" appearance="outline">
+                            <mat-select placeholder="Groups">
+                                <mat-option>None</mat-option>
+                                <mat-option *ngFor="let item of contacts" [value]="item.ID">{{ item.Name }}</mat-option>
+                            </mat-select>
+                            <mat-error> Contact is required </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <div fxFlex="100">
+                        <mat-form-field appearance="outline" class="w-100-p">
+                            <mat-label>SMS</mat-label>
+                            <textarea matInput></textarea>
+                            <mat-error> Required </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div fxFlex="100">
+                        <div class="mx-auto w-40-p">
+                            <button mat-raised-button mat-dialog-close color="primary" class="w-100-p">Send</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div mat-dialog-actions>
+                <button mat-raised-button mat-dialog-close color="primary" class="mx-auto">Send</button>
+            </div> -->
+        </mat-card-content>
+    </div></mat-card
+>

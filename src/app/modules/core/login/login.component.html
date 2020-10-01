@@ -36,6 +36,7 @@
                     <input class="login-input" matInput required placeholder="LAN ID" (keydown.enter)="login(false)" formControlName="lanId" #lanId />
                     <button
                         mat-button
+                        type="button"
                         color="primary"
                         *ngIf="loginForm.get('lanId').value"
                         matSuffix
@@ -53,6 +54,7 @@
                     <button
                         mat-button
                         color="primary"
+                        type="button"
                         *ngIf="loginForm.get('agentId').value"
                         matSuffix
                         mat-icon-button
@@ -77,6 +79,7 @@
                     />
                     <button
                         mat-icon-button
+                        type="button"
                         color="primary"
                         color="primary"
                         matSuffix
@@ -107,6 +110,7 @@
                     <button
                         *ngIf="loginForm.get('station').value"
                         matSuffix
+                        type="button"
                         mat-icon-button
                         color="primary"
                         aria-label="Clear"

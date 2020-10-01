@@ -1,0 +1,56 @@
+race-car-track {
+    width: 100%;
+    height: 100%;
+
+    svg {
+        border-radius: 20px;
+        border-top-left-radius: 40px;
+        border-bottom-left-radius: 40px;
+    }
+
+    .cars {
+        * {
+            transition: all 2s;
+        }
+
+        .pos {
+            &-1 {
+                transform: translate(-100%, 0px);
+            }
+            &-2 {
+                transform: translate(-100%, 27.96px);
+            }
+            &-3 {
+                transform: translate(-100%, 55.564px);
+            }
+            &-4 {
+                transform: translate(-100%, 84.66px);
+            }
+        }
+    }
+
+    .moving {
+        // animation: travelling 10s infinite linear;
+        // transition: all 10s linear;
+        // transform: translateX(110%);
+        &-2 {
+            // animation: railings 3s infinite linear;
+            // transition: all 3s linear;
+            // // transform:  scaleX(2) translateX(0%);
+        }
+    }
+
+    @keyframes railings {
+        // 0% {
+        //     transform: scaleX(2);
+        // }
+        100% {
+            transform: translateX(-500px);
+        }
+    }
+    @keyframes travelling {
+        100% {
+            transform: translateX(-800px);
+        }
+    }
+}
