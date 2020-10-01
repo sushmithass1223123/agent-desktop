@@ -12,10 +12,12 @@ import {
     AgentReminder,
     AgentStatusChangeEvent,
     CommandResultEvent,
+    GenericInteractionEvent,
     HoldTimerEvent,
     IResponse,
     IUIEvent,
     SDKClient,
+    TCMDirectAgentNotifyTimeoutEvent,
     TUtils
 } from 'tmac-sdk';
 import { AOTWidgetService } from './aot-widget.service';
@@ -28,12 +30,14 @@ import { InteractionManagerService } from './interaction-manager.service';
 })
 export class TMACEventService {
     // Private
-
     /**
      * Unsubscribe all subject
      */
     private _unsubscribeAll: Subject<any>;
-
+    /**
+     * App config
+     */
+    appConfig: any;
     /**
      * TMAC events storage array 
      */
@@ -43,7 +47,6 @@ export class TMACEventService {
      * Construct and Dispose TMAC event subject
      */
     private _constructDisposeEventSubject: BehaviorSubject<any>;
-
     /**
      * Array to store the list AOT widgets for AgentNotificaitonEvent's ExecuteAction and ExecuteTask
      */
@@ -69,6 +72,10 @@ export class TMACEventService {
          * DAC request dialog ref
          */
         dacRequest: MatDialogRef<RemiderTaskDialogComponent, any>
+        /**
+         * TCM WQ voice DAC request dialog ref
+         */
+        tcmWQVoice: MatDialogRef<RemiderTaskDialogComponent, any>
     };
 
     /**
@@ -92,7 +99,8 @@ export class TMACEventService {
             makeCall: null,
             meeting: null,
             changeState: null,
-            dacRequest: null
+            dacRequest: null,
+            tcmWQVoice: null
         };
     }
 
@@ -156,7 +164,7 @@ export class TMACEventService {
             // }
 
             // get the type
-            const type = evt.Type.toLowerCase();
+            const type = evt.Type?.toLowerCase() || '';
 
             // handle alerts
             if (type === 'alert' && evt.Message) {
@@ -340,6 +348,8 @@ export class TMACEventService {
                                     this.reminderActionExecuted('Rejected', parsedMessage.ID);
                                 }
                                 else {
+                                    // snooze the reminder
+                                    this.reminderActionExecuted('Snooze', parsedMessage.ID);
                                     // show an alert for auto snooze
                                     this._appUIService.showSnackbar('Make call task is snoozed', 'info');
                                 }
@@ -461,6 +471,15 @@ export class TMACEventService {
                 });
 
             }
+            else if (type === 'customersentimentdetected') {
+                // parse the message
+                const { AgentName } = JSON.parse(evt.Message);
+                // show in alert
+                this._appUIService.showAppSnackbar({
+                    message: `Negative sentiment has been detected from customer for ${AgentName}`,
+                    state: 'info'
+                });
+            }
         } catch (error) {
             TUtils.Logger.log('Exception in AgentNotificaitonEvent', error);
         }
@@ -505,6 +524,136 @@ export class TMACEventService {
         });
     }
 
+    /**
+     * Tp process GenericInteractionEvent
+     * @param {GenericInteractionEvent} evt 
+     */
+    private GenericInteractionEvent = (evt: GenericInteractionEvent) => {
+        const { PhoneNumber } = evt.Item;
+        const { agentId, deviceId } = SDKClient.getAgentData();
+        // inform TCM proxy about the assignment
+        const tcmProyUrl = this.appConfig.Main.Content.Urls.TCMClient || '';
+        // only notify that callback request is assigned if it was assigned the first time and not if the UI is reloaded or re-login
+        if (!evt.RecoveryEvent) {
+            if (tcmProyUrl) {
+                TUtils.HttpClient.sendRequest({
+                    url: tcmProyUrl + '/OnDacNotificationEvent',
+                    header: {
+                        'Content-Type': 'application/json'
+                    },
+                    method: 'POST',
+                    responseType: 'json',
+                    requestArgs: {
+                        fromAddr: PhoneNumber,
+                        response: 'assigned',
+                        agentID: agentId,
+                        extension: deviceId,
+                        scheduletime: '',
+                        interactionId: evt.InteractionID
+                    }
+                })
+                    .then((dt: IResponse) => {
+                        if (dt.response.d === 1) {
+                            this.promptTCMWQDACRequest(evt);
+                        }
+                        else {
+                            this.tcwWQDACRequestError(evt.InteractionID.toString());
+                        }
+                    })
+                    .catch(() => {
+                        this.tcwWQDACRequestError(evt.InteractionID.toString());
+                    });
+            }
+            else {
+                this.tcwWQDACRequestError(evt.InteractionID.toString());
+                return;
+            }
+        }
+        else {
+            this.promptTCMWQDACRequest(evt);
+        }
+    }
+
+    /**
+     * To process TCM WQ DAC request
+     * 
+     * @param {GenericInteractionEvent} evt
+     */
+    private promptTCMWQDACRequest(evt: GenericInteractionEvent): void {
+        const { PhoneNumber, Skill, ID } = evt.Item;
+        const { agentId, deviceId } = SDKClient.getAgentData();
+        this._remiderTaskDialog.tcmWQVoice = this._appUIService.showRemiderTaskModal('tcmwqvoice', `Dial-out to customer ${PhoneNumber}?`);
+        this._remiderTaskDialog.tcmWQVoice.afterClosed().subscribe((resp) => {
+            // if agent accept the callback
+            if (resp === 'accept') {
+                // prepare query string
+                const queryParams = `fromAddr=${PhoneNumber}&agentID=${agentId}&extension=${deviceId}&ucid=''&skill=${Skill}&intid=${evt.InteractionID}&ID=${ID}`;
+                // make call to the provided number and complete the reminder
+                SDKClient.makeCall({
+                    interactionId: '0',
+                    number: PhoneNumber,
+                    source: 'tcamp',
+                    sourceId: queryParams
+                })
+                    .then((dt: IResponse) => {
+                        // get the response
+                        const result: CommandResultEvent = dt.response;
+                        // check the response
+                        if (result.ResultCode === 0) {
+                            // make call success
+                            this._appUIService.showSnackbar(`Make call to ${PhoneNumber} successful`);
+                        }
+                        else {
+                            // make call failed
+                            this._appUIService.showSnackbar('Make call failed', 'failure');
+                        }
+                    })
+                    .catch(() => {
+                        // make call error
+                        this._appUIService.showSnackbar('Make call error', 'failure');
+                    });
+            }
+            // close the dialog
+            this._remiderTaskDialog.tcmWQVoice = null;
+        });
+    }
+
+    /**
+     * To handle TCM WQ DAC request error
+     */
+    private tcwWQDACRequestError(interactionId: string): void {
+        this._appUIService.addNotification({
+            message: 'Error in assigning DAC item, Please contact administrator',
+            status: 'new',
+            icon: 'error',
+            showAlert: true
+        });
+        // close the dialog
+        this._remiderTaskDialog.tcmWQVoice = null;
+        // close the generic interaction in server
+        SDKClient.closeInteraction(interactionId);
+    }
+
+    /**
+     * To process TCM_DirectAgentNotifyTimeoutEvent
+     * @param {TCMDirectAgentNotifyTimeoutEvent} evt 
+     */
+    private TCMDirectAgentNotifyTimeoutEvent = (evt: TCMDirectAgentNotifyTimeoutEvent) => {
+        const obj = JSON.parse(evt.JsonData);
+        const contact = JSON.parse(obj.Contact);
+
+        // show an alert
+        this._appUIService.addNotification({
+            message: 'Callback request for ' + contact.Name + ' number ' + contact.PhoneNumber + ' timed out.',
+            status: 'new',
+            showAlert: true
+        });
+        // close the dialog
+        this._remiderTaskDialog.tcmWQVoice = null;
+        // close the generic interaction in server
+        SDKClient.closeInteraction(evt.InteractionID.toString());
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @ Public Methods
     // -----------------------------------------------------------------------------------------------------
@@ -520,6 +669,8 @@ export class TMACEventService {
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe(
                 (config: any) => {
+                    // assign the config
+                    this.appConfig = config;
                     // get the AOT widgets
                     this._aotWidgets = config.Main.AOT.Widgets;
                 }
@@ -527,6 +678,8 @@ export class TMACEventService {
 
         SDKClient.events.on('onTMACEvent', this.onTMACEvents);
         SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
+        SDKClient.events.on('GenericInteractionEvent', this.GenericInteractionEvent);
+        SDKClient.events.on('TCMDirectAgentNotifyTimeoutEvent', this.TCMDirectAgentNotifyTimeoutEvent);
         SDKClient.events.on('ACWTimerEvent', this.ACWTimerEvent);
         SDKClient.events.on('HoldTimerEvent', this.HoldTimerEvent);
     }
@@ -539,6 +692,8 @@ export class TMACEventService {
 
         SDKClient.events.off('onTMACEvent', this.onTMACEvents);
         SDKClient.events.off('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
+        SDKClient.events.off('GenericInteractionEvent', this.GenericInteractionEvent);
+        SDKClient.events.off('TCMDirectAgentNotifyTimeoutEvent', this.TCMDirectAgentNotifyTimeoutEvent);
         SDKClient.events.off('ACWTimerEvent', this.ACWTimerEvent);
         SDKClient.events.off('HoldTimerEvent', this.HoldTimerEvent);
 

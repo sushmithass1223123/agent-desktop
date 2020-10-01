@@ -1055,10 +1055,24 @@
             >
                 <mat-icon>done</mat-icon>
             </button>
-            <button mat-raised-button mat-icon-button class="bg-danger mr-12" matTooltip="Reject" (click)="data.reject()">
+            <button
+                *ngIf="data.type !== 'tcmwqvoice'"
+                mat-raised-button
+                mat-icon-button
+                class="bg-danger mr-12"
+                matTooltip="Reject"
+                (click)="data.reject()"
+            >
                 <mat-icon>close</mat-icon>
             </button>
-            <button mat-raised-button mat-icon-button class="bg-warning" matTooltip="Snooze" (click)="data.snooze()">
+            <button
+                *ngIf="data.type !== 'tcmwqvoice'"
+                mat-raised-button
+                mat-icon-button
+                class="bg-warning"
+                matTooltip="Snooze"
+                (click)="data.snooze()"
+            >
                 <mat-icon>pending_actions</mat-icon>
             </button>
         </div>

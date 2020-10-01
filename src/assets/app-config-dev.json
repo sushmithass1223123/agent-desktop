@@ -75,7 +75,9 @@
                                 "Config": {
                                     "Enabled": true
                                 },
-                                "Data": {}
+                                "Data": {
+                                    "ByTeam": true
+                                }
                             },
                             {
                                 "Name": "Logout Button",
@@ -1209,7 +1211,9 @@
                                         "ViewState": "restore",
                                         "Header": true
                                     },
-                                    "Data": {}
+                                    "Data": {
+                                        "IsAuthenticated": true
+                                    }
                                 },
                                 {
                                     "Name": "AMDOC-BCC",
@@ -1747,7 +1751,9 @@
                                         "ViewState": "restore",
                                         "Header": true
                                     },
-                                    "Data": {}
+                                    "Data": {
+                                        "IsAuthenticated": true
+                                    }
                                 },
                                 {
                                     "Name": "Canned Responses",
@@ -2118,7 +2124,9 @@
                                         "ViewState": "restore",
                                         "Header": true
                                     },
-                                    "Data": {}
+                                    "Data": {
+                                        "IsAuthenticated": true
+                                    }
                                 },
                                 {
                                     "Name": "Canned Responses",
@@ -2498,7 +2506,8 @@
                 "FileServerUrl": {
                     "SMM": "",
                     "MediaProxy": "https://dice.tetherfi.cloud/ApiFileUploadDownLoad/"
-                }
+                },
+                "TCMClient": "https://dice.tetherfi.cloud/TCM_Client/CampaignManager.asmx"
             }
         },
         "AOT": {

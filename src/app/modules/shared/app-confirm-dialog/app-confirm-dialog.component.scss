@@ -6,6 +6,7 @@
     filter: drop-shadow(0px 10px 6px rgba(0, 0, 0, 0.2));
     .mat-dialog-container {
         padding: 0 0 25px 0 !important;
+        margin: 0px 0px -12px 0px;
         .mat-toolbar {
             padding-bottom: 30px;
         }
@@ -25,5 +26,6 @@ app-confirm-dialog {
 
     .message {
         word-wrap: break-word;
+        line-height: 20px;
     }
 }

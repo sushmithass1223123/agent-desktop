@@ -65,12 +65,14 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
         }
 
         // get the type
-        const type = evt.Type.toLowerCase();
+        const type = evt.Type?.toLowerCase() || '';
+
         // check the type
         if (type !== 'im' &&
             type !== 'interactionim' &&
             type !== 'executeaction' &&
             type !== 'executetask' &&
+            type !== 'customersentimentdetected' &&
             type !== 'agentsentimentdetected') {
             this._appUIService.addNotification({
                 icon: type === 'broadcast' ? 'announcement' : type === 'notify' ? 'notification_important' : 'info',

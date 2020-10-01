@@ -223,7 +223,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
         const { agentId } = SDKClient.getAgentData();
         const { SessionId, RouteId } = this.emailSearchRes.data.selected;
         this.http
-            .post('http://dice.tetherfi.cloud:55005/api/workbench/email/pull', {
+            .post('https://dice.tetherfi.cloud:55005/api/workbench/email/pull', {
                 tmacServer: '',
                 agentId,
                 items: [

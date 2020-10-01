@@ -296,7 +296,7 @@ export class AppUiService {
      */
     public addNotification(notification: AppNotification): string {
         // play new chat sound 
-        this.playAudio('alert', 0.5);
+        this.playAudio('notification', 0.5);
 
         // Get the value from the behavior subject
         let notifications = this._appNotificationsSubject.getValue();

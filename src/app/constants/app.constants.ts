@@ -109,6 +109,11 @@ export const RemiderTaskDialogConstants: Record<ReminderTaskDialogTypes, { title
         title: 'DAC Request',
         message: 'Do you to accept this DAC request?',
         type: 'dacrequest'
+    },
+    tcmwqvoice: {
+        title: 'DAC Request',
+        message: 'Do you to accept this DAC request?',
+        type: 'tcmwqvoice'
     }
 };
 

@@ -51,12 +51,15 @@
 .bg-alt {
     &-danger {
         background-color: $tw-alt-danger !important;
+        color: #ffffff !important;
     }
     &-warning {
         background-color: $tw-alt-warning !important;
+        color: #ffffff !important;
     }
     &-success {
         background-color: $tw-alt-success !important;
+        color: #ffffff !important;
     }
 }
 

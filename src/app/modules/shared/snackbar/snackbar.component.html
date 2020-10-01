@@ -1,6 +1,7 @@
 <div fxFlayout fxLayoutAlign="space-between center">
     <span> {{ data.message }} </span>
     <mat-icon
+        class="ml-8"
         [ngClass]="{
             spin: data.loading,
             'text-info': data.state === 'info' || data.state === 'loading',

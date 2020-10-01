@@ -5,9 +5,7 @@
 <!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
 
 <tw-wrapper twChart [data]="data" (maximizeEvent)="maximized = !maximized">
-    <!-- your code goes here -->
-
-    <div fxLayout fxLayoutAlign="start center" class="p-4 w-100-p h-100-p" fusePerfectScrollbar>
+    <div fxLayout fxLayoutAlign="start center" class="p-4 w-100-p h-100-p" fusePerfectScrollbar *ngIf="isAuthenticated">
         <div fxLayout="column" fxLayoutAlign="space-around center" class="h-100-p">
             <button mat-button matTooltip="Wireless" color="primary">
                 <mat-icon>phonelink_ring</mat-icon>
@@ -81,5 +79,84 @@
         </div>
     </div>
 
-    <!-- your code goes here -->
+    <div fxLayout="column" fxLayoutAlign="space-between none" class="p-12 w-100-p h-100-p voice-bio" fusePerfectScrollbar *ngIf="!isAuthenticated">
+        <div fxLayout>
+            <div fxLayout="column" fxFlex="33.33">
+                <div>
+                    <label>Personal ID: </label>
+                    <span class="text-bold">{{ NRIC }}</span>
+                </div>
+                <button
+                    mat-raised-button
+                    color="primary"
+                    style="width: fit-content"
+                    [disabled]="disable.updateNRIC"
+                    matTooltip="Edit Personal ID"
+                    (click)="updateVBNRIC()"
+                >
+                    <mat-icon>edit</mat-icon>
+                </button>
+            </div>
+
+            <div fxFlex="33.33">
+                <label>CLI: </label>
+                <span class="text-bold">{{ CLI }}</span>
+            </div>
+
+            <div fxFlex="33.33">
+                <label>Tier Verified + Customer Consent</label>
+                <mat-checkbox class="ml-8"></mat-checkbox>
+            </div>
+        </div>
+
+        <div fxLayout="row" fxLayoutAlign=" none">
+            <div fxLayout="column" fxFlex="33.33">
+                <label>VB Enroll Status</label>
+                <span
+                    class="label"
+                    [ngClass]="{
+                        'label-alt-success': enrolledStatus === 'YES',
+                        'label-alt-danger': enrolledStatus === 'NO'
+                    }"
+                    >{{ enrolledStatus }}</span
+                >
+            </div>
+            <div fxLayout="column" fxFlex="33.33">
+                <div>
+                    <label>Declained: </label>
+                    <span class="text-bold">None</span>
+                </div>
+                <span class="label label-info">-</span>
+            </div>
+            <div fxLayout="column" fxFlex="33.33">
+                <label>Verification Status</label>
+                <span
+                    class="label label-info"
+                    [ngClass]="{
+                        'label-alt-warning': audioStatus === 'collecting',
+                        'label-alt-success': audioStatus === 'enough'
+                    }"
+                    >{{ audioStatus === 'collecting' ? 'Collecting Audio' : audioStatus === 'enough' ? 'Enough Audio' : '-' }}</span
+                >
+            </div>
+        </div>
+
+        <div fxLayout>
+            <div fxFlex="33.3">
+                <button mat-raised-button class="bg-alt-success" [disabled]="disable.enroll" (click)="enroll()">
+                    <mat-icon>thumb_up</mat-icon> Enroll
+                </button>
+            </div>
+
+            <div fxFlex="33.3">
+                <button mat-raised-button color="warn" (click)="reject()" [disabled]="disable.reject"><mat-icon>cancel</mat-icon> Reject</button>
+            </div>
+
+            <div fxFlex="33.3">
+                <button mat-raised-button class="bg-alt-warning" (click)="thirdParty()" [disabled]="disable.thirdParty">
+                    <mat-icon>transform</mat-icon> 3<sup>rd</sup> Party
+                </button>
+            </div>
+        </div>
+    </div>
 </tw-wrapper>

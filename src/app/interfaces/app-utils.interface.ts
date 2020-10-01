@@ -130,7 +130,7 @@ export interface AppAlertDialogData {
     type: AppAlertDialogTypes;
 }
 
-export type ReminderTaskDialogTypes = 'makecall' | 'meeting' | 'changestate' | 'dacrequest';
+export type ReminderTaskDialogTypes = 'makecall' | 'meeting' | 'changestate' | 'dacrequest' | 'tcmwqvoice';
 
 export interface ReminderTaskDialogData {
     /**
