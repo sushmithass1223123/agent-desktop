@@ -23,7 +23,7 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
         GetCallbacksUrl: string;
     };
 
-    getDashboardDataRes: ResData<{ callbacks: any[]; handled: number; missed: number, pending: number }> = {
+    getDashboardDataRes: ResData<{ callbacks: any[]; handled: number; missed: number; pending: number }> = {
         error: false,
         loading: true,
         msg: '',
@@ -120,7 +120,7 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
         callback.contact.name = callback.contact.Name;
         callback.contact.directAgentScheduleTime = callback.contact.ScheduleTime;
         this.addNewCallbacks([callback]);
-    }
+    };
 
     addNewCallbacks = (calls: any[]): void => {
         let handled = 0;
@@ -128,28 +128,28 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
         let pending = 0;
         let activeCalls = 0;
 
-        const callbacks = sortBy([...this.getDashboardDataRes.data.callbacks, ...calls], 'contact.directAgentScheduleTime')
-            .reverse()
-            .map((x) => {
-                if (PENDING_CALL_STATUSES.includes(x.contact.status)) {
-                    pending += 1;
-                }
-                if (ACTIVE_CALL_STATUSES.includes(x.contact.status)) {
-                    activeCalls += 1;
-                }
+        const callbacksList = sortBy([...this.getDashboardDataRes.data.callbacks, ...calls], 'contact.directAgentScheduleTime');
+        const callbacksReversed = callbacksList.reverse();
+        const callbacks = callbacksReversed.map((x) => {
+            if (PENDING_CALL_STATUSES.includes(x.contact.status)) {
+                pending += 1;
+            }
+            if (ACTIVE_CALL_STATUSES.includes(x.contact.status)) {
+                activeCalls += 1;
+            }
 
-                if (parseInt(x.contact.directAgentScheduleTime, 10) < parseInt(moment().format('YYYYMMDDHHmmss'), 10)) {
-                    missed += 1;
-                }
+            if (parseInt(x.contact.directAgentScheduleTime, 10) < parseInt(moment().format('YYYYMMDDHHmmss'), 10)) {
+                missed += 1;
+            }
 
-                return {
-                    ...x,
-                    contact: {
-                        ...x.contact,
-                        directAgentScheduleTime: moment(x.contact.directAgentScheduleTime, 'YYYYMMDDHHmmss').format('DD-MM-YYYY hh:mm:ss A')
-                    }
-                };
-            });
+            return {
+                ...x,
+                contact: {
+                    ...x.contact,
+                    directAgentScheduleTime: moment(x.contact.directAgentScheduleTime, 'YYYYMMDDHHmmss').format('DD-MM-YYYY hh:mm:ss A')
+                }
+            };
+        });
 
         handled = callbacks.length - (pending - (activeCalls > 0 ? 1 : 0));
 
@@ -164,7 +164,7 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
                 pending
             }
         };
-    }
+    };
 
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods

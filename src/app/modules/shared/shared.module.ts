@@ -7,7 +7,10 @@ import * as Chart from 'chart.js';
 // import 'chartjs-plugin-piechart-outlabels';
 import { ChartsModule } from 'ng2-charts';
 import { AlertDialogComponent } from './alert-dialog/alert-dialog.component';
+import { AppConfirmDialogComponent } from './app-confirm-dialog/app-confirm-dialog.component';
+import { AppSnackbarComponent } from './app-snackbar/app-snackbar.component';
 import { AvatarComponent } from './avatar/avatar.component';
+import { CreateSmsComponent } from './create-sms/create-sms.component';
 import { CustomDialogComponent } from './custom-dialog/custom-dialog.component';
 import { TWChartDirective } from './directives/tw-chart.directive';
 import { MaterialModule } from './material.module';
@@ -15,8 +18,6 @@ import { RemiderTaskDialogComponent } from './remider-task-dialog/remider-task-d
 import { ResourceNotFoundComponent } from './resource-not-found/resource-not-found.component';
 import { SnackbarComponent } from './snackbar/snackbar.component';
 import { WidgetFabComponent } from './widget-fab/widget-fab.component';
-import { AppConfirmDialogComponent } from './app-confirm-dialog/app-confirm-dialog.component';
-import { AppSnackbarComponent } from './app-snackbar/app-snackbar.component';
 
 Chart.defaults.global.responsive = true;
 Chart.defaults.global.legend.position = 'right';
@@ -43,7 +44,8 @@ const sharedComponents = [
     AlertDialogComponent,
     RemiderTaskDialogComponent,
     AppConfirmDialogComponent,
-    AppSnackbarComponent
+    AppSnackbarComponent,
+    CreateSmsComponent
 ];
 
 @NgModule({

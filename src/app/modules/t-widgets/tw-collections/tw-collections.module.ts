@@ -23,7 +23,10 @@ import { TwCustomerJourneyComponent } from './tw-customer-journey/tw-customer-jo
 import { TwCustomerSentimentComponent } from './tw-customer-sentiment/tw-customer-sentiment.component';
 import { TwEmailControlsComponent } from './tw-email-controls/tw-email-controls.component';
 import { TwEmailPanelComponent } from './tw-email-panel/tw-email-panel.component';
+import { RaceCarTrackComponent } from './tw-gamification/race-car-track/race-car-track.component';
+import { TwGamificationComponent } from './tw-gamification/tw-gamification.component';
 import { TwPanelComponent } from './tw-panel/tw-panel.component';
+import { TwPendingCallbacksComponent } from './tw-pending-callbacks/tw-pending-callbacks.component';
 import { TwPieChartComponent } from './tw-pie-chart/tw-pie-chart.component';
 import { TwRegisterCallbackComponent } from './tw-register-callback/tw-register-callback.component';
 import { TwSampleComponent } from './tw-sample/tw-sample.component';
@@ -94,7 +97,10 @@ const collectionComponents = [
     TwWorkbenchPanelComponent,
     WorkbenchEmailComponent,
     TwEmailPanelComponent,
-    TwEmailControlsComponent
+    TwEmailControlsComponent,
+    TwPendingCallbacksComponent,
+    TwGamificationComponent,
+    RaceCarTrackComponent
 ];
 
 @NgModule({
@@ -102,4 +108,4 @@ const collectionComponents = [
     imports: [SharedModule, TwWrapperModule],
     exports: collectionComponents
 })
-export class TwCollectionsModule { }
+export class TwCollectionsModule {}

@@ -33,9 +33,10 @@
                 </mat-form-field>
 
                 <mat-form-field class="form-field custom" appearance="outline">
-                    <input class="login-input" matInput required placeholder="LAN ID" (keydown.enter)="login(false)" formControlName="lanId" #lanId />
+                    <input class="login-input" matInput required placeholder="LAN ID" formControlName="lanId" #lanId />
                     <button
                         mat-button
+                        type="button"
                         color="primary"
                         *ngIf="loginForm.get('lanId').value"
                         matSuffix
@@ -49,10 +50,11 @@
                 </mat-form-field>
 
                 <mat-form-field class="form-field custom" appearance="outline" *ngIf="agentIdEnabled">
-                    <input class="login-input" matInput required placeholder="AGENT ID" (keydown.enter)="login(false)" formControlName="agentId" />
+                    <input class="login-input" matInput required placeholder="AGENT ID" formControlName="agentId" />
                     <button
                         mat-button
                         color="primary"
+                        type="button"
                         *ngIf="loginForm.get('agentId').value"
                         matSuffix
                         mat-icon-button
@@ -72,11 +74,11 @@
                         [type]="hidePassword ? 'password' : 'text'"
                         required
                         placeholder="PASSWORD"
-                        (keydown.enter)="login(false)"
                         formControlName="password"
                     />
                     <button
                         mat-icon-button
+                        type="button"
                         color="primary"
                         color="primary"
                         matSuffix
@@ -101,12 +103,12 @@
                         required
                         placeholder="STATION"
                         (keypress)="numberOnly($event)"
-                        (keydown.enter)="login(false)"
                         formControlName="station"
                     />
                     <button
                         *ngIf="loginForm.get('station').value"
                         matSuffix
+                        type="button"
                         mat-icon-button
                         color="primary"
                         aria-label="Clear"

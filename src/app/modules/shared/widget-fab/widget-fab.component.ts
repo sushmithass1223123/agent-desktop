@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewEncapsulation, Input } from '@angular/core';
-import { widgetFabAnimations } from './widget-fab.animation';
+import { widgetFabAnimations } from '@modules/shared/animations/widget-fab.animation';
 import { IWidget } from 'app/interfaces';
 import { AOTWidgetService } from '@services/aot-widget.service';
 @Component({
@@ -10,19 +10,14 @@ import { AOTWidgetService } from '@services/aot-widget.service';
     animations: widgetFabAnimations
 })
 export class WidgetFabComponent implements OnInit {
-
-
     @Input() fabWidgets: IWidget[];
 
     buttons: IWidget[] = [];
     fabTogglerState = 'inactive';
 
-    constructor(
-        private _aotWidgetService: AOTWidgetService
-    ) { }
+    constructor(private _aotWidgetService: AOTWidgetService) {}
 
-    ngOnInit(): void {
-    }
+    ngOnInit(): void {}
 
     showItems(): void {
         this.fabTogglerState = 'active';
@@ -46,5 +41,4 @@ export class WidgetFabComponent implements OnInit {
         // toggle FAB
         this.onToggleFab();
     }
-
 }

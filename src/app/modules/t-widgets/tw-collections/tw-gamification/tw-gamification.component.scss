@@ -1,0 +1,77 @@
+@import 'app/scss/shared';
+
+tw-gamification {
+    avatar {
+        & > *:first-child {
+            overflow: hidden;
+        }
+    }
+
+    .gamification-cards {
+        --card-space: 30px;
+        & > * {
+            margin-bottom: var(--card-space);
+            height: calc(50% - var(--card-space));
+        }
+    }
+
+    .readonly {
+        position: relative;
+        &::after {
+            content: '';
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            top: 0;
+            left: 0;
+        }
+    }
+
+    .rank {
+        background-color: gold;
+    }
+
+    .mat-slider-horizontal {
+        height: auto !important;
+        pointer-events: none;
+        .mat-slider-wrapper {
+            top: unset;
+            left: unset;
+            right: unset;
+            position: relative !important;
+        }
+        // .mat-slider-track-wrapper {
+        //     transform: scaleY(3);
+        // }
+    }
+
+    .leader-progress-bar {
+        position: relative;
+        display: flex;
+        & > *:not(.marker) {
+            height: 5px;
+            flex: 1;
+            margin: 0px 1px;
+            border-radius: 20px;
+        }
+        .marker {
+            position: absolute;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid #111;
+            top: -6px;
+        }
+
+        // .level {
+        // &-1 {
+        //     background-color: $tw-alt-success;
+        // }
+        // &-2 {
+        //     background-color: tw-alt-warning;
+        // }
+        // &-3 {
+        //     background-color: palevioletred;
+        // }
+        // }
+    }
+}

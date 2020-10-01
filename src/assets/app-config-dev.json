@@ -107,6 +107,24 @@
                                     "Enabled": true
                                 },
                                 "Data": {}
+                            },
+                            {
+                                "Name": "Create Interaction",
+                                "Description": "",
+                                "Type": "tw-create-interaction",
+                                "Config": {
+                                    "Enabled": true
+                                },
+                                "Data": {
+                                    "Channels": [
+                                        {
+                                            "Name": "SMS",
+                                            "Type": "sms",
+                                            "Icon": "sms",
+                                            "Enable": true
+                                        }
+                                    ]
+                                }
                             }
                         ]
                     }
@@ -610,31 +628,32 @@
                                 {
                                     "Name": "Gamification",
                                     "Description": "",
-                                    "Type": "tw-custom",
+                                    "Type": "tw-gamification",
                                     "Config": {
                                         "Enabled": true,
                                         "Static": false,
-                                        "Anchor": true,
-                                        "AOT": true,
+                                        "Anchor": false,
+                                        "AOT": false,
                                         "Icon": "extension",
                                         "Class": "",
                                         "Position": {
-                                            "X": 0,
-                                            "Y": 0,
-                                            "W": 1500,
-                                            "H": 900
+                                            "X": 2,
+                                            "Y": 4,
+                                            "W": 1200,
+                                            "H": 700
                                         },
                                         "Actions": [
-                                            "minimize",
+                                            "maximize",
+                                            "pin",
+                                            "float",
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
                                     "Data": {
-                                        "AutoOpen": false,
-                                        "OpenInNew": false,
-                                        "Url": "https://dice.tetherfi.cloud/GamificationUI/?agentId=_agentId"
+                                        "LeaderBoardUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetLeaderBoard",
+                                        "AgentProgressUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetProgress"
                                     }
                                 },
                                 {
@@ -2372,7 +2391,7 @@
                                         "ViewState": "restore"
                                     },
                                     "Data": {
-                                        "EmailSearchUrl": "https://dice.tetherfi.cloud:55005/api/workbench/email/search"
+                                        "WorkbenchUrl": "https://dice.tetherfi.cloud:55005/api/workbench"
                                     }
                                 }
                             ]

@@ -233,7 +233,7 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
                 label: d
             }))
             .filter((x) => {
-                const sum = x.data.reduce((a, b) => a + b);
+                const sum = x.data && x.data.length ? x.data.reduce((a, b) => a + b) : null;
                 return !!sum;
             });
         this.chart.labels = labels;
