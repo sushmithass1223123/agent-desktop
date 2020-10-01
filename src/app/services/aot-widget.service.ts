@@ -9,9 +9,13 @@ import { AppDataService } from './app-data.service';
     providedIn: 'root'
 })
 export class AOTWidgetService {
-
-    // Private
+    /**
+     * Subject to unsubscribe for all subscriptions
+     */
     private _unsubscribeAll: Subject<any>;
+    /**
+     * Widget subject to emit when AOT is added or removed
+     */
     private _widgetsSubject: BehaviorSubject<IWidget[]>;
 
     constructor(
@@ -60,7 +64,7 @@ export class AOTWidgetService {
 
     /**
      * To add a new AOT widget
-     * @param widget widget model
+     * @param widget Widget model
      */
     public addWidget(widget: IWidget): void {
 
@@ -78,15 +82,21 @@ export class AOTWidgetService {
         // push the new content
         widgetList.push(widget);
 
+        // listen to destory widget invokation
+        widget.destroy = () => {
+            this.destroyWidget(widget.ID, true);
+        };
+
         // notify the observers
         this._widgetsSubject.next(widgetList);
     }
 
     /**
      * To destroy a AOT widget
-     * @param id id of the widget
+     * @param id ID of the widget
+     * @param force [OPTIONAL] To force close widget with out triggering OnDestroy
      */
-    public destroyWidget(id: string): void {
+    public destroyWidget(id: string, force?: boolean): void {
 
         // check if the id is null
         if (!id) {
@@ -106,8 +116,8 @@ export class AOTWidgetService {
         const widget = widgetList.filter((w) => w.ID === id)?.[0];
 
         // get the widget and call on destroy
-        if (widget && typeof widget.OnDestroy === 'function') {
-            widget.OnDestroy();
+        if (widget && typeof widget.OnDestroy === 'function' && !force && !widget.OnDestroy()) {
+            return;
         }
 
         // remove the widget
@@ -136,6 +146,5 @@ export class AOTWidgetService {
         // unsubscribe from all subscriptions
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
-        this._widgetsSubject = new BehaviorSubject([]);
     }
 }

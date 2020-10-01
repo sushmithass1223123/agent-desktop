@@ -1,12 +1,17 @@
 <div class="tw-navbar-menu">
     <div class="menu-item" *ngFor="let widget of toolbarMenuWidget">
-        <tw-aux-timer [data]="widget" *ngIf="widget.Type === 'tw-aux-timer'" fxHide fxShow.gt-xs></tw-aux-timer>
-        <tw-agent-details [data]="widget" *ngIf="widget.Type === 'tw-agent-details'"></tw-agent-details>
-        <tw-aux-codes [data]="widget" *ngIf="widget.Type === 'tw-aux-codes'"></tw-aux-codes>
-        <tw-notifications [data]="widget" *ngIf="widget.Type === 'tw-notifications'" fxHide fxShow.gt-xs></tw-notifications>
-        <tw-instant-messaging [data]="widget" *ngIf="widget.Type === 'tw-instant-messaging'" fxHide fxShow.gt-xs></tw-instant-messaging>
-        <tw-logout [data]="widget" *ngIf="widget.Type === 'tw-logout'"></tw-logout>
-        <tw-broadcast [data]="widget" *ngIf="widget.Type === 'tw-broadcast'" fxHide fxShow.gt-sm></tw-broadcast>
-        <tw-create-interaction [data]="widget" *ngIf="widget.Type === 'tw-create-interaction'"></tw-create-interaction>
+        <tw-aux-timer [data]="widget" *ngIf="widget.Type === 'tw-aux-timer' && widget.Config.Enabled" fxHide fxShow.gt-xs></tw-aux-timer>
+        <tw-agent-details [data]="widget" *ngIf="widget.Type === 'tw-agent-details' && widget.Config.Enabled"></tw-agent-details>
+        <tw-notifications [data]="widget" *ngIf="widget.Type === 'tw-notifications' && widget.Config.Enabled" fxHide fxShow.gt-xs></tw-notifications>
+        <tw-aux-codes [data]="widget" *ngIf="widget.Type === 'tw-aux-codes' && widget.Config.Enabled"></tw-aux-codes>
+        <tw-instant-messaging
+            [data]="widget"
+            *ngIf="widget.Type === 'tw-instant-messaging' && widget.Config.Enabled"
+            fxHide
+            fxShow.gt-xs
+        ></tw-instant-messaging>
+        <tw-logout [data]="widget" *ngIf="widget.Type === 'tw-logout' && widget.Config.Enabled"></tw-logout>
+        <tw-broadcast [data]="widget" *ngIf="widget.Type === 'tw-broadcast' && widget.Config.Enabled" fxHide fxShow.gt-sm></tw-broadcast>
+        <tw-create-interaction [data]="widget" *ngIf="widget.Type === 'tw-create-interaction' && widget.Config.Enabled"></tw-create-interaction>
     </div>
 </div>

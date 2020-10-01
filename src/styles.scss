@@ -24,3 +24,12 @@ html {
     box-shadow: inset 0 0 0 10px rgba(0, 0, 0, 0.54) !important;
 }
 
+input[type='text'] {
+    color: currentColor !important;
+}
+
+input[type='time']::-webkit-calendar-picker-indicator {
+    width: 20px;
+    height: 20px;
+    opacity: 0.8;
+}

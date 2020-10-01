@@ -280,7 +280,7 @@ export class InstantMessagingComponent implements OnInit, AfterViewInit, OnDestr
     }
 
     AgentNotificaitonEvent = (evt: AgentNotificaitonEvent): void => {
-        if (evt.Type !== 'IM') {
+        if (evt.InteractionID > 0 || evt.Type !== 'IM') {
             return;
         }
         if (!this.allChats[evt.FromAgentId]) {

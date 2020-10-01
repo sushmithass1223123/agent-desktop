@@ -11,7 +11,7 @@ export class ResourceNotFoundComponent implements OnInit {
     subtitle: string;
     title: string;
     description: string;
-    login: boolean;
+    login = true;
 
     constructor(private _router: Router) { }
 
@@ -19,7 +19,7 @@ export class ResourceNotFoundComponent implements OnInit {
         this.subtitle = history.state.subtitle || '';
         this.title = history.state.title || '';
         this.description = history.state.description || '';
-        this.login = history.state.login || false;
+        this.login = history.state.login || true;
     }
 
     routeToLogin(): void {

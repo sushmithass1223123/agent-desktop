@@ -1,6 +1,7 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { TWidgetWrapper } from '@twidgets/utils';
+import { IWidget } from 'app/interfaces';
 import { AgentStatusChangeEvent, IAgentData, IAUXCodes, IResponse, SDKClient } from 'tmac-sdk';
 
 @Component({
@@ -10,10 +11,17 @@ import { AgentStatusChangeEvent, IAgentData, IAUXCodes, IResponse, SDKClient } f
     encapsulation: ViewEncapsulation.None
 })
 export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-
-    @Input() data: any;
-
+    /**
+     * Widget data
+     */
+    @Input() data: IWidget;
+    /**
+     * AUX code menu opened falg
+     */
     opened = false;
+    /**
+     * AUX code list with default data
+     */
     auxCodesList: IAUXCodes[] = [
         {
             Code: 'nodata',
@@ -24,8 +32,17 @@ export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDes
             Value: 0
         }
     ];
+    /**
+     * Current AUX reference
+     */
     currentAux: string;
+    /**
+     * Agent name reference
+     */
     agentName = '';
+    /**
+     * Agent status reference
+     */
     agentStatus = '';
 
     constructor(
@@ -34,15 +51,21 @@ export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDes
         super();
     }
 
+    /**
+     * OnInit
+     */
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
+
+        // get the widget extra data
+        const byTeam = this.data.Data.ByTeam || false;
 
         // register to event
         SDKClient.events.on('AgentStatusChangeEvent', this.AgentStatusChangeEvent);
 
         // get agent aux codes
-        SDKClient.loadAUXCodes(false, null)
+        SDKClient.loadAUXCodes(byTeam, null)
             .then((result: IResponse) => {
                 // check if the data is null
                 if (result.response && result.response.length > 0) {
@@ -58,6 +81,9 @@ export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDes
         this.currentAux = agentData.agentStatus;
     }
 
+    /**
+     * OnDestroy
+     */
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();

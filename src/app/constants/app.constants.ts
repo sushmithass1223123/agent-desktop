@@ -1,6 +1,6 @@
 import { Color } from 'ng2-charts';
 import { SDKClient, TUtils } from 'tmac-sdk';
-import { AppAlertDialogTypes, ReminderTaskDialogTypes } from 'app/interfaces';
+import { AppAlertDialogTypes, AppConfirmDialogTypes, ReminderTaskDialogTypes } from 'app/interfaces';
 
 export const CHART_COLORS: Color[] = [
     {
@@ -89,18 +89,59 @@ export const AppAlertDialogConstants: Record<AppAlertDialogTypes, { heading: str
     }
 };
 
-export const RemiderTaskDialogConstants: Record<ReminderTaskDialogTypes, { message: string, type: string }> = {
+export const RemiderTaskDialogConstants: Record<ReminderTaskDialogTypes, { title: string, message: string, type: string }> = {
     makecall: {
+        title: 'Task Reminder',
         message: 'Do you want to make this call?',
         type: 'makecall'
     },
     meeting: {
+        title: 'Task Reminder',
         message: 'Do you want to accept the scheduled meeting?',
         type: 'meeting'
     },
     changestate: {
+        title: 'Task Reminder',
         message: 'Do you want to change you status?',
         type: 'changestate'
+    },
+    dacrequest: {
+        title: 'DAC Request',
+        message: 'Do you to accept this DAC request?',
+        type: 'dacrequest'
+    },
+    tcmwqvoice: {
+        title: 'DAC Request',
+        message: 'Do you to accept this DAC request?',
+        type: 'tcmwqvoice'
+    }
+};
+
+export const AppConfirmDialogConstants: Record<AppConfirmDialogTypes, { title: string, message: string, type: string }> = {
+    takeoverSession: {
+        title: 'Confirm Login',
+        message: 'Another session detected. Do you want to take it over?',
+        type: 'takeoverSession'
+    },
+    endInteraction: {
+        title: 'Confirm End',
+        message: 'Are you sure to end this interaction?',
+        type: 'endInteraction'
+    },
+    closeInteraction: {
+        title: 'Confirm Close',
+        message: 'Are you sure to close this interaction?',
+        type: 'closeInteraction'
+    },
+    'logout': {
+        title: 'Confirm Logout',
+        message: 'Are you sure you want to logout?',
+        type: 'logout'
+    },
+    'generic': {
+        title: 'Confirm',
+        message: 'Are you sure?',
+        type: 'generic'
     }
 };
 

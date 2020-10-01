@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { InteractionRef, InteractionWidgets, IWidget } from 'app/interfaces';
@@ -15,26 +15,24 @@ import { InteractionClosedEvent, TextChatIncomingEvent } from 'tmac-sdk';
 })
 export class TwcTextchatComponent extends TWContentWrapper implements OnInit, OnDestroy {
 
-    @Input() data: IWidget;
-
-    interactions: InteractionWidgets[] = [];
-    activeInteraction: number;
-
     constructor(
         public hostElement: ElementRef,
         public contentPageService: ContentPageService,
         private _interactionManagerService: InteractionManagerService,
-        private _interactionEventService: TMACEventService
+        private _tmacEventService: TMACEventService
     ) {
         super(hostElement, contentPageService);
     }
 
+    /**
+     * OnInit
+     */
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
 
         // subscribe to interaction events observable
-        this._interactionEventService.constructDisposeEvents
+        this._tmacEventService.constructDisposeEvents
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((evt: any) => {
                 // filter the event name
@@ -61,18 +59,24 @@ export class TwcTextchatComponent extends TWContentWrapper implements OnInit, On
             });
     }
 
+    /**
+     * OnDestroy
+     */
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
     }
 
+    /**
+     * To process TextChatIncomingEvent
+     */
     private textChatIncomingEvent = (evt: TextChatIncomingEvent) => {
 
         // get the content widgets
         const textchatWidgets = this.data.Data.Widgets || [];
 
         const staticWidgets = textchatWidgets.Static || [];
-        const dynamicWidgets = textchatWidgets.Dynamic || [];
+        const dynamicWidgets = JSON.parse(evt.WidgetConfigData) || textchatWidgets.Dynamic || [];
         const aotWidgets = textchatWidgets.AOT || [];
 
         // loop the widgets and add append interaction details
@@ -115,6 +119,9 @@ export class TwcTextchatComponent extends TWContentWrapper implements OnInit, On
         });
     }
 
+    /**
+     * To process interaction closed event for voice
+     */
     private interactionClosed = (evt: InteractionClosedEvent) => {
         this.interactions = this.interactions.filter((i: InteractionWidgets) => i.interactionId !== evt.InteractionID);
         // if there are other item in the list auto select fist chat after closing current

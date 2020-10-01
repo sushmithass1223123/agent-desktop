@@ -13,8 +13,12 @@
     <mat-icon color="primary" *ngIf="subType.toLowerCase() === 'field'">roofing</mat-icon>
 </ng-template>
 
-<!-- (collapseEvent)="collapseEvent($event)" (floatEvent)="floatEvent($event)" -->
-<tw-wrapper [data]="data" (maximizeEvent)="maximizeEvent($event)">
+<tw-wrapper
+    [data]="data"
+    (maximizeEvent)="onMaximizeEvent($event)"
+    (collapseEvent)="collapseEvent.emit($event)"
+    (floatEvent)="floatEvent.emit($event)"
+>
     <div *ngIf="!customerJourneyTable.loading" class="customer-journey" [fxLayout]="maximized ? 'column' : 'row wrap'" fxLayoutGap="6px">
         <div *ngIf="!maximized" class="timeline" fusePerfectScrollbar [fusePerfectScrollbarOptions]="{ suppressScrollX: true }">
             <div
@@ -99,7 +103,7 @@
                 matSortDisableClear
                 [formGroup]="searchForm"
             >
-                <!NA Note that these columns can be defined in any order.
+                <!-- NA Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
 
                 <ng-container matColumnDef="SessionID">
@@ -108,7 +112,7 @@
                         <mat-icon [matMenuTriggerFor]="sessionSearch" mat-ripple>search</mat-icon>
                         <mat-menu #sessionSearch="matMenu" class="search-input p-4">
                             <div fxLayout="column">
-                                <mat-form-field (click)="$event.stopPropagation()" appearance="outline" class="custom form-field">
+                                <mat-form-field (click)="$event.stopPropagation()" appearance="outline" class="custom with-border form-field">
                                     <input type="text" matInput class="p-0 login-input" formControlName="SessionID" />
                                 </mat-form-field>
                             </div>
@@ -123,7 +127,7 @@
                         <mat-icon [matMenuTriggerFor]="receivedAtSearch" mat-ripple>search</mat-icon>
                         <mat-menu #receivedAtSearch="matMenu" class="search-input p-4">
                             <div fxLayout="column">
-                                <mat-form-field (click)="$event.stopPropagation()" appearance="outline" class="custom form-field">
+                                <mat-form-field (click)="$event.stopPropagation()" appearance="outline" class="custom with-border form-field">
                                     <input type="text" matInput class="p-0 login-input" formControlName="InteractionDate" />
                                 </mat-form-field>
                             </div>
@@ -138,7 +142,7 @@
                         <mat-icon [matMenuTriggerFor]="channelSearch" mat-ripple>search</mat-icon>
                         <mat-menu #channelSearch="matMenu" class="search-input p-4">
                             <div fxLayout="column">
-                                <mat-form-field (click)="$event.stopPropagation()" appearance="outline" class="custom form-field">
+                                <mat-form-field (click)="$event.stopPropagation()" appearance="outline" class="custom with-border form-field">
                                     <input type="text" matInput class="p-0 login-input" formControlName="Channel" />
                                 </mat-form-field>
                             </div>
@@ -171,7 +175,7 @@
                         <mat-icon [matMenuTriggerFor]="cifSearch" mat-ripple>search</mat-icon>
                         <mat-menu #cifSearch="matMenu" class="search-input p-4">
                             <div fxLayout="column">
-                                <mat-form-field (click)="$event.stopPropagation()" appearance="outline" class="custom form-field">
+                                <mat-form-field (click)="$event.stopPropagation()" appearance="outline" class="custom with-border form-field">
                                     <input type="text" matInput class="p-0 login-input" formControlName="CIF" />
                                 </mat-form-field>
                             </div>
@@ -186,7 +190,7 @@
                         <mat-icon [matMenuTriggerFor]="emailSearch" mat-ripple>search</mat-icon>
                         <mat-menu #emailSearch="matMenu" class="search-input p-4">
                             <div fxLayout="column">
-                                <mat-form-field (click)="$event.stopPropagation()" appearance="outline" class="custom form-field">
+                                <mat-form-field (click)="$event.stopPropagation()" appearance="outline" class="custom with-border form-field">
                                     <input type="text" matInput class="p-0 login-input" formControlName="EmailID" />
                                 </mat-form-field>
                             </div>
@@ -201,7 +205,7 @@
                         <mat-icon [matMenuTriggerFor]="nricSearch" mat-ripple>search</mat-icon>
                         <mat-menu #nricSearch="matMenu" class="search-input p-4">
                             <div fxLayout="column">
-                                <mat-form-field (click)="$event.stopPropagation()" appearance="outline" class="custom form-field">
+                                <mat-form-field (click)="$event.stopPropagation()" appearance="outline" class="custom with-border form-field">
                                     <input type="text" matInput class="p-0 login-input" formControlName="NRIC" />
                                 </mat-form-field>
                             </div>
@@ -216,7 +220,7 @@
                         <mat-icon [matMenuTriggerFor]="phoneSearch" mat-ripple>search</mat-icon>
                         <mat-menu #phoneSearch="matMenu" class="search-input p-4">
                             <div fxLayout="column">
-                                <mat-form-field (click)="$event.stopPropagation()" appearance="outline" class="custom form-field">
+                                <mat-form-field (click)="$event.stopPropagation()" appearance="outline" class="custom with-border form-field">
                                     <input type="text" matInput class="p-0 login-input" formControlName="PhoneNumber" />
                                 </mat-form-field>
                             </div>
@@ -231,7 +235,7 @@
                         <mat-icon [matMenuTriggerFor]="sentimentSearch" mat-ripple>search</mat-icon>
                         <mat-menu #sentimentSearch="matMenu" class="search-input p-4">
                             <div fxLayout="column">
-                                <mat-form-field (click)="$event.stopPropagation()" appearance="outline" class="custom form-field">
+                                <mat-form-field (click)="$event.stopPropagation()" appearance="outline" class="custom with-border form-field">
                                     <input type="text" matInput class="p-0 login-input" formControlName="OverallSentiment" />
                                 </mat-form-field>
                             </div>

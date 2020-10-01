@@ -8,6 +8,7 @@ import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseSplashScreenService } from '@fuse/services/splash-screen.service';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { TranslateService } from '@ngx-translate/core';
+import { AppUiService } from '@services/app-ui.service';
 import { locale as navigationEnglish } from 'app/navigation/i18n/en';
 import { locale as navigationTurkish } from 'app/navigation/i18n/tr';
 import { navigation } from 'app/navigation/navigation';
@@ -78,6 +79,10 @@ export class AppComponent implements OnInit, OnDestroy {
      * @param {FuseTranslationLoaderService} _fuseTranslationLoaderService
      * @param {Platform} _platform
      * @param {TranslateService} _translateService
+     * @param {Title} _titleService
+     * @param {AppDataService} _appDataService
+     * @param {TitRouterle} _router
+     * @param {AppUiService} _appUIService
      */
     constructor(
         @Inject(DOCUMENT) private document: any,
@@ -85,11 +90,12 @@ export class AppComponent implements OnInit, OnDestroy {
         private _fuseNavigationService: FuseNavigationService,
         private _fuseSplashScreenService: FuseSplashScreenService,
         private _fuseTranslationLoaderService: FuseTranslationLoaderService,
-        private _translateService: TranslateService,
         private _platform: Platform,
+        private _translateService: TranslateService,
         private _titleService: Title,
         private _appDataService: AppDataService,
         private _router: Router,
+        private _appUIService: AppUiService
     ) {
         // Get default navigation
         this.navigation = navigation;
@@ -207,6 +213,9 @@ export class AppComponent implements OnInit, OnDestroy {
         // Unsubscribe from all subscriptions
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
+
+        // subscribe to app ui service
+        this._appUIService.unsubscribe();
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -333,5 +342,8 @@ export class AppComponent implements OnInit, OnDestroy {
                     }
                 });
         }
+
+        // subscribe to app ui service
+        this._appUIService.subscribe();
     }
 }

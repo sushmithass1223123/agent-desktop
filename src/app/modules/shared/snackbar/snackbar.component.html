@@ -1,12 +1,13 @@
 <div fxFlayout fxLayoutAlign="space-between center">
     <span> {{ data.message }} </span>
     <mat-icon
+        class="ml-8"
         [ngClass]="{
             spin: data.loading,
-            'text-info': data.color === 'info' || data.color === 'loading',
-            'text-success': data.color === 'success',
-            'text-warning': data.color === 'warning',
-            'text-danger': data.color === 'failure'
+            'text-info': data.state === 'info' || data.state === 'loading',
+            'text-alt-success': data.state === 'success',
+            'text-alt-warning': data.state === 'warning',
+            'text-alt-danger': data.state === 'failure'
         }"
     >
         {{ data.icon }}

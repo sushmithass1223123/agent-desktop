@@ -1,5 +1,5 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -96,6 +96,10 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     interactionId: number;
     historyParams: IGetInteractionHistory;
 
+    @Output() maximizeEvent = new EventEmitter();
+    @Output() floatEvent = new EventEmitter();
+    @Output() collapseEvent = new EventEmitter();
+
     /**
      * Customer journey table Info
      */
@@ -112,7 +116,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
 
     maximized = false;
 
-    constructor(private _fuseConfigService: FuseConfigService, private _interactionEventService: TMACEventService, private sanitizer: DomSanitizer) {
+    constructor(private _fuseConfigService: FuseConfigService, private _tmacEventService: TMACEventService, private sanitizer: DomSanitizer) {
         super();
 
         this.customerJourneyTable = {
@@ -153,7 +157,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         };
 
         // get the event from event bag to make sure no events are missed
-        const eventBag = this._interactionEventService.get(this.interactionId);
+        const eventBag = this._tmacEventService.get(this.interactionId);
 
         // process the events if any
         eventBag.forEach((evt: IUIEvent) => {
@@ -283,7 +287,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      * Maximize event from Wrapper
      * @param {Boolean} state
      */
-    public maximizeEvent(state: boolean): void {
+    public onMaximizeEvent(state: boolean): void {
+        this.maximizeEvent.emit(state);
         this.maximized = state;
     }
 

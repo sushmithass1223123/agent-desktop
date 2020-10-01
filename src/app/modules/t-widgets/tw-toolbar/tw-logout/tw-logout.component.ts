@@ -2,7 +2,6 @@ import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
-import { ConfirmDialogComponent } from '@modules/shared/confirm-dialog/confirm-dialog.component';
 import { AppUiService } from '@services/app-ui.service';
 import { TWidgetWrapper } from '@twidgets/utils';
 import { IAUXCodes, IResponse, SDKClient } from 'tmac-sdk';
@@ -80,11 +79,7 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
 
     logout(): void {
         // confirm logout 
-        const confirmDialogRef = this._dialog.open(ConfirmDialogComponent, {
-            disableClose: false
-        });
-        confirmDialogRef.componentInstance.title = 'Confirm logout';
-        confirmDialogRef.componentInstance.message = 'Are you sure you want to logout?';
+        const confirmDialogRef = this._appUIService.showAppConfirmDialog('logout')
         confirmDialogRef.afterClosed().subscribe((dialogResult) => {
             if (dialogResult) {
                 // logout error

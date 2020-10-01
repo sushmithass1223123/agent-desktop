@@ -5,7 +5,7 @@ import { InteractionRef, InteractionWidgets, IWidget } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
 import { InteractionManagerService } from 'app/services/interaction-manager.service';
 import { takeUntil } from 'rxjs/operators';
-import { InteractionClosedEvent } from 'tmac-sdk';
+import { IncomingEmailEvent, InteractionClosedEvent } from 'tmac-sdk';
 
 @Component({
     selector: 'twc-email',
@@ -14,10 +14,6 @@ import { InteractionClosedEvent } from 'tmac-sdk';
     encapsulation: ViewEncapsulation.None
 })
 export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDestroy {
-    @Input() data: IWidget;
-
-    interactions: InteractionWidgets[] = [];
-    activeInteraction: number;
 
     constructor(
         public hostElement: ElementRef,
@@ -28,45 +24,60 @@ export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDes
         super(hostElement, contentPageService);
     }
 
+    /**
+     * OnInit
+     */
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
 
         // subscribe to active interaction observable
-        this._interactionManagerService.interactions.pipe(takeUntil(this.unsubscribeAll)).subscribe((interactions: InteractionRef[]) => {
-            // check if there are email interactions first
-            if (this.interactions.length > 0) {
-                const emailInteractions = interactions.filter((i) => i.type === 'email');
-                // filter and get the active emailchat interaction if any
-                emailInteractions.forEach((interaction: InteractionRef) => {
-                    this.activeInteraction = interaction.isActive ? interaction.interactionId : this.activeInteraction;
-                });
-            }
-        });
+        this._interactionManagerService.interactions
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((interactions: InteractionRef[]) => {
+                // check if there are email interactions first
+                if (this.interactions.length > 0) {
+                    const emailInteractions = interactions.filter((i) => i.type === 'email');
+                    // filter and get the active emailchat interaction if any
+                    emailInteractions.forEach((interaction: InteractionRef) => {
+                        this.activeInteraction = interaction.isActive ? interaction.interactionId : this.activeInteraction;
+                    });
+                }
+            });
 
         // subscribe to interaction events observable
-        this._tmacEventService.constructDisposeEvents.pipe(takeUntil(this.unsubscribeAll)).subscribe((evt: any) => {
-            // filter the event name
-            if (evt.EventName === 'IncomingEmailEvent') {
-                this.EmailIncomingEvent(evt);
-            } else if (evt.EventName === 'InteractionClosedEvent') {
-                this.interactionClosed(evt);
-            }
-        });
+        this._tmacEventService.constructDisposeEvents
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((evt: any) => {
+                // filter the event name
+                if (evt.EventName === 'IncomingEmailEvent') {
+                    this.incomingEmailEvent(evt);
+                } else if (evt.EventName === 'InteractionClosedEvent') {
+                    this.interactionClosed(evt);
+                }
+            });
     }
 
+    /**
+     * OnDestroy
+     */
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
     }
 
-    private EmailIncomingEvent = (evt: any) => {
+    /**
+     * To process IncomingEmailEvent
+     * 
+     * @param {IncomingEmailEvent} evt
+     */
+    private incomingEmailEvent = (evt: IncomingEmailEvent) => {
         // get the content widgets
-        const textchatWidgets = this.data.Data.Widgets || [];
+        const emailWidgets = this.data.Data.Widgets || [];
 
-        const staticWidgets = textchatWidgets.Static || [];
-        const dynamicWidgets = textchatWidgets.Dynamic || [];
-        const aotWidgets = textchatWidgets.AOT || [];
+        const staticWidgets = emailWidgets.Static || [];
+        const dynamicWidgets = JSON.parse(evt.WidgetConfigData) || emailWidgets.Dynamic || [];
+        const aotWidgets = emailWidgets.AOT || [];
 
         // loop the widgets and add append interaction details
         staticWidgets.forEach((widget: IWidget) => {
@@ -104,8 +115,11 @@ export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDes
             path: this.data.Data.Path,
             otherData: evt
         });
-    };
+    }
 
+    /**
+     * To process interaction closed event for voice
+     */
     private interactionClosed = (evt: InteractionClosedEvent) => {
         this.interactions = this.interactions.filter((i: InteractionWidgets) => i.interactionId !== evt.InteractionID);
         // if there are other item in the list auto select fist chat after closing current
@@ -114,5 +128,5 @@ export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDes
                 isActive: true
             });
         }
-    };
+    }
 }

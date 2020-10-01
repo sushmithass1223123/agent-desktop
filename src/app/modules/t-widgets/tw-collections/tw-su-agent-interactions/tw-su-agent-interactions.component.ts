@@ -43,7 +43,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
     maximized = false;
     interactionList: any;
 
-    mindisplayedColumns: string[] = ['InteractionID', 'Channel', 'LastStatus', 'User', 'Actions'];
+    mindisplayedColumns: string[] = ['InteractionID', 'Channel', 'LastStatus', 'User', 'ActiveTime', 'HoldTime', 'Actions'];
 
     featureMap = AGENT_FEATURES_MAP;
     agentData: IAgentData;
@@ -151,10 +151,51 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
         this.interactionDetailsTable.source.paginator = this.paginator;
     }
 
+    /**
+     * To perform chat bargeIn
+     * @param {'silent' | 'whisper' | 'conf'} type Type of barge-In
+     * @param {InteractionDataModel} item Interaction data
+     */
+    private performChatBargeIn(type: 'silent' | 'whisper' | 'conf', item: InteractionDataModel): void {
+        this._appUIService.showSnackbar('Please wait, connecting to the interaction...', 'loading');
+        // send request to server
+        SDKClient.transferTextChat({
+            agentId: this.configData.AgentLoginID,
+            deviceId: this.configData.StationID,
+            tmacServer: this.configData.TmacServer,
+            chatMode: item.Channel === 'audiochat' ? 'audio' : item.Channel === 'videochat' ? 'video' : 'text',
+            comment: '',
+            conferenceType: type,
+            interactionId: item.InteractionID.toString(),
+            lineId: 'bargein',
+            sessionId: item.InteractionData.SessionId,
+            toAgentId: this.agentData.agentId,
+            toTmacServer: this.agentData.tmacServer
+        })
+            .then((resp: IResponse) => {
+                // check the response
+                if (resp.response && resp.response.ResultCode >= 0) {
+                    this._appUIService.showSnackbar(`Chat ${type === 'conf' ? 'conference' : type} barge-in successful`, 'success');
+                    // close the widget
+                    this._aotWidgetService.destroyWidget(this.data.ID);
+                }
+                else {
+                    this._appUIService.showSnackbar(`Chat ${type === 'conf' ? 'conference' : type} barge-in failed`, 'failure');
+                }
+            })
+            .catch(() => {
+                this._appUIService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
+            });
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * On widget maximized event
+     * @param state Maximzed flag
+     */
     public maximizeEvent(state: boolean): void {
         this.maximized = state;
         if (state) {
@@ -165,7 +206,13 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
         }
     }
 
-    public featureCheck(feature: AgentFeatures, type: string, subType: string): boolean {
+    /**
+     * To check whether the feature is enabled for the agent
+     * @param {AgentFeatures} feature Agent's feature
+     * @param {'agent' | 'interaction'} type Type of feature
+     * @param {string} subType Subtype of feature
+     */
+    public featureCheck(feature: AgentFeatures, type: 'agent' | 'interaction', subType: string): boolean {
         // if not allow supervisor or in map the item is not found return false
         if (!feature.Feature.startsWith('AllowSupervisor') || !this.featureMap[feature.Feature]) {
             return false;
@@ -189,43 +236,22 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
         }
     }
 
-    public performAgentAction(item: InteractionDataModel, feature: AgentFeatures): void {
+    /**
+     * To perform action on agent interaction
+     */
+    public performInteractionAction(item: InteractionDataModel, feature: AgentFeatures): void {
         console.log('performAgentAction', { item, feature });
         switch (feature.Feature) {
             case 'AllowSupervisorToBargeIn':
                 break;
             case 'AllowSupervisorToChatConference':
+                this.performChatBargeIn('conf', item);
                 break;
             case 'AllowSupervisorToChatSilentMonitor':
-                this._appUIService.showSnackbar('Please wait, connecting to the interaction...', 'loading');
-                SDKClient.transferTextChat({
-                    agentId: this.configData.AgentLoginID,
-                    deviceId: this.configData.StationID,
-                    chatMode: item.Channel === 'audiochat' ? 'audio' : item.Channel === 'videochat' ? 'video' : 'text',
-                    comment: '',
-                    conferenceType: 'silent',
-                    interactionId: item.InteractionID.toString(),
-                    lineId: 'bargein',
-                    sessionId: item.InteractionData.SessionId,
-                    toAgentId: this.agentData.agentId,
-                    toTmacServer: this.agentData.tmacServer
-                })
-                    .then((resp: IResponse) => {
-                        // check the response
-                        if (resp.response && resp.response.ResultCode >= 0) {
-                            this._appUIService.showSnackbar('Chat barge-in successful', 'success');
-                            // close the widget
-                            this._aotWidgetService.destroyWidget(this.data.ID);
-                        }
-                        else {
-                            this._appUIService.showSnackbar('Chat barge-in failed', 'failure');
-                        }
-                    })
-                    .catch(() => {
-                        this._appUIService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
-                    });
+                this.performChatBargeIn('silent', item);
                 break;
             case 'AllowSupervisorToChatWhisper':
+                this.performChatBargeIn('whisper', item);
                 break;
             case 'AllowSupervisorToFaxTransferAgent':
                 break;

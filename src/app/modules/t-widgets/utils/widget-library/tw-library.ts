@@ -16,6 +16,8 @@ import { TwCannedResponsesComponent } from '@modules/t-widgets/tw-collections/tw
 import { TwChatPanelComponent } from '@modules/t-widgets/tw-collections/tw-chat-panel/tw-chat-panel.component';
 import { TwCustomComponent } from '@modules/t-widgets/tw-collections/tw-custom/tw-custom.component';
 import { TwCustomerSentimentComponent } from '@modules/t-widgets/tw-collections/tw-customer-sentiment/tw-customer-sentiment.component';
+import { TwEmailControlsComponent } from '@modules/t-widgets/tw-collections/tw-email-controls/tw-email-controls.component';
+import { TwEmailPanelComponent } from '@modules/t-widgets/tw-collections/tw-email-panel/tw-email-panel.component';
 import { TwGamificationComponent } from '@modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component';
 import { TwPendingCallbacksComponent } from '@modules/t-widgets/tw-collections/tw-pending-callbacks/tw-pending-callbacks.component';
 import { TwPieChartComponent } from '@modules/t-widgets/tw-collections/tw-pie-chart/tw-pie-chart.component';
@@ -84,8 +86,8 @@ export class TWLibrary {
         'tw-transfer-interaction': TwTransferInteractionComponent,
         'tw-voice-canned-responses': TwVoiceCannedResponsesComponent,
         'tw-workbench-panel': TwWorkbenchPanelComponent,
-        'tw-email-panel': TwChatPanelComponent,
-        'tw-email-controls': TwAudioControlsComponent,
+        'tw-email-panel': TwEmailPanelComponent,
+        'tw-email-controls': TwEmailControlsComponent,
         'tw-pending-callbacks': TwPendingCallbacksComponent,
         'tw-gamification': TwGamificationComponent
     };

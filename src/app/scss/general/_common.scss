@@ -67,3 +67,56 @@
     animation-iteration-count: infinite;
     animation-timing-function: linear;
 }
+
+.label {
+    background-color: rgba(0, 0, 0, 0.08);
+    width: fit-content;
+    border-radius: 4px;
+    margin: 0 4px 0 0;
+    padding: 3px 8px;
+
+    &-primary {
+        background-color: $tw-primary !important;
+        color: rgba(0, 0, 0, 0.87) !important;
+    }
+    &-secondary {
+        background-color: $tw-secondary !important;
+        color: rgba(0, 0, 0, 0.87) !important;
+    }
+    &-info {
+        background-color: $tw-info !important;
+        color: rgba(0, 0, 0, 0.87) !important;
+    }
+    &-danger {
+        background-color: $tw-danger !important;
+        color: rgba(0, 0, 0, 0.87) !important;
+    }
+    &-warning {
+        background-color: $tw-warning !important;
+        color: rgba(0, 0, 0, 0.87) !important;
+    }
+    &-success {
+        background-color: $tw-success !important;
+        color: rgba(0, 0, 0, 0.87) !important;
+    }
+    &-alt-danger {
+        background-color: $tw-alt-danger !important;
+        color: #ffffff !important;
+    }
+    &-alt-warning {
+        background-color: $tw-alt-warning !important;
+        color: #ffffff !important;
+    }
+    &-alt-success {
+        background-color: $tw-alt-success !important;
+        color: #ffffff !important;
+    }
+    &-dark {
+        background-color: $tw-dark !important;
+        color: #ffffff !important;
+    }
+    &-light {
+        background-color: #ffffff !important;
+        color: $tw-dark !important;
+    }
+}

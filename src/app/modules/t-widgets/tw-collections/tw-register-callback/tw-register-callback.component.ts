@@ -95,7 +95,7 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
         private matDialog: MatDialog,
         private _appUiService: AppUiService,
         private _aotWidgetService: AOTWidgetService,
-        private _interactionEventService: TMACEventService
+        private _tmacEventService: TMACEventService
     ) {
         super();
     }
@@ -123,7 +123,7 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
         // listen to events only if opened in an interaction
         if (this.interactionId) {
             // get the event from event bag to make sure no events are missed
-            const eventBag = this._interactionEventService.get(this.interactionId);
+            const eventBag = this._tmacEventService.get(this.interactionId);
 
             // process the events if any
             eventBag.forEach((evt: IUIEvent) => {

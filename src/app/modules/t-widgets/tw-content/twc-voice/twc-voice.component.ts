@@ -1,8 +1,8 @@
-import { Component, ElementRef, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { TMACEventService } from '@services/tmac-event.service';
+import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { InteractionManagerService } from '@services/interaction-manager.service';
+import { TMACEventService } from '@services/tmac-event.service';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
-import { InteractionWidgets, IWidget, InteractionRef } from 'app/interfaces';
+import { InteractionRef, InteractionWidgets, IWidget } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
 import { takeUntil } from 'rxjs/operators';
 import { IncomingCallEvent, InteractionClosedEvent, OutgoingCallEvent } from 'tmac-sdk';
@@ -15,26 +15,32 @@ import { IncomingCallEvent, InteractionClosedEvent, OutgoingCallEvent } from 'tm
 })
 export class TwcVoiceComponent extends TWContentWrapper implements OnInit, OnDestroy {
 
-    @Input() data: any;
-
-    interactions: InteractionWidgets[] = [];
-    activeInteraction: number;
-
+    /**
+     * Constructor
+     * 
+     * @param {ElementRef} hostElement
+     * @param {ContentPageService} contentPageService
+     * @param {TMACEventService} _tmacEventService
+     * @param {InteractionManagerService} _interactionManagerService
+     */
     constructor(
-        public hostElement: ElementRef,
-        public contentPageService: ContentPageService,
-        private _interactionEventService: TMACEventService,
+        hostElement: ElementRef,
+        contentPageService: ContentPageService,
+        private _tmacEventService: TMACEventService,
         private _interactionManagerService: InteractionManagerService
     ) {
         super(hostElement, contentPageService);
     }
 
+    /**
+     * OnInit
+     */
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
 
         // subscribe to interaction events observable
-        this._interactionEventService.constructDisposeEvents
+        this._tmacEventService.constructDisposeEvents
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((evt: any) => {
                 // filter the event name
@@ -61,18 +67,24 @@ export class TwcVoiceComponent extends TWContentWrapper implements OnInit, OnDes
             });
     }
 
+    /**
+     * OnDestroy
+     */
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
     }
 
+    /**
+     * To process incoming or outgoing call event
+     */
     private incomingOutgoingCallEvent = (evt: IncomingCallEvent | OutgoingCallEvent) => {
 
         // get the content widgets
         const voiceWidgets = this.data.Data.Widgets || [];
 
         const staticWidgets = voiceWidgets.Static || [];
-        const dynamicWidgets = voiceWidgets.Dynamic || [];
+        const dynamicWidgets = JSON.parse(evt.WidgetConfigData) || voiceWidgets.Dynamic || [];
         const aotWidgets = voiceWidgets.AOT || [];
 
         // loop the widgets and add append interaction details
@@ -113,6 +125,9 @@ export class TwcVoiceComponent extends TWContentWrapper implements OnInit, OnDes
         });
     }
 
+    /**
+     * To process interaction closed event for voice
+     */
     private interactionClosed = (evt: InteractionClosedEvent) => {
         this.interactions = this.interactions.filter((i: InteractionWidgets) => i.interactionId !== evt.InteractionID);
         // if there are other item in the list auto select fist chat after closing current

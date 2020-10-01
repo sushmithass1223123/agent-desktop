@@ -71,6 +71,18 @@
         }
     }
 
+    mat-form-field {
+        &.prompt {
+            textarea {
+                @if ($is-dark) {
+                    background-color: map-get($background, hover);
+                } @else {
+                    background-color: #ffffff;
+                }
+            }
+        }
+    }
+
     .mat-paginator {
         @if ($is-dark) {
             color: #eaeaea;

@@ -13,10 +13,10 @@
                     ' ' +
                     (floating[widget.Type] || widget.Config.ViewState === 'float' ? 'floating' : '')
                 "
+                (maximizeEvent)="maximized['tw-email-controls'] = $event"
+                (collapseEvent)="collapsed['tw-email-controls'] = $event"
+                (floatEvent)="floating['tw-email-controls'] = $event"
             >
-                <!-- (maximizeEvent)="onmaximized($event, widget.Type)"
-            (collapseEvent)="onCollapsed($event, widget.Type)"
-            (floatEvent)="onFloating($event, widget.Type)" -->
             </tw-email-controls>
 
             <tw-customer-journey
@@ -31,9 +31,9 @@
                     ' ' +
                     (floating[widget.Type] || widget.Config.ViewState === 'float' ? 'floating' : '')
                 "
-                (maximizeEvent)="onmaximized($event, widget.Type)"
-                (collapseEvent)="onCollapsed($event, widget.Type)"
-                (floatEvent)="onFloating($event, widget.Type)"
+                (maximizeEvent)="maximized['tw-customer-journey'] = $event"
+                (collapseEvent)="collapsed['tw-customer-journey'] = $event"
+                (floatEvent)="floating['tw-customer-journey'] = $event"
             >
             </tw-customer-journey>
         </ng-container>

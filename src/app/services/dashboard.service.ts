@@ -124,10 +124,16 @@ export class DashboardService {
         }
     }
 
+    /**
+     * Getter to observe the server connection change
+     */
     get connectionState(): any | Observable<string> {
         return this._dashboardServiceSubject.asObservable();
     }
 
+    /**
+     * To subscribe to dashboard service
+     */
     public subscribe(): void {
         // check if subscribed
         if (this._subscribed) {
@@ -152,6 +158,9 @@ export class DashboardService {
         this._subscribed = true;
     }
 
+    /**
+     * To unsubscribe from dashboard servie
+     */
     public unsubscribe(): void {
         // check if unsubscribed
         if (!this._subscribed) {
@@ -164,6 +173,7 @@ export class DashboardService {
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
         this._subscribed = false;
+        this._dashboardServiceSubject = new BehaviorSubject('');
     }
 
     public triggerAgentData(agentId: string, start: boolean, duration: number): void {

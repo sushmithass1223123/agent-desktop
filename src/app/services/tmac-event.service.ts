@@ -1,10 +1,25 @@
 import { Injectable } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { RemiderTaskDialogComponent } from '@modules/shared/remider-task-dialog/remider-task-dialog.component';
+import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { IWidget } from 'app/interfaces';
+import { TwWidgetModel } from 'app/models';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AgentNotificaitonEvent, AgentReminder, AgentStatusChangeEvent, CommandResultEvent, IResponse, IUIEvent, SDKClient, TUtils } from 'tmac-sdk';
+import {
+    ACWTimerEvent,
+    AgentNotificaitonEvent,
+    AgentReminder,
+    AgentStatusChangeEvent,
+    CommandResultEvent,
+    GenericInteractionEvent,
+    HoldTimerEvent,
+    IResponse,
+    IUIEvent,
+    SDKClient,
+    TCMDirectAgentNotifyTimeoutEvent,
+    TUtils
+} from 'tmac-sdk';
 import { AOTWidgetService } from './aot-widget.service';
 import { AppDataService } from './app-data.service';
 import { AppUiService } from './app-ui.service';
@@ -15,16 +30,61 @@ import { InteractionManagerService } from './interaction-manager.service';
 })
 export class TMACEventService {
     // Private
+    /**
+     * Unsubscribe all subject
+     */
     private _unsubscribeAll: Subject<any>;
+    /**
+     * App config
+     */
+    appConfig: any;
+    /**
+     * TMAC events storage array 
+     */
     private _tmacEventArray: any[];
+
+    /**
+     * Construct and Dispose TMAC event subject
+     */
     private _constructDisposeEventSubject: BehaviorSubject<any>;
+    /**
+     * Array to store the list AOT widgets for AgentNotificaitonEvent's ExecuteAction and ExecuteTask
+     */
     private _aotWidgets: IWidget[];
+
+    /**
+     * Remider task dialog reference
+     */
     private _remiderTaskDialog: {
+        /**
+         * Make call task dialog ref
+         */
         makeCall: MatDialogRef<RemiderTaskDialogComponent, any>,
+        /**
+         * Meeting task dialog ref
+         */
         meeting: MatDialogRef<RemiderTaskDialogComponent, any>,
+        /**
+         * Change status task dialog ref
+         */
         changeState: MatDialogRef<RemiderTaskDialogComponent, any>
+        /**
+         * DAC request dialog ref
+         */
+        dacRequest: MatDialogRef<RemiderTaskDialogComponent, any>
+        /**
+         * TCM WQ voice DAC request dialog ref
+         */
+        tcmWQVoice: MatDialogRef<RemiderTaskDialogComponent, any>
     };
 
+    /**
+     * Constructor
+     * @param {AppDataService} _appDataService
+     * @param {InteractionManagerService} _interactionManagerService
+     * @param {AppUiService} _appUIService
+     * @param {AOTWidgetService} _aotWidgetService
+     */
     constructor(
         private _appDataService: AppDataService,
         private _interactionManagerService: InteractionManagerService,
@@ -38,7 +98,9 @@ export class TMACEventService {
         this._remiderTaskDialog = {
             makeCall: null,
             meeting: null,
-            changeState: null
+            changeState: null,
+            dacRequest: null,
+            tcmWQVoice: null
         };
     }
 
@@ -57,6 +119,10 @@ export class TMACEventService {
     // @ Private Methods
     // -----------------------------------------------------------------------------------------------------    
 
+    /**
+     * TMAC event listener function
+     * @param evt TMAC event
+     */
     private onTMACEvents = (evt: IUIEvent) => {
         if (evt.InteractionID > 0) {
             // add all the interaction events to the array
@@ -76,44 +142,140 @@ export class TMACEventService {
         }
     }
 
+    /**
+     * To remove all the events from reference which related to an interaction
+     */
     private remove(interactionId: number): void {
         this._tmacEventArray = this._tmacEventArray.filter(i => i.InteractionID !== interactionId);
     }
 
-    private onAgentNotificaitonEvent = (evt: AgentNotificaitonEvent) => {
+    /**
+     * To process AgentNotificaitonEvent
+     * 
+     * @param {AgentNotificaitonEvent} evt
+     */
+    private AgentNotificaitonEvent = (evt: AgentNotificaitonEvent) => {
         try {
+            // TODO:: check if the interaction id is there then return 
+            // and to handle interaction AgentNotificaitonEvent separatly
+            // if (evt.InteractionID > 0) {
+            //     TUtils.Logger.console('info', 'TMACEventService.AgentNotificaitonEvent: event for an interaction, return');
+            //     return;
+            // }
+
             // get the type
-            const type = evt.Type.toLowerCase();
+            const type = evt.Type?.toLowerCase() || '';
+
             // handle alerts
             if (type === 'alert' && evt.Message) {
                 this._appUIService.showAlertModal(evt.Message, 'error', 'Alert');
             }
             else if (type === 'executeaction') {
                 // parse the action
+                const parsedMessage: {
+                    /**
+                     * Type of action
+                     */
+                    Action: string,
+                    /**
+                     * Data for the notification
+                     */
+                    Data: string,
+                    /**
+                     * Mandatory action to be taken
+                     */
+                    IsMandatory: boolean,
+                    /**
+                     * [OPTIONAL] Work queue ID for DacRequest action
+                     */
+                    WQId?: string,
+                    /**
+                     * [OPTIONAL] Request Id for DacRequest action
+                     */
+                    RequestId?: string;
+                    /**
+                     * [OPTIONAL] Header for the assist widget
+                     */
+                    Header?: string,
+                } = JSON.parse(evt.Message);
 
-                // TODO:: add Mandatory property
-                
-                const parsedMessage: { Action: string, Data: string } = JSON.parse(evt.Message);
                 // get the action
                 switch (parsedMessage.Action.toLowerCase()) {
-                    case 'registercallback': {
-                        // check if AOT cofngured for register callback
-                        const widget = this._aotWidgets.filter((w: IWidget) => w.Type === 'tw-register-callback')?.[0];
-                        // check if widget is found
-                        if (widget) {
-                            this._aotWidgetService.addWidget(widget);
-                        }
-                        break;
-                    }
-                    case 'visualivr':
+                    case 'registercallback':
                         {
-                            // check if AOT cofngured for custom
-                            const widget = this._aotWidgets.filter((w: IWidget) => w.Type === 'tw-custom')?.[0];
+                            // check if AOT cofngured for register callback
+                            const widget = this._aotWidgets.filter((w: IWidget) => w.Type === 'tw-register-callback')?.[0];
                             // check if widget is found
                             if (widget) {
-                                
-                                // TODO:: change the config
+                                this._aotWidgetService.addWidget(widget);
+                            }
+                            break;
+                        }
+                    case 'dacrequest':
+                        {
+                            // check if the dialog is already opened
+                            if (this._remiderTaskDialog.dacRequest) {
+                                TUtils.Logger.console('info', 'TMACEventService.AgentNotificaitonEvent: dacRequest dialog is already opened!');
+                                return;
+                            }
 
+                            // parse the data and get info
+                            const {
+                                ItemID,
+                                CustomerIdentifier,
+                                Channel,
+                                Key
+                            } = JSON.parse(parsedMessage.Data);
+
+                            this._remiderTaskDialog.dacRequest =
+                                this._appUIService.showRemiderTaskModal(
+                                    'dacrequest',
+                                    `Direct agent request from ${CustomerIdentifier || 'NA'} on channel ${Channel || 'NA'}`
+                                );
+
+                            this._remiderTaskDialog.dacRequest.afterClosed().subscribe((resp) => {
+                                // since we do not have accept for DAC request, we will handle 'reject' | 'snooze'
+                                if (resp === 'reject' || resp === 'snooze') {
+                                    // inform server about the reject
+                                    SDKClient.respondToWqDacRequest({
+                                        comment: '',
+                                        itemId: ItemID || '',
+                                        requestId: parsedMessage.RequestId || '',
+                                        response: resp,
+                                        wqId: parsedMessage.WQId || '',
+                                        wqKey: Key || ''
+                                    });
+                                }
+
+                                // set the dialogRef to null
+                                this._remiderTaskDialog.dacRequest = null;
+                            });
+                            break;
+                        }
+                    case 'vivr':
+                        {
+                            // check if AOT cofngured for VIVR
+                            const widget: IWidget = new TwWidgetModel(`Agent Assist - ${parsedMessage.Header}`, 'tw-custom', 'assistance');
+                            widget.Config.Actions = ['minimize', 'destroy'];
+                            widget.Config.Position.W = 450;
+                            widget.Config.Position.H = 800;
+                            widget.Data.Url = parsedMessage.Data;
+
+                            // if mandatory, pop a confiration and destroy
+                            if (parsedMessage.IsMandatory) {
+                                widget.OnDestroy = () => {
+                                    // get confiration before close
+                                    const confirmDialogRef = this._appUIService.showAppConfirmDialog('generic', 'Confirm Close', 'Are you sure you want to close this widget?');
+                                    confirmDialogRef.afterClosed().subscribe((resp) => {
+                                        if (resp) {
+                                            widget.destroy();
+                                        }
+                                    });
+                                    return false;
+                                };
+                            }
+                            // check if widget is found
+                            if (widget) {
                                 this._aotWidgetService.addWidget(widget);
                             }
                             break;
@@ -125,7 +287,20 @@ export class TMACEventService {
                 // parse the notification message
                 const parsedMessage: AgentReminder = JSON.parse(evt.Message);
                 // parse then remider message
-                const remiderMessage: { Action: string, Data: string, Comment: string } = JSON.parse(parsedMessage.Message);
+                const remiderMessage: {
+                    /**
+                     * Type of action
+                     */
+                    Action: string,
+                    /**
+                     * Data for the reminder
+                     */
+                    Data: string,
+                    /**
+                     * Comment to be alerted
+                     */
+                    Comment: string
+                } = JSON.parse(parsedMessage.Message);
 
                 // get the action
                 switch (remiderMessage.Action.toLowerCase()) {
@@ -133,6 +308,7 @@ export class TMACEventService {
                         {
                             // check if the dialog is already opened
                             if (this._remiderTaskDialog.makeCall) {
+                                TUtils.Logger.console('info', 'TMACEventService.AgentNotificaitonEvent: makeCall dialog is already opened!');
                                 return;
                             }
 
@@ -172,6 +348,8 @@ export class TMACEventService {
                                     this.reminderActionExecuted('Rejected', parsedMessage.ID);
                                 }
                                 else {
+                                    // snooze the reminder
+                                    this.reminderActionExecuted('Snooze', parsedMessage.ID);
                                     // show an alert for auto snooze
                                     this._appUIService.showSnackbar('Make call task is snoozed', 'info');
                                 }
@@ -183,15 +361,14 @@ export class TMACEventService {
                         }
                     case 'meeting':
                         {
-
                             // TODO:: handle meeting task
-
                             break;
                         }
                     case 'changestate':
                         {
                             // check if the dialog is already opened
                             if (this._remiderTaskDialog.changeState) {
+                                TUtils.Logger.console('info', 'TMACEventService.AgentNotificaitonEvent: changeState dialog is already opened!');
                                 return;
                             }
 
@@ -245,11 +422,72 @@ export class TMACEventService {
                     default:
                 }
             }
+            else if (type === 'agentsentimentdetected') {
+                // parse the message
+                const {
+                    AgentName,
+                    AgentId,
+                    DeviceId,
+                    Channel,
+                    TmacServer,
+                    SessionId,
+                    InteractionId
+                } = JSON.parse(evt.Message);
+                // get cofirmation
+                const confrimationDialogRef = this._appUIService.showAppConfirmDialog('generic',
+                    'Negative Sentiment Detected',
+                    `Negative sentiment has been detected for ${AgentName}. Do you want to monitor?`);
+                // route to supervisor page and select the agent if confirmed
+                confrimationDialogRef.afterClosed().subscribe((resp1) => {
+                    if (resp1) {
+                        this._appUIService.showSnackbar('Please wait, connecting to the interaction...', 'loading');
+                        // send request to server
+                        SDKClient.transferTextChat({
+                            agentId: AgentId,
+                            deviceId: DeviceId,
+                            tmacServer: TmacServer,
+                            chatMode: Channel === 'audiochat' ? 'audio' : Channel === 'videochat' ? 'video' : 'text',
+                            comment: '',
+                            conferenceType: 'silent',
+                            interactionId: InteractionId.toString(),
+                            lineId: 'bargein',
+                            sessionId: SessionId,
+                            toAgentId: SDKClient.getAgentData().agentId,
+                            toTmacServer: SDKClient.getAgentData().tmacServer
+                        })
+                            .then((resp2: IResponse) => {
+                                // check the response
+                                if (resp2.response && resp2.response.ResultCode >= 0) {
+                                    this._appUIService.showSnackbar(`Chat silent barge-in successful`, 'success');
+                                }
+                                else {
+                                    this._appUIService.showSnackbar(`Chat silent barge-in failed`, 'failure');
+                                }
+                            })
+                            .catch(() => {
+                                this._appUIService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
+                            });
+                    }
+                });
+
+            }
+            else if (type === 'customersentimentdetected') {
+                // parse the message
+                const { AgentName } = JSON.parse(evt.Message);
+                // show in alert
+                this._appUIService.showAppSnackbar({
+                    message: `Negative sentiment has been detected from customer for ${AgentName}`,
+                    state: 'info'
+                });
+            }
         } catch (error) {
             TUtils.Logger.log('Exception in AgentNotificaitonEvent', error);
         }
     }
 
+    /**
+     * Remider action executed method to update agent reminder
+     */
     private reminderActionExecuted(status: string, id: string): void {
         // check if completed or rejected
         SDKClient.updateAgentReminder(
@@ -261,10 +499,168 @@ export class TMACEventService {
         );
     }
 
+    /**
+     * To process ACWTimerEvent
+     * 
+     * @param {ACWTimerEvent} evt
+     */
+    private ACWTimerEvent = (evt: ACWTimerEvent) => {
+        this._appUIService.showAppSnackbar({
+            message: `ACW timer alert for ${evt.ACWTimeString}`,
+            state: evt.ColorCode,
+            duration: 10000
+        });
+    }
+
+    /**
+     * To process HoldTimerEvent
+     * 
+     * @param {HoldTimerEvent} evt
+     */
+    private HoldTimerEvent = (evt: HoldTimerEvent) => {
+        this._appUIService.showAppSnackbar({
+            message: `Interaction is on hold for ${evt.HoldTimeString}`,
+            state: evt.ColorCode
+        });
+    }
+
+    /**
+     * Tp process GenericInteractionEvent
+     * @param {GenericInteractionEvent} evt 
+     */
+    private GenericInteractionEvent = (evt: GenericInteractionEvent) => {
+        const { PhoneNumber } = evt.Item;
+        const { agentId, deviceId } = SDKClient.getAgentData();
+        // inform TCM proxy about the assignment
+        const tcmProyUrl = this.appConfig.Main.Content.Urls.TCMClient || '';
+        // only notify that callback request is assigned if it was assigned the first time and not if the UI is reloaded or re-login
+        if (!evt.RecoveryEvent) {
+            if (tcmProyUrl) {
+                TUtils.HttpClient.sendRequest({
+                    url: tcmProyUrl + '/OnDacNotificationEvent',
+                    header: {
+                        'Content-Type': 'application/json'
+                    },
+                    method: 'POST',
+                    responseType: 'json',
+                    requestArgs: {
+                        fromAddr: PhoneNumber,
+                        response: 'assigned',
+                        agentID: agentId,
+                        extension: deviceId,
+                        scheduletime: '',
+                        interactionId: evt.InteractionID
+                    }
+                })
+                    .then((dt: IResponse) => {
+                        if (dt.response.d === 1) {
+                            this.promptTCMWQDACRequest(evt);
+                        }
+                        else {
+                            this.tcwWQDACRequestError(evt.InteractionID.toString());
+                        }
+                    })
+                    .catch(() => {
+                        this.tcwWQDACRequestError(evt.InteractionID.toString());
+                    });
+            }
+            else {
+                this.tcwWQDACRequestError(evt.InteractionID.toString());
+                return;
+            }
+        }
+        else {
+            this.promptTCMWQDACRequest(evt);
+        }
+    }
+
+    /**
+     * To process TCM WQ DAC request
+     * 
+     * @param {GenericInteractionEvent} evt
+     */
+    private promptTCMWQDACRequest(evt: GenericInteractionEvent): void {
+        const { PhoneNumber, Skill, ID } = evt.Item;
+        const { agentId, deviceId } = SDKClient.getAgentData();
+        this._remiderTaskDialog.tcmWQVoice = this._appUIService.showRemiderTaskModal('tcmwqvoice', `Dial-out to customer ${PhoneNumber}?`);
+        this._remiderTaskDialog.tcmWQVoice.afterClosed().subscribe((resp) => {
+            // if agent accept the callback
+            if (resp === 'accept') {
+                // prepare query string
+                const queryParams = `fromAddr=${PhoneNumber}&agentID=${agentId}&extension=${deviceId}&ucid=''&skill=${Skill}&intid=${evt.InteractionID}&ID=${ID}`;
+                // make call to the provided number and complete the reminder
+                SDKClient.makeCall({
+                    interactionId: '0',
+                    number: PhoneNumber,
+                    source: 'tcamp',
+                    sourceId: queryParams
+                })
+                    .then((dt: IResponse) => {
+                        // get the response
+                        const result: CommandResultEvent = dt.response;
+                        // check the response
+                        if (result.ResultCode === 0) {
+                            // make call success
+                            this._appUIService.showSnackbar(`Make call to ${PhoneNumber} successful`);
+                        }
+                        else {
+                            // make call failed
+                            this._appUIService.showSnackbar('Make call failed', 'failure');
+                        }
+                    })
+                    .catch(() => {
+                        // make call error
+                        this._appUIService.showSnackbar('Make call error', 'failure');
+                    });
+            }
+            // close the dialog
+            this._remiderTaskDialog.tcmWQVoice = null;
+        });
+    }
+
+    /**
+     * To handle TCM WQ DAC request error
+     */
+    private tcwWQDACRequestError(interactionId: string): void {
+        this._appUIService.addNotification({
+            message: 'Error in assigning DAC item, Please contact administrator',
+            status: 'new',
+            icon: 'error',
+            showAlert: true
+        });
+        // close the dialog
+        this._remiderTaskDialog.tcmWQVoice = null;
+        // close the generic interaction in server
+        SDKClient.closeInteraction(interactionId);
+    }
+
+    /**
+     * To process TCM_DirectAgentNotifyTimeoutEvent
+     * @param {TCMDirectAgentNotifyTimeoutEvent} evt 
+     */
+    private TCMDirectAgentNotifyTimeoutEvent = (evt: TCMDirectAgentNotifyTimeoutEvent) => {
+        const obj = JSON.parse(evt.JsonData);
+        const contact = JSON.parse(obj.Contact);
+
+        // show an alert
+        this._appUIService.addNotification({
+            message: 'Callback request for ' + contact.Name + ' number ' + contact.PhoneNumber + ' timed out.',
+            status: 'new',
+            showAlert: true
+        });
+        // close the dialog
+        this._remiderTaskDialog.tcmWQVoice = null;
+        // close the generic interaction in server
+        SDKClient.closeInteraction(evt.InteractionID.toString());
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @ Public Methods
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * To subscribe to TMACEventService service
+     */
     public subscribe(): void {
         TUtils.Logger.console('info', 'TMACEventService.subscribe');
 
@@ -273,26 +669,45 @@ export class TMACEventService {
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe(
                 (config: any) => {
+                    // assign the config
+                    this.appConfig = config;
                     // get the AOT widgets
                     this._aotWidgets = config.Main.AOT.Widgets;
                 }
             );
 
         SDKClient.events.on('onTMACEvent', this.onTMACEvents);
-        SDKClient.events.on('AgentNotificaitonEvent', this.onAgentNotificaitonEvent);
+        SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
+        SDKClient.events.on('GenericInteractionEvent', this.GenericInteractionEvent);
+        SDKClient.events.on('TCMDirectAgentNotifyTimeoutEvent', this.TCMDirectAgentNotifyTimeoutEvent);
+        SDKClient.events.on('ACWTimerEvent', this.ACWTimerEvent);
+        SDKClient.events.on('HoldTimerEvent', this.HoldTimerEvent);
     }
 
+    /**
+     * To unsubscribe to TMACEventService service
+     */
     public unsubscribe(): void {
         TUtils.Logger.console('info', 'TMACEventService.unsubscribe');
 
         SDKClient.events.off('onTMACEvent', this.onTMACEvents);
-        SDKClient.events.off('AgentNotificaitonEvent', this.onAgentNotificaitonEvent);
+        SDKClient.events.off('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
+        SDKClient.events.off('GenericInteractionEvent', this.GenericInteractionEvent);
+        SDKClient.events.off('TCMDirectAgentNotifyTimeoutEvent', this.TCMDirectAgentNotifyTimeoutEvent);
+        SDKClient.events.off('ACWTimerEvent', this.ACWTimerEvent);
+        SDKClient.events.off('HoldTimerEvent', this.HoldTimerEvent);
 
         // unsubscribe from all subscriptions
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
     }
 
+    /**
+     * To get all the received events for an interaction.
+     * Sometimes interaction events may be received by SDK before
+     * app is finishing up with components creation.
+     * @param interactionId ID of the interaction
+     */
     public get(interactionId: number): any {
         // get the events based on interaction Id
         const events = this._tmacEventArray.filter(i => i.InteractionID === interactionId);

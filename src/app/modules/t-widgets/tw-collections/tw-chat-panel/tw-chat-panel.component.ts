@@ -1,6 +1,9 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { AppUiService } from '@services/app-ui.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
+import { TwWidgetModel } from 'app/models';
+import { AgentNotificaitonEvent, SDKClient } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-chat-panel',
@@ -9,11 +12,21 @@ import { IWidget } from 'app/interfaces';
     encapsulation: ViewEncapsulation.None
 })
 export class TwChatPanelComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-
+    /**
+     * To hold all the data related to this widget from the config
+     */
     @Input() data: IWidget;
-
+    /**
+     * To hold chat panel widget
+     */
     chatPanelWidgets = [];
-
+    /**
+     * ID of the interaction
+     */
+    interactionId: number;
+    /**
+     * Maximized flag for each chat panel widget
+     */
     maximized = [
         {
             'tw-voice-controls': false,
@@ -21,7 +34,9 @@ export class TwChatPanelComponent extends TWidgetWrapper implements OnInit, OnDe
             'tw-customer-journey': false,
         }
     ];
-
+    /**
+     * * Collapsed flag for each chat panel widget
+     */
     collapsed = [
         {
             'tw-voice-controls': false,
@@ -29,7 +44,9 @@ export class TwChatPanelComponent extends TWidgetWrapper implements OnInit, OnDe
             'tw-customer-journey': false,
         }
     ];
-
+    /**
+     * * Floating flag for each chat panel widget
+     */
     floating = [
         {
             'tw-voice-controls': false,
@@ -38,6 +55,9 @@ export class TwChatPanelComponent extends TWidgetWrapper implements OnInit, OnDe
         }
     ];
 
+    /**
+     * Constructor 
+     */
     constructor() {
         super();
     }
@@ -46,6 +66,9 @@ export class TwChatPanelComponent extends TWidgetWrapper implements OnInit, OnDe
     // @ Lifecycle hooks
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * On Init
+     */
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
@@ -59,7 +82,9 @@ export class TwChatPanelComponent extends TWidgetWrapper implements OnInit, OnDe
             widget.Data.Path = this.data.Data.Path;
         });
     }
-
+    /**
+     * On Destroy
+     */
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
@@ -68,15 +93,37 @@ export class TwChatPanelComponent extends TWidgetWrapper implements OnInit, OnDe
         this.unsubscribeAll.complete();
     }
 
-    onmaximized(ismaximized: boolean, type: string): void {
-        this.maximized[type] = ismaximized;
-    }
+    // -----------------------------------------------------------------------------------------------------
+    // @ Private methods
+    // -----------------------------------------------------------------------------------------------------
 
-    onCollapsed(isCollapsed: boolean, type: string): void {
+
+    // -----------------------------------------------------------------------------------------------------
+    // @ Public methods
+    // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * To updted the maximized reference of widget based on type
+     * @param isMaximized Maximized flag
+     * @param type Widget type
+     */
+    public onmaximized(isMaximized: boolean, type: string): void {
+        this.maximized[type] = isMaximized;
+    }
+    /**
+     * To updted the collapsed reference of widget based on type
+     * @param isCollapsed Collapsed flag
+     * @param type Widget type
+     */
+    public onCollapsed(isCollapsed: boolean, type: string): void {
         this.collapsed[type] = isCollapsed;
     }
-
-    onFloating(isFloating: boolean, type: string): void {
+    /**
+     * To updted the floating reference of widget based on type
+     * @param isFloating Floating flag
+     * @param type Widget type
+     */
+    public onFloating(isFloating: boolean, type: string): void {
         this.floating[type] = isFloating;
     }
 }

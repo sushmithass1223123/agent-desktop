@@ -28,8 +28,10 @@ export class TwTemplateComponent implements AfterContentInit {
     ngAfterContentInit(): void {
         // loop throught input widgets
         this.widgets?.forEach((widget: IWidget) => {
-            // load the components
-            this.loadComponent(widget);
+            // filter and load the enabled widgets
+            if (widget.Config.Enabled) {
+                this.loadComponent(widget);
+            }
         });
     }
 

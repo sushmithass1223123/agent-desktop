@@ -7,9 +7,11 @@ import * as Chart from 'chart.js';
 // import 'chartjs-plugin-piechart-outlabels';
 import { ChartsModule } from 'ng2-charts';
 import { AlertDialogComponent } from './alert-dialog/alert-dialog.component';
+import { AppConfirmDialogComponent } from './app-confirm-dialog/app-confirm-dialog.component';
+import { AppSnackbarComponent } from './app-snackbar/app-snackbar.component';
 import { AvatarComponent } from './avatar/avatar.component';
-import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { CreateSmsComponent } from './create-sms/create-sms.component';
+import { CustomDialogComponent } from './custom-dialog/custom-dialog.component';
 import { TWChartDirective } from './directives/tw-chart.directive';
 import { MaterialModule } from './material.module';
 import { RemiderTaskDialogComponent } from './remider-task-dialog/remider-task-dialog.component';
@@ -34,13 +36,15 @@ const sharedModules = [MaterialModule, FuseSharedModule, LeafletModule, ChartsMo
 
 const sharedComponents = [
     ResourceNotFoundComponent,
-    ConfirmDialogComponent,
+    CustomDialogComponent,
     AvatarComponent,
     TWChartDirective,
     SnackbarComponent,
     WidgetFabComponent,
     AlertDialogComponent,
     RemiderTaskDialogComponent,
+    AppConfirmDialogComponent,
+    AppSnackbarComponent,
     CreateSmsComponent
 ];
 

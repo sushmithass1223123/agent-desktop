@@ -1,1 +1,1 @@
-export * from './tw-widget';
+export * from './tw-widget.model';

@@ -2,7 +2,6 @@ import { Component, ElementRef, Input, OnDestroy, OnInit, QueryList, ViewChildre
 import { MatDialog } from '@angular/material/dialog';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseConfigService } from '@fuse/services/config.service';
-import { ConfirmDialogComponent } from '@modules/shared/confirm-dialog/confirm-dialog.component';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
 // import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
@@ -192,20 +191,15 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
     }
 
     private onAVEvent = (evt: AVEvent) => {
-        console.log('##### onAVEvent #####', evt);
-
         // swtich the av events
         switch (evt.event) {
             case 'onIncoming':
                 // request param
                 const param = evt.data.param.charAt(0).toUpperCase() + evt.data.param.slice(1);
                 // config incoming call
-                const confirmDialogRef = this._dialog.open(ConfirmDialogComponent, {
-                    disableClose: true
-                });
-                confirmDialogRef.componentInstance.message = param + ' call requested by customer, Do you want to accept it?';
-                confirmDialogRef.afterClosed().subscribe((dialogResult) => {
-                    if (dialogResult) {
+                const confirmDialogRef = this._appUIService.showCustomDialog('confirm', param + ' call requested by customer, Do you want to accept it?');
+                confirmDialogRef.afterClosed().subscribe((resp) => {
+                    if (resp) {
                         // accept request
                         evt.data.response(true);
                         // show the UI
@@ -400,13 +394,9 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                 // get base64 url
                 const base64 = canvas.toDataURL();
                 // config force login
-                const confirmDialogRef = this._dialog.open(ConfirmDialogComponent, {
-                    disableClose: false
-                });
-                confirmDialogRef.componentInstance.title = 'Confirm Snapshot';
-                confirmDialogRef.componentInstance.message = `<img src="${base64}" width="640" height="320" />`;
-                confirmDialogRef.afterClosed().subscribe((dialogResult) => {
-                    if (dialogResult) {
+                const confirmDialogRef = this._appUIService.showCustomDialog('confirm', `<img src="${base64}" width="640" height="320" />`, 'Confirm Snapshot');
+                confirmDialogRef.afterClosed().subscribe((resp) => {
+                    if (resp) {
                         this._appUIService.showSnackbar('Saving ...', 'loading');
                         // send snapshot
                         SDKClient.saveVideoSnap({

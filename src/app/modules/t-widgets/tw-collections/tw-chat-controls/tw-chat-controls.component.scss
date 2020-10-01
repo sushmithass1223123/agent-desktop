@@ -55,17 +55,24 @@ tw-chat-controls {
             }
 
             avatar {
+                width: 53px;
+                height: 38px;
+                margin-bottom: 6px;
+
                 .avatar-content {
-                    width: 53px;
-                    height: 38px;
+                    width: inherit;
+                    height: inherit;
                     border-radius: 16px;
-                    margin-bottom: 6px;
                     cursor: pointer;
                 }
 
                 &.active {
                     .avatar-content {
                         box-shadow: 0px 3px 3px -2px rgba(0, 0, 0, 0.2), 0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12);
+                        border-top-right-radius: 0;
+                        border-bottom-right-radius: 0;
+                        position: absolute;
+                        left: 7px;
                     }
                 }
             }
@@ -76,8 +83,6 @@ tw-chat-controls {
                 .chat-actions {
                     button {
                         margin: 6px 6px 6px 0;
-                        // width: 46px;
-                        // height: 46px;
 
                         &:not(.mat-warn) {
                             background: #bdbdbd;
@@ -234,21 +239,11 @@ tw-chat-controls {
                                 }
 
                                 .time {
-                                    // position: absolute;
-                                    // display: none;
                                     width: 100%;
-                                    // font-size: 11px;
                                     z-index: 2;
                                     font-size: 10px;
-
-                                    // margin-top: 8px;
-                                    // top: 100%;
-                                    // left: 0;
-
                                     white-space: nowrap;
-
                                     text-align: right;
-                                    // margin: -10px 40px -5px 0px;
                                     margin: -20px 0px -6px -2px;
 
                                     &.image,
@@ -261,17 +256,7 @@ tw-chat-controls {
 
                             &.contact {
                                 .bubble {
-                                    // border-top-left-radius: 5px;
-                                    // border-bottom-left-radius: 5px;
-
-                                    // border-top-right-radius: 20px;
-                                    // border-bottom-right-radius: 20px;
-
                                     border-radius: 5px;
-
-                                    .time {
-                                        // margin-left: 12px;
-                                    }
                                 }
 
                                 &.first-of-group {
@@ -297,20 +282,7 @@ tw-chat-controls {
 
                                 .bubble {
                                     margin-left: auto;
-
-                                    // border-top-left-radius: 20px;
-                                    // border-bottom-left-radius: 20px;
-
-                                    // border-top-right-radius: 5px;
-                                    // border-bottom-right-radius: 5px;
-
                                     border-radius: 5px;
-
-                                    .time {
-                                        // justify-content: flex-end;
-                                        // right: 0;
-                                        // margin-right: 12px;
-                                    }
                                 }
 
                                 &.first-of-group {
@@ -331,33 +303,12 @@ tw-chat-controls {
                                 padding-top: 4px;
                                 margin-top: 4px;
                             }
-
-                            &.first-of-group {
-                                .bubble {
-                                    // border-top-left-radius: 20px;
-                                    // padding-top: 13px;
-                                }
-                            }
-
-                            &.last-of-group {
-                                .bubble {
-                                    // border-bottom-left-radius: 20px;
-                                    // padding-bottom: 13px;
-
-                                    .time {
-                                        // display: flex;
-                                    }
-                                }
-                            }
                         }
                     }
                 }
 
                 .chat-footer {
-                    // padding: 8px 8px 8px 16px;
-                    // padding: 8px 8px 12px 16px;
                     padding: 8px;
-                    // margin-bottom: 4px;
 
                     .reply-form {
                         position: relative;

@@ -144,7 +144,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
         }
 
         const { agentId } = SDKClient.getAgentData();
-        // const agentId = '';
 
         const searchFields = this.advancedSearchForm.value;
 
@@ -170,7 +169,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
         this.emailSearchRes.loading = true;
 
         this.http
-            .post(this.data.Data.EmailSearchUrl, {
+            .post(this.data.Data.WorkbenchUrl + '/email/search', {
                 skills: searchFields.skills ? [searchFields.skills] : [],
                 email: searchFields.email,
                 agent: '',
@@ -224,7 +223,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
         const { agentId } = SDKClient.getAgentData();
         const { SessionId, RouteId } = this.emailSearchRes.data.selected;
         this.http
-            .post('http://dice.tetherfi.cloud:55005/api/workbench/email/pull', {
+            .post(this.data.Data.WorkbenchUrl + '/email/pull', {
                 tmacServer: '',
                 agentId,
                 items: [

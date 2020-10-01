@@ -1,5 +1,5 @@
 <div class="fab-container">
-    <button mat-mini-fab color="primary" cdkOverlayOrigin #channelList="cdkOverlayOrigin" (click)="channels = channels.length ? [] : data.Data.Channels">
+    <button mat-icon-button cdkOverlayOrigin #channelList="cdkOverlayOrigin" (click)="channels = channels.length ? [] : data.Data.Channels">
         <mat-icon [@fabToggler]="{ value: !!channels.length ? 'active' : 'inactive' }">add </mat-icon>
     </button>
     <!-- This template displays the overlay content and is connected to the button -->

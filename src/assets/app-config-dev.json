@@ -16,53 +16,52 @@
         "PromptAgentIdOnInvalidLanId": false
     },
     "Main": {
-        "Navbar": {
+        "Toolbar": {
             "Height": 50,
             "Widgets": [
                 {
                     "Name": "Interaction indicators",
                     "Description": "",
                     "Type": "tw-active-interaction",
-                    "Config": {},
+                    "Config": {
+                        "Enabled": true
+                    },
                     "Data": {}
                 },
                 {
-                    "Name": "Navbar Menu",
+                    "Name": "Toolbar Menu",
                     "Description": "",
                     "Type": "tw-toolbar-menu",
-                    "Config": {},
+                    "Config": {
+                        "Enabled": true
+                    },
                     "Data": {
                         "Widgets": [
                             {
                                 "Name": "Broadcast Message",
                                 "Description": "",
                                 "Type": "tw-broadcast",
-                                "Config": {},
+                                "Config": {
+                                    "Enabled": true
+                                },
                                 "Data": {}
                             },
                             {
                                 "Name": "Aux Timer",
                                 "Description": "",
                                 "Type": "tw-aux-timer",
-                                "Config": {},
+                                "Config": {
+                                    "Enabled": true
+                                },
                                 "Data": {}
-                            },
-                            {
-                                "Name": "Create Interaction",
-                                "Description": "",
-                                "Type": "tw-create-interaction",
-                                "Config": {},
-                                "Data": {
-                                    "Channels" : [
-                                        { "Name" : "SMS" , "Type" : "sms" , "Icon" : "sms" , "Enable" : true }
-                                    ]
-                                }
                             },
                             {
                                 "Name": "Agent Details",
                                 "Description": "",
                                 "Type": "tw-agent-details",
-                                "Config": {},
+                                "Config": {
+                                    "Enabled": true
+                                },
                                 "Data": {
                                     "ProfilePicture": true,
                                     "Status": true,
@@ -73,14 +72,20 @@
                                 "Name": "Aux Codes Dropdown",
                                 "Description": "",
                                 "Type": "tw-aux-codes",
-                                "Config": {},
-                                "Data": {}
+                                "Config": {
+                                    "Enabled": true
+                                },
+                                "Data": {
+                                    "ByTeam": true
+                                }
                             },
                             {
                                 "Name": "Logout Button",
                                 "Description": "",
                                 "Type": "tw-logout",
-                                "Config": {},
+                                "Config": {
+                                    "Enabled": true
+                                },
                                 "Data": {
                                     "LogoutAux": "logout"
                                 }
@@ -89,30 +94,55 @@
                                 "Name": "Agent IM",
                                 "Description": "",
                                 "Type": "tw-instant-messaging",
-                                "Config": {},
+                                "Config": {
+                                    "Enabled": true
+                                },
                                 "Data": {}
                             },
                             {
                                 "Name": "Notification",
                                 "Description": "",
                                 "Type": "tw-notifications",
-                                "Config": {},
+                                "Config": {
+                                    "Enabled": true
+                                },
                                 "Data": {}
+                            },
+                            {
+                                "Name": "Create Interaction",
+                                "Description": "",
+                                "Type": "tw-create-interaction",
+                                "Config": {
+                                    "Enabled": true
+                                },
+                                "Data": {
+                                    "Channels": [
+                                        {
+                                            "Name": "SMS",
+                                            "Type": "sms",
+                                            "Icon": "sms",
+                                            "Enable": true
+                                        }
+                                    ]
+                                }
                             }
                         ]
                     }
                 }
             ]
         },
-        "Sidebar": {
+        "Navbar": {
             "Widgets": {
                 "Top": [
                     {
                         "Name": "Home",
                         "Description": "",
                         "Type": "twn-home",
+                        "Config": {
+                            "Enabled": true,
+                            "Icon": "home"
+                        },
                         "Data": {
-                            "Icon": "home",
                             "Path": "/home",
                             "Active": true
                         }
@@ -121,8 +151,11 @@
                         "Name": "Supervisor",
                         "Description": "",
                         "Type": "twn-supervisor",
+                        "Config": {
+                            "Enabled": true,
+                            "Icon": "supervised_user_circle"
+                        },
                         "Data": {
-                            "Icon": "supervised_user_circle",
                             "Path": "/supervisor",
                             "Active": false
                         }
@@ -131,8 +164,11 @@
                         "Name": "Voice",
                         "Description": "",
                         "Type": "twn-voice",
+                        "Config": {
+                            "Enabled": true,
+                            "Icon": "phone"
+                        },
                         "Data": {
-                            "Icon": "phone",
                             "Path": "/voice",
                             "Active": false
                         }
@@ -141,8 +177,11 @@
                         "Name": "TextChat",
                         "Description": "",
                         "Type": "twn-textchat",
+                        "Config": {
+                            "Enabled": true,
+                            "Icon": "chat"
+                        },
                         "Data": {
-                            "Icon": "chat",
                             "Path": "/textchat",
                             "Active": false
                         }
@@ -151,8 +190,11 @@
                         "Name": "Email",
                         "Description": "",
                         "Type": "twn-email",
+                        "Config": {
+                            "Enabled": true,
+                            "Icon": "email"
+                        },
                         "Data": {
-                            "Icon": "email",
                             "Path": "/email",
                             "Active": false
                         }
@@ -161,8 +203,11 @@
                         "Name": "Workbench",
                         "Description": "",
                         "Type": "twc-workbench",
+                        "Config": {
+                            "Enabled": true,
+                            "Icon": "library_books"
+                        },
                         "Data": {
-                            "Icon": "library_books",
                             "Path": "/workbench",
                             "Active": false
                         }
@@ -173,8 +218,11 @@
                         "Name": "TDM",
                         "Description": "",
                         "Type": "twn-custom",
+                        "Config": {
+                            "Enabled": true,
+                            "Icon": "tv"
+                        },
                         "Data": {
-                            "Icon": "tv",
                             "Path": "/tdm-client",
                             "Active": false
                         }
@@ -183,8 +231,11 @@
                         "Name": "TMeet",
                         "Description": "",
                         "Type": "twn-custom",
+                        "Config": {
+                            "Enabled": true,
+                            "Icon": "meeting_room"
+                        },
                         "Data": {
-                            "Icon": "meeting_room",
                             "Path": "/tmeet",
                             "Active": false
                         }
@@ -193,8 +244,11 @@
                         "Name": "Dashboard",
                         "Description": "",
                         "Type": "twn-custom",
+                        "Config": {
+                            "Enabled": true,
+                            "Icon": "dashboard"
+                        },
                         "Data": {
-                            "Icon": "dashboard",
                             "Path": "/dashboard",
                             "Active": false
                         }
@@ -203,8 +257,11 @@
                         "Name": "Sentiment Dashboard",
                         "Description": "",
                         "Type": "twn-custom",
+                        "Config": {
+                            "Enabled": true,
+                            "Icon": "sentiment_satisfied_alt"
+                        },
                         "Data": {
-                            "Icon": "sentiment_satisfied_alt",
                             "Path": "/sentimentdashboard",
                             "Active": false
                         }
@@ -213,8 +270,11 @@
                         "Name": "KPI Dashboard",
                         "Description": "",
                         "Type": "twn-custom",
+                        "Config": {
+                            "Enabled": true,
+                            "Icon": "signal_cellular_alt"
+                        },
                         "Data": {
-                            "Icon": "signal_cellular_alt",
                             "Path": "/kpidashboard",
                             "Active": false
                         }
@@ -223,8 +283,11 @@
                         "Name": "Session Dashboard",
                         "Description": "",
                         "Type": "twn-custom",
+                        "Config": {
+                            "Enabled": true,
+                            "Icon": "format_list_bulleted"
+                        },
                         "Data": {
-                            "Icon": "format_list_bulleted",
                             "Path": "/sessiondashboard",
                             "Active": false
                         }
@@ -233,8 +296,11 @@
                         "Name": "Realtime Stats",
                         "Description": "",
                         "Type": "twn-custom",
+                        "Config": {
+                            "Enabled": true,
+                            "Icon": "analytics"
+                        },
                         "Data": {
-                            "Icon": "analytics",
                             "Path": "/realtimestats",
                             "Active": false
                         }
@@ -249,6 +315,7 @@
                     "Description": "",
                     "Type": "twc-home",
                     "Config": {
+                        "Enabled": true,
                         "Class": "",
                         "Position": {
                             "X": 3,
@@ -264,6 +331,7 @@
                                     "Description": "",
                                     "Type": "tw-wallboard",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": true,
                                         "AOT": false,
@@ -275,11 +343,7 @@
                                         },
                                         "Actions": [],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "Source": "dashboard"
@@ -288,18 +352,19 @@
                             ],
                             "Dynamic": [
                                 {
-                                    "Name": "Gamification",
+                                    "Name": "All Interactions",
                                     "Description": "",
-                                    "Type": "tw-gamification",
+                                    "Type": "tw-pie-chart",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
                                         "Icon": "dvr",
                                         "Class": "",
                                         "Position": {
-                                            "X": 2,
-                                            "Y": 4
+                                            "X": 0,
+                                            "Y": 1
                                         },
                                         "Actions": [
                                             "maximize",
@@ -307,15 +372,11 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
-                                        "LeaderBoardUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetLeaderBoard",
-                                        "AgentProgressUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetProgress"
+                                        "Source": "tw-ad-total-interactions",
+                                        "Role": "dashboard"
                                     }
                                 },
                                 {
@@ -323,6 +384,7 @@
                                     "Description": "",
                                     "Type": "tw-aht-tc",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -338,11 +400,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "Source": "dashboard"
@@ -353,6 +411,7 @@
                                     "Description": "",
                                     "Type": "tw-pie-chart",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -368,11 +427,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "Source": "tw-aux-status-chart",
@@ -384,6 +439,7 @@
                                     "Description": "",
                                     "Type": "tw-ad-interaction-details",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -399,11 +455,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {}
                                 },
@@ -412,6 +464,7 @@
                                     "Description": "",
                                     "Type": "tw-ad-performance",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -427,11 +480,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "AgentProgressUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetProgress"
@@ -442,6 +491,7 @@
                                     "Description": "",
                                     "Type": "tw-ad-gamification",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -457,11 +507,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "LeaderBoardUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetLeaderBoard",
@@ -473,6 +519,7 @@
                                     "Description": "phone_callback",
                                     "Type": "tw-ad-callbacks",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -488,11 +535,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "GetCallbacksUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Contact/GetContactSessionByAgent"
@@ -503,6 +546,7 @@
                                     "Description": "",
                                     "Type": "tw-ad-feedback",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -518,11 +562,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "Source": "dashboard"
@@ -533,6 +573,7 @@
                                     "Description": "",
                                     "Type": "tw-ad-score",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -548,11 +589,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {}
                                 }
@@ -563,6 +600,7 @@
                                     "Description": "",
                                     "Type": "tw-custom",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": true,
                                         "AOT": true,
@@ -579,94 +617,68 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "AutoOpen": false,
-                                        "Url": "https://tmac.tetherfilabs.com/tcie-web-appv8/?id=_agentId",
-                                        "QueryParams": []
+                                        "OpenInNew": false,
+                                        "Url": "https://tmac.tetherfilabs.com/tcie-web-appv8/?id=_agentId"
                                     }
                                 },
                                 {
                                     "Name": "Gamification",
                                     "Description": "",
-                                    "Type": "tw-custom",
+                                    "Type": "tw-gamification",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
-                                        "Anchor": true,
-                                        "AOT": true,
+                                        "Anchor": false,
+                                        "AOT": false,
                                         "Icon": "extension",
                                         "Class": "",
                                         "Position": {
-                                            "X": 0,
-                                            "Y": 0,
-                                            "W": 1500,
-                                            "H": 900
+                                            "X": 2,
+                                            "Y": 4,
+                                            "W": 1200,
+                                            "H": 700
                                         },
                                         "Actions": [
-                                            "minimize",
+                                            "maximize",
+                                            "pin",
+                                            "float",
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
-                                        "AutoOpen": false,
-                                        "Url": "https://demo2.tetherfilabs.com:55443/GamificationUI/?agentId=_agentId",
-                                        "QueryParams": []
+                                        "LeaderBoardUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetLeaderBoard",
+                                        "AgentProgressUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetProgress"
                                     }
-                                }
-                            ]
-                        }
-                    }
-                },
-                {
-                    "Name": "Workbench",
-                    "Description": "",
-                    "Type": "twc-workbench",
-                    "Config": {
-                        "Class": "",
-                        "Position": {
-                            "X": 3,
-                            "Y": 6
-                        }
-                    },
-                    "Data": {
-                        "Path": "/workbench",
-                        "Widgets": {
-                            "Static": [
+                                },
                                 {
-                                    "Name": "Workbench Panel",
+                                    "Name": "Chat Test App",
                                     "Description": "",
-                                    "Type": "tw-workbench-panel",
+                                    "Type": "tw-custom",
                                     "Config": {
-                                        "Static": true,
-                                        "Anchor": true,
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": false,
                                         "AOT": false,
-                                        "Icon": "dvr",
+                                        "Icon": "chat",
                                         "Class": "",
                                         "Position": {
-                                            "X": 3,
-                                            "Y": 2
+                                            "X": 0,
+                                            "Y": 0
                                         },
                                         "Actions": [],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": false,
-                                        "Disabled": false
+                                        "Header": false
                                     },
                                     "Data": {
-                                        "EmailSearchUrl": "http://dice.tetherfi.cloud:55005/api/workbench/email/search"
+                                        "AutoOpen": false,
+                                        "OpenInNew": true,
+                                        "Url": "https://dice.tetherfi.cloud:8443/api/testapp_UOB.jsp"
                                     }
                                 }
                             ]
@@ -678,6 +690,7 @@
                     "Description": "",
                     "Type": "twc-supervisor",
                     "Config": {
+                        "Enabled": true,
                         "Class": "",
                         "Position": {
                             "X": 3,
@@ -693,6 +706,7 @@
                                     "Description": "",
                                     "Type": "tw-su-active-agents",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -704,11 +718,7 @@
                                         },
                                         "Actions": [],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {}
                                 }
@@ -719,6 +729,7 @@
                                     "Description": "",
                                     "Type": "tw-pie-chart",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -734,11 +745,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "Source": "tw-ad-total-interactions",
@@ -750,6 +757,7 @@
                                     "Description": "",
                                     "Type": "tw-aht-tc",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -765,11 +773,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "Source": "supervisor"
@@ -780,6 +784,7 @@
                                     "Description": "",
                                     "Type": "tw-pie-chart",
                                     "Config": {
+                                        "Enabled": true,
                                         "Anchor": false,
                                         "AOT": false,
                                         "Icon": "",
@@ -794,11 +799,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "Source": "tw-su-calls-in-queue",
@@ -810,6 +811,7 @@
                                     "Description": "",
                                     "Type": "tw-pie-chart",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -825,11 +827,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "Source": "tw-su-intent-list"
@@ -840,6 +838,7 @@
                                     "Description": "",
                                     "Type": "tw-wallboard",
                                     "Config": {
+                                        "Enabled": true,
                                         "Anchor": false,
                                         "AOT": false,
                                         "Icon": "",
@@ -854,11 +853,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "Source": "supervisor"
@@ -869,6 +864,7 @@
                                     "Description": "",
                                     "Type": "tw-su-channels",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -884,11 +880,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {}
                                 },
@@ -897,6 +889,7 @@
                                     "Description": "",
                                     "Type": "tw-pie-chart",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -912,11 +905,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "Source": "tw-su-status",
@@ -928,6 +917,7 @@
                                     "Description": "",
                                     "Type": "tw-work-codes",
                                     "Config": {
+                                        "Enabled": true,
                                         "Anchor": false,
                                         "AOT": false,
                                         "Icon": "",
@@ -942,11 +932,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "Source": "supervisor",
@@ -961,6 +947,7 @@
                                     "Description": "",
                                     "Type": "tw-su-gamification",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": true,
@@ -978,11 +965,7 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "LeaderBoardUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetLeaderBoard"
@@ -997,6 +980,7 @@
                     "Description": "",
                     "Type": "twc-voice",
                     "Config": {
+                        "Enabled": true,
                         "Class": "",
                         "Position": {
                             "X": 3,
@@ -1012,6 +996,7 @@
                                     "Description": "",
                                     "Type": "tw-voice-panel",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": true,
                                         "Anchor": false,
                                         "AOT": false,
@@ -1023,11 +1008,7 @@
                                         },
                                         "Actions": [],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": false,
-                                        "Disabled": false
+                                        "Header": false
                                     },
                                     "Data": {
                                         "Widgets": [
@@ -1036,6 +1017,7 @@
                                                 "Description": "",
                                                 "Type": "tw-voice-controls",
                                                 "Config": {
+                                                    "Enabled": true,
                                                     "Static": false,
                                                     "Anchor": true,
                                                     "AOT": false,
@@ -1054,8 +1036,7 @@
                                                     "PinState": false,
                                                     "FloatState": false,
                                                     "Resizable": false,
-                                                    "Header": true,
-                                                    "Disabled": false
+                                                    "Header": true
                                                 },
                                                 "Data": {
                                                     "TransferAllowed": true,
@@ -1087,6 +1068,7 @@
                                                 "Description": "",
                                                 "Type": "tw-customer-details",
                                                 "Config": {
+                                                    "Enabled": true,
                                                     "Static": false,
                                                     "Anchor": true,
                                                     "AOT": false,
@@ -1104,8 +1086,7 @@
                                                     "PinState": false,
                                                     "FloatState": false,
                                                     "Resizable": false,
-                                                    "Header": true,
-                                                    "Disabled": false
+                                                    "Header": true
                                                 },
                                                 "Data": {
                                                     "CustomerInfo": [
@@ -1159,6 +1140,7 @@
                                                 "Description": "",
                                                 "Type": "tw-customer-journey",
                                                 "Config": {
+                                                    "Enabled": true,
                                                     "Static": false,
                                                     "Anchor": true,
                                                     "AOT": false,
@@ -1176,8 +1158,7 @@
                                                     "PinState": false,
                                                     "FloatState": false,
                                                     "Resizable": false,
-                                                    "Header": true,
-                                                    "Disabled": false
+                                                    "Header": true
                                                 },
                                                 "Data": {
                                                     "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/version5/index.html?Key=SESSIONID:",
@@ -1194,6 +1175,7 @@
                                     "Description": "",
                                     "Type": "tw-agent-assist",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -1208,11 +1190,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "Confidence": 0.5,
@@ -1230,10 +1208,11 @@
                                     }
                                 },
                                 {
-                                    "Name": "Pending Callbacks",
+                                    "Name": "Account Information",
                                     "Description": "",
-                                    "Type": "tw-pending-callbacks",
+                                    "Type": "tw-account-information",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -1249,15 +1228,10 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
-                                        "GetPendingCallbacksUrl" : "https://dice.tetherfi.cloud/TCM_Proxy/api/Contact/GetContactsByPhoneNumber",
-                                        "ChangeContactStatusUrl" : "https://dice.tetherfi.cloud/TCM_Proxy/api/Contact/ChangeContactstatus"
+                                        "IsAuthenticated": true
                                     }
                                 },
                                 {
@@ -1265,6 +1239,7 @@
                                     "Description": "",
                                     "Type": "tw-amdocs-bcc",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -1280,11 +1255,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {}
                                 },
@@ -1293,6 +1264,7 @@
                                     "Description": "feedback",
                                     "Type": "tw-customer-sentiment",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -1308,11 +1280,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {}
                                 },
@@ -1321,6 +1289,7 @@
                                     "Description": "",
                                     "Type": "tw-work-codes",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -1336,11 +1305,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "Source": "interaction",
@@ -1353,6 +1318,7 @@
                                     "Description": "",
                                     "Type": "tw-voice-bot-transcripts",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -1368,11 +1334,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {}
                                 }
@@ -1383,6 +1345,7 @@
                                     "Description": "",
                                     "Type": "tw-register-callback",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": true,
                                         "AOT": true,
@@ -1399,11 +1362,7 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "GetCampaignsUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Campaign/GetCampaigns",
@@ -1425,6 +1384,7 @@
                                     "Description": "",
                                     "Type": "tw-custom",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": true,
                                         "AOT": true,
@@ -1441,16 +1401,12 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "AutoOpen": false,
-                                        "Url": "https://dice.tetherfi.cloud/TAS/Survey/Index?intentname=DiceIntent2&inSimulation=false&agentid=50020&customerid=12&ucid=Test&flowType=Test&campId=Test&station=42002&phoneNumber=6539284004",
-                                        "QueryParams": []
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/TAS/Survey/Index?intentname=DiceIntent2&inSimulation=false&agentid=50020&customerid=12&ucid=Test&flowType=Test&campId=Test&station=42002&phoneNumber=6539284004"
                                     }
                                 },
                                 {
@@ -1458,6 +1414,7 @@
                                     "Description": "",
                                     "Type": "tw-custom",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": true,
                                         "AOT": true,
@@ -1474,16 +1431,12 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "AutoOpen": false,
-                                        "Url": "https://www.tetherfi.com",
-                                        "QueryParams": []
+                                        "OpenInNew": false,
+                                        "Url": "https://www.tetherfi.com"
                                     }
                                 },
                                 {
@@ -1491,6 +1444,7 @@
                                     "Description": "",
                                     "Type": "tw-voice-canned-responses",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": true,
                                         "AOT": true,
@@ -1507,11 +1461,7 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {}
                                 }
@@ -1524,6 +1474,7 @@
                     "Description": "",
                     "Type": "twc-textchat",
                     "Config": {
+                        "Enabled": true,
                         "Class": "",
                         "Position": {
                             "X": 3,
@@ -1539,6 +1490,7 @@
                                     "Description": "",
                                     "Type": "tw-chat-panel",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": true,
                                         "Anchor": false,
                                         "AOT": false,
@@ -1550,11 +1502,7 @@
                                         },
                                         "Actions": [],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": false,
-                                        "Disabled": false
+                                        "Header": false
                                     },
                                     "Data": {
                                         "Widgets": [
@@ -1563,6 +1511,7 @@
                                                 "Description": "",
                                                 "Type": "tw-chat-controls",
                                                 "Config": {
+                                                    "Enabled": true,
                                                     "Static": false,
                                                     "Anchor": true,
                                                     "AOT": false,
@@ -1581,8 +1530,7 @@
                                                     "PinState": false,
                                                     "FloatState": false,
                                                     "Resizable": false,
-                                                    "Header": true,
-                                                    "Disabled": false
+                                                    "Header": true
                                                 },
                                                 "Data": {
                                                     "TransferAllowed": true,
@@ -1630,6 +1578,7 @@
                                                 "Description": "",
                                                 "Type": "tw-customer-details",
                                                 "Config": {
+                                                    "Enabled": true,
                                                     "Static": false,
                                                     "Anchor": true,
                                                     "AOT": false,
@@ -1647,8 +1596,7 @@
                                                     "PinState": false,
                                                     "FloatState": false,
                                                     "Resizable": false,
-                                                    "Header": true,
-                                                    "Disabled": false
+                                                    "Header": true
                                                 },
                                                 "Data": {
                                                     "CustomerInfo": [
@@ -1732,6 +1680,7 @@
                                                 "Description": "",
                                                 "Type": "tw-customer-journey",
                                                 "Config": {
+                                                    "Enabled": true,
                                                     "Static": false,
                                                     "Anchor": true,
                                                     "AOT": false,
@@ -1749,8 +1698,7 @@
                                                     "PinState": false,
                                                     "FloatState": false,
                                                     "Resizable": false,
-                                                    "Header": true,
-                                                    "Disabled": false
+                                                    "Header": true
                                                 },
                                                 "Data": {
                                                     "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/version5/index.html?Key=SESSIONID:",
@@ -1767,6 +1715,7 @@
                                     "Description": "",
                                     "Type": "tw-agent-assist",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -1781,11 +1730,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "Confidence": 0.5,
@@ -1803,10 +1748,11 @@
                                     }
                                 },
                                 {
-                                    "Name": "Pending Callbacks",
+                                    "Name": "Account Information",
                                     "Description": "",
-                                    "Type": "tw-pending-callbacks",
+                                    "Type": "tw-account-information",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -1822,15 +1768,10 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
-                                        "GetPendingCallbacksUrl" : "https://dice.tetherfi.cloud/TCM_Proxy/api/Contact/GetContactsByPhoneNumber",
-                                        "ChangeContactStatusUrl" : "https://dice.tetherfi.cloud/TCM_Proxy/api/Contact/ChangeContactstatus"
+                                        "IsAuthenticated": true
                                     }
                                 },
                                 {
@@ -1838,6 +1779,7 @@
                                     "Description": "",
                                     "Type": "tw-canned-responses",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -1853,11 +1795,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {}
                                 },
@@ -1866,6 +1804,7 @@
                                     "Description": "feedback",
                                     "Type": "tw-customer-sentiment",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -1881,11 +1820,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {}
                                 },
@@ -1894,6 +1829,7 @@
                                     "Description": "",
                                     "Type": "tw-work-codes",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -1909,11 +1845,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "Source": "interaction",
@@ -1926,6 +1858,7 @@
                                     "Description": "",
                                     "Type": "tw-amdocs-bcc",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
@@ -1941,11 +1874,7 @@
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {}
                                 }
@@ -1956,6 +1885,7 @@
                                     "Description": "",
                                     "Type": "tw-register-callback",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": true,
                                         "AOT": true,
@@ -1972,11 +1902,7 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "GetCampaignsUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Campaign/GetCampaigns",
@@ -1998,6 +1924,7 @@
                                     "Description": "",
                                     "Type": "tw-custom",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": true,
                                         "AOT": true,
@@ -2014,16 +1941,12 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "AutoOpen": false,
-                                        "Url": "https://dice.tetherfi.cloud/TAS/Survey/Index?intentname=DiceIntent2&inSimulation=false&agentid=50020&customerid=12&ucid=Test&flowType=Test&campId=Test&station=42002&phoneNumber=6539284004#",
-                                        "QueryParams": []
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/TAS/Survey/Index?intentname=DiceIntent2&inSimulation=false&agentid=50020&customerid=12&ucid=Test&flowType=Test&campId=Test&station=42002&phoneNumber=6539284004#"
                                     }
                                 },
                                 {
@@ -2031,6 +1954,7 @@
                                     "Description": "",
                                     "Type": "tw-custom",
                                     "Config": {
+                                        "Enabled": true,
                                         "Static": false,
                                         "Anchor": true,
                                         "AOT": true,
@@ -2047,16 +1971,12 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "PinState": false,
-                                        "FloatState": false,
-                                        "Resizable": false,
-                                        "Header": true,
-                                        "Disabled": false
+                                        "Header": true
                                     },
                                     "Data": {
                                         "AutoOpen": false,
-                                        "Url": "https://www.tetherfi.com",
-                                        "QueryParams": []
+                                        "OpenInNew": false,
+                                        "Url": "https://www.tetherfi.com"
                                     }
                                 }
                             ]
@@ -2068,6 +1988,7 @@
                     "Description": "",
                     "Type": "twc-email",
                     "Config": {
+                        "Enabled": true,
                         "Class": "",
                         "Position": {
                             "X": 3,
@@ -2076,7 +1997,405 @@
                     },
                     "Data": {
                         "Path": "/email",
-                        "Widgets": []
+                        "Widgets": {
+                            "Static": [
+                                {
+                                    "Name": "Email-Panel",
+                                    "Description": "",
+                                    "Type": "tw-email-panel",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": true,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 3,
+                                            "Y": 2
+                                        },
+                                        "Actions": [],
+                                        "ViewState": "restore",
+                                        "Header": false
+                                    },
+                                    "Data": {
+                                        "Widgets": [
+                                            {
+                                                "Name": "Email Controls",
+                                                "Description": "",
+                                                "Type": "tw-email-controls",
+                                                "Config": {
+                                                    "Enabled": true,
+                                                    "Static": false,
+                                                    "Anchor": true,
+                                                    "AOT": false,
+                                                    "Icon": "chat",
+                                                    "Class": "",
+                                                    "Position": {
+                                                        "X": 1,
+                                                        "Y": 2
+                                                    },
+                                                    "Actions": [
+                                                        "maximize",
+                                                        "minimize",
+                                                        "float"
+                                                    ],
+                                                    "ViewState": "restore",
+                                                    "PinState": false,
+                                                    "FloatState": false,
+                                                    "Resizable": false,
+                                                    "Header": true
+                                                },
+                                                "Data": {}
+                                            },
+                                            {
+                                                "Name": "Customer Journey",
+                                                "Description": "",
+                                                "Type": "tw-customer-journey",
+                                                "Config": {
+                                                    "Enabled": true,
+                                                    "Static": false,
+                                                    "Anchor": true,
+                                                    "AOT": false,
+                                                    "Icon": "storage",
+                                                    "Class": "",
+                                                    "Position": {
+                                                        "X": 1,
+                                                        "Y": 2
+                                                    },
+                                                    "Actions": [
+                                                        "maximize",
+                                                        "minimize"
+                                                    ],
+                                                    "ViewState": "restore",
+                                                    "PinState": false,
+                                                    "FloatState": false,
+                                                    "Resizable": false,
+                                                    "Header": true
+                                                },
+                                                "Data": {
+                                                    "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/version5/index.html?Key=SESSIONID:",
+                                                    "NoOfRecords": 20
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "Dynamic": [
+                                {
+                                    "Name": "Agent Assist",
+                                    "Description": "",
+                                    "Type": "tw-agent-assist",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "verified_user",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {
+                                        "Confidence": 0.5,
+                                        "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=_intent&ucid=_ucid",
+                                        "Title": "Agent Assist",
+                                        "Icon": "assistant",
+                                        "Width": 450,
+                                        "Height": 800,
+                                        "Actions": [
+                                            "minimize",
+                                            "maximize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore"
+                                    }
+                                },
+                                {
+                                    "Name": "Account Information",
+                                    "Description": "",
+                                    "Type": "tw-account-information",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {
+                                        "IsAuthenticated": true
+                                    }
+                                },
+                                {
+                                    "Name": "Canned Responses",
+                                    "Description": "",
+                                    "Type": "tw-canned-responses",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {}
+                                },
+                                {
+                                    "Name": "Realtime Customer Sentiment",
+                                    "Description": "feedback",
+                                    "Type": "tw-customer-sentiment",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "sentiment_satisfied_alt",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {}
+                                },
+                                {
+                                    "Name": "Work Codes",
+                                    "Description": "",
+                                    "Type": "tw-work-codes",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {
+                                        "Source": "interaction",
+                                        "ByTeam": false,
+                                        "ByGroup": false
+                                    }
+                                },
+                                {
+                                    "Name": "AMDOC-BCC",
+                                    "Description": "",
+                                    "Type": "tw-amdocs-bcc",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {}
+                                }
+                            ],
+                            "AOT": [
+                                {
+                                    "Name": "Register Callback",
+                                    "Description": "",
+                                    "Type": "tw-register-callback",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "Icon": "phone_callback",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0,
+                                            "W": 300,
+                                            "H": 300
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {
+                                        "GetCampaignsUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Campaign/GetCampaigns",
+                                        "CreateContactCampaignUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Contact/CreateCampaignContact",
+                                        "DataMap": {
+                                            "Name": {
+                                                "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.Name",
+                                                "DefaultValue": "Mr. Tan"
+                                            },
+                                            "Phone": {
+                                                "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.mobile",
+                                                "DefaultValue": "6596975347"
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "Name": "TAS",
+                                    "Description": "",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "Icon": "integration_instructions",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0,
+                                            "W": 1000,
+                                            "H": 700
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/TAS/Survey/Index?intentname=DiceIntent2&inSimulation=false&agentid=50020&customerid=12&ucid=Test&flowType=Test&campId=Test&station=42002&phoneNumber=6539284004#"
+                                    }
+                                },
+                                {
+                                    "Name": "STPedia",
+                                    "Description": "",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "Icon": "school",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0,
+                                            "W": 1000,
+                                            "H": 700
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "OpenInNew": false,
+                                        "Url": "https://www.tetherfi.com"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "Name": "Workbench",
+                    "Description": "",
+                    "Type": "twc-workbench",
+                    "Config": {
+                        "Enabled": true,
+                        "Class": "",
+                        "Position": {
+                            "X": 3,
+                            "Y": 6
+                        }
+                    },
+                    "Data": {
+                        "Path": "/workbench",
+                        "Widgets": {
+                            "Static": [
+                                {
+                                    "Name": "Workbench Panel",
+                                    "Description": "",
+                                    "Type": "tw-workbench-panel",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": true,
+                                        "Anchor": true,
+                                        "AOT": false,
+                                        "Icon": "dvr",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 3,
+                                            "Y": 2
+                                        },
+                                        "Actions": [],
+                                        "ViewState": "restore"
+                                    },
+                                    "Data": {
+                                        "WorkbenchUrl": "https://dice.tetherfi.cloud:55005/api/workbench"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 },
                 {
@@ -2084,6 +2403,7 @@
                     "Description": "",
                     "Type": "twc-custom",
                     "Config": {
+                        "Enabled": true,
                         "Class": "",
                         "Position": {
                             "X": 3,
@@ -2092,8 +2412,7 @@
                     },
                     "Data": {
                         "Path": "/tdm-client",
-                        "Url": "https://dice.tetherfi.cloud/TDM_Client/",
-                        "QueryParams": []
+                        "Url": "https://dice.tetherfi.cloud/TDM_Client/"
                     }
                 },
                 {
@@ -2101,6 +2420,7 @@
                     "Description": "",
                     "Type": "twc-custom",
                     "Config": {
+                        "Enabled": true,
                         "Class": "",
                         "Position": {
                             "X": 3,
@@ -2109,8 +2429,7 @@
                     },
                     "Data": {
                         "Path": "/tmeet",
-                        "Url": "https://dice.tetherfi.cloud/t-meet/",
-                        "QueryParams": []
+                        "Url": "https://dice.tetherfi.cloud/t-meet/"
                     }
                 },
                 {
@@ -2118,6 +2437,7 @@
                     "Description": "",
                     "Type": "twc-custom",
                     "Config": {
+                        "Enabled": true,
                         "Class": "",
                         "Position": {
                             "X": 3,
@@ -2126,8 +2446,7 @@
                     },
                     "Data": {
                         "Path": "/dashboard",
-                        "Url": "https://dice.tetherfi.cloud/CustomerJourneyDashBoard/",
-                        "QueryParams": []
+                        "Url": "https://dice.tetherfi.cloud/CustomerJourneyDashBoard/"
                     }
                 },
                 {
@@ -2135,6 +2454,7 @@
                     "Description": "",
                     "Type": "twc-custom",
                     "Config": {
+                        "Enabled": true,
                         "Class": "",
                         "Position": {
                             "X": 3,
@@ -2143,8 +2463,7 @@
                     },
                     "Data": {
                         "Path": "/sentimentdashboard",
-                        "Url": "https://dice.tetherfi.cloud/SentimentDashboard/?agentid=_agentId",
-                        "QueryParams": []
+                        "Url": "https://dice.tetherfi.cloud/SentimentDashboard/?agentid=_agentId"
                     }
                 },
                 {
@@ -2152,6 +2471,7 @@
                     "Description": "",
                     "Type": "twc-custom",
                     "Config": {
+                        "Enabled": true,
                         "Class": "",
                         "Position": {
                             "X": 3,
@@ -2160,8 +2480,7 @@
                     },
                     "Data": {
                         "Path": "/kpidashboard",
-                        "Url": "https://dice.tetherfi.cloud/IWDashboards/IWDashboard/kpi",
-                        "QueryParams": []
+                        "Url": "https://dice.tetherfi.cloud/IWDashboards/IWDashboard/kpi"
                     }
                 },
                 {
@@ -2169,6 +2488,7 @@
                     "Description": "",
                     "Type": "twc-custom",
                     "Config": {
+                        "Enabled": true,
                         "Class": "",
                         "Position": {
                             "X": 3,
@@ -2177,8 +2497,7 @@
                     },
                     "Data": {
                         "Path": "/sessiondashboard",
-                        "Url": "https://dice.tetherfi.cloud/IWDashboards/IWDashboard/session",
-                        "QueryParams": []
+                        "Url": "https://dice.tetherfi.cloud/IWDashboards/IWDashboard/session"
                     }
                 },
                 {
@@ -2186,6 +2505,7 @@
                     "Description": "",
                     "Type": "twc-custom",
                     "Config": {
+                        "Enabled": true,
                         "Class": "",
                         "Position": {
                             "X": 3,
@@ -2194,8 +2514,7 @@
                     },
                     "Data": {
                         "Path": "/realtimestats",
-                        "Url": "https://dice.tetherfi.cloud/IWDashboards/VoiceStatsDashboard/RealTimeInteractionStats?dblb=Ivr",
-                        "QueryParams": []
+                        "Url": "https://dice.tetherfi.cloud/IWDashboards/VoiceStatsDashboard/RealTimeInteractionStats?dblb=Ivr"
                     }
                 }
             ],
@@ -2206,7 +2525,8 @@
                 "FileServerUrl": {
                     "SMM": "",
                     "MediaProxy": "https://dice.tetherfi.cloud/ApiFileUploadDownLoad/"
-                }
+                },
+                "TCMClient": "https://dice.tetherfi.cloud/TCM_Client/CampaignManager.asmx"
             }
         },
         "AOT": {
@@ -2216,6 +2536,7 @@
                     "Description": "",
                     "Type": "tw-custom",
                     "Config": {
+                        "Enabled": true,
                         "Static": false,
                         "Anchor": true,
                         "AOT": true,
@@ -2235,13 +2556,12 @@
                         "PinState": false,
                         "FloatState": false,
                         "Resizable": false,
-                        "Header": true,
-                        "Disabled": false
+                        "Header": true
                     },
                     "Data": {
                         "AutoOpen": false,
-                        "Url": "https://tmac.tetherfilabs.com/tcie-web-appv8?id=_agentId",
-                        "QueryParams": []
+                        "OpenInNew": false,
+                        "Url": "https://tmac.tetherfilabs.com/tcie-web-appv8?id=_agentId"
                     }
                 },
                 {
@@ -2249,6 +2569,7 @@
                     "Description": "",
                     "Type": "tw-register-callback",
                     "Config": {
+                        "Enabled": true,
                         "Static": false,
                         "Anchor": true,
                         "AOT": true,
@@ -2268,43 +2589,12 @@
                         "PinState": false,
                         "FloatState": false,
                         "Resizable": false,
-                        "Header": true,
-                        "Disabled": false
+                        "Header": true
                     },
                     "Data": {
                         "AutoOpen": false,
                         "GetCampaignsUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Campaign/GetCampaigns",
                         "CreateContactCampaignUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Contact/CreateCampaignContact"
-                    }
-                },
-                {
-                    "Name": "Agent Assist",
-                    "Description": "",
-                    "Type": "tw-custom",
-                    "Config": {
-                        "Static": false,
-                        "Anchor": true,
-                        "AOT": true,
-                        "Icon": "",
-                        "Class": "",
-                        "Position": {
-                            "X": 0,
-                            "Y": 0
-                        },
-                        "Actions": [
-                            "minimize",
-                            "destroy"
-                        ],
-                        "ViewState": "restore",
-                        "PinState": false,
-                        "FloatState": false,
-                        "Resizable": false,
-                        "Header": true,
-                        "Disabled": false
-                    },
-                    "Data": {
-                        "AutoOpen": false,
-                        "Url": ""
                     }
                 }
             ]
@@ -2318,7 +2608,6 @@
             "Default": {
                 "Large": {
                     "Src": "https://tmac.tetherfilabs.com/tcie-web-app/assets/img/main-logo.png",
-                    "Alt": "Tetherfi",
                     "Width": 180,
                     "Height": 90
                 },
@@ -2331,9 +2620,9 @@
             },
             "Customer": {
                 "Large": {
-                    "Src": "",
-                    "Width": null,
-                    "Height": null
+                    "Src": "https://tmac.tetherfilabs.com/Images/singtel_large.png",
+                    "Width": 160,
+                    "Height": 88
                 },
                 "Small": {
                     "Src": "https://tmac.tetherfilabs.com/Images/singtel_small.png",

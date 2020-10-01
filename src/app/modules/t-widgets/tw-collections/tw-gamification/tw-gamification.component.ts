@@ -391,7 +391,7 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
     OnLoadMetricsToAgent = (evt: any): void => {
         const JsonData = JSON.parse(evt.JsonData);
         // console.log({ ...evt, JsonData: { ...JsonData, eventdata: JSON.parse(JsonData.eventdata) } });
-    };
+    }
 
     /**
      * Assign points events
@@ -399,16 +399,15 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
      */
     OnAssignPointsToAgent = (evt: any): void => {
         const JsonData = JSON.parse(evt.JsonData);
-        this.appUiService.addNotification({ message: JsonData.totalPointsAssigned, status: 'success' });
-        // this.appUiService.showSnackbar(JsonData.totalPointsAssigned, 'success');
-    };
+        this.appUiService.addNotification({ message: JsonData.totalPointsAssigned, status: 'new' });
+    }
 
     /**
      * Set current agent level
      */
     setCurrenAgentLevel(): void {
         this.currentUser.level = 0;
-        this.getAgentLevelsRes.data.forEach((l, i) => {
+        this.getAgentLevelsRes.data.forEach((l: any, i: any) => {
             if (this.currentUser.totalPoints > l.Points) {
                 this.currentUser.level = i + 1;
             }

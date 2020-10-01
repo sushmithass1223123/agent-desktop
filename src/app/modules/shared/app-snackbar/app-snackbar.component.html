@@ -1,0 +1,11 @@
+<div fxFlayout fxFill fxLayoutAlign="center center">
+    <div fxFlayout fxFlex="15" fxLayoutAlign="center center" class="h-100-p icon">
+        <mat-icon class="s-36"> {{ data.icon }} </mat-icon>
+    </div>
+    <div fxFlayout fxFlex="85" fxLayoutAlign="start center" class="h-100-p p-8 font-size-16 font-weight-600">
+        {{ data.message }}
+    </div>
+    <button mat-icon-button color="warn" class="mr-8" (click)="dismiss()">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>

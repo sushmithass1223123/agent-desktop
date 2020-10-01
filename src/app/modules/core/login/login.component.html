@@ -11,10 +11,10 @@
         <div id="login-form" class="{{ loading ? 'blur' : null }}">
             <div class="logo" [@animate]="{ value: '*', params: { scale: '0.5' } }">
                 <img
-                    [src]="logoSrc || 'assets/images/logos/tetherfi.png'"
-                    [width]="logoWidth || 180"
-                    [height]="logoHeight || 90"
-                    alt="{{ logoAlt || 'Tetherfi' }}"
+                    [src]="appCustomerLogo?.Large.Src || 'assets/images/logos/tetherfi.png'"
+                    [alt]="appCustomerLogo?.Alt || 'Tetherfi'"
+                    [width]="appCustomerLogo?.Large.Width || 180"
+                    [height]="appCustomerLogo?.Large.Height || 90"
                 />
             </div>
 
@@ -33,7 +33,7 @@
                 </mat-form-field>
 
                 <mat-form-field class="form-field custom" appearance="outline">
-                    <input class="login-input" matInput required placeholder="LAN ID" (keydown.enter)="login(false)" formControlName="lanId" #lanId />
+                    <input class="login-input" matInput required placeholder="LAN ID" formControlName="lanId" #lanId />
                     <button
                         mat-button
                         type="button"
@@ -50,7 +50,7 @@
                 </mat-form-field>
 
                 <mat-form-field class="form-field custom" appearance="outline" *ngIf="agentIdEnabled">
-                    <input class="login-input" matInput required placeholder="AGENT ID" (keydown.enter)="login(false)" formControlName="agentId" />
+                    <input class="login-input" matInput required placeholder="AGENT ID" formControlName="agentId" />
                     <button
                         mat-button
                         color="primary"
@@ -74,7 +74,6 @@
                         [type]="hidePassword ? 'password' : 'text'"
                         required
                         placeholder="PASSWORD"
-                        (keydown.enter)="login(false)"
                         formControlName="password"
                     />
                     <button
@@ -104,7 +103,6 @@
                         required
                         placeholder="STATION"
                         (keypress)="numberOnly($event)"
-                        (keydown.enter)="login(false)"
                         formControlName="station"
                     />
                     <button

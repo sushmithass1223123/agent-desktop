@@ -1,7 +1,6 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { FuseConfigService } from '@fuse/services/config.service';
-import { ConfirmDialogComponent } from '@modules/shared/confirm-dialog/confirm-dialog.component';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
@@ -194,13 +193,10 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
             case 'onIncoming':
                 // request param
                 const param = evt.data.param.charAt(0).toUpperCase() + evt.data.param.slice(1);
-                // config incoming call
-                const confirmDialogRef = this._dialog.open(ConfirmDialogComponent, {
-                    disableClose: true
-                });
-                confirmDialogRef.componentInstance.message = param + ' call requested by customer, Do you want to accept it?';
-                confirmDialogRef.afterClosed().subscribe((dialogResult) => {
-                    if (dialogResult) {
+                // get confirmation
+                const confirmDialogRef = this._appUIService.showCustomDialog('confirm', param + ' call requested by customer, Do you want to accept it?');
+                confirmDialogRef.afterClosed().subscribe((resp) => {
+                    if (resp) {
                         // accept request
                         evt.data.response(true);
                         // show the UI

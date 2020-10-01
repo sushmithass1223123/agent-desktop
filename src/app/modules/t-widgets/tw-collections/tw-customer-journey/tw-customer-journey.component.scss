@@ -62,14 +62,7 @@
     .mat-menu-content {
         padding: 0;
     }
-    mat-form-field.custom .mat-form-field-wrapper .mat-form-field-outline {
-        &-start {
-            border-color: unset;
-        }
-        &-end {
-            border-color: unset;
-        }
-    }
+
     mat-form-field.custom .mat-form-field-wrapper {
         padding-bottom: 0 !important;
     }

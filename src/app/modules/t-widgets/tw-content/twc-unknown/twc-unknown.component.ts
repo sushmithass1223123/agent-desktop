@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, ElementRef, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { ContentPageService } from 'app/services/content-page.service';
 
@@ -10,8 +10,6 @@ import { ContentPageService } from 'app/services/content-page.service';
 })
 export class TwcUnknownComponent extends TWContentWrapper implements OnInit, OnDestroy {
 
-    @Input() data: any;
-
     constructor(
         public hostElement: ElementRef,
         public contentPageService: ContentPageService
@@ -19,10 +17,16 @@ export class TwcUnknownComponent extends TWContentWrapper implements OnInit, OnD
         super(hostElement, contentPageService);
     }
 
+    /**
+     * OnInit
+     */
     ngOnInit(): void {
         this.initWrapper(this.data);
     }
 
+    /**
+     * OnDestroy
+     */
     ngOnDestroy(): void {
         this.destroyWrapper();
     }

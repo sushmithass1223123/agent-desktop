@@ -4,14 +4,15 @@ import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-b
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
 import { AppDataService } from '@services/app-data.service';
-import { TMACEventService } from '@services/tmac-event.service';
+import { AppUiService } from '@services/app-ui.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
+import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { InteractionRef, IWidget } from 'app/interfaces';
 import { Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
-    AVChannel,
+    AgentInteractionTemplate, AVChannel,
     AVEvent,
     CallConferenceCompletedEvent,
     CallConferenceInitiatedEvent,
@@ -19,7 +20,7 @@ import {
     CallConferenceRemoteConnectedEvent,
     CallConnectedEvent,
     CallDisconnectedEvent,
-    CallHoldEvent,
+    CallerIntentEvent, CallHoldEvent,
     CallHoldReconnectEvent,
     CallTransferInitiatedEvent,
     CallTransferLineDisconnectEvent,
@@ -27,18 +28,10 @@ import {
     IAgentData,
     IResponse,
     IUIEvent,
-    MediaServerEvent,
+    IVRDataEvent, MediaServerEvent,
     SDKClient,
-    TUtils,
-    TEnums,
-    IVRDataEvent,
-    CallerIntentEvent,
-    AgentInteractionTemplate
+    TEnums, TUtils
 } from 'tmac-sdk';
-import { AppUiService } from '@services/app-ui.service';
-import { arch } from 'os';
-import { MatDialog } from '@angular/material/dialog';
-import { ConfirmDialogComponent } from '@modules/shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
     selector: 'tw-voice-controls',
@@ -83,9 +76,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         private _fuseProgressBarService: FuseProgressBarService,
         private _appDataService: AppDataService,
         private _interactionManagerService: InteractionManagerService,
-        private _interactionEventService: TMACEventService,
-        private _appUIService: AppUiService,
-        private _dialog: MatDialog
+        private _tmacEventService: TMACEventService,
+        private _appUIService: AppUiService
     ) {
         super();
     }
@@ -177,7 +169,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
     private registerToEvents(): void {
         // get the event from event bag to make sure no events are missed
-        const eventBag = this._interactionEventService.get(this.interactionId);
+        const eventBag = this._tmacEventService.get(this.interactionId);
 
         // process the events if any
         eventBag.forEach((evt: IUIEvent) => {
@@ -678,10 +670,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
     public confirmDisconnectCall(btn: MatButton): void {
         // config force login
-        const confirmDialogRef = this._dialog.open(ConfirmDialogComponent, {
-            disableClose: false
-        });
-        confirmDialogRef.componentInstance.message = 'Are you sure to end this call?';
+        const confirmDialogRef = this._appUIService.showAppConfirmDialog('endInteraction');
         confirmDialogRef.afterClosed().subscribe((dialogResult) => {
             if (dialogResult) {
                 // send end chat to server 
@@ -764,14 +753,41 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
     public confirmCloseInteraction(btn: MatButton): void {
         // config force login
-        const confirmDialogRef = this._dialog.open(ConfirmDialogComponent, {
-            disableClose: false
-        });
-        confirmDialogRef.componentInstance.message = 'Are you sure to close this interaction?';
+        const confirmDialogRef = this._appUIService.showAppConfirmDialog('closeInteraction');
         confirmDialogRef.afterClosed().subscribe((dialogResult) => {
             if (dialogResult) {
                 // send end chat to server 
                 this.closeInteraction(btn);
+            }
+        });
+    }
+
+    /**
+     * To save interaction comments to server
+     */
+    public saveInteractionComments(): void {
+        const dialogRef = this._appUIService.showCustomDialog('prompt', 'Enter the comments', 'Interaction Comment');
+        dialogRef.afterClosed().subscribe((resp1) => {
+            if (resp1) {
+                this._fuseProgressBarService.show();
+                SDKClient.saveInteractionComment({
+                    comment: resp1,
+                    interactionId: this.interactionId.toString()
+                })
+                    .then((resp2) => {
+                        if (resp2.response > 0) {
+                            this._appUIService.showSnackbar('Interaction comment saved successfully');
+                        }
+                        else {
+                            this._appUIService.showSnackbar('Interaction comment save failed', 'failure');
+                        }
+
+                        this._fuseProgressBarService.hide();
+                    })
+                    .catch(() => {
+                        this._fuseProgressBarService.hide();
+                        this._appUIService.showSnackbar('Error in saving interaction comment', 'failure');
+                    });
             }
         });
     }

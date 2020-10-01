@@ -75,7 +75,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
                     // check if the config is not null
                     if (config !== null) {
                         // get the sidebar widgets
-                        const sidebarWidgets = config.Main.Sidebar.Widgets || {};
+                        const sidebarWidgets = config.Main.Navbar.Widgets || {};
                         // assign the brand logo
                         this.brandLogo = config.AppConfigs.Logos.Default || null;
                         // assign the customer logo

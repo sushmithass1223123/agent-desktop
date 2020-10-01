@@ -8,7 +8,8 @@ export interface IWidget {
     Config: IWidgetConfig;
     Data: any;
     InteractionDetails?: any;
-    OnDestroy?: () => void;
+    destroy?: () => void;
+    OnDestroy?: () => boolean;
 }
 
 export interface InteractionWidgets {
@@ -21,19 +22,16 @@ export interface InteractionWidgets {
 }
 
 export interface IWidgetConfig {
+    Enabled: boolean;
     Static: boolean;
     Anchor: boolean;
     AOT: boolean;
     Icon: string;
     Class: string;
     Position: IWidgetPosition;
-    Actions: any[];
-    ViewState: string;
-    PinState: boolean;
-    FloatState: boolean;
-    Resizable: boolean;
+    Actions: ('restore' | 'maximize' | 'minimize' | 'destroy' | 'float')[];
+    ViewState: 'restore' | 'maximize' | 'minimize' | 'hidden' | 'float';
     Header: boolean;
-    Disabled: boolean;
 }
 
 export interface IWidgetPosition {

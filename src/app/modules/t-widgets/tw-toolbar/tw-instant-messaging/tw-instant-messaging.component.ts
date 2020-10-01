@@ -37,6 +37,11 @@ export class TwInstantMessagingComponent extends TWidgetWrapper implements OnIni
     }
 
     private AgentNotificaitonEvent = (evt: AgentNotificaitonEvent): void => {
+        // check if the interaction id is there then return
+        if (evt.InteractionID > 0) {
+            return;
+        }
+
         if (!this._fuseSidebarService.getSidebar('chatPanel').opened && evt.Type === 'IM') {
             this.unreadMessages += 1;
         }

@@ -6,11 +6,22 @@ import { TUtils } from 'tmac-sdk';
 @Directive()
 // tslint:disable-next-line: directive-class-suffix
 export class TWidgetWrapper {
+    /**
+     * Host binding for class
+     */
     @HostBinding('class') class = 'tw-card';
+    /**
+     * Host binding for style
+     */
     @HostBinding('style') style = '';
+    /**
+     * Host binding for id
+     */
     @HostBinding('id') id = '';
 
-    // Private
+    /**
+     * Subject to unsubscribe
+     */
     unsubscribeAll: Subject<any>;
 
     constructor() {
@@ -18,6 +29,11 @@ export class TWidgetWrapper {
         this.unsubscribeAll = new Subject();
     }
 
+    /**
+     * On widget init
+     *  
+     * @param {IWidget} data Widget data
+     */
     initWrapper(data: IWidget): void {
         // check if the data is null
         if (!data) {
@@ -31,10 +47,6 @@ export class TWidgetWrapper {
             data.ID = TUtils.Generic.uuid();
             // append the id to the tag
             this.id = data.ID;
-        }
-
-        if (this.getWidgetType(data.Type) === 'tw') {
-            // add custom class for 'tw' type
         }
 
         // Check if the position is defined
@@ -72,15 +84,13 @@ export class TWidgetWrapper {
             this.class += ' ' + data.Config.ViewState;
         }
     }
-
+    
+    /**
+     * On widget destroy
+     */
     destroyWrapper(): void {
         // Unsubscribe from all subscriptions
         this.unsubscribeAll.next();
         this.unsubscribeAll.complete();
-    }
-
-    private getWidgetType(type: string): string {
-        const typeSplit = type.split('-');
-        return typeSplit[0];
     }
 }

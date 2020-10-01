@@ -11,7 +11,7 @@
     >
         <mat-table [dataSource]="interactionDetailsTable.source" matSort matSortDisableClear>
             <ng-container matColumnDef="InteractionID">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Interaction ID</mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     {{ element.InteractionID || 'NA' }}
                 </mat-cell>
@@ -48,6 +48,20 @@
                 </mat-cell>
             </ng-container>
 
+            <ng-container matColumnDef="ActiveTime">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Active Time</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{ (element.ActiveTime * 1000 | date: 'H:mm:ss':'UTC') || '00:00:00' }}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="HoldTime">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Hold Time</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{ (element.HoldTime * 1000 | date: 'H:mm:ss':'UTC') || '00:00:00' }}
+                </mat-cell>
+            </ng-container>
+
             <ng-container matColumnDef="Actions">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Actions</mat-header-cell>
                 <mat-cell *matCellDef="let element" class="px-12">
@@ -57,7 +71,7 @@
                             mat-icon-button
                             *ngIf="featureCheck(feature, 'interaction', element.Channel.toLowerCase())"
                             [matTooltip]="featureMap[feature.Feature].Label"
-                            (click)="performAgentAction(element, feature)"
+                            (click)="performInteractionAction(element, feature)"
                         >
                             <mat-icon>{{ featureMap[feature.Feature].Icon }}</mat-icon>
                         </button>

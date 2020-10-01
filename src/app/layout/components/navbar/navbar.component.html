@@ -14,37 +14,39 @@
     <div class="twn-list">
         <mat-selection-list #sidebarList [multiple]="false">
             <div class="top mat-elevation-z1">
-                <mat-list-option
-                    *ngFor="let item of topWidgets"
-                    [value]="item.Data.Path"
-                    (click)="selectTab(item)"
-                    #sidebarListOption
-                    [selected]="item.Data.Active"
-                    matTooltip="{{ item.Name }}"
-                    matTooltipPosition="after"
-                    matTooltipClass="tooltip"
-                >
-                    <mat-icon class="icon" mat-list-icon [matBadge]="item.Data.Count || ''">{{ item.Data.Icon }}</mat-icon>
-                </mat-list-option>
-
                 <mat-divider *ngIf="topWidgets.length > 0"></mat-divider>
+                <ng-container *ngFor="let item of topWidgets">
+                    <mat-list-option
+                        *ngIf="item.Config.Enabled"
+                        [value]="item.Data.Path"
+                        (click)="selectTab(item)"
+                        #sidebarListOption
+                        [selected]="item.Data.Active"
+                        [matTooltip]="item.Name"
+                        matTooltipPosition="after"
+                        matTooltipClass="tooltip"
+                    >
+                        <mat-icon class="icon" mat-list-icon [matBadge]="item.Data.Count || ''">{{ item.Config.Icon || 'widgets' }}</mat-icon>
+                    </mat-list-option>
+                </ng-container>
             </div>
 
             <div class="bottom mat-elevation-z1" fusePerfectScrollbar [fusePerfectScrollbarOptions]="{ suppressScrollX: true }">
                 <mat-divider *ngIf="bottomWidgets.length > 0"></mat-divider>
-
-                <mat-list-option
-                    *ngFor="let item of bottomWidgets"
-                    [value]="item.Data.Path"
-                    (click)="selectTab(item)"
-                    #sidebarListOption
-                    [selected]="item.Data.Active"
-                    matTooltip="{{ item.Name }}"
-                    matTooltipPosition="after"
-                    matTooltipClass="tooltip"
-                >
-                    <mat-icon class="icon" mat-list-icon>{{ item.Data.Icon }}</mat-icon>
-                </mat-list-option>
+                <ng-container *ngFor="let item of bottomWidgets">
+                    <mat-list-option
+                        *ngIf="item.Config.Enabled"
+                        [value]="item.Data.Path"
+                        (click)="selectTab(item)"
+                        #sidebarListOption
+                        [selected]="item.Data.Active"
+                        [matTooltip]="item.Name"
+                        matTooltipPosition="after"
+                        matTooltipClass="tooltip"
+                    >
+                        <mat-icon class="icon" mat-list-icon>{{ item.Config.Icon || 'widgets' }}</mat-icon>
+                    </mat-list-option>
+                </ng-container>
             </div>
 
             <button mat-button class="button-settings" (click)="toggleSidebarOpen('themeOptionsPanel')">
