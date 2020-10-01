@@ -147,7 +147,7 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
         const { agentId } = SDKClient.getAgentData();
 
         this.currentUser = {
-            agentId: '50005',
+            agentId,
             name: '',
             badges: [],
             coins: [],
