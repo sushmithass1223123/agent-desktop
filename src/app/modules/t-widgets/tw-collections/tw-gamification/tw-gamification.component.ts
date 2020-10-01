@@ -147,7 +147,7 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
         const { agentId } = SDKClient.getAgentData();
 
         this.currentUser = {
-            agentId,
+            agentId: '50005',
             name: '',
             badges: [],
             coins: [],
@@ -158,8 +158,9 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
         this.setupDashboard();
 
         this.polling.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
-            this.fetchLeaderBoard();
-            this.getAgentProgress();
+            // this.fetchLeaderBoard();
+            // this.getAgentProgress();
+            // this.getQuizInfo();
         });
 
         SDKClient.events.on('OnLoadMetricsToAgent', this.OnLoadMetricsToAgent);
@@ -280,7 +281,15 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
             .subscribe(
                 (progressRes) => {
                     try {
-                        this.getAgentProgressRes = { loading: false, error: false, data: sortBy(progressRes || [], 'RequiredPointsForNextBadge') };
+                        this.getAgentProgressRes = {
+                            loading: false,
+                            error: false,
+                            data: sortBy(progressRes || [], 'RequiredPointsForNextBadge').map((x) => ({
+                                ...x,
+                                MetricMaxValue: x.MetricMaxValue ? parseInt(x.MetricMaxValue, 10) : 0,
+                                MetricAverageValue: x.MetricAverageValue ? parseInt(x.MetricAverageValue, 10) : 0
+                            }))
+                        };
                         this.currentUser.totalPoints = 0;
                         this.getAgentProgressRes.data.forEach((p) => {
                             this.currentUser.totalPoints += p.PointsAssigned;
@@ -311,19 +320,22 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
         this.http
             .post<any>('https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetAgentLevels', { agentId: this.currentUser.agentId })
             // .pipe(map((x) => ({ ...x.d, data: JSON.parse(x.d.data) })))
-            .pipe(takeUntil(this.unsubscribeAll))
+            .pipe(
+                takeUntil(this.unsubscribeAll),
+                map((x) => ({ ...x.d, data: JSON.parse(x.d.data) }))
+            )
             .subscribe(
                 (agentLevelRes) => {
                     try {
-                        agentLevelRes.d.data = {
-                            Levels: [
-                                { LevelID: 1, Name: 'Level1', Points: 1000 },
-                                { LevelID: 2, Name: 'Level2', Points: 1500 },
-                                { LevelID: 3, Name: 'Level3', Points: 2000 },
-                                { LevelID: 4, Name: 'Level4', Points: 2500 }
-                            ]
-                        };
-                        this.getAgentLevelsRes = { error: false, loading: false, data: sortBy(agentLevelRes.d.data.Levels, 'Points') };
+                        // agentLevelRes.d.data = {
+                        //     Levels: [
+                        //         { LevelID: 1, Name: 'Level1', Points: 1000 },
+                        //         { LevelID: 2, Name: 'Level2', Points: 1500 },
+                        //         { LevelID: 3, Name: 'Level3', Points: 2000 },
+                        //         { LevelID: 4, Name: 'Level4', Points: 2500 }
+                        //     ]
+                        // };
+                        this.getAgentLevelsRes = { error: false, loading: false, data: sortBy(agentLevelRes.data.Levels, 'Points') };
                         this.setCurrenAgentLevel();
                     } catch (e) {
                         console.error(e);
@@ -387,7 +399,8 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
      */
     OnAssignPointsToAgent = (evt: any): void => {
         const JsonData = JSON.parse(evt.JsonData);
-        this.appUiService.showSnackbar(JsonData.totalPointsAssigned, 'success');
+        this.appUiService.addNotification({ message: JsonData.totalPointsAssigned, status: 'success' });
+        // this.appUiService.showSnackbar(JsonData.totalPointsAssigned, 'success');
     };
 
     /**

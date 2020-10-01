@@ -64,7 +64,11 @@
                                         '%'
                                 }"
                             ></div>
-                            <div *ngFor="let level of getAgentLevelsRes.data; let i = index" [ngClass]="scoreBgs[i] + ' ' + level + '-' + i"></div>
+                            <div
+                                *ngFor="let level of getAgentLevelsRes.data; let i = index"
+                                [ngClass]="scoreBgs[i] + ' ' + level + '-' + i"
+                                fxFlex="100"
+                            ></div>
                         </div>
                         <strong class="ml-4"> {{ p.TotalPoints }} Pt</strong>
                     </div>
@@ -110,7 +114,11 @@
                                 '%'
                         }"
                     ></div>
-                    <div *ngFor="let level of getAgentLevelsRes.data; let i = index" [ngClass]="scoreBgs[i] + ' ' + level + '-' + i"></div>
+                    <div
+                        *ngFor="let level of getAgentLevelsRes.data; let i = index"
+                        [ngClass]="scoreBgs[i] + ' ' + level + '-' + i"
+                        fxFlex="100"
+                    ></div>
                 </div>
                 <div fxFlex="100">
                     <span>
@@ -159,29 +167,17 @@
 
         <div fxFlex="40">
             <p class="mat-title mb-8">My Performance</p>
-            <div
-                *ngFor="let p of getAgentProgressRes.data | slice: 0:6; trackBy: pointsAssigned"
-                fxLayout
-                fxLayoutAlign="space-between center"
-                class="mb-16"
-            >
-                <span fxFlex="30" class="text-center border-right-secondary"> {{ p.Channel }}{{ p.Channel ? '_' : '' }}{{ p.MetricName }}</span>
-                <mat-slider
-                    fxFlex="50"
-                    [value]="(p.PointsAssigned * 100) / (p.PointsAssigned + p.RequiredPointsForNextBadge) - 1"
-                    step="1"
-                    color="primary"
-                ></mat-slider>
-
-                <!-- [min]="(p.PointsAssigned * 100) / (p.PointsAssigned + p.RequiredPointsForNextBadge)"
-                    [max]="100" -->
-                <!-- <mat-progress-bar
-                    color="primary"
-                    [value]="(p.PointsAssigned * 100) / (p.PointsAssigned + p.RequiredPointsForNextBadge)"
-                    fxFlex="50"
-                ></mat-progress-bar> -->
-
-                <span fxFlex="20" class="ml-4"> {{ p.PointsAssigned }} / {{ p.PointsAssigned + p.RequiredPointsForNextBadge }} </span>
+            <div fusePerfectScrollbar class="h-100-p">
+                <div *ngFor="let p of getAgentProgressRes.data; trackBy: pointsAssigned" fxLayout fxLayoutAlign="space-between center" class="mb-16">
+                    <span fxFlex="35" class="text-center border-right-secondary"> {{ p.Channel }}{{ p.Channel ? '_' : '' }}{{ p.MetricName }}</span>
+                    <mat-slider
+                        fxFlex="30"
+                        [value]="p.MetricAverageValue"
+                        step="1"
+                        [color]="p.MetricAverageValue > p.MetricMaxValue ? 'accent' : 'primary'"
+                    ></mat-slider>
+                    <span fxFlex="30" class="ml-4"> {{ p.MetricAverageValue }} / {{ p.MetricMaxValue }} </span>
+                </div>
             </div>
         </div>
     </div>
