@@ -120,7 +120,7 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
                 let silverCoins = 0;
                 let bronzeCoins = 0;
 
-                metrics.forEach((m: any) => {
+                metrics?.forEach((m: any) => {
                     goldCoins += m.GoldCoins;
                     silverCoins += m.SilverCoins;
                     bronzeCoins += m.BronzeCoins;

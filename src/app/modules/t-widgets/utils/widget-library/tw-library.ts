@@ -16,6 +16,8 @@ import { TwCannedResponsesComponent } from '@modules/t-widgets/tw-collections/tw
 import { TwChatPanelComponent } from '@modules/t-widgets/tw-collections/tw-chat-panel/tw-chat-panel.component';
 import { TwCustomComponent } from '@modules/t-widgets/tw-collections/tw-custom/tw-custom.component';
 import { TwCustomerSentimentComponent } from '@modules/t-widgets/tw-collections/tw-customer-sentiment/tw-customer-sentiment.component';
+import { TwGamificationComponent } from '@modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component';
+import { TwPendingCallbacksComponent } from '@modules/t-widgets/tw-collections/tw-pending-callbacks/tw-pending-callbacks.component';
 import { TwPieChartComponent } from '@modules/t-widgets/tw-collections/tw-pie-chart/tw-pie-chart.component';
 import { TwRegisterCallbackComponent } from '@modules/t-widgets/tw-collections/tw-register-callback/tw-register-callback.component';
 import { TwSampleComponent } from '@modules/t-widgets/tw-collections/tw-sample/tw-sample.component';
@@ -38,47 +40,61 @@ import { TwWorkCodesComponent } from '@modules/t-widgets/tw-collections/tw-work-
 import { TwWorkbenchPanelComponent } from '@modules/t-widgets/tw-collections/tw-workbench-panel/tw-workbench-panel.component';
 import { TWidget } from '@modules/t-widgets/utils/t-widget';
 
+/**
+ * Widgets library
+ */
 export class TWLibrary {
+    /**
+     * coded components for library
+     */
     static widgetLibrary: Record<string, Type<any>> = {
         'tw-sample': TwSampleComponent,
-        'tw-custom': TwCustomComponent, //
-        'tw-wallboard': TwWallboardComponent, //
-        'tw-voice-panel': TwVoicePanelComponent, //
-        'tw-chat-panel': TwChatPanelComponent, //
-        'tw-ad-total-interactions': TwAdTotalInteractionsComponent, // 
-        'tw-ad-interaction-details': TwAdInteractionDetailsComponent, //
-        'tw-ad-callbacks': TwAdCallbacksComponent, //
-        'tw-su-calls-in-queue': TwSuCallsInQueueComponent, //
-        'tw-su-channels': TwSuChannelsComponent, //
-        'tw-su-status': TwSuStatusComponent, //
-        'tw-su-active-agents': TwSuActiveAgentsComponent, //
-        'tw-work-codes': TwWorkCodesComponent, //
+        'tw-custom': TwCustomComponent,
+        'tw-wallboard': TwWallboardComponent,
+        'tw-voice-panel': TwVoicePanelComponent,
+        'tw-chat-panel': TwChatPanelComponent,
+        'tw-ad-total-interactions': TwAdTotalInteractionsComponent,
+        'tw-ad-interaction-details': TwAdInteractionDetailsComponent,
+        'tw-ad-callbacks': TwAdCallbacksComponent,
+        'tw-su-calls-in-queue': TwSuCallsInQueueComponent,
+        'tw-su-channels': TwSuChannelsComponent,
+        'tw-su-status': TwSuStatusComponent,
+        'tw-su-active-agents': TwSuActiveAgentsComponent,
+        'tw-work-codes': TwWorkCodesComponent,
         'tw-su-agent-activity': TwSuAgentActivityComponent,
-        'tw-ad-feedback': TwAdFeedbackComponent, //
-        'tw-ad-score': TwAdScoreComponent, //
-        'tw-ad-performance': TwAdPerformanceComponent, //
-        'tw-ad-gamification': TwAdGamificationComponent, //
-        'tw-su-gamification': TwSuGamificationComponent, //
-        'tw-amdocs-bcc': TwAmdocsBccComponent, //
-        'tw-account-information': TwAccountInformationComponent, //
-        'tw-canned-responses': TwCannedResponsesComponent, //
-        'tw-agent-assist': TwAgentAssistComponent, //
-        'tw-customer-sentiment': TwCustomerSentimentComponent, //
+        'tw-ad-feedback': TwAdFeedbackComponent,
+        'tw-ad-score': TwAdScoreComponent,
+        'tw-ad-performance': TwAdPerformanceComponent,
+        'tw-ad-gamification': TwAdGamificationComponent,
+        'tw-su-gamification': TwSuGamificationComponent,
+        'tw-amdocs-bcc': TwAmdocsBccComponent,
+        'tw-account-information': TwAccountInformationComponent,
+        'tw-canned-responses': TwCannedResponsesComponent,
+        'tw-agent-assist': TwAgentAssistComponent,
+        'tw-customer-sentiment': TwCustomerSentimentComponent,
         'tw-audio-controls': TwAudioControlsComponent,
         'tw-video-controls': TwVideoControlsComponent,
-        'tw-aux-status-chart': TwAuxStatusChartComponent, //
-        'tw-aht-tc': TwAhtTcComponent, //
-        'tw-su-intent-list': TwSuIntentListComponent, //
-        'tw-voice-bot-transcripts': TwVoiceBotTranscriptsComponent, //
-        'tw-register-callback': TwRegisterCallbackComponent, //
+        'tw-aux-status-chart': TwAuxStatusChartComponent,
+        'tw-aht-tc': TwAhtTcComponent,
+        'tw-su-intent-list': TwSuIntentListComponent,
+        'tw-voice-bot-transcripts': TwVoiceBotTranscriptsComponent,
+        'tw-register-callback': TwRegisterCallbackComponent,
         'tw-su-agent-interactions': TwSuAgentInteractionsComponent,
-        'tw-pie-chart': TwPieChartComponent, //
-        'tw-transfer-interaction': TwTransferInteractionComponent, //
-        'tw-voice-canned-responses': TwVoiceCannedResponsesComponent, // 
+        'tw-pie-chart': TwPieChartComponent,
+        'tw-transfer-interaction': TwTransferInteractionComponent,
+        'tw-voice-canned-responses': TwVoiceCannedResponsesComponent,
         'tw-workbench-panel': TwWorkbenchPanelComponent,
         'tw-email-panel': TwChatPanelComponent,
-        'tw-email-controls': TwAudioControlsComponent
+        'tw-email-controls': TwAudioControlsComponent,
+        'tw-pending-callbacks': TwPendingCallbacksComponent,
+        'tw-gamification': TwGamificationComponent
     };
+
+    /**
+     * Get widget by type with added input data
+     * @param type
+     * @param data
+     */
 
     public static getWidget(type: string, data: any): TWidget {
         const widget = this.widgetLibrary[type];

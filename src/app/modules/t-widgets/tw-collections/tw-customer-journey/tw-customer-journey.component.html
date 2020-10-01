@@ -103,7 +103,7 @@
           The actual rendered columns are set as a property on the row definition" -->
 
                 <ng-container matColumnDef="SessionID">
-                    <mat-header-cell *matHeaderCellDef>
+                    <mat-header-cell fxFlex="20" *matHeaderCellDef>
                         <span mat-sort-header> Session Id </span>
                         <mat-icon [matMenuTriggerFor]="sessionSearch" mat-ripple>search</mat-icon>
                         <mat-menu #sessionSearch="matMenu" class="search-input p-4">
@@ -114,11 +114,11 @@
                             </div>
                         </mat-menu>
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let element">{{ element.SessionID || 'NA' }}</mat-cell>
+                    <mat-cell *matCellDef="let element" fxFlex="20">{{ element.SessionID || 'NA' }}</mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="InteractionDate">
-                    <mat-header-cell *matHeaderCellDef class="d-flex w-100-p">
+                    <mat-header-cell fxFlex="15" *matHeaderCellDef class="d-flex w-100-p">
                         <span mat-sort-header> Received At </span>
                         <mat-icon [matMenuTriggerFor]="receivedAtSearch" mat-ripple>search</mat-icon>
                         <mat-menu #receivedAtSearch="matMenu" class="search-input p-4">
@@ -129,7 +129,7 @@
                             </div>
                         </mat-menu>
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let element">{{ element.InteractionDate || 'NA' }}</mat-cell>
+                    <mat-cell fxFlex="15" *matCellDef="let element">{{ element.InteractionDate || 'NA' }}</mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="Channel">
@@ -260,7 +260,7 @@
                                     [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
                                 >
                                     <div
-                                        class="step m-8 px-8 py-16 border-radius-20"
+                                        class="step m-8 px-8 py-8 mat-elevation-z1 border-radius-20"
                                         *ngFor="let action of sessionActions.data"
                                         [ngClass]="
                                             fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
@@ -290,7 +290,7 @@
                                     <p>
                                         {{ sessionActions.msg }}
                                     </p>
-                                    <button mat-button color="primary" (click)="getSessionActions(element.SessionID)" >Retry</button>
+                                    <button mat-button color="primary" (click)="getSessionActions(element.SessionID)">Retry</button>
                                 </div>
                             </mat-menu>
                         </div>

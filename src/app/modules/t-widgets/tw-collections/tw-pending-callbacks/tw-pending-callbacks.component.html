@@ -1,0 +1,90 @@
+<!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
+<!-- implement following events in your component to access widget wrapper action events -->
+<!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
+
+<!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
+
+<ng-template #phoneForm let-buttonLabel="buttonLabel">
+    <form
+        (ngSubmit)="getPendingCallbacks()"
+        class="w-100-p p-12"
+        #phoneNumberForm="ngForm"
+        fxLayout
+        fxLayoutAlign="center center"
+        fxLayoutGap="20px"
+        novalidate
+    >
+        <mat-form-field appearance="outline" fxFlex="80">
+            <mat-label>Phone Number</mat-label>
+            <input type="number" matInput [(ngModel)]="phone" name="phone" #phoneCtrl="ngModel" required />
+            <mat-error *ngIf="phoneCtrl.errors?.required"> Required </mat-error>
+        </mat-form-field>
+        <button fxFlex="20" mat-raised-button color="primary">{{ buttonLabel }}</button>
+    </form>
+</ng-template>
+
+<tw-wrapper [data]="data">
+    <!-- your code goes here -->
+    <ng-container *ngIf="!getPendingCallbacksReq.loading && !getPendingCallbacksReq.error">
+        <ng-container *ngIf="getPendingCallbacksReq.data">
+            <mat-table [dataSource]="pendingCallbacksTable.source" matSort matSortActive="ScheduleTime" matSortDirection="desc" matSortDisableClear>
+                <!--- Note that these columns can be defined in any order.
+The actual rendered columns are set as a property on the row definition" -->
+
+                <ng-container matColumnDef="ScheduleTime">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Scheduled At</mat-header-cell>
+                    <mat-cell *matCellDef="let element">{{ element.ScheduleTime || 'NA' }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="Name">
+                    <mat-header-cell *matHeaderCellDef class="d-flex w-100-p">
+                        <span mat-sort-header> Name </span>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">{{ element.Name || 'NA' }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="Status">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
+                    <mat-cell *matCellDef="let element">{{ element.Status || 'NA' }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="Actions">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header></mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <div fxLayout fxLayoutAlign="center center" class="h-100-p w-100-p">
+                            <mat-icon
+                                mat-ripple
+                                *ngIf="changeContactStatusReq.data !== element.Id"
+                                (click)="closeCallback(element)"
+                                [matIcon]="Close"
+                            >
+                                close
+                            </mat-icon>
+                            <mat-icon mat-ripple *ngIf="changeContactStatusReq.data === element.Id" class="spin" (click)="closeCallback(element)">
+                                loop
+                            </mat-icon>
+                        </div>
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="pendingCallbacksTable.columns; sticky: true"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: pendingCallbacksTable.columns"></mat-row>
+            </mat-table>
+            <p *ngIf="!pendingCallbacksTable.source.data.length" class="text-center">No data available</p>
+        </ng-container>
+        <ng-container *ngIf="!getPendingCallbacksReq.data">
+            <ng-container *ngTemplateOutlet="phoneForm; context: { buttonLabel: 'Submit' }"></ng-container>
+        </ng-container>
+    </ng-container>
+
+    <div *ngIf="getPendingCallbacksReq.loading" fxLayout="column" fxLayoutAlign="center center" class="w-100-p h-100-p">
+        <mat-spinner></mat-spinner>
+    </div>
+
+    <div *ngIf="getPendingCallbacksReq.error" fxLayout="column" fxLayoutAlign="center center" class="w-100-p h-100-p">
+        <p>{{ getPendingCallbacksReq.msg }}</p>
+        <ng-container *ngTemplateOutlet="phoneForm; context: { buttonLabel: 'Retry' }"></ng-container>
+    </div>
+
+    <!-- your code goes here -->
+</tw-wrapper>
