@@ -133,11 +133,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
     hasChild = (_: number, node: any) => !!node.children && node.children.length > 0;
 
     advancedSearch(): void {
-        if (!this.data.Data.EmailSearchUrl) {
+        if (!this.data.Data.WorkbenchUrl) {
             this.emailSearchRes = {
                 loading: false,
                 error: true,
-                msg: 'EmailSearchUrl not provided',
+                msg: 'WorkbenchUrl not provided',
                 data: { selected: this.emailSearchRes.data.selected || false }
             };
             return;

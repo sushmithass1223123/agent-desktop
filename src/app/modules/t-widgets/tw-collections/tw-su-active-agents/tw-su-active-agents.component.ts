@@ -82,7 +82,6 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         // listen to agent list event
         SDKClient.events.on('SupervisorAgentListEvent', this.SupervisorAgentListEvent);
         SDKClient.events.on('TeamAgentListDataEvent', this.TeamAgentListDataEvent);
-        SDKClient.events.on('AutoSelectSupervisorAgentEvent', this.AutoSelectSupervisorAgentEvent);
 
         // get agent aux codes
         SDKClient.loadAUXCodes(false, null).then((result: IResponse) => {
@@ -104,7 +103,6 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         // listen off agent list event
         SDKClient.events.off('SupervisorAgentListEvent', this.SupervisorAgentListEvent);
         SDKClient.events.off('TeamAgentListDataEvent', this.TeamAgentListDataEvent);
-        SDKClient.events.off('AutoSelectSupervisorAgentEvent', this.AutoSelectSupervisorAgentEvent);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -118,7 +116,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         if (this.searchTerm) {
             this.filterAgents();
         }
-    };
+    }
 
     private TeamAgentListDataEvent = (agentListData: SuAgentDataModel[]) => {
         if (this.agentList.length === 0) {
@@ -140,9 +138,6 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         if (this.searchTerm) {
             this.filterAgents();
         }
-    }
-    private AutoSelectSupervisorAgentEvent = (evt: any) => {
-        this.selectedAgent = evt.AgentId;
     }
 
     private createActivityWidget(item: any): void {
@@ -174,6 +169,10 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                 return agentItem.AgentName.toLowerCase().includes(searchTerm);
             });
         }
+    }
+
+    public trackByID(index: number, agent: any): string {
+        return agent.AgentLoginID;
     }
 
     public selectAgent(agent: any): void {
@@ -342,11 +341,19 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             });
     }
 
-    sendIntent(intent: string): void {
-        // SDKClient.addEventToAgentSession({
-        //     agentId : this.selectActiveAgent.
-        // })
-        console.log({ intent });
+    public sendIntent(intent: string, item: SuAgentModel): void {
+        SDKClient.addEventToAgentSession({
+            agentId: item.AgentLoginID,
+            eventString: JSON.stringify({
+                EventName: 'GenericEvent',
+                SubEventName: 'TestingEvent',
+                JsonData: JSON.stringify({
+                    Intent: intent
+                })
+            }),
+            isPriority: true,
+            toTmacServer: item.TmacServer
+        });
     }
 }
 
