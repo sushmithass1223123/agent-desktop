@@ -1,3 +1,4 @@
 {
-    "ProxyUrl": "https://dice.tetherfi.cloud/TMACHttpProxy/TmacProxy.asmx"
+    "ProxyUrl": "https://dice.tetherfi.cloud/TMACHttpProxy/TmacProxy.asmx",
+    "ConfigMode": "remote"
 }

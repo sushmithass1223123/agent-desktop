@@ -88,6 +88,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         AgentName: string;
         ConferenceType: string;
         TmacServer: string;
+        IsBotAgent: boolean;
     }[] = [];
     chatTranscripts: ChatTranscripts[] = [];
     customerName = 'Customer';
@@ -100,6 +101,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     showAutoFreeze: boolean;
     supervisorInit: boolean;
     confirmDialogRef: MatDialogRef<any, any>;
+    /**
+     * Bot connected to chat flag
+     */
+    botConnected: boolean;
 
     @ViewChildren(FusePerfectScrollbarDirective) directiveScrolls: QueryList<FusePerfectScrollbarDirective>;
     @ViewChildren('replyInput') replyInputField: any;
@@ -378,7 +383,16 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // to store connected agent's TmacServer
         let tmacServer = '';
         try {
-            tmacServer = JSON.parse(JSON.parse(evt.AgentInfoJson).extraparam).serverName;
+            // get conference agent info
+            const agentInfo = JSON.parse(evt.AgentInfoJson);
+            // extra parameter for agent info
+            const extraParam = JSON.parse(agentInfo.extraparam);
+            // assign the tmac server
+            tmacServer = extraParam.serverName;
+            // show an alert on connect 
+            if (extraParam.conferenceType === 'conf' || extraParam.conferenceType === 'whisper') {
+                this._appUIService.showSnackbar(`${evt.AgentName} connected to the chat`, 'info');
+            }
         } catch (error) {
         }
 
@@ -387,8 +401,14 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             AgentId: evt.AgentId,
             AgentName: evt.AgentName,
             ConferenceType: evt.ConferenceType,
+            IsBotAgent: evt.IsBotAgent,
             TmacServer: tmacServer
         });
+
+        // check if a bot is connected 
+        if (evt.IsBotAgent) {
+            this.botConnected = true;
+        }
     }
 
     /**
@@ -746,6 +766,16 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // remove the agent from list 
         this.conferenceAgentList = this.conferenceAgentList.filter(c => c.AgentId !== evt.AgentId);
+
+        // check if a bot is connected 
+        if (evt.IsBotAgent) {
+            this.botConnected = false;
+        }
+
+        // show an alert for non silent agent
+        if (evt.ConferenceType === '' || evt.ConferenceType === 'conf' || evt.ConferenceType === 'whisper') {
+            this._appUIService.showSnackbar(`${evt.AgentName} is disconnected from chat`, 'info');
+        }
     }
 
     /**
@@ -1225,6 +1255,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     public conferenceWithBot(): void {
         this._fuseProgressBarService.show();
+        // freeze auto response 
+        this.freezeAutoResponse(true);
         // send the request to server
         SDKClient.textChatConferenceToBot({
             destination: '',

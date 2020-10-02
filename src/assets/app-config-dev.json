@@ -1195,7 +1195,7 @@
                                     "Data": {
                                         "Confidence": 0.5,
                                         "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=_intent&ucid=_ucid",
-                                        "Title": "Visual IVR",
+                                        "Title": "Agent Assist",
                                         "Icon": "assistant",
                                         "Width": 450,
                                         "Height": 800,

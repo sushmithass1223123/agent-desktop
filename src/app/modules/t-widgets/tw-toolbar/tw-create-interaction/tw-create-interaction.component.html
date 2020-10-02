@@ -1,7 +1,14 @@
 <div class="fab-container">
-    <button mat-icon-button cdkOverlayOrigin #channelList="cdkOverlayOrigin" (click)="channels = channels.length ? [] : data.Data.Channels">
+    <button
+        mat-icon-button
+        cdkOverlayOrigin
+        #channelList="cdkOverlayOrigin"
+        (click)="channels = channels.length ? [] : data.Data.Channels"
+        matTooltip="More Actions"
+    >
         <mat-icon [@fabToggler]="{ value: !!channels.length ? 'active' : 'inactive' }">add </mat-icon>
     </button>
+
     <!-- This template displays the overlay content and is connected to the button -->
     <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="channelList" [cdkConnectedOverlayOpen]="channels.length">
         <div fxLayout="column" fxLayoutGap="10px" class="mt-12" [@widgetStagger]="channels.length">
@@ -18,19 +25,3 @@
         </div>
     </ng-template>
 </div>
-<!-- <div>
-    <button mat-button [matMenuTriggerFor]="channelList">
-        <mat-icon>add</mat-icon>
-    </button>
-</div>
-
-<mat-menu #channelList="matMenu">
-    <ng-container *ngFor="let channel of data.Data.Channels">
-        <mat-menu-item *ngIf="channel.Enable">
-            <mat-icon>
-                {{ channel.Icon }}
-            </mat-icon>
-            {{ channel.Name }}
-        </mat-menu-item>
-    </ng-container>
-</mat-menu> -->

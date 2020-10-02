@@ -40,7 +40,7 @@
                     </small>
                 </div>
                 <div fxFlex="85" fxLayout fxLayoutAlign="space-between center" class="step-details px-16">
-                    <div fxLayout fxLayoutAlign="start center">
+                    <div fxLayout fxFlex="85" fxLayoutAlign="start center">
                         <div mat-card-avatar [ngSwitch]="s.Channel | lowercase" class="w-32 h-32 border-sm-primary">
                             <ng-container *ngSwitchCase="'textchat'">
                                 <ng-container *ngTemplateOutlet="interactionBrandType; context: s"></ng-container>
@@ -75,7 +75,7 @@
                             {{ s.LastServicedAgentName || s.AgentName }}
                         </span>
                     </div>
-                    <small> Default </small>
+                    <small fxFlex="15" class="text-center">{{ s.Intent || 'Default' }}</small>
                 </div>
             </div>
             <div *ngIf="customerJourneyTable.tableData.source.data.length === 0" fxLayout fxLayoutAlign="center center" class="mat-title h-120">

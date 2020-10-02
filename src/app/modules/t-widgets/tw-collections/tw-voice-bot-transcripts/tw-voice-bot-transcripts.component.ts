@@ -1,11 +1,12 @@
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { FusePerfectScrollbarDirective } from '@fuse/directives/fuse-perfect-scrollbar/fuse-perfect-scrollbar.directive';
 import { FuseConfigService } from '@fuse/services/config.service';
-import { AppDataService } from '@services/app-data.service';
-import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { takeUntil } from 'rxjs/operators';
-import { IAgentData, SDKClient, VoiceBotTranscriptEvent, IUIEvent } from 'tmac-sdk';
-import { ChatTranscripts } from 'app/interfaces';
+import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
+import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
+import { ChatTranscripts } from 'app/interfaces';
+import { takeUntil } from 'rxjs/operators';
+import { IAgentData, IUIEvent, SDKClient, VoiceBotTranscriptEvent } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-voice-bot-transcripts',
@@ -14,37 +15,46 @@ import { TMACEventService } from '@services/tmac-event.service';
     encapsulation: ViewEncapsulation.None
 })
 export class TwVoiceBotTranscriptsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-    // holds all the data related to this widget from the config
+    /**
+     * Holds all the data related to this widget from the config
+     */
     @Input() data: any;
 
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store the fuse config for theme
-    // -----------------------------------------------------------
+    /**
+     * Perfect scroll bar directive ref
+     */
+    @ViewChild(FusePerfectScrollbarDirective)
+    directiveScroll: FusePerfectScrollbarDirective;
+    /**
+     * To store the fuse config for theme
+     */
     fuseConfig: any;
-
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store entire app config and get update
-    // -----------------------------------------------------------
-    appConfig: any;
-
+    /**
+     * Voice bot transcripts list
+     */
     chatTranscripts: ChatTranscripts[] = [];
+    /**
+     * Current agent data
+     */
     user: Partial<IAgentData> = {
         agentName: 'VoiceBot'
     };
-
+    /**
+     * Current interaction Id
+     */
     interactionId: number;
 
     /**
      * Constructor
+     * 
      * @param {FuseConfigService} _fuseConfigService
-     * @param {AppDataService} _appDataService
+     * @param {TMACEventService} _tmacEventService
+     * @param {AppUiService} _appUIService
      */
     constructor(
-        // @ [OPTIONAL]
         private _fuseConfigService: FuseConfigService,
-        // @ [OPTIONAL]
-        private _appDataService: AppDataService,
-        private _tmacEventService: TMACEventService
+        private _tmacEventService: TMACEventService,
+        private _appUIService: AppUiService
     ) {
         super();
     }
@@ -54,24 +64,14 @@ export class TwVoiceBotTranscriptsComponent extends TWidgetWrapper implements On
     // -----------------------------------------------------------------------------------------------------
 
     /**
-     * A callback method that is invoked immediately after the default change detector has checked the directive's data-bound properties for the first time,
-     * and before any of the view or content children have been checked. It is invoked only once when the directive is instantiated.
+     * On Init
      */
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the fuse config
-        // -----------------------------------------------------------
+
         this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
             this.fuseConfig = config;
-        });
-
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the app config
-        // -----------------------------------------------------------
-        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.appConfig = config;
         });
 
         // set the interaction id from data
@@ -89,7 +89,7 @@ export class TwVoiceBotTranscriptsComponent extends TWidgetWrapper implements On
     }
 
     /**
-     * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
+     * On Destroy
      */
     ngOnDestroy(): void {
         // call the wrapper destroy method
@@ -102,30 +102,81 @@ export class TwVoiceBotTranscriptsComponent extends TWidgetWrapper implements On
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * To process VoiceBotTranscriptEvent
+     * 
+     * @param {VoiceBotTranscriptEvent} evt 
+     */
     private VoiceBotTranscriptEvent = (evt: VoiceBotTranscriptEvent) => {
         // check for the interaction
         if (this.interactionId !== evt.InteractionID) {
             return;
         }
 
-        this.chatTranscripts = JSON.parse(evt.Transcript)
-            .map((m: { botTranscription: string; userTranscription: string }) => {
-                const message: ChatTranscripts[] = [];
-                if (m.botTranscription) {
-                    message.push({
-                        who: 'VoiceBot',
-                        message: m.botTranscription
-                    });
+        // check if exisitng transcripts are there
+        if (evt.Transcript) {
+            // add to the chat transcripts ref
+            this.chatTranscripts = JSON.parse(evt.Transcript)
+                .map((m:
+                    {
+                        /**
+                         * Bot transcript
+                         */
+                        botTranscription: string;
+                        /**
+                         * User transcript
+                         */
+                        userTranscription: string
+                    }
+                ) => {
+                    const message: ChatTranscripts[] = [];
+                    if (m.botTranscription) {
+                        message.push({
+                            who: 'VoiceBot',
+                            message: m.botTranscription
+                        });
+                    }
+                    if (m.userTranscription) {
+                        message.push({
+                            who: 'Customer',
+                            message: m.userTranscription
+                        });
+                    }
+                    return message;
+                })
+                .flat();
+        }
+
+        // add the customer speech
+        if (evt.CustomerSpeech) {
+            this.chatTranscripts.push(
+                {
+                    who: 'Customer',
+                    message: evt.CustomerSpeech
+
                 }
-                if (m.userTranscription) {
-                    message.push({
-                        who: 'Customer',
-                        message: m.userTranscription
-                    });
-                }
-                return message;
-            })
-            .flat();
+            );
+            this._appUIService.playAudio('message', 0.5);
+        }
+
+        // scroll to the bottom of chat view
+        this.scrollToBottom();
+    }
+
+    /**
+     * Scroll to the bottom
+     *
+     * @param {number} speed
+     */
+    scrollToBottom(speed?: number): void {
+        speed = speed || 400;
+        if (this.directiveScroll) {
+            this.directiveScroll.update();
+
+            setTimeout(() => {
+                this.directiveScroll.scrollToBottom(0, speed);
+            });
+        }
     }
 
     // -----------------------------------------------------------------------------------------------------

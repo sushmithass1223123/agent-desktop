@@ -53,6 +53,18 @@
         >
             <div class="email-content p-8">
                 <div fxLayout fxLayoutAlign="space-between" class="font-weight-700">
+                    <span fxLayout="row" fxLayoutAlign=" center" matTooltip="Intent">
+                        <mat-icon>grading</mat-icon> <span class="text-bold">{{ intent }}</span>
+                    </span>
+                    <span fxLayout="row" fxLayoutAlign=" center" matTooltip="Sentiment">
+                        <mat-icon>person</mat-icon>
+                        <img *ngIf="sentiment === 'Positive'" class="w-24" src="assets/images/vectors/positive-score.svg" alt="" />
+                        <img *ngIf="sentiment === 'Neutral'" class="w-24" src="assets/images/vectors/neutral-score.svg" alt="" />
+                        <img *ngIf="sentiment === 'Negative'" class="w-24" src="assets/images/vectors/negative-score.svg" alt="" />
+                        <ng-container *ngIf="sentiment === 'NA'"> NA </ng-container>
+                    </span>
+                </div>
+                <div fxLayout fxLayoutAlign="space-between" class="font-weight-700 mt-8">
                     <span>{{ getInboxMessageReq.data.AgentName }} ({{ getInboxMessageReq.data.From }}) </span>
                     <div>
                         <span>{{ getInboxMessageReq.data.CreatedTime | date: 'mediumDate' }}</span>
@@ -60,6 +72,7 @@
                         <span>{{ getInboxMessageReq.data.CreatedTime | date: 'shortTime' }}</span>
                     </div>
                 </div>
+
                 <div fxLayout fxLayoutAlign="end" fxLayoutGap="5px" class="mt-12">
                     <button mat-flat-button class="border-radius-20">Transfer</button>
                     <button mat-flat-button class="border-radius-20">Reply</button>

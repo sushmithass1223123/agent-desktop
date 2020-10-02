@@ -222,6 +222,9 @@ export class AppComponent implements OnInit, OnDestroy {
     // @ Private methods
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * To get config for the app
+     */
     private async getConfig(): Promise<any> {
         let data = null;
         try {
@@ -251,6 +254,9 @@ export class AppComponent implements OnInit, OnDestroy {
         this.setTMACConfig(data);
     }
 
+    /**
+     * To get production config
+     */
     private async getProductionConfig(): Promise<any> {
         // get the config
         const respnse = await fetch(this.prodConfigPath);
@@ -266,6 +272,15 @@ export class AppComponent implements OnInit, OnDestroy {
         if (data) {
             this._appDataService.appConfig = data;
         }
+
+        // check the config mode
+        if (data.ConfigMode === 'local') {
+            TUtils.Logger.console('info', 'Config mode=local, load config from app-config-dev.json');
+            // get the config from local for developement
+            return await this.getDevelopementConfig();
+        }
+
+        TUtils.Logger.console('info', 'Config mode=remote, load config from server');
 
         // get the login json from proxy
         const loginJson: IResponse = await TUtils.HttpClient.sendRequest({
@@ -283,12 +298,20 @@ export class AppComponent implements OnInit, OnDestroy {
         return loginJson.response ? JSON.parse(loginJson.response.d) : null;
     }
 
+    /**
+     * To get developement config
+     */
     private async getDevelopementConfig(): Promise<any> {
         // get the config
         const respnse = await fetch(this.devConfigPath);
         return await respnse.json();
     }
 
+    /**
+     * To set TMAC config
+     * 
+     * @param config
+     */
     private setTMACConfig(config: any): void {
         // check if the config is null
         if (config !== null) {
