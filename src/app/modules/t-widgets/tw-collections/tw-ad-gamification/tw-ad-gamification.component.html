@@ -19,22 +19,25 @@
         fxFill
         class="badges p-4 h-100-p w-100-p"
     >
-        <div fxFlex="33" *ngFor="let badge of gamificationReqStatus.data.badges | slice: 0:3" class="mb-8">
+        <div fxFlex="33" *ngFor="let badge of gamificationReqStatus.data.TotalBadges | slice: 0:3" class="mb-8 text-center">
             <img [src]="badge.BadgeUrl" class="w-70-p mx-auto d-block" />
-            <span class="text-truncate text-center my-4" [ngClass]="{ 'mat-title m-0': maximized }"> {{ badge.BadgeName }} </span>
+            <span class="text-truncate text-center mt-4" [ngClass]="{ 'mat-title m-0': maximized }"> {{ badge.BadgeName }} </span>
+            <strong class="text-center mb-4"> {{ badge.BadgePoints }} </strong>
         </div>
+
+        <p fxFlex="100" class="text-center" *ngIf="!gamificationReqStatus.data.TotalBadges.length">You Have No Badges</p>
 
         <div fxFlex="33" fxLayout fxLayoutAlign="center center">
             <mat-icon class="gold mr-8 brand-logo box-shadow-3d"> monetization_on </mat-icon>
-            <span class="font-size-18" [ngClass]="{ 'mat-title m-0': maximized }"> {{ gamificationReqStatus.data.goldCoins }} </span>
+            <span class="font-size-18" [ngClass]="{ 'mat-title m-0': maximized }"> {{ gamificationReqStatus.data.GoldCoins }} </span>
         </div>
         <div fxFlex="33" fxLayout fxLayoutAlign="center center">
             <mat-icon class="silver mr-8 brand-logo box-shadow-3d"> monetization_on </mat-icon>
-            <span class="font-size-18" [ngClass]="{ 'mat-title m-0': maximized }"> {{ gamificationReqStatus.data.silverCoins }} </span>
+            <span class="font-size-18" [ngClass]="{ 'mat-title m-0': maximized }"> {{ gamificationReqStatus.data.SilverCoins }} </span>
         </div>
         <div fxFlex="33" fxLayout fxLayoutAlign="center center">
             <mat-icon class="bronze mr-8 brand-logo box-shadow-3d"> monetization_on </mat-icon>
-            <span class="font-size-18" [ngClass]="{ 'mat-title m-0': maximized }"> {{ gamificationReqStatus.data.bronzeCoins }} </span>
+            <span class="font-size-18" [ngClass]="{ 'mat-title m-0': maximized }"> {{ gamificationReqStatus.data.BronzeCoins }} </span>
         </div>
     </div>
     <!-- your code goes here -->

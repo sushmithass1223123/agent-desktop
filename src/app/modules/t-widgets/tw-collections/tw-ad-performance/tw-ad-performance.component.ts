@@ -1,12 +1,13 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { AppDataService } from '@services/app-data.service';
 import { GamificationService } from '@services/gamification.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
+import { GAMIFICATION_METRIC_LABELS } from 'app/constants';
 import { ResData } from 'app/interfaces';
 import { BaseChartDirective } from 'ng2-charts';
-import { takeUntil } from 'rxjs/operators';
-import { GAMIFICATION_METRIC_LABELS } from 'app/constants';
+import { map, takeUntil } from 'rxjs/operators';
 import { SDKClient } from 'tmac-sdk';
 
 const OnLoadMetricsToAgent = {
@@ -88,7 +89,7 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
         private _fuseConfigService: FuseConfigService,
         // @ [OPTIONAL]
         private _appDataService: AppDataService,
-        private gamificationService: GamificationService
+        private http: HttpClient
     ) {
         super();
     }
@@ -148,32 +149,35 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
 
         const { agentId } = SDKClient.getAgentData();
 
-        this.gamificationService.getAgentProgress(this.data.Data.AgentProgressUrl, agentId).subscribe(
-            (metrics) => {
-                try {
-                    this.gamificationReqStatus = {
-                        loading: false,
-                        error: false,
-                        msg: ''
-                    };
-                    metrics.forEach((m: any) => {
-                        this.performanceChartProgress.badge[m.MetricName] = {
-                            max: m.PointsAssigned + m.RequiredPointsForNextBadge,
-                            current: m.PointsAssigned
+        this.http
+            .post<{ d: string }>(this.data.Data.AgentProgressUrl, { agentId })
+            .pipe(map((x) => JSON.parse(x.d)))
+            .subscribe(
+                (metrics) => {
+                    try {
+                        this.gamificationReqStatus = {
+                            loading: false,
+                            error: false,
+                            msg: ''
                         };
-                        this.performanceChartProgress.goal[m.MetricName] = {
-                            max: parseInt(m.MetricMaxValue, 10),
-                            current: parseInt(m.MetricCurrentValue, 10)
-                        };
-                    });
-                } catch (e) {
-                    this.gamificationReqStatus = { loading: false, error: true, msg: 'Looks like something went wrong' };
+                        metrics.forEach((m: any) => {
+                            this.performanceChartProgress.badge[m.Channel + (m.Channel ? '_' : '') + m.MetricName] = {
+                                max: m.PointsAssigned + m.RequiredPointsForNextBadge,
+                                current: m.PointsAssigned
+                            };
+                            this.performanceChartProgress.goal[m.Channel + (m.Channel ? '_' : '') + m.MetricName] = {
+                                max: parseInt(m.MetricMaxValue, 10),
+                                current: parseInt(m.MetricAverageValue, 10)
+                            };
+                        });
+                    } catch (e) {
+                        this.gamificationReqStatus = { loading: false, error: true, msg: 'Looks like something went wrong' };
+                    }
+                },
+                (err) => {
+                    this.gamificationReqStatus = { loading: false, error: true, msg: 'Something went wrong while fetching progress' };
                 }
-            },
-            (err) => {
-                this.gamificationReqStatus = { loading: false, error: true, msg: 'Something went wrong while fetching progress' };
-            }
-        );
+            );
     }
 }
 

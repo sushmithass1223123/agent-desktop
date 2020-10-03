@@ -1,9 +1,29 @@
 @import 'app/scss/shared';
 
 tw-gamification {
+    .top-performers-card,
+    .leaderboard-card {
+        .records-list {
+            max-height: 300px;
+        }
+    }
+
     avatar {
         & > *:first-child {
             overflow: hidden;
+        }
+    }
+
+    .green-slider {
+        .mat-slider-track-fill,
+        .mat-slider-thumb {
+            background-color: $tw-alt-success !important;
+        }
+    }
+    .red-slider {
+        .mat-slider-track-fill,
+        .mat-slider-thumb {
+            background-color: $tw-alt-danger !important;
         }
     }
 

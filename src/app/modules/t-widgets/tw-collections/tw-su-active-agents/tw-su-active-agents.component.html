@@ -187,13 +187,20 @@
                             <mat-icon>preview</mat-icon>
                         </button>
 
-                        <button mat-icon-button mat-raised-button matTooltip="Send Quiz" [matMenuTriggerFor]="quizIntentMenu"></button>
+                        <!-- quiz intent start  -->
 
+                        <button mat-icon-button matTooltip="Send Quiz" [matMenuTriggerFor]="quizIntentMenu">
+                            <mat-icon>subtitles</mat-icon>
+                        </button>
                         <mat-menu #quizIntentMenu="matMenu">
-                            <mat-menu-item *ngFor="let intent of availableQuizIntents" (click)="sendIntent(intent.intent)">
+                            <button mat-menu-item *ngFor="let intent of availableQuizIntents" (click)="sendQuizIntent(intent.intent, item)">
                                 {{ intent.name }}
-                            </mat-menu-item>
+                            </button>
                         </mat-menu>
+
+                        <!-- quiz intent end  -->
+
+                        
                     </div>
                     <div fxFlex="50" fxLayout="row wrap" fxLayoutAlign=" start" class="channel-list px-8">
                         <div

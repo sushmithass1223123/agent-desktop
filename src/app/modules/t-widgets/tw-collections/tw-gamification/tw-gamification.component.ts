@@ -1,22 +1,35 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Input, OnDestroy, OnInit, TemplateRef, ViewChildren, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
+import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
-import { IWidget, ResData, ResGamification, ResGamificationBadge } from 'app/interfaces';
+import { IAction, IWidget, ResData, ResGamification, ResGamificationBadge } from 'app/interfaces';
+import { TwWidgetModel } from 'app/models';
 import { sortBy } from 'lodash';
-import { interval } from 'rxjs';
+import { interval, Subscription } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { SDKClient } from 'tmac-sdk';
 
 type Coin = {
-    order: number;
+    /**
+     * Number  of coins
+     */
     value: number;
+    /**
+     * coin image
+     */
     image: string;
+    /**
+     * coin name
+     */
     name: string;
+    /**
+     * whether coins are statically placed
+     */
     static?: boolean;
 };
 
@@ -35,47 +48,88 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
      */
     @Input() data: IWidget;
 
+    /**
+     * stateful leaderBoardrequest
+     */
     leaderBoardRes: ResData<ResGamification[]> = {
         error: false,
         loading: false,
         data: []
     };
 
+    /**
+     * stateful getAgentProgress request
+     */
     getAgentProgressRes: ResData<any[]> = {
         error: false,
         loading: false,
         data: []
     };
 
+    /**
+     * stateful getAgentLevels request
+     */
     getAgentLevelsRes: ResData<any> = {
         error: false,
         loading: false,
         data: []
     };
 
+    /**
+     * stateful getQuizInfo Request
+     */
     getQuizInfoRes: ResData<null> = {
         error: false,
         loading: false
     };
 
-    defaultHighestScore = 3000;
+    /**
+     * Score Backgrounds
+     */
     scoreBgs = ['bg-info', 'bg-alt-success', 'bg-alt-warning', 'bg-alt-danger'];
 
+    /**
+     * Current global dashboard state
+     */
     dashboardState = {
-        loading: true,
+        loading: false,
         error: false,
         msg: COMMON_ERR_MESSAGE
     };
 
+    /**
+     * Current user details
+     */
     currentUser: {
+        /**
+         * agent Id
+         */
         agentId: string;
+        /**
+         * Agent name
+         */
         name: string;
+        /**
+         * Coins for agent
+         */
         coins: Coin[];
+        /**
+         * agentt's badges
+         */
         badges: ResGamificationBadge[];
+        /**
+         * Total user points
+         */
         totalPoints: number;
+        /**
+         * current user level
+         */
         level: number;
     };
 
+    /**
+     * Coins Images
+     */
     coinsImages = {
         Bronze: 'assets/images/vectors/silver-coins-chest.svg',
         Gold: 'assets/images/vectors/gold-coins-chest.svg',
@@ -84,10 +138,20 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
         SingtelGeneralQuiz: 'assets/images/vectors/product-quiz.svg'
     };
 
-    polling = interval(10000);
+    /**
+     * polling interval in milliseconds
+     */
+    pollingInterval = 10000;
 
-    @ViewChildren('points') points: TemplateRef<any>;
-    @ViewChildren('racecar') racecars: TemplateRef<any>;
+    /**
+     * Polling subscriptoin
+     */
+    polling: Subscription;
+
+    /**
+     * Required Urls in config
+     */
+    requiredUrls = ['LeaderBoardUrl', 'AgentProgressUrl', 'GetAgentLevelsUrl', 'GetQuizInfoUrl'];
 
     /**
      * --------------------------------------------------
@@ -114,7 +178,8 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
         // @ [OPTIONAL]
         private _appDataService: AppDataService,
         private http: HttpClient,
-        private appUiService: AppUiService
+        private appUiService: AppUiService,
+        private _aotWidgetService: AOTWidgetService
     ) {
         super();
     }
@@ -144,7 +209,8 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
             this.appConfig = config;
         });
 
-        const { agentId } = SDKClient.getAgentData();
+        // const { agentId } = SDKClient.getAgentData();
+        const agentId = '50005';
 
         this.currentUser = {
             agentId,
@@ -156,12 +222,6 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
         };
 
         this.setupDashboard();
-
-        this.polling.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
-            // this.fetchLeaderBoard();
-            // this.getAgentProgress();
-            // this.getQuizInfo();
-        });
 
         SDKClient.events.on('OnLoadMetricsToAgent', this.OnLoadMetricsToAgent);
         SDKClient.events.on('OnAssignPointsToAgent', this.OnAssignPointsToAgent);
@@ -197,6 +257,21 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * Check for missing app json configs
+     */
+    private getMissingConfigs(): string[] {
+        const missingConfigs = [];
+
+        this.requiredUrls.forEach((url) => {
+            if (!this.data.Data[url]) {
+                missingConfigs.push(url);
+            }
+        });
+
+        return missingConfigs;
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
@@ -206,16 +281,30 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
      */
     setupDashboard(): void {
         try {
-            this.leaderBoardRes = { loading: true, error: false };
-            this.getAgentProgressRes.loading = true;
-            this.getAgentProgressRes.error = false;
-            this.getAgentLevelsRes = { loading: true, error: false, data: [] };
-            this.getQuizInfoRes.loading = true;
-            this.getQuizInfoRes.error = false;
-            this.fetchLeaderBoard();
-            this.getAgentProgress();
-            this.getAgentLevels();
-            this.getQuizInfo();
+            const missingConfigs = this.getMissingConfigs();
+            if (missingConfigs.length) {
+                this.dashboardState = { loading: false, error: true, msg: `${missingConfigs.join(' , ')} missing in app config` };
+            } else {
+                if (this.polling) {
+                    this.polling.unsubscribe();
+                }
+                const pollingPulse = interval(this.pollingInterval);
+                this.polling = pollingPulse.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
+                    this.fetchLeaderBoard();
+                    this.getAgentProgress();
+                    this.getQuizInfo();
+                });
+                this.leaderBoardRes = { loading: true, error: false };
+                this.getAgentProgressRes.loading = true;
+                this.getAgentProgressRes.error = false;
+                this.getAgentLevelsRes = { loading: true, error: false, data: [] };
+                this.getQuizInfoRes.loading = true;
+                this.getQuizInfoRes.error = false;
+                this.fetchLeaderBoard();
+                this.getAgentProgress();
+                this.getAgentLevels();
+                this.getQuizInfo();
+            }
         } catch (e) {
             console.error(e);
         }
@@ -227,7 +316,7 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
      */
     fetchLeaderBoard(): void {
         this.http
-            .post<{ d: string }>(this.data.Data.LeaderBoardUrl, {})
+            .post<Record<'d', string>>(this.data.Data.LeaderBoardUrl, {})
             .pipe(
                 map((x) => JSON.parse(x.d)),
                 takeUntil(this.unsubscribeAll)
@@ -238,11 +327,17 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
                     try {
                         this.leaderBoardRes.data.forEach((user) => {
                             if (user.AgentId === this.currentUser.agentId) {
-                                this.currentUser.badges.unshift(...user.TotalBadges);
+                                // this.currentUser.badges.unshift(...this.sortBadges(user.TotalBadges));
+                                this.currentUser.totalPoints = user.TotalPoints;
+                                this.currentUser.badges = [
+                                    { BadgeName: 'Novice', BadgeId: 0, BadgeUrl: user.NoviceBadgeUrl, BadgePoints: user.NoviceBadges },
+                                    { BadgeName: 'Influencer', BadgeId: 1, BadgeUrl: user.InfluencerBadgeUrl, BadgePoints: user.InfluencerBadges },
+                                    { BadgeName: 'Master', BadgeId: 2, BadgeUrl: user.MasterBadgeUrl, BadgePoints: user.MasterBadges }
+                                ];
                                 const coins: Coin[] = [
-                                    { image: this.coinsImages['Gold'], name: 'Gold', order: 0, value: user.GoldCoins, static: true },
-                                    { image: this.coinsImages['Bronze'], name: 'Bronze', order: 2, value: user.BronzeCoins, static: true },
-                                    { image: this.coinsImages['Silver'], name: 'Silver', order: 1, value: user.SilverCoins, static: true }
+                                    { image: this.coinsImages['Gold'], name: 'Gold', value: user.GoldCoins, static: true },
+                                    { image: this.coinsImages['Silver'], name: 'Silver', value: user.SilverCoins, static: true },
+                                    { image: this.coinsImages['Bronze'], name: 'Bronze', value: user.BronzeCoins, static: true }
                                 ];
 
                                 // if (this.currentUser.coins[0] && this.currentUser.coins[0].name === 'Gold') {
@@ -250,6 +345,7 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
                                 //     console.log(this.currentUser.coins);
                                 // }
                                 this.currentUser.coins.unshift(...sortBy(coins, 'order'));
+                                this.setCurrenAgentLevel();
                             }
                         });
                     } catch (e) {
@@ -273,7 +369,7 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
      */
     getAgentProgress(): void {
         this.http
-            .post<{ d: string }>(this.data.Data.AgentProgressUrl, { agentId: this.currentUser.agentId })
+            .post<Record<'d', string>>(this.data.Data.AgentProgressUrl, { agentId: this.currentUser.agentId })
             .pipe(
                 map((x) => JSON.parse(x.d)),
                 takeUntil(this.unsubscribeAll)
@@ -290,16 +386,11 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
                                 MetricAverageValue: x.MetricAverageValue ? parseInt(x.MetricAverageValue, 10) : 0
                             }))
                         };
-                        this.currentUser.totalPoints = 0;
-                        this.getAgentProgressRes.data.forEach((p) => {
-                            this.currentUser.totalPoints += p.PointsAssigned;
-                            // this.currentUser.badges.push({
-                            //     BadgeId: (p.PointsAssigned * 100) / (p.PointsAssigned + p.RequiredPointsForNextBadge),
-                            //     BadgeName: 'Locked',
-                            //     BadgeUrl: 'assets/images/vectors/achievement-locked.svg'
-                            // });
-                        });
-                        this.setCurrenAgentLevel();
+                        // this.currentUser.totalPoints = 0;
+                        // this.getAgentProgressRes.data.forEach((p) => {
+                        //     this.currentUser.totalPoints += p.PointsAssigned;
+                        // });
+                        // this.setCurrenAgentLevel();
                     } catch (e) {
                         this.getAgentProgressRes = { loading: false, error: true };
                         this.dashboardState.msg = COMMON_ERR_MESSAGE;
@@ -318,7 +409,7 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
      */
     getAgentLevels(): void {
         this.http
-            .post<any>('https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetAgentLevels', { agentId: this.currentUser.agentId })
+            .post<any>(this.data.Data.GetAgentLevelsUrl, { agentId: this.currentUser.agentId })
             // .pipe(map((x) => ({ ...x.d, data: JSON.parse(x.d.data) })))
             .pipe(
                 takeUntil(this.unsubscribeAll),
@@ -357,7 +448,7 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
     getQuizInfo(): void {
         const coins = [];
         this.http
-            .post<any>('https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetQuizInformation', { agentId: this.currentUser.agentId })
+            .post<any>(this.data.Data.GetQuizInfoUrl, { agentId: this.currentUser.agentId })
             .pipe(
                 takeUntil(this.unsubscribeAll),
                 map((x) => ({ ...x.d, data: JSON.parse(x.d.data) }))
@@ -368,6 +459,7 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
                         quizInfoRes.data.forEach((d, i) => {
                             coins.push({ image: this.coinsImages[d.Intent], value: d.Result, name: d.Intent, order: i + 2 });
                         });
+                        this.currentUser.coins = this.currentUser.coins.filter((x) => x.static) || [];
                         this.currentUser.coins.push(...sortBy(coins, 'order'));
                         this.getQuizInfoRes = { loading: false, error: false };
                     } catch (e) {
@@ -389,9 +481,9 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
      * @param evt
      */
     OnLoadMetricsToAgent = (evt: any): void => {
-        const JsonData = JSON.parse(evt.JsonData);
+        // const JsonData = JSON.parse(evt.JsonData);
         // console.log({ ...evt, JsonData: { ...JsonData, eventdata: JSON.parse(JsonData.eventdata) } });
-    }
+    };
 
     /**
      * Assign points events
@@ -400,15 +492,15 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
     OnAssignPointsToAgent = (evt: any): void => {
         const JsonData = JSON.parse(evt.JsonData);
         this.appUiService.addNotification({ message: JsonData.totalPointsAssigned, status: 'new' });
-    }
+    };
 
     /**
      * Set current agent level
      */
     setCurrenAgentLevel(): void {
-        this.currentUser.level = 0;
-        this.getAgentLevelsRes.data.forEach((l: any, i: any) => {
-            if (this.currentUser.totalPoints > l.Points) {
+        this.currentUser.level = 1;
+        sortBy(this.getAgentLevelsRes.data, 'Points').forEach((l: any, i: any) => {
+            if (this.currentUser.totalPoints >= l.Points) {
                 this.currentUser.level = i + 1;
             }
         });
@@ -439,6 +531,38 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
      */
     pointsAssigned(_: number, field: any): any {
         return field.PointsAssigned;
+    }
+
+    /**
+     * Method to redeem points
+     */
+    redeem(): void {
+        if (!this.data.Data.TVirtualStore) {
+            this.appUiService.showSnackbar('Missing TVirtualStore in app config', 'failure');
+            return;
+        }
+        const title = `TVirtualStore`;
+        const icon = '';
+        const width = 600;
+        const height = 500;
+        const actions: IAction[] = ['destroy'];
+        const viewState = 'restore';
+
+        // create a widget model
+        const widget = new TwWidgetModel(title, 'tw-custom', icon);
+        widget.Config.Position.W = width;
+        widget.Config.Position.H = height;
+        widget.Config.Actions = actions;
+        widget.Config.ViewState = viewState;
+
+        const url = new URL(this.data.Data.TVirtualStoreUrl);
+
+        const { agentId } = SDKClient.getAgentData();
+        url.searchParams.append('agentId', agentId);
+
+        widget.Data.Url = url.toString();
+
+        this._aotWidgetService.addWidget(widget);
     }
 }
 
