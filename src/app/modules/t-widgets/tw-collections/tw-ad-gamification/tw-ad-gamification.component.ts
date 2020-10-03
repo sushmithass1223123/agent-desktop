@@ -1,11 +1,11 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { ResData } from 'app/interfaces';
-import { GamificationService } from 'app/services/gamification.service';
-import { forkJoin } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { uniqBy } from 'lodash';
+import { map, takeUntil } from 'rxjs/operators';
 import { SDKClient } from 'tmac-sdk';
 
 @Component({
@@ -52,7 +52,7 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
         private _fuseConfigService: FuseConfigService,
         // @ [OPTIONAL]
         private _appDataService: AppDataService,
-        private _gamificationService: GamificationService
+        private http: HttpClient
     ) {
         super();
     }
@@ -110,39 +110,51 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
             return;
         }
         const { agentId } = SDKClient.getAgentData();
-        forkJoin([
-            this._gamificationService.fetchLeaderBoard(this.data.Data.LeaderBoardUrl),
-            this._gamificationService.getAgentProgress(this.data.Data.AgentProgressUrl, agentId)
-        ]).subscribe(
-            (res) => {
-                const [leaders, metrics] = res;
-                let goldCoins = 0;
-                let silverCoins = 0;
-                let bronzeCoins = 0;
-
-                metrics?.forEach((m: any) => {
-                    goldCoins += m.GoldCoins;
-                    silverCoins += m.SilverCoins;
-                    bronzeCoins += m.BronzeCoins;
-                });
-
-                this.gamificationReqStatus = {
-                    loading: false,
-                    error: false,
-                    msg: '',
-                    data: {
-                        goldCoins,
-                        silverCoins,
-                        bronzeCoins,
-                        badges: leaders && leaders.length ? leaders[0].TotalBadges : []
-                    }
-                };
-            },
-            (err) => {
-                console.error(err);
-                this.gamificationReqStatus = { msg: 'Something went wrong', error: true, loading: false };
-            }
-        );
+        // const agentId = '50005';
+        this.http
+            .post<{ d: string }>(this.data.Data.LeaderBoardUrl, {})
+            .pipe(
+                map((x) => JSON.parse(x.d)),
+                takeUntil(this.unsubscribeAll)
+            )
+            .subscribe(
+                (res) => {
+                    const currentAgentData = res.find((x) => x.AgentId === agentId);
+                    this.gamificationReqStatus = {
+                        loading: false,
+                        error: false,
+                        data: currentAgentData
+                            ? {
+                                  ...currentAgentData,
+                                  TotalBadges: [
+                                      {
+                                          BadgeName: 'Novice',
+                                          BadgeId: 0,
+                                          BadgeUrl: currentAgentData.NoviceBadgeUrl,
+                                          BadgePoints: currentAgentData.NoviceBadges
+                                      },
+                                      {
+                                          BadgeName: 'Influencer',
+                                          BadgeId: 1,
+                                          BadgeUrl: currentAgentData.InfluencerBadgeUrl,
+                                          BadgePoints: currentAgentData.InfluencerBadges
+                                      },
+                                      {
+                                          BadgeName: 'Master',
+                                          BadgeId: 2,
+                                          BadgeUrl: currentAgentData.MasterBadgeUrl,
+                                          BadgePoints: currentAgentData.MasterBadges
+                                      }
+                                  ]
+                              }
+                            : { GoldCoins: 0, SilverCoins: 0, BronzeCoins: 0, TotalBadges: [] }
+                    };
+                },
+                (err) => {
+                    console.error(err);
+                    this.gamificationReqStatus = { msg: 'Something went wrong', error: true, loading: false };
+                }
+            );
     };
 
     // -----------------------------------------------------------------------------------------------------
@@ -151,6 +163,21 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
 
     public maximizeEvent(state: boolean): void {
         this.maximized = state;
+    }
+
+    sortBadges(badges: any[] = []): any[] {
+        const badgeOrder = ['Novice', 'Influence', 'Master'];
+        const totalBadges = [];
+        Array(badges.length)
+            .fill(1)
+            .forEach((_, i) => {
+                badges.forEach((badge) => {
+                    if (badgeOrder[i].toLowerCase() === badge.BadgeName.toLowerCase()) {
+                        totalBadges.push(badge);
+                    }
+                });
+            });
+        return uniqBy(totalBadges, 'BadgeName');
     }
 }
 

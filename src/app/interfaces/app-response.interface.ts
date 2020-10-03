@@ -20,12 +20,19 @@ export interface ResGamification {
     GoldCoins: number;
     BronzeCoins: number;
     SilverCoins: number;
+    InfluencerBadgeUrl: string;
+    InfluencerBadges: number;
+    MasterBadgeUrl: string;
+    MasterBadges: number;
+    NoviceBadgeUrl: string;
+    NoviceBadges: number;
 }
 
 export interface ResGamificationBadge {
     BadgeId: number;
     BadgeName: string;
     BadgeUrl: string;
+    BadgePoints?: number;
 }
 
 export interface ResLoadWorkCodes {

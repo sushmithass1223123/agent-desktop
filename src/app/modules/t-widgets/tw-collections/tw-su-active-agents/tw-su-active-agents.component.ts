@@ -6,9 +6,10 @@ import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AGENT_FEATURES_MAP, COMMON_ERR_MESSAGE } from 'app/constants';
-import { IWidget } from 'app/interfaces';
+import { IWidget, QuizEventJsonData } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import * as _ from 'lodash';
+import { random } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 import { AgentFeatures, AgentTabCount, IAgentData, IAUXCodes, IResponse, SDKClient, SuAgentDataModel, SuAgentModel, TUtils } from 'tmac-sdk';
 
@@ -30,7 +31,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     agentList: SuAgentModel[];
     filteredAgents: SuAgentModel[];
     searchTerm: string;
-    selectedAgent: string
+    selectedAgent: string;
     featureMap = AGENT_FEATURES_MAP;
     activityWidget: IWidget;
     auxCodesList: IAUXCodes[];
@@ -267,8 +268,12 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                     });
                 break;
             case 'AllowSupervisorToLogout':
-                // confirm logout 
-                const confirmDialogRef = this._appUIService.showAppConfirmDialog('logout', null, `Are you sure you want to logout ${agent.AgentName}?`);
+                // confirm logout
+                const confirmDialogRef = this._appUIService.showAppConfirmDialog(
+                    'logout',
+                    null,
+                    `Are you sure you want to logout ${agent.AgentName}?`
+                );
                 confirmDialogRef.afterClosed().subscribe((dialogResult) => {
                     if (dialogResult) {
                         // show the progress bar
@@ -341,19 +346,36 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             });
     }
 
-    public sendIntent(intent: string, item: SuAgentModel): void {
-        SDKClient.addEventToAgentSession({
+    /**
+     *  Send Quiz intent to agent
+     * @param {String} intentname
+     * @param {SuAgentDataModel} item
+     */
+    public sendQuizIntent(intentname: string, item: SuAgentModel): void {
+        if (!this.data.Data.TASUrl) {
+            this._appUIService.showSnackbar('You missed a quiz event because TASUrl is missing in app config', 'failure');
+            return;
+        }
+        const JsonData: QuizEventJsonData = {
+            url: this.data.Data.TASUrl,
+            params: {
+                intentname,
+                customerId: random(100000, 999999, false),
+                inSimulation: false,
+                enableQuiz: true
+            }
+        };
+        const reqPacket = {
             agentId: item.AgentLoginID,
             eventString: JSON.stringify({
                 EventName: 'GenericEvent',
-                SubEventName: 'TestingEvent',
-                JsonData: JSON.stringify({
-                    Intent: intent
-                })
+                SubEventName: 'QuizEvent',
+                JsonData: JSON.stringify(JsonData)
             }),
             isPriority: true,
             toTmacServer: item.TmacServer
-        });
+        };
+        SDKClient.addEventToAgentSession(reqPacket);
     }
 }
 
