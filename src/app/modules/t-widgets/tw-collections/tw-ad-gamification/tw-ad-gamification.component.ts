@@ -5,6 +5,7 @@ import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { ResData } from 'app/interfaces';
 import { uniqBy } from 'lodash';
+import { interval } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { SDKClient } from 'tmac-sdk';
 
@@ -84,6 +85,7 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
         });
 
         this.setBadges();
+        interval(10000).pipe(takeUntil(this.unsubscribeAll)).subscribe(this.setBadges);
         this.setupBadgeListeners();
     }
 
@@ -104,6 +106,9 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
         SDKClient.events.on('InteractionClosedEvent', this.setBadges);
     }
 
+    /**
+     * Set Badges
+     */
     setBadges = (): void => {
         if (!this.data.Data.LeaderBoardUrl || !this.data.Data.AgentProgressUrl) {
             this.gamificationReqStatus = { loading: false, error: true, msg: 'LeaderBoardUrl / AgentProgressUrl not provided in app config' };
@@ -165,20 +170,6 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
         this.maximized = state;
     }
 
-    sortBadges(badges: any[] = []): any[] {
-        const badgeOrder = ['Novice', 'Influence', 'Master'];
-        const totalBadges = [];
-        Array(badges.length)
-            .fill(1)
-            .forEach((_, i) => {
-                badges.forEach((badge) => {
-                    if (badgeOrder[i].toLowerCase() === badge.BadgeName.toLowerCase()) {
-                        totalBadges.push(badge);
-                    }
-                });
-            });
-        return uniqBy(totalBadges, 'BadgeName');
-    }
 }
 
 // for more info visit - https://angular.io/api/core

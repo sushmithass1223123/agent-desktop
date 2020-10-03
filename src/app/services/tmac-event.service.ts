@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { ReminderTaskDialogComponent } from '@modules/shared/reminder-task-dialog/reminder-task-dialog.component';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
-import { IWidget, QuizEvent } from 'app/interfaces';
+import { IAction, IWidget, QuizEvent } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -521,11 +521,11 @@ export class TMACEventService {
     private QuizEvent = (evt: QuizEvent): void => {
         const data = JSON.parse(evt.JsonData);
         // get assist widget config
-        const title = `${data.Title || 'Custom'} - ${data.params.intentName}`;
+        const title = `${data.Title || 'Custom'} - ${data.params.intentname}`;
         const icon = data.Icon || '';
         const width = data.Width || 1000;
         const height = data.Height || 700;
-        const actions = data.Actions || ['destroy'];
+        const actions: IAction[] = data.Actions || ['destroy', 'maximize'];
         const viewState = data.ViewState || 'restore';
 
         // create a widget model

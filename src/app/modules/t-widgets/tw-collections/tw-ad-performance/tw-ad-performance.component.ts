@@ -7,6 +7,7 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { GAMIFICATION_METRIC_LABELS } from 'app/constants';
 import { ResData } from 'app/interfaces';
 import { BaseChartDirective } from 'ng2-charts';
+import { interval } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { SDKClient } from 'tmac-sdk';
 
@@ -62,6 +63,7 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
         this.initWrapper(this.data);
 
         this.setChartData();
+        interval(10000).pipe(takeUntil(this.unsubscribeAll)).subscribe(this.setChartData);
     }
 
     /**
@@ -72,7 +74,10 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
         this.destroyWrapper();
     }
 
-    setChartData(): void {
+    /**
+     * Set Chart Data
+     */
+    setChartData = (): void => {
         if (!this.data.Data.AgentProgressUrl) {
             this.gamificationReqStatus = { loading: false, error: true, msg: 'AgentProgressUrl is not provided in app config' };
             return;

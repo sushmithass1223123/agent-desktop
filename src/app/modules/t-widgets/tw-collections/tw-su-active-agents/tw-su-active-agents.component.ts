@@ -38,8 +38,8 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
 
     availableQuizIntents = [
         { name: 'General Quiz', intent: 'GeneralQuiz' },
-        { name: 'Product Quiz', intent: 'ProductQuiz' },
-        { name: 'Learning Quiz', intent: 'LearningQuiz' }
+        { name: 'Product Quiz', intent: 'CallCenterQuiz' },
+        { name: 'Training Quiz', intent: 'CallCenterQuiz' }
     ];
 
     /**
@@ -351,18 +351,31 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
      * @param {String} intentName
      * @param {SuAgentDataModel} item
      */
-    public sendQuizIntent(intentName: string, item: SuAgentModel): void {
+    public sendQuizIntent(intentname: string, item: SuAgentModel): void {
         if (!this.data.Data.TASUrl) {
             this._appUIService.showSnackbar('You missed a quiz event because TASUrl is missing in app config', 'failure');
             return;
         }
+
+        const intentDetails = {
+            GeneralQuiz: {
+                ucid: 'Test',
+                flowType: 'Test',
+                campId: 'Test',
+                station: 42002,
+                phoneNumber: '6539284004'
+            },
+            CallCenterQuiz: {},
+        };
+
         const JsonData: QuizEventJsonData = {
             url: this.data.Data.TASUrl,
             params: {
-                intentName,
+                intentname,
                 customerId: random(100000, 999999, false),
                 inSimulation: false,
-                enableQuiz: true
+                enableQuiz: true,
+                ...intentDetails[intentname]
             }
         };
         const reqPacket = {
