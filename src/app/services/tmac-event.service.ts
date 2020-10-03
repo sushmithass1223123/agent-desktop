@@ -25,6 +25,9 @@ import { AppDataService } from './app-data.service';
 import { AppUiService } from './app-ui.service';
 import { InteractionManagerService } from './interaction-manager.service';
 
+/**
+ *  Componentless Event service 
+ */
 @Injectable({
     providedIn: 'root'
 })
@@ -140,7 +143,7 @@ export class TMACEventService {
                 this._constructDisposeEventSubject.next(evt);
             }
         }
-    };
+    }
 
     /**
      * To remove all the events from reference which related to an interaction
@@ -457,7 +460,7 @@ export class TMACEventService {
         } catch (error) {
             TUtils.Logger.log('Exception in AgentNotificaitonEvent', error);
         }
-    };
+    }
 
     /**
      * Remider action executed method to update agent reminder
@@ -482,7 +485,7 @@ export class TMACEventService {
             state: evt.ColorCode,
             duration: 10000
         });
-    };
+    }
 
     /**
      * To process HoldTimerEvent
@@ -494,7 +497,7 @@ export class TMACEventService {
             message: `Interaction is on hold for ${evt.HoldTimeString}`,
             state: evt.ColorCode
         });
-    };
+    }
 
     /**
      * Quiz Event
@@ -505,8 +508,8 @@ export class TMACEventService {
         // get assist widget config
         const title = `${data.Title || 'Custom'} - ${data.params.intentname}`;
         const icon = data.Icon || '';
-        const width = data.Width || 600;
-        const height = data.Height || 500;
+        const width = data.Width || 1000;
+        const height = data.Height || 800;
         const actions = data.Actions || ['destroy'];
         const viewState = data.ViewState || 'restore';
 
@@ -528,7 +531,7 @@ export class TMACEventService {
         widget.Data.Url = url.toString();
 
         this._aotWidgetService.addWidget(widget);
-    };
+    }
 
     /**
      * Tp process GenericInteractionEvent
@@ -575,7 +578,7 @@ export class TMACEventService {
         } else {
             this.promptTCMWQDACRequest(evt);
         }
-    };
+    }
 
     /**
      * To process TCM WQ DAC request
@@ -654,7 +657,7 @@ export class TMACEventService {
         this._remiderTaskDialog.tcmWQVoice = null;
         // close the generic interaction in server
         SDKClient.closeInteraction(evt.InteractionID.toString());
-    };
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Public Methods

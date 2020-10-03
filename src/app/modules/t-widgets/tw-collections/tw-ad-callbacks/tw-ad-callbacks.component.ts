@@ -128,7 +128,7 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
         let pending = 0;
         let activeCalls = 0;
 
-        const callbacksList = sortBy([...this.getDashboardDataRes.data.callbacks, ...calls], 'contact.directAgentScheduleTime');
+        const callbacksList = sortBy([...this.getDashboardDataRes.data.callbacks, ...(calls || [])], 'contact.directAgentScheduleTime');
         const callbacksReversed = callbacksList.reverse();
         const callbacks = callbacksReversed.map((x) => {
             if (PENDING_CALL_STATUSES.includes(x.contact.status)) {
