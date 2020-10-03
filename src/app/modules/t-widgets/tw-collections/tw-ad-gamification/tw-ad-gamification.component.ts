@@ -18,7 +18,7 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
     // holds all the data related to this widget from the config
     @Input() data: any;
 
-    gamificationReqStatus: ResData<{ badges: any[]; goldCoins: number; silverCoins: number; bronzeCoins: number }> = {
+    gamificationReqStatus: ResData<{ TotalBadges: any[]; goldCoins: number; silverCoins: number; bronzeCoins: number }> = {
         error: false,
         loading: true,
         msg: '',
@@ -26,7 +26,7 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
             bronzeCoins: 0,
             goldCoins: 0,
             silverCoins: 0,
-            badges: []
+            TotalBadges: []
         }
     };
 
@@ -119,34 +119,34 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
             )
             .subscribe(
                 (res) => {
-                    const currentAgentData = res.find((x) => x.AgentId === agentId);
+                    const currentAgentData = (res || []).find((x) => x.AgentId === agentId);
                     this.gamificationReqStatus = {
                         loading: false,
                         error: false,
                         data: currentAgentData
                             ? {
-                                  ...currentAgentData,
-                                  TotalBadges: [
-                                      {
-                                          BadgeName: 'Novice',
-                                          BadgeId: 0,
-                                          BadgeUrl: currentAgentData.NoviceBadgeUrl,
-                                          BadgePoints: currentAgentData.NoviceBadges
-                                      },
-                                      {
-                                          BadgeName: 'Influencer',
-                                          BadgeId: 1,
-                                          BadgeUrl: currentAgentData.InfluencerBadgeUrl,
-                                          BadgePoints: currentAgentData.InfluencerBadges
-                                      },
-                                      {
-                                          BadgeName: 'Master',
-                                          BadgeId: 2,
-                                          BadgeUrl: currentAgentData.MasterBadgeUrl,
-                                          BadgePoints: currentAgentData.MasterBadges
-                                      }
-                                  ]
-                              }
+                                ...currentAgentData,
+                                TotalBadges: [
+                                    {
+                                        BadgeName: 'Novice',
+                                        BadgeId: 0,
+                                        BadgeUrl: currentAgentData.NoviceBadgeUrl,
+                                        BadgePoints: currentAgentData.NoviceBadges
+                                    },
+                                    {
+                                        BadgeName: 'Influencer',
+                                        BadgeId: 1,
+                                        BadgeUrl: currentAgentData.InfluencerBadgeUrl,
+                                        BadgePoints: currentAgentData.InfluencerBadges
+                                    },
+                                    {
+                                        BadgeName: 'Master',
+                                        BadgeId: 2,
+                                        BadgeUrl: currentAgentData.MasterBadgeUrl,
+                                        BadgePoints: currentAgentData.MasterBadges
+                                    }
+                                ]
+                            }
                             : { GoldCoins: 0, SilverCoins: 0, BronzeCoins: 0, TotalBadges: [] }
                     };
                 },

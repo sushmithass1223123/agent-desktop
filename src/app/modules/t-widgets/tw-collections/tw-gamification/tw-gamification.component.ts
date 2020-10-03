@@ -209,8 +209,8 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
             this.appConfig = config;
         });
 
-        // const { agentId } = SDKClient.getAgentData();
-        const agentId = '50005';
+        const { agentId } = SDKClient.getAgentData();
+        // const agentId = '50005';
 
         this.currentUser = {
             agentId,
@@ -413,7 +413,7 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
             // .pipe(map((x) => ({ ...x.d, data: JSON.parse(x.d.data) })))
             .pipe(
                 takeUntil(this.unsubscribeAll),
-                map((x) => ({ ...x.d, data: JSON.parse(x.d.data) }))
+                map((x) => ({ ...x.d, data: x.d ? JSON.parse(x.d.data) : [] }))
             )
             .subscribe(
                 (agentLevelRes) => {
@@ -451,7 +451,7 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
             .post<any>(this.data.Data.GetQuizInfoUrl, { agentId: this.currentUser.agentId })
             .pipe(
                 takeUntil(this.unsubscribeAll),
-                map((x) => ({ ...x.d, data: JSON.parse(x.d.data) }))
+                map((x) => ({ ...x.d, data: x.d ? JSON.parse(x.d.data) : [] }))
             )
             .subscribe(
                 (quizInfoRes) => {
@@ -537,15 +537,15 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
      * Method to redeem points
      */
     redeem(): void {
-        if (!this.data.Data.TVirtualStore) {
+        if (!this.data.Data.TVirtualStoreUrl) {
             this.appUiService.showSnackbar('Missing TVirtualStore in app config', 'failure');
             return;
         }
         const title = `TVirtualStore`;
         const icon = '';
-        const width = 600;
-        const height = 500;
-        const actions: IAction[] = ['destroy'];
+        const width = 1000;
+        const height = 700;
+        const actions: IAction[] = ['destroy', 'maximize'];
         const viewState = 'restore';
 
         // create a widget model
@@ -558,7 +558,7 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
         const url = new URL(this.data.Data.TVirtualStoreUrl);
 
         const { agentId } = SDKClient.getAgentData();
-        url.searchParams.append('agentId', agentId);
+        url.searchParams.append('agentid', agentId);
 
         widget.Data.Url = url.toString();
 

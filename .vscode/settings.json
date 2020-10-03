@@ -5,5 +5,8 @@
         "**/documentation": true,
         "**/bower_components": true,
         "**/tmp": true
-    }
+    },
+    "prettier.disableLanguages": [
+        "typescript"
+    ]
 }

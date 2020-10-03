@@ -160,7 +160,7 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
                             error: false,
                             msg: ''
                         };
-                        metrics.forEach((m: any) => {
+                        (metrics || []).forEach((m: any) => {
                             this.performanceChartProgress.badge[m.Channel + (m.Channel ? '_' : '') + m.MetricName] = {
                                 max: m.PointsAssigned + m.RequiredPointsForNextBadge,
                                 current: m.PointsAssigned
@@ -171,10 +171,12 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
                             };
                         });
                     } catch (e) {
+                        console.error(e);
                         this.gamificationReqStatus = { loading: false, error: true, msg: 'Looks like something went wrong' };
                     }
                 },
                 (err) => {
+                    console.error(err);
                     this.gamificationReqStatus = { loading: false, error: true, msg: 'Something went wrong while fetching progress' };
                 }
             );

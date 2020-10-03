@@ -895,6 +895,33 @@
                                     "Data": {
                                         "LeaderBoardUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetLeaderBoard"
                                     }
+                                },
+                                {
+                                    "Name": "Add Products",
+                                    "Description": "",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": true,
+                                        "Icon": "store",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "W": 500,
+                                            "H": "300"
+                                        },
+                                        "Actions": ["maximize", "pin", "destroy"],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "OpenInNew" :true,
+                                        "Url": "https://dice.tetherfi.cloud/TVirtualStore/product.html"
+                                    }
                                 }
                             ]
                         }
