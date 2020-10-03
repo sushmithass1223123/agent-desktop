@@ -7,6 +7,9 @@ tw-gamification {
             max-height: 300px;
         }
     }
+    .my-performance-card .records-list {
+        max-height: 200px;
+    }
 
     avatar {
         & > *:first-child {
