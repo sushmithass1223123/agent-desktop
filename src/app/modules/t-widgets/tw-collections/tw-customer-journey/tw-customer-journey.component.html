@@ -40,7 +40,7 @@
                     </small>
                 </div>
                 <div fxFlex="85" fxLayout fxLayoutAlign="space-between center" class="step-details px-16">
-                    <div fxLayout fxLayoutAlign="start center">
+                    <div fxLayout fxFlex="85" fxLayoutAlign="start center">
                         <div mat-card-avatar [ngSwitch]="s.Channel | lowercase" class="w-32 h-32 border-sm-primary">
                             <ng-container *ngSwitchCase="'textchat'">
                                 <ng-container *ngTemplateOutlet="interactionBrandType; context: s"></ng-container>
@@ -75,7 +75,7 @@
                             {{ s.LastServicedAgentName || s.AgentName }}
                         </span>
                     </div>
-                    <small> Default </small>
+                    <small fxFlex="15" class="text-center">{{ s.Intent || 'Default' }}</small>
                 </div>
             </div>
             <div *ngIf="customerJourneyTable.tableData.source.data.length === 0" fxLayout fxLayoutAlign="center center" class="mat-title h-120">
@@ -109,7 +109,7 @@
                 <ng-container matColumnDef="SessionID">
                     <mat-header-cell fxFlex="20" *matHeaderCellDef>
                         <span mat-sort-header> Session Id </span>
-                        <mat-icon [matMenuTriggerFor]="sessionSearch" mat-ripple>search</mat-icon>
+                        <mat-icon [matMenuTriggerFor]="sessionSearch">search</mat-icon>
                         <mat-menu #sessionSearch="matMenu" class="search-input p-4">
                             <div fxLayout="column">
                                 <mat-form-field (click)="$event.stopPropagation()" appearance="outline" class="custom with-border form-field">
@@ -242,9 +242,30 @@
                         </mat-menu>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <img *ngIf="element.OverallSentiment === 'Positive'" class="w-24" src="assets/images/vectors/positive-score.svg" alt="" />
-                        <img *ngIf="element.OverallSentiment === 'Neutral'" class="w-24" src="assets/images/vectors/neutral-score.svg" alt="" />
-                        <img *ngIf="element.OverallSentiment === 'Negative'" class="w-24" src="assets/images/vectors/negative-score.svg" alt="" />
+                        <img
+                            *ngIf="element.OverallSentiment === 'Positive'"
+                            class="w-24"
+                            src="assets/images/vectors/positive-score.svg"
+                            alt="Positive"
+                            matTooltip="Sentiment Dashboard"
+                            (click)="openSentimentDashboard(element.SessionID)"
+                        />
+                        <img
+                            *ngIf="element.OverallSentiment === 'Neutral'"
+                            class="w-24"
+                            src="assets/images/vectors/neutral-score.svg"
+                            alt="Neutral"
+                            matTooltip="Sentiment Dashboard"
+                            (click)="openSentimentDashboard(element.SessionID)"
+                        />
+                        <img
+                            *ngIf="element.OverallSentiment === 'Negative'"
+                            class="w-24"
+                            src="assets/images/vectors/negative-score.svg"
+                            alt="Negative"
+                            matTooltip="Sentiment Dashboard"
+                            (click)="openSentimentDashboard(element.SessionID)"
+                        />
                         <ng-container *ngIf="!element.OverallSentiment"> NA </ng-container>
                     </mat-cell>
                 </ng-container>
@@ -253,9 +274,9 @@
                     <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
                     <mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">
                         <div fxLayout fxLayoutAlign="center center" class="h-100-p w-100-p">
-                            <mat-icon [matMenuTriggerFor]="sessionActionsRef" mat-ripple (click)="getSessionActions(element.SessionID)">
-                                history
-                            </mat-icon>
+                            <button mat-icon-button [matMenuTriggerFor]="sessionActionsRef" (click)="getSessionActions(element.SessionID)">
+                                <mat-icon> history </mat-icon>
+                            </button>
                             <mat-menu #sessionActionsRef="matMenu" backdropClass="ih-actions-menu" xPosition="before">
                                 <div
                                     class="timeline"
@@ -304,6 +325,7 @@
                 <mat-header-row *matHeaderRowDef="customerJourneyTable.tableData.columns; sticky: true"></mat-header-row>
                 <mat-row
                     (click)="setIframe(row)"
+                    class="selectable"
                     [ngClass]="{ selected: !!customerJourneyTable.tableData.selection.isSelected(row) }"
                     *matRowDef="let row; columns: customerJourneyTable.tableData.columns"
                 ></mat-row>

@@ -225,7 +225,7 @@ export class AgentFeaturesService {
     }
 
     public subscribe(): void {
-        TUtils.Logger.console('log', 'AgentFeaturesService.subscribe');
+        TUtils.Logger.console('info', 'AgentFeaturesService.subscribe');
         // listen to AgentSnapShotEvent
         SDKClient.events.on('AgentSnapShotEvent', this.AgentSnapShotEvent);
         // get the agent features from SDK
@@ -265,7 +265,7 @@ export class AgentFeaturesService {
     }
 
     public unsubscribe(): void {
-        TUtils.Logger.console('log', 'AgentFeaturesService.unsubscribe');
+        TUtils.Logger.console('info', 'AgentFeaturesService.unsubscribe');
 
         // unregister from AgentSnapShotEvent
         SDKClient.events.off('AgentSnapShotEvent', this.AgentSnapShotEvent);

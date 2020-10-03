@@ -15,7 +15,7 @@ import { CreateSmsComponent } from './create-sms/create-sms.component';
 import { CustomDialogComponent } from './custom-dialog/custom-dialog.component';
 import { TWChartDirective } from './directives/tw-chart.directive';
 import { MaterialModule } from './material.module';
-import { RemiderTaskDialogComponent } from './remider-task-dialog/remider-task-dialog.component';
+import { ReminderTaskDialogComponent } from './reminder-task-dialog/reminder-task-dialog.component';
 import { ResourceNotFoundComponent } from './resource-not-found/resource-not-found.component';
 import { SnackbarComponent } from './snackbar/snackbar.component';
 import { WidgetFabComponent } from './widget-fab/widget-fab.component';
@@ -43,7 +43,7 @@ const sharedComponents = [
     SnackbarComponent,
     WidgetFabComponent,
     AlertDialogComponent,
-    RemiderTaskDialogComponent,
+    ReminderTaskDialogComponent,
     AppConfirmDialogComponent,
     AppSnackbarComponent,
     CreateSmsComponent,
@@ -55,4 +55,4 @@ const sharedComponents = [
     imports: [CommonModule, ...sharedModules],
     exports: [...sharedModules, ...sharedComponents]
 })
-export class SharedModule {}
+export class SharedModule { }

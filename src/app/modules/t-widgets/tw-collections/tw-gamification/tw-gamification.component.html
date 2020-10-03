@@ -81,7 +81,7 @@
             <div class="w-100-p">
                 <race-car-track
                     [leaders]="leaderBoardRes.data | slice: 0:4"
-                    [highest]="(getAgentLevelsRes.data | slice: -1)[0] ? (getAgentLevelsRes.data | slice: -1)[0].Points : defaultHighestScore"
+                    [highest]="(getAgentLevelsRes.data | slice: -1)[0] ? (getAgentLevelsRes.data | slice: -1)[0].Points : 0"
                 ></race-car-track>
             </div>
             <!-- </div> -->

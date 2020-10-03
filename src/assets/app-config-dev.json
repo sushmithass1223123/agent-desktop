@@ -354,6 +354,7 @@
                                 {
                                     "Name": "All Interactions",
                                     "Description": "",
+                                    "Key": "AllInteractions",
                                     "Type": "tw-pie-chart",
                                     "Config": {
                                         "Enabled": true,
@@ -366,7 +367,11 @@
                                             "X": 0,
                                             "Y": 1
                                         },
-                                        "Actions": ["maximize", "pin", "float"],
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -378,6 +383,7 @@
                                 {
                                     "Name": "AHT/Transfer/Conference ",
                                     "Description": "",
+                                    "Key": "AHT-Trans-Conf-Count",
                                     "Type": "tw-aht-tc",
                                     "Config": {
                                         "Enabled": true,
@@ -390,7 +396,11 @@
                                             "X": 0,
                                             "Y": 2
                                         },
-                                        "Actions": ["maximize", "pin", "float"],
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -401,6 +411,7 @@
                                 {
                                     "Name": "Aux Status",
                                     "Description": "",
+                                    "Key": "AUXStatus",
                                     "Type": "tw-pie-chart",
                                     "Config": {
                                         "Enabled": true,
@@ -413,7 +424,11 @@
                                             "X": 0,
                                             "Y": 1
                                         },
-                                        "Actions": ["maximize", "pin", "float"],
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -425,6 +440,7 @@
                                 {
                                     "Name": "Interaction Details",
                                     "Description": "",
+                                    "Key": "InteractionDetails",
                                     "Type": "tw-ad-interaction-details",
                                     "Config": {
                                         "Enabled": true,
@@ -437,7 +453,11 @@
                                             "X": 0,
                                             "Y": 2
                                         },
-                                        "Actions": ["maximize", "pin", "float"],
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -446,6 +466,7 @@
                                 {
                                     "Name": "Performance",
                                     "Description": "",
+                                    "Key": "AgentPerformance",
                                     "Type": "tw-ad-performance",
                                     "Config": {
                                         "Enabled": true,
@@ -458,7 +479,11 @@
                                             "X": 0,
                                             "Y": 1
                                         },
-                                        "Actions": ["maximize", "pin", "float"],
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -469,6 +494,7 @@
                                 {
                                     "Name": "Gamification",
                                     "Description": "",
+                                    "Key": "AgentGamification",
                                     "Type": "tw-ad-gamification",
                                     "Config": {
                                         "Enabled": true,
@@ -481,7 +507,11 @@
                                             "X": 0,
                                             "Y": 1
                                         },
-                                        "Actions": ["maximize", "pin", "float"],
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -493,6 +523,7 @@
                                 {
                                     "Name": "Call-backs",
                                     "Description": "phone_callback",
+                                    "Key": "AgentPendigCallbacks",
                                     "Type": "tw-ad-callbacks",
                                     "Config": {
                                         "Enabled": true,
@@ -505,7 +536,11 @@
                                             "X": 0,
                                             "Y": 2
                                         },
-                                        "Actions": ["maximize", "pin", "float"],
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -516,6 +551,7 @@
                                 {
                                     "Name": "Feedback",
                                     "Description": "",
+                                    "Key": "AgentFeeback",
                                     "Type": "tw-ad-feedback",
                                     "Config": {
                                         "Enabled": true,
@@ -528,7 +564,11 @@
                                             "X": 0,
                                             "Y": 1
                                         },
-                                        "Actions": ["maximize", "pin", "float"],
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -539,6 +579,7 @@
                                 {
                                     "Name": "Score",
                                     "Description": "",
+                                    "Key": "AgentScore",
                                     "Type": "tw-ad-score",
                                     "Config": {
                                         "Enabled": true,
@@ -551,7 +592,11 @@
                                             "X": 0,
                                             "Y": 1
                                         },
-                                        "Actions": ["maximize", "pin", "float"],
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -562,6 +607,7 @@
                                 {
                                     "Name": "TRS",
                                     "Description": "",
+                                    "Key": "TRS",
                                     "Type": "tw-custom",
                                     "Config": {
                                         "Enabled": true,
@@ -576,7 +622,10 @@
                                             "W": 325,
                                             "H": 740
                                         },
-                                        "Actions": ["minimize", "destroy"],
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -589,6 +638,7 @@
                                 {
                                     "Name": "Gamification",
                                     "Description": "",
+                                    "Key": "Gamification",
                                     "Type": "tw-gamification",
                                     "Config": {
                                         "Enabled": true,
@@ -603,7 +653,11 @@
                                             "W": 1200,
                                             "H": 700
                                         },
-                                        "Actions": ["maximize", "pin", "float", "destroy"],
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -616,8 +670,9 @@
                                     }
                                 },
                                 {
-                                    "Name": "Chat Test App",
+                                    "Name": "Singtel-Contact Us",
                                     "Description": "",
+                                    "Key": "SingtelContactUs",
                                     "Type": "tw-custom",
                                     "Config": {
                                         "Enabled": true,
@@ -637,7 +692,38 @@
                                     "Data": {
                                         "AutoOpen": false,
                                         "OpenInNew": true,
-                                        "Url": "https://dice.tetherfi.cloud:8443/api/testapp_UOB.jsp"
+                                        "Url": "https://www.singtel.com/contact-us"
+                                    }
+                                },
+                                {
+                                    "Name": "Reminders",
+                                    "Description": "",
+                                    "Key": "AgentReminders",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "Icon": "event_note",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0,
+                                            "W": 700,
+                                            "H": 600
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/agent-desktop/reminders/index.html?agentid=_agentId&tmacserver=TmacServer1"
                                     }
                                 }
                             ]
@@ -688,6 +774,7 @@
                                 {
                                     "Name": "All Interactions",
                                     "Description": "",
+                                    "Key": "AllInteractions",
                                     "Type": "tw-pie-chart",
                                     "Config": {
                                         "Enabled": true,
@@ -700,7 +787,11 @@
                                             "X": 0,
                                             "Y": 1
                                         },
-                                        "Actions": ["maximize", "pin", "float"],
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -712,6 +803,7 @@
                                 {
                                     "Name": "AHT/Tran./Conf.",
                                     "Description": "",
+                                    "Key": "AHT-Trans-Conf-Count",
                                     "Type": "tw-aht-tc",
                                     "Config": {
                                         "Enabled": true,
@@ -724,7 +816,11 @@
                                             "X": 0,
                                             "Y": 1
                                         },
-                                        "Actions": ["maximize", "pin", "float"],
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -735,6 +831,7 @@
                                 {
                                     "Name": "Calls in Queue",
                                     "Description": "",
+                                    "Key": "InteractionsInQueue",
                                     "Type": "tw-pie-chart",
                                     "Config": {
                                         "Enabled": true,
@@ -746,7 +843,11 @@
                                             "X": 0,
                                             "Y": 1
                                         },
-                                        "Actions": ["maximize", "pin", "float"],
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -758,6 +859,7 @@
                                 {
                                     "Name": "Intent List",
                                     "Description": "",
+                                    "Key": "IntentStats",
                                     "Type": "tw-pie-chart",
                                     "Config": {
                                         "Enabled": true,
@@ -770,7 +872,11 @@
                                             "X": 0,
                                             "Y": 1
                                         },
-                                        "Actions": ["maximize", "pin", "float"],
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -781,6 +887,7 @@
                                 {
                                     "Name": "Skill Dashboard",
                                     "Description": "",
+                                    "Key": "TeamWallboard",
                                     "Type": "tw-wallboard",
                                     "Config": {
                                         "Enabled": true,
@@ -792,7 +899,11 @@
                                             "X": 2,
                                             "Y": 2
                                         },
-                                        "Actions": ["maximize", "pin", "float"],
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -803,6 +914,7 @@
                                 {
                                     "Name": "Channels",
                                     "Description": "",
+                                    "Key": "TeamChannels",
                                     "Type": "tw-su-channels",
                                     "Config": {
                                         "Enabled": true,
@@ -815,7 +927,11 @@
                                             "X": 0,
                                             "Y": 1
                                         },
-                                        "Actions": ["maximize", "pin", "float"],
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -824,6 +940,7 @@
                                 {
                                     "Name": "Status",
                                     "Description": "",
+                                    "Key": "TeamStatus",
                                     "Type": "tw-pie-chart",
                                     "Config": {
                                         "Enabled": true,
@@ -836,7 +953,11 @@
                                             "X": 0,
                                             "Y": 1
                                         },
-                                        "Actions": ["maximize", "pin", "float"],
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -848,6 +969,7 @@
                                 {
                                     "Name": "Work Codes",
                                     "Description": "",
+                                    "Key": "TeamWorkCodes",
                                     "Type": "tw-work-codes",
                                     "Config": {
                                         "Enabled": true,
@@ -859,7 +981,11 @@
                                             "X": 0,
                                             "Y": 2
                                         },
-                                        "Actions": ["maximize", "pin", "float"],
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -874,6 +1000,7 @@
                                 {
                                     "Name": "Leaderboard",
                                     "Description": "",
+                                    "Key": "Leaderboard",
                                     "Type": "tw-su-gamification",
                                     "Config": {
                                         "Enabled": true,
@@ -888,7 +1015,11 @@
                                             "W": 500,
                                             "H": "300"
                                         },
-                                        "Actions": ["maximize", "pin", "destroy"],
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -910,16 +1041,20 @@
                                         "Position": {
                                             "X": 0,
                                             "Y": 1,
-                                            "W": 500,
-                                            "H": "300"
+                                            "W": 1200,
+                                            "H": 800
                                         },
-                                        "Actions": ["maximize", "pin", "destroy"],
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
                                     "Data": {
                                         "AutoOpen": false,
-                                        "OpenInNew" :true,
+                                        "OpenInNew": true,
                                         "Url": "https://dice.tetherfi.cloud/TVirtualStore/product.html"
                                     }
                                 }
@@ -979,7 +1114,11 @@
                                                         "X": 1,
                                                         "Y": 2
                                                     },
-                                                    "Actions": ["maximize", "minimize", "float"],
+                                                    "Actions": [
+                                                        "maximize",
+                                                        "minimize",
+                                                        "float"
+                                                    ],
                                                     "ViewState": "restore",
                                                     "PinState": false,
                                                     "FloatState": false,
@@ -991,7 +1130,12 @@
                                                     "ConferenceAllowed": true,
                                                     "IVR": {
                                                         "MenuEnabled": true,
-                                                        "DefaultMenu": ["Main Menu", "Products", "Mobile", "Agent"],
+                                                        "DefaultMenu": [
+                                                            "Main Menu",
+                                                            "Products",
+                                                            "Mobile",
+                                                            "Agent"
+                                                        ],
                                                         "Transfer": {
                                                             "Allowed": true,
                                                             "Menu": [
@@ -1021,7 +1165,10 @@
                                                         "X": 1,
                                                         "Y": 2
                                                     },
-                                                    "Actions": ["maximize", "minimize"],
+                                                    "Actions": [
+                                                        "maximize",
+                                                        "minimize"
+                                                    ],
                                                     "ViewState": "restore",
                                                     "PinState": false,
                                                     "FloatState": false,
@@ -1034,37 +1181,37 @@
                                                             "Title": "Mobile",
                                                             "ValueSource": "CCLDataEvent.RegisteredPhone",
                                                             "Unit": "",
-                                                            "DefaultValue": "6596975347"
+                                                            "DefaultValue": ""
                                                         },
                                                         {
                                                             "Title": "Name",
                                                             "ValueSource": "CCLDataEvent.CallerName",
                                                             "Unit": "",
-                                                            "DefaultValue": "Mr. Tan"
+                                                            "DefaultValue": ""
                                                         },
                                                         {
                                                             "Title": "Email",
                                                             "ValueSource": "CCLDataEvent.Email",
                                                             "Unit": "",
-                                                            "DefaultValue": "tan.c@gmail.com"
+                                                            "DefaultValue": ""
                                                         },
                                                         {
                                                             "Title": "Address",
                                                             "ValueSource": "CCLDataEvent.Address",
                                                             "Unit": "",
-                                                            "DefaultValue": "62 Ubi Road 1 #10-21 Oxley Bizhub 2 Singapore 408734"
+                                                            "DefaultValue": ""
                                                         },
                                                         {
                                                             "Title": "NRIC",
                                                             "ValueSource": "CCLDataEvent.NRIC",
                                                             "Unit": "",
-                                                            "DefaultValue": "S1234567J"
+                                                            "DefaultValue": ""
                                                         },
                                                         {
                                                             "Title": "Account Number",
                                                             "ValueSource": "CCLDataEvent.AccountNumber",
                                                             "Unit": "",
-                                                            "DefaultValue": "987654321"
+                                                            "DefaultValue": ""
                                                         },
                                                         {
                                                             "Title": "Queue time",
@@ -1090,7 +1237,10 @@
                                                         "X": 1,
                                                         "Y": 2
                                                     },
-                                                    "Actions": ["maximize", "minimize"],
+                                                    "Actions": [
+                                                        "maximize",
+                                                        "minimize"
+                                                    ],
                                                     "ViewState": "restore",
                                                     "PinState": false,
                                                     "FloatState": false,
@@ -1098,8 +1248,9 @@
                                                     "Header": true
                                                 },
                                                 "Data": {
-                                                    "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/version5/index.html?Key=SESSIONID:",
-                                                    "NoOfRecords": 20
+                                                    "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
+                                                    "NoOfRecords": 20,
+                                                    "SentimentDashboardUrl": "https://dice.tetherfi.cloud/SentimentDashboard"
                                                 }
                                             }
                                         ]
@@ -1110,6 +1261,7 @@
                                 {
                                     "Name": "Agent Assist",
                                     "Description": "",
+                                    "Key": "AgentAssist",
                                     "Type": "tw-agent-assist",
                                     "Config": {
                                         "Enabled": true,
@@ -1122,24 +1274,32 @@
                                             "X": 1,
                                             "Y": 2
                                         },
-                                        "Actions": ["pin", "float"],
+                                        "Actions": [
+                                            "pin",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
                                     "Data": {
                                         "Confidence": 0.5,
                                         "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=_intent&ucid=_ucid",
-                                        "Title": "Visual IVR",
+                                        "Title": "Agent Assist",
                                         "Icon": "assistant",
                                         "Width": 450,
                                         "Height": 800,
-                                        "Actions": ["minimize", "maximize", "destroy"],
+                                        "Actions": [
+                                            "minimize",
+                                            "maximize",
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore"
                                     }
                                 },
                                 {
                                     "Name": "Account Information",
                                     "Description": "",
+                                    "Key": "CustomerAccountInfo",
                                     "Type": "tw-account-information",
                                     "Config": {
                                         "Enabled": true,
@@ -1152,7 +1312,11 @@
                                             "X": 1,
                                             "Y": 2
                                         },
-                                        "Actions": ["maximize", "pin", "float"],
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -1163,6 +1327,7 @@
                                 {
                                     "Name": "AMDOC-BCC",
                                     "Description": "",
+                                    "Key": "AmdocBCC",
                                     "Type": "tw-amdocs-bcc",
                                     "Config": {
                                         "Enabled": true,
@@ -1175,7 +1340,11 @@
                                             "X": 1,
                                             "Y": 2
                                         },
-                                        "Actions": ["maximize", "pin", "float"],
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -1184,6 +1353,7 @@
                                 {
                                     "Name": "Customer Sentiment",
                                     "Description": "feedback",
+                                    "Key": "CustomerSentiment",
                                     "Type": "tw-customer-sentiment",
                                     "Config": {
                                         "Enabled": true,
@@ -1196,7 +1366,11 @@
                                             "X": 0,
                                             "Y": 2
                                         },
-                                        "Actions": ["maximize", "pin", "float"],
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -1205,6 +1379,7 @@
                                 {
                                     "Name": "Work Codes",
                                     "Description": "",
+                                    "Key": "WorkCodes",
                                     "Type": "tw-work-codes",
                                     "Config": {
                                         "Enabled": true,
@@ -1217,7 +1392,11 @@
                                             "X": 1,
                                             "Y": 2
                                         },
-                                        "Actions": ["maximize", "pin", "float"],
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -1230,6 +1409,7 @@
                                 {
                                     "Name": "Voice-Bot Transcripts",
                                     "Description": "",
+                                    "Key": "SpeechTranscript",
                                     "Type": "tw-voice-bot-transcripts",
                                     "Config": {
                                         "Enabled": true,
@@ -1242,7 +1422,11 @@
                                             "X": 1,
                                             "Y": 2
                                         },
-                                        "Actions": ["maximize", "pin", "float"],
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -1253,6 +1437,7 @@
                                 {
                                     "Name": "Register Callback",
                                     "Description": "",
+                                    "Key": "RegisterCallback",
                                     "Type": "tw-register-callback",
                                     "Config": {
                                         "Enabled": true,
@@ -1267,7 +1452,10 @@
                                             "W": 300,
                                             "H": 300
                                         },
-                                        "Actions": ["minimize", "destroy"],
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -1287,8 +1475,39 @@
                                     }
                                 },
                                 {
+                                    "Name": "Pending Callbacks",
+                                    "Description": "",
+                                    "Key": "CustomerPendingCallbacks",
+                                    "Type": "tw-pending-callbacks",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "phone_callback",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0,
+                                            "W": 700,
+                                            "H": 300
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {
+                                        "TCMProxy": "https://dice.tetherfi.cloud/TCM_Proxy"
+                                    }
+                                },
+                                {
                                     "Name": "TAS",
                                     "Description": "",
+                                    "Key": "AgentScript",
                                     "Type": "tw-custom",
                                     "Config": {
                                         "Enabled": true,
@@ -1303,7 +1522,10 @@
                                             "W": 1000,
                                             "H": 700
                                         },
-                                        "Actions": ["minimize", "destroy"],
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -1316,6 +1538,7 @@
                                 {
                                     "Name": "STPedia",
                                     "Description": "",
+                                    "Key": "STPedia",
                                     "Type": "tw-custom",
                                     "Config": {
                                         "Enabled": true,
@@ -1330,19 +1553,23 @@
                                             "W": 1000,
                                             "H": 700
                                         },
-                                        "Actions": ["minimize", "destroy"],
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
                                     "Data": {
                                         "AutoOpen": false,
                                         "OpenInNew": false,
-                                        "Url": "https://www.tetherfi.com"
+                                        "Url": "https://www.tetherfi.com/frequently-asked-questions/"
                                     }
                                 },
                                 {
                                     "Name": "Voice Canned Responses",
                                     "Description": "",
+                                    "Key": "VoiceCannedResponses",
                                     "Type": "tw-voice-canned-responses",
                                     "Config": {
                                         "Enabled": true,
@@ -1357,11 +1584,138 @@
                                             "W": 300,
                                             "H": 300
                                         },
-                                        "Actions": ["minimize", "destroy"],
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
                                     "Data": {}
+                                },
+                                {
+                                    "Name": "Line Test",
+                                    "Description": "",
+                                    "Key": "SingtelLineTest",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "Icon": "router",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0,
+                                            "W": 600,
+                                            "H": 600
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/cdn/web/linetest/"
+                                    }
+                                },
+                                {
+                                    "Name": "CRM-Zoho",
+                                    "Description": "",
+                                    "Key": "CRMZoho",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "Icon": "storage",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0,
+                                            "W": 800,
+                                            "H": 700
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "OpenInNew": false,
+                                        "Url": "https://projects.zoho.com/portal/ilink#todomilestones/736040000007428009/customview/"
+                                    }
+                                },
+                                {
+                                    "Name": "CRM-Singtel",
+                                    "Description": "",
+                                    "Key": "CRMSingtel",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "Icon": "folder_shared",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0,
+                                            "W": 800,
+                                            "H": 700
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "OpenInNew": false,
+                                        "Url": "https://singtel.bitrix24.com"
+                                    }
+                                },
+                                {
+                                    "Name": "CxInfo",
+                                    "Description": "",
+                                    "Key": "CxInfo",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "Icon": "contacts",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0,
+                                            "W": 450,
+                                            "H": 800
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=userdata"
+                                    }
                                 }
                             ]
                         }
@@ -1419,7 +1773,11 @@
                                                         "X": 1,
                                                         "Y": 2
                                                     },
-                                                    "Actions": ["maximize", "minimize", "float"],
+                                                    "Actions": [
+                                                        "maximize",
+                                                        "minimize",
+                                                        "float"
+                                                    ],
                                                     "ViewState": "restore",
                                                     "PinState": false,
                                                     "FloatState": false,
@@ -1460,8 +1818,12 @@
                                                                 "Label": "Audio Video"
                                                             }
                                                         ],
-                                                        "On": ["oncall", "afterdisconnect"]
-                                                    }
+                                                        "On": [
+                                                            "oncall",
+                                                            "afterdisconnect"
+                                                        ]
+                                                    },
+                                                    "TransferConferenceUtilsUrl": "https://dice.tetherfi.cloud/TMAC_Trans_Conf/index.html?r=_requestArgs"
                                                 }
                                             },
                                             {
@@ -1479,7 +1841,10 @@
                                                         "X": 1,
                                                         "Y": 2
                                                     },
-                                                    "Actions": ["maximize", "minimize"],
+                                                    "Actions": [
+                                                        "maximize",
+                                                        "minimize"
+                                                    ],
                                                     "ViewState": "restore",
                                                     "PinState": false,
                                                     "FloatState": false,
@@ -1489,76 +1854,58 @@
                                                 "Data": {
                                                     "CustomerInfo": [
                                                         {
-                                                            "Title": "Email",
-                                                            "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.email",
-                                                            "Unit": "",
-                                                            "DefaultValue": "tan.c@gmail.com"
-                                                        },
-                                                        {
-                                                            "Title": "NRIC",
-                                                            "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.NRIC",
-                                                            "Unit": "",
-                                                            "DefaultValue": "S1234567J"
-                                                        },
-                                                        {
                                                             "Title": "Queue time",
                                                             "ValueSource": "TextChatRemoteUserConnectedEvent.QueueTime",
                                                             "Unit": "s",
-                                                            "DefaultValue": "0"
+                                                            "DefaultValue": "00:00:00"
                                                         },
                                                         {
                                                             "Title": "Mobile",
                                                             "ValueSource": "CCLDataEvent.RegisteredPhone",
                                                             "Unit": "",
-                                                            "DefaultValue": "6596975347"
+                                                            "DefaultValue": ""
                                                         },
                                                         {
                                                             "Title": "Name",
                                                             "ValueSource": "CCLDataEvent.CallerName",
                                                             "Unit": "",
-                                                            "DefaultValue": "Mr. Tan"
+                                                            "DefaultValue": ""
                                                         },
                                                         {
                                                             "Title": "Auth Type",
                                                             "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.authType",
                                                             "Unit": "",
-                                                            "DefaultValue": "OTP"
+                                                            "DefaultValue": ""
                                                         },
                                                         {
                                                             "Title": "Auth Status",
                                                             "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.authStatus",
                                                             "Unit": "",
-                                                            "DefaultValue": "Authenticated"
+                                                            "DefaultValue": ""
                                                         },
                                                         {
                                                             "Title": "Email",
                                                             "ValueSource": "CCLDataEvent.Email",
                                                             "Unit": "",
-                                                            "DefaultValue": "tan.c@gmail.com"
+                                                            "DefaultValue": ""
                                                         },
                                                         {
                                                             "Title": "Address",
                                                             "ValueSource": "CCLDataEvent.Address",
                                                             "Unit": "",
-                                                            "DefaultValue": "62 Ubi Road 1 #10-21 Oxley Bizhub 2 Singapore 408734"
+                                                            "DefaultValue": ""
                                                         },
                                                         {
                                                             "Title": "NRIC",
                                                             "ValueSource": "CCLDataEvent.NRIC",
                                                             "Unit": "",
-                                                            "DefaultValue": "S1234567J"
+                                                            "DefaultValue": ""
                                                         },
                                                         {
                                                             "Title": "Account Number",
                                                             "ValueSource": "CCLDataEvent.AccountNumber",
                                                             "Unit": "",
-                                                            "DefaultValue": "987654321"
-                                                        },
-                                                        {
-                                                            "Title": "Queue time",
-                                                            "ValueSource": "TextChatRemoteUserConnectedEvent.QueueTime",
-                                                            "Unit": "s",
-                                                            "DefaultValue": "0"
+                                                            "DefaultValue": ""
                                                         }
                                                     ]
                                                 }
@@ -1578,7 +1925,10 @@
                                                         "X": 1,
                                                         "Y": 2
                                                     },
-                                                    "Actions": ["maximize", "minimize"],
+                                                    "Actions": [
+                                                        "maximize",
+                                                        "minimize"
+                                                    ],
                                                     "ViewState": "minimize",
                                                     "PinState": false,
                                                     "FloatState": false,
@@ -1586,8 +1936,9 @@
                                                     "Header": true
                                                 },
                                                 "Data": {
-                                                    "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/version5/index.html?Key=SESSIONID:",
-                                                    "NoOfRecords": 20
+                                                    "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
+                                                    "NoOfRecords": 20,
+                                                    "SentimentDashboardUrl": "https://dice.tetherfi.cloud/SentimentDashboard"
                                                 }
                                             }
                                         ]
@@ -1598,6 +1949,7 @@
                                 {
                                     "Name": "Agent Assist",
                                     "Description": "",
+                                    "Key": "AgentAssist",
                                     "Type": "tw-agent-assist",
                                     "Config": {
                                         "Enabled": true,
@@ -1610,7 +1962,10 @@
                                             "X": 1,
                                             "Y": 2
                                         },
-                                        "Actions": ["pin", "float"],
+                                        "Actions": [
+                                            "pin",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -1621,13 +1976,18 @@
                                         "Icon": "assistant",
                                         "Width": 450,
                                         "Height": 800,
-                                        "Actions": ["minimize", "maximize", "destroy"],
+                                        "Actions": [
+                                            "minimize",
+                                            "maximize",
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore"
                                     }
                                 },
                                 {
                                     "Name": "Account Information",
                                     "Description": "",
+                                    "Key": "CustomerAccountInfo",
                                     "Type": "tw-account-information",
                                     "Config": {
                                         "Enabled": true,
@@ -1640,7 +2000,11 @@
                                             "X": 1,
                                             "Y": 2
                                         },
-                                        "Actions": ["maximize", "pin", "float"],
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -1651,6 +2015,7 @@
                                 {
                                     "Name": "Canned Responses",
                                     "Description": "",
+                                    "Key": "TexCannedResponses",
                                     "Type": "tw-canned-responses",
                                     "Config": {
                                         "Enabled": true,
@@ -1663,7 +2028,11 @@
                                             "X": 1,
                                             "Y": 2
                                         },
-                                        "Actions": ["maximize", "pin", "float"],
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -1672,6 +2041,7 @@
                                 {
                                     "Name": "Realtime Customer Sentiment",
                                     "Description": "feedback",
+                                    "Key": "CustomerSentiment",
                                     "Type": "tw-customer-sentiment",
                                     "Config": {
                                         "Enabled": true,
@@ -1684,7 +2054,11 @@
                                             "X": 0,
                                             "Y": 2
                                         },
-                                        "Actions": ["maximize", "pin", "float"],
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -1693,6 +2067,7 @@
                                 {
                                     "Name": "Work Codes",
                                     "Description": "",
+                                    "Key": "WorkCodes",
                                     "Type": "tw-work-codes",
                                     "Config": {
                                         "Enabled": true,
@@ -1705,7 +2080,11 @@
                                             "X": 1,
                                             "Y": 2
                                         },
-                                        "Actions": ["maximize", "pin", "float"],
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -1718,6 +2097,7 @@
                                 {
                                     "Name": "AMDOC-BCC",
                                     "Description": "",
+                                    "Key": "AmdocBCC",
                                     "Type": "tw-amdocs-bcc",
                                     "Config": {
                                         "Enabled": true,
@@ -1730,7 +2110,11 @@
                                             "X": 1,
                                             "Y": 2
                                         },
-                                        "Actions": ["maximize", "pin", "float"],
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -1741,6 +2125,7 @@
                                 {
                                     "Name": "Register Callback",
                                     "Description": "",
+                                    "Key": "RegisterCallback",
                                     "Type": "tw-register-callback",
                                     "Config": {
                                         "Enabled": true,
@@ -1755,7 +2140,10 @@
                                             "W": 300,
                                             "H": 300
                                         },
-                                        "Actions": ["minimize", "destroy"],
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -1777,6 +2165,7 @@
                                 {
                                     "Name": "TAS",
                                     "Description": "",
+                                    "Key": "AgentScript",
                                     "Type": "tw-custom",
                                     "Config": {
                                         "Enabled": true,
@@ -1791,7 +2180,10 @@
                                             "W": 1000,
                                             "H": 700
                                         },
-                                        "Actions": ["minimize", "destroy"],
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -1804,6 +2196,7 @@
                                 {
                                     "Name": "STPedia",
                                     "Description": "",
+                                    "Key": "STPedia",
                                     "Type": "tw-custom",
                                     "Config": {
                                         "Enabled": true,
@@ -1818,14 +2211,141 @@
                                             "W": 1000,
                                             "H": 700
                                         },
-                                        "Actions": ["minimize", "destroy"],
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
                                     "Data": {
                                         "AutoOpen": false,
                                         "OpenInNew": false,
-                                        "Url": "https://www.tetherfi.com"
+                                        "Url": "https://www.tetherfi.com/frequently-asked-questions/"
+                                    }
+                                },
+                                {
+                                    "Name": "Line Test",
+                                    "Description": "",
+                                    "Key": "SingtelLineTest",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "Icon": "router",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0,
+                                            "W": 600,
+                                            "H": 600
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/cdn/web/linetest/"
+                                    }
+                                },
+                                {
+                                    "Name": "CRM-Zoho",
+                                    "Description": "",
+                                    "Key": "CRMZoho",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "Icon": "storage",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0,
+                                            "W": 1000,
+                                            "H": 700
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "OpenInNew": false,
+                                        "Url": "https://projects.zoho.com/portal/ilink#todomilestones/736040000007428009/customview/"
+                                    }
+                                },
+                                {
+                                    "Name": "CRM-Singtel",
+                                    "Description": "",
+                                    "Key": "CRMSingtel",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "Icon": "folder_shared",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0,
+                                            "W": 1000,
+                                            "H": 700
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "OpenInNew": false,
+                                        "Url": "https://singtel.bitrix24.com"
+                                    }
+                                },
+                                {
+                                    "Name": "CxInfo",
+                                    "Description": "",
+                                    "Key": "CxInfo",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "Icon": "contacts",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0,
+                                            "W": 450,
+                                            "H": 800
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=userdata"
                                     }
                                 }
                             ]
@@ -1884,7 +2404,11 @@
                                                         "X": 1,
                                                         "Y": 2
                                                     },
-                                                    "Actions": ["maximize", "minimize", "float"],
+                                                    "Actions": [
+                                                        "maximize",
+                                                        "minimize",
+                                                        "float"
+                                                    ],
                                                     "ViewState": "restore",
                                                     "PinState": false,
                                                     "FloatState": false,
@@ -1908,7 +2432,10 @@
                                                         "X": 1,
                                                         "Y": 2
                                                     },
-                                                    "Actions": ["maximize", "minimize"],
+                                                    "Actions": [
+                                                        "maximize",
+                                                        "minimize"
+                                                    ],
                                                     "ViewState": "restore",
                                                     "PinState": false,
                                                     "FloatState": false,
@@ -1916,8 +2443,9 @@
                                                     "Header": true
                                                 },
                                                 "Data": {
-                                                    "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/version5/index.html?Key=SESSIONID:",
-                                                    "NoOfRecords": 20
+                                                    "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
+                                                    "NoOfRecords": 20,
+                                                    "SentimentDashboardUrl": "https://dice.tetherfi.cloud/SentimentDashboard"
                                                 }
                                             }
                                         ]
@@ -1928,6 +2456,7 @@
                                 {
                                     "Name": "Agent Assist",
                                     "Description": "",
+                                    "Key": "AgentAssist",
                                     "Type": "tw-agent-assist",
                                     "Config": {
                                         "Enabled": true,
@@ -1940,7 +2469,10 @@
                                             "X": 1,
                                             "Y": 2
                                         },
-                                        "Actions": ["pin", "float"],
+                                        "Actions": [
+                                            "pin",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -1951,13 +2483,18 @@
                                         "Icon": "assistant",
                                         "Width": 450,
                                         "Height": 800,
-                                        "Actions": ["minimize", "maximize", "destroy"],
+                                        "Actions": [
+                                            "minimize",
+                                            "maximize",
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore"
                                     }
                                 },
                                 {
                                     "Name": "Account Information",
                                     "Description": "",
+                                    "Key": "CustomerAccountInfo",
                                     "Type": "tw-account-information",
                                     "Config": {
                                         "Enabled": true,
@@ -1970,7 +2507,11 @@
                                             "X": 1,
                                             "Y": 2
                                         },
-                                        "Actions": ["maximize", "pin", "float"],
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -1981,6 +2522,7 @@
                                 {
                                     "Name": "Canned Responses",
                                     "Description": "",
+                                    "Key": "TexCannedResponses",
                                     "Type": "tw-canned-responses",
                                     "Config": {
                                         "Enabled": true,
@@ -1993,28 +2535,11 @@
                                             "X": 1,
                                             "Y": 2
                                         },
-                                        "Actions": ["maximize", "pin", "float"],
-                                        "ViewState": "restore",
-                                        "Header": true
-                                    },
-                                    "Data": {}
-                                },
-                                {
-                                    "Name": "Realtime Customer Sentiment",
-                                    "Description": "feedback",
-                                    "Type": "tw-customer-sentiment",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "Icon": "sentiment_satisfied_alt",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 2
-                                        },
-                                        "Actions": ["maximize", "pin", "float"],
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -2023,6 +2548,7 @@
                                 {
                                     "Name": "Work Codes",
                                     "Description": "",
+                                    "Key": "WorkCodes",
                                     "Type": "tw-work-codes",
                                     "Config": {
                                         "Enabled": true,
@@ -2035,7 +2561,11 @@
                                             "X": 1,
                                             "Y": 2
                                         },
-                                        "Actions": ["maximize", "pin", "float"],
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -2048,6 +2578,7 @@
                                 {
                                     "Name": "AMDOC-BCC",
                                     "Description": "",
+                                    "Key": "AmdocBCC",
                                     "Type": "tw-amdocs-bcc",
                                     "Config": {
                                         "Enabled": true,
@@ -2060,7 +2591,11 @@
                                             "X": 1,
                                             "Y": 2
                                         },
-                                        "Actions": ["maximize", "pin", "float"],
+                                        "Actions": [
+                                            "maximize",
+                                            "pin",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -2071,6 +2606,7 @@
                                 {
                                     "Name": "Register Callback",
                                     "Description": "",
+                                    "Key": "RegisterCallback",
                                     "Type": "tw-register-callback",
                                     "Config": {
                                         "Enabled": true,
@@ -2085,7 +2621,10 @@
                                             "W": 300,
                                             "H": 300
                                         },
-                                        "Actions": ["minimize", "destroy"],
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -2107,6 +2646,7 @@
                                 {
                                     "Name": "TAS",
                                     "Description": "",
+                                    "Key": "AgentScript",
                                     "Type": "tw-custom",
                                     "Config": {
                                         "Enabled": true,
@@ -2121,7 +2661,10 @@
                                             "W": 1000,
                                             "H": 700
                                         },
-                                        "Actions": ["minimize", "destroy"],
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -2134,6 +2677,7 @@
                                 {
                                     "Name": "STPedia",
                                     "Description": "",
+                                    "Key": "STPedia",
                                     "Type": "tw-custom",
                                     "Config": {
                                         "Enabled": true,
@@ -2148,14 +2692,141 @@
                                             "W": 1000,
                                             "H": 700
                                         },
-                                        "Actions": ["minimize", "destroy"],
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
                                     "Data": {
                                         "AutoOpen": false,
                                         "OpenInNew": false,
-                                        "Url": "https://www.tetherfi.com"
+                                        "Url": "https://www.tetherfi.com/frequently-asked-questions/"
+                                    }
+                                },
+                                {
+                                    "Name": "Line Test",
+                                    "Description": "",
+                                    "Key": "SingtelLineTest",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "Icon": "router",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0,
+                                            "W": 600,
+                                            "H": 600
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/cdn/web/linetest/"
+                                    }
+                                },
+                                {
+                                    "Name": "CRM-Zoho",
+                                    "Description": "",
+                                    "Key": "CRMZoho",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "Icon": "storage",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0,
+                                            "W": 1000,
+                                            "H": 700
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "OpenInNew": false,
+                                        "Url": "https://projects.zoho.com/portal/ilink#todomilestones/736040000007428009/customview/"
+                                    }
+                                },
+                                {
+                                    "Name": "CRM-Singtel",
+                                    "Description": "",
+                                    "Key": "CRMSingtel",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "Icon": "folder_shared",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0,
+                                            "W": 1000,
+                                            "H": 700
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "OpenInNew": false,
+                                        "Url": "https://singtel.bitrix24.com"
+                                    }
+                                },
+                                {
+                                    "Name": "CxInfo",
+                                    "Description": "",
+                                    "Key": "CxInfo",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "Icon": "contacts",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0,
+                                            "W": 450,
+                                            "H": 800
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=userdata"
                                     }
                                 }
                             ]
@@ -2325,7 +2996,9 @@
                 }
             ],
             "Urls": {
-                "DashboardServerUrls": ["https://dice.tetherfi.cloud:443/SignalRDashboardSup"],
+                "DashboardServerUrls": [
+                    "https://dice.tetherfi.cloud:443/SignalRDashboardSup"
+                ],
                 "FileServerUrl": {
                     "SMM": "",
                     "MediaProxy": "https://dice.tetherfi.cloud/ApiFileUploadDownLoad/"
@@ -2352,7 +3025,10 @@
                             "W": 325,
                             "H": 740
                         },
-                        "Actions": ["minimize", "destroy"],
+                        "Actions": [
+                            "minimize",
+                            "destroy"
+                        ],
                         "ViewState": "restore",
                         "PinState": false,
                         "FloatState": false,
@@ -2382,7 +3058,10 @@
                             "W": 300,
                             "H": 300
                         },
-                        "Actions": ["minimize", "destroy"],
+                        "Actions": [
+                            "minimize",
+                            "destroy"
+                        ],
                         "ViewState": "restore",
                         "PinState": false,
                         "FloatState": false,
@@ -2492,7 +3171,9 @@
         },
         "SDK": {
             "Proxy": {
-                "Urls": ["https://dice.tetherfi.cloud/TMACHttpProxy/TmacProxy.asmx"],
+                "Urls": [
+                    "https://dice.tetherfi.cloud/TMACHttpProxy/TmacProxy.asmx"
+                ],
                 "Type": "soap",
                 "Timeout": 30
             },

@@ -88,6 +88,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         AgentName: string;
         ConferenceType: string;
         TmacServer: string;
+        IsBotAgent: boolean;
     }[] = [];
     chatTranscripts: ChatTranscripts[] = [];
     customerName = 'Customer';
@@ -100,6 +101,18 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     showAutoFreeze: boolean;
     supervisorInit: boolean;
     confirmDialogRef: MatDialogRef<any, any>;
+    /**
+     * Bot connected to chat flag
+     */
+    botConnected: boolean;
+    /**
+     * Chatmode
+     */
+    chatMode: string;
+    /**
+     * Line ID
+     */
+    lineId: string;
 
     @ViewChildren(FusePerfectScrollbarDirective) directiveScrolls: QueryList<FusePerfectScrollbarDirective>;
     @ViewChildren('replyInput') replyInputField: any;
@@ -181,8 +194,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // get the file upload Url
         this.fileUploadUrl = this.appConfig.Main.Content.Urls?.FileServerUrl || null;
 
+        // update the line Id
+        this.lineId = this.data.InteractionDetails?.RecoveryData?.lineid || '';
+
         // check if this chat is init by supervisor
-        this.supervisorInit = this.data.InteractionDetails?.RecoveryData?.lineid === 'bargein';
+        this.supervisorInit = this.lineId === 'bargein';
     }
 
     /**
@@ -309,6 +325,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.sessionID = evt.TextChatSessionID;
         // update the conference type
         this.conferenceType = evt.ConferenceType;
+        // update the chatmode
+        this.chatMode = evt.ChatMode;
         // check for bot history
         try {
             const botHistory = JSON.parse(evt.ChatHistoryData);
@@ -378,7 +396,16 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // to store connected agent's TmacServer
         let tmacServer = '';
         try {
-            tmacServer = JSON.parse(JSON.parse(evt.AgentInfoJson).extraparam).serverName;
+            // get conference agent info
+            const agentInfo = JSON.parse(evt.AgentInfoJson);
+            // extra parameter for agent info
+            const extraParam = JSON.parse(agentInfo.extraparam);
+            // assign the tmac server
+            tmacServer = extraParam.serverName;
+            // show an alert on connect 
+            if (extraParam.conferenceType === 'conf' || extraParam.conferenceType === 'whisper') {
+                this._appUIService.showSnackbar(`${evt.AgentName} connected to the chat`, 'info');
+            }
         } catch (error) {
         }
 
@@ -387,8 +414,14 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             AgentId: evt.AgentId,
             AgentName: evt.AgentName,
             ConferenceType: evt.ConferenceType,
+            IsBotAgent: evt.IsBotAgent,
             TmacServer: tmacServer
         });
+
+        // check if a bot is connected 
+        if (evt.IsBotAgent) {
+            this.botConnected = true;
+        }
     }
 
     /**
@@ -746,6 +779,16 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // remove the agent from list 
         this.conferenceAgentList = this.conferenceAgentList.filter(c => c.AgentId !== evt.AgentId);
+
+        // check if a bot is connected 
+        if (evt.IsBotAgent) {
+            this.botConnected = false;
+        }
+
+        // show an alert for non silent agent
+        if (evt.ConferenceType === '' || evt.ConferenceType === 'conf' || evt.ConferenceType === 'whisper') {
+            this._appUIService.showSnackbar(`${evt.AgentName} is disconnected from chat`, 'info');
+        }
     }
 
     /**
@@ -782,6 +825,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 const attachment = (formattedMessage && formattedMessage.attachment) ? formattedMessage.attachment : null;
 
                 // TODO:: implement reply and get the replied message
+
+                // show auto freeze
+                this.showAutoFreeze = true;
 
                 // add message to the transcripts
                 this.chatTranscripts.push({
@@ -1087,6 +1133,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         // check the response
                         if (dt.response && dt.response.ResultCode === 0) {
                             this._appUIService.showSnackbar('Interaction closed successfully');
+
                         }
                         else {
                             // enable if something goes wrong
@@ -1225,6 +1272,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     public conferenceWithBot(): void {
         this._fuseProgressBarService.show();
+        // freeze auto response 
+        this.freezeAutoResponse(true);
         // send the request to server
         SDKClient.textChatConferenceToBot({
             destination: '',
@@ -1275,5 +1324,36 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     });
             }
         });
+    }
+
+    /**
+     * To open transfer dialog
+     * 
+     * @param type
+     * @param icon
+     */
+    public openTransferConferenceDialog(type: string, icon: string): void {
+        const customUrl = this.data.Data.TransferConferenceUtilsUrl;
+        // check if url is valid
+        if (customUrl) {
+            // create a widget model
+            const widget = new TwWidgetModel(`${type} Chat`, 'tw-custom', icon);
+            widget.Config.Position.W = 550;
+            widget.Config.Position.H = 550;
+            widget.Config.Actions = ['minimize', 'destroy'];
+            widget.Config.ViewState = 'restore';
+
+            // get agent data
+            const { agentId, deviceId, tmacServer } = SDKClient.getAgentData();
+            // get the conference type
+            const conferenceType = type === 'transfer' ? 'transfer' : 'conf';
+            const callType = type === 'transfer' ? 'TextChatTransfer' : 'TextChatConference';
+            // create map object for custom widget query string
+            widget.Data.MapObject = {
+                _requestArgs: `${agentId},${deviceId},${tmacServer},${callType},${this.interactionId},${this.sessionID},${this.chatMode},${this.lineId},${conferenceType}`
+            };
+            widget.Data.Url = customUrl;
+            this._aotWidgetService.addWidget(widget);
+        }
     }
 }

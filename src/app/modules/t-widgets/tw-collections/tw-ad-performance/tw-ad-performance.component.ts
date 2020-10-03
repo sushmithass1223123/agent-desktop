@@ -10,35 +10,6 @@ import { BaseChartDirective } from 'ng2-charts';
 import { map, takeUntil } from 'rxjs/operators';
 import { SDKClient } from 'tmac-sdk';
 
-const OnLoadMetricsToAgent = {
-    SubEventName: 'OnLoadMetricsToAgent',
-    JsonData:
-        '{"eventdata":"[{\\"GoalId\\":1,\\"GoalType\\":\\"Daily\\",\\"MetricType\\":\\"AHT\\",\\"GoalName\\":\\"Voice_AHT\\",\\"GoalTarget\\":90},{\\"GoalId\\":2,\\"GoalType\\":\\"Daily\\",\\"MetricType\\":\\"TotalChat\\",\\"GoalName\\":\\"TotalChatInteractions\\",\\"GoalTarget\\":10},{\\"GoalId\\":3,\\"GoalType\\":\\"Daily\\",\\"MetricType\\":\\"AHT\\",\\"GoalName\\":\\"Chat_AHT\\",\\"GoalTarget\\":60}]"}',
-    EventName: 'GenericTMACEvent',
-    InteractionID: 0,
-    IsInteractionConstructEvent: false,
-    IsInteractionDisposeEvent: false,
-    CreatedTime: '0001-01-01T00:00:00',
-    EventId: null,
-    RecoveryEvent: false,
-    QueuedEvent: false,
-    ACK: null
-};
-
-const OnAssignPointsToAgent = {
-    SubEventName: 'OnAssignPointsToAgent',
-    JsonData: '{"totalPointsAssigned":"AHT points : 5, TotalChats points : 2"}',
-    EventName: 'GenericTMACEvent',
-    InteractionID: 0,
-    IsInteractionConstructEvent: false,
-    IsInteractionDisposeEvent: false,
-    CreatedTime: '0001-01-01T00:00:00',
-    EventId: null,
-    RecoveryEvent: false,
-    QueuedEvent: false,
-    ACK: null
-};
-
 @Component({
     selector: 'tw-ad-performance',
     templateUrl: './tw-ad-performance.component.html',
@@ -62,22 +33,10 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
         msg: ''
     };
 
-    private performanceChartRef: BaseChartDirective;
-    @ViewChild(BaseChartDirective) set setChartRef(content: any) {
-        if (content) {
-            this.performanceChartRef = content;
-        }
-    }
-
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store the fuse config for theme
-    // -----------------------------------------------------------
-    fuseConfig: any;
-
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store entire app config and get update
-    // -----------------------------------------------------------
-    appConfig: any;
+    /**
+     * Widget maximized flag
+     */
+    maximized: boolean;
 
     /**
      * Constructor
@@ -85,10 +44,6 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
      * @param {AppDataService} _appDataService
      */
     constructor(
-        // @ [OPTIONAL]
-        private _fuseConfigService: FuseConfigService,
-        // @ [OPTIONAL]
-        private _appDataService: AppDataService,
         private http: HttpClient
     ) {
         super();
@@ -106,20 +61,6 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the fuse config
-        // -----------------------------------------------------------
-        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.fuseConfig = config;
-        });
-
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the app config
-        // -----------------------------------------------------------
-        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.appConfig = config;
-        });
-
         this.setChartData();
     }
 
@@ -136,16 +77,6 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
             this.gamificationReqStatus = { loading: false, error: true, msg: 'AgentProgressUrl is not provided in app config' };
             return;
         }
-
-        let onLoadMetricsToAgent = {
-            ...OnLoadMetricsToAgent,
-            JsonData: JSON.parse(OnLoadMetricsToAgent.JsonData)
-        };
-
-        onLoadMetricsToAgent = {
-            ...onLoadMetricsToAgent,
-            JsonData: { ...onLoadMetricsToAgent.JsonData, eventdata: JSON.parse(onLoadMetricsToAgent.JsonData.eventdata) }
-        };
 
         const { agentId } = SDKClient.getAgentData();
 

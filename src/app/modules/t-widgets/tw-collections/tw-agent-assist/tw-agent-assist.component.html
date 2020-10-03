@@ -9,18 +9,18 @@
     <div fxFlex fxFill fxLayout="row" class="p-8">
         <mat-chip-list *ngIf="nlpData.length > 0; else noData">
             <mat-chip
-                *ngFor="let intent of nlpData"
+                *ngFor="let item of nlpData"
                 removable
-                (click)="openAssitWidget(intent.Name)"
+                (click)="openAssitWidget(item.Name, false, item.Url, item.Width, item.Height)"
                 [ngClass]="{
-                    'bg-info': intent.Count < 5,
-                    'bg-secondary': intent.Count >= 5 && intent.Count > 10,
-                    'bg-success': intent.Count >= 10 && intent.Count > 20,
-                    'bg-warning': intent.Count >= 20 && intent.Count > 30,
-                    'bg-danger': intent.Count >= 30
+                    'bg-info': item.Count < 5,
+                    'bg-secondary': item.Count >= 5 && item.Count > 10,
+                    'bg-success': item.Count >= 10 && item.Count > 20,
+                    'bg-warning': item.Count >= 20 && item.Count > 30,
+                    'bg-danger': item.Count >= 30
                 }"
             >
-                {{ intent.Name }}
+                {{ item.Name }}
                 <mat-icon matChipRemove>close</mat-icon>
             </mat-chip>
         </mat-chip-list>

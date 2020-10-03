@@ -130,7 +130,7 @@ export interface AppAlertDialogData {
     type: AppAlertDialogTypes;
 }
 
-export type ReminderTaskDialogTypes = 'makecall' | 'meeting' | 'changestate' | 'dacrequest' | 'tcmwqvoice';
+export type ReminderTaskDialogTypes = 'makecall' | 'meeting' | 'changestate' | 'dacrequest' | 'tcmwqvoice' | 'reminder';
 
 export interface ReminderTaskDialogData {
     /**
@@ -152,7 +152,7 @@ export interface ReminderTaskDialogData {
     /**
      * Method to snooze the reminder task
      */
-    snooze: () => void;
+    snooze: (time?: number) => void;
     /**
      * Type of reminder task of type ReminderTaskDialogTypes
      */

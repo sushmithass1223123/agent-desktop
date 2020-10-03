@@ -24,24 +24,3 @@ tw-aux-codes {
         }
     }
 }
-
-.tw-aux-codes-list {
-    border-radius: 2rem !important;
-
-    button {
-        height: 3.2rem;
-        line-height: 2rem;
-
-        .mat-icon {
-            color: #6c757d;
-
-            &.available {
-                color: #28a745;
-            }
-
-            &.logout {
-                color: #f44336;
-            }
-        }
-    }
-}

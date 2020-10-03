@@ -6,7 +6,7 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import * as _ from 'lodash';
-import { AgentNotificaitonEvent, CallerIntentEvent, GenericEvent, IUIEvent, SDKClient, TextChatRemoteUserConnectedEvent } from 'tmac-sdk';
+import { AgentAssistDataEvent, AgentNotificaitonEvent, CallerIntentEvent, GenericEvent, IUIEvent, SDKClient, TextChatRemoteUserConnectedEvent } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-agent-assist',
@@ -34,7 +34,28 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
     /**
      * NLP data from event
      */
-    nlpData = [];
+    nlpData: {
+        /**
+         * Name of intent
+         */
+        Name: string;
+        /**
+         * Count of intent
+         */
+        Count: number,
+        /**
+         * Url to assist
+         */
+        Url?: string;
+        /**
+         * Width of assist widget
+         */
+        Width?: number;
+        /**
+         * Height of assist widget
+         */
+        Height?: number;
+    }[] = [];
 
     /**
      * Constructor 
@@ -83,6 +104,7 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         SDKClient.events.on('OnNLPDataEvent', this.OnNLPDataEvent);
         SDKClient.events.on('CallerIntentEvent', this.CallerIntentEvent);
         SDKClient.events.on('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
+        SDKClient.events.on('AgentAssistDataEvent', this.AgentAssistDataEvent);
 
         // TODO:: To implement interaction based AOT
         // SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
@@ -99,6 +121,7 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         SDKClient.events.off('OnNLPDataEvent', this.OnNLPDataEvent);
         SDKClient.events.off('CallerIntentEvent', this.CallerIntentEvent);
         SDKClient.events.off('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
+        SDKClient.events.off('AgentAssistDataEvent', this.AgentAssistDataEvent);
 
         // TODO:: To implement interaction based AOT
         // SDKClient.events.off('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
@@ -240,16 +263,23 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
 
     /**
      * To add intent to NLP data
+     * 
      * @param intent Intent to be added
+     * @param url [OPTIONAL] Assist url to be opened
+     * @param width [OPTIONAL] Width of assit widget
+     * @param height [OPTIONAL] Height of assist widget
      */
-    private addIntentToNLPData(intent: string): void {
+    private addIntentToNLPData(intent: string, url?: string, width?: number, height?: number): void {
         const getData = this.nlpData.filter((i) => i.Name === intent);
         if (getData.length > 0) {
             ++getData[0].Count;
         } else {
             this.nlpData.push({
                 Name: intent,
-                Count: 0
+                Count: 0,
+                Url: url,
+                Width: width,
+                Height: height
             });
         }
 
@@ -257,17 +287,36 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         this.nlpData = _.orderBy(this.nlpData, ['Count'], ['desc']);
     }
 
+    /**
+     * To process AgentAssistDataEvent
+     * 
+     * @param {AgentAssistDataEvent} evt
+     */
+    private AgentAssistDataEvent = (evt: AgentAssistDataEvent) => {
+        // check for the interaction
+        if (this.interactionId !== evt.InteractionID) {
+            return;
+        }
+
+        // add intent to the list
+        this.addIntentToNLPData(evt.Name, evt.Url, evt.Width, evt.Height);
+    }
+
+
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
 
     /**
      * To open assist widget
+     * 
      * @param intent Intent to be passed to assist widgetData
      * @param isMandatory [OPTIONAL] Falg to pop confirmation before the widget close
      * @param assistUrl [OPTIONAL] Assist url to be opened
+     * @param width [OPTIONAL] Width of assit widget
+     * @param height [OPTIONAL] Height of assist widget
      */
-    public openAssitWidget(intent: string, isMandatory?: boolean, assistUrl?: string): void {
+    public openAssitWidget(intent: string, isMandatory?: boolean, assistUrl?: string, width?: number, height?: number): void {
         // check if the url to be taken from param
         let url = assistUrl ? assistUrl : this.widgetData.AssistWidgetUrl;
 
@@ -298,10 +347,11 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         // get assist widget config
         const title = `${this.widgetData.Title || 'Custom'} - ${intent}`;
         const icon = this.widgetData.Icon || '';
-        const width = this.widgetData.Width || 500;
-        const height = this.widgetData.Height || 500;
         const actions = this.widgetData.Actions || ['destroy'];
         const viewState = this.widgetData.ViewState || 'restore';
+
+        width = width || this.widgetData.Width || 500;
+        height = height || this.widgetData.Height || 500;
 
         // create a widget model
         const widget = new TwWidgetModel(title, 'tw-custom', icon);

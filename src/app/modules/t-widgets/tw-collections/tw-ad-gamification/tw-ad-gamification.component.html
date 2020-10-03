@@ -25,7 +25,10 @@
             <strong class="text-center mb-4"> {{ badge.BadgePoints }} </strong>
         </div>
 
-        <p fxFlex="100" class="text-center" *ngIf="!gamificationReqStatus.data.TotalBadges.length">You Have No Badges</p>
+        <div *ngIf="!gamificationReqStatus.data.TotalBadges.length" class="w-100-p h-50-p">
+            <img src="assets/images/vectors/no-data-1.svg" class="w-100-p h-100-p box-shadow-3d" />
+            <p class="text-center mat-title m-0">You Have No Badges!</p>
+        </div>
 
         <div fxFlex="33" fxLayout fxLayoutAlign="center center">
             <mat-icon class="gold mr-8 brand-logo box-shadow-3d"> monetization_on </mat-icon>

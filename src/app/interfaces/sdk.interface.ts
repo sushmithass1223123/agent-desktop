@@ -17,7 +17,7 @@ export interface QuizEvent {
 export interface QuizEventJsonData {
     url: string;
     params: {
-        intentname: string;
+        intentName: string;
         customerId: number;
         inSimulation: boolean;
         enableQuiz: boolean;

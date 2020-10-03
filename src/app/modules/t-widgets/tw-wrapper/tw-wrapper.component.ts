@@ -71,7 +71,8 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
 
         // set the drag position for AOT
         if (this.aot) {
-            this.dragPosition = { x: -(this.data.Config.Position.W / 2), y: -50 };
+            const x = (this.data.Config.Position.W || 10) / 2;
+            this.dragPosition = { x: -x, y: -50 };
         }
     }
 

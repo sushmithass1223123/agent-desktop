@@ -18,14 +18,14 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
     // holds all the data related to this widget from the config
     @Input() data: any;
 
-    gamificationReqStatus: ResData<{ TotalBadges: any[]; goldCoins: number; silverCoins: number; bronzeCoins: number }> = {
+    gamificationReqStatus: ResData<{ TotalBadges: any[]; GoldCoins: number; SilverCoins: number; BronzeCoins: number }> = {
         error: false,
         loading: true,
         msg: '',
         data: {
-            bronzeCoins: 0,
-            goldCoins: 0,
-            silverCoins: 0,
+            BronzeCoins: 0,
+            GoldCoins: 0,
+            SilverCoins: 0,
             TotalBadges: []
         }
     };

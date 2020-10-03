@@ -12,7 +12,6 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { InteractionRef, IWidget, ResData } from 'app/interfaces';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
 import { IAgentData, IResponse, SDKClient } from 'tmac-sdk';
-import { TwEmailControlsMachine } from './tw-email-controls.machine';
 
 @Component({
     selector: 'tw-email-controls',
@@ -50,6 +49,14 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     interactionList: InteractionRef[];
     interactionId: number;
     user: IAgentData;
+    /**
+     * Email intent
+     */
+    intent: string;
+    /**
+     * Customer sentiment
+     */
+    sentiment: string;
 
     @ViewChildren(FusePerfectScrollbarDirective) directiveScrolls: QueryList<FusePerfectScrollbarDirective>;
 
@@ -57,7 +64,6 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         private _fuseConfigService: FuseConfigService,
         private _interactionManagerService: InteractionManagerService,
         private _appDataService: AppDataService,
-        public machine: TwEmailControlsMachine,
         private domSanitizer: DomSanitizer,
         private _fuseProgressBarService: FuseProgressBarService,
         private _appUIService: AppUiService
@@ -69,6 +75,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     // @ Lifecycle hooks
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * OnInit
+     */
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
@@ -77,6 +86,13 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // set the interaction id from data
         this.interactionId = this.data.InteractionDetails?.InteractionID;
+
+        // set the intent
+        this.intent = this.data.InteractionDetails.Intent || 'NA';
+
+        // set the sentiment
+        this.sentiment = this.data.InteractionDetails.Sentiment || 'NA';
+
 
         this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
             this.appConfig = config;
@@ -115,6 +131,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         this._appUIService.playAudio('new-email', 0.5);
     }
 
+    /**
+     * On Destroy
+     */
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();

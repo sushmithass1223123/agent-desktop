@@ -91,7 +91,7 @@
 
                     <button
                         *ngIf="supervisorInit && (conferenceType === 'silent' || conferenceType === 'whisper' || conferenceType === 'conf')"
-                        [disabled]="status !== 'connected'"
+                        [disabled]="status !== 'connected' || this.botConnected"
                         mat-mini-fab
                         color="default"
                         [ngClass]="
@@ -112,7 +112,7 @@
 
                     <button
                         *ngIf="data.Data.TransferAllowed"
-                        [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper'"
+                        [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper' || this.botConnected"
                         mat-mini-fab
                         color="default"
                         [ngClass]="
@@ -123,13 +123,32 @@
                             (status === 'connected' ? 'mat-elevation-z2' : '')
                         "
                         matTooltip="Transfer"
+                        (click)="openTransferConferenceDialog('transfer', 'forward')"
                     >
                         <mat-icon>forward</mat-icon>
                     </button>
 
                     <button
                         *ngIf="data.Data.ConferenceAllowed"
-                        [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper'"
+                        [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper' || this.botConnected"
+                        mat-mini-fab
+                        color="default"
+                        [ngClass]="
+                            (fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                                ? fuseConfig.layout.anchorWidget.bodyBackground
+                                : '') +
+                            ' ' +
+                            (status === 'connected' ? 'mat-elevation-z2' : '')
+                        "
+                        matTooltip="Conference"
+                        (click)="openTransferConferenceDialog('conference', 'group')"
+                    >
+                        <mat-icon>group</mat-icon>
+                    </button>
+
+                    <button
+                        *ngIf="data.Data.ConferenceAllowed"
+                        [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper' || this.botConnected"
                         mat-mini-fab
                         color="default"
                         [ngClass]="
@@ -146,25 +165,10 @@
                     </button>
 
                     <button
-                        *ngIf="data.Data.ConferenceAllowed"
-                        [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper'"
-                        mat-mini-fab
-                        color="default"
-                        [ngClass]="
-                            (fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
-                                ? fuseConfig.layout.anchorWidget.bodyBackground
-                                : '') +
-                            ' ' +
-                            (status === 'connected' ? 'mat-elevation-z2' : '')
-                        "
-                        matTooltip="Conference"
-                    >
-                        <mat-icon>group</mat-icon>
-                    </button>
-
-                    <button
                         *ngIf="data.Data.AudioEscalateEnabled"
-                        [disabled]="status !== 'connected' || disableAV || conferenceType === 'silent' || conferenceType === 'whisper'"
+                        [disabled]="
+                            status !== 'connected' || disableAV || conferenceType === 'silent' || conferenceType === 'whisper' || this.botConnected
+                        "
                         mat-mini-fab
                         color="default"
                         [ngClass]="
@@ -182,7 +186,9 @@
 
                     <button
                         *ngIf="data.Data.VideoEscalateEnabled"
-                        [disabled]="status !== 'connected' || disableAV || conferenceType === 'silent' || conferenceType === 'whisper'"
+                        [disabled]="
+                            status !== 'connected' || disableAV || conferenceType === 'silent' || conferenceType === 'whisper' || this.botConnected
+                        "
                         mat-mini-fab
                         color="default"
                         [ngClass]="

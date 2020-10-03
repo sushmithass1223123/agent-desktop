@@ -1,9 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { FuseConfigService } from '@fuse/services/config.service';
-import { FuseConfig } from '@fuse/types';
 import { AOTWidgetService } from '@services/aot-widget.service';
-import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
@@ -154,29 +151,11 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
     requiredUrls = ['LeaderBoardUrl', 'AgentProgressUrl', 'GetAgentLevelsUrl', 'GetQuizInfoUrl'];
 
     /**
-     * --------------------------------------------------
-     *  @ [OPTIONAL] to store the fuse config for theme
-     * --------------------------------------------------
-     */
-    fuseConfig: FuseConfig;
-
-    /**
-     * --------------------------------------------------
-     *  @ [OPTIONAL] to store entire app config and get update
-     * --------------------------------------------------
-     */
-    appConfig: any;
-
-    /**
      * Constructor
      * @param {FuseConfigService} _fuseConfigService
      * @param {AppDataService} _appDataService
      */
     constructor(
-        // @ [OPTIONAL]
-        private _fuseConfigService: FuseConfigService,
-        // @ [OPTIONAL]
-        private _appDataService: AppDataService,
         private http: HttpClient,
         private appUiService: AppUiService,
         private _aotWidgetService: AOTWidgetService
@@ -195,22 +174,8 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the fuse config
-        // -----------------------------------------------------------
-        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.fuseConfig = config;
-        });
-
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the app config
-        // -----------------------------------------------------------
-        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.appConfig = config;
-        });
 
         const { agentId } = SDKClient.getAgentData();
-        // const agentId = '50005';
 
         this.currentUser = {
             agentId,
