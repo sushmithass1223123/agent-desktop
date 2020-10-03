@@ -17,7 +17,7 @@ export interface InteractionWidgets {
     widgets: {
         static: TWidget[];
         dynamic: TWidget[];
-        aot?: TWidget[]
+        aot?: TWidget[];
     };
 }
 
@@ -29,10 +29,12 @@ export interface IWidgetConfig {
     Icon: string;
     Class: string;
     Position: IWidgetPosition;
-    Actions: ('restore' | 'maximize' | 'minimize' | 'destroy' | 'float')[];
+    Actions: IAction[];
     ViewState: 'restore' | 'maximize' | 'minimize' | 'hidden' | 'float';
     Header: boolean;
 }
+
+export type IAction = 'restore' | 'maximize' | 'minimize' | 'destroy' | 'float';
 
 export interface IWidgetPosition {
     X: number;

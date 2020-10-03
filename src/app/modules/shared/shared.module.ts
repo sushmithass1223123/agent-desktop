@@ -10,6 +10,7 @@ import { AlertDialogComponent } from './alert-dialog/alert-dialog.component';
 import { AppConfirmDialogComponent } from './app-confirm-dialog/app-confirm-dialog.component';
 import { AppSnackbarComponent } from './app-snackbar/app-snackbar.component';
 import { AvatarComponent } from './avatar/avatar.component';
+import { NoDataAvailableComponent } from './components';
 import { CreateSmsComponent } from './create-sms/create-sms.component';
 import { CustomDialogComponent } from './custom-dialog/custom-dialog.component';
 import { TWChartDirective } from './directives/tw-chart.directive';
@@ -45,7 +46,8 @@ const sharedComponents = [
     RemiderTaskDialogComponent,
     AppConfirmDialogComponent,
     AppSnackbarComponent,
-    CreateSmsComponent
+    CreateSmsComponent,
+    NoDataAvailableComponent
 ];
 
 @NgModule({
@@ -53,4 +55,4 @@ const sharedComponents = [
     imports: [CommonModule, ...sharedModules],
     exports: [...sharedModules, ...sharedComponents]
 })
-export class SharedModule { }
+export class SharedModule {}
