@@ -595,6 +595,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 this.toggleButton(false, btn);
                 if (dt.response && dt.response.ResultCode === 0) {
                     this._appUIService.showSnackbar('Interaction closed successfully');
+                    // remove the interaction reference
+                    this._interactionManagerService.removeInteraction(dt.response.InteractionID);
                 }
                 else {
                     this._appUIService.showSnackbar('Close interaction failed', 'failure');

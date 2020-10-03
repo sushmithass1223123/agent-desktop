@@ -492,7 +492,7 @@
                                     }
                                 },
                                 {
-                                    "Name": "Gamification",
+                                    "Name": "Coins and Badges",
                                     "Description": "",
                                     "Key": "AgentGamification",
                                     "Type": "tw-ad-gamification",
@@ -636,7 +636,7 @@
                                     }
                                 },
                                 {
-                                    "Name": "Gamification",
+                                    "Name": "Gamification Leaderboard",
                                     "Description": "",
                                     "Key": "Gamification",
                                     "Type": "tw-gamification",
