@@ -52,7 +52,12 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
             let url = this.data.Data.Url;
 
             // get the agent data map
-            const mapObj = AGENT_DATA_MAP();
+            let mapObj = AGENT_DATA_MAP();
+
+            // check if extra map data sent with in an interaction
+            if (this.data.Data.MapObject) {
+                mapObj = { ...mapObj, ...this.data.Data.MapObject };
+            }
 
             // add the query param
             const reg = new RegExp(Object.keys(mapObj).join('|'), 'gi');

@@ -123,8 +123,27 @@
                             (status === 'connected' ? 'mat-elevation-z2' : '')
                         "
                         matTooltip="Transfer"
+                        (click)="openTransferConferenceDialog('transfer', 'forward')"
                     >
                         <mat-icon>forward</mat-icon>
+                    </button>
+
+                    <button
+                        *ngIf="data.Data.ConferenceAllowed"
+                        [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper' || this.botConnected"
+                        mat-mini-fab
+                        color="default"
+                        [ngClass]="
+                            (fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                                ? fuseConfig.layout.anchorWidget.bodyBackground
+                                : '') +
+                            ' ' +
+                            (status === 'connected' ? 'mat-elevation-z2' : '')
+                        "
+                        matTooltip="Conference"
+                        (click)="openTransferConferenceDialog('conference', 'group')"
+                    >
+                        <mat-icon>group</mat-icon>
                     </button>
 
                     <button
@@ -143,23 +162,6 @@
                         (click)="conferenceWithBot()"
                     >
                         <mat-icon>android</mat-icon>
-                    </button>
-
-                    <button
-                        *ngIf="data.Data.ConferenceAllowed"
-                        [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper' || this.botConnected"
-                        mat-mini-fab
-                        color="default"
-                        [ngClass]="
-                            (fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
-                                ? fuseConfig.layout.anchorWidget.bodyBackground
-                                : '') +
-                            ' ' +
-                            (status === 'connected' ? 'mat-elevation-z2' : '')
-                        "
-                        matTooltip="Conference"
-                    >
-                        <mat-icon>group</mat-icon>
                     </button>
 
                     <button

@@ -29,38 +29,48 @@
         <ng-container *ngIf="getPendingCallbacksReq.data">
             <mat-table [dataSource]="pendingCallbacksTable.source" matSort matSortActive="ScheduleTime" matSortDirection="desc" matSortDisableClear>
                 <!--- Note that these columns can be defined in any order.
-The actual rendered columns are set as a property on the row definition" -->
+                The actual rendered columns are set as a property on the row definition" -->
+
+                <ng-container matColumnDef="CampaignName">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header><span>Campaign <br /> Name</span></mat-header-cell>
+                    <mat-cell *matCellDef="let element">{{ element.campName || 'NA' }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="CampaignType">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header><span>Campaign <br /> Type</span></mat-header-cell>
+                    <mat-cell *matCellDef="let element">{{ element.campType || 'NA' }}</mat-cell>
+                </ng-container>
 
                 <ng-container matColumnDef="ScheduleTime">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header>Scheduled At</mat-header-cell>
-                    <mat-cell *matCellDef="let element">{{ element.ScheduleTime || 'NA' }}</mat-cell>
+                    <mat-header-cell *matHeaderCellDef mat-sort-header
+                        ><span
+                            >Scheduled <br />
+                            At</span
+                        ></mat-header-cell
+                    >
+                    <mat-cell *matCellDef="let element">{{ element.directAgentScheduleTime || 'NA' }}</mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="Name">
-                    <mat-header-cell *matHeaderCellDef class="d-flex w-100-p">
-                        <span mat-sort-header> Name </span>
+                    <mat-header-cell *matHeaderCellDef class="d-flex w-100-p" mat-sort-header>
+                        <span> Name </span>
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let element">{{ element.Name || 'NA' }}</mat-cell>
+                    <mat-cell *matCellDef="let element">{{ element.name || 'NA' }}</mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="Status">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
-                    <mat-cell *matCellDef="let element">{{ element.Status || 'NA' }}</mat-cell>
+                    <mat-header-cell *matHeaderCellDef mat-sort-header><span>Status</span></mat-header-cell>
+                    <mat-cell *matCellDef="let element">{{ element.status || 'NA' }}</mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="Actions">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header></mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef><span>Actions</span></mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <div fxLayout fxLayoutAlign="center center" class="h-100-p w-100-p">
-                            <mat-icon
-                                mat-ripple
-                                *ngIf="changeContactStatusReq.data !== element.Id"
-                                (click)="closeCallback(element)"
-                                [matIcon]="Close"
-                            >
+                            <mat-icon *ngIf="changeContactStatusReq.data !== element.id" (click)="closeCallback(element)" matTooltip="Close">
                                 close
                             </mat-icon>
-                            <mat-icon mat-ripple *ngIf="changeContactStatusReq.data === element.Id" class="spin" (click)="closeCallback(element)">
+                            <mat-icon mat-ripple *ngIf="changeContactStatusReq.data === element.id" class="spin" (click)="closeCallback(element)">
                                 loop
                             </mat-icon>
                         </div>

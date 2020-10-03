@@ -9,7 +9,7 @@ import { takeUntil } from 'rxjs/operators';
 import { SDKClient, GenericEvent } from 'tmac-sdk';
 
 const neutral = new Image();
-neutral.src = 'assets/images/vectors/average-score.svg';
+neutral.src = 'assets/images/vectors/neutral-score.svg';
 neutral.width = 20;
 neutral.height = 20;
 

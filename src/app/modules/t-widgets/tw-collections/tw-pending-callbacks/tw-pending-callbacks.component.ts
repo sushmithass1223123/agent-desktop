@@ -1,15 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { FuseConfigService } from '@fuse/services/config.service';
-import { FuseConfig } from '@fuse/types';
-import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { IWidget, ResData } from 'app/interfaces';
 import * as moment from 'moment';
-import { takeUntil } from 'rxjs/operators';
 
 /**
  * Pending Callbacks widget
@@ -62,36 +58,25 @@ export class TwPendingCallbacksComponent extends TWidgetWrapper implements OnIni
     };
 
     /**
-     * --------------------------------------------------
-     *  @ [OPTIONAL] to store the fuse config for theme
-     * --------------------------------------------------
+     * TCM proxy Url
      */
-    fuseConfig: FuseConfig;
-
-    /**
-     * --------------------------------------------------
-     *  @ [OPTIONAL] to store entire app config and get update
-     * --------------------------------------------------
-     */
-    appConfig: any;
+    tcmProxyUrl: string;
 
     /**
      * Constructor
      * @param {FuseConfigService} _fuseConfigService
      * @param {AppDataService} _appDataService
+     * @param {http} HttpClient
+     * @param {appUiService} AppUiService
      */
     constructor(
-        // @ [OPTIONAL]
-        private _fuseConfigService: FuseConfigService,
-        // @ [OPTIONAL]
-        private _appDataService: AppDataService,
         private http: HttpClient,
         private appUiService: AppUiService
     ) {
         super();
         this.pendingCallbacksTable = {
             source: new MatTableDataSource([]),
-            columns: ['ScheduleTime', 'Name', 'Status', 'Actions']
+            columns: ['CampaignName', 'CampaignType', 'ScheduleTime', 'Name', 'Status', 'Actions']
         };
     }
 
@@ -106,20 +91,17 @@ export class TwPendingCallbacksComponent extends TWidgetWrapper implements OnIni
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the fuse config
-        // -----------------------------------------------------------
-        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.fuseConfig = config;
-        });
 
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the app config
-        // -----------------------------------------------------------
-        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.appConfig = config;
-        });
-        this.phone = this.data.InteractionDetails.PhoneNumber;
+        // assign the proxy url
+        const url = this.data.Data.TCMProxy;
+        this.tcmProxyUrl = url.endsWith('/') ? url : url + '/';
+        if (!this.tcmProxyUrl) {
+            this.getPendingCallbacksReq = { loading: false, error: true, msg: 'Missing TCMProxy in config', data: false };
+            return;
+        }
+
+        // assign the phone number
+        this.phone = this.data.InteractionDetails?.PhoneNumber;
         if (this.phone) {
             this.getPendingCallbacks();
         }
@@ -146,11 +128,7 @@ export class TwPendingCallbacksComponent extends TWidgetWrapper implements OnIni
      */
     async getPendingCallbacks(): Promise<void> {
         try {
-            if (!this.data.Data.GetPendingCallbacksUrl) {
-                this.getPendingCallbacksReq = { loading: false, error: true, msg: 'Missing GetPendingCallbacksUrl in config', data: false };
-                return;
-            }
-            const url = new URL(this.data.Data.GetPendingCallbacksUrl);
+            const url = new URL(`${this.tcmProxyUrl}/api/Contact/GetContactsByPhoneNumber`);
             url.searchParams.append('phone', this.phone.toString());
             this.getPendingCallbacksReq = { loading: true, error: false };
             this.http.get(url.toString()).subscribe(
@@ -179,11 +157,11 @@ export class TwPendingCallbacksComponent extends TWidgetWrapper implements OnIni
     async closeCallback(callback: any): Promise<void> {
         try {
             // const { agentStatus } = SDKClient.getAgentData();
-            this.changeContactStatusReq = { loading: true, error: false, data: callback.Id };
+            this.changeContactStatusReq = { loading: true, error: false, data: callback.id };
             this.http
-                .post(this.data.Data.ChangeContactStatusUrl, {
-                    campaignId: callback.CampId,
-                    contactIds: [callback.Id],
+                .post(`${this.tcmProxyUrl}/api/Contact/ChangeContactStatus`, {
+                    campaignId: callback.campaignId,
+                    contactIds: [callback.id],
                     contactStatus: 'Completed',
                     agentStatus: 'Closed',
                     reason: 'Closed',
@@ -193,7 +171,7 @@ export class TwPendingCallbacksComponent extends TWidgetWrapper implements OnIni
                     (res: any) => {
                         if (res.resultCode) {
                             this.changeContactStatusReq = { loading: false, error: false };
-                            this.pendingCallbacksTable.source.data = this.pendingCallbacksTable.source.data.filter((x) => x.Id !== callback.Id);
+                            this.pendingCallbacksTable.source.data = this.pendingCallbacksTable.source.data.filter((x) => x.Id !== callback.id);
                         } else {
                             this.changeContactStatusReq = { loading: false, error: false };
                         }

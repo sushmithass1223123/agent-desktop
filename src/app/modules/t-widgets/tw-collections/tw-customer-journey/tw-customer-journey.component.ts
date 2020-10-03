@@ -9,6 +9,7 @@ import { FusePerfectScrollbarDirective } from '@fuse/directives/fuse-perfect-scr
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
 import { TwWrapperComponent } from '@modules/t-widgets/tw-wrapper/tw-wrapper.component';
+import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
@@ -116,7 +117,12 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
 
     maximized = false;
 
-    constructor(private _fuseConfigService: FuseConfigService, private _tmacEventService: TMACEventService, private sanitizer: DomSanitizer) {
+    constructor(
+        private _fuseConfigService: FuseConfigService,
+        private _tmacEventService: TMACEventService,
+        private sanitizer: DomSanitizer,
+        private _appUIService: AppUiService
+    ) {
         super();
 
         this.customerJourneyTable = {
@@ -310,5 +316,30 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             this.sessionActions = { loading: false, error: true, msg: COMMON_ERR_MESSAGE };
             console.error(e);
         }
+    }
+
+    /**
+     * To open sentiment dashboard for a session
+     * 
+     * @param sessionId 
+     */
+    public openSentimentDashboard(sessionId: string): void {
+        let url = this.data.Data.SentimentDashboardUrl;
+
+        // verify the url
+        if (!url) {
+            this._appUIService.showSnackbar('Sentiment Dashboard Url is not configured!', 'failure');
+            return;
+        }
+
+        url += `?/sessionid=${sessionId}&agentid=${SDKClient.getAgentData().agentId}`;
+
+        window.open(
+            url,
+            'sentimentDashboard',
+            `menubar=no,resizable=yes,location=no,scrollbars=no,
+            width=${screen.width},
+            height=${screen.height}`
+        );
     }
 }

@@ -157,7 +157,7 @@
                                 <mat-icon>{{ featureMap[feature.Feature].Icon }}</mat-icon>
                             </button>
 
-                            <mat-menu class="tw-aux-codes-list" #menu="matMenu" xPosition="after">
+                            <mat-menu class="custom" #menu="matMenu" xPosition="after">
                                 <button
                                     mat-menu-item
                                     *ngFor="let auxCode of auxCodesList"
@@ -190,17 +190,21 @@
                         <!-- quiz intent start  -->
 
                         <button mat-icon-button matTooltip="Send Quiz" [matMenuTriggerFor]="quizIntentMenu">
-                            <mat-icon>subtitles</mat-icon>
+                            <mat-icon>rule</mat-icon>
                         </button>
-                        <mat-menu #quizIntentMenu="matMenu">
-                            <button mat-menu-item *ngFor="let intent of availableQuizIntents" (click)="sendQuizIntent(intent.intent, item)">
-                                {{ intent.name }}
+                        <mat-menu #quizIntentMenu="matMenu" class="custom">
+                            <button
+                                mat-menu-item
+                                class="custom"
+                                *ngFor="let intent of availableQuizIntents"
+                                (click)="sendQuizIntent(intent.intent, item)"
+                            >
+                                <mat-icon>grading</mat-icon>
+                                <span>{{ intent.name }}</span>
                             </button>
                         </mat-menu>
 
                         <!-- quiz intent end  -->
-
-                        
                     </div>
                     <div fxFlex="50" fxLayout="row wrap" fxLayoutAlign=" start" class="channel-list px-8">
                         <div

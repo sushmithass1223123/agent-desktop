@@ -14,9 +14,7 @@ tw-wrapper {
 
         &.aot {
             display: grid;
-            // min-width: 250px;
-            min-width: fit-content;
-            min-height: fit-content;
+            min-width: 250px;
             max-width: 100vw;
             max-height: 100vh;
             transition-property: height, min-height, max-height;

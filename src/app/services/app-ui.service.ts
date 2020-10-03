@@ -5,7 +5,7 @@ import { AlertDialogComponent } from '@modules/shared/alert-dialog/alert-dialog.
 import { AppConfirmDialogComponent } from '@modules/shared/app-confirm-dialog/app-confirm-dialog.component';
 import { AppSnackbarComponent } from '@modules/shared/app-snackbar/app-snackbar.component';
 import { CustomDialogComponent } from '@modules/shared/custom-dialog/custom-dialog.component';
-import { RemiderTaskDialogComponent } from '@modules/shared/remider-task-dialog/remider-task-dialog.component';
+import { ReminderTaskDialogComponent } from '@modules/shared/reminder-task-dialog/reminder-task-dialog.component';
 import { AppAlertDialogTypes, AppConfirmDialogTypes, AppNotification, AppSnackBarArgs, ReminderTaskDialogTypes, SnackbarStateTypes } from 'app/interfaces';
 import * as _ from 'lodash';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
@@ -165,17 +165,19 @@ export class AppUiService {
      */
     public showRemiderTaskModal(
         type: ReminderTaskDialogTypes,
-        message?: string
-    ): MatDialogRef<RemiderTaskDialogComponent> {
+        message?: string,
+        title?: string
+    ): MatDialogRef<ReminderTaskDialogComponent> {
         // play new chat sound 
         this.playAudio('alert', 0.5);
-        const dialogRef = this._matDialog.open(RemiderTaskDialogComponent, {
+        const dialogRef = this._matDialog.open(ReminderTaskDialogComponent, {
             data: {
                 type,
                 message,
+                title,
                 accept: () => dialogRef.close('accept'),
                 reject: () => dialogRef.close('reject'),
-                snooze: () => dialogRef.close('snooze')
+                snooze: (time?: number) => dialogRef.close('snooze:' + time)
             },
             panelClass: 'reminder-task-dialog',
             width: '350px',

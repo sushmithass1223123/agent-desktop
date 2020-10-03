@@ -81,7 +81,7 @@ mat-selection-list {
         margin-top: 8px !important;
         margin-bottom: 8px !important;
     }
-    
+
     .mat-list-single-selected-option,
     .mat-list-single-selected-option:hover,
     .mat-list-single-selected-option:focus {
@@ -176,6 +176,10 @@ mat-selection-list {
         border-radius: 20px;
         margin-bottom: 8px;
         box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+
+        &.selectable {
+            cursor: pointer;
+        }
 
         &.selected {
             background-color: rgb(0 0 0 / 0.2) !important;
@@ -342,4 +346,27 @@ mat-dialog-container {
 
 .mat-ripple {
     cursor: pointer;
+}
+
+.mat-menu-panel {
+    &.custom {
+        border-radius: 2rem !important;
+
+        button {
+            height: 3.2rem;
+            line-height: 2rem;
+
+            .mat-icon {
+                color: #6c757d;
+
+                &.available {
+                    color: #28a745;
+                }
+
+                &.logout {
+                    color: #f44336;
+                }
+            }
+        }
+    }
 }

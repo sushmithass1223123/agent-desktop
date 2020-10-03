@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { RemiderTaskDialogComponent } from '@modules/shared/remider-task-dialog/remider-task-dialog.component';
+import { ReminderTaskDialogComponent } from '@modules/shared/reminder-task-dialog/reminder-task-dialog.component';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { IWidget, QuizEvent } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
@@ -10,6 +10,7 @@ import {
     ACWTimerEvent,
     AgentNotificaitonEvent,
     AgentReminder,
+    AgentReminderEvent,
     AgentStatusChangeEvent,
     CommandResultEvent,
     GenericInteractionEvent,
@@ -59,23 +60,36 @@ export class TMACEventService {
         /**
          * Make call task dialog ref
          */
-        makeCall: MatDialogRef<RemiderTaskDialogComponent, any>;
+        makeCall: MatDialogRef<ReminderTaskDialogComponent, any>;
         /**
          * Meeting task dialog ref
          */
-        meeting: MatDialogRef<RemiderTaskDialogComponent, any>;
+        meeting: MatDialogRef<ReminderTaskDialogComponent, any>;
         /**
          * Change status task dialog ref
          */
-        changeState: MatDialogRef<RemiderTaskDialogComponent, any>;
+        changeState: MatDialogRef<ReminderTaskDialogComponent, any>;
         /**
          * DAC request dialog ref
          */
-        dacRequest: MatDialogRef<RemiderTaskDialogComponent, any>;
+        dacRequest: MatDialogRef<ReminderTaskDialogComponent, any>;
         /**
          * TCM WQ voice DAC request dialog ref
          */
-        tcmWQVoice: MatDialogRef<RemiderTaskDialogComponent, any>;
+        tcmWQVoice: MatDialogRef<ReminderTaskDialogComponent, any>;
+        /**
+         * Normal reminder
+         */
+        reminder: {
+            /**
+             * Reminder ID
+             */
+            id: string,
+            /**
+             * Reminder dialog ref
+             */
+            ref: MatDialogRef<ReminderTaskDialogComponent, any>
+        }[];
     };
 
     /**
@@ -100,7 +114,8 @@ export class TMACEventService {
             meeting: null,
             changeState: null,
             dacRequest: null,
-            tcmWQVoice: null
+            tcmWQVoice: null,
+            reminder: []
         };
     }
 
@@ -140,7 +155,7 @@ export class TMACEventService {
                 this._constructDisposeEventSubject.next(evt);
             }
         }
-    };
+    }
 
     /**
      * To remove all the events from reference which related to an interaction
@@ -279,7 +294,7 @@ export class TMACEventService {
             } else if (type === 'executetask') {
                 // parse the notification message
                 const parsedMessage: AgentReminder = JSON.parse(evt.Message);
-                // parse then remider message
+                // parse then reminder message
                 const remiderMessage: {
                     /**
                      * Type of action
@@ -332,13 +347,13 @@ export class TMACEventService {
                                     });
 
                                 // complete the reminder
-                                this.reminderActionExecuted('Completed', parsedMessage.ID);
+                                this.updateReminderStatus('Completed', parsedMessage.ID);
                             } else if (resp === 'reject') {
                                 // reject the reminder
-                                this.reminderActionExecuted('Rejected', parsedMessage.ID);
+                                this.updateReminderStatus('Rejected', parsedMessage.ID);
                             } else {
                                 // snooze the reminder
-                                this.reminderActionExecuted('Snooze', parsedMessage.ID);
+                                this.updateReminderStatus('Snooze', parsedMessage.ID);
                                 // show an alert for auto snooze
                                 this._appUIService.showSnackbar('Make call task is snoozed', 'info');
                             }
@@ -389,10 +404,10 @@ export class TMACEventService {
                                     });
 
                                 // complete the reminder
-                                this.reminderActionExecuted('Completed', parsedMessage.ID);
+                                this.updateReminderStatus('Completed', parsedMessage.ID);
                             } else if (resp === 'reject') {
                                 // reject the reminder
-                                this.reminderActionExecuted('Rejected', parsedMessage.ID);
+                                this.updateReminderStatus('Rejected', parsedMessage.ID);
                             } else {
                                 // show an alert for auto snooze
                                 this._appUIService.showSnackbar('Change status task is snoozed', 'info');
@@ -457,12 +472,12 @@ export class TMACEventService {
         } catch (error) {
             TUtils.Logger.log('Exception in AgentNotificaitonEvent', error);
         }
-    };
+    }
 
     /**
      * Remider action executed method to update agent reminder
      */
-    private reminderActionExecuted(status: string, id: string): void {
+    private updateReminderStatus(status: string, id: string): void {
         // check if completed or rejected
         SDKClient.updateAgentReminder({
             id,
@@ -482,7 +497,7 @@ export class TMACEventService {
             state: evt.ColorCode,
             duration: 10000
         });
-    };
+    }
 
     /**
      * To process HoldTimerEvent
@@ -494,19 +509,19 @@ export class TMACEventService {
             message: `Interaction is on hold for ${evt.HoldTimeString}`,
             state: evt.ColorCode
         });
-    };
+    }
 
     /**
-     * Quiz Event
+     * To process Quiz Event
      * @param {QuizEvent} evt
      */
     private QuizEvent = (evt: QuizEvent): void => {
         const data = JSON.parse(evt.JsonData);
         // get assist widget config
-        const title = `${data.Title || 'Custom'} - ${data.params.intentname}`;
+        const title = `${data.Title || 'Custom'} - ${data.params.intentName}`;
         const icon = data.Icon || '';
-        const width = data.Width || 600;
-        const height = data.Height || 500;
+        const width = data.Width || 1000;
+        const height = data.Height || 700;
         const actions = data.Actions || ['destroy'];
         const viewState = data.ViewState || 'restore';
 
@@ -522,13 +537,14 @@ export class TMACEventService {
         Object.keys(data.params).forEach((k) => {
             url.searchParams.append(k, data.params[k]);
         });
+
         const { agentId } = SDKClient.getAgentData();
         url.searchParams.append('agentId', agentId);
 
         widget.Data.Url = url.toString();
 
         this._aotWidgetService.addWidget(widget);
-    };
+    }
 
     /**
      * Tp process GenericInteractionEvent
@@ -575,7 +591,7 @@ export class TMACEventService {
         } else {
             this.promptTCMWQDACRequest(evt);
         }
-    };
+    }
 
     /**
      * To process TCM WQ DAC request
@@ -654,7 +670,47 @@ export class TMACEventService {
         this._remiderTaskDialog.tcmWQVoice = null;
         // close the generic interaction in server
         SDKClient.closeInteraction(evt.InteractionID.toString());
-    };
+    }
+
+    /**
+     * To process AgentReminderEvent
+     * 
+     * @param {AgentReminderEvent} evt
+     */
+    private AgentReminderEvent = (evt: AgentReminderEvent) => {
+        evt.Reminders.forEach((item: AgentReminder) => {
+            // check if the ref is already opened
+            const ref = this._remiderTaskDialog.reminder?.filter((r) => r.id === item.ID)?.length > 0;
+
+            // check if the dialog is opened for this ID
+            if (!ref) {
+                const dialogRef = this._appUIService.showRemiderTaskModal(
+                    'reminder',
+                    item.Message,
+                    `Reminder @ ${item.RemindDate} ${item.RemindTime}`
+                );
+
+                this._remiderTaskDialog.reminder.push({
+                    id: item.ID,
+                    ref: dialogRef
+                });
+
+                dialogRef.afterClosed().subscribe((resp) => {
+                    if (resp === 'accept') {
+                        this.updateReminderStatus('Completed', item.ID);
+                    }
+                    else if (resp.includes('snooze')) {
+                        const time = resp.split(':')[1];
+                        this._appUIService.showSnackbar(`Reminder is snoozed for ${time} mins`, 'info');
+                        this.updateReminderStatus(`Snooze:${time}`, item.ID);
+                    }
+
+                    // remove the dialog from ref
+                    this._remiderTaskDialog.reminder = this._remiderTaskDialog.reminder.filter((r) => r.id !== item.ID);
+                });
+            }
+        });
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Public Methods
@@ -681,6 +737,7 @@ export class TMACEventService {
         SDKClient.events.on('ACWTimerEvent', this.ACWTimerEvent);
         SDKClient.events.on('HoldTimerEvent', this.HoldTimerEvent);
         SDKClient.events.on('QuizEvent', this.QuizEvent);
+        SDKClient.events.on('AgentReminderEvent', this.AgentReminderEvent);
     }
 
     /**
@@ -696,6 +753,7 @@ export class TMACEventService {
         SDKClient.events.off('ACWTimerEvent', this.ACWTimerEvent);
         SDKClient.events.off('HoldTimerEvent', this.HoldTimerEvent);
         SDKClient.events.off('QuizEvent', this.QuizEvent);
+        SDKClient.events.off('AgentReminderEvent', this.AgentReminderEvent);
 
         // unsubscribe from all subscriptions
         this._unsubscribeAll.next();
