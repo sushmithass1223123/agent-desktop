@@ -18,19 +18,19 @@ export class RaceCarTrackComponent implements OnInit, AfterViewInit, OnChanges {
     @Input() leaders: ResGamification[];
     @Input() highest: number;
 
-    constructor() {}
+    constructor() { }
 
-    ngOnInit(): void {}
+    ngOnInit(): void { }
 
     ngAfterViewInit() {
         this.leaders?.forEach((l, i) => {
             const percent = (l.TotalPoints * 100) / this.highest;
             if (this.cars?._results[i] && this.boards?._results[i] && this.names?._results[i]) {
                 this.cars._results[i].nativeElement.style.transform = `translate(${percent}px , ${this.yPositions[i]}px)`;
-                this.boards._results[i].nativeElement.style.transform = `translate(${percent + (percent < 10 ? 100 : 0)}px , ${
-                    this.yPositions[i]
-                }px)`;
-                this.names._results[i].nativeElement.innerHTML = l.AgentName || l.AgentId;
+                this.boards._results[i].nativeElement.style.transform = `translate(${percent + (percent < 10 ? 100 : 0)}px , ${this.yPositions[i]
+                    }px)`;
+                this.names._results[i].nativeElement.innerHTML =
+                    (l.AgentName || l.AgentId).length > 6 ? (l.AgentName || l.AgentId).slice(0, 6) + '...' : (l.AgentName || l.AgentId);
             }
         });
     }
@@ -44,9 +44,8 @@ export class RaceCarTrackComponent implements OnInit, AfterViewInit, OnChanges {
                 const percent = (l.TotalPoints * 100) / this.highest;
                 if (this.cars?._results[i] && this.boards?._results[i] && this.names?._results[i]) {
                     this.cars._results[i].nativeElement.style.transform = `translate(${percent}px , ${this.yPositions[i]}px)`;
-                    this.boards._results[i].nativeElement.style.transform = `translate(${percent + (percent < 10 ? 100 : 0)}px , ${
-                        this.yPositions[i]
-                    }px)`;
+                    this.boards._results[i].nativeElement.style.transform = `translate(${percent + (percent < 10 ? 100 : 0)}px , ${this.yPositions[i]
+                        }px)`;
                     this.names._results[i].nativeElement.innerHTML = l.AgentName || l.AgentId;
                 }
             });

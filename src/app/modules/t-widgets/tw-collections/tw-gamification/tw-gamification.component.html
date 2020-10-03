@@ -20,9 +20,9 @@
             !this.dashboardState.error
         "
         fxLayout="row wrap"
-        fxLayoutAlign="center center"
         class="p-8 gamification-cards"
     >
+        <!-- fxLayoutAlign="center center" -->
         <div fxFlex="20" class="top-performers-card">
             <p class="mat-title mb-8">Top Performers</p>
             <div *ngIf="leaderBoardRes.data.length" fusePerfectScrollbar class="records-list h-100-p px-12">
@@ -187,17 +187,23 @@
             <p class="mat-title mb-8">My Performance</p>
             <div *ngIf="getAgentProgressRes.data.length" fusePerfectScrollbar class="h-100-p">
                 <div *ngFor="let p of getAgentProgressRes.data; trackBy: pointsAssigned" fxLayout fxLayoutAlign="space-between center" class="mb-16">
+                    <ng-container [ngSwitch]="p.Channel | lowercase">
+                        <mat-icon *ngSwitchCase="'chat'"> chat </mat-icon>
+                        <mat-icon *ngSwitchCase="'voice'"> phone </mat-icon>
+                    </ng-container>
                     <span fxFlex="35" class="text-center border-right-secondary"> {{ p.Channel }}{{ p.Channel ? '_' : '' }}{{ p.MetricName }}</span>
                     <mat-slider
                         fxFlex="30"
                         [value]="p.MetricAverageValue"
                         step="1"
                         [ngClass]="
-                            (p.Channel || '').toLowerCase().includes('total')
-                                ? 'green-slider'
-                                : p.MetricAverageValue < p.MetricMaxValue
-                                ? 'green-slider'
-                                : 'red-slider'
+                            p.MetricAverageValue < p.MetricMaxValue
+                                ? (p.Channel || '').toLowerCase().includes('total')
+                                    ? 'green-slider'
+                                    : 'red-slider'
+                                : (p.Channel || '').toLowerCase().includes('total')
+                                ? 'red-slider'
+                                : 'green-slider'
                         "
                         [max]="p.MetricMaxValue"
                     ></mat-slider>

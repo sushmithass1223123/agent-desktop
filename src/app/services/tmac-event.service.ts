@@ -26,6 +26,9 @@ import { AppDataService } from './app-data.service';
 import { AppUiService } from './app-ui.service';
 import { InteractionManagerService } from './interaction-manager.service';
 
+/**
+ *  Componentless Event service 
+ */
 @Injectable({
     providedIn: 'root'
 })
