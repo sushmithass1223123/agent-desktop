@@ -145,6 +145,7 @@
                         mat-flat-button
                         [disabled]="status !== 'connected'"
                         matTooltip="Transfer"
+                        (click)="openTransferConferenceDialog('Transfer', 'phone_forwarded')"
                     >
                         <mat-icon>phone_forwarded</mat-icon>
                     </button>
@@ -153,6 +154,7 @@
                         mat-flat-button
                         [disabled]="status !== 'connected'"
                         matTooltip="Conference"
+                        (click)="openTransferConferenceDialog('Conference', 'group')"
                     >
                         <mat-icon>group</mat-icon>
                     </button>

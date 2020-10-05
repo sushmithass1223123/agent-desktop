@@ -15,9 +15,9 @@
             <div *ngFor="let cb of getDashboardDataRes.data.callbacks" class="callback mb-20" fxLayout fxLayoutAlign="space-between center">
                 <div fxFlex="65" fxLayout fxLayoutAlign="start center" fxLayoutGap="20px">
                     <div mat-card-avatar class="border-info">
-                        <mat-icon> textsms </mat-icon>
+                        <mat-icon> phone_callback </mat-icon>
                     </div>
-                    <span class="font-weight-600"> SMS with {{ cb.contact.name }} </span>
+                    <span class="font-weight-600"> Callback with {{ cb.contact.name }} </span>
                 </div>
                 <small fxFlex="30" class="font-weight-600">
                     {{ cb.contact.directAgentScheduleTime }}

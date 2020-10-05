@@ -1,11 +1,15 @@
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
+import * as _ from 'lodash';
 import { takeUntil } from 'rxjs/operators';
+import { SDKClient } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-transfer-interaction',
@@ -15,9 +19,12 @@ import { takeUntil } from 'rxjs/operators';
     animations: fuseAnimations
 })
 export class TwTransferInteractionComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-
-    // holds all the data related to this widget from the config
+    /**
+     * Holds all the data related to this widget from the config
+     */
     @Input() data: IWidget;
+
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     fuseConfig: FuseConfig;
 
@@ -28,23 +35,54 @@ export class TwTransferInteractionComponent extends TWidgetWrapper implements On
             label: 'Agent List',
             textLabel: 'Agent ID'
         },
-        {
-            key: 'skillList',
-            label: 'Skill List',
-            textLabel: 'Skill'
-        }
+        // {
+        //     key: 'skillList',
+        //     label: 'Skill List',
+        //     textLabel: 'Skill'
+        // }
     ];
     activeSwitcher = 'agentList';
     searchTerm = '';
     agentListTable = {
         source: new MatTableDataSource([]),
-        columns: ['FirstName', 'LastName', 'AgentID', 'Status']
+        agentList: [],
+        loading: true,
+        columns: ['FirstName', 'LastName', 'AgentID', 'CurrentAgentStatus']
     };
 
     skillListTable = {
         source: new MatTableDataSource([]),
         columns: ['Name', 'VDN', 'ID', 'Stf', 'Avl', 'CIQ']
     };
+    /**
+     * Skill list to filter agent list based on skill
+     */
+    allSkills: any;
+    /**
+     * Selected skill for agent list filter
+     */
+    selectedSkill: any;
+    /**
+     * Channel to transfer/conference
+     */
+    channelPrefix: string;
+    /**
+     * Search form
+     */
+    advancedSearchForm = new FormGroup({
+        email: new FormControl(''),
+        queue: new FormControl(''),
+        fromDate: new FormControl(''),
+        fromTime: new FormControl(''),
+        toDate: new FormControl(''),
+        toTime: new FormControl(''),
+        subject: new FormControl(''),
+        content: new FormControl('')
+    });
+    /**
+     * Open search form flag
+     */
+    openSearch: boolean;
 
     /**
      * Constructor
@@ -69,6 +107,8 @@ export class TwTransferInteractionComponent extends TWidgetWrapper implements On
         // call the wrapper init method
         this.initWrapper(this.data);
 
+        this.channelPrefix = this.data.Data?.ChannelPrefix || '';
+
         this._fuseConfigService.config
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe(
@@ -77,6 +117,22 @@ export class TwTransferInteractionComponent extends TWidgetWrapper implements On
                 }
             );
 
+        // get wallboard skills
+        SDKClient.getTmacWallboardSkills()
+            .then((dt) => {
+                let response: any[] = dt.response;
+                if (response.length > 0) {
+                    // filter the skill for the channel
+                    if (this.channelPrefix) {
+                        response = response.filter(r => r.SkillName.startsWith(this.channelPrefix));
+                    }
+                    // assign all the skills
+                    this.allSkills = _.orderBy(response, ['SkillName'], ['asc']);
+                }
+            });
+
+        // load agent list
+        this.loadAgentList(false);
     }
 
     /**
@@ -91,8 +147,6 @@ export class TwTransferInteractionComponent extends TWidgetWrapper implements On
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
 
-
-
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
@@ -101,8 +155,55 @@ export class TwTransferInteractionComponent extends TWidgetWrapper implements On
         this.activeSwitcher = item.key;
     }
 
-    public filterAgents(): void {
+    /**
+     * To filter agent list based on selected skill
+     * 
+     */
+    public filterAgentList(): void {
+        if (this.agentListTable.agentList.length > 0 && this.selectedSkill) {
+            let list = this.agentListTable.agentList;
+            list = list.filter((d) => d.AgentVoiceSkillsAsString?.includes(this.selectedSkill));
+            this.agentListTable.source.data = list;
+        }
+    }
 
+    /**
+     * To clear skill filter
+     */
+    public clearAgentListFilter(): void {
+        if (this.agentListTable.agentList.length > 0) {
+            this.agentListTable.source.data = this.agentListTable.agentList;
+            this.selectedSkill = null;
+        }
+    }
+
+    /**
+     * To load agent list
+     */
+    public loadAgentList(reload: boolean): void {
+        this.agentListTable.loading = true;
+        // get agent list
+        SDKClient.getAgentListStaffed()
+            .then((dt) => {
+                this.agentListTable.loading = false;
+                // check if data found
+                if (dt.response.length > 0) {
+                    // filter the same agent and bots from the list
+                    dt.response = dt.response.filter((r: any) => r.LoginID !== SDKClient.getAgentData().agentId &&
+                        r.AgentProfile.AccessRole.toLowerCase() !== 'chatbot');
+                    this.agentListTable.source.data = dt.response;
+                    this.agentListTable.agentList = dt.response;
+                    this.agentListTable.source.sort = this.sort;
+
+                    // if reload the filter after getting the data
+                    if (reload) {
+                        this.filterAgentList();
+                    }
+                }
+            })
+            .catch(() => {
+                this.agentListTable.loading = false;
+            });
     }
 }
 

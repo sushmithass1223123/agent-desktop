@@ -121,7 +121,7 @@
 
 .tw-accordion {
     & + &-menu {
-        // transition: padding 0.3s ease-in-out;
+        transition: padding 0.3s ease-in-out;
         max-height: 0;
         overflow: hidden;
         background-color: inherit;

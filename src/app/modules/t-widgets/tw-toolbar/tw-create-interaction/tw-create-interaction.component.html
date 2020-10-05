@@ -10,7 +10,14 @@
     </button>
 
     <!-- This template displays the overlay content and is connected to the button -->
-    <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="channelList" [cdkConnectedOverlayOpen]="channels.length">
+    <ng-template
+        cdkConnectedOverlay
+        [cdkConnectedOverlayOrigin]="channelList"
+        [cdkConnectedOverlayOpen]="channels.length"
+        cdkConnectedOverlayHasBackdrop
+        cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+        (overlayOutsideClick)="channels = []"
+    >
         <div fxLayout="column" fxLayoutGap="10px" class="mt-12" [@widgetStagger]="channels.length">
             <button
                 mat-mini-fab

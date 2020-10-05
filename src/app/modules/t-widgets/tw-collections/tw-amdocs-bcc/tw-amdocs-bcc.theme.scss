@@ -6,24 +6,29 @@
     $is-dark: map-get($theme, is-dark);
     $mat-warn: map-get($theme, warn);
 
-    tw-ad-amdocs-bcc {
+    tw-amdocs-bcc {
         mat-form-field {
             &.custom {
                 .mat-form-field-wrapper {
                     .mat-form-field-outline {
                         @if ($is-dark) {
                             background-color: map-get($background, hover);
+                        } @else {
+                            background-color: #ffffff;
                         }
                     }
                 }
-            }
-        }
-        .mat-form-field-wrapper {
-            .mat-form-field-flex {
-                .mat-form-field-infix {
-                    textarea {
-                        @if ($is-dark) {
-                            background-color: map-get($background, hover);
+
+                .mat-form-field-wrapper {
+                    .mat-form-field-flex {
+                        .mat-form-field-infix {
+                            textarea {
+                                @if ($is-dark) {
+                                    background-color: map-get($background, hover);
+                                } @else {
+                                    background-color: #ffffff;
+                                }
+                            }
                         }
                     }
                 }

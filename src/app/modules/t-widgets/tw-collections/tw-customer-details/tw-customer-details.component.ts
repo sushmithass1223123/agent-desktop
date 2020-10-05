@@ -38,7 +38,7 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
         this.interactionId = this.data.InteractionDetails.InteractionID;
 
         // get the customer info config
-        this.customerInfo = this.data.Data.CustomerInfo || [];
+        this.customerInfo = [...this.data.Data.CustomerInfo] || [];
 
         // get the event from event bag to make sure no events are missed
         const eventBag = this._tmacEventService.get(this.interactionId);

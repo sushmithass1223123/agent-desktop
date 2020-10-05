@@ -96,10 +96,6 @@ export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDes
         this.currentAux = evt.Status;
     }
 
-    menuOpened(opened: boolean): void {
-        this.opened = opened;
-    }
-
     changeStatus(item: IAUXCodes): void {
         // show the progress bar
         this._fuseProgressBarService.show();

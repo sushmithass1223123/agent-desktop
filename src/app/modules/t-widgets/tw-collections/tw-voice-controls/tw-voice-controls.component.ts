@@ -3,12 +3,14 @@ import { MatButton } from '@angular/material/button';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
+import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { InteractionRef, IWidget } from 'app/interfaces';
+import { TwWidgetModel } from 'app/models';
 import { Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
@@ -70,6 +72,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     processMediaMessages = false;
     mediaServerMessages = [];
     audioPlayer: any;
+    /**
+     * Transfer/Conference widgetf
+     */
+    tranfConfWidget: IWidget;
 
     constructor(
         private _fuseConfigService: FuseConfigService,
@@ -77,7 +83,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         private _appDataService: AppDataService,
         private _interactionManagerService: InteractionManagerService,
         private _tmacEventService: TMACEventService,
-        private _appUIService: AppUiService
+        private _appUIService: AppUiService,
+        private _aotWidgetService: AOTWidgetService
     ) {
         super();
     }
@@ -265,6 +272,12 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // stop duration timer
         this.stopTimer.next();
+
+        // destroy the transfer/conf widget
+        if (this.tranfConfWidget) {
+            this._aotWidgetService.destroyWidget(this.tranfConfWidget.ID);
+            this.tranfConfWidget = null;
+        }
     }
 
     private CallHoldEvent = (evt: CallHoldEvent) => {
@@ -600,7 +613,12 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 }
                 else {
                     this._appUIService.showSnackbar('Close interaction failed', 'failure');
+                    this.toggleButton(false, btn);
                 }
+            })
+            .catch(() => {
+                this._appUIService.showSnackbar('Close interaction failed', 'failure');
+                this.toggleButton(false, btn);
             });
     }
 
@@ -616,8 +634,13 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     // disconnect call success
                 }
                 else {
+                    this.toggleButton(false, btn);
                     this._appUIService.showSnackbar('Disconnect call failed', 'failure');
                 }
+            })
+            .catch(() => {
+                this._appUIService.showSnackbar('Disconnect call failed', 'failure');
+                this.toggleButton(false, btn);
             });
     }
 
@@ -792,5 +815,36 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     });
             }
         });
+    }
+
+    /**
+     * To open transfer dialog
+     * 
+     * @param type
+     * @param icon
+     */
+    public openTransferConferenceDialog(type: string, icon: string): void {
+        const customUrl = this.data.Data.TransferConferenceUtilsUrl;
+        // check if url is valid
+        if (customUrl) {
+            // create a widget model
+            const widget = new TwWidgetModel(`${type} Call`, 'tw-custom', icon);
+            widget.Config.Position.W = 550;
+            widget.Config.Position.H = 550;
+            widget.Config.Actions = ['minimize', 'destroy'];
+            widget.Config.ViewState = 'restore';
+
+            // get agent data
+            const { agentId, deviceId, tmacServer } = SDKClient.getAgentData();
+            const callType = type === 'transfer' ? 'Transfer' : 'Conference';
+            // create map object for custom widget query string
+            widget.Data.MapObject = {
+                _requestArgs: `${agentId},${deviceId},${tmacServer},${callType},${this.interactionId}`
+            };
+            widget.Data.Url = customUrl;
+            this._aotWidgetService.addWidget(widget);
+            // assign to the variable
+            this.tranfConfWidget = widget;
+        }
     }
 }

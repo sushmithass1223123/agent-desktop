@@ -14,6 +14,11 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
 
     agentData: IAgentData;
 
+    /**
+     * Menu opened flag
+     */
+    opened: boolean;
+
     constructor() {
         super();
     }

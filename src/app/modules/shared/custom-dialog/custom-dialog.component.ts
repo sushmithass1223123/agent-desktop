@@ -20,13 +20,14 @@ export class CustomDialogComponent implements OnInit {
      *
      * @param {CustomDialogData} data
      */
-    constructor(@Inject(MAT_DIALOG_DATA) public data: CustomDialogData) { }
+    constructor(@Inject(MAT_DIALOG_DATA) public data: CustomDialogData) {
+        this.promptData = '';
+    }
 
     /**
      * OnInit
      */
     ngOnInit(): void {
-        this.promptData = '';
-    }
 
+    }
 }
