@@ -1,5 +1,14 @@
 <div fxFlex fxFill fxLayout="row" fxLayoutAlign="start center" *ngIf="agentData.agentName">
-    <button mat-button class="user-button" [matMenuTriggerFor]="userMenu" fxLayout="column" fxLayoutAlign="center center">
+    <button
+        mat-button
+        class="user-button"
+        [ngClass]="{ opened: opened }"
+        (menuOpened)="opened = true"
+        (menuClosed)="opened = false"
+        [matMenuTriggerFor]="userMenu"
+        fxLayout="column"
+        fxLayoutAlign="center center"
+    >
         <div fxLayout="row" fxLayoutAlign="center center" class="position-relative">
             <img
                 class="avatar mr-0 mat-elevation-z3"
@@ -31,7 +40,7 @@
         <span class="mat-caption agent-status" *ngIf="data.Data.Status">{{ agentData.agentStatus }}</span>
     </div>
 
-    <mat-menu #userMenu="matMenu" [overlapTrigger]="false" class="agent-info-menu">
+    <mat-menu #userMenu="matMenu" [overlapTrigger]="false" class="agent-info-menu custom">
         <button mat-menu-item fxLayout fxLayoutAlign=" center">
             <mat-icon>perm_identity</mat-icon>
             <span>{{ agentData.agentId }}</span>

@@ -1,5 +1,5 @@
 <div class="w-100-p h-100-p tw-widget-container">
-    <div fxFill fxFlex fxLayout="row wrap" fxLayoutAlign=" none" fxLayoutGap.gt-md="8px">
+    <div fxFill fxFlex fxLayout="row wrap" fxLayoutAlign=" none">
         <tw-template fxFlex.gt-md="33" class="static-widget-grid" *ngIf="staticWidgets.length > 0" [widgets]="staticWidgets"></tw-template>
         <tw-template fxFlex.gt-md="66" class="dynamic-widget-grid" *ngIf="dynamicWidgets.length > 0" [widgets]="dynamicWidgets"></tw-template>
         <div class="tw-aot-fab" cdkDrag cdkDragBoundary=".tw-widget-container" *ngIf="aotWidgets.length > 0">

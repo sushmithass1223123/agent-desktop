@@ -36,17 +36,9 @@ workbench-email {
     }
 
     .advanced-search-form {
-        border-radius: 10px;
-        width: 100%;
-        padding-bottom: 8px;
-        top: 100%;
         display: none;
         &.show {
             display: block;
-        }
-
-        .form-field {
-            margin-bottom: 8px;
         }
     }
 

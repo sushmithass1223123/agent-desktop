@@ -154,7 +154,7 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
         });
 
         // set the interaction id from data
-        this.interactionId = this.data.InteractionDetails.InteractionID;
+        this.interactionId = this.data.InteractionDetails?.InteractionID;
 
         SDKClient.events.on('OnNLPDataEvent', this.OnNLPDataEvent);
     }

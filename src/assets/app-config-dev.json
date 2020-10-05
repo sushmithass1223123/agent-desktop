@@ -118,10 +118,18 @@
                                 "Data": {
                                     "Channels": [
                                         {
-                                            "Name": "SMS",
+                                            "Name": "Send SMS",
+                                            "Enable": true,
                                             "Type": "sms",
                                             "Icon": "sms",
-                                            "Enable": true
+                                            "Status": ""
+                                        },
+                                        {
+                                            "Name": "Make Call",
+                                            "Enable": true,
+                                            "Type": "voice",
+                                            "Icon": "call",
+                                            "Status": ""
                                         }
                                     ]
                                 }
@@ -492,7 +500,7 @@
                                     }
                                 },
                                 {
-                                    "Name": "Gamification",
+                                    "Name": "Coins and Badges",
                                     "Description": "",
                                     "Key": "AgentGamification",
                                     "Type": "tw-ad-gamification",
@@ -636,7 +644,7 @@
                                     }
                                 },
                                 {
-                                    "Name": "Gamification",
+                                    "Name": "Gamification Leaderboard",
                                     "Description": "",
                                     "Key": "Gamification",
                                     "Type": "tw-gamification",
@@ -679,7 +687,7 @@
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
-                                        "Icon": "chat",
+                                        "Icon": "contact_support",
                                         "Class": "",
                                         "Position": {
                                             "X": 0,
@@ -1147,7 +1155,8 @@
                                                                 }
                                                             ]
                                                         }
-                                                    }
+                                                    },
+                                                    "TransferConferenceUtilsUrl": "https://dice.tetherfi.cloud/TMAC_Trans_Conf/index.html?r=_requestArgs"
                                                 }
                                             },
                                             {

@@ -34,26 +34,6 @@
                 }
             }
 
-            .advanced-search-form {
-                @if ($is-dark == true) {
-                    color: #fafafa;
-                    background-color: map-get($accent, 700);
-                } @else {
-                    color: rgba(0, 0, 0, 0.87);
-                    background-color: #f1f1f1;
-                }
-
-                .adv-search-btn {
-                    @if ($is-dark == true) {
-                        color: rgba(0, 0, 0, 0.87);
-                        background-color: map-get($accent, default);
-                    } @else {
-                        color: #fafafa;
-                        background-color: map-get($primary, default);
-                    }
-                }
-            }
-
             .email-workbench {
                 @if ($is-dark == true) {
                     background-color: map-get($background, hover);

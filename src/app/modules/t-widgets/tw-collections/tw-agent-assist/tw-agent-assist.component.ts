@@ -6,7 +6,7 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import * as _ from 'lodash';
-import { AgentAssistDataEvent, AgentNotificaitonEvent, CallerIntentEvent, GenericEvent, IUIEvent, SDKClient, TextChatRemoteUserConnectedEvent } from 'tmac-sdk';
+import { AgentAssistDataEvent, CallerIntentEvent, GenericEvent, IUIEvent, SDKClient, TextChatRemoteUserConnectedEvent } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-agent-assist',
@@ -84,13 +84,13 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         this.initWrapper(this.data);
 
         // set the interaction id from data
-        this.interactionId = this.data.InteractionDetails.InteractionID;
+        this.interactionId = this.data.InteractionDetails?.InteractionID;
 
         // assign the widget data
         this.widgetData = this.data.Data || new Object();
 
         // assign the UCID
-        this.ucid = this.data?.InteractionDetails.UCID || '';
+        this.ucid = this.data?.InteractionDetails?.UCID || '';
 
         // get the event from event bag to make sure no events are missed
         const eventBag = this._tmacEventService.get(this.interactionId);

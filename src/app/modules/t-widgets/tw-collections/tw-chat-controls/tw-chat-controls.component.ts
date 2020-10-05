@@ -113,6 +113,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * Line ID
      */
     lineId: string;
+    /**
+     * Transfer/Conference widgetf
+     */
+    tranfConfWidget: IWidget;
 
     @ViewChildren(FusePerfectScrollbarDirective) directiveScrolls: QueryList<FusePerfectScrollbarDirective>;
     @ViewChildren('replyInput') replyInputField: any;
@@ -765,6 +769,17 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     break;
             }
         }
+
+        // show the alert
+        if (alertMessage) {
+            this._appUIService.showSnackbar(alertMessage);
+        }
+
+        // destroy the transfer/conf widget
+        if (this.tranfConfWidget) {
+            this._aotWidgetService.destroyWidget(this.tranfConfWidget.ID);
+            this.tranfConfWidget = null;
+        }
     }
 
     /**
@@ -1133,7 +1148,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         // check the response
                         if (dt.response && dt.response.ResultCode === 0) {
                             this._appUIService.showSnackbar('Interaction closed successfully');
-
+                            // remove the interaction reference
+                            this._interactionManagerService.removeInteraction(dt.response.InteractionID);
                         }
                         else {
                             // enable if something goes wrong
@@ -1354,6 +1370,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             };
             widget.Data.Url = customUrl;
             this._aotWidgetService.addWidget(widget);
+            // assign to the variable
+            this.tranfConfWidget = widget;
         }
     }
 }

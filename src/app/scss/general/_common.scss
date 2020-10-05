@@ -120,3 +120,15 @@
         color: $tw-dark !important;
     }
 }
+
+.advanced-search-form {
+    border-radius: 10px;
+    min-width: 400px;
+    width: 100%;
+    padding-bottom: 8px;
+    top: 100%;
+   
+    .form-field {
+        margin-bottom: 8px;
+    }
+}
