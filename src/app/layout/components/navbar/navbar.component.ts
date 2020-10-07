@@ -9,6 +9,9 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 
+/**
+ * Navbar component
+ */
 @Component({
     selector: 'navbar',
     templateUrl: './navbar.component.html',

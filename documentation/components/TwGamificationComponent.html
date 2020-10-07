@@ -1,0 +1,2597 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>agent-desktop documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	      <link rel="stylesheet" href="../styles/style.css">
+    </head>
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top visible-xs">
+            <a href="../" class="navbar-brand">agent-desktop documentation</a>
+            <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="hidden-xs menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+<ol class="breadcrumb">
+  <li>Components</li>
+  <li>TwGamificationComponent</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="active">
+            <a href="#info" role="tab" id="info-tab" data-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li >
+            <a href="#source" role="tab" id="source-tab" data-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li >
+            <a href="#templateData" role="tab" id="templateData-tab" data-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li >
+            <a href="#styleData" role="tab" id="styleData-tab" data-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li >
+            <a href="#tree" role="tab" id="tree-tab" data-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="c-info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>src/app/modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component.ts</code>
+</p>
+
+    <p class="comment">
+        <h3>Description</h3>
+    </p>
+    <p class="comment">
+        <p>Sample Component for T-widgets</p>
+
+    </p>
+
+    <p class="comment">
+        <h3>Extends</h3>
+    </p>
+    <p class="comment">
+                <code><a href="../classes/TWidget.html" target="_self" >TWidgetWrapper</a></code>
+    </p>
+
+    <p class="comment">
+        <h3>Implements</h3>
+    </p>
+    <p class="comment">
+                    <code><a href="https://angular.io/api/core/OnInit" target="_blank" >OnInit</a></code>
+                    <code><a href="https://angular.io/api/core/OnDestroy" target="_blank" >OnDestroy</a></code>
+    </p>
+
+
+<section>
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover">
+        <tbody>
+
+
+            <tr>
+                <td class="col-md-3">encapsulation</td>
+                <td class="col-md-9"><code>ViewEncapsulation.None</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>tw-gamification</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./tw-gamification.component.scss</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./tw-gamification.component.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section>
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#coinsImages">coinsImages</a>
+                            </li>
+                            <li>
+                                <a href="#currentUser">currentUser</a>
+                            </li>
+                            <li>
+                                <a href="#dashboardState">dashboardState</a>
+                            </li>
+                            <li>
+                                <a href="#getAgentLevelsRes">getAgentLevelsRes</a>
+                            </li>
+                            <li>
+                                <a href="#getAgentProgressRes">getAgentProgressRes</a>
+                            </li>
+                            <li>
+                                <a href="#getQuizInfoRes">getQuizInfoRes</a>
+                            </li>
+                            <li>
+                                <a href="#leaderBoardRes">leaderBoardRes</a>
+                            </li>
+                            <li>
+                                <a href="#OnAssignPointsToAgent">OnAssignPointsToAgent</a>
+                            </li>
+                            <li>
+                                <a href="#OnLoadMetricsToAgent">OnLoadMetricsToAgent</a>
+                            </li>
+                            <li>
+                                <a href="#polling">polling</a>
+                            </li>
+                            <li>
+                                <a href="#pollingInterval">pollingInterval</a>
+                            </li>
+                            <li>
+                                <a href="#requiredUrls">requiredUrls</a>
+                            </li>
+                            <li>
+                                <a href="#scoreBgs">scoreBgs</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#badgeName">badgeName</a>
+                            </li>
+                            <li>
+                                <a href="#fetchLeaderBoard">fetchLeaderBoard</a>
+                            </li>
+                            <li>
+                                <a href="#getAgentLevels">getAgentLevels</a>
+                            </li>
+                            <li>
+                                <a href="#getAgentProgress">getAgentProgress</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#getMissingConfigs">getMissingConfigs</a>
+                            </li>
+                            <li>
+                                <a href="#getQuizInfo">getQuizInfo</a>
+                            </li>
+                            <li>
+                                <a href="#ngOnDestroy">ngOnDestroy</a>
+                            </li>
+                            <li>
+                                <a href="#ngOnInit">ngOnInit</a>
+                            </li>
+                            <li>
+                                <a href="#pointsAssigned">pointsAssigned</a>
+                            </li>
+                            <li>
+                                <a href="#redeem">redeem</a>
+                            </li>
+                            <li>
+                                <a href="#setCurrenAgentLevel">setCurrenAgentLevel</a>
+                            </li>
+                            <li>
+                                <a href="#setupDashboard">setupDashboard</a>
+                            </li>
+                            <li>
+                                <a href="#valueField">valueField</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Inputs</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#data">data</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section>
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(http: <a href="https://angular.io/api/common/http/HttpClient" target="_blank">HttpClient</a>, appUiService: <a href="../injectables/AppUiService.html">AppUiService</a>, _aotWidgetService: <a href="../injectables/AOTWidgetService.html">AOTWidgetService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="151" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component.ts:151</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div class="io-description"><p>Constructor</p>
+</div>
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>http</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="https://angular.io/api/common/http/HttpClient" target="_blank" >HttpClient</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>appUiService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/AppUiService.html" target="_self" >AppUiService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>_aotWidgetService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/AOTWidgetService.html" target="_self" >AOTWidgetService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+    <section>
+    <h3 id="inputs">Inputs</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="data"></a>
+                        <b>data</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/IWidget.html" target="_self" >IWidget</a></code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="46" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component.ts:46</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>holds all the data related to this widget from the config</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+
+
+    <section>
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="badgeName"></a>
+                    <span class="name">
+                        <b>
+                            badgeName
+                        </b>
+                        <a href="#badgeName"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>badgeName(_: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, field: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="488"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component.ts:488</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>track func for earned badges</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>_</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>field</td>
+                                    <td>
+                                                <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="fetchLeaderBoard"></a>
+                    <span class="name">
+                        <b>
+                            fetchLeaderBoard
+                        </b>
+                        <a href="#fetchLeaderBoard"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>fetchLeaderBoard()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="282"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component.ts:282</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>FetchLeaderboard Data</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAgentLevels"></a>
+                    <span class="name">
+                        <b>
+                            getAgentLevels
+                        </b>
+                        <a href="#getAgentLevels"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getAgentLevels()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="375"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component.ts:375</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Get agent levels</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAgentProgress"></a>
+                    <span class="name">
+                        <b>
+                            getAgentProgress
+                        </b>
+                        <a href="#getAgentProgress"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getAgentProgress()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="335"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component.ts:335</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Gets Agent Progress</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getMissingConfigs"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Private</span>
+                            getMissingConfigs
+                        </b>
+                        <a href="#getMissingConfigs"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getMissingConfigs()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="228"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component.ts:228</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Check for missing app json configs</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Returns : </b>    <code>string[]</code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getQuizInfo"></a>
+                    <span class="name">
+                        <b>
+                            getQuizInfo
+                        </b>
+                        <a href="#getQuizInfo"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getQuizInfo()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="413"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component.ts:413</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Get quiz Information</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngOnDestroy"></a>
+                    <span class="name">
+                        <b>
+                            ngOnDestroy
+                        </b>
+                        <a href="#ngOnDestroy"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngOnDestroy()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="214"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component.ts:214</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngOnInit"></a>
+                    <span class="name">
+                        <b>
+                            ngOnInit
+                        </b>
+                        <a href="#ngOnInit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngOnInit()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="174"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component.ts:174</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>A callback method that is invoked immediately after the default change detector has checked the directive&#39;s data-bound properties for the first time,
+and before any of the view or content children have been checked. It is invoked only once when the directive is instantiated.</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="pointsAssigned"></a>
+                    <span class="name">
+                        <b>
+                            pointsAssigned
+                        </b>
+                        <a href="#pointsAssigned"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>pointsAssigned(_: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, field: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="497"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component.ts:497</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>track by fun for My Performance</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>_</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>field</td>
+                                    <td>
+                                                <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="redeem"></a>
+                    <span class="name">
+                        <b>
+                            redeem
+                        </b>
+                        <a href="#redeem"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>redeem()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="504"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component.ts:504</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Method to redeem points</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="setCurrenAgentLevel"></a>
+                    <span class="name">
+                        <b>
+                            setCurrenAgentLevel
+                        </b>
+                        <a href="#setCurrenAgentLevel"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>setCurrenAgentLevel()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="465"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component.ts:465</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Set current agent level</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="setupDashboard"></a>
+                    <span class="name">
+                        <b>
+                            setupDashboard
+                        </b>
+                        <a href="#setupDashboard"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>setupDashboard()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="247"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component.ts:247</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Makes all api requests</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="valueField"></a>
+                    <span class="name">
+                        <b>
+                            valueField
+                        </b>
+                        <a href="#valueField"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>valueField(_: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, field: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="479"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component.ts:479</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Track by func for coins and points</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>_</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>field</td>
+                                    <td>
+                                                <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section>
+    
+        <h3 id="inputs">
+            Properties
+        </h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="coinsImages"></a>
+                        <span class="name">
+                            <b>
+                            coinsImages</b>
+                            <a href="#coinsImages"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>{
+        Bronze: &#x27;assets/images/vectors/silver-coins-chest.svg&#x27;,
+        Gold: &#x27;assets/images/vectors/gold-coins-chest.svg&#x27;,
+        Silver: &#x27;assets/images/vectors/silver-coins-chest.svg&#x27;,
+        GeneralQuiz: &#x27;assets/images/vectors/general-quiz.svg&#x27;,
+        SingtelGeneralQuiz: &#x27;assets/images/vectors/product-quiz.svg&#x27;
+    }</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="130" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component.ts:130</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Coins Images</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="currentUser"></a>
+                        <span class="name">
+                            <b>
+                            currentUser</b>
+                            <a href="#currentUser"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>    <code>literal type</code>
+
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="100" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component.ts:100</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Current user details</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="dashboardState"></a>
+                        <span class="name">
+                            <b>
+                            dashboardState</b>
+                            <a href="#dashboardState"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>{
+        loading: false,
+        error: false,
+        msg: COMMON_ERR_MESSAGE
+    }</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="91" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component.ts:91</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Current global dashboard state</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="getAgentLevelsRes"></a>
+                        <span class="name">
+                            <b>
+                            getAgentLevelsRes</b>
+                            <a href="#getAgentLevelsRes"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="../interfaces/ResData.html" target="_self" >ResData&lt;any&gt;</a></code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>{
+        error: false,
+        loading: false,
+        data: []
+    }</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="69" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component.ts:69</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>stateful getAgentLevels request</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="getAgentProgressRes"></a>
+                        <span class="name">
+                            <b>
+                            getAgentProgressRes</b>
+                            <a href="#getAgentProgressRes"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="../interfaces/ResData.html" target="_self" >ResData&lt;any[]&gt;</a></code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>{
+        error: false,
+        loading: false,
+        data: []
+    }</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="60" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component.ts:60</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>stateful getAgentProgress request</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="getQuizInfoRes"></a>
+                        <span class="name">
+                            <b>
+                            getQuizInfoRes</b>
+                            <a href="#getQuizInfoRes"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="../interfaces/ResData.html" target="_self" >ResData&lt;null&gt;</a></code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>{
+        error: false,
+        loading: false
+    }</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="78" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component.ts:78</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>stateful getQuizInfo Request</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="leaderBoardRes"></a>
+                        <span class="name">
+                            <b>
+                            leaderBoardRes</b>
+                            <a href="#leaderBoardRes"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>    <code>ResData&lt;ResGamification[]&gt;</code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>{
+        error: false,
+        loading: false,
+        data: []
+    }</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="51" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component.ts:51</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>stateful leaderBoardrequest</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="OnAssignPointsToAgent"></a>
+                        <span class="name">
+                            <b>
+                            OnAssignPointsToAgent</b>
+                            <a href="#OnAssignPointsToAgent"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>() &#x3D;&gt; {...}</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="457" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component.ts:457</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Assign points events</p>
+</div>
+                    </td>
+                </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                          <div class="io-description">
+                                  <b>Parameters :</b>
+                                  <table class="params">
+                                      <thead>
+                                          <tr>
+                                                <td>Name</td>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                                <tr>
+                                                        <td>evt</td>
+                                                </tr>
+                                      </tbody>
+                                  </table>
+                          </div>
+                        </td>
+                    </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="OnLoadMetricsToAgent"></a>
+                        <span class="name">
+                            <b>
+                            OnLoadMetricsToAgent</b>
+                            <a href="#OnLoadMetricsToAgent"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>() &#x3D;&gt; {...}</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="448" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component.ts:448</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>load metrics on login</p>
+</div>
+                    </td>
+                </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                          <div class="io-description">
+                                  <b>Parameters :</b>
+                                  <table class="params">
+                                      <thead>
+                                          <tr>
+                                                <td>Name</td>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                                <tr>
+                                                        <td>evt</td>
+                                                </tr>
+                                      </tbody>
+                                  </table>
+                          </div>
+                        </td>
+                    </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="polling"></a>
+                        <span class="name">
+                            <b>
+                            polling</b>
+                            <a href="#polling"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>    <code>Subscription</code>
+
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="146" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component.ts:146</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Polling subscriptoin</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="pollingInterval"></a>
+                        <span class="name">
+                            <b>
+                            pollingInterval</b>
+                            <a href="#pollingInterval"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>10000</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="141" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component.ts:141</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>polling interval in milliseconds</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="requiredUrls"></a>
+                        <span class="name">
+                            <b>
+                            requiredUrls</b>
+                            <a href="#requiredUrls"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>    <code>[]</code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>[&#x27;LeaderBoardUrl&#x27;, &#x27;AgentProgressUrl&#x27;, &#x27;GetAgentLevelsUrl&#x27;, &#x27;GetQuizInfoUrl&#x27;]</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="151" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component.ts:151</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Required Urls in config</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="scoreBgs"></a>
+                        <span class="name">
+                            <b>
+                            scoreBgs</b>
+                            <a href="#scoreBgs"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>    <code>[]</code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>[&#x27;bg-info&#x27;, &#x27;bg-alt-success&#x27;, &#x27;bg-alt-warning&#x27;, &#x27;bg-alt-danger&#x27;]</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="86" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component.ts:86</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Score Backgrounds</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+</section>
+
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="c-source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { HttpClient } from &#x27;@angular/common/http&#x27;;
+import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from &#x27;@angular/core&#x27;;
+import { AOTWidgetService } from &#x27;@services/aot-widget.service&#x27;;
+import { AppUiService } from &#x27;@services/app-ui.service&#x27;;
+import { TWidgetWrapper } from &#x27;@twidgets/utils/widget-wrapper/tw-wrapper&#x27;;
+import { COMMON_ERR_MESSAGE } from &#x27;app/constants&#x27;;
+import { IAction, IWidget, ResData, ResGamification, ResGamificationBadge } from &#x27;app/interfaces&#x27;;
+import { TwWidgetModel } from &#x27;app/models&#x27;;
+import { sortBy } from &#x27;lodash&#x27;;
+import { interval, Subscription } from &#x27;rxjs&#x27;;
+import { map, takeUntil } from &#x27;rxjs/operators&#x27;;
+import { SDKClient } from &#x27;tmac-sdk&#x27;;
+
+type Coin &#x3D; {
+    /**
+     * Number  of coins
+     */
+    value: number;
+    /**
+     * coin image
+     */
+    image: string;
+    /**
+     * coin name
+     */
+    name: string;
+    /**
+     * whether coins are statically placed
+     */
+    static?: boolean;
+};
+
+/**
+ * Sample Component for T-widgets
+ */
+@Component({
+    selector: &#x27;tw-gamification&#x27;, // make sure you set the selector starts with tw-&lt;widget-name&gt;
+    templateUrl: &#x27;./tw-gamification.component.html&#x27;,
+    styleUrls: [&#x27;./tw-gamification.component.scss&#x27;],
+    encapsulation: ViewEncapsulation.None
+})
+export class TwGamificationComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+    /**
+     * holds all the data related to this widget from the config
+     */
+    @Input() data: IWidget;
+
+    /**
+     * stateful leaderBoardrequest
+     */
+    leaderBoardRes: ResData&lt;ResGamification[]&gt; &#x3D; {
+        error: false,
+        loading: false,
+        data: []
+    };
+
+    /**
+     * stateful getAgentProgress request
+     */
+    getAgentProgressRes: ResData&lt;any[]&gt; &#x3D; {
+        error: false,
+        loading: false,
+        data: []
+    };
+
+    /**
+     * stateful getAgentLevels request
+     */
+    getAgentLevelsRes: ResData&lt;any&gt; &#x3D; {
+        error: false,
+        loading: false,
+        data: []
+    };
+
+    /**
+     * stateful getQuizInfo Request
+     */
+    getQuizInfoRes: ResData&lt;null&gt; &#x3D; {
+        error: false,
+        loading: false
+    };
+
+    /**
+     * Score Backgrounds
+     */
+    scoreBgs &#x3D; [&#x27;bg-info&#x27;, &#x27;bg-alt-success&#x27;, &#x27;bg-alt-warning&#x27;, &#x27;bg-alt-danger&#x27;];
+
+    /**
+     * Current global dashboard state
+     */
+    dashboardState &#x3D; {
+        loading: false,
+        error: false,
+        msg: COMMON_ERR_MESSAGE
+    };
+
+    /**
+     * Current user details
+     */
+    currentUser: {
+        /**
+         * agent Id
+         */
+        agentId: string;
+        /**
+         * Agent name
+         */
+        name: string;
+        /**
+         * Coins for agent
+         */
+        coins: Coin[];
+        /**
+         * agentt&#x27;s badges
+         */
+        badges: ResGamificationBadge[];
+        /**
+         * Total user points
+         */
+        totalPoints: number;
+        /**
+         * current user level
+         */
+        level: number;
+    };
+
+    /**
+     * Coins Images
+     */
+    coinsImages &#x3D; {
+        Bronze: &#x27;assets/images/vectors/silver-coins-chest.svg&#x27;,
+        Gold: &#x27;assets/images/vectors/gold-coins-chest.svg&#x27;,
+        Silver: &#x27;assets/images/vectors/silver-coins-chest.svg&#x27;,
+        GeneralQuiz: &#x27;assets/images/vectors/general-quiz.svg&#x27;,
+        SingtelGeneralQuiz: &#x27;assets/images/vectors/product-quiz.svg&#x27;
+    };
+
+    /**
+     * polling interval in milliseconds
+     */
+    pollingInterval &#x3D; 10000;
+
+    /**
+     * Polling subscriptoin
+     */
+    polling: Subscription;
+
+    /**
+     * Required Urls in config
+     */
+    requiredUrls &#x3D; [&#x27;LeaderBoardUrl&#x27;, &#x27;AgentProgressUrl&#x27;, &#x27;GetAgentLevelsUrl&#x27;, &#x27;GetQuizInfoUrl&#x27;];
+
+    /**
+     * Constructor
+     * @param {FuseConfigService} _fuseConfigService
+     * @param {AppDataService} _appDataService
+     */
+    constructor(
+        private http: HttpClient,
+        private appUiService: AppUiService,
+        private _aotWidgetService: AOTWidgetService
+    ) {
+        super();
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+    // @ Lifecycle hooks
+    // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * A callback method that is invoked immediately after the default change detector has checked the directive&#x27;s data-bound properties for the first time,
+     * and before any of the view or content children have been checked. It is invoked only once when the directive is instantiated.
+     */
+    ngOnInit(): void {
+        // call the wrapper init method
+        this.initWrapper(this.data);
+
+        const { agentId } &#x3D; SDKClient.getAgentData();
+
+        this.currentUser &#x3D; {
+            agentId,
+            name: &#x27;&#x27;,
+            badges: [],
+            coins: [],
+            totalPoints: 0,
+            level: 0
+        };
+
+        this.setupDashboard();
+
+        SDKClient.events.on(&#x27;OnLoadMetricsToAgent&#x27;, this.OnLoadMetricsToAgent);
+        SDKClient.events.on(&#x27;OnAssignPointsToAgent&#x27;, this.OnAssignPointsToAgent);
+
+        // setTimeout(() &#x3D;&gt; {
+        //     this.OnAssignPointsToAgent({
+        //         SubEventName: &#x27;OnAssignPointsToAgent&#x27;,
+        //         JsonData: &#x27;{&quot;totalPointsAssigned&quot;:&quot;AHT points : 5, TotalChats points : 2&quot;}&#x27;,
+        //         EventName: &#x27;GenericTMACEvent&#x27;,
+        //         InteractionID: 0,
+        //         IsInteractionConstructEvent: false,
+        //         IsInteractionDisposeEvent: false,
+        //         CreatedTime: &#x27;0001-01-01T00:00:00&#x27;,
+        //         EventId: null,
+        //         RecoveryEvent: false,
+        //         QueuedEvent: false,
+        //         ACK: null
+        //     });
+        // }, 5000);
+    }
+
+    /**
+     * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
+     */
+    ngOnDestroy(): void {
+        SDKClient.events.off(&#x27;OnLoadMetricsToAgent&#x27;, this.OnLoadMetricsToAgent);
+        SDKClient.events.off(&#x27;OnAssignPointsToAgent&#x27;, this.OnAssignPointsToAgent);
+        // call the wrapper destroy method
+        this.destroyWrapper();
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+    // @  Private Methods
+    // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * Check for missing app json configs
+     */
+    private getMissingConfigs(): string[] {
+        const missingConfigs &#x3D; [];
+
+        this.requiredUrls.forEach((url) &#x3D;&gt; {
+            if (!this.data.Data[url]) {
+                missingConfigs.push(url);
+            }
+        });
+
+        return missingConfigs;
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+    // @  Public Methods
+    // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * Makes all api requests
+     */
+    setupDashboard(): void {
+        try {
+            const missingConfigs &#x3D; this.getMissingConfigs();
+            if (missingConfigs.length) {
+                this.dashboardState &#x3D; { loading: false, error: true, msg: &#x60;${missingConfigs.join(&#x27; , &#x27;)} missing in app config&#x60; };
+            } else {
+                if (this.polling) {
+                    this.polling.unsubscribe();
+                }
+                const pollingPulse &#x3D; interval(this.pollingInterval);
+                this.polling &#x3D; pollingPulse.pipe(takeUntil(this.unsubscribeAll)).subscribe(() &#x3D;&gt; {
+                    this.fetchLeaderBoard();
+                    this.getAgentProgress();
+                    this.getQuizInfo();
+                });
+                this.leaderBoardRes &#x3D; { loading: true, error: false };
+                this.getAgentProgressRes.loading &#x3D; true;
+                this.getAgentProgressRes.error &#x3D; false;
+                this.getAgentLevelsRes &#x3D; { loading: true, error: false, data: [] };
+                this.getQuizInfoRes.loading &#x3D; true;
+                this.getQuizInfoRes.error &#x3D; false;
+                this.fetchLeaderBoard();
+                this.getAgentProgress();
+                this.getAgentLevels();
+                this.getQuizInfo();
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    /**
+     * FetchLeaderboard Data
+     * @param url
+     */
+    fetchLeaderBoard(): void {
+        this.http
+            .post&lt;Record&lt;&#x27;d&#x27;, string&gt;&gt;(this.data.Data.LeaderBoardUrl, {})
+            .pipe(
+                map((x) &#x3D;&gt; JSON.parse(x.d)),
+                takeUntil(this.unsubscribeAll)
+            )
+            .subscribe(
+                (leaderBoardRes) &#x3D;&gt; {
+                    this.leaderBoardRes &#x3D; { loading: false, error: false, data: sortBy(leaderBoardRes || [], &#x27;Position&#x27;) };
+                    try {
+                        this.leaderBoardRes.data.forEach((user) &#x3D;&gt; {
+                            if (user.AgentId &#x3D;&#x3D;&#x3D; this.currentUser.agentId) {
+                                // this.currentUser.badges.unshift(...this.sortBadges(user.TotalBadges));
+                                this.currentUser.totalPoints &#x3D; user.TotalPoints;
+                                this.currentUser.badges &#x3D; [
+                                    { BadgeName: &#x27;Novice&#x27;, BadgeId: 0, BadgeUrl: user.NoviceBadgeUrl, BadgePoints: user.NoviceBadges },
+                                    { BadgeName: &#x27;Influencer&#x27;, BadgeId: 1, BadgeUrl: user.InfluencerBadgeUrl, BadgePoints: user.InfluencerBadges },
+                                    { BadgeName: &#x27;Master&#x27;, BadgeId: 2, BadgeUrl: user.MasterBadgeUrl, BadgePoints: user.MasterBadges }
+                                ];
+                                const coins: Coin[] &#x3D; [
+                                    { image: this.coinsImages[&#x27;Gold&#x27;], name: &#x27;Gold&#x27;, value: user.GoldCoins, static: true },
+                                    { image: this.coinsImages[&#x27;Silver&#x27;], name: &#x27;Silver&#x27;, value: user.SilverCoins, static: true },
+                                    { image: this.coinsImages[&#x27;Bronze&#x27;], name: &#x27;Bronze&#x27;, value: user.BronzeCoins, static: true }
+                                ];
+
+                                // if (this.currentUser.coins[0] &amp;&amp; this.currentUser.coins[0].name &#x3D;&#x3D;&#x3D; &#x27;Gold&#x27;) {
+                                this.currentUser.coins &#x3D; this.currentUser.coins.filter((x) &#x3D;&gt; !x.static) || [];
+                                //     console.log(this.currentUser.coins);
+                                // }
+                                this.currentUser.coins.unshift(...sortBy(coins, &#x27;order&#x27;));
+                                this.setCurrenAgentLevel();
+                            }
+                        });
+                    } catch (e) {
+                        console.error(e);
+                        this.leaderBoardRes &#x3D; { loading: false, error: true };
+                        this.dashboardState.msg &#x3D; COMMON_ERR_MESSAGE;
+                    }
+                },
+                (err) &#x3D;&gt; {
+                    console.error(err);
+                    this.leaderBoardRes &#x3D; { loading: false, error: true };
+                    this.dashboardState.msg &#x3D; COMMON_ERR_MESSAGE;
+                }
+            );
+    }
+
+    /**
+     * Gets Agent Progress
+     * @param url
+     * @param agentId
+     */
+    getAgentProgress(): void {
+        this.http
+            .post&lt;Record&lt;&#x27;d&#x27;, string&gt;&gt;(this.data.Data.AgentProgressUrl, { agentId: this.currentUser.agentId })
+            .pipe(
+                map((x) &#x3D;&gt; JSON.parse(x.d)),
+                takeUntil(this.unsubscribeAll)
+            )
+            .subscribe(
+                (progressRes) &#x3D;&gt; {
+                    try {
+                        this.getAgentProgressRes &#x3D; {
+                            loading: false,
+                            error: false,
+                            data: sortBy(progressRes || [], &#x27;RequiredPointsForNextBadge&#x27;).map((x) &#x3D;&gt; ({
+                                ...x,
+                                MetricMaxValue: x.MetricMaxValue ? parseInt(x.MetricMaxValue, 10) : 0,
+                                MetricAverageValue: x.MetricAverageValue ? parseInt(x.MetricAverageValue, 10) : 0
+                            }))
+                        };
+                        // this.currentUser.totalPoints &#x3D; 0;
+                        // this.getAgentProgressRes.data.forEach((p) &#x3D;&gt; {
+                        //     this.currentUser.totalPoints +&#x3D; p.PointsAssigned;
+                        // });
+                        // this.setCurrenAgentLevel();
+                    } catch (e) {
+                        this.getAgentProgressRes &#x3D; { loading: false, error: true };
+                        this.dashboardState.msg &#x3D; COMMON_ERR_MESSAGE;
+                    }
+                },
+                (err) &#x3D;&gt; {
+                    console.error(err);
+                    this.getAgentProgressRes &#x3D; { loading: false, error: true };
+                    this.dashboardState.msg &#x3D; COMMON_ERR_MESSAGE;
+                }
+            );
+    }
+
+    /**
+     * Get agent levels
+     */
+    getAgentLevels(): void {
+        this.http
+            .post&lt;any&gt;(this.data.Data.GetAgentLevelsUrl, { agentId: this.currentUser.agentId })
+            // .pipe(map((x) &#x3D;&gt; ({ ...x.d, data: JSON.parse(x.d.data) })))
+            .pipe(
+                takeUntil(this.unsubscribeAll),
+                map((x) &#x3D;&gt; ({ ...x.d, data: x.d ? JSON.parse(x.d.data) : [] }))
+            )
+            .subscribe(
+                (agentLevelRes) &#x3D;&gt; {
+                    try {
+                        // agentLevelRes.d.data &#x3D; {
+                        //     Levels: [
+                        //         { LevelID: 1, Name: &#x27;Level1&#x27;, Points: 1000 },
+                        //         { LevelID: 2, Name: &#x27;Level2&#x27;, Points: 1500 },
+                        //         { LevelID: 3, Name: &#x27;Level3&#x27;, Points: 2000 },
+                        //         { LevelID: 4, Name: &#x27;Level4&#x27;, Points: 2500 }
+                        //     ]
+                        // };
+                        this.getAgentLevelsRes &#x3D; { error: false, loading: false, data: sortBy(agentLevelRes.data.Levels, &#x27;Points&#x27;) };
+                        this.setCurrenAgentLevel();
+                    } catch (e) {
+                        console.error(e);
+                        this.getAgentLevelsRes &#x3D; { loading: false, error: true };
+                        this.dashboardState.msg &#x3D; COMMON_ERR_MESSAGE;
+                    }
+                },
+                (err) &#x3D;&gt; {
+                    console.error(err);
+                    this.getAgentLevelsRes &#x3D; { loading: false, error: true };
+                    this.dashboardState.msg &#x3D; COMMON_ERR_MESSAGE;
+                }
+            );
+    }
+
+    /**
+     * Get quiz Information
+     */
+    getQuizInfo(): void {
+        const coins &#x3D; [];
+        this.http
+            .post&lt;any&gt;(this.data.Data.GetQuizInfoUrl, { agentId: this.currentUser.agentId })
+            .pipe(
+                takeUntil(this.unsubscribeAll),
+                map((x) &#x3D;&gt; ({ ...x.d, data: x.d ? JSON.parse(x.d.data) : [] }))
+            )
+            .subscribe(
+                (quizInfoRes) &#x3D;&gt; {
+                    try {
+                        quizInfoRes.data.forEach((d, i) &#x3D;&gt; {
+                            coins.push({ image: this.coinsImages[d.Intent], value: d.Result, name: d.Intent, order: i + 2 });
+                        });
+                        this.currentUser.coins &#x3D; this.currentUser.coins.filter((x) &#x3D;&gt; x.static) || [];
+                        this.currentUser.coins.push(...sortBy(coins, &#x27;order&#x27;));
+                        this.getQuizInfoRes &#x3D; { loading: false, error: false };
+                    } catch (e) {
+                        console.error(e);
+                        this.getQuizInfoRes &#x3D; { loading: false, error: true };
+                        this.dashboardState.msg &#x3D; COMMON_ERR_MESSAGE;
+                    }
+                },
+                (err) &#x3D;&gt; {
+                    console.error(err);
+                    this.getQuizInfoRes &#x3D; { loading: false, error: true };
+                    this.dashboardState.msg &#x3D; COMMON_ERR_MESSAGE;
+                }
+            );
+    }
+
+    /**
+     * load metrics on login
+     * @param evt
+     */
+    OnLoadMetricsToAgent &#x3D; (evt: any): void &#x3D;&gt; {
+        // const JsonData &#x3D; JSON.parse(evt.JsonData);
+        // console.log({ ...evt, JsonData: { ...JsonData, eventdata: JSON.parse(JsonData.eventdata) } });
+    };
+
+    /**
+     * Assign points events
+     * @param evt
+     */
+    OnAssignPointsToAgent &#x3D; (evt: any): void &#x3D;&gt; {
+        const JsonData &#x3D; JSON.parse(evt.JsonData);
+        this.appUiService.addNotification({ message: JsonData.totalPointsAssigned, status: &#x27;new&#x27; });
+    };
+
+    /**
+     * Set current agent level
+     */
+    setCurrenAgentLevel(): void {
+        this.currentUser.level &#x3D; 1;
+        sortBy(this.getAgentLevelsRes.data, &#x27;Points&#x27;).forEach((l: any, i: any) &#x3D;&gt; {
+            if (this.currentUser.totalPoints &gt;&#x3D; l.Points) {
+                this.currentUser.level &#x3D; i + 1;
+            }
+        });
+    }
+
+    /**
+     * Track by func for coins and points
+     * @param index
+     * @param field
+     */
+    valueField(_: number, field: any): any {
+        return field.value;
+    }
+
+    /**
+     * track func for earned badges
+     * @param _
+     * @param field
+     */
+    badgeName(_: number, field: any): void {
+        return field.BadgeName;
+    }
+
+    /**
+     * track by fun for My Performance
+     * @param _
+     * @param field
+     */
+    pointsAssigned(_: number, field: any): any {
+        return field.PointsAssigned;
+    }
+
+    /**
+     * Method to redeem points
+     */
+    redeem(): void {
+        if (!this.data.Data.TVirtualStoreUrl) {
+            this.appUiService.showSnackbar(&#x27;Missing TVirtualStore in app config&#x27;, &#x27;failure&#x27;);
+            return;
+        }
+        const title &#x3D; &#x60;TVirtualStore&#x60;;
+        const icon &#x3D; &#x27;&#x27;;
+        const width &#x3D; 1000;
+        const height &#x3D; 700;
+        const actions: IAction[] &#x3D; [&#x27;destroy&#x27;, &#x27;maximize&#x27;];
+        const viewState &#x3D; &#x27;restore&#x27;;
+
+        // create a widget model
+        const widget &#x3D; new TwWidgetModel(title, &#x27;tw-custom&#x27;, icon);
+        widget.Config.Position.W &#x3D; width;
+        widget.Config.Position.H &#x3D; height;
+        widget.Config.Actions &#x3D; actions;
+        widget.Config.ViewState &#x3D; viewState;
+
+        const url &#x3D; new URL(this.data.Data.TVirtualStoreUrl);
+
+        const { agentId } &#x3D; SDKClient.getAgentData();
+        url.searchParams.append(&#x27;agentid&#x27;, agentId);
+
+        widget.Data.Url &#x3D; url.toString();
+
+        this._aotWidgetService.addWidget(widget);
+    }
+}
+
+// for more info visit - https://angular.io/api/core
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="c-templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper --&gt;
+&lt;!-- implement following events in your component to access widget wrapper action events --&gt;
+&lt;!-- (maximizeEvent)&#x3D;&quot;maximizeEvent.emit($event)&quot; (collapseEvent)&#x3D;&quot;collapseEvent.emit($event)&quot; (floatEvent)&#x3D;&quot;floatEvent.emit($event)&quot; --&gt;
+
+&lt;!-- PLEASE NOTE: do not add any other attributes or directive to &#x27;tw-wrapper&#x27; selector --&gt;
+
+&lt;tw-wrapper [data]&#x3D;&quot;data&quot;&gt;
+    &lt;!-- your code goes here --&gt;
+    &lt;div
+        *ngIf&#x3D;&quot;
+            !this.leaderBoardRes.loading &amp;&amp;
+            !this.getAgentProgressRes.loading &amp;&amp;
+            !this.getAgentLevelsRes.loading &amp;&amp;
+            !this.getQuizInfoRes.loading &amp;&amp;
+            !this.dashboardState.loading &amp;&amp;
+            !this.leaderBoardRes.error &amp;&amp;
+            !this.getAgentProgressRes.error &amp;&amp;
+            !this.getAgentLevelsRes.error &amp;&amp;
+            !this.getQuizInfoRes.error &amp;&amp;
+            !this.dashboardState.error
+        &quot;
+        fxLayout&#x3D;&quot;row wrap&quot;
+        class&#x3D;&quot;p-8 gamification-cards&quot;
+    &gt;
+        &lt;!-- fxLayoutAlign&#x3D;&quot;center center&quot; --&gt;
+        &lt;div fxFlex&#x3D;&quot;20&quot; class&#x3D;&quot;top-performers-card&quot;&gt;
+            &lt;p class&#x3D;&quot;mat-title mb-8&quot;&gt;Top Performers&lt;/p&gt;
+            &lt;div *ngIf&#x3D;&quot;leaderBoardRes.data.length&quot; fusePerfectScrollbar class&#x3D;&quot;records-list h-100-p px-12&quot;&gt;
+                &lt;div *ngFor&#x3D;&quot;let p of leaderBoardRes.data; let i &#x3D; index&quot; fxLayout fxLayoutAlign&#x3D;&quot;start center&quot; class&#x3D;&quot;mb-16&quot;&gt;
+                    &lt;div class&#x3D;&quot;w-20 h-20 text-center mat-elevation-z1 border-radius-100 position-absolute rank font-weight-700&quot;&gt;{{ i + 1 }}&lt;/div&gt;
+                    &lt;avatar
+                        [name]&#x3D;&quot;p.AgentName || p.AgentId&quot;
+                        classes&#x3D;&quot;w-44 mat-elevation-z2 h-44 border-radius-100 mx-12&quot;
+                        [photoUrl]&#x3D;&quot;p.ProfilePic&quot;
+                    &gt;&lt;/avatar&gt;
+                    &lt;div&gt;
+                        &lt;span&gt;{{ p.AgentName || p.AgentId }}&lt;/span&gt;
+                        &lt;br /&gt;
+                        &lt;span&gt;{{ p.TotalPoints }} points &lt;/span&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div *ngIf&#x3D;&quot;!leaderBoardRes.data.length&quot; fxLayout&#x3D;&quot;row wrap&quot; fxLayoutAlign&#x3D;&quot;center center&quot;&gt;
+                &lt;no-data-available&gt; &lt;/no-data-available&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div fxFlex&#x3D;&quot;20&quot; class&#x3D;&quot;leaderboard-card&quot;&gt;
+            &lt;p class&#x3D;&quot;mat-title mb-8&quot;&gt;Leaderboard&lt;/p&gt;
+            &lt;div *ngIf&#x3D;&quot;leaderBoardRes.data.length&quot; fusePerfectScrollbar class&#x3D;&quot;records-list h-100-p px-12&quot;&gt;
+                &lt;div *ngFor&#x3D;&quot;let p of leaderBoardRes.data&quot; class&#x3D;&quot;mb-12&quot;&gt;
+                    &lt;span class&#x3D;&quot;mat-body-2&quot;&gt; {{ p.AgentName || p.AgentId || &#x27;Unknown&#x27; }} &lt;/span&gt;
+                    &lt;div fxLayout fxLayoutAlign&#x3D;&quot;space-between center&quot; fxLayoutGap&#x3D;&quot;10px&quot;&gt;
+                        &lt;div class&#x3D;&quot;leader-progress-bar&quot; fxFlex&#x3D;&quot;70&quot;&gt;
+                            &lt;div
+                                class&#x3D;&quot;marker&quot;
+                                [ngStyle]&#x3D;&quot;{
+                                    left:
+                                        (p.TotalPoints * 100) / (getAgentLevelsRes.data | slice: -1)[0].Points &gt; 100
+                                            ? 100
+                                            : (p.TotalPoints * 100) / (getAgentLevelsRes.data | slice: -1)[0].Points + &#x27;%&#x27;
+                                }&quot;
+                            &gt;&lt;/div&gt;
+                            &lt;div
+                                *ngFor&#x3D;&quot;let level of getAgentLevelsRes.data; let i &#x3D; index&quot;
+                                [ngClass]&#x3D;&quot;scoreBgs[i] + &#x27; &#x27; + level + &#x27;-&#x27; + i&quot;
+                                fxFlex&#x3D;&quot;100&quot;
+                            &gt;&lt;/div&gt;
+                        &lt;/div&gt;
+                        &lt;strong class&#x3D;&quot;ml-4&quot;&gt; {{ p.TotalPoints }} Pt&lt;/strong&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div *ngIf&#x3D;&quot;!leaderBoardRes.data.length&quot; fxLayout&#x3D;&quot;row wrap&quot; fxLayoutAlign&#x3D;&quot;center center&quot;&gt;
+                &lt;no-data-available&gt; &lt;/no-data-available&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div fxFlex&#x3D;&quot;50&quot;&gt;
+            &lt;!-- &lt;div fxLayout&#x3D;&quot;row wrap&quot; fxLayoutAlign&#x3D;&quot;center center&quot; class&#x3D;&quot;w-100-p h-100-p p-12&quot;&gt; --&gt;
+            &lt;div class&#x3D;&quot;w-100-p&quot;&gt;
+                &lt;race-car-track
+                    [leaders]&#x3D;&quot;leaderBoardRes.data | slice: 0:4&quot;
+                    [highest]&#x3D;&quot;(getAgentLevelsRes.data | slice: -1)[0] ? (getAgentLevelsRes.data | slice: -1)[0].Points : 0&quot;
+                &gt;&lt;/race-car-track&gt;
+            &lt;/div&gt;
+            &lt;!-- &lt;/div&gt; --&gt;
+        &lt;/div&gt;
+
+        &lt;div fxFlex&#x3D;&quot;10&quot; fxLayout&#x3D;&quot;column&quot; fxayoutAlign&#x3D;&quot;center space-between&quot; class&#x3D;&quot;text-center py-20&quot;&gt;
+            &lt;ng-container *ngIf&#x3D;&quot;leaderBoardRes.data.length&quot;&gt;
+                &lt;div class&#x3D;&quot;mb-20&quot;&gt;
+                    &lt;img class&#x3D;&quot;w-40-p mb-4&quot; src&#x3D;&quot;assets/images/vectors/trophy.svg&quot; alt&#x3D;&quot;&quot; /&gt;
+                    &lt;br /&gt;
+                    &lt;span&gt; {{ leaderBoardRes.data[0]?.AgentName }} &lt;/span&gt;
+                &lt;/div&gt;
+
+                &lt;div class&#x3D;&quot;mb-20&quot;&gt;
+                    &lt;img class&#x3D;&quot;w-40-p mb-4&quot; src&#x3D;&quot;assets/images/vectors/total-points.svg&quot; alt&#x3D;&quot;&quot; /&gt;
+                    &lt;br /&gt;
+                    &lt;span&gt; {{ leaderBoardRes.data[0]?.TotalPoints }} &lt;/span&gt;
+                &lt;/div&gt;
+
+                &lt;div class&#x3D;&quot;mb-20&quot;&gt;
+                    &lt;img class&#x3D;&quot;w-40-p mb-4&quot; src&#x3D;&quot;assets/images/vectors/team-car.svg&quot; alt&#x3D;&quot;&quot; /&gt;
+                    &lt;br /&gt;
+                    &lt;span&gt; {{ leaderBoardRes.data[0]?.TeamName }} &lt;/span&gt;
+                &lt;/div&gt;
+            &lt;/ng-container&gt;
+        &lt;/div&gt;
+
+        &lt;div fxFlex&#x3D;&quot;30&quot;&gt;
+            &lt;p class&#x3D;&quot;mat-title mb-8&quot;&gt;My Position&lt;/p&gt;
+            &lt;div *ngIf&#x3D;&quot;(getAgentLevelsRes.data | slice: -1)[0]&quot; fxLayout&#x3D;&quot;row wrap&quot; fxLayoutAlign&#x3D;&quot;start center&quot; class&#x3D;&quot;mb-12&quot;&gt;
+                &lt;div fxFlex&#x3D;&quot;15&quot;&gt;
+                    &lt;span class&#x3D;&quot;mat-display-1 mb-0&quot;&gt; L{{ currentUser.level }} &lt;/span&gt;
+                &lt;/div&gt;
+                &lt;div fxFlex&#x3D;&quot;70&quot; class&#x3D;&quot;leader-progress-bar&quot;&gt;
+                    &lt;div
+                        class&#x3D;&quot;marker&quot;
+                        [ngStyle]&#x3D;&quot;{
+                            left:
+                                (currentUser.totalPoints * 100) / (getAgentLevelsRes.data | slice: -1)[0].Points &gt; 100
+                                    ? 100
+                                    : (currentUser.totalPoints * 100) / (getAgentLevelsRes.data | slice: -1)[0].Points + &#x27;%&#x27;
+                        }&quot;
+                    &gt;&lt;/div&gt;
+                    &lt;div
+                        *ngFor&#x3D;&quot;let level of getAgentLevelsRes.data; let i &#x3D; index&quot;
+                        [ngClass]&#x3D;&quot;scoreBgs[i] + &#x27; &#x27; + level + &#x27;-&#x27; + i&quot;
+                        fxFlex&#x3D;&quot;100&quot;
+                    &gt;&lt;/div&gt;
+                &lt;/div&gt;
+                &lt;div fxFlex&#x3D;&quot;100&quot;&gt;
+                    &lt;span class&#x3D;&quot;mr-4&quot;&gt; {{ currentUser.totalPoints }} Pts &lt;/span&gt;
+                    |
+                    &lt;span class&#x3D;&quot;ml-4&quot;&gt;
+                        {{
+                            getAgentLevelsRes.data[currentUser.level]
+                                ? &#x27;+&#x27; +
+                                  (getAgentLevelsRes.data[currentUser.level].Points - currentUser.totalPoints) +
+                                  &#x27; for Level &#x27; +
+                                  (currentUser.level + 1)
+                                : &#x27;Top Level&#x27;
+                        }}
+                    &lt;/span&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;p *ngIf&#x3D;&quot;!(getAgentLevelsRes.data | slice: -1)[0]&quot;&gt;No Data available&lt;/p&gt;
+            &lt;p class&#x3D;&quot;mat-title mb-8&quot;&gt;Earned Badges&lt;/p&gt;
+            &lt;div fxLayout&#x3D;&quot;row&quot; fxLayoutAlign&#x3D;&quot;start center&quot; class&#x3D;&quot;mb-12&quot;&gt;
+                &lt;div *ngFor&#x3D;&quot;let b of currentUser.badges | slice: 0:3; trackBy: badgeName&quot; fxFlex&#x3D;&quot;30&quot; class&#x3D;&quot;text-center&quot;&gt;
+                    &lt;img
+                        [src]&#x3D;&quot;b.BadgeUrl&quot;
+                        class&#x3D;&quot;mx-auto mb-4 d-block&quot;
+                        [ngClass]&#x3D;&quot;{ &#x27;w-30-p&#x27;: b.BadgeName &#x3D;&#x3D;&#x3D; &#x27;Locked&#x27;, &#x27;w-50-p&#x27;: b.BadgeName !&#x3D;&#x3D; &#x27;Locked&#x27; }&quot;
+                        [alt]&#x3D;&quot;b.BadgeName&quot;
+                    /&gt;
+                    &lt;div class&#x3D;&quot;text-center&quot;&gt;{{ b.BadgeName }}&lt;/div&gt;
+                    &lt;strong&gt; {{ b.BadgePoints }} &lt;/strong&gt;
+                    &lt;!-- &lt;div *ngIf&#x3D;&quot;b.BadgeName &#x3D;&#x3D;&#x3D; &#x27;Locked&#x27;&quot;&gt;
+                        &lt;mat-icon [color]&#x3D;&quot;b.BadgeId &gt; 33 ? &#x27;primary&#x27; : &#x27;&#x27;&quot;&gt; star_rating &lt;/mat-icon&gt;
+                        &lt;mat-icon [color]&#x3D;&quot;b.BadgeId &gt; 66 ? &#x27;primary&#x27; : &#x27;&#x27;&quot;&gt; star_rating &lt;/mat-icon&gt;
+                        &lt;mat-icon [color]&#x3D;&quot;b.BadgeId &gt; 99 ? &#x27;primary&#x27; : &#x27;&#x27;&quot;&gt; star_rating &lt;/mat-icon&gt;
+                    &lt;/div&gt; --&gt;
+                &lt;/div&gt;
+                &lt;p *ngIf&#x3D;&quot;!currentUser.badges.length&quot;&gt;No Data available&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div fxFlex&#x3D;&quot;30&quot;&gt;
+            &lt;p class&#x3D;&quot;mat-title mb-8&quot;&gt;Coins and Points&lt;/p&gt;
+            &lt;div fxLayout&#x3D;&quot;row wrap&quot; fxLayoutAlign&#x3D;&quot;start center&quot;&gt;
+                &lt;div *ngFor&#x3D;&quot;let c of currentUser.coins | slice: 0:5; trackBy: valueField&quot; fxFlex&#x3D;&quot;30&quot; class&#x3D;&quot;mb-8&quot;&gt;
+                    &lt;img [src]&#x3D;&quot;c.image&quot; class&#x3D;&quot;mx-auto mb-4 d-block&quot; [alt]&#x3D;&quot;c.name&quot; /&gt;
+                    &lt;div class&#x3D;&quot;text-center&quot;&gt;
+                        {{ c.name }}
+                        &lt;br /&gt;
+                        &lt;strong&gt; {{ c.value }} &lt;/strong&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;no-data-available *ngIf&#x3D;&quot;!currentUser.coins.length&quot;&gt; &lt;/no-data-available&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div fxFlex&#x3D;&quot;40&quot; class&#x3D;&quot;my-performance-card&quot;&gt;
+            &lt;p class&#x3D;&quot;mat-title mb-8&quot;&gt;My Performance&lt;/p&gt;
+            &lt;div *ngIf&#x3D;&quot;getAgentProgressRes.data.length&quot; fusePerfectScrollbar class&#x3D;&quot;records-list px-8&quot;&gt;
+                &lt;div *ngFor&#x3D;&quot;let p of getAgentProgressRes.data; trackBy: pointsAssigned&quot; fxLayout fxLayoutAlign&#x3D;&quot;space-between center&quot; class&#x3D;&quot;mb-16&quot;&gt;
+                    &lt;ng-container [ngSwitch]&#x3D;&quot;p.Channel | lowercase&quot;&gt;
+                        &lt;mat-icon *ngSwitchCase&#x3D;&quot;&#x27;textchat&#x27;&quot;&gt; chat &lt;/mat-icon&gt;
+                        &lt;mat-icon *ngSwitchCase&#x3D;&quot;&#x27;voice&#x27;&quot;&gt; phone &lt;/mat-icon&gt;
+                    &lt;/ng-container&gt;
+                    &lt;span fxFlex&#x3D;&quot;35&quot; class&#x3D;&quot;text-center px-4 border-right-secondary&quot;&gt;
+                        {{ p.Channel }}{{ p.Channel ? &#x27;_&#x27; : &#x27;&#x27; }}{{ p.MetricName }}
+                    &lt;/span&gt;
+                    &lt;mat-slider
+                        fxFlex&#x3D;&quot;30&quot;
+                        [value]&#x3D;&quot;p.MetricAverageValue&quot;
+                        step&#x3D;&quot;1&quot;
+                        [ngClass]&#x3D;&quot;
+                            p.MetricAverageValue &lt;&#x3D; p.MetricMaxValue
+                                ? (p.MetricName || &#x27;&#x27;).toLowerCase().includes(&#x27;total&#x27;)
+                                    ? &#x27;red-slider&#x27;
+                                    : &#x27;green-slider&#x27;
+                                : (p.MetricName || &#x27;&#x27;).toLowerCase().includes(&#x27;total&#x27;)
+                                ? &#x27;green-slider&#x27;
+                                : &#x27;red-slider&#x27;
+                        &quot;
+                        [max]&#x3D;&quot;p.MetricMaxValue&quot;
+                    &gt;&lt;/mat-slider&gt;
+                    &lt;span fxFlex&#x3D;&quot;30&quot; class&#x3D;&quot;ml-4&quot;&gt; {{ p.MetricAverageValue }} / {{ p.MetricMaxValue }} &lt;/span&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div *ngIf&#x3D;&quot;!getAgentProgressRes.data.length&quot; fxLayout&#x3D;&quot;row wrap&quot; fxLayoutAlign&#x3D;&quot;center center&quot;&gt;
+                &lt;no-data-available&gt; &lt;/no-data-available&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div fxFlex&#x3D;&quot;100&quot; fxLayoutAlign&#x3D;&quot;center center&quot;&gt;
+            &lt;button mat-raised-button color&#x3D;&quot;primary&quot; class&#x3D;&quot;w-40-p&quot; (click)&#x3D;&quot;redeem()&quot;&gt;Redeem Now !&lt;/button&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div
+        *ngIf&#x3D;&quot;
+            this.leaderBoardRes.loading ||
+            this.getAgentProgressRes.loading ||
+            this.getAgentLevelsRes.loading ||
+            this.getQuizInfoRes.loading ||
+            this.dashboardState.loading
+        &quot;
+        fxLayout&#x3D;&quot;column&quot;
+        fxLayoutAlign&#x3D;&quot;center center&quot;
+        class&#x3D;&quot;w-100-p h-100-p&quot;
+    &gt;
+        &lt;div class&#x3D;&quot;w-70-p text-center&quot;&gt;
+            &lt;p class&#x3D;&quot;mat-title mb-40&quot;&gt;Setting Up Gamification Dashboard&lt;/p&gt;
+            &lt;mat-progress-bar mode&#x3D;&quot;indeterminate&quot;&gt;&lt;/mat-progress-bar&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div
+        *ngIf&#x3D;&quot;
+            this.leaderBoardRes.error ||
+            this.getAgentProgressRes.error ||
+            this.getAgentLevelsRes.error ||
+            this.getQuizInfoRes.error ||
+            this.dashboardState.error
+        &quot;
+        fxLayout&#x3D;&quot;column&quot;
+        fxLayoutAlign&#x3D;&quot;center center&quot;
+        class&#x3D;&quot;w-100-p h-100-p&quot;
+    &gt;
+        &lt;div class&#x3D;&quot;w-70-p text-center&quot;&gt;
+            &lt;p class&#x3D;&quot;mat-title mb-40&quot;&gt;{{ dashboardState.msg }}&lt;/p&gt;
+            &lt;button mat-raised-button color&#x3D;&quot;primary&quot; class&#x3D;&quot;w-20-p&quot; (click)&#x3D;&quot;setupDashboard()&quot;&gt;Retry&lt;/button&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;!-- your code goes here --&gt;
+&lt;/tw-wrapper&gt;
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="c-styleData">
+                <p class="comment">
+                    <code>./tw-gamification.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">@import &#x27;app/scss/shared&#x27;;
+
+tw-gamification {
+    .top-performers-card,
+    .leaderboard-card {
+        .records-list {
+            max-height: 300px;
+        }
+    }
+    .my-performance-card .records-list {
+        max-height: 200px;
+    }
+
+    avatar {
+        &amp; &gt; *:first-child {
+            overflow: hidden;
+        }
+    }
+
+    .green-slider {
+        .mat-slider-track-fill,
+        .mat-slider-thumb {
+            background-color: $tw-alt-success !important;
+        }
+    }
+    .red-slider {
+        .mat-slider-track-fill,
+        .mat-slider-thumb {
+            background-color: $tw-alt-danger !important;
+        }
+    }
+
+    .gamification-cards {
+        --card-space: 30px;
+        &amp; &gt; * {
+            margin-bottom: var(--card-space);
+            height: calc(50% - var(--card-space));
+        }
+    }
+
+    .readonly {
+        position: relative;
+        &amp;::after {
+            content: &#x27;&#x27;;
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            top: 0;
+            left: 0;
+        }
+    }
+
+    .rank {
+        background-color: gold;
+    }
+
+    .mat-slider-horizontal {
+        height: auto !important;
+        pointer-events: none;
+        .mat-slider-wrapper {
+            top: unset;
+            left: unset;
+            right: unset;
+            position: relative !important;
+        }
+        // .mat-slider-track-wrapper {
+        //     transform: scaleY(3);
+        // }
+    }
+
+    .leader-progress-bar {
+        position: relative;
+        display: flex;
+        &amp; &gt; *:not(.marker) {
+            height: 5px;
+            flex: 1;
+            margin: 0px 1px;
+            border-radius: 20px;
+        }
+        .marker {
+            position: absolute;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid #111;
+            top: -6px;
+        }
+
+        // .level {
+        // &amp;-1 {
+        //     background-color: $tw-alt-success;
+        // }
+        // &amp;-2 {
+        //     background-color: tw-alt-warning;
+        // }
+        // &amp;-3 {
+        //     background-color: palevioletred;
+        // }
+        // }
+    }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="c-tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper --><!-- implement following events in your component to access widget wrapper action events --><!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" --><!-- PLEASE NOTE: do not add any other attributes or directive to \'tw-wrapper\' selector --><tw-wrapper [data]="data">    <!-- your code goes here -->    <div        *ngIf="            !this.leaderBoardRes.loading &&            !this.getAgentProgressRes.loading &&            !this.getAgentLevelsRes.loading &&            !this.getQuizInfoRes.loading &&            !this.dashboardState.loading &&            !this.leaderBoardRes.error &&            !this.getAgentProgressRes.error &&            !this.getAgentLevelsRes.error &&            !this.getQuizInfoRes.error &&            !this.dashboardState.error        "        fxLayout="row wrap"        class="p-8 gamification-cards"    >        <!-- fxLayoutAlign="center center" -->        <div fxFlex="20" class="top-performers-card">            <p class="mat-title mb-8">Top Performers</p>            <div *ngIf="leaderBoardRes.data.length" fusePerfectScrollbar class="records-list h-100-p px-12">                <div *ngFor="let p of leaderBoardRes.data; let i = index" fxLayout fxLayoutAlign="start center" class="mb-16">                    <div class="w-20 h-20 text-center mat-elevation-z1 border-radius-100 position-absolute rank font-weight-700">{{ i + 1 }}</div>                    <avatar                        [name]="p.AgentName || p.AgentId"                        classes="w-44 mat-elevation-z2 h-44 border-radius-100 mx-12"                        [photoUrl]="p.ProfilePic"                    ></avatar>                    <div>                        <span>{{ p.AgentName || p.AgentId }}</span>                        <br />                        <span>{{ p.TotalPoints }} points </span>                    </div>                </div>            </div>            <div *ngIf="!leaderBoardRes.data.length" fxLayout="row wrap" fxLayoutAlign="center center">                <no-data-available> </no-data-available>            </div>        </div>        <div fxFlex="20" class="leaderboard-card">            <p class="mat-title mb-8">Leaderboard</p>            <div *ngIf="leaderBoardRes.data.length" fusePerfectScrollbar class="records-list h-100-p px-12">                <div *ngFor="let p of leaderBoardRes.data" class="mb-12">                    <span class="mat-body-2"> {{ p.AgentName || p.AgentId || \'Unknown\' }} </span>                    <div fxLayout fxLayoutAlign="space-between center" fxLayoutGap="10px">                        <div class="leader-progress-bar" fxFlex="70">                            <div                                class="marker"                                [ngStyle]="{                                    left:                                        (p.TotalPoints * 100) / (getAgentLevelsRes.data | slice: -1)[0].Points > 100                                            ? 100                                            : (p.TotalPoints * 100) / (getAgentLevelsRes.data | slice: -1)[0].Points + \'%\'                                }"                            ></div>                            <div                                *ngFor="let level of getAgentLevelsRes.data; let i = index"                                [ngClass]="scoreBgs[i] + \' \' + level + \'-\' + i"                                fxFlex="100"                            ></div>                        </div>                        <strong class="ml-4"> {{ p.TotalPoints }} Pt</strong>                    </div>                </div>            </div>            <div *ngIf="!leaderBoardRes.data.length" fxLayout="row wrap" fxLayoutAlign="center center">                <no-data-available> </no-data-available>            </div>        </div>        <div fxFlex="50">            <!-- <div fxLayout="row wrap" fxLayoutAlign="center center" class="w-100-p h-100-p p-12"> -->            <div class="w-100-p">                <race-car-track                    [leaders]="leaderBoardRes.data | slice: 0:4"                    [highest]="(getAgentLevelsRes.data | slice: -1)[0] ? (getAgentLevelsRes.data | slice: -1)[0].Points : 0"                ></race-car-track>            </div>            <!-- </div> -->        </div>        <div fxFlex="10" fxLayout="column" fxayoutAlign="center space-between" class="text-center py-20">            <ng-container *ngIf="leaderBoardRes.data.length">                <div class="mb-20">                    <img class="w-40-p mb-4" src="assets/images/vectors/trophy.svg" alt="" />                    <br />                    <span> {{ leaderBoardRes.data[0]?.AgentName }} </span>                </div>                <div class="mb-20">                    <img class="w-40-p mb-4" src="assets/images/vectors/total-points.svg" alt="" />                    <br />                    <span> {{ leaderBoardRes.data[0]?.TotalPoints }} </span>                </div>                <div class="mb-20">                    <img class="w-40-p mb-4" src="assets/images/vectors/team-car.svg" alt="" />                    <br />                    <span> {{ leaderBoardRes.data[0]?.TeamName }} </span>                </div>            </ng-container>        </div>        <div fxFlex="30">            <p class="mat-title mb-8">My Position</p>            <div *ngIf="(getAgentLevelsRes.data | slice: -1)[0]" fxLayout="row wrap" fxLayoutAlign="start center" class="mb-12">                <div fxFlex="15">                    <span class="mat-display-1 mb-0"> L{{ currentUser.level }} </span>                </div>                <div fxFlex="70" class="leader-progress-bar">                    <div                        class="marker"                        [ngStyle]="{                            left:                                (currentUser.totalPoints * 100) / (getAgentLevelsRes.data | slice: -1)[0].Points > 100                                    ? 100                                    : (currentUser.totalPoints * 100) / (getAgentLevelsRes.data | slice: -1)[0].Points + \'%\'                        }"                    ></div>                    <div                        *ngFor="let level of getAgentLevelsRes.data; let i = index"                        [ngClass]="scoreBgs[i] + \' \' + level + \'-\' + i"                        fxFlex="100"                    ></div>                </div>                <div fxFlex="100">                    <span class="mr-4"> {{ currentUser.totalPoints }} Pts </span>                    |                    <span class="ml-4">                        {{                            getAgentLevelsRes.data[currentUser.level]                                ? \'+\' +                                  (getAgentLevelsRes.data[currentUser.level].Points - currentUser.totalPoints) +                                  \' for Level \' +                                  (currentUser.level + 1)                                : \'Top Level\'                        }}                    </span>                </div>            </div>            <p *ngIf="!(getAgentLevelsRes.data | slice: -1)[0]">No Data available</p>            <p class="mat-title mb-8">Earned Badges</p>            <div fxLayout="row" fxLayoutAlign="start center" class="mb-12">                <div *ngFor="let b of currentUser.badges | slice: 0:3; trackBy: badgeName" fxFlex="30" class="text-center">                    <img                        [src]="b.BadgeUrl"                        class="mx-auto mb-4 d-block"                        [ngClass]="{ \'w-30-p\': b.BadgeName === \'Locked\', \'w-50-p\': b.BadgeName !== \'Locked\' }"                        [alt]="b.BadgeName"                    />                    <div class="text-center">{{ b.BadgeName }}</div>                    <strong> {{ b.BadgePoints }} </strong>                    <!-- <div *ngIf="b.BadgeName === \'Locked\'">                        <mat-icon [color]="b.BadgeId > 33 ? \'primary\' : \'\'"> star_rating </mat-icon>                        <mat-icon [color]="b.BadgeId > 66 ? \'primary\' : \'\'"> star_rating </mat-icon>                        <mat-icon [color]="b.BadgeId > 99 ? \'primary\' : \'\'"> star_rating </mat-icon>                    </div> -->                </div>                <p *ngIf="!currentUser.badges.length">No Data available</p>            </div>        </div>        <div fxFlex="30">            <p class="mat-title mb-8">Coins and Points</p>            <div fxLayout="row wrap" fxLayoutAlign="start center">                <div *ngFor="let c of currentUser.coins | slice: 0:5; trackBy: valueField" fxFlex="30" class="mb-8">                    <img [src]="c.image" class="mx-auto mb-4 d-block" [alt]="c.name" />                    <div class="text-center">                        {{ c.name }}                        <br />                        <strong> {{ c.value }} </strong>                    </div>                </div>                <no-data-available *ngIf="!currentUser.coins.length"> </no-data-available>            </div>        </div>        <div fxFlex="40" class="my-performance-card">            <p class="mat-title mb-8">My Performance</p>            <div *ngIf="getAgentProgressRes.data.length" fusePerfectScrollbar class="records-list px-8">                <div *ngFor="let p of getAgentProgressRes.data; trackBy: pointsAssigned" fxLayout fxLayoutAlign="space-between center" class="mb-16">                    <ng-container [ngSwitch]="p.Channel | lowercase">                        <mat-icon *ngSwitchCase="\'textchat\'"> chat </mat-icon>                        <mat-icon *ngSwitchCase="\'voice\'"> phone </mat-icon>                    </ng-container>                    <span fxFlex="35" class="text-center px-4 border-right-secondary">                        {{ p.Channel }}{{ p.Channel ? \'_\' : \'\' }}{{ p.MetricName }}                    </span>                    <mat-slider                        fxFlex="30"                        [value]="p.MetricAverageValue"                        step="1"                        [ngClass]="                            p.MetricAverageValue <= p.MetricMaxValue                                ? (p.MetricName || \'\').toLowerCase().includes(\'total\')                                    ? \'red-slider\'                                    : \'green-slider\'                                : (p.MetricName || \'\').toLowerCase().includes(\'total\')                                ? \'green-slider\'                                : \'red-slider\'                        "                        [max]="p.MetricMaxValue"                    ></mat-slider>                    <span fxFlex="30" class="ml-4"> {{ p.MetricAverageValue }} / {{ p.MetricMaxValue }} </span>                </div>            </div>            <div *ngIf="!getAgentProgressRes.data.length" fxLayout="row wrap" fxLayoutAlign="center center">                <no-data-available> </no-data-available>            </div>        </div>        <div fxFlex="100" fxLayoutAlign="center center">            <button mat-raised-button color="primary" class="w-40-p" (click)="redeem()">Redeem Now !</button>        </div>    </div>    <div        *ngIf="            this.leaderBoardRes.loading ||            this.getAgentProgressRes.loading ||            this.getAgentLevelsRes.loading ||            this.getQuizInfoRes.loading ||            this.dashboardState.loading        "        fxLayout="column"        fxLayoutAlign="center center"        class="w-100-p h-100-p"    >        <div class="w-70-p text-center">            <p class="mat-title mb-40">Setting Up Gamification Dashboard</p>            <mat-progress-bar mode="indeterminate"></mat-progress-bar>        </div>    </div>    <div        *ngIf="            this.leaderBoardRes.error ||            this.getAgentProgressRes.error ||            this.getAgentLevelsRes.error ||            this.getQuizInfoRes.error ||            this.dashboardState.error        "        fxLayout="column"        fxLayoutAlign="center center"        class="w-100-p h-100-p"    >        <div class="w-70-p text-center">            <p class="mat-title mb-40">{{ dashboardState.msg }}</p>            <button mat-raised-button color="primary" class="w-20-p" (click)="setupDashboard()">Retry</button>        </div>    </div>    <!-- your code goes here --></tw-wrapper></div>'
+    var COMPONENTS = [{'name': 'AlertDialogComponent', 'selector': 'alert-dialog'},{'name': 'AppComponent', 'selector': 'app'},{'name': 'AppConfirmDialogComponent', 'selector': 'app-confirm-dialog'},{'name': 'AppSnackbarComponent', 'selector': 'app-snackbar'},{'name': 'AppThemeOptionsComponent', 'selector': 'app-theme-options'},{'name': 'AvatarComponent', 'selector': 'avatar'},{'name': 'ContentComponent', 'selector': 'content'},{'name': 'CreateSmsComponent', 'selector': 'app-create-sms'},{'name': 'CustomDialogComponent', 'selector': 'custom-dialog'},{'name': 'FooterComponent', 'selector': 'footer'},{'name': 'FuseConfirmDialogComponent', 'selector': 'fuse-confirm-dialog'},{'name': 'FuseCountdownComponent', 'selector': 'fuse-countdown'},{'name': 'FuseDemoContentComponent', 'selector': 'fuse-demo-content'},{'name': 'FuseDemoSidebarComponent', 'selector': 'fuse-demo-sidebar'},{'name': 'FuseHighlightComponent', 'selector': 'fuse-highlight'},{'name': 'FuseMaterialColorPickerComponent', 'selector': 'fuse-material-color-picker'},{'name': 'FuseNavHorizontalCollapsableComponent', 'selector': 'fuse-nav-horizontal-collapsable'},{'name': 'FuseNavHorizontalItemComponent', 'selector': 'fuse-nav-horizontal-item'},{'name': 'FuseNavigationComponent', 'selector': 'fuse-navigation'},{'name': 'FuseNavVerticalCollapsableComponent', 'selector': 'fuse-nav-vertical-collapsable'},{'name': 'FuseNavVerticalGroupComponent', 'selector': 'fuse-nav-vertical-group'},{'name': 'FuseNavVerticalItemComponent', 'selector': 'fuse-nav-vertical-item'},{'name': 'FuseProgressBarComponent', 'selector': 'fuse-progress-bar'},{'name': 'FuseSearchBarComponent', 'selector': 'fuse-search-bar'},{'name': 'FuseShortcutsComponent', 'selector': 'fuse-shortcuts'},{'name': 'FuseSidebarComponent', 'selector': 'fuse-sidebar'},{'name': 'FuseThemeOptionsComponent', 'selector': 'fuse-theme-options'},{'name': 'FuseWidgetComponent', 'selector': 'fuse-widget'},{'name': 'HorizontalLayout1Component', 'selector': 'horizontal-layout-1'},{'name': 'InstantMessagingComponent', 'selector': 'instant-messaging'},{'name': 'LoginComponent', 'selector': 'login'},{'name': 'MainComponent', 'selector': 'main'},{'name': 'NavbarComponent', 'selector': 'navbar'},{'name': 'NoDataAvailableComponent', 'selector': 'no-data-available'},{'name': 'QuickPanelComponent', 'selector': 'quick-panel'},{'name': 'RaceCarTrackComponent', 'selector': 'race-car-track'},{'name': 'ReminderTaskDialogComponent', 'selector': 'reminder-task-dialog'},{'name': 'ResourceNotFoundComponent', 'selector': 'resource-not-found'},{'name': 'SnackbarComponent', 'selector': 'snackbar'},{'name': 'ToolbarComponent', 'selector': 'toolbar'},{'name': 'TwAccountInformationComponent', 'selector': 'tw-account-information'},{'name': 'TwActiveInteractionsComponent', 'selector': 'tw-active-interactions'},{'name': 'TwAdCallbacksComponent', 'selector': 'tw-ad-callbacks'},{'name': 'TwAdFeedbackComponent', 'selector': 'tw-ad-feedback'},{'name': 'TwAdGamificationComponent', 'selector': 'tw-ad-gamification'},{'name': 'TwAdInteractionDetailsComponent', 'selector': 'tw-ad-interaction-details'},{'name': 'TwAdPerformanceComponent', 'selector': 'tw-ad-performance'},{'name': 'TwAdScoreComponent', 'selector': 'tw-ad-score'},{'name': 'TwAdTotalInteractionsComponent', 'selector': 'tw-ad-total-interactions'},{'name': 'TwAgentAssistComponent', 'selector': 'tw-agent-assist'},{'name': 'TwAgentDetailsComponent', 'selector': 'tw-agent-details'},{'name': 'TwAhtTcComponent', 'selector': 'tw-aht-tc'},{'name': 'TwAmdocsBccComponent', 'selector': 'tw-amdocs-bcc'},{'name': 'TwAudioControlsComponent', 'selector': 'tw-audio-controls'},{'name': 'TwAuxCodesComponent', 'selector': 'tw-aux-codes'},{'name': 'TwAuxStatusChartComponent', 'selector': 'tw-aux-status-chart.component'},{'name': 'TwAuxTimerComponent', 'selector': 'tw-aux-timer'},{'name': 'TwBroadcastComponent', 'selector': 'tw-broadcast'},{'name': 'TwCannedResponsesComponent', 'selector': 'tw-canned-responses'},{'name': 'TwCardComponent', 'selector': 'tw-card'},{'name': 'TwCardHeaderComponent', 'selector': 'tw-card-header'},{'name': 'TwcCustomComponent', 'selector': 'twc-custom'},{'name': 'TwcEmailComponent', 'selector': 'twc-email'},{'name': 'TwChatControlsComponent', 'selector': 'tw-chat-controls'},{'name': 'TwChatPanelComponent', 'selector': 'tw-chat-panel'},{'name': 'TwcHomeComponent', 'selector': 'twc-home'},{'name': 'TwcNoInteractionComponent', 'selector': 'twc-no-interaction'},{'name': 'TwcNoWidgetsComponent', 'selector': 'twc-no-widgets'},{'name': 'TwCreateInteractionComponent', 'selector': 'tw-create-interaction'},{'name': 'TwcSupervisorComponent', 'selector': 'twc-supervisor'},{'name': 'TwcTextchatComponent', 'selector': 'twc-textchat'},{'name': 'TwcUnknownComponent', 'selector': 'twc-unknown'},{'name': 'TwCustomComponent', 'selector': 'tw-custom'},{'name': 'TwCustomerDetailsComponent', 'selector': 'tw-customer-details'},{'name': 'TwCustomerJourneyComponent', 'selector': 'tw-customer-journey'},{'name': 'TwCustomerSentimentComponent', 'selector': 'tw-customer-sentiment'},{'name': 'TwcVoiceComponent', 'selector': 'twc-voice'},{'name': 'TwcWorkbenchComponent', 'selector': 'twc-workbench'},{'name': 'TwEmailControlsComponent', 'selector': 'tw-email-controls'},{'name': 'TwEmailPanelComponent', 'selector': 'tw-email-panel'},{'name': 'TwGamificationComponent', 'selector': 'tw-gamification'},{'name': 'TwInstantMessagingComponent', 'selector': 'tw-instant-messaging'},{'name': 'TwLogoutComponent', 'selector': 'tw-logout'},{'name': 'TwNotificationsComponent', 'selector': 'tw-notifications'},{'name': 'TwPanelComponent', 'selector': 'tw-panel'},{'name': 'TwPendingCallbacksComponent', 'selector': 'tw-pending-callbacks'},{'name': 'TwPieChartComponent', 'selector': 'tw-pie-chart.component'},{'name': 'TwRegisterCallbackComponent', 'selector': 'tw-register-callback'},{'name': 'TwSampleComponent', 'selector': 'tw-sample'},{'name': 'TwSuActiveAgentsComponent', 'selector': 'tw-su-active-agents'},{'name': 'TwSuAgentActivityComponent', 'selector': 'tw-su-agent-activity'},{'name': 'TwSuAgentActivityDetailsComponent', 'selector': 'tw-su-agent-activity-details'},{'name': 'TwSuAgentInteractionsComponent', 'selector': 'tw-su-agent-interactions'},{'name': 'TwSuCallsInQueueComponent', 'selector': 'tw-su-calls-in-queue.component'},{'name': 'TwSuChannelsComponent', 'selector': 'tw-su-channels.component'},{'name': 'TwSuGamificationComponent', 'selector': 'tw-su-gamification'},{'name': 'TwSuIntentListComponent', 'selector': 'tw-su-intent-list'},{'name': 'TwSuStatusComponent', 'selector': 'tw-su-status.component'},{'name': 'TwTemplateComponent', 'selector': 'tw-template'},{'name': 'TwToolbarMenuComponent', 'selector': 'tw-toolbar-menu'},{'name': 'TwTransferInteractionComponent', 'selector': 'tw-transfer-interaction'},{'name': 'TwUnknownComponent', 'selector': 'tw-unknown'},{'name': 'TwVideoControlsComponent', 'selector': 'tw-video-controls'},{'name': 'TwVoiceBotTranscriptsComponent', 'selector': 'tw-voice-bot-transcripts'},{'name': 'TwVoiceCannedResponsesComponent', 'selector': 'tw-voice-canned-responses'},{'name': 'TwVoiceControlsComponent', 'selector': 'tw-voice-controls'},{'name': 'TwVoicePanelComponent', 'selector': 'tw-voice-panel'},{'name': 'TwWallboardComponent', 'selector': 'tw-wallboard'},{'name': 'TwWorkbenchPanelComponent', 'selector': 'tw-workbench-panel'},{'name': 'TwWorkCodesComponent', 'selector': 'tw-work-codes'},{'name': 'TwWrapperComponent', 'selector': 'tw-wrapper'},{'name': 'VerticalLayout1Component', 'selector': 'vertical-layout-1'},{'name': 'WidgetFabComponent', 'selector': 'widget-fab'},{'name': 'WidgetPreviewComponent', 'selector': 'widget-preview'},{'name': 'WorkbenchEmailComponent', 'selector': 'workbench-email'}];
+    var DIRECTIVES = [{'name': 'FuseIfOnDomDirective', 'selector': '[fuseIfOnDom]'},{'name': 'FuseInnerScrollDirective', 'selector': '.inner-scroll'},{'name': 'FuseMatSidenavHelperDirective', 'selector': '[fuseMatSidenavHelper]'},{'name': 'FuseMatSidenavTogglerDirective', 'selector': '[fuseMatSidenavToggler]'},{'name': 'FusePerfectScrollbarDirective', 'selector': '[fusePerfectScrollbar]'},{'name': 'FuseWidgetToggleDirective', 'selector': '[fuseWidgetToggle]'},{'name': 'QuillDirective', 'selector': '[quill]'},{'name': 'TWChartDirective', 'selector': '[twChart]'},{'name': 'TwTemplateDirective', 'selector': '[widgetTemplate]'}];
+    var ACTUAL_COMPONENT = {'name': 'TwGamificationComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+                   
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> result-matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'TwGamificationComponent.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+       <!-- Required to polyfill modern browsers as code is ES5 for IE... -->
+       <script src="../js/libs/custom-elements-es5-adapter.js" charset="utf-8" defer></script>
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+       <script src="../js/libs/zepto.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

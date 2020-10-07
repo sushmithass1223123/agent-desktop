@@ -51,6 +51,10 @@ import { TwWorkCodesComponent } from './tw-work-codes/tw-work-codes.component';
 import { TwWorkbenchPanelComponent } from './tw-workbench-panel/tw-workbench-panel.component';
 import { WorkbenchEmailComponent } from './tw-workbench-panel/workbench-email/workbench-email.component';
 
+
+/**
+ * Collections components
+ */
 const collectionComponents = [
     TwCustomComponent,
     TwUnknownComponent,
@@ -103,6 +107,9 @@ const collectionComponents = [
     RaceCarTrackComponent
 ];
 
+/**
+ * Widgets Collections Module
+ */
 @NgModule({
     declarations: collectionComponents,
     imports: [SharedModule, TwWrapperModule],

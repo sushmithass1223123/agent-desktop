@@ -7,6 +7,9 @@ import { ContentPageService } from 'app/services/content-page.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
+/**
+ * Content Component
+ */
 @Component({
     selector: 'content',
     templateUrl: './content.component.html',

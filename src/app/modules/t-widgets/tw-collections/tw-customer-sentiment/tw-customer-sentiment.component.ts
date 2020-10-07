@@ -8,24 +8,45 @@ import * as Chart from 'chart.js';
 import { takeUntil } from 'rxjs/operators';
 import { SDKClient, GenericEvent } from 'tmac-sdk';
 
+/**
+ * Neutral image
+ */
 const neutral = new Image();
 neutral.src = 'assets/images/vectors/neutral-score.svg';
 neutral.width = 20;
 neutral.height = 20;
 
+/**
+ * Positive image
+ */
 const positive = new Image();
 positive.src = 'assets/images/vectors/positive-score.svg';
 positive.width = 20;
 positive.height = 20;
 
+/**
+ * Negative image
+ */
 const negative = new Image();
 negative.src = 'assets/images/vectors/negative-score.svg';
 negative.width = 20;
 negative.height = 20;
 
+/**
+ * Sendtiment constant datapoints in Graph
+ */
 const sentimentDataPoints = {
+    /**
+     * Slightly above zero
+     */
     Negative: 8,
+    /**
+     * Median
+     */
     Neutral: 50,
+    /**
+     * Slightly below 100
+     */
     Positive: 93
 };
 
@@ -47,6 +68,9 @@ Chart.pluginService.register({
     }
 });
 
+/**
+ * Customer sentiment chart component
+ */
 @Component({
     selector: 'tw-customer-sentiment',
     templateUrl: './tw-customer-sentiment.component.html',
@@ -54,9 +78,14 @@ Chart.pluginService.register({
     encapsulation: ViewEncapsulation.None
 })
 export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-    // holds all the data related to this widget from the config
+    /**
+     * holds all the data related to this widget from the config
+     */
     @Input() data: IWidget;
 
+    /**
+     * customerSentimentChart data
+     */
     customerSentimentChart: TwChartConfig = {
         datasets: [
             {
@@ -100,18 +129,30 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
         }
     };
 
+    /**
+     * Current Interaction id
+     */
     interactionId: number;
 
+    /**
+     * current nlp data
+     */
     nlpCurrentData: any = null;
 
     // -----------------------------------------------------------
     // @ [OPTIONAL] to store the fuse config for theme
     // -----------------------------------------------------------
+    /**
+     * Fuse config data
+     */
     fuseConfig: any;
 
     // -----------------------------------------------------------
     // @ [OPTIONAL] to store entire app config and get update
     // -----------------------------------------------------------
+    /**
+     * App config data
+     */
     appConfig: any;
 
     /**
@@ -167,6 +208,10 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
         this.destroyWrapper();
     }
 
+    /**
+     * OnNLPDataEvent handler
+     * @param {GenericEvent} evt 
+     */
     OnNLPDataEvent = (evt: GenericEvent): void => {
         const receivedData = evt;
         if (receivedData) {

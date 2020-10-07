@@ -11,6 +11,9 @@ import { TwLogoutComponent } from './tw-logout/tw-logout.component';
 import { TwNotificationsComponent } from './tw-notifications/tw-notifications.component';
 import { TwToolbarMenuComponent } from './tw-toolbar-menu/tw-toolbar-menu.component';
 
+/**
+ * Toolbar compoents
+ */
 const toolbarComponents = [
     TwActiveInteractionsComponent,
     TwAgentDetailsComponent,
@@ -24,9 +27,12 @@ const toolbarComponents = [
     TwCreateInteractionComponent
 ];
 
+/**
+ * All components in Toolbar 
+ */
 @NgModule({
     declarations: toolbarComponents,
     imports: [SharedModule],
     exports: toolbarComponents
 })
-export class TwToolbarModule {}
+export class TwToolbarModule { }

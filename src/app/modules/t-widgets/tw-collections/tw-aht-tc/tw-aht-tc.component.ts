@@ -10,11 +10,17 @@ import { AgentChannelDataList, SDKClient } from 'tmac-sdk';
 
 type Sources = 'dashboard' | 'supervisor';
 
+/**
+ * Colors for chart
+ */
 const multiColors: any = {
     backgroundColor: CHART_COLORS.map((c) => c.backgroundColor),
     hoverBackgroundColor: CHART_COLORS.map((c) => c.hoverBackgroundColor)
 };
 
+/**
+ * AHT / TC Widget component
+ */
 @Component({
     selector: 'tw-aht-tc',
     templateUrl: './tw-aht-tc.component.html',
@@ -23,18 +29,43 @@ const multiColors: any = {
     animations: fuseAnimations
 })
 export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+    /**
+     * App config json data
+     */
     @Input() data: any;
 
+    /**
+     * Table Sort ref
+     */
     @ViewChild(MatSort, { static: true }) sort: MatSort;
+
+    /**
+     * Table Paginator ref
+     */
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
+    /**
+     * Widget Maximized status
+     */
     maximized = false;
+    /**
+     * Interactino list
+     */
     interactionList: any[] = [];
 
+    /**
+     * App data config
+     */
     dataConfig: {
+        /**
+         * Available sources for this reusable compnent
+         */
         Source: Sources;
     };
 
+    /**
+     * AHT chart config
+     */
     ahtChart: TwChartConfig = {
         datasets: [{ data: [] }],
         options: {
@@ -52,6 +83,9 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
         legend: false
     };
 
+    /**
+     * Interaction Details table data
+     */
     interactionDetailsTable = {
         source: new MatTableDataSource([]),
         columns: ['Channel', 'AverageHandleTime', 'Transfer', 'Conference']
@@ -62,6 +96,10 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
         this.ahtChart.options.plugins = { outlabels: { display: this.ahtChart.legend } };
     }
 
+    /**
+     * Lifecycle hook
+     * @method
+     */
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
@@ -73,6 +111,10 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
         }
     }
 
+    /**
+     * Lifecycle hook
+     * @method
+     */
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
@@ -82,6 +124,10 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
 
     // Methods for Source === 'dashboard' ::: Start
 
+    /**
+     * AgentChannelDetailsEvent handler
+     * @param {AgentChannelDataList} data 
+     */
     private AgentChannelDetailsEvent = (data: AgentChannelDataList) => {
         this.interactionList = data.Channels;
         this.interactionDetailsTable.source = new MatTableDataSource(this.interactionList);
@@ -93,6 +139,10 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
 
     // Methods for Source === 'supervisor' ::: Start
 
+    /**
+     * TeamChannelListEvent handler
+     * @param {AgentChannelDataList} data 
+     */
     private TeamChannelListEvent = (data: AgentChannelDataList) => {
         const datasets = { AHT: [], 'Transfer / Conference': [] };
         const labels = [];

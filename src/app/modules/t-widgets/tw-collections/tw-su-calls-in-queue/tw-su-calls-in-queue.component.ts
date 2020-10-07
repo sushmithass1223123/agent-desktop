@@ -9,11 +9,17 @@ import { takeUntil } from 'rxjs/operators';
 import { SDKClient, WallboardRefreshEvent } from 'tmac-sdk';
 import { sortBy } from 'lodash';
 
+/**
+ * Colors for chart
+ */
 const multiColors: any = {
     backgroundColor: [...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS].map((c) => c.backgroundColor),
     hoverBackgroundColor: [...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS].map((c) => c.hoverBackgroundColor)
 };
 
+/**
+ * Calls in queue component
+ */
 @Component({
     selector: 'tw-su-calls-in-queue.component',
     templateUrl: './tw-su-calls-in-queue.component.html',
@@ -21,19 +27,30 @@ const multiColors: any = {
     encapsulation: ViewEncapsulation.None
 })
 export class TwSuCallsInQueueComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-    // holds all the data related to this widget from the config
+    /**
+     * holds all the data related to this widget from the config
+     */
     @Input() data: any;
 
     // -----------------------------------------------------------
     // @ [OPTIONAL] to store the fuse config for theme
     // -----------------------------------------------------------
+    /**
+     * holds all the data from the fuse config
+     */
     fuseConfig: FuseConfig;
 
     // -----------------------------------------------------------
     // @ [OPTIONAL] to store entire app config and get update
     // -----------------------------------------------------------
+    /**
+     * App config
+     */
     appConfig: any;
 
+    /**
+     * Calls in queue Chart info
+     */
     ciqChart: TwChartConfig = {
         datasets: [{ data: [] }],
         options: {
@@ -106,6 +123,10 @@ export class TwSuCallsInQueueComponent extends TWidgetWrapper implements OnInit,
         this.destroyWrapper();
     }
 
+    /**
+     * TeamWallboardRefreshEvent handler
+     * @param {WallboardRefreshEvent} evt 
+     */
     TeamWallboardRefreshEvent = (evt: WallboardRefreshEvent) => {
         const datasets = { 'Calls In Queue': [] };
         const labels = [];

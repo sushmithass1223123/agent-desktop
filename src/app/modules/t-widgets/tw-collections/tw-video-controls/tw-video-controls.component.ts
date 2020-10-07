@@ -15,6 +15,9 @@ import { takeUntil } from 'rxjs/operators';
 import { AVChannel, AVControlMessageReceivedEvent, AVEvent, IAgentData, IResponse, SDKClient, TEnums, TextChatDisconnectedEvent, TUtils } from 'tmac-sdk';
 import { TwChatControlsComponent } from '../tw-chat-controls/tw-chat-controls.component';
 
+/**
+ * Video Controls
+ */
 @Component({
     selector: 'tw-video-controls',
     templateUrl: './tw-video-controls.component.html',
@@ -23,38 +26,112 @@ import { TwChatControlsComponent } from '../tw-chat-controls/tw-chat-controls.co
     animations: fuseAnimations
 })
 export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-    // holds all the data related to this widget from the config
+    /**
+     * holds all the data related to this widget from the config
+     */
     @Input() data: IWidget;
 
+    /**
+     * Fuse Config
+     */
     fuseConfig: any;
+
+    /**
+     * App Config
+     */
     appConfig: any;
 
+    /**
+     * Maximized State
+     */
     maximized: boolean;
+
+    /**
+     * Widget Data
+     */
     widgetData: {
         customerName: string;
         chatConfig: any;
         direction: string;
         opener: TwChatControlsComponent;
     };
+
+    /**
+     * User Info
+     */
     user: IAgentData;
+    /**
+     * AV connection
+     */
     avConn: AVChannel;
+    /**
+     * Interaction Id
+     */
     interactionId: number;
+    /**
+     * Session Id
+     */
     sessionID: string;
+    /**
+     * Need more decription
+     */
     userList: any[] = [];
+    /**
+     * Start time 
+     */
     startTime: Date;
+    /**
+     * Duration
+     */
     duration: number;
+    /**
+     * Need More description
+     */
     mos = '0.00';
+    /**
+     * Need more description
+     */
     status = 'initial';
+    /**
+     * Connection Flag
+     */
     connected: boolean;
+    /**
+     * Need more description
+     */
     showUI: boolean;
+    /**
+     * Self cam stream visibility flag
+     */
     selfVideo: MediaStream;
+    /**
+     * Self view stram size
+     */
     selfViewSmall: boolean;
+    /**
+     * Audio flag
+     */
     audioMuted: boolean;
+    /**
+     * Video Flag
+     */
     videoMuted: boolean;
+    /**
+     * Hold flag
+     */
     hold: boolean;
+    /**
+     * Local Screensharng flag
+     */
     screenSharing: boolean;
+    /**
+     * Remote Screen sharing flag
+     */
     remoteScreenSharing: boolean;
 
+    /**
+     * Remote Video Elements Ref
+     */
     @ViewChildren('remoteVideo') remoteVideoElements: QueryList<ElementRef>;
 
     /**
@@ -149,6 +226,11 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * Create Av connection
+     * @method createAVConnection
+     * @param {AVControlMessageReceivedEvent} avEvent 
+     */
     private createAVConnection(avEvent: AVControlMessageReceivedEvent): void {
         // create a AV channel connection
         const connection = new AVChannel(
@@ -180,6 +262,11 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         }
     }
 
+    /**
+     * AVControlMessageReceivedEvent Handler
+     * @method AVControlMessageReceivedEvent
+     * @param {AVControlMessageReceivedEvent} evt 
+     */
     private AVControlMessageReceivedEvent = (evt: AVControlMessageReceivedEvent) => {
         // check the interaction
         if (evt.InteractionID !== this.interactionId) {
@@ -190,6 +277,12 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         this.avConn?.onMessage(evt.Message);
     }
 
+    
+    /**
+     * AVEvent Handler
+     * @method onAVEvent
+     * @param {AVEvent} evt 
+     */
     private onAVEvent = (evt: AVEvent) => {
         // swtich the av events
         switch (evt.event) {
@@ -319,6 +412,11 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         }
     }
 
+    /**
+     * TextChatDisconnectedEvent Handler
+     * @method TextChatDisconnectedEvent
+     * @param {TextChatDisconnectedEvent} evt 
+     */
     private TextChatDisconnectedEvent = (evt: TextChatDisconnectedEvent) => {
         // check the interaction
         if (evt.InteractionID !== this.interactionId) {
@@ -328,6 +426,10 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         this.destroyWidget();
     }
 
+    /**
+     * Widget Cleanup
+     * @method destroyWidget
+     */
     private destroyWidget(): void {
         // close the audio call widget
         this._aotWidgetService.destroyWidget(this.data.ID);
@@ -337,10 +439,18 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * Minimize video
+     * @method minimizeVideo
+     */
     public minimizeVideo(): void {
         this.selfViewSmall = !this.selfViewSmall;
     }
 
+    /**
+     * Mute Audio Call
+     * @method muteAudioCall
+     */
     public muteAudioCall(): void {
         // check the muted flag
         if (this.audioMuted) {
@@ -354,6 +464,10 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         this.audioMuted = !this.audioMuted;
     }
 
+    /**
+     * Mute Video Call
+     * @method muteVideoCall
+     */
     public muteVideoCall(): void {
         // check the muted flag
         if (this.videoMuted) {
@@ -367,6 +481,10 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         this.videoMuted = !this.videoMuted;
     }
 
+    /**
+     * Share Screen
+     * @method shareScreen
+     */
     public shareScreen(): void {
         // check if to start or stop
         if (this.screenSharing) {
@@ -378,6 +496,11 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         }
     }
 
+    /**
+     * Take Snap shot
+     * @method takeSnapShot
+     * @param {any} user 
+     */
     public takeSnapShot(user: any): void {
         console.log(this.remoteVideoElements, user);
         this.remoteVideoElements?.forEach((element: ElementRef) => {
@@ -445,6 +568,10 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         });
     }
 
+    /**
+     * Hold call
+     * @method holdCall
+     */
     public holdCall(): void {
         // check the muted flag
         if (this.hold) {
@@ -458,6 +585,10 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         this.hold = !this.hold;
     }
 
+    /**
+     * End Call
+     * @method endCall
+     */
     public endCall(): void {
         // end the call
         // if there is only customer then endCall else dropCall

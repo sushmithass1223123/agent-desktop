@@ -4,6 +4,9 @@ import { FuseConfig } from '@fuse/types';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
 
+/**
+ *  Create  SMS Component
+ */
 @Component({
     selector: 'app-create-sms',
     templateUrl: './create-sms.component.html',

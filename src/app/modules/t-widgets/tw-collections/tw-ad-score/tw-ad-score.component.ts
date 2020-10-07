@@ -4,6 +4,11 @@ import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { takeUntil } from 'rxjs/operators';
 
+/**
+ * TW - Score Widget
+ * Agent Widget 
+ * Shows the agent's sentiment response score with 3 emojis
+ */
 @Component({
     selector: 'tw-ad-score',
     templateUrl: './tw-ad-score.component.html',

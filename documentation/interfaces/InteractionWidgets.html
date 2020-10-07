@@ -122,6 +122,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Interaction Id</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -151,6 +157,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Widgets</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -161,44 +173,131 @@
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { TWidget } from &#x27;@modules/t-widgets/utils&#x27;;
 
 export interface IWidget {
+    /**
+     * Name of the Widget
+     */
     Name: string;
+    /**
+     * Widget Id
+     */
     ID: string;
+    /**
+     * Widget Description
+     */
     Description: string;
+    /**
+     * Type of widget from widget library
+     */
     Type: string;
+    /**
+     * Widget Configs
+     */
     Config: IWidgetConfig;
+    /**
+     * Widget Custom Data
+     */
     Data: any;
+    /**
+     * Widget Interaction Details
+     */
     InteractionDetails?: any;
+    /**
+     * Need more description
+     * Widget on destroy callback
+     */
+    destroy?: () &#x3D;&gt; void;
+    /**
+     * Need more description
+     * Widget on destroy callback
+     */
+    OnDestroy?: () &#x3D;&gt; boolean;
 }
 
 export interface InteractionWidgets {
+    /**
+     * Interaction Id
+     */
     interactionId: number;
+    /**
+     * Widgets
+     */
     widgets: {
+        /**
+         * Static Widgets
+         */
         static: TWidget[];
+        /**
+         * Dynamic Widgets
+         */
         dynamic: TWidget[];
-        aot?: TWidget[]
+        /**
+         * AOT widgets
+         */
+        aot?: TWidget[];
     };
 }
 
 export interface IWidgetConfig {
+    /**
+     * Enabled flag
+     */
+    Enabled: boolean;
+    /**
+     * Static flag
+     */
     Static: boolean;
+    /**
+     * Anchor flag
+     */
     Anchor: boolean;
+    /**
+     * AOT flag
+     */
     AOT: boolean;
+    /**
+     * Icon of Widget
+     */
     Icon: string;
+    /**
+     * class of widget
+     */
     Class: string;
+    /**
+     * Widget position
+     */
     Position: IWidgetPosition;
-    Actions: any[];
-    ViewState: string;
-    PinState: boolean;
-    FloatState: boolean;
-    Resizable: boolean;
+    /**
+     * Available widget actions
+     */
+    Actions: IAction[];
+    /**
+     * Initail state of widget
+     */
+    ViewState: &#x27;restore&#x27; | &#x27;maximize&#x27; | &#x27;minimize&#x27; | &#x27;hidden&#x27; | &#x27;float&#x27;;
+    /**
+     * Header flag
+     */
     Header: boolean;
-    Disabled: boolean;
 }
 
+export type IAction &#x3D; &#x27;restore&#x27; | &#x27;maximize&#x27; | &#x27;minimize&#x27; | &#x27;destroy&#x27; | &#x27;float&#x27;;
+
 export interface IWidgetPosition {
+    /**
+     * X axis position
+     */
     X: number;
+    /**
+     * Y axis position
+     */
     Y: number;
+    /**
+     * Height of widget
+     */
     H?: number;
+    /**
+     * Width of widget
+     */
     W?: number;
 }
 </code></pre>

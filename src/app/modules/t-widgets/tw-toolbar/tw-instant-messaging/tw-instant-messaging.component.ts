@@ -2,7 +2,9 @@ import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { TWidgetWrapper } from '@twidgets/utils';
 import { AgentNotificaitonEvent, SDKClient } from 'tmac-sdk';
-
+/**
+ * Instant messaging sidebar component
+ */
 @Component({
     selector: 'tw-instant-messaging',
     templateUrl: './tw-instant-messaging.component.html',

@@ -3,7 +3,10 @@ import { TWContentLibrary, TWidget, TWLibrary } from '@twidgets/utils';
 import { IWidget } from 'app/interfaces';
 import { TwTemplateDirective } from './tw-template.directive';
 
-
+/**
+ * Template component
+ * Widget Template component
+ */
 @Component({
     selector: 'tw-template',
     templateUrl: './tw-template.component.html',
@@ -11,20 +14,31 @@ import { TwTemplateDirective } from './tw-template.directive';
 })
 export class TwTemplateComponent implements AfterContentInit {
 
-    // widget list loader
+    /**
+     * widget list loader
+     */
     @Input() widgets: IWidget[];
 
-    // single widget loader
+    /**
+     * single widget loader
+     */
     @Input() set widget(widget: IWidget) {
         this.loadComponent(widget);
     }
 
+    /**
+     * Template directive
+     */
     @ViewChild(TwTemplateDirective, { static: true }) widgetTemplate: TwTemplateDirective;
 
     constructor(
         private _componentFactoryResolver: ComponentFactoryResolver
     ) { }
 
+    /**
+     * Lifecycle Hook
+     * @method
+     */
     ngAfterContentInit(): void {
         // loop throught input widgets
         this.widgets?.forEach((widget: IWidget) => {
@@ -35,6 +49,10 @@ export class TwTemplateComponent implements AfterContentInit {
         });
     }
 
+    /**
+     * Lifecycle Hook
+     * @method
+     */
     private loadComponent(widgetModel: IWidget): void {
         let widget: TWidget = null;
 

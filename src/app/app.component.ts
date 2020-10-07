@@ -21,28 +21,61 @@ import { AppDataService } from './services/app-data.service';
 // declare global
 declare global {
     interface Window {
+        /**
+         * SDK Client global
+         */
         SDKClient: typeof SDKClient;
     }
 }
 
+/**
+ * App / root component
+ */
 @Component({
     selector: 'app',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit, OnDestroy {
+    /**
+     * fuse Config data
+     */
     fuseConfig: any;
+    /**
+     * Need more Description
+     * Navigation 
+     */
     navigation: any;
+    /**
+     * Need more description
+     * Config
+     */
     config: any;
 
+    /**
+     * Production conofig path
+     */
     prodConfigPath = 'assets/app-config.json';
+
+    /**
+     * Dev config path
+     */
     devConfigPath = 'assets/app-config-dev.json';
 
+    /**
+     * loading state
+     */
     loaded = false;
 
-    // Private
+    /**
+     * Unsubscribe all subject
+     */
     private _unsubscribeAll: Subject<any>;
 
+    /**
+     * Disable opening console / refreshing
+     * @param {KeyboardEvent} event 
+     */
     @HostListener('document:keydown', ['$event'])
     handleKeyboardEvent(event: KeyboardEvent): any {
         if (!this.config) {

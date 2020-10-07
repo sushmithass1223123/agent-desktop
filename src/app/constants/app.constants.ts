@@ -2,6 +2,9 @@ import { Color } from 'ng2-charts';
 import { SDKClient, TUtils } from 'tmac-sdk';
 import { AppAlertDialogTypes, AppConfirmDialogTypes, ReminderTaskDialogTypes } from 'app/interfaces';
 
+/**
+ * Chart colors
+ */
 export const CHART_COLORS: Color[] = [
     {
         backgroundColor: 'rgb(138, 124, 207)',
@@ -30,8 +33,14 @@ export const CHART_COLORS: Color[] = [
     }
 ];
 
+/**
+ * Customer sentiment graph datapoints span
+ */
 export const CUSTOMER_SENTIMENT_PLOT_RECORDS = 10;
 
+/**
+ * Avatar colors
+ */
 export const AVATAR_COLORS = [
     '#D32F2F', // Red-700
     '#303F9F', // Indigo-700
@@ -39,17 +48,38 @@ export const AVATAR_COLORS = [
     '#388E3C' // Green-700
 ];
 
+/**
+ * Common error message
+ */
 export const COMMON_ERR_MESSAGE = 'Something went wrong';
 
+/**
+ * Gamification labels
+ */
 export const GAMIFICATION_METRIC_LABELS = {
     chat_interactions: 'Chat Interactions',
     chat_interactions_aht: 'Chat Interactions AHT'
 };
 
+/**
+ * Active callback statuses
+ */
 export const ACTIVE_CALL_STATUSES = ['AgentConnected', 'DacAccepted'];
+
+/**
+ * Failed callback statuses
+ */
 export const FAILED_CALL_STATUSES = ['DacNotificationFailed'];
+
+/**
+ * Pending callback statuses
+ */
 export const PENDING_CALL_STATUSES = ['Open', 'QueueConnected'];
 
+
+/**
+ * Agent Data map
+ */
 export const AGENT_DATA_MAP = () => {
     try {
         // get the agent data
@@ -70,6 +100,10 @@ export const AGENT_DATA_MAP = () => {
     return new Object();
 };
 
+
+/**
+ * Alert dialog constants
+ */
 export const AppAlertDialogConstants: Record<AppAlertDialogTypes, { heading: string; icon: string }> = {
     info: {
         heading: 'Info',
@@ -89,6 +123,10 @@ export const AppAlertDialogConstants: Record<AppAlertDialogTypes, { heading: str
     }
 };
 
+
+/**
+ * Reminder Task dialog constants
+ */
 export const RemiderTaskDialogConstants: Record<ReminderTaskDialogTypes, { title: string, message: string, type: ReminderTaskDialogTypes }> = {
     makecall: {
         title: 'Task Reminder',
@@ -122,6 +160,9 @@ export const RemiderTaskDialogConstants: Record<ReminderTaskDialogTypes, { title
     }
 };
 
+/**
+ * App confirm dialog constants
+ */
 export const AppConfirmDialogConstants: Record<AppConfirmDialogTypes, { title: string, message: string, type: string }> = {
     takeoverSession: {
         title: 'Confirm Login',
@@ -150,6 +191,9 @@ export const AppConfirmDialogConstants: Record<AppConfirmDialogTypes, { title: s
     }
 };
 
+/**
+ * Agent features map
+ */
 export const AGENT_FEATURES_MAP = {
     AllowSupervisorToBargeIn: {
         Type: 'interaction',

@@ -137,6 +137,13 @@
         </p>
 
 
+        <p class="comment">
+            <h3>Description</h3>
+        </p>
+        <p class="comment">
+            <p>Shared modules</p>
+
+        </p>
 
 
         <div class="container-fluid module">
@@ -173,9 +180,16 @@ import { FlexLayoutModule } from &#x27;@angular/flex-layout&#x27;;
 import { FormsModule, ReactiveFormsModule } from &#x27;@angular/forms&#x27;;
 import { FuseDirectivesModule } from &#x27;@fuse/directives/directives&#x27;;
 import { FusePipesModule } from &#x27;@fuse/pipes/pipes.module&#x27;;
+import { QuillModule } from &#x27;ngx-quill&#x27;;
 
-const modules &#x3D; [CommonModule, FormsModule, ReactiveFormsModule, FlexLayoutModule, FuseDirectivesModule, FusePipesModule];
+/**
+ * Shared module list
+ */
+const modules &#x3D; [CommonModule, FormsModule, ReactiveFormsModule, FlexLayoutModule, FuseDirectivesModule, FusePipesModule, QuillModule];
 
+/**
+ * Shared modules
+ */
 @NgModule({
     imports: modules,
     exports: modules

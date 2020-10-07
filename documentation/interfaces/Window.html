@@ -1,0 +1,593 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>agent-desktop documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	      <link rel="stylesheet" href="../styles/style.css">
+    </head>
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top visible-xs">
+            <a href="../" class="navbar-brand">agent-desktop documentation</a>
+            <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="hidden-xs menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li>Interfaces</li>
+  <li>Window</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="active">
+            <a href="#info" role="tab" id="info-tab" data-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li >
+            <a href="#source" role="tab" id="source-tab" data-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="c-info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/app.component.ts</code>
+        </p>
+
+
+
+        <section>
+            <h3 id="index">Index</h3>
+            <table class="table table-sm table-bordered index-table">
+                <tbody>
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Properties</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                        <a href="#SDKClient">SDKClient</a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+
+            <section>
+                <h3 id="inputs">Properties</h3>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="SDKClient"></a>
+                                        <span class="name"><b>SDKClient</b><a href="#SDKClient"><span class="icon ion-ios-link"></span></a></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>SDKClient:     <code></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>SDK Client global</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+            </section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="c-source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Platform } from &#x27;@angular/cdk/platform&#x27;;
+import { DOCUMENT } from &#x27;@angular/common&#x27;;
+import { Component, HostListener, Inject, OnDestroy, OnInit } from &#x27;@angular/core&#x27;;
+import { Title } from &#x27;@angular/platform-browser&#x27;;
+import { ActivatedRoute, Router } from &#x27;@angular/router&#x27;;
+import { FuseNavigationService } from &#x27;@fuse/components/navigation/navigation.service&#x27;;
+import { FuseConfigService } from &#x27;@fuse/services/config.service&#x27;;
+import { FuseSplashScreenService } from &#x27;@fuse/services/splash-screen.service&#x27;;
+import { FuseTranslationLoaderService } from &#x27;@fuse/services/translation-loader.service&#x27;;
+import { TranslateService } from &#x27;@ngx-translate/core&#x27;;
+import { AppUiService } from &#x27;@services/app-ui.service&#x27;;
+import { locale as navigationEnglish } from &#x27;app/navigation/i18n/en&#x27;;
+import { locale as navigationTurkish } from &#x27;app/navigation/i18n/tr&#x27;;
+import { navigation } from &#x27;app/navigation/navigation&#x27;;
+import { Subject } from &#x27;rxjs&#x27;;
+import { takeUntil } from &#x27;rxjs/operators&#x27;;
+import { IResponse, SDKClient, TEnums, TUtils } from &#x27;tmac-sdk&#x27;;
+import { environment } from &#x27;../environments/environment&#x27;;
+import { AppDataService } from &#x27;./services/app-data.service&#x27;;
+
+// declare global
+declare global {
+    interface Window {
+        /**
+         * SDK Client global
+         */
+        SDKClient: typeof SDKClient;
+    }
+}
+
+/**
+ * App / root component
+ */
+@Component({
+    selector: &#x27;app&#x27;,
+    templateUrl: &#x27;./app.component.html&#x27;,
+    styleUrls: [&#x27;./app.component.scss&#x27;]
+})
+export class AppComponent implements OnInit, OnDestroy {
+    /**
+     * fuse Config data
+     */
+    fuseConfig: any;
+    /**
+     * Need more Description
+     * Navigation 
+     */
+    navigation: any;
+    /**
+     * Need more description
+     * Config
+     */
+    config: any;
+
+    /**
+     * Production conofig path
+     */
+    prodConfigPath &#x3D; &#x27;assets/app-config.json&#x27;;
+
+    /**
+     * Dev config path
+     */
+    devConfigPath &#x3D; &#x27;assets/app-config-dev.json&#x27;;
+
+    /**
+     * loading state
+     */
+    loaded &#x3D; false;
+
+    /**
+     * Unsubscribe all subject
+     */
+    private _unsubscribeAll: Subject&lt;any&gt;;
+
+    /**
+     * Disable opening console / refreshing
+     * @param {KeyboardEvent} event 
+     */
+    @HostListener(&#x27;document:keydown&#x27;, [&#x27;$event&#x27;])
+    handleKeyboardEvent(event: KeyboardEvent): any {
+        if (!this.config) {
+            return;
+        }
+        //  Disables refresh (F5, ctrl + r, ctrl + F5)
+        if (this.config.AppConfigs.RefreshDisabled) {
+            if (event.key.toUpperCase() &#x3D;&#x3D;&#x3D; &#x27;F5&#x27;
+                || (event.key.toUpperCase() &#x3D;&#x3D;&#x3D; &#x27;R&#x27; &amp;&amp; event.ctrlKey) ||
+                (event.key.toUpperCase() &#x3D;&#x3D;&#x3D; &#x27;F5&#x27; &amp;&amp; event.ctrlKey)) {
+                event.preventDefault();
+                return false;
+            }
+        }
+        //  Disabled dev tools (F12, ctrl + shift + c, ctrl + shift + i)
+        if (this.config.AppConfigs.DevToolsDisabled) {
+            if (event.key.toUpperCase() &#x3D;&#x3D;&#x3D; &#x27;F12&#x27; ||
+                (event.key.toUpperCase() &#x3D;&#x3D;&#x3D; &#x27;C&#x27; &amp;&amp; event.ctrlKey &amp;&amp; event.shiftKey) ||
+                (event.key.toUpperCase() &#x3D;&#x3D;&#x3D; &#x27;I&#x27; &amp;&amp; event.ctrlKey &amp;&amp; event.shiftKey)) {
+                event.preventDefault();
+                return false;
+            }
+        }
+    }
+
+    /**
+     * Constructor
+     *
+     * @param {DOCUMENT} document
+     * @param {FuseConfigService} _fuseConfigService
+     * @param {FuseNavigationService} _fuseNavigationService
+     * @param {FuseSidebarService} _fuseSidebarService
+     * @param {FuseSplashScreenService} _fuseSplashScreenService
+     * @param {FuseTranslationLoaderService} _fuseTranslationLoaderService
+     * @param {Platform} _platform
+     * @param {TranslateService} _translateService
+     * @param {Title} _titleService
+     * @param {AppDataService} _appDataService
+     * @param {TitRouterle} _router
+     * @param {AppUiService} _appUIService
+     */
+    constructor(
+        @Inject(DOCUMENT) private document: any,
+        private _fuseConfigService: FuseConfigService,
+        private _fuseNavigationService: FuseNavigationService,
+        private _fuseSplashScreenService: FuseSplashScreenService,
+        private _fuseTranslationLoaderService: FuseTranslationLoaderService,
+        private _platform: Platform,
+        private _translateService: TranslateService,
+        private _titleService: Title,
+        private _appDataService: AppDataService,
+        private _router: Router,
+        private _appUIService: AppUiService
+    ) {
+        // Get default navigation
+        this.navigation &#x3D; navigation;
+
+        // Register the navigation to the service
+        this._fuseNavigationService.register(&#x27;main&#x27;, this.navigation);
+
+        // Set the main navigation as our current navigation
+        this._fuseNavigationService.setCurrentNavigation(&#x27;main&#x27;);
+
+        // Add languages
+        this._translateService.addLangs([&#x27;en&#x27;, &#x27;tr&#x27;]);
+
+        // Set the default language
+        this._translateService.setDefaultLang(&#x27;en&#x27;);
+
+        // Set the navigation translations
+        this._fuseTranslationLoaderService.loadTranslations(navigationEnglish, navigationTurkish);
+
+        // Use a language
+        this._translateService.use(&#x27;en&#x27;);
+
+        /**
+         * ----------------------------------------------------------------------------------------------------
+         * ngxTranslate Fix Start
+         * ----------------------------------------------------------------------------------------------------
+         */
+
+        /**
+         * If you are using a language other than the default one, i.e. Turkish in this case,
+         * you may encounter an issue where some of the components are not actually being
+         * translated when your app first initialized.
+         *
+         * This is related to ngxTranslate module and below there is a temporary fix while we
+         * are moving the multi language implementation over to the Angular&#x27;s core language
+         * service.
+         */
+
+        // Set the default language to &#x27;en&#x27; and then back to &#x27;tr&#x27;.
+        // &#x27;.use&#x27; cannot be used here as ngxTranslate won&#x27;t switch to a language that&#x27;s already
+        // been selected and there is no way to force it, so we overcome the issue by switching
+        // the default language back and forth.
+        /**
+         * setTimeout(() &#x3D;&gt; {
+         * this._translateService.setDefaultLang(&#x27;en&#x27;);
+         * this._translateService.setDefaultLang(&#x27;tr&#x27;);
+         * });
+         */
+
+        /**
+         * ----------------------------------------------------------------------------------------------------
+         * ngxTranslate Fix End
+         * ----------------------------------------------------------------------------------------------------
+         */
+
+        // Add is-mobile class to the body if the platform is mobile
+        if (this._platform.ANDROID || this._platform.IOS) {
+            this.document.body.classList.add(&#x27;is-mobile&#x27;);
+        }
+
+        // Set the private defaults
+        this._unsubscribeAll &#x3D; new Subject();
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+    // @ Lifecycle hooks
+    // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * On init
+     */
+    ngOnInit(): void {
+
+        // do not load config for preview page
+        if (this._router.url &#x3D;&#x3D;&#x3D; &#x27;/preview&#x27;) {
+            return;
+        }
+
+        // Get the app config
+        this.getConfig();
+
+        // Subscribe to config changes
+        this._fuseConfigService.config
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((config: any) &#x3D;&gt; {
+
+                this.fuseConfig &#x3D; config;
+
+                // Boxed
+                if (this.fuseConfig.layout.width &#x3D;&#x3D;&#x3D; &#x27;boxed&#x27;) {
+                    this.document.body.classList.add(&#x27;boxed&#x27;);
+                }
+                else {
+                    this.document.body.classList.remove(&#x27;boxed&#x27;);
+                }
+
+                // Color theme - Use normal for loop for IE11 compatibility
+                // tslint:disable-next-line: prefer-for-of
+                for (let i &#x3D; 0; i &lt; this.document.body.classList.length; i++) {
+                    const className &#x3D; this.document.body.classList[i];
+
+                    if (className.startsWith(&#x27;theme-&#x27;)) {
+                        this.document.body.classList.remove(className);
+                    }
+                }
+
+                this.document.body.classList.add(this.fuseConfig.colorTheme);
+            });
+    }
+
+    /**
+     * On destroy
+     */
+    ngOnDestroy(): void {
+        // Unsubscribe from all subscriptions
+        this._unsubscribeAll.next();
+        this._unsubscribeAll.complete();
+
+        // subscribe to app ui service
+        this._appUIService.unsubscribe();
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+    // @ Private methods
+    // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * To get config for the app
+     */
+    private async getConfig(): Promise&lt;any&gt; {
+        let data &#x3D; null;
+        try {
+            // check the environment and load config
+            if (environment.production) {
+                // get the config from server for production
+                data &#x3D; await this.getProductionConfig();
+                TUtils.Logger.console(&#x27;info&#x27;, &#x27;App config loaded&#x27;);
+            }
+            else {
+                // get the config from local for developement
+                data &#x3D; await this.getDevelopementConfig();
+                TUtils.Logger.console(&#x27;info&#x27;, &#x27;App config loaded&#x27;, data);
+            }
+
+            // set the config to service
+            if (data) {
+                this._appDataService.config &#x3D; data;
+            }
+
+        } catch (error) {
+            TUtils.Logger.log(&#x27;Exception in AppComponent.getConfig&#x27;, error);
+        }
+        // set the loaded flag to true
+        this.loaded &#x3D; true;
+        // set the TMAC config
+        this.setTMACConfig(data);
+    }
+
+    /**
+     * To get production config
+     */
+    private async getProductionConfig(): Promise&lt;any&gt; {
+        // get the config
+        const respnse &#x3D; await fetch(this.prodConfigPath);
+        // get the json response
+        const data &#x3D; await respnse.json();
+
+        // check if the config is empty or null
+        if (data &#x3D;&#x3D;&#x3D; null || Object.keys(data).length &#x3D;&#x3D;&#x3D; 0) {
+            return null;
+        }
+
+        // set the app config to service
+        if (data) {
+            this._appDataService.appConfig &#x3D; data;
+        }
+
+        // check the config mode
+        if (data.ConfigMode &#x3D;&#x3D;&#x3D; &#x27;local&#x27;) {
+            TUtils.Logger.console(&#x27;info&#x27;, &#x27;Config mode&#x3D;local, load config from app-config-dev.json&#x27;);
+            // get the config from local for developement
+            return await this.getDevelopementConfig();
+        }
+
+        TUtils.Logger.console(&#x27;info&#x27;, &#x27;Config mode&#x3D;remote, load config from server&#x27;);
+
+        // get the login json from proxy
+        const loginJson: IResponse &#x3D; await TUtils.HttpClient.sendRequest({
+            url: &#x60;${data.ProxyUrl}/GetTmacLoginJson&#x60;,
+            header: {
+                &#x27;Content-Type&#x27;: &#x27;application/json&#x27;
+            },
+            responseType: &#x27;json&#x27;,
+            requestArgs: { id: &#x27;&#x27; },
+            method: &#x27;POST&#x27;,
+            retry: 3
+        });
+
+        // parse the json and return
+        return loginJson.response ? JSON.parse(loginJson.response.d) : null;
+    }
+
+    /**
+     * To get developement config
+     */
+    private async getDevelopementConfig(): Promise&lt;any&gt; {
+        // get the config
+        const respnse &#x3D; await fetch(this.devConfigPath);
+        return await respnse.json();
+    }
+
+    /**
+     * To set TMAC config
+     * 
+     * @param config
+     */
+    private setTMACConfig(config: any): void {
+        // check if the config is null
+        if (config !&#x3D;&#x3D; null) {
+            // set the title
+            if (config.AppConfigs.TitleName) {
+                this._titleService.setTitle(config.AppConfigs.TitleName);
+            }
+            // set the favicon
+            if (config.AppConfigs.Logos.Favicon) {
+                this.document.getElementById(&#x27;appFavicon&#x27;).setAttribute(&#x27;href&#x27;, config.AppConfigs.Logos.Favicon);
+            }
+
+            // set the SDK config
+            SDKClient.setConfig({
+                proxy: {
+                    urls: config.AppConfigs.SDK.Proxy.Urls || &#x27;&#x27;,
+                    type: config.AppConfigs.SDK.Proxy.Type || TEnums.ProxyType.SOAP,
+                    timeout: config.AppConfigs.SDK.Proxy.Timeout || 30000
+                },
+                signalRProxy: {
+                    logging: config.AppConfigs.SDK.SignalRProxy.Logging || false,
+                    protocol: config.AppConfigs.SDK.SignalRProxy?.Protocol,
+                    timeout: config.AppConfigs.SDK.SignalRProxy.Timeout || 30
+                },
+                logging: {
+                    enabled: config.AppConfigs.SDK.Logging.Enabled || false,
+                    remote: config.AppConfigs.SDK.Logging.Remote || false,
+                    remoteThreshold: config.AppConfigs.SDK.Logging.RemoteThreshold || 15
+                },
+                customScripts:
+                    [...config.AppConfigs.SDK.CustomSripts]
+            });
+
+            // check the environment and set window variable
+            if (!environment.production) {
+                // set a global variable to access SDK client on development mode
+                window.SDKClient &#x3D; SDKClient;
+            }
+        }
+        else {
+            // we will route to not-found page
+            this._router.navigate([&#x27;not-found&#x27;],
+                {
+                    queryParamsHandling: &#x27;preserve&#x27;,
+                    preserveFragment: true,
+                    state: {
+                        subtitle: &#x27;Oops&#x27;,
+                        title: &#x27;&#x27;,
+                        description: &#x27;Config is not found, please contact administrator!&#x27;,
+                        login: false
+                    }
+                });
+        }
+
+        // subscribe to app ui service
+        this._appUIService.subscribe();
+    }
+}
+</code></pre>
+    </div>
+</div>
+
+
+                   
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> result-matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'Window.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+       <!-- Required to polyfill modern browsers as code is ES5 for IE... -->
+       <script src="../js/libs/custom-elements-es5-adapter.js" charset="utf-8" defer></script>
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+       <script src="../js/libs/zepto.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

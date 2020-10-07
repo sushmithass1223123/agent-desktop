@@ -4,6 +4,9 @@ import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-b
 import { IResponse, TUtils } from 'tmac-sdk';
 import { TwWidgetModel } from 'app/models';
 
+/**
+ * Widget Preview
+ */
 @Component({
     selector: 'widget-preview',
     templateUrl: './widget-preview.component.html',
@@ -12,11 +15,26 @@ import { TwWidgetModel } from 'app/models';
 })
 export class WidgetPreviewComponent implements OnInit {
 
+    /**
+     * Static widgets
+     */
     staticWidgets = [];
+    /**
+     * Dynamic Widgets
+     */
     dynamicWidgets = [];
 
+    /**
+     * Loading state
+     */
     loading = true;
+    /**
+     * App config path
+     */
     appConfigPath = 'assets/app-config.json';
+    /**
+     * App config
+     */
     appConfig: any;
 
     constructor(
@@ -26,6 +44,9 @@ export class WidgetPreviewComponent implements OnInit {
     ) {
     }
 
+    /**
+     * Lifecycle Hook
+     */
     ngOnInit(): void {
         // get the config
         this.getConfig();
@@ -38,6 +59,10 @@ export class WidgetPreviewComponent implements OnInit {
         this.staticWidgets = [staticWidget];
     }
 
+    /**
+     * Get config
+     * @method
+     */
     private async getConfig(): Promise<any> {
         // get the config
         const respnse = await fetch(this.appConfigPath);
@@ -64,6 +89,10 @@ export class WidgetPreviewComponent implements OnInit {
         }
     }
 
+    /**
+     * Route to 404 page
+     * @param {String} message 
+     */
     private routeToNotFound(message: string): void {
         // route to the not found page
         this._router.navigate(['not-found'],
@@ -77,6 +106,10 @@ export class WidgetPreviewComponent implements OnInit {
             });
     }
 
+    /**
+     * Get template json
+     * @param {String} templateName
+     */
     private async getTemplateJson(templateName: string): Promise<void> {
         try {
             this._fuseProgressBarService.show();

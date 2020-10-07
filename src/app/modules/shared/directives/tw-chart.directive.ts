@@ -1,14 +1,25 @@
 import { ContentChild, Directive, HostListener } from '@angular/core';
 import { BaseChartDirective } from 'ng2-charts';
 
+/**
+ * Directive chart
+ * show legends on maximise
+ */
 @Directive({
     selector: '[twChart]'
 })
 export class TWChartDirective {
+    /**
+     * Content child
+     */
     @ContentChild(BaseChartDirective) chart: BaseChartDirective;
 
-    constructor() {}
+    constructor() { }
 
+    /**
+     * Listen to maximized event
+     * @param {Boolean} state 
+     */
     @HostListener('maximizeEvent', ['$event'])
     maximizeEvent(state: boolean): void {
         if (this.chart) {

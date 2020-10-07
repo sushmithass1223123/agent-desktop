@@ -78,27 +78,23 @@ import { WidgetPreviewComponent } from &#x27;@modules/core/widget-preview/widget
 import { ResourceNotFoundComponent } from &#x27;@modules/shared/resource-not-found/resource-not-found.component&#x27;;
 
 const appRoutes: Routes &#x3D; [
-    {
-        path: &#x27;&#x27;,
-        redirectTo: &#x27;login&#x27;,
-        pathMatch: &#x27;full&#x27;
-    },
+    { path: &#x27;&#x27;, redirectTo: &#x27;login&#x27;, pathMatch: &#x27;full&#x27; },
     {
         path: &#x27;login&#x27;,
-        component: LoginComponent
+        children: [
+            {
+                path: &#x27;&#x27;,
+                component: LoginComponent
+            },
+            {
+                path: &#x27;:lanId&#x27;,
+                component: LoginComponent
+            }
+        ]
     },
-    {
-        path: &#x27;main&#x27;,
-        component: MainComponent
-    },
-    {
-        path: &#x27;preview&#x27;,
-        component: WidgetPreviewComponent
-    },
-    {
-        path: &#x27;not-found&#x27;,
-        component: ResourceNotFoundComponent
-    }
+    { path: &#x27;main&#x27;, component: MainComponent },
+    { path: &#x27;preview&#x27;, component: WidgetPreviewComponent },
+    { path: &#x27;not-found&#x27;, component: ResourceNotFoundComponent }
 ];
 
 @NgModule({

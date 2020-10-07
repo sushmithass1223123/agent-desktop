@@ -33,8 +33,14 @@ Chart.defaults.global.plugins = {
     outlabels: { display: false, backgroundColor: null, font: { size: 15 }, color: 'black' }
 };
 
+/**
+ * Shared Modules
+ */
 const sharedModules = [MaterialModule, FuseSharedModule, LeafletModule, ChartsModule];
 
+/**
+ * Shared components
+ */
 const sharedComponents = [
     ResourceNotFoundComponent,
     CustomDialogComponent,
@@ -50,6 +56,9 @@ const sharedComponents = [
     NoDataAvailableComponent
 ];
 
+/**
+ * Shared Module
+ */
 @NgModule({
     declarations: sharedComponents,
     imports: [CommonModule, ...sharedModules],

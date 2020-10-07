@@ -5,15 +5,21 @@ import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CHART_COLORS } from 'app/constants';
 import { TwChartConfig } from 'app/interfaces';
-import { takeUntil } from 'rxjs/operators';
-import { SDKClient, AgentChannelDataModel, AgentChannelDataList } from 'tmac-sdk';
 import { sortBy } from 'lodash';
+import { takeUntil } from 'rxjs/operators';
+import { AgentChannelDataList, SDKClient } from 'tmac-sdk';
 
+/**
+ * Chart colors
+ */
 const multiColors: any = {
     backgroundColor: [...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS].map((c) => c.backgroundColor),
     hoverBackgroundColor: [...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS].map((c) => c.hoverBackgroundColor)
 };
 
+/**
+ * Supervisor channels chart widgets
+ */
 @Component({
     selector: 'tw-su-channels.component',
     templateUrl: './tw-su-channels.component.html',
@@ -21,19 +27,30 @@ const multiColors: any = {
     encapsulation: ViewEncapsulation.None
 })
 export class TwSuChannelsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-    // holds all the data related to this widget from the config
+    /**
+     * holds all the data related to this widget from the config
+     */
     @Input() data: any;
 
     // -----------------------------------------------------------
     // @ [OPTIONAL] to store the fuse config for theme
     // -----------------------------------------------------------
+    /**
+     * holds all the data from the fuse config
+     */
     fuseConfig: FuseConfig;
 
     // -----------------------------------------------------------
     // @ [OPTIONAL] to store entire app config and get update
     // -----------------------------------------------------------
+    /**
+     * App config
+     */
     appConfig: any;
 
+    /**
+     * Channeks Chart data
+     */
     channelsChart: TwChartConfig = {
         datasets: [{ data: [] }],
         options: {
@@ -105,6 +122,10 @@ export class TwSuChannelsComponent extends TWidgetWrapper implements OnInit, OnD
         this.destroyWrapper();
     }
 
+    /**
+     * Team active channel list event handler
+     * @param {AgentChannelDataList} evt 
+     */
     TeamActiveChannelListEvent = (evt: AgentChannelDataList) => {
         const datasets = { Count: [] };
         const labels = [];

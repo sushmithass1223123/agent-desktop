@@ -13,6 +13,9 @@ import { Observable } from 'rxjs';
 import { map, startWith, takeUntil } from 'rxjs/operators';
 import { SDKClient, WorkCode, WorkCodeAddedEvent } from 'tmac-sdk';
 
+/**
+ * Work codes Component
+ */
 @Component({
     selector: 'tw-work-codes',
     templateUrl: './tw-work-codes.component.html',

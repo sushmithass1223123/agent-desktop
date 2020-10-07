@@ -13,6 +13,9 @@ import { random } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 import { AgentFeatures, AgentTabCount, IAgentData, IAUXCodes, IResponse, SDKClient, SuAgentDataModel, SuAgentModel, TUtils } from 'tmac-sdk';
 
+/**
+ * Active agents component widget
+ */
 @Component({
     selector: 'tw-su-active-agents',
     templateUrl: './tw-su-active-agents.component.html',

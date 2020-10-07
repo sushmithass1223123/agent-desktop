@@ -1,7 +1,9 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TWidgetWrapper } from '@twidgets/utils';
 import { AgentStatusChangeEvent, IAgentData, SDKClient } from 'tmac-sdk';
-
+/**
+ * Agent Details component
+ */
 @Component({
     selector: 'tw-agent-details',
     templateUrl: './tw-agent-details.component.html',

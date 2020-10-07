@@ -2,13 +2,16 @@ import { Component, Input, OnDestroy, OnInit, ViewEncapsulation, ViewChild } fro
 import { FuseConfigService } from '@fuse/services/config.service';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { takeUntil } from 'rxjs/operators';
-import { GamificationService } from '@services/gamification.service';
+import { map, takeUntil } from 'rxjs/operators';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { sortBy } from 'lodash';
 import { ResData } from 'app/interfaces';
+import { HttpClient } from '@angular/common/http';
 
+/**
+ * Supervisor Gamification Component
+ */
 @Component({
     selector: 'tw-su-gamification',
     templateUrl: './tw-su-gamification.component.html',
@@ -59,7 +62,7 @@ export class TwSuGamificationComponent extends TWidgetWrapper implements OnInit,
         private _fuseConfigService: FuseConfigService,
         // @ [OPTIONAL]
         private _appDataService: AppDataService,
-        public gamificationService: GamificationService
+        private http: HttpClient
     ) {
         super();
     }
@@ -109,17 +112,22 @@ export class TwSuGamificationComponent extends TWidgetWrapper implements OnInit,
     // -----------------------------------------------------------------------------------------------------
 
     setupLeaderBoard(): void {
-        this.gamificationService.fetchLeaderBoard(this.data.Data.LeaderBoardUrl).subscribe(
-            (leaders) => {
-                if (leaders && leaders.length) {
-                    this.leaderboardTable.source = new MatTableDataSource(sortBy(leaders, 'Position'));
+        this.http
+            .post<Record<'d', string>>(this.data.Data.LeaderBoardUrl, {})
+            .pipe(
+                map((x) => JSON.parse(x.d)),
+                takeUntil(this.unsubscribeAll)
+            ).subscribe(
+                (leaders) => {
+                    if (leaders && leaders.length) {
+                        this.leaderboardTable.source = new MatTableDataSource(sortBy(leaders, 'Position'));
+                    }
+                    this.gamificationReqStatus = { msg: '', error: false, loading: false };
+                },
+                () => {
+                    this.gamificationReqStatus = { msg: 'Something went wrong', error: true, loading: false };
                 }
-                this.gamificationReqStatus = { msg: '', error: false, loading: false };
-            },
-            () => {
-                this.gamificationReqStatus = { msg: 'Something went wrong', error: true, loading: false };
-            }
-        );
+            );
     }
 
     maximizeEvent(state: boolean): void {

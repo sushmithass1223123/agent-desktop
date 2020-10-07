@@ -6,6 +6,9 @@ import { IWidget } from 'app/interfaces';
 import { sortBy, uniqBy } from 'lodash';
 import { CallerIntentEvent, IResponse, IUIEvent, SDKClient, WorkCodeAddedEvent } from 'tmac-sdk';
 
+/**
+ * TW canned Responses
+ */
 @Component({
     selector: 'tw-canned-responses',
     templateUrl: './tw-canned-responses.component.html',

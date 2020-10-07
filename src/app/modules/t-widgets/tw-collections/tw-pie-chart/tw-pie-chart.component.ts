@@ -7,15 +7,21 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CHART_COLORS } from 'app/constants';
 import { IWidget, TwChartConfig } from 'app/interfaces';
 import { orderBy, sortBy } from 'lodash';
-import { from, fromEvent } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AgentChannelDataList, AgentStateDurationList, SDKClient, TeamIntentDataList, WallboardRefreshEvent } from 'tmac-sdk';
 
+
+/**
+ * Colors for chart
+ */
 const multiColors: any = {
     backgroundColor: [...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS].map((c) => c.backgroundColor),
     hoverBackgroundColor: [...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS].map((c) => c.hoverBackgroundColor)
 };
 
+/**
+ * Common Pie / Doughnut chart component
+ */
 @Component({
     selector: 'tw-pie-chart.component',
     templateUrl: './tw-pie-chart.component.html',
@@ -23,21 +29,35 @@ const multiColors: any = {
     encapsulation: ViewEncapsulation.None
 })
 export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-    // holds all the data related to this widget from the config
+    /**
+     * holds all the data related to this widget from the config
+     */
     @Input() data: IWidget;
 
+    /**
+     * Wrapper component ref, to detect change in maximize
+     */
     @ViewChild(TwWrapperComponent) wrapperComponent: TwWrapperComponent;
 
     // -----------------------------------------------------------
     // @ [OPTIONAL] to store the fuse config for theme
     // -----------------------------------------------------------
+    /**
+     * holds all the data from the app config
+     */
     fuseConfig: FuseConfig;
 
     // -----------------------------------------------------------
     // @ [OPTIONAL] to store entire app config and get update
     // -----------------------------------------------------------
+    /**
+     * App config
+     */
     appConfig: any;
 
+    /**
+     * Chart data
+     */
     chart: TwChartConfig = {
         datasets: [{ data: [] }],
         options: {
@@ -132,6 +152,11 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * TeamActiveStatusDetailsEvent handler
+     * @param {AgentStateDurationList} evt 
+     * @method
+     */
     private TeamActiveStatusDetailsEvent = (evt: AgentStateDurationList) => {
         const datasets = { Duration: [] };
         const labels = [];
@@ -152,6 +177,11 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
         this.chart.labels = labels;
     };
 
+    /**
+     * WallboardRefreshEvent handler 
+     * @param {WallboardRefreshEvent} evt 
+     * @method
+     */
     private TeamWallboardRefreshEvent = (evt: WallboardRefreshEvent) => {
         const datasets = { 'Calls In Queue': [] };
         const labels = [];
@@ -170,6 +200,11 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
         this.chart.labels = labels;
     };
 
+    /**
+     * TeamIntentListEvent handler 
+     * @param {TeamIntentDataList} intentList 
+     * @method
+     */
     private TeamIntentListEvent = (intentList: TeamIntentDataList) => {
         const datasets = { Count: [] };
         const labels = [];
@@ -201,6 +236,12 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
             });
     };
 
+
+    /**
+     * AgentChannelDetailsEvent handler 
+     * @param {AgentChannelDataList} intentList 
+     * @method
+     */
     private AgentChannelDetailsEvent = (channelData: AgentChannelDataList): void => {
         if (this.data.Data.Role === 'supervisor' && this.data.Data.AgentId !== channelData.AgentId) {
             return;
@@ -220,6 +261,12 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
         this.chart.labels = labels;
     };
 
+
+    /**
+     * TeamChannelListEvent handler 
+     * @param {AgentChannelDataList} intentList 
+     * @method
+     */
     private TeamChannelListEvent = (evt: AgentChannelDataList) => {
         const datasets = { Total: [] };
         const labels = [];
@@ -239,6 +286,11 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
         this.chart.labels = labels;
     };
 
+    /**
+     * TeamActiveChannelListEvent handler 
+     * @param {AgentChannelDataList} intentList 
+     * @method
+     */
     private TeamActiveChannelListEvent = (evt: AgentChannelDataList) => {
         const datasets = { Count: [] };
         const labels = [];

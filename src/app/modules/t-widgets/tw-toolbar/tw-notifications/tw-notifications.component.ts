@@ -7,6 +7,9 @@ import * as _ from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 import { AgentNotificaitonEvent, SDKClient } from 'tmac-sdk';
 
+/**
+ * Notfications Component
+ */
 @Component({
     selector: 'tw-notifications',
     templateUrl: './tw-notifications.component.html',

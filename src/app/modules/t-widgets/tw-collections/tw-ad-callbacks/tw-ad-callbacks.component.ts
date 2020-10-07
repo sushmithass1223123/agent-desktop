@@ -10,6 +10,9 @@ import * as moment from 'moment';
 import { takeUntil } from 'rxjs/operators';
 import { SDKClient } from 'tmac-sdk';
 
+/**
+ * Agent Callbacks Widget
+ */
 @Component({
     selector: 'tw-ad-callbacks',
     templateUrl: './tw-ad-callbacks.component.html',

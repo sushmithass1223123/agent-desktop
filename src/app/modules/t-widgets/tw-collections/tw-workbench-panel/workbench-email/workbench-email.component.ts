@@ -16,6 +16,9 @@ import * as moment from 'moment';
 import { takeUntil } from 'rxjs/operators';
 import { SDKClient } from 'tmac-sdk';
 
+/**
+ * Workbench Email
+ */
 @Component({
     selector: 'workbench-email', // make sure you set the selector starts with <widget-name>
     templateUrl: './workbench-email.component.html',

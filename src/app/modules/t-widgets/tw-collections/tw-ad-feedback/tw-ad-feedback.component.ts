@@ -1,15 +1,17 @@
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+import { fuseAnimations } from '@fuse/animations';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { takeUntil } from 'rxjs/operators';
-import { TwWrapperComponent } from '@modules/t-widgets/tw-wrapper/tw-wrapper.component';
-import { MatTableDataSource } from '@angular/material/table';
 import { random } from 'lodash';
-import { MatSort } from '@angular/material/sort';
-import { MatPaginator } from '@angular/material/paginator';
-import { fuseAnimations } from '@fuse/animations';
+import { takeUntil } from 'rxjs/operators';
 
+/**
+ * Feedback compnent
+ */
 @Component({
     selector: 'tw-ad-feedback',
     templateUrl: './tw-ad-feedback.component.html',

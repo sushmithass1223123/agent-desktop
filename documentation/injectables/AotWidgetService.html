@@ -38,7 +38,7 @@
 
 <ol class="breadcrumb">
   <li>Injectables</li>
-  <li>AotWidgetService</li>
+  <li>AOTWidgetService</li>
 </ol>
 
 <ul class="nav nav-tabs" role="tablist">
@@ -59,6 +59,13 @@
             <code>src/app/services/aot-widget.service.ts</code>
         </p>
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Service for AOT - Always On Top Widgets</p>
+
+            </p>
 
 
 
@@ -76,6 +83,10 @@
                         <ul class="index-list">
                             <li>
                                     <span class="modifier">Private</span>
+                                <a href="#_unsubscribeAll">_unsubscribeAll</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
                                 <a href="#_widgetsSubject">_widgetsSubject</a>
                             </li>
                         </ul>
@@ -91,6 +102,7 @@
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
+                                    <span class="modifier">Public</span>
                                 <a href="#addWidget">addWidget</a>
                             </li>
                             <li>
@@ -100,6 +112,14 @@
                             <li>
                                     <span class="modifier">Public</span>
                                 <a href="#getWidgets">getWidgets</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#subscribe">subscribe</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#unsubscribe">unsubscribe</a>
                             </li>
                         </ul>
                     </td>
@@ -138,7 +158,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="12" class="link-to-prism">src/app/services/aot-widget.service.ts:12</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">src/app/services/aot-widget.service.ts:22</a></div>
                             </td>
                         </tr>
 
@@ -188,6 +208,7 @@
                     <a name="addWidget"></a>
                     <span class="name">
                         <b>
+                            <span class="modifier">Public</span>
                             addWidget
                         </b>
                         <a href="#addWidget"><span class="icon ion-ios-link"></span></a>
@@ -196,15 +217,16 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>addWidget(widget: <a href="../interfaces/IWidget.html">IWidget</a>)</code>
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>addWidget(widget: <a href="../interfaces/IWidget.html">IWidget</a>)</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="52"
-                            class="link-to-prism">src/app/services/aot-widget.service.ts:52</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="72"
+                            class="link-to-prism">src/app/services/aot-widget.service.ts:72</a></div>
                 </td>
             </tr>
 
@@ -238,7 +260,7 @@
 
 
                                     <td>
-                                        <p>widget model</p>
+                                        <p>Widget model</p>
 
                                     </td>
                                 </tr>
@@ -275,15 +297,15 @@
             <tr>
                 <td class="col-md-4">
                     <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>destroyWidget(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                    <code>destroyWidget(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, force?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="76"
-                            class="link-to-prism">src/app/services/aot-widget.service.ts:76</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="102"
+                            class="link-to-prism">src/app/services/aot-widget.service.ts:102</a></div>
                 </td>
             </tr>
 
@@ -317,7 +339,23 @@
 
 
                                     <td>
-                                        <p>id of the widget</p>
+                                        <p>ID of the widget</p>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>force</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                    </td>
+
+                                    <td>
+                                        Yes
+                                    </td>
+
+
+                                    <td>
+                                        <p>[OPTIONAL] To force close widget with out triggering OnDestroy</p>
 
                                     </td>
                                 </tr>
@@ -361,8 +399,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="105"
-                            class="link-to-prism">src/app/services/aot-widget.service.ts:105</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="139"
+                            class="link-to-prism">src/app/services/aot-widget.service.ts:139</a></div>
                 </td>
             </tr>
 
@@ -380,12 +418,132 @@
             </tr>
         </tbody>
     </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="subscribe"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Public</span>
+                            subscribe
+                        </b>
+                        <a href="#subscribe"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>subscribe()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="46"
+                            class="link-to-prism">src/app/services/aot-widget.service.ts:46</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>To subscribe to the service</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="unsubscribe"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Public</span>
+                            unsubscribe
+                        </b>
+                        <a href="#unsubscribe"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>unsubscribe()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="146"
+                            class="link-to-prism">src/app/services/aot-widget.service.ts:146</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>To unsubscribe from the service</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </section>
             <section>
     
         <h3 id="inputs">
             Properties
         </h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="_unsubscribeAll"></a>
+                        <span class="name">
+                            <b>
+                                <span class="modifier">Private</span>
+                            _unsubscribeAll</b>
+                            <a href="#_unsubscribeAll"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>    <code>Subject&lt;any&gt;</code>
+
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="18" class="link-to-prism">src/app/services/aot-widget.service.ts:18</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Subject to unsubscribe for all subscriptions</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
         <table class="table table-sm table-bordered">
             <tbody>
                 <tr>
@@ -407,10 +565,16 @@
                     </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="12" class="link-to-prism">src/app/services/aot-widget.service.ts:12</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">src/app/services/aot-widget.service.ts:22</a></div>
                             </td>
                         </tr>
 
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Widget subject to emit when AOT is added or removed</p>
+</div>
+                    </td>
+                </tr>
 
             </tbody>
         </table>
@@ -436,7 +600,7 @@
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="44" class="link-to-prism">src/app/services/aot-widget.service.ts:44</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="39" class="link-to-prism">src/app/services/aot-widget.service.ts:39</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -460,24 +624,55 @@
     <div class="tab-pane fade  tab-source-code" id="c-source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &#x27;@angular/core&#x27;;
 import { IWidget } from &#x27;app/interfaces&#x27;;
-import { BehaviorSubject, Observable } from &#x27;rxjs&#x27;;
+import { BehaviorSubject, Observable, Subject } from &#x27;rxjs&#x27;;
+import { takeUntil } from &#x27;rxjs/operators&#x27;;
+import { TUtils } from &#x27;tmac-sdk&#x27;;
 import { AppDataService } from &#x27;./app-data.service&#x27;;
 
+/**
+ * Service for AOT - Always On Top Widgets
+ */
 @Injectable({
     providedIn: &#x27;root&#x27;
 })
-export class AotWidgetService {
-
-    // Private
+export class AOTWidgetService {
+    /**
+     * Subject to unsubscribe for all subscriptions
+     */
+    private _unsubscribeAll: Subject&lt;any&gt;;
+    /**
+     * Widget subject to emit when AOT is added or removed
+     */
     private _widgetsSubject: BehaviorSubject&lt;IWidget[]&gt;;
 
     constructor(
-        _appDataService: AppDataService
+        private _appDataService: AppDataService
     ) {
         // init the subject
+        this._unsubscribeAll &#x3D; new Subject();
         this._widgetsSubject &#x3D; new BehaviorSubject([]);
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+    // @ Accessors
+    // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * Getter for widgets
+     */
+    get widgets(): any | Observable&lt;any&gt; {
+        return this._widgetsSubject.asObservable();
+    }
+
+    /**
+     * To subscribe to the service
+     */
+    public subscribe(): void {
+        TUtils.Logger.console(&#x27;info&#x27;, &#x27;AOTWidgetService.subscribe&#x27;);
+
         // get the config and check for AOT widgets
-        _appDataService.config
+        this._appDataService.config
+            .pipe(takeUntil(this._unsubscribeAll))
             .subscribe(
                 (config: any) &#x3D;&gt; {
                     // get the AOT widgets
@@ -494,22 +689,11 @@ export class AotWidgetService {
             );
     }
 
-    // -----------------------------------------------------------------------------------------------------
-    // @ Accessors
-    // -----------------------------------------------------------------------------------------------------
-
-    /**
-     * Getter for widgets
-     */
-    get widgets(): any | Observable&lt;any&gt; {
-        return this._widgetsSubject.asObservable();
-    }
-
     /**
      * To add a new AOT widget
-     * @param widget widget model
+     * @param widget Widget model
      */
-    addWidget(widget: IWidget): void {
+    public addWidget(widget: IWidget): void {
 
         // check if the widget is null
         if (!widget) {
@@ -525,15 +709,21 @@ export class AotWidgetService {
         // push the new content
         widgetList.push(widget);
 
+        // listen to destory widget invokation
+        widget.destroy &#x3D; () &#x3D;&gt; {
+            this.destroyWidget(widget.ID, true);
+        };
+
         // notify the observers
         this._widgetsSubject.next(widgetList);
     }
 
     /**
      * To destroy a AOT widget
-     * @param id id of the widget
+     * @param id ID of the widget
+     * @param force [OPTIONAL] To force close widget with out triggering OnDestroy
      */
-    public destroyWidget(id: string): void {
+    public destroyWidget(id: string, force?: boolean): void {
 
         // check if the id is null
         if (!id) {
@@ -546,6 +736,14 @@ export class AotWidgetService {
 
         // if there are no widgets for this id return
         if (currentCount &#x3D;&#x3D;&#x3D; 0) {
+            return;
+        }
+
+        // get the widget
+        const widget &#x3D; widgetList.filter((w) &#x3D;&gt; w.ID &#x3D;&#x3D;&#x3D; id)?.[0];
+
+        // get the widget and call on destroy
+        if (widget &amp;&amp; typeof widget.OnDestroy &#x3D;&#x3D;&#x3D; &#x27;function&#x27; &amp;&amp; !force &amp;&amp; !widget.OnDestroy()) {
             return;
         }
 
@@ -564,6 +762,17 @@ export class AotWidgetService {
      */
     public getWidgets(): IWidget[] {
         return { ...this._widgetsSubject.getValue() };
+    }
+
+    /**
+     * To unsubscribe from the service
+     */
+    public unsubscribe(): void {
+        TUtils.Logger.console(&#x27;info&#x27;, &#x27;AOTWidgetService.unsubscribe&#x27;);
+
+        // unsubscribe from all subscriptions
+        this._unsubscribeAll.next();
+        this._unsubscribeAll.complete();
     }
 }
 </code></pre>
@@ -599,7 +808,7 @@ export class AotWidgetService {
        <script>
             var COMPODOC_CURRENT_PAGE_DEPTH = 1;
             var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
-            var COMPODOC_CURRENT_PAGE_URL = 'AotWidgetService.html';
+            var COMPODOC_CURRENT_PAGE_URL = 'AOTWidgetService.html';
             var MAX_SEARCH_RESULTS = 15;
        </script>
 
