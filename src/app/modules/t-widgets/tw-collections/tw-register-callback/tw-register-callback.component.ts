@@ -12,8 +12,10 @@ import * as moment from 'moment';
 import { SDKClient, IUIEvent, CCLDataEvent, TextChatRemoteUserConnectedEvent } from 'tmac-sdk';
 import { join } from 'lodash';
 import * as _ from 'lodash';
-import { O } from '@angular/cdk/keycodes';
 
+/**
+ * Register Callback Widget component
+ */
 @Component({
     selector: 'tw-register-callback',
     templateUrl: './tw-register-callback.component.html',
@@ -21,18 +23,38 @@ import { O } from '@angular/cdk/keycodes';
     encapsulation: ViewEncapsulation.None
 })
 export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-    // holds all the data related to this widget from the config
+    /**
+     * holds all the data related to this widget from the config
+     */
     @Input() data: IWidget;
 
+    /**
+     * Add contact form group
+     */
     @ViewChild('addContactForm') addContactFormDialog: TemplateRef<any>;
 
+    /**
+     * Data Config
+     */
     dataConfig: {
+        /**
+         * Get campaigns list
+         */
         GetCampaignsUrl: string;
+        /**
+         * Create Contact campaign Url
+         */
         CreateContactCampaignUrl: string;
     };
 
+    /**
+     * Seleced Campaign
+     */
     selectedCampaign: ResCampaign;
 
+    /**
+     * Get Campaign Stateful Request
+     */
     getCampaignsReq: ResData<ResCampaign[]> = {
         data: [],
         error: false,
@@ -40,14 +62,23 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
         msg: ''
     };
 
+    /**
+     * Add campaign stateful request
+     */
     addCampaingReq: ResData<null> = {
         error: false,
         loading: false,
         msg: ''
     };
 
+    /**
+     * Minimum Date for Callback
+     */
     minDate = new Date();
 
+    /**
+     * Add contact form group
+     */
     addContactFormGroup = new FormGroup({
         Name: new FormControl('', [Validators.required]),
         Phone: new FormControl('', [Validators.required]),
@@ -78,13 +109,29 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
         ])
     });
 
+    /**
+     * Interaction id
+     */
     interactionId: number;
 
+    /**
+     * Data map
+     */
     dataMap: {
+        /**
+         * Name 
+         */
         Name: string;
+        /**
+         * Phone
+         */
         Phone: number;
     };
 
+    /**
+     * Data Map values
+     * Need more description
+     */
     dataMapValues = new Object();
 
     /**
@@ -147,14 +194,29 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
         SDKClient.events.off('CCLDataEvent', this.CCLDataEvent);
     }
 
+    /**
+     * TextChatRemoteUserConnectedEvent handler
+     * @method TextChatRemoteUserConnectedEvent
+     * @param {TextChatRemoteUserConnectedEvent} evt 
+     */
     private TextChatRemoteUserConnectedEvent = (evt: TextChatRemoteUserConnectedEvent) => {
         this.processCustomerDetails(evt);
     }
 
+    /**
+     * CCLDataEvent Handler
+     * @method CCLDataEvent
+     * @param {CCLDataEvent} evt 
+     */
     private CCLDataEvent = (evt: CCLDataEvent) => {
         this.processCustomerDetails(evt);
     }
 
+    /**
+     * Custmer details processed
+     * @method processCustomerDetails
+     * @param {IUIEvent} evt 
+     */
     private processCustomerDetails = (evt: IUIEvent) => {
         // check the interaction
         if (evt.InteractionID !== this.interactionId) {
@@ -184,6 +246,10 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
         }
     }
 
+    /**
+     * Fetch campaigns 
+     * @method fetchCampaigns
+     */
     fetchCampaigns(): void {
         if (this.dataConfig.GetCampaignsUrl) {
             this.http.get<ResCampaign[]>(this.dataConfig.GetCampaignsUrl).subscribe(
@@ -220,6 +286,10 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * Add new Contact
+     * @method addNewContact
+     */
     addNewContact(): void {
         if (this.addContactFormGroup.invalid) {
             return;
@@ -280,6 +350,11 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
         );
     }
 
+    /**
+     * 
+     * Toggle Callback Form display
+     * @param {ResCampaign} campaign
+     */
     toggleForm(campaign: ResCampaign): void {
         if (this.matDialog.openDialogs.length) {
             this.matDialog.closeAll();

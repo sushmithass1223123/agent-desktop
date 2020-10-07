@@ -8,15 +8,17 @@ import { QuickPanelComponent } from 'app/layout/components/quick-panel/quick-pan
  */
 @NgModule({
     declarations: [
+        /**
+         * Quick panel Component
+         */
         QuickPanelComponent
     ],
-    imports     : [
-SharedModule
+    imports: [
+        SharedModule
     ],
     exports: [
         QuickPanelComponent
     ]
 })
-export class QuickPanelModule
-{
+export class QuickPanelModule {
 }

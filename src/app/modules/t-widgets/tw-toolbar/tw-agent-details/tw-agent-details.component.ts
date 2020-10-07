@@ -12,8 +12,14 @@ import { AgentStatusChangeEvent, IAgentData, SDKClient } from 'tmac-sdk';
 })
 export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
 
+    /**
+     * App confif widget data
+     */
     @Input() data: any;
 
+    /**
+     * Agent Data
+     */
     agentData: IAgentData;
 
     /**
@@ -25,6 +31,9 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
         super();
     }
 
+    /**
+     * Life cycle hooks
+     */
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
@@ -37,6 +46,9 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
         SDKClient.events.on('AgentStatusChangeEvent', this.AgentStatusChangeEvent);
     }
 
+    /**
+     * Lifecycle hook
+     */
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
@@ -46,10 +58,17 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
         SDKClient.events.off('AgentStatusChangeEvent', this.AgentStatusChangeEvent);
     }
 
+    /**
+     * AgentStatusChangingEvent Handler
+     */
     private AgentStatusChangingEvent = () => {
         this.agentData.agentStatus = 'Please wait...';
     }
 
+    /**
+     * AgentStatusChangeEvent Handler
+     * @param {AgentStatusChangeEvent} evt 
+     */
     private AgentStatusChangeEvent = (evt: AgentStatusChangeEvent) => {
         this.agentData.agentStatus = evt.Status;
     }

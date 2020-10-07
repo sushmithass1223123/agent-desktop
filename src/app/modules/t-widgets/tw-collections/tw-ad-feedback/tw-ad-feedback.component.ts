@@ -20,26 +20,52 @@ import { takeUntil } from 'rxjs/operators';
     animations: fuseAnimations
 })
 export class TwAdFeedbackComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-    // holds all the data related to this widget from the config
+    /**
+     * holds all the data related to this widget from the config
+     */
     @Input() data: any;
 
+    /**
+     * Mat sort ref
+     */
     @ViewChild(MatSort, { static: true }) sort: MatSort;
+    /**
+     * Mat Paginator ref
+     */
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
+    /**
+     * Ratings size
+     */
     ratings = Array(5).fill(1);
+    /**
+     * Static stars
+     */
     stars = 4;
 
+    /**
+     * feedback date
+     */
     date: number;
 
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store the fuse config for theme
-    // -----------------------------------------------------------
+    /**
+     * [OPTIONAL] to store the fuse config for theme
+     */
     fuseConfig: any;
 
+    /**
+     * Data config
+     */
     dataConfig: {
+        /**
+         * Source for reusability
+         */
         Source: 'dashboard' | 'supervisor';
     };
 
+    /**
+     * Feedback details table
+     */
     feedbackDetailsTable = {
         source: new MatTableDataSource(
             Array(10)
@@ -54,9 +80,9 @@ export class TwAdFeedbackComponent extends TWidgetWrapper implements OnInit, OnD
         columns: ['InteractionID', 'Channel', 'Feedback', 'Score']
     };
 
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store entire app config and get update
-    // -----------------------------------------------------------
+    /**
+     * [OPTIONAL] to store entire app config and get update
+     */
     appConfig: any;
 
     /**

@@ -2,23 +2,12 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { FuseSharedModule } from '@fuse/shared.module';
-// import { NgxChartsModule } from '@swimlane/ngx-charts';
 import * as Chart from 'chart.js';
 // import 'chartjs-plugin-piechart-outlabels';
 import { ChartsModule } from 'ng2-charts';
-import { AlertDialogComponent } from './alert-dialog/alert-dialog.component';
-import { AppConfirmDialogComponent } from './app-confirm-dialog/app-confirm-dialog.component';
-import { AppSnackbarComponent } from './app-snackbar/app-snackbar.component';
-import { AvatarComponent } from './avatar/avatar.component';
-import { NoDataAvailableComponent } from './components';
-import { CreateSmsComponent } from './create-sms/create-sms.component';
-import { CustomDialogComponent } from './custom-dialog/custom-dialog.component';
-import { TWChartDirective } from './directives/tw-chart.directive';
+import { AlertDialogComponent, AppConfirmDialogComponent, AppSnackbarComponent, AvatarComponent, CreateSmsComponent, CustomDialogComponent, NoDataAvailableComponent, ReminderTaskDialogComponent, ResourceNotFoundComponent, SnackbarComponent, WidgetFabComponent } from './components';
+import { QuillDirective, TWChartDirective } from './directives';
 import { MaterialModule } from './material.module';
-import { ReminderTaskDialogComponent } from './reminder-task-dialog/reminder-task-dialog.component';
-import { ResourceNotFoundComponent } from './resource-not-found/resource-not-found.component';
-import { SnackbarComponent } from './snackbar/snackbar.component';
-import { WidgetFabComponent } from './widget-fab/widget-fab.component';
 
 Chart.defaults.global.responsive = true;
 Chart.defaults.global.legend.position = 'right';
@@ -53,11 +42,13 @@ const sharedComponents = [
     AppConfirmDialogComponent,
     AppSnackbarComponent,
     CreateSmsComponent,
-    NoDataAvailableComponent
+    NoDataAvailableComponent,
+    QuillDirective,
+    TWChartDirective
 ];
 
 /**
- * Shared Module
+ * Shared module
  */
 @NgModule({
     declarations: sharedComponents,

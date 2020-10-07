@@ -592,13 +592,13 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="modules/QuickPanelModule.html" data-type="entity-link">QuickPanelModule</a>
                                     <li class="chapter inner">
                                         <div class="simple menu-toggler" data-toggle="collapse" ${ isNormalMode ?
-                                            'data-target="#components-links-module-QuickPanelModule-b224d2f83a26d5c734370233b2900d6e"' : 'data-target="#xs-components-links-module-QuickPanelModule-b224d2f83a26d5c734370233b2900d6e"' }>
+                                            'data-target="#components-links-module-QuickPanelModule-1667b09cd58d9616a52692d3b8dadd55"' : 'data-target="#xs-components-links-module-QuickPanelModule-1667b09cd58d9616a52692d3b8dadd55"' }>
                                             <span class="icon ion-md-cog"></span>
                                             <span>Components</span>
                                             <span class="icon ion-ios-arrow-down"></span>
                                         </div>
-                                        <ul class="links collapse" ${ isNormalMode ? 'id="components-links-module-QuickPanelModule-b224d2f83a26d5c734370233b2900d6e"' :
-                                            'id="xs-components-links-module-QuickPanelModule-b224d2f83a26d5c734370233b2900d6e"' }>
+                                        <ul class="links collapse" ${ isNormalMode ? 'id="components-links-module-QuickPanelModule-1667b09cd58d9616a52692d3b8dadd55"' :
+                                            'id="xs-components-links-module-QuickPanelModule-1667b09cd58d9616a52692d3b8dadd55"' }>
                                             <li class="link">
                                                 <a href="components/QuickPanelComponent.html"
                                                     data-type="entity-link" data-context="sub-entity" data-context-id="modules">QuickPanelComponent</a>
@@ -608,76 +608,6 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="modules/SharedModule.html" data-type="entity-link">SharedModule</a>
-                                    <li class="chapter inner">
-                                        <div class="simple menu-toggler" data-toggle="collapse" ${ isNormalMode ?
-                                            'data-target="#components-links-module-SharedModule-7b3a89c7b37c22d611cdf98cf05067a5"' : 'data-target="#xs-components-links-module-SharedModule-7b3a89c7b37c22d611cdf98cf05067a5"' }>
-                                            <span class="icon ion-md-cog"></span>
-                                            <span>Components</span>
-                                            <span class="icon ion-ios-arrow-down"></span>
-                                        </div>
-                                        <ul class="links collapse" ${ isNormalMode ? 'id="components-links-module-SharedModule-7b3a89c7b37c22d611cdf98cf05067a5"' :
-                                            'id="xs-components-links-module-SharedModule-7b3a89c7b37c22d611cdf98cf05067a5"' }>
-                                            <li class="link">
-                                                <a href="components/AlertDialogComponent.html"
-                                                    data-type="entity-link" data-context="sub-entity" data-context-id="modules">AlertDialogComponent</a>
-                                            </li>
-                                            <li class="link">
-                                                <a href="components/AppConfirmDialogComponent.html"
-                                                    data-type="entity-link" data-context="sub-entity" data-context-id="modules">AppConfirmDialogComponent</a>
-                                            </li>
-                                            <li class="link">
-                                                <a href="components/AppSnackbarComponent.html"
-                                                    data-type="entity-link" data-context="sub-entity" data-context-id="modules">AppSnackbarComponent</a>
-                                            </li>
-                                            <li class="link">
-                                                <a href="components/AvatarComponent.html"
-                                                    data-type="entity-link" data-context="sub-entity" data-context-id="modules">AvatarComponent</a>
-                                            </li>
-                                            <li class="link">
-                                                <a href="components/CreateSmsComponent.html"
-                                                    data-type="entity-link" data-context="sub-entity" data-context-id="modules">CreateSmsComponent</a>
-                                            </li>
-                                            <li class="link">
-                                                <a href="components/CustomDialogComponent.html"
-                                                    data-type="entity-link" data-context="sub-entity" data-context-id="modules">CustomDialogComponent</a>
-                                            </li>
-                                            <li class="link">
-                                                <a href="components/NoDataAvailableComponent.html"
-                                                    data-type="entity-link" data-context="sub-entity" data-context-id="modules">NoDataAvailableComponent</a>
-                                            </li>
-                                            <li class="link">
-                                                <a href="components/ReminderTaskDialogComponent.html"
-                                                    data-type="entity-link" data-context="sub-entity" data-context-id="modules">ReminderTaskDialogComponent</a>
-                                            </li>
-                                            <li class="link">
-                                                <a href="components/ResourceNotFoundComponent.html"
-                                                    data-type="entity-link" data-context="sub-entity" data-context-id="modules">ResourceNotFoundComponent</a>
-                                            </li>
-                                            <li class="link">
-                                                <a href="components/SnackbarComponent.html"
-                                                    data-type="entity-link" data-context="sub-entity" data-context-id="modules">SnackbarComponent</a>
-                                            </li>
-                                            <li class="link">
-                                                <a href="components/WidgetFabComponent.html"
-                                                    data-type="entity-link" data-context="sub-entity" data-context-id="modules">WidgetFabComponent</a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                <li class="chapter inner">
-                                    <div class="simple menu-toggler" data-toggle="collapse" ${ isNormalMode ?
-                                        'data-target="#directives-links-module-SharedModule-7b3a89c7b37c22d611cdf98cf05067a5"' : 'data-target="#xs-directives-links-module-SharedModule-7b3a89c7b37c22d611cdf98cf05067a5"' }>
-                                        <span class="icon ion-md-code-working"></span>
-                                        <span>Directives</span>
-                                        <span class="icon ion-ios-arrow-down"></span>
-                                    </div>
-                                    <ul class="links collapse" ${ isNormalMode ? 'id="directives-links-module-SharedModule-7b3a89c7b37c22d611cdf98cf05067a5"' :
-                                        'id="xs-directives-links-module-SharedModule-7b3a89c7b37c22d611cdf98cf05067a5"' }>
-                                        <li class="link">
-                                            <a href="directives/TWChartDirective.html"
-                                                data-type="entity-link" data-context="sub-entity" data-context-id="modules">TWChartDirective</a>
-                                        </li>
-                                    </ul>
-                                </li>
                             </li>
                             <li class="link">
                                 <a href="modules/ToolbarModule.html" data-type="entity-link">ToolbarModule</a>
@@ -1116,6 +1046,55 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                 </ul>
                 </li>
+                    <li class="chapter">
+                        <div class="simple menu-toggler" data-toggle="collapse" ${ isNormalMode ? 'data-target="#components-links"' :
+                            'data-target="#xs-components-links"' }>
+                            <span class="icon ion-md-cog"></span>
+                            <span>Components</span>
+                            <span class="icon ion-ios-arrow-down"></span>
+                        </div>
+                        <ul class="links collapse " ${ isNormalMode ? 'id="components-links"' : 'id="xs-components-links"' }>
+                            <li class="link">
+                                <a href="components/AlertDialogComponent.html" data-type="entity-link">AlertDialogComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/AppConfirmDialogComponent.html" data-type="entity-link">AppConfirmDialogComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/AppSnackbarComponent.html" data-type="entity-link">AppSnackbarComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/AvatarComponent.html" data-type="entity-link">AvatarComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/CreateSmsComponent.html" data-type="entity-link">CreateSmsComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/CustomDialogComponent.html" data-type="entity-link">CustomDialogComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/FooterComponent.html" data-type="entity-link">FooterComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/NavbarComponent.html" data-type="entity-link">NavbarComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/NoDataAvailableComponent.html" data-type="entity-link">NoDataAvailableComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/ReminderTaskDialogComponent.html" data-type="entity-link">ReminderTaskDialogComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/ResourceNotFoundComponent.html" data-type="entity-link">ResourceNotFoundComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/SnackbarComponent.html" data-type="entity-link">SnackbarComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/WidgetFabComponent.html" data-type="entity-link">WidgetFabComponent</a>
+                            </li>
+                        </ul>
+                    </li>
                         <li class="chapter">
                             <div class="simple menu-toggler" data-toggle="collapse" ${ isNormalMode ? 'data-target="#directives-links"' :
                                 'data-target="#xs-directives-links"' }>
@@ -1141,6 +1120,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 </li>
                                 <li class="link">
                                     <a href="directives/QuillDirective.html" data-type="entity-link">QuillDirective</a>
+                                </li>
+                                <li class="link">
+                                    <a href="directives/TWChartDirective.html" data-type="entity-link">TWChartDirective</a>
                                 </li>
                             </ul>
                         </li>

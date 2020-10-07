@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from '@modules/core/login/login.component';
 import { MainComponent } from '@modules/core/main/main.component';
 import { WidgetPreviewComponent } from '@modules/core/widget-preview/widget-preview.component';
-import { ResourceNotFoundComponent } from '@modules/shared/resource-not-found/resource-not-found.component';
+import { ResourceNotFoundComponent } from '@modules/shared/components';
 
 const appRoutes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },

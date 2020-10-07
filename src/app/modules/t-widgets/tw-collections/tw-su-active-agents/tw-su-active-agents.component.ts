@@ -24,21 +24,58 @@ import { AgentFeatures, AgentTabCount, IAgentData, IAUXCodes, IResponse, SDKClie
     animations: fuseAnimations
 })
 export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-    // holds all the data related to this widget from the config
+    /**
+     * holds all the data related to this widget from the config
+     */
     @Input() data: any;
 
+    /**
+     * Fuse Config
+     */
     fuseConfig: any;
+    /**
+     * App Config
+     */
     appConfig: any;
 
+    /**
+     * Use info
+     */
     user: IAgentData;
+    /**
+     * Agent list
+     */
     agentList: SuAgentModel[];
+    /**
+     * Filtered Agents
+     */
     filteredAgents: SuAgentModel[];
+    /**
+     * Search key
+     */
     searchTerm: string;
+    /**
+     * Selected Agent
+     */
     selectedAgent: string;
+    /**
+     * Agent features
+     */
     featureMap = AGENT_FEATURES_MAP;
+    /**
+     * Activity widget
+     * Need more description
+     */
     activityWidget: IWidget;
+    /**
+     * Aux code list
+     * Need more description
+     */
     auxCodesList: IAUXCodes[];
 
+    /**
+     * Available quiz intents
+     */
     availableQuizIntents = [
         { name: 'General Quiz', intent: 'GeneralQuiz' },
         { name: 'Product Quiz', intent: 'CallCenterQuiz' },
@@ -113,6 +150,11 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * SupervisorAgentListEvent handler
+     * @method SupervisorAgentListEvent
+     * @param {SuAgentModel[]} agentList 
+     */
     private SupervisorAgentListEvent = (agentList: SuAgentModel[]) => {
         // filter for excpet me
         this.agentList = this.filteredAgents = agentList || [];
@@ -122,6 +164,11 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         }
     }
 
+    /**
+     * TeamAgentListDataEvent Handler
+     * @method TeamAgentListDataEvent
+     * @param {SuAgentDataModel[]} agentListData 
+     */
     private TeamAgentListDataEvent = (agentListData: SuAgentDataModel[]) => {
         if (this.agentList.length === 0) {
             return;
@@ -144,6 +191,12 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         }
     }
 
+    /**
+     * createActivityWidget
+     * Need more description
+     * @method createActivityWidget 
+     * @param {any} item 
+     */
     private createActivityWidget(item: any): void {
         // create activity details widget
         const widget = new TwWidgetModel(item.title, 'tw-su-agent-activity-details', 'local_activity');
@@ -163,6 +216,10 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * Filter Agents
+     * @method filterAgents
+     */
     public filterAgents(): void {
         const searchTerm = this.searchTerm.toLowerCase();
         // Search
@@ -175,10 +232,21 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         }
     }
 
+    /**
+     * Track by for avoiding rerender
+     * @method trackByID
+     * @param {number} index 
+     * @param {any} agent 
+     */
     public trackByID(index: number, agent: any): string {
         return agent.AgentLoginID;
     }
 
+    /**
+     * Select an agent
+     * @method selectAgent
+     * @param {any} agent 
+     */
     public selectAgent(agent: any): void {
         if (this.selectedAgent === agent.AgentLoginID) {
             this.selectedAgent = null;
@@ -187,6 +255,13 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         }
     }
 
+    /**
+     * Check Feature
+     * @method featureCheck
+     * @param {AgentFeatures} feature 
+     * @param {String} type 
+     * @param {String} subType 
+     */
     public featureCheck(feature: AgentFeatures, type: string, subType: string): boolean {
         // if not allow supervisor or in map the item is not found return false
         if (
@@ -214,6 +289,12 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         }
     }
 
+    /**
+     * Perform Agent Action
+     * @method performAgentAction
+     * @param {SuAgentDataModel} agent 
+     * @param {AgentFeatures} feature 
+     */
     public performAgentAction(agent: SuAgentModel, feature: AgentFeatures): void {
         console.log('performAgentAction', { agent, feature });
 
@@ -306,6 +387,11 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         }
     }
 
+    /**
+     * Check for active interactions
+     * @method checkForActiveInteraction
+     * @param {AgentTabCount[]} channelItems 
+     */
     public checkForActiveInteraction(channelItems: AgentTabCount[]): boolean {
         let isActive = false;
 
@@ -318,6 +404,11 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         return isActive;
     }
 
+    /**
+     * View interactions by agent
+     * @method viewInteractions
+     * @param {SuAgentModel} item 
+     */
     public viewInteractions(item: SuAgentModel): void {
         const widget = new TwWidgetModel('Interaction Details - ' + item.AgentName, 'tw-su-agent-interactions');
         widget.Config.Anchor = true;
@@ -328,6 +419,12 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         this._aotWidgetService.addWidget(widget);
     }
 
+    /**
+     * Change agent status
+     * @method changeAgentStatus
+     * @param {SuAgentDataModel} agent 
+     * @param {IAUXCodes} item 
+     */
     public changeAgentStatus(agent: SuAgentModel, item: IAUXCodes): void {
         this._appUIService.showSnackbar('Please wait, changing status...', 'loading');
         // change the status

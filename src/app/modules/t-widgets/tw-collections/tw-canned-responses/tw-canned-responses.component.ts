@@ -16,17 +16,46 @@ import { CallerIntentEvent, IResponse, IUIEvent, SDKClient, WorkCodeAddedEvent }
     encapsulation: ViewEncapsulation.None
 })
 export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-    // holds all the data related to this widget from the config
+    /**
+     * holds all the data related to this widget from the config
+     */
     @Input() data: IWidget;
 
+    /**
+     * Interaction Id
+     */
     interactionId: number;
+    /**
+     * Departments
+     */
     departments = [];
+    /**
+     * Selected Departments
+     */
     selectedDepartment: any;
+    /**
+     * Groups
+     */
     groups = [];
+    /**
+     * Selected Groups
+     */
     selectedGroup: any;
+    /**
+     * Template list
+     */
     templates = [];
+    /**
+     * Selected Templates
+     */
     selectedTemplate: any;
+    /**
+     * Template text
+     */
     templateText: string;
+    /**
+     * Type of response 'auto' or 'manual'
+     */
     responseMode = 'auto';
 
     /**
@@ -87,6 +116,11 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * WorkCodeAddedEvent Handler
+     * @method WorkCodeAddedEvent
+     * @param {WorkCodeAddedEvent} evt 
+     */
     private WorkCodeAddedEvent = (evt: WorkCodeAddedEvent) => {
         // check for the interaction
         if (this.interactionId !== evt.InteractionID) {
@@ -97,6 +131,11 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
         this.groups = newGroups;
     }
 
+    /**
+     * CallerIntentEvent Handler
+     * @method CallerIntentEvent
+     * @param {CallerIntentEvent} evt 
+     */
     private CallerIntentEvent = (evt: CallerIntentEvent) => {
         // check for the interaction
         if (this.interactionId !== evt.InteractionID) {
@@ -108,6 +147,11 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
         this.groups = newGroups;
     }
 
+    /**
+     * OnNLPDataEvent Handler
+     * @method OnNLPDataEvent
+     * @param {OnNLPDataEvent} evt 
+     */
     private OnNLPDataEvent = (evt: any): void => {
         const parsedJson = JSON.parse(evt.JsonData);
 
@@ -120,6 +164,10 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
         this.onSelectGroups({ value: newGroup.intent.name });
     }
 
+    /**
+     * Reset form
+     * @method clearAllData
+     */
     private clearAllData(): void {
         this.selectedDepartment = null;
         this.groups = [];
@@ -132,6 +180,11 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
+    /**
+     * Select Department
+     * @method onSelectDepartment
+     * @param {any} event 
+     */
     onSelectDepartment(event: any): void {
         const value = event.value;
         // check if value is there
@@ -147,6 +200,11 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
         });
     }
 
+    /**
+     * Slect Groups
+     * @method onSelectGroups
+     * @param {any} event 
+     */
     onSelectGroups(event: any): void {
         const value = event.value;
         // check if value is there
@@ -169,11 +227,21 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
         });
     }
 
+    /**
+     * Template Selct
+     * @method onTemplateSelect
+     * @param template 
+     */
     onTemplateSelect(template: any): void {
         this.selectedTemplate = template;
         this.templateText = template.Text;
     }
 
+    /**
+     * Send selected template
+     * @method sendTemplate
+     * @param {sendTemplate} template 
+     */
     sendTemplate(template: any): void {
         // check if any interaction is present
         if (!this.interactionId) {
@@ -195,6 +263,11 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
         }
     }
 
+    /**
+     * Change Mode
+     * @method changeMode
+     * @param {MatSelectChange} event 
+     */
     changeMode(event: MatSelectChange): void {
         if (event.value === 'manual') {
             console.log('Cancelling listeners');

@@ -20,34 +20,65 @@ import { SDKClient } from 'tmac-sdk';
     encapsulation: ViewEncapsulation.None
 })
 export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-    // holds all the data related to this widget from the config
+    /**
+     * holds all the data related to this widget from the config
+     */
     @Input() data: any;
+    /**
+     * Data Config
+     */
     dataConfig: {
+        /**
+         * Get Callbacks Url
+         */
         GetCallbacksUrl: string;
     };
 
-    getDashboardDataRes: ResData<{ callbacks: any[]; handled: number; missed: number; pending: number }> = {
-        error: false,
-        loading: true,
-        msg: '',
-        data: {
-            callbacks: [],
-            handled: 0,
-            missed: 0,
-            pending: 0
-        }
-    };
+    /**
+     * Get Dashboard data res
+     */
+    getDashboardDataRes: ResData<{
+        /**
+         * Callbacks list
+         */
+        callbacks: any[];
+        /**
+         * Handled callbacks
+         */
+        handled: number;
+        /**
+         * Missed Callbacks
+         */
+        missed: number;
+        /**
+         * Pending Callbacks
+         */
+        pending: number
+    }> = {
+            error: false,
+            loading: true,
+            msg: '',
+            data: {
+                callbacks: [],
+                handled: 0,
+                missed: 0,
+                pending: 0
+            }
+        };
 
-    sample = Array(20).fill(1);
+    /**
+     * Maximized state
+     */
     maximized = false;
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store the fuse config for theme
-    // -----------------------------------------------------------
+
+    /**
+     * [OPTIONAL] to store the fuse config for theme
+     */
     fuseConfig: any;
 
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store entire app config and get update
-    // -----------------------------------------------------------
+    /**
+     * [OPTIONAL] to store entire app config and get update
+     */
     appConfig: any;
 
     /**
@@ -117,6 +148,11 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * CallbackDataReceivedForAgent Handler
+     * @method CallbackDataReceivedForAgent
+     * @param {any} evt 
+     */
     CallbackDataReceivedForAgent = (evt: any) => {
         const callback = JSON.parse(evt);
         callback.contact.status = callback.contact.Status;
@@ -125,6 +161,11 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
         this.addNewCallbacks([callback]);
     };
 
+    /**
+     * Add Callbacks
+     * @method addNewCallbacks 
+     * @param {any[]} calls 
+     */
     addNewCallbacks = (calls: any[]): void => {
         let handled = 0;
         let missed = 0;
@@ -167,11 +208,17 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
                 pending
             }
         };
-    };
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * Maximize Event Handler
+     * @method maximizeEvent
+     * @param {Boolean} state 
+     */
     maximizeEvent(state: boolean): void {
         this.maximized = state;
     }

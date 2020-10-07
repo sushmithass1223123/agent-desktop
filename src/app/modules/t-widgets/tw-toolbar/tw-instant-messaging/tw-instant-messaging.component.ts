@@ -12,16 +12,31 @@ import { AgentNotificaitonEvent, SDKClient } from 'tmac-sdk';
     encapsulation: ViewEncapsulation.None
 })
 export class TwInstantMessagingComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+    /**
+     * App config data for widget
+     */
     @Input() data: any;
 
+    /**
+     * Opened Flag
+     */
     opened = false;
+    /**
+     * Side bar folded flag
+     */
     sidebarFolded: boolean;
+    /**
+     * Unread messages
+     */
     unreadMessages = 0;
 
     constructor(private _fuseSidebarService: FuseSidebarService) {
         super();
     }
 
+    /**
+     * Lifecycle hook
+     */
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
@@ -30,6 +45,9 @@ export class TwInstantMessagingComponent extends TWidgetWrapper implements OnIni
         SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
     }
 
+    /**
+     * Lifecycle hook
+     */
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
@@ -38,6 +56,11 @@ export class TwInstantMessagingComponent extends TWidgetWrapper implements OnIni
         SDKClient.events.off('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
     }
 
+    /**
+     *  AgentNotificaitonEvent Handler
+     * @method  AgentNotificaitonEvent
+     * @param { AgentNotificaitonEvent} evt 
+     */
     private AgentNotificaitonEvent = (evt: AgentNotificaitonEvent): void => {
         // check if the interaction id is there then return
         if (evt.InteractionID > 0) {
@@ -55,8 +78,7 @@ export class TwInstantMessagingComponent extends TWidgetWrapper implements OnIni
 
     /**
      * Toggle sidebar open
-     *
-     * @param key
+     * @param {String} key
      */
     toggleSidebarOpen(key: string): void {
         this._fuseSidebarService.getSidebar(key).toggleOpen();

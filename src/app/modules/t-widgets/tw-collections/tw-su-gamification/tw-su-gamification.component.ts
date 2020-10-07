@@ -19,32 +19,52 @@ import { HttpClient } from '@angular/common/http';
     encapsulation: ViewEncapsulation.None
 })
 export class TwSuGamificationComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-    // holds all the data related to this widget from the config
+    /**
+     * holds all the data related to this widget from the config
+     */
     @Input() data: any;
 
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store the fuse config for theme
-    // -----------------------------------------------------------
+    /**
+     * Optional to store the fuse config for theme
+     */
     fuseConfig: any;
 
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store entire app config and get update
-    // -----------------------------------------------------------
+    /**
+     * [OPTIONAL] to store entire app config and get update
+     */
     appConfig: any;
 
+    /**
+     * Gamificartion Request status
+     */
     gamificationReqStatus: ResData<null> = {
         error: false,
         loading: true,
         msg: ''
     };
+    /***
+     * Maximized Status
+     */
     maximized = false;
+    /**
+     * Maximized Table Columns
+     */
     maximizedTableColumns = ['Position', 'AgentName', 'TotalBadges', 'TeamName', 'TotalPoints'];
+    /**
+     * Minimized table columns
+     */
     minimizedTableColumns = ['Position', 'AgentName', 'TotalPoints'];
+    /**
+     * Leaderboard table
+     */
     leaderboardTable = {
         source: new MatTableDataSource([]),
         columns: this.minimizedTableColumns
     };
 
+    /**
+     * Mat table sort ref
+     */
     @ViewChild(MatSort) set sortContent(content: MatSort) {
         if (content) {
             // initially setter gets called with undefined
@@ -111,6 +131,10 @@ export class TwSuGamificationComponent extends TWidgetWrapper implements OnInit,
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * Setup Leaderboard
+     * @method setupLeaderBoard
+     */
     setupLeaderBoard(): void {
         this.http
             .post<Record<'d', string>>(this.data.Data.LeaderBoardUrl, {})
@@ -130,6 +154,11 @@ export class TwSuGamificationComponent extends TWidgetWrapper implements OnInit,
             );
     }
 
+    /**
+     * Maximize event
+     * @method maximizeEvent
+     * @param {bBoolean} state
+     */
     maximizeEvent(state: boolean): void {
         this.maximized = state;
         if (state) {
