@@ -7,7 +7,7 @@
 <tw-wrapper [data]="data">
     <div fxFlex fxFill fxLayout="column">
         <div
-            class="w-100-p py-8 px-16 border-radius-20"
+            class="w-100-p px-16 pt-0 pb-12 border-radius-20"
             fxLayout="row"
             [ngClass]="
                 fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
@@ -20,14 +20,14 @@
             <div fxFlex fxLayout="column">
                 <div fxLayout>
                     <p fxFlex="20" fxLayoutAlign=" center" class="px-8">{{ mainLabel }}</p>
-                    <mat-form-field fxFlex appearance="outline" class="custom">
-                        <input matInput required [placeholder]="mainLabel" />
+                    <mat-form-field fxFlex appearance="outline" class="custom with-bg">
+                        <input matInput required [placeholder]="mainLabel" [(ngModel)]="selectedItem" />
                         <mat-error> {{ mainLabel }} is required </mat-error>
                     </mat-form-field>
                 </div>
                 <div fxFlex fxLayout>
                     <p fxFlex="20" fxLayoutAlign=" flex-start" class="px-8 mt-16">Comments</p>
-                    <mat-form-field fxFlex floatLabel="never" appearance="standard" class="comments">
+                    <mat-form-field fxFlex floatLabel="never" appearance="standard" class="custom with-bg comments">
                         <textarea
                             matInput
                             placeholder="Enter comments here..."
@@ -39,7 +39,7 @@
                 </div>
             </div>
             <div class="pl-8 py-8">
-                <button mat-raised-button class="transfer-btn bg-success border-radius-20">
+                <button mat-raised-button class="transfer-btn custom-btn bg-success border-radius-20" [disabled]="!selectedItem">
                     <mat-icon>swap_horiz</mat-icon>
                 </button>
             </div>
@@ -162,9 +162,9 @@
                             </ng-template> -->
 
                             <div fxFlex>
-                                <mat-form-field class="form-field custom w-100-p" appearance="outline">
+                                <mat-form-field class="form-field custom with-bg w-100-p" appearance="outline">
                                     <mat-select placeholder="Select Skill..." [(ngModel)]="selectedSkill">
-                                        <mat-option>None</mat-option>
+                                        <mat-option (click)="clearSkillFilter()">None</mat-option>
                                         <mat-option *ngFor="let item of allSkills" [value]="item.SkillID" (click)="filterAgentList()">{{
                                             item.SkillName
                                         }}</mat-option>
@@ -173,7 +173,7 @@
                             </div>
 
                             <div class="ml-8">
-                                <button mat-raised-button mat-icon-button (click)="clearAgentListFilter()">
+                                <button mat-raised-button mat-icon-button (click)="clearAllFilter()">
                                     <mat-icon>close</mat-icon>
                                 </button>
                             </div>
@@ -191,7 +191,7 @@
                                 class="h-100-p"
                                 matSort
                                 matSortDisableClear
-                                [dataSource]="agentListTable.source"
+                                [dataSource]="agentListTable.tableData.source"
                                 matSortActive="CurrentAgentStatus"
                                 matSortDirection="asc"
                             >
@@ -230,11 +230,16 @@
                                     <mat-cell *matCellDef="let row"> {{ row.InteractionCounts }} </mat-cell>
                                 </ng-container>
 
-                                <mat-header-row *matHeaderRowDef="agentListTable.columns; sticky: true"></mat-header-row>
-                                <mat-row *matRowDef="let row; columns: agentListTable.columns" class="selectable"></mat-row>
+                                <mat-header-row *matHeaderRowDef="agentListTable.tableData.columns; sticky: true"></mat-header-row>
+                                <mat-row
+                                    *matRowDef="let row; columns: agentListTable.tableData.columns"
+                                    (click)="selectAgent(row)"
+                                    class="selectable"
+                                    [ngClass]="{ selected: !!agentListTable.tableData.selection.isSelected(row) }"
+                                ></mat-row>
                             </mat-table>
 
-                            <p *ngIf="!agentListTable.loading && agentListTable.source.data.length === 0" class="text-center m-0 mat-title">
+                            <p *ngIf="!agentListTable.loading && agentListTable.tableData.source.data.length === 0" class="text-center m-0 mat-title">
                                 No Data Available
                             </p>
                         </div>
@@ -268,7 +273,7 @@
                             </mat-form-field> -->
                         </div>
                         <div class="w-100-p h-100-p">
-                            <mat-table class="h-100-p" matSort matSortDisableClear [dataSource]="skillListTable.source">
+                            <mat-table class="h-100-p" matSort matSortDisableClear [dataSource]="skillListTable.tableData.source">
                                 <ng-container matColumnDef="Name">
                                     <mat-header-cell *matHeaderCellDef mat-sort-header>
                                         <span> Name </span>
@@ -303,10 +308,10 @@
                                     <mat-cell *matCellDef="let row"> {{ row.CIQ }} </mat-cell>
                                 </ng-container>
 
-                                <mat-header-row *matHeaderRowDef="skillListTable.columns; sticky: true"></mat-header-row>
-                                <mat-row *matRowDef="let row; columns: skillListTable.columns"></mat-row>
+                                <mat-header-row *matHeaderRowDef="skillListTable.tableData.columns; sticky: true"></mat-header-row>
+                                <mat-row *matRowDef="let row; columns: skillListTable.tableData.columns"></mat-row>
                             </mat-table>
-                            <p *ngIf="skillListTable.source.data.length === 0" class="text-center m-0 mat-title">No Data Available</p>
+                            <p *ngIf="skillListTable.tableData.source.data.length === 0" class="text-center m-0 mat-title">No Data Available</p>
                         </div>
                     </div>
                 </div>

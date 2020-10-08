@@ -72,7 +72,9 @@
     }
 
     mat-form-field {
-        &.prompt {
+        &.prompt,
+        &.with-bg {
+            .mat-form-field-wrapper .mat-form-field-outline,
             textarea {
                 @if ($is-dark) {
                     background-color: map-get($background, hover);

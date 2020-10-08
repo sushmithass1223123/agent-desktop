@@ -54,6 +54,11 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
             // get the agent data map
             let mapObj = AGENT_DATA_MAP();
 
+            // check if interaction details are there
+            if (this.data.InteractionDetails) {
+                mapObj = { ...mapObj, ...this.data.InteractionDetails };
+            }
+
             // check if extra map data sent with in an interaction
             if (this.data.Data.MapObject) {
                 mapObj = { ...mapObj, ...this.data.Data.MapObject };

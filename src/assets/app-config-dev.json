@@ -363,7 +363,7 @@
                                     "Name": "All Interactions",
                                     "Description": "",
                                     "Key": "AllInteractions",
-                                    "Type": "tw-pie-chart",
+                                    "Type": "tw-transfer-interaction",
                                     "Config": {
                                         "Enabled": true,
                                         "Static": false,
@@ -372,8 +372,8 @@
                                         "Icon": "dvr",
                                         "Class": "",
                                         "Position": {
-                                            "X": 0,
-                                            "Y": 1
+                                            "X": 2,
+                                            "Y": 2
                                         },
                                         "Actions": [
                                             "maximize",

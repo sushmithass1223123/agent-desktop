@@ -1,3 +1,4 @@
+import { SelectionModel } from '@angular/cdk/collections';
 import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatSort } from '@angular/material/sort';
@@ -9,7 +10,7 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import * as _ from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient } from 'tmac-sdk';
+import { AgentModel, IResponse, SDKClient } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-transfer-interaction',
@@ -43,17 +44,29 @@ export class TwTransferInteractionComponent extends TWidgetWrapper implements On
     ];
     activeSwitcher = 'agentList';
     searchTerm = '';
-    agentListTable = {
-        source: new MatTableDataSource([]),
-        agentList: [],
-        loading: true,
-        columns: ['FirstName', 'LastName', 'AgentID', 'CurrentAgentStatus']
+
+    agentListTable: {
+        loading: boolean;
+        agentList: any[],
+        tableData: {
+            source: MatTableDataSource<AgentModel>;
+            columns: string[];
+            selection: SelectionModel<AgentModel>;
+        };
     };
 
-    skillListTable = {
-        source: new MatTableDataSource([]),
-        columns: ['Name', 'VDN', 'ID', 'Stf', 'Avl', 'CIQ']
+    skillListTable: {
+        loading: boolean;
+        skillList: any[],
+        tableData: {
+            source: MatTableDataSource<any>;
+            columns: string[];
+            selection: SelectionModel<any>;
+        };
     };
+
+    selectedItem: string;
+
     /**
      * Skill list to filter agent list based on skill
      */
@@ -93,6 +106,27 @@ export class TwTransferInteractionComponent extends TWidgetWrapper implements On
         private _fuseConfigService: FuseConfigService
     ) {
         super();
+
+        this.agentListTable = {
+            loading: true,
+            agentList: [],
+            tableData: {
+                columns: ['FirstName', 'LastName', 'AgentID', 'CurrentAgentStatus'],
+                selection: new SelectionModel<any>(false, []),
+                source: new MatTableDataSource([])
+            }
+        };
+
+
+        this.skillListTable = {
+            loading: true,
+            skillList: [],
+            tableData: {
+                columns: ['Name', 'VDN', 'ID', 'Stf', 'Avl', 'CIQ'],
+                selection: new SelectionModel<any>(false, []),
+                source: new MatTableDataSource([])
+            }
+        };
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -163,16 +197,28 @@ export class TwTransferInteractionComponent extends TWidgetWrapper implements On
         if (this.agentListTable.agentList.length > 0 && this.selectedSkill) {
             let list = this.agentListTable.agentList;
             list = list.filter((d) => d.AgentVoiceSkillsAsString?.includes(this.selectedSkill));
-            this.agentListTable.source.data = list;
+            this.agentListTable.tableData.source.data = list;
         }
+    }
+
+    /**
+     * To clear all filter
+     */
+    public clearAllFilter(): void {
+        // clear skill filter
+        this.clearSkillFilter();
+        // set the selected item to null
+        this.selectedItem = null;
+        // select the row in grid
+        this.agentListTable.tableData.selection.clear();
     }
 
     /**
      * To clear skill filter
      */
-    public clearAgentListFilter(): void {
+    public clearSkillFilter(): void {
         if (this.agentListTable.agentList.length > 0) {
-            this.agentListTable.source.data = this.agentListTable.agentList;
+            this.agentListTable.tableData.source.data = this.agentListTable.agentList;
             this.selectedSkill = null;
         }
     }
@@ -189,17 +235,50 @@ export class TwTransferInteractionComponent extends TWidgetWrapper implements On
                 // check if data found
                 if (dt.response.length > 0) {
                     // filter the same agent and bots from the list
-                    dt.response = dt.response.filter((r: any) => r.LoginID !== SDKClient.getAgentData().agentId &&
+                    dt.response = dt.response.filter((r: AgentModel) => r.LoginID !== SDKClient.getAgentData().agentId &&
                         r.AgentProfile.AccessRole.toLowerCase() !== 'chatbot');
-                    this.agentListTable.source.data = dt.response;
+                    this.agentListTable.tableData.source.data = dt.response;
                     this.agentListTable.agentList = dt.response;
-                    this.agentListTable.source.sort = this.sort;
+                    this.agentListTable.tableData.source.sort = this.sort;
 
                     // if reload the filter after getting the data
                     if (reload) {
                         this.filterAgentList();
                     }
                 }
+            })
+            .catch(() => {
+                this.agentListTable.loading = false;
+            });
+    }
+
+    /**
+     * To process agent selected from list
+     */
+    public selectAgent(row: AgentModel): void {
+        this.agentListTable.loading = true;
+        // get agent's current status
+        SDKClient.getAgentStatus({
+            agentId: row.LoginID,
+            deviceId: row.StationID,
+            tmacServer: row.TmacServer
+        })
+            .then((dt: IResponse) => {
+                this.agentListTable.loading = false;
+                let list = this.agentListTable.agentList;
+                list = _.map(list, (item: AgentModel) => {
+                    if (item.LoginID === row.LoginID) {
+                        item.CurrentAgentStatus = dt.response.ResultMessage;
+                    }
+                    return item;
+                });
+                this.agentListTable.tableData.source.data = list;
+
+                // select the row in grid
+                this.agentListTable.tableData.selection.select(row);
+
+                // assign the selected item
+                this.selectedItem = row.LoginID;
             })
             .catch(() => {
                 this.agentListTable.loading = false;

@@ -20,8 +20,6 @@
 @import 'src/app/modules/t-widgets/tw-collections/tw-chat-controls/tw-chat-controls.theme';
 @import 'src/app/modules/t-widgets/tw-collections/tw-su-active-agents/tw-su-active-agents.theme';
 @import 'src/app/modules/t-widgets/tw-collections/tw-ad-callbacks/tw-ad-callbacks.theme';
-@import 'src/app/modules/t-widgets/tw-collections/tw-amdocs-bcc/tw-amdocs-bcc.theme';
-@import 'src/app/modules/t-widgets/tw-collections/tw-canned-responses/tw-canned-responses.theme';
 @import 'src/app/modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.theme';
 @import 'src/app/modules/t-widgets/tw-collections/tw-workbench-panel/tw-workbench-panel.theme';
 
@@ -66,8 +64,6 @@
     @include tw-chat-controls-theme($theme);
     @include tw-su-active-agents-theme($theme);
     @include tw-ad-callbacks-theme($theme);
-    @include tw-amdocs-bcc-theme($theme);
-    @include tw-canned-responses-theme($theme);
     @include tw-customer-journey-theme($theme);
     @include tw-workbench-panel-theme($theme);
 }
