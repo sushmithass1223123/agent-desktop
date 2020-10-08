@@ -59,6 +59,14 @@
             <code>src/app/services/interaction-manager.service.ts</code>
         </p>
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Need more Description 
+Interaction Manager Service</p>
+
+            </p>
 
 
 
@@ -139,7 +147,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">src/app/services/interaction-manager.service.ts:14</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">src/app/services/interaction-manager.service.ts:20</a></div>
                             </td>
                         </tr>
 
@@ -174,14 +182,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="36"
-                            class="link-to-prism">src/app/services/interaction-manager.service.ts:36</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="45"
+                            class="link-to-prism">src/app/services/interaction-manager.service.ts:45</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Adds incoming interaction to the subject</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -244,14 +254,17 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="128"
-                            class="link-to-prism">src/app/services/interaction-manager.service.ts:128</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="150"
+                            class="link-to-prism">src/app/services/interaction-manager.service.ts:150</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Gets interaction counts 
+returns total and active interactions</p>
+</div>
 
                     <div class="io-description">
                         <b>Returns : </b>        <code><a href="../interfaces/InteractionCount.html" target="_self" >InteractionCount</a></code>
@@ -283,14 +296,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="108"
-                            class="link-to-prism">src/app/services/interaction-manager.service.ts:108</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="126"
+                            class="link-to-prism">src/app/services/interaction-manager.service.ts:126</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Deleted interaction by interaction Id</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -353,14 +368,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="52"
-                            class="link-to-prism">src/app/services/interaction-manager.service.ts:52</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="66"
+                            class="link-to-prism">src/app/services/interaction-manager.service.ts:66</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Updates interaction info</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -440,10 +457,16 @@
                     </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">src/app/services/interaction-manager.service.ts:14</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">src/app/services/interaction-manager.service.ts:20</a></div>
                             </td>
                         </tr>
 
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Holds all interaction details</p>
+</div>
+                    </td>
+                </tr>
 
             </tbody>
         </table>
@@ -469,7 +492,7 @@
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/app/services/interaction-manager.service.ts:28</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="34" class="link-to-prism">src/app/services/interaction-manager.service.ts:34</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -498,12 +521,18 @@ import { Observable } from &#x27;rxjs&#x27;;
 import { BehaviorSubject } from &#x27;rxjs/internal/BehaviorSubject&#x27;;
 import { SDKClient } from &#x27;tmac-sdk&#x27;;
 
+/**
+ * Need more Description 
+ * Interaction Manager Service
+ */
 @Injectable({
     providedIn: &#x27;root&#x27;
 })
 export class InteractionManagerService {
 
-    // Private
+    /**
+     * Holds all interaction details
+     */
     private _interactionsSubject: BehaviorSubject&lt;InteractionRef[]&gt;;
 
     constructor() {
@@ -525,7 +554,10 @@ export class InteractionManagerService {
     // -----------------------------------------------------------------------------------------------------
     // @ Public Methods
     // -----------------------------------------------------------------------------------------------------
-
+    /**
+     * Adds incoming interaction to the subject
+     * @param {InteractionRef} payload 
+     */
     addInteraction(payload: InteractionRef): void {
         // check if the data is null
         if (!payload) {
@@ -542,6 +574,11 @@ export class InteractionManagerService {
         this._interactionsSubject.next(interactions);
     }
 
+    /**
+     * Updates interaction info
+     * @param {Number} interactionId 
+     * @param {any} value 
+     */
     updateInteraction(interactionId: number, value: any): void {
         // check if the key and value are not null
         if (!interactionId || !value) {
@@ -598,6 +635,10 @@ export class InteractionManagerService {
         }
     }
 
+    /**
+     * Deleted interaction by interaction Id
+     * @param {number} interactionId 
+     */
     removeInteraction(interactionId: number): void {
         // Get the value from the behavior subject
         let interactions &#x3D; this._interactionsSubject.getValue();
@@ -617,7 +658,11 @@ export class InteractionManagerService {
             this._interactionsSubject.next(interactions);
         }
     }
-
+    
+    /**
+     * Gets interaction counts 
+     * returns total and active interactions
+     */
     getInteractionCount(): InteractionCount {
         // get all the interactions
         const interactions &#x3D; this._interactionsSubject.getValue();

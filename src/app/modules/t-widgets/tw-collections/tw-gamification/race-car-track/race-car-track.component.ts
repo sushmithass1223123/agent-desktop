@@ -2,6 +2,9 @@ import { AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges, View
 import { ResGamification } from 'app/interfaces';
 import { isEqual } from 'lodash';
 
+/**
+ * An SVG component , that changes positinos of cars
+ */
 @Component({
     selector: 'race-car-track',
     templateUrl: './race-car-track.component.html',
@@ -9,20 +12,50 @@ import { isEqual } from 'lodash';
     encapsulation: ViewEncapsulation.None
 })
 export class RaceCarTrackComponent implements OnInit, AfterViewInit, OnChanges {
+    /**
+     * Default Y axis positins of card
+     */
     yPositions = [0, 27.96, 55.564, 84.66];
 
+    /**
+     * Get all cars
+     */
     @ViewChildren('car') cars: any;
+
+    /**
+     * Get all boards
+     */
     @ViewChildren('board') boards: any;
+
+    /**
+     * Get all names tags 
+     */
     @ViewChildren('name') names: any;
 
+    /**
+     * Passed top leaders
+     */
     @Input() leaders: ResGamification[];
+
+    /**
+     * Hightest score
+     */
     @Input() highest: number;
 
     constructor() { }
 
+    /**
+     * Lifecycle hook 
+     * @method
+     */
     ngOnInit(): void { }
 
-    ngAfterViewInit() {
+
+    /**
+     * Lifecycle hook 
+     * @method
+     */
+    ngAfterViewInit(): void {
         this.leaders?.forEach((l, i) => {
             const percent = (l.TotalPoints * 100) / this.highest;
             if (this.cars?._results[i] && this.boards?._results[i] && this.names?._results[i]) {
@@ -35,6 +68,12 @@ export class RaceCarTrackComponent implements OnInit, AfterViewInit, OnChanges {
         });
     }
 
+
+    /**
+     * Lifecycle hook
+     * @param {SimpleChanges} changes 
+     * @method
+     */
     ngOnChanges(changes: SimpleChanges): void {
         if (
             !isEqual(changes.leaders?.currentValue, changes.leaders?.previousValue) ||

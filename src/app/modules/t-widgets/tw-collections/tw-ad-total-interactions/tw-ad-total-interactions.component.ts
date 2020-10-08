@@ -9,11 +9,18 @@ import { takeUntil } from 'rxjs/operators';
 import { AgentChannelDataList, SDKClient } from 'tmac-sdk';
 import { sortBy } from 'lodash';
 
+
+/**
+ * Colors for chart
+ */
 const multiColors: any = {
     backgroundColor: CHART_COLORS.map((c) => c.backgroundColor),
     hoverBackgroundColor: CHART_COLORS.map((c) => c.hoverBackgroundColor)
 };
 
+/**
+ * Total Interaction Widget Component
+ */
 @Component({
     selector: 'tw-ad-total-interactions',
     templateUrl: './tw-ad-total-interactions.component.html',
@@ -21,23 +28,49 @@ const multiColors: any = {
     encapsulation: ViewEncapsulation.None
 })
 export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-    // holds all the data related to this widget from the config
+    /**
+     * holds all the data related to this widget from the config
+     */
     @Input() data: IWidget;
 
     // -----------------------------------------------------------
     // @ [OPTIONAL] to store the fuse config for theme
     // -----------------------------------------------------------
+    /**
+     * holds all the data from the config
+     */
     fuseConfig: FuseConfig;
 
     // -----------------------------------------------------------
     // @ [OPTIONAL] to store entire app config and get update
     // -----------------------------------------------------------
+    /**
+     * App config
+     */
     appConfig: any;
 
-    dataConfig: { Source: string; AgentId: string };
+    /**
+     * Data config for App config
+     */
+    dataConfig: {
+        /**
+         * Availabel sources for this reusable component
+         */
+        Source: string;
+        /**
+         * Agent id
+         */
+        AgentId: string
+    };
 
+    /**
+     * Maximized state
+     */
     maximized: boolean;
 
+    /**
+     * All interaction Chart config
+     */
     allInteractionsChart: TwChartConfig = {
         datasets: [{ data: [] }],
         options: {
@@ -121,6 +154,10 @@ export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements On
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * AgentChannelDetailsEvent Handler
+     * @param {AgentChannelDataList} channelData 
+     */
     private AgentChannelDetailsEvent = (channelData: AgentChannelDataList): void => {
         if (this.dataConfig.Source === 'supervisor' && this.dataConfig.AgentId !== channelData.AgentId) {
             return;
@@ -140,6 +177,10 @@ export class TwAdTotalInteractionsComponent extends TWidgetWrapper implements On
         this.allInteractionsChart.labels = labels;
     }
 
+    /**
+     * TeamChannelListEvent Handler
+     * @param {AgentChannelDataList} evt 
+     */
     private TeamChannelListEvent = (evt: AgentChannelDataList) => {
         const datasets = { Total: [] };
         const labels = [];

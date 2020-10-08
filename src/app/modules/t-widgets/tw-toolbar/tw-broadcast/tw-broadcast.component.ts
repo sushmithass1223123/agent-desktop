@@ -1,7 +1,9 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TWidgetWrapper } from '@twidgets/utils';
 import { AgentNotificaitonEvent, SDKClient } from 'tmac-sdk';
-
+/**
+ * Broadcat component
+ */
 @Component({
     selector: 'tw-broadcast',
     templateUrl: './tw-broadcast.component.html',
@@ -10,14 +12,24 @@ import { AgentNotificaitonEvent, SDKClient } from 'tmac-sdk';
 })
 export class TwBroadcastComponent extends TWidgetWrapper implements OnInit, OnDestroy {
 
+    /**
+     * App confog data
+     */
     @Input() data: any;
 
+    /**
+     * Broadcat messgae
+     */
     broadcastMessage: string;
 
     constructor() {
         super();
     }
 
+    /**
+     * Lifecycle hook
+     * @method
+     */
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
@@ -26,6 +38,10 @@ export class TwBroadcastComponent extends TWidgetWrapper implements OnInit, OnDe
         SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
     }
 
+    /**
+     * Lifecycle hoook
+     * @method
+     */
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
@@ -34,6 +50,12 @@ export class TwBroadcastComponent extends TWidgetWrapper implements OnInit, OnDe
         SDKClient.events.off('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
     }
 
+    /**
+     * 
+     * Triggered on notification reception
+     * @param {AgentNotificaitonEvent} evt
+     * @method 
+     */
     private AgentNotificaitonEvent = (evt: AgentNotificaitonEvent) => {
         // check if the interaction id is there then return
         if (evt.InteractionID > 0) {

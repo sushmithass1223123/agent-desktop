@@ -5,6 +5,11 @@ import { IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { AgentNotificaitonEvent, SDKClient } from 'tmac-sdk';
 
+/**
+ * Chat Panel Component
+ * A Static Widget
+ * Nests Voice tw-voice-controls , tw-customer-details , tw-customer-journey
+ */
 @Component({
     selector: 'tw-chat-panel',
     templateUrl: './tw-chat-panel.component.html',

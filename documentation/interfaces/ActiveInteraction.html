@@ -122,6 +122,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Interaction Id</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -151,6 +157,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Interaction type</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -159,20 +171,47 @@
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">export interface ActiveInteraction {
+    /**
+     * Interaction type
+     */
     type: string;
+    /**
+     * Interaction Id
+     */
     interactionId: number;
 }
 
 export interface InteractionRef extends ActiveInteraction {
+    /**
+     * Active interaction flag
+     */
     isActive: boolean;
+    /**
+     * Interaction status 
+     */
     status: string;
+    /**
+     * Interaction User
+     */
     user: string;
+    /**
+     * Interaction Path
+     */
     path: string;
+    /**
+     * Other intreaction data
+     */
     otherData?: any;
 }
 
 export interface InteractionCount {
+    /**
+     * Total interactiyon
+     */
     total: number;
+    /**
+     * Active interaction
+     */
     active: number;
 }
 </code></pre>

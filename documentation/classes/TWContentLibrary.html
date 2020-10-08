@@ -63,9 +63,21 @@
             <code>src/app/modules/t-widgets/utils/widget-library/twc-library.ts</code>
         </p>
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>TWC widgets library and creation</p>
+
+            </p>
 
 
 
+            <p class="comment">
+                <h3>Example</h3>
+            </p>
+            <div class="io-description">
+            </div>
 
             <section>
     <h3 id="index">Index</h3>
@@ -149,16 +161,24 @@
         &#x27;twc-supervisor&#x27;: TwcSupervisorComponent,
         &#x27;twc-textchat&#x27;: TwcTextchatComponent,
         // &#x27;twc-email&#x27;: EmailComponent,
-        &#x27;twc-custom&#x27;: TwcCustomComponent
+        &#x27;twc-custom&#x27;: TwcCustomComponent,
+        &#x27;twc-workbench&#x27;: TwcWorkbenchComponent,
+        &#x27;twc-email&#x27;: TwcEmailComponent
     }</code>
                         </td>
                     </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="13" class="link-to-prism">src/app/modules/t-widgets/utils/widget-library/twc-library.ts:13</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">src/app/modules/t-widgets/utils/widget-library/twc-library.ts:22</a></div>
                             </td>
                         </tr>
 
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Static widget library</p>
+</div>
+                    </td>
+                </tr>
 
             </tbody>
         </table>
@@ -193,14 +213,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="23"
-                            class="link-to-prism">src/app/modules/t-widgets/utils/widget-library/twc-library.ts:23</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="38"
+                            class="link-to-prism">src/app/modules/t-widgets/utils/widget-library/twc-library.ts:38</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Get all widgets</p>
+</div>
 
                     <div class="io-description">
                         <b>Returns : </b>    <code>Record&lt;string, Type&lt;any&gt;&gt;</code>
@@ -234,14 +256,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="27"
-                            class="link-to-prism">src/app/modules/t-widgets/utils/widget-library/twc-library.ts:27</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="47"
+                            class="link-to-prism">src/app/modules/t-widgets/utils/widget-library/twc-library.ts:47</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Get widget by type with injected data</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -313,9 +337,18 @@ import { TwcHomeComponent } from &#x27;@modules/t-widgets/tw-content/twc-home/tw
 import { TwcSupervisorComponent } from &#x27;@modules/t-widgets/tw-content/twc-supervisor/twc-supervisor.component&#x27;;
 import { TwcVoiceComponent } from &#x27;@modules/t-widgets/tw-content/twc-voice/twc-voice.component&#x27;;
 import { TwcTextchatComponent } from &#x27;@modules/t-widgets/tw-content/twc-textchat/twc-textchat.component&#x27;;
+import { TwcWorkbenchComponent } from &#x27;@modules/t-widgets/tw-content/twc-workbench/twc-workbench.component&#x27;;
+import { TwcEmailComponent } from &#x27;@modules/t-widgets/tw-content/twc-email/twc-email.component&#x27;;
 
+/**
+ * TWC widgets library and creation
+ * @class TWContentLibrary
+ */
 export class TWContentLibrary {
-
+    /**
+     * Static widget library
+     * @static widgetLibrary
+     */
     static widgetLibrary: Record&lt;string, Type&lt;any&gt;&gt; &#x3D; {
         // &#x27;twc-sample&#x27;: SampleContentComponent,
         &#x27;twc-home&#x27;: TwcHomeComponent,
@@ -323,13 +356,24 @@ export class TWContentLibrary {
         &#x27;twc-supervisor&#x27;: TwcSupervisorComponent,
         &#x27;twc-textchat&#x27;: TwcTextchatComponent,
         // &#x27;twc-email&#x27;: EmailComponent,
-        &#x27;twc-custom&#x27;: TwcCustomComponent
+        &#x27;twc-custom&#x27;: TwcCustomComponent,
+        &#x27;twc-workbench&#x27;: TwcWorkbenchComponent,
+        &#x27;twc-email&#x27;: TwcEmailComponent
     };
 
+    /**
+     * Get all widgets
+     * @static
+     */
     public static getAllWidgets(): Record&lt;string, Type&lt;any&gt;&gt; {
         return { ...this.widgetLibrary };
     }
 
+    /**
+     * Get widget by type with injected data
+     * @param {string} type 
+     * @param {any} data 
+     */
     public static getWidget(type: string, data: any): TWidget {
         const widget &#x3D; this.widgetLibrary[type];
         // check the widget is found
@@ -341,8 +385,6 @@ export class TWContentLibrary {
         return new TWidget(TwcUnknownComponent, data);
     }
 }
-
-
 </code></pre>
     </div>
 </div>

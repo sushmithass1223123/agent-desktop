@@ -204,8 +204,12 @@
                                 <a href="#ngOnInit">ngOnInit</a>
                             </li>
                             <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#performChatBargeIn">performChatBargeIn</a>
+                            </li>
+                            <li>
                                     <span class="modifier">Public</span>
-                                <a href="#performAgentAction">performAgentAction</a>
+                                <a href="#performInteractionAction">performInteractionAction</a>
                             </li>
                         </ul>
                     </td>
@@ -239,7 +243,7 @@
             <tbody>
                 <tr>
                     <td class="col-md-4">
-<code>constructor(_fuseConfigService: <a href="../injectables/FuseConfigService.html">FuseConfigService</a>, _appDataService: <a href="../injectables/AppDataService.html">AppDataService</a>, _dashboardService: <a href="../injectables/DashboardService.html">DashboardService</a>, _appUIService: <a href="../injectables/AppUiService.html">AppUiService</a>, _aotWidgetService: <a href="../injectables/AotWidgetService.html">AotWidgetService</a>)</code>
+<code>constructor(_fuseConfigService: <a href="../injectables/FuseConfigService.html">FuseConfigService</a>, _appDataService: <a href="../injectables/AppDataService.html">AppDataService</a>, _dashboardService: <a href="../injectables/DashboardService.html">DashboardService</a>, _appUIService: <a href="../injectables/AppUiService.html">AppUiService</a>, _aotWidgetService: <a href="../injectables/AOTWidgetService.html">AOTWidgetService</a>)</code>
                     </td>
                 </tr>
                         <tr>
@@ -315,7 +319,7 @@
                                                         <td>_aotWidgetService</td>
                                                   
                                                         <td>
-                                                                        <code><a href="../injectables/AotWidgetService.html" target="_self" >AotWidgetService</a></code>
+                                                                        <code><a href="../injectables/AOTWidgetService.html" target="_self" >AOTWidgetService</a></code>
                                                         </td>
                                                   
                                                     <td>
@@ -381,21 +385,23 @@
             <tr>
                 <td class="col-md-4">
                     <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>featureCheck(feature: AgentFeatures, type: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, subType: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                    <code>featureCheck(feature: AgentFeatures, type: "agent" | "interaction", subType: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="168"
-                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-su-agent-interactions/tw-su-agent-interactions.component.ts:168</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="215"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-su-agent-interactions/tw-su-agent-interactions.component.ts:215</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>To check whether the feature is enabled for the agent</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -405,6 +411,7 @@
                                     <td>Name</td>
                                     <td>Type</td>
                                     <td>Optional</td>
+                                    <td>Description</td>
                                 </tr>
                             </thead>
                             <tbody>
@@ -419,11 +426,15 @@
                                     </td>
 
 
+                                    <td>
+                                        <p>Agent&#39;s feature</p>
+
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>type</td>
                                     <td>
-                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            <code>&quot;agent&quot; | &quot;interaction&quot;</code>
                                     </td>
 
                                     <td>
@@ -431,6 +442,10 @@
                                     </td>
 
 
+                                    <td>
+                                        <p>Type of feature</p>
+
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>subType</td>
@@ -443,6 +458,10 @@
                                     </td>
 
 
+                                    <td>
+                                        <p>Subtype of feature</p>
+
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -484,14 +503,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="158"
-                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-su-agent-interactions/tw-su-agent-interactions.component.ts:158</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="199"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-su-agent-interactions/tw-su-agent-interactions.component.ts:199</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>On widget maximized event</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -501,6 +522,7 @@
                                     <td>Name</td>
                                     <td>Type</td>
                                     <td>Optional</td>
+                                    <td>Description</td>
                                 </tr>
                             </thead>
                             <tbody>
@@ -515,6 +537,10 @@
                                     </td>
 
 
+                                    <td>
+                                        <p>Maximzed flag</p>
+
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -619,34 +645,131 @@ and before any of the view or content children have been checked. It is invoked 
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="performAgentAction"></a>
+                    <a name="performChatBargeIn"></a>
                     <span class="name">
                         <b>
-                            <span class="modifier">Public</span>
-                            performAgentAction
+                            <span class="modifier">Private</span>
+                            performChatBargeIn
                         </b>
-                        <a href="#performAgentAction"><span class="icon ion-ios-link"></span></a>
+                        <a href="#performChatBargeIn"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
             <tr>
                 <td class="col-md-4">
                     <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>performAgentAction(item: InteractionDataModel, feature: AgentFeatures)</code>
+                    <code>performChatBargeIn(type: "silent" | "whisper" | "conf", item: InteractionDataModel)</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="192"
-                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-su-agent-interactions/tw-su-agent-interactions.component.ts:192</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="159"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-su-agent-interactions/tw-su-agent-interactions.component.ts:159</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>To perform chat bargeIn</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                    <td>Description</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>type</td>
+                                    <td>
+                                            <code>&quot;silent&quot; | &quot;whisper&quot; | &quot;conf&quot;</code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                    <td>
+                                        <p>Type of barge-In</p>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>item</td>
+                                    <td>
+                                            <code>InteractionDataModel</code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                    <td>
+                                        <p>Interaction data</p>
+
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="performInteractionAction"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Public</span>
+                            performInteractionAction
+                        </b>
+                        <a href="#performInteractionAction"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>performInteractionAction(item: InteractionDataModel, feature: AgentFeatures)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="242"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-su-agent-interactions/tw-su-agent-interactions.component.ts:242</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>To perform action on agent interaction</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -948,7 +1071,7 @@ and before any of the view or content children have been checked. It is invoked 
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                            <i>Default value : </i><code>[&#x27;InteractionID&#x27;, &#x27;Channel&#x27;, &#x27;LastStatus&#x27;, &#x27;User&#x27;, &#x27;Actions&#x27;]</code>
+                            <i>Default value : </i><code>[&#x27;InteractionID&#x27;, &#x27;Channel&#x27;, &#x27;LastStatus&#x27;, &#x27;User&#x27;, &#x27;ActiveTime&#x27;, &#x27;HoldTime&#x27;, &#x27;Actions&#x27;]</code>
                         </td>
                     </tr>
                         <tr>
@@ -1078,7 +1201,7 @@ import { MatPaginator } from &#x27;@angular/material/paginator&#x27;;
 import { MatTableDataSource } from &#x27;@angular/material/table&#x27;;
 import { AGENT_FEATURES_MAP, COMMON_ERR_MESSAGE } from &#x27;app/constants&#x27;;
 import { AppUiService } from &#x27;@services/app-ui.service&#x27;;
-import { AotWidgetService } from &#x27;@services/aot-widget.service&#x27;;
+import { AOTWidgetService } from &#x27;@services/aot-widget.service&#x27;;
 
 @Component({
     selector: &#x27;tw-su-agent-interactions&#x27;,
@@ -1110,7 +1233,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
     maximized &#x3D; false;
     interactionList: any;
 
-    mindisplayedColumns: string[] &#x3D; [&#x27;InteractionID&#x27;, &#x27;Channel&#x27;, &#x27;LastStatus&#x27;, &#x27;User&#x27;, &#x27;Actions&#x27;];
+    mindisplayedColumns: string[] &#x3D; [&#x27;InteractionID&#x27;, &#x27;Channel&#x27;, &#x27;LastStatus&#x27;, &#x27;User&#x27;, &#x27;ActiveTime&#x27;, &#x27;HoldTime&#x27;, &#x27;Actions&#x27;];
 
     featureMap &#x3D; AGENT_FEATURES_MAP;
     agentData: IAgentData;
@@ -1129,7 +1252,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
         private _appDataService: AppDataService,
         private _dashboardService: DashboardService,
         private _appUIService: AppUiService,
-        private _aotWidgetService: AotWidgetService
+        private _aotWidgetService: AOTWidgetService
     ) {
         super();
 
@@ -1218,10 +1341,51 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
         this.interactionDetailsTable.source.paginator &#x3D; this.paginator;
     }
 
+    /**
+     * To perform chat bargeIn
+     * @param {&#x27;silent&#x27; | &#x27;whisper&#x27; | &#x27;conf&#x27;} type Type of barge-In
+     * @param {InteractionDataModel} item Interaction data
+     */
+    private performChatBargeIn(type: &#x27;silent&#x27; | &#x27;whisper&#x27; | &#x27;conf&#x27;, item: InteractionDataModel): void {
+        this._appUIService.showSnackbar(&#x27;Please wait, connecting to the interaction...&#x27;, &#x27;loading&#x27;);
+        // send request to server
+        SDKClient.transferTextChat({
+            agentId: this.configData.AgentLoginID,
+            deviceId: this.configData.StationID,
+            tmacServer: this.configData.TmacServer,
+            chatMode: item.Channel &#x3D;&#x3D;&#x3D; &#x27;audiochat&#x27; ? &#x27;audio&#x27; : item.Channel &#x3D;&#x3D;&#x3D; &#x27;videochat&#x27; ? &#x27;video&#x27; : &#x27;text&#x27;,
+            comment: &#x27;&#x27;,
+            conferenceType: type,
+            interactionId: item.InteractionID.toString(),
+            lineId: &#x27;bargein&#x27;,
+            sessionId: item.InteractionData.SessionId,
+            toAgentId: this.agentData.agentId,
+            toTmacServer: this.agentData.tmacServer
+        })
+            .then((resp: IResponse) &#x3D;&gt; {
+                // check the response
+                if (resp.response &amp;&amp; resp.response.ResultCode &gt;&#x3D; 0) {
+                    this._appUIService.showSnackbar(&#x60;Chat ${type &#x3D;&#x3D;&#x3D; &#x27;conf&#x27; ? &#x27;conference&#x27; : type} barge-in successful&#x60;, &#x27;success&#x27;);
+                    // close the widget
+                    this._aotWidgetService.destroyWidget(this.data.ID);
+                }
+                else {
+                    this._appUIService.showSnackbar(&#x60;Chat ${type &#x3D;&#x3D;&#x3D; &#x27;conf&#x27; ? &#x27;conference&#x27; : type} barge-in failed&#x60;, &#x27;failure&#x27;);
+                }
+            })
+            .catch(() &#x3D;&gt; {
+                this._appUIService.showSnackbar(COMMON_ERR_MESSAGE, &#x27;failure&#x27;);
+            });
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * On widget maximized event
+     * @param state Maximzed flag
+     */
     public maximizeEvent(state: boolean): void {
         this.maximized &#x3D; state;
         if (state) {
@@ -1232,7 +1396,13 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
         }
     }
 
-    public featureCheck(feature: AgentFeatures, type: string, subType: string): boolean {
+    /**
+     * To check whether the feature is enabled for the agent
+     * @param {AgentFeatures} feature Agent&#x27;s feature
+     * @param {&#x27;agent&#x27; | &#x27;interaction&#x27;} type Type of feature
+     * @param {string} subType Subtype of feature
+     */
+    public featureCheck(feature: AgentFeatures, type: &#x27;agent&#x27; | &#x27;interaction&#x27;, subType: string): boolean {
         // if not allow supervisor or in map the item is not found return false
         if (!feature.Feature.startsWith(&#x27;AllowSupervisor&#x27;) || !this.featureMap[feature.Feature]) {
             return false;
@@ -1256,43 +1426,22 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
         }
     }
 
-    public performAgentAction(item: InteractionDataModel, feature: AgentFeatures): void {
+    /**
+     * To perform action on agent interaction
+     */
+    public performInteractionAction(item: InteractionDataModel, feature: AgentFeatures): void {
         console.log(&#x27;performAgentAction&#x27;, { item, feature });
         switch (feature.Feature) {
             case &#x27;AllowSupervisorToBargeIn&#x27;:
                 break;
             case &#x27;AllowSupervisorToChatConference&#x27;:
+                this.performChatBargeIn(&#x27;conf&#x27;, item);
                 break;
             case &#x27;AllowSupervisorToChatSilentMonitor&#x27;:
-                this._appUIService.showSnackbar(&#x27;Please wait, connecting to the interaction...&#x27;, &#x27;loading&#x27;);
-                SDKClient.transferTextChat({
-                    agentId: this.configData.AgentLoginID,
-                    deviceId: this.configData.StationID,
-                    chatMode: item.Channel &#x3D;&#x3D;&#x3D; &#x27;audiochat&#x27; ? &#x27;audio&#x27; : item.Channel &#x3D;&#x3D;&#x3D; &#x27;videochat&#x27; ? &#x27;video&#x27; : &#x27;text&#x27;,
-                    comment: &#x27;&#x27;,
-                    conferenceType: &#x27;silent&#x27;,
-                    interactionId: item.InteractionID.toString(),
-                    lineId: &#x27;bargein&#x27;,
-                    sessionId: item.InteractionData.SessionId,
-                    toAgentId: this.agentData.agentId,
-                    toTmacServer: this.agentData.tmacServer
-                })
-                    .then((resp: IResponse) &#x3D;&gt; {
-                        // check the response
-                        if (resp.response &amp;&amp; resp.response.ResultCode &gt;&#x3D; 0) {
-                            this._appUIService.showSnackbar(&#x27;Chat barge-in successful&#x27;, &#x27;success&#x27;);
-                            // close the widget
-                            this._aotWidgetService.destroyWidget(this.data.ID);
-                        }
-                        else {
-                            this._appUIService.showSnackbar(&#x27;Chat barge-in failed&#x27;, &#x27;failure&#x27;);
-                        }
-                    })
-                    .catch(() &#x3D;&gt; {
-                        this._appUIService.showSnackbar(COMMON_ERR_MESSAGE, &#x27;failure&#x27;);
-                    });
+                this.performChatBargeIn(&#x27;silent&#x27;, item);
                 break;
             case &#x27;AllowSupervisorToChatWhisper&#x27;:
+                this.performChatBargeIn(&#x27;whisper&#x27;, item);
                 break;
             case &#x27;AllowSupervisorToFaxTransferAgent&#x27;:
                 break;
@@ -1329,7 +1478,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
     &gt;
         &lt;mat-table [dataSource]&#x3D;&quot;interactionDetailsTable.source&quot; matSort matSortDisableClear&gt;
             &lt;ng-container matColumnDef&#x3D;&quot;InteractionID&quot;&gt;
-                &lt;mat-header-cell *matHeaderCellDef mat-sort-header&gt;Interaction ID&lt;/mat-header-cell&gt;
+                &lt;mat-header-cell *matHeaderCellDef mat-sort-header&gt;ID&lt;/mat-header-cell&gt;
                 &lt;mat-cell *matCellDef&#x3D;&quot;let element&quot;&gt;
                     {{ element.InteractionID || &#x27;NA&#x27; }}
                 &lt;/mat-cell&gt;
@@ -1338,7 +1487,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
             &lt;ng-container matColumnDef&#x3D;&quot;Channel&quot;&gt;
                 &lt;mat-header-cell *matHeaderCellDef mat-sort-header&gt;Channel&lt;/mat-header-cell&gt;
                 &lt;mat-cell *matCellDef&#x3D;&quot;let element&quot;&gt;
-                    &lt;mat-icon class&#x3D;&quot;channel-icon text-primary&quot;&gt;
+                    &lt;mat-icon class&#x3D;&quot;channel-icon&quot; color&#x3D;&quot;primary&quot;&gt;
                         {{
                             element.Channel &#x3D;&#x3D;&#x3D; &#x27;Voice&#x27;
                                 ? &#x27;phone&#x27;
@@ -1366,6 +1515,20 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
                 &lt;/mat-cell&gt;
             &lt;/ng-container&gt;
 
+            &lt;ng-container matColumnDef&#x3D;&quot;ActiveTime&quot;&gt;
+                &lt;mat-header-cell *matHeaderCellDef mat-sort-header&gt;Active Time&lt;/mat-header-cell&gt;
+                &lt;mat-cell *matCellDef&#x3D;&quot;let element&quot;&gt;
+                    {{ (element.ActiveTime * 1000 | date: &#x27;H:mm:ss&#x27;:&#x27;UTC&#x27;) || &#x27;00:00:00&#x27; }}
+                &lt;/mat-cell&gt;
+            &lt;/ng-container&gt;
+
+            &lt;ng-container matColumnDef&#x3D;&quot;HoldTime&quot;&gt;
+                &lt;mat-header-cell *matHeaderCellDef mat-sort-header&gt;Hold Time&lt;/mat-header-cell&gt;
+                &lt;mat-cell *matCellDef&#x3D;&quot;let element&quot;&gt;
+                    {{ (element.HoldTime * 1000 | date: &#x27;H:mm:ss&#x27;:&#x27;UTC&#x27;) || &#x27;00:00:00&#x27; }}
+                &lt;/mat-cell&gt;
+            &lt;/ng-container&gt;
+
             &lt;ng-container matColumnDef&#x3D;&quot;Actions&quot;&gt;
                 &lt;mat-header-cell *matHeaderCellDef mat-sort-header&gt;Actions&lt;/mat-header-cell&gt;
                 &lt;mat-cell *matCellDef&#x3D;&quot;let element&quot; class&#x3D;&quot;px-12&quot;&gt;
@@ -1375,7 +1538,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
                             mat-icon-button
                             *ngIf&#x3D;&quot;featureCheck(feature, &#x27;interaction&#x27;, element.Channel.toLowerCase())&quot;
                             [matTooltip]&#x3D;&quot;featureMap[feature.Feature].Label&quot;
-                            (click)&#x3D;&quot;performAgentAction(element, feature)&quot;
+                            (click)&#x3D;&quot;performInteractionAction(element, feature)&quot;
                         &gt;
                             &lt;mat-icon&gt;{{ featureMap[feature.Feature].Icon }}&lt;/mat-icon&gt;
                         &lt;/button&gt;
@@ -1430,9 +1593,9 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
 <script src="../js/libs/htmlparser.js"></script>
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
-        var COMPONENT_TEMPLATE = '<div><!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper --><!-- implement following events in your component to access widget wrapper action events --><!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" --><tw-wrapper [data]="data" (maximizeEvent)="maximizeEvent($event)">    <div        *ngIf="interactionDetailsTable.loaded"        class="w-100-p bg-inherit"        [ngClass]="maximized ? \'h-90-p\' : \'h-100-p\'"        fusePerfectScrollbar        [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"    >        <mat-table [dataSource]="interactionDetailsTable.source" matSort matSortDisableClear>            <ng-container matColumnDef="InteractionID">                <mat-header-cell *matHeaderCellDef mat-sort-header>Interaction ID</mat-header-cell>                <mat-cell *matCellDef="let element">                    {{ element.InteractionID || \'NA\' }}                </mat-cell>            </ng-container>            <ng-container matColumnDef="Channel">                <mat-header-cell *matHeaderCellDef mat-sort-header>Channel</mat-header-cell>                <mat-cell *matCellDef="let element">                    <mat-icon class="channel-icon text-primary">                        {{                            element.Channel === \'Voice\'                                ? \'phone\'                                : element.Channel === \'TextChat\'                                ? \'chat\'                                : element.Channel === \'Email\'                                ? \'email\'                                : \'library_books\'                        }}                    </mat-icon>                </mat-cell>            </ng-container>            <ng-container matColumnDef="LastStatus">                <mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>                <mat-cell *matCellDef="let element">                    {{ element.LastStatus || \'NA\' }}                </mat-cell>            </ng-container>            <ng-container matColumnDef="User">                <mat-header-cell *matHeaderCellDef mat-sort-header>User</mat-header-cell>                <mat-cell *matCellDef="let element">                    {{ element.InteractionData.User || \'NA\' }}                </mat-cell>            </ng-container>            <ng-container matColumnDef="Actions">                <mat-header-cell *matHeaderCellDef mat-sort-header>Actions</mat-header-cell>                <mat-cell *matCellDef="let element" class="px-12">                    <ng-container *ngFor="let feature of configData.AgentFeatures">                        <button                            #agentActionBtn                            mat-icon-button                            *ngIf="featureCheck(feature, \'interaction\', element.Channel.toLowerCase())"                            [matTooltip]="featureMap[feature.Feature].Label"                            (click)="performAgentAction(element, feature)"                        >                            <mat-icon>{{ featureMap[feature.Feature].Icon }}</mat-icon>                        </button>                    </ng-container>                </mat-cell>            </ng-container>            <mat-header-row *matHeaderRowDef="interactionDetailsTable.columns; sticky: true"></mat-header-row>            <mat-row *matRowDef="let row; columns: interactionDetailsTable.columns"></mat-row>        </mat-table>        <p *ngIf="interactionDetailsTable.source.data.length === 0" class="text-center m-0 mat-title">No Data Available</p>    </div>    <mat-paginator *ngIf="maximized" [pageSizeOptions]="maximized ? [30, 40, 50] : [3, 6, 12]" showFirstLastButtons> </mat-paginator>    <div *ngIf="!interactionDetailsTable.loaded" class="w-100-p h-100-p" fxLayout fxLayoutAlign="center center">        <mat-spinner></mat-spinner>    </div></tw-wrapper></div>'
-    var COMPONENTS = [{'name': 'AlertDialogComponent', 'selector': 'alert-dialog'},{'name': 'AppComponent', 'selector': 'app'},{'name': 'AppThemeOptionsComponent', 'selector': 'app-theme-options'},{'name': 'AvatarComponent', 'selector': 'avatar'},{'name': 'ChatPanelComponent', 'selector': 'chat-panel'},{'name': 'ConfirmDialogComponent', 'selector': 'confirm-dialog'},{'name': 'ContentComponent', 'selector': 'content'},{'name': 'FooterComponent', 'selector': 'footer'},{'name': 'FuseConfirmDialogComponent', 'selector': 'fuse-confirm-dialog'},{'name': 'FuseCountdownComponent', 'selector': 'fuse-countdown'},{'name': 'FuseDemoContentComponent', 'selector': 'fuse-demo-content'},{'name': 'FuseDemoSidebarComponent', 'selector': 'fuse-demo-sidebar'},{'name': 'FuseHighlightComponent', 'selector': 'fuse-highlight'},{'name': 'FuseMaterialColorPickerComponent', 'selector': 'fuse-material-color-picker'},{'name': 'FuseNavHorizontalCollapsableComponent', 'selector': 'fuse-nav-horizontal-collapsable'},{'name': 'FuseNavHorizontalItemComponent', 'selector': 'fuse-nav-horizontal-item'},{'name': 'FuseNavigationComponent', 'selector': 'fuse-navigation'},{'name': 'FuseNavVerticalCollapsableComponent', 'selector': 'fuse-nav-vertical-collapsable'},{'name': 'FuseNavVerticalGroupComponent', 'selector': 'fuse-nav-vertical-group'},{'name': 'FuseNavVerticalItemComponent', 'selector': 'fuse-nav-vertical-item'},{'name': 'FuseProgressBarComponent', 'selector': 'fuse-progress-bar'},{'name': 'FuseSearchBarComponent', 'selector': 'fuse-search-bar'},{'name': 'FuseShortcutsComponent', 'selector': 'fuse-shortcuts'},{'name': 'FuseSidebarComponent', 'selector': 'fuse-sidebar'},{'name': 'FuseThemeOptionsComponent', 'selector': 'fuse-theme-options'},{'name': 'FuseWidgetComponent', 'selector': 'fuse-widget'},{'name': 'HorizontalLayout1Component', 'selector': 'horizontal-layout-1'},{'name': 'LoginComponent', 'selector': 'login'},{'name': 'MainComponent', 'selector': 'main'},{'name': 'NavbarComponent', 'selector': 'navbar'},{'name': 'QuickPanelComponent', 'selector': 'quick-panel'},{'name': 'ResourceNotFoundComponent', 'selector': 'resource-not-found'},{'name': 'SnackbarComponent', 'selector': 'snackbar'},{'name': 'ToolbarComponent', 'selector': 'toolbar'},{'name': 'TwAccountInformationComponent', 'selector': 'tw-account-information'},{'name': 'TwActiveInteractionsComponent', 'selector': 'tw-active-interactions'},{'name': 'TwAdCallbacksComponent', 'selector': 'tw-ad-callbacks'},{'name': 'TwAdFeedbackComponent', 'selector': 'tw-ad-feedback'},{'name': 'TwAdGamificationComponent', 'selector': 'tw-ad-gamification'},{'name': 'TwAdInteractionDetailsComponent', 'selector': 'tw-ad-interaction-details'},{'name': 'TwAdPerformanceComponent', 'selector': 'tw-ad-performance'},{'name': 'TwAdScoreComponent', 'selector': 'tw-ad-score'},{'name': 'TwAdTotalAvComponent', 'selector': 'tw-ad-total-av'},{'name': 'TwAdTotalCallsComponent', 'selector': 'tw-ad-total-calls'},{'name': 'TwAdTotalChatsComponent', 'selector': 'app-tw-ad-total-chats'},{'name': 'TwAdTotalInteractionsComponent', 'selector': 'tw-ad-total-interactions'},{'name': 'TwAgentAssistComponent', 'selector': 'tw-agent-assist'},{'name': 'TwAgentDetailsComponent', 'selector': 'tw-agent-details'},{'name': 'TwAhtTcComponent', 'selector': 'tw-aht-tc'},{'name': 'TwAmdocsBccComponent', 'selector': 'tw-amdocs-bcc'},{'name': 'TwAudioControlsComponent', 'selector': 'tw-audio-controls'},{'name': 'TwAuxCodesComponent', 'selector': 'tw-aux-codes'},{'name': 'TwAuxStatusChartComponent', 'selector': 'tw-aux-status-chart.component'},{'name': 'TwAuxTimerComponent', 'selector': 'tw-aux-timer'},{'name': 'TwBroadcastComponent', 'selector': 'tw-broadcast'},{'name': 'TwCannedResponsesComponent', 'selector': 'tw-canned-responses'},{'name': 'TwCardComponent', 'selector': 'tw-card'},{'name': 'TwCardHeaderComponent', 'selector': 'tw-card-header'},{'name': 'TwcCustomComponent', 'selector': 'twc-custom'},{'name': 'TwChatControlsComponent', 'selector': 'tw-chat-controls'},{'name': 'TwChatPanelComponent', 'selector': 'tw-chat-panel'},{'name': 'TwcHomeComponent', 'selector': 'twc-home'},{'name': 'TwcNoInteractionComponent', 'selector': 'twc-no-interaction'},{'name': 'TwcNoWidgetsComponent', 'selector': 'twc-no-widgets'},{'name': 'TwcSupervisorComponent', 'selector': 'twc-supervisor'},{'name': 'TwcTextchatComponent', 'selector': 'twc-textchat'},{'name': 'TwcUnknownComponent', 'selector': 'twc-unknown'},{'name': 'TwCustomComponent', 'selector': 'tw-custom'},{'name': 'TwCustomerDetailsComponent', 'selector': 'tw-customer-details'},{'name': 'TwCustomerJourneyComponent', 'selector': 'tw-customer-journey'},{'name': 'TwCustomerSentimentComponent', 'selector': 'tw-customer-sentiment'},{'name': 'TwcVoiceComponent', 'selector': 'twc-voice'},{'name': 'TwHeatMapComponent', 'selector': 'tw-heat-map'},{'name': 'TwInstantMessagingComponent', 'selector': 'tw-instant-messaging'},{'name': 'TwInteractionSelectorComponent', 'selector': 'tw-interaction-selector'},{'name': 'TwLogoutComponent', 'selector': 'tw-logout'},{'name': 'TwNotificationsComponent', 'selector': 'tw-notifications'},{'name': 'TwPanelComponent', 'selector': 'tw-panel'},{'name': 'TwRegisterCallbackComponent', 'selector': 'tw-register-callback'},{'name': 'TwSampleComponent', 'selector': 'tw-sample'},{'name': 'TwSuActiveAgentsComponent', 'selector': 'tw-su-active-agents'},{'name': 'TwSuAgentActivityComponent', 'selector': 'tw-su-agent-activity'},{'name': 'TwSuAgentActivityDetailsComponent', 'selector': 'tw-su-agent-activity-details'},{'name': 'TwSuAgentInteractionsComponent', 'selector': 'tw-su-agent-interactions'},{'name': 'TwSuAverageHandleTimeComponent', 'selector': 'tw-su-average-handle-time'},{'name': 'TwSuCallsInQueueComponent', 'selector': 'tw-su-calls-in-queue.component'},{'name': 'TwSuChannelsComponent', 'selector': 'tw-su-channels.component'},{'name': 'TwSuChannelsStatusComponent', 'selector': 'tw-su-channels-status'},{'name': 'TwSuGamificationComponent', 'selector': 'tw-su-gamification'},{'name': 'TwSuIntentListComponent', 'selector': 'tw-su-intent-list'},{'name': 'TwSuStatusComponent', 'selector': 'tw-su-status.component'},{'name': 'TwSuTotalCallsComponent', 'selector': 'tw-su-total-calls.component'},{'name': 'TwSuTransferredConferencedCallsComponent', 'selector': 'tw-su-transferred-conferenced-calls'},{'name': 'TwTemplateComponent', 'selector': 'tw-template'},{'name': 'TwToolbarMenuComponent', 'selector': 'tw-toolbar-menu'},{'name': 'TwUnknownComponent', 'selector': 'tw-unknown'},{'name': 'TwVideoControlsComponent', 'selector': 'tw-video-controls'},{'name': 'TwVoiceBotTranscriptsComponent', 'selector': 'tw-voice-bot-transcripts'},{'name': 'TwVoiceControlsComponent', 'selector': 'tw-voice-controls'},{'name': 'TwVoicePanelComponent', 'selector': 'tw-voice-panel'},{'name': 'TwWallboardComponent', 'selector': 'tw-wallboard'},{'name': 'TwWorkCodesComponent', 'selector': 'tw-work-codes'},{'name': 'TwWrapperComponent', 'selector': 'tw-wrapper'},{'name': 'VerticalLayout1Component', 'selector': 'vertical-layout-1'},{'name': 'WidgetFabComponent', 'selector': 'widget-fab'},{'name': 'WidgetPreviewComponent', 'selector': 'widget-preview'}];
-    var DIRECTIVES = [{'name': 'FuseIfOnDomDirective', 'selector': '[fuseIfOnDom]'},{'name': 'FuseInnerScrollDirective', 'selector': '.inner-scroll'},{'name': 'FuseMatSidenavHelperDirective', 'selector': '[fuseMatSidenavHelper]'},{'name': 'FuseMatSidenavTogglerDirective', 'selector': '[fuseMatSidenavToggler]'},{'name': 'FusePerfectScrollbarDirective', 'selector': '[fusePerfectScrollbar]'},{'name': 'FuseWidgetToggleDirective', 'selector': '[fuseWidgetToggle]'},{'name': 'TWChartDirective', 'selector': '[twChart]'},{'name': 'TwTemplateDirective', 'selector': '[widgetTemplate]'}];
+        var COMPONENT_TEMPLATE = '<div><!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper --><!-- implement following events in your component to access widget wrapper action events --><!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" --><tw-wrapper [data]="data" (maximizeEvent)="maximizeEvent($event)">    <div        *ngIf="interactionDetailsTable.loaded"        class="w-100-p bg-inherit"        [ngClass]="maximized ? \'h-90-p\' : \'h-100-p\'"        fusePerfectScrollbar        [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"    >        <mat-table [dataSource]="interactionDetailsTable.source" matSort matSortDisableClear>            <ng-container matColumnDef="InteractionID">                <mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>                <mat-cell *matCellDef="let element">                    {{ element.InteractionID || \'NA\' }}                </mat-cell>            </ng-container>            <ng-container matColumnDef="Channel">                <mat-header-cell *matHeaderCellDef mat-sort-header>Channel</mat-header-cell>                <mat-cell *matCellDef="let element">                    <mat-icon class="channel-icon" color="primary">                        {{                            element.Channel === \'Voice\'                                ? \'phone\'                                : element.Channel === \'TextChat\'                                ? \'chat\'                                : element.Channel === \'Email\'                                ? \'email\'                                : \'library_books\'                        }}                    </mat-icon>                </mat-cell>            </ng-container>            <ng-container matColumnDef="LastStatus">                <mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>                <mat-cell *matCellDef="let element">                    {{ element.LastStatus || \'NA\' }}                </mat-cell>            </ng-container>            <ng-container matColumnDef="User">                <mat-header-cell *matHeaderCellDef mat-sort-header>User</mat-header-cell>                <mat-cell *matCellDef="let element">                    {{ element.InteractionData.User || \'NA\' }}                </mat-cell>            </ng-container>            <ng-container matColumnDef="ActiveTime">                <mat-header-cell *matHeaderCellDef mat-sort-header>Active Time</mat-header-cell>                <mat-cell *matCellDef="let element">                    {{ (element.ActiveTime * 1000 | date: \'H:mm:ss\':\'UTC\') || \'00:00:00\' }}                </mat-cell>            </ng-container>            <ng-container matColumnDef="HoldTime">                <mat-header-cell *matHeaderCellDef mat-sort-header>Hold Time</mat-header-cell>                <mat-cell *matCellDef="let element">                    {{ (element.HoldTime * 1000 | date: \'H:mm:ss\':\'UTC\') || \'00:00:00\' }}                </mat-cell>            </ng-container>            <ng-container matColumnDef="Actions">                <mat-header-cell *matHeaderCellDef mat-sort-header>Actions</mat-header-cell>                <mat-cell *matCellDef="let element" class="px-12">                    <ng-container *ngFor="let feature of configData.AgentFeatures">                        <button                            #agentActionBtn                            mat-icon-button                            *ngIf="featureCheck(feature, \'interaction\', element.Channel.toLowerCase())"                            [matTooltip]="featureMap[feature.Feature].Label"                            (click)="performInteractionAction(element, feature)"                        >                            <mat-icon>{{ featureMap[feature.Feature].Icon }}</mat-icon>                        </button>                    </ng-container>                </mat-cell>            </ng-container>            <mat-header-row *matHeaderRowDef="interactionDetailsTable.columns; sticky: true"></mat-header-row>            <mat-row *matRowDef="let row; columns: interactionDetailsTable.columns"></mat-row>        </mat-table>        <p *ngIf="interactionDetailsTable.source.data.length === 0" class="text-center m-0 mat-title">No Data Available</p>    </div>    <mat-paginator *ngIf="maximized" [pageSizeOptions]="maximized ? [30, 40, 50] : [3, 6, 12]" showFirstLastButtons> </mat-paginator>    <div *ngIf="!interactionDetailsTable.loaded" class="w-100-p h-100-p" fxLayout fxLayoutAlign="center center">        <mat-spinner></mat-spinner>    </div></tw-wrapper></div>'
+    var COMPONENTS = [{'name': 'AlertDialogComponent', 'selector': 'alert-dialog'},{'name': 'AppComponent', 'selector': 'app'},{'name': 'AppConfirmDialogComponent', 'selector': 'app-confirm-dialog'},{'name': 'AppSnackbarComponent', 'selector': 'app-snackbar'},{'name': 'AppThemeOptionsComponent', 'selector': 'app-theme-options'},{'name': 'AvatarComponent', 'selector': 'avatar'},{'name': 'ContentComponent', 'selector': 'content'},{'name': 'CreateSmsComponent', 'selector': 'app-create-sms'},{'name': 'CustomDialogComponent', 'selector': 'custom-dialog'},{'name': 'FooterComponent', 'selector': 'footer'},{'name': 'FuseConfirmDialogComponent', 'selector': 'fuse-confirm-dialog'},{'name': 'FuseCountdownComponent', 'selector': 'fuse-countdown'},{'name': 'FuseDemoContentComponent', 'selector': 'fuse-demo-content'},{'name': 'FuseDemoSidebarComponent', 'selector': 'fuse-demo-sidebar'},{'name': 'FuseHighlightComponent', 'selector': 'fuse-highlight'},{'name': 'FuseMaterialColorPickerComponent', 'selector': 'fuse-material-color-picker'},{'name': 'FuseNavHorizontalCollapsableComponent', 'selector': 'fuse-nav-horizontal-collapsable'},{'name': 'FuseNavHorizontalItemComponent', 'selector': 'fuse-nav-horizontal-item'},{'name': 'FuseNavigationComponent', 'selector': 'fuse-navigation'},{'name': 'FuseNavVerticalCollapsableComponent', 'selector': 'fuse-nav-vertical-collapsable'},{'name': 'FuseNavVerticalGroupComponent', 'selector': 'fuse-nav-vertical-group'},{'name': 'FuseNavVerticalItemComponent', 'selector': 'fuse-nav-vertical-item'},{'name': 'FuseProgressBarComponent', 'selector': 'fuse-progress-bar'},{'name': 'FuseSearchBarComponent', 'selector': 'fuse-search-bar'},{'name': 'FuseShortcutsComponent', 'selector': 'fuse-shortcuts'},{'name': 'FuseSidebarComponent', 'selector': 'fuse-sidebar'},{'name': 'FuseThemeOptionsComponent', 'selector': 'fuse-theme-options'},{'name': 'FuseWidgetComponent', 'selector': 'fuse-widget'},{'name': 'HorizontalLayout1Component', 'selector': 'horizontal-layout-1'},{'name': 'InstantMessagingComponent', 'selector': 'instant-messaging'},{'name': 'LoginComponent', 'selector': 'login'},{'name': 'MainComponent', 'selector': 'main'},{'name': 'NavbarComponent', 'selector': 'navbar'},{'name': 'NoDataAvailableComponent', 'selector': 'no-data-available'},{'name': 'QuickPanelComponent', 'selector': 'quick-panel'},{'name': 'RaceCarTrackComponent', 'selector': 'race-car-track'},{'name': 'ReminderTaskDialogComponent', 'selector': 'reminder-task-dialog'},{'name': 'ResourceNotFoundComponent', 'selector': 'resource-not-found'},{'name': 'SnackbarComponent', 'selector': 'snackbar'},{'name': 'ToolbarComponent', 'selector': 'toolbar'},{'name': 'TwAccountInformationComponent', 'selector': 'tw-account-information'},{'name': 'TwActiveInteractionsComponent', 'selector': 'tw-active-interactions'},{'name': 'TwAdCallbacksComponent', 'selector': 'tw-ad-callbacks'},{'name': 'TwAdFeedbackComponent', 'selector': 'tw-ad-feedback'},{'name': 'TwAdGamificationComponent', 'selector': 'tw-ad-gamification'},{'name': 'TwAdInteractionDetailsComponent', 'selector': 'tw-ad-interaction-details'},{'name': 'TwAdPerformanceComponent', 'selector': 'tw-ad-performance'},{'name': 'TwAdScoreComponent', 'selector': 'tw-ad-score'},{'name': 'TwAdTotalInteractionsComponent', 'selector': 'tw-ad-total-interactions'},{'name': 'TwAgentAssistComponent', 'selector': 'tw-agent-assist'},{'name': 'TwAgentDetailsComponent', 'selector': 'tw-agent-details'},{'name': 'TwAhtTcComponent', 'selector': 'tw-aht-tc'},{'name': 'TwAmdocsBccComponent', 'selector': 'tw-amdocs-bcc'},{'name': 'TwAudioControlsComponent', 'selector': 'tw-audio-controls'},{'name': 'TwAuxCodesComponent', 'selector': 'tw-aux-codes'},{'name': 'TwAuxStatusChartComponent', 'selector': 'tw-aux-status-chart.component'},{'name': 'TwAuxTimerComponent', 'selector': 'tw-aux-timer'},{'name': 'TwBroadcastComponent', 'selector': 'tw-broadcast'},{'name': 'TwCannedResponsesComponent', 'selector': 'tw-canned-responses'},{'name': 'TwCardComponent', 'selector': 'tw-card'},{'name': 'TwCardHeaderComponent', 'selector': 'tw-card-header'},{'name': 'TwcCustomComponent', 'selector': 'twc-custom'},{'name': 'TwcEmailComponent', 'selector': 'twc-email'},{'name': 'TwChatControlsComponent', 'selector': 'tw-chat-controls'},{'name': 'TwChatPanelComponent', 'selector': 'tw-chat-panel'},{'name': 'TwcHomeComponent', 'selector': 'twc-home'},{'name': 'TwcNoInteractionComponent', 'selector': 'twc-no-interaction'},{'name': 'TwcNoWidgetsComponent', 'selector': 'twc-no-widgets'},{'name': 'TwCreateInteractionComponent', 'selector': 'tw-create-interaction'},{'name': 'TwcSupervisorComponent', 'selector': 'twc-supervisor'},{'name': 'TwcTextchatComponent', 'selector': 'twc-textchat'},{'name': 'TwcUnknownComponent', 'selector': 'twc-unknown'},{'name': 'TwCustomComponent', 'selector': 'tw-custom'},{'name': 'TwCustomerDetailsComponent', 'selector': 'tw-customer-details'},{'name': 'TwCustomerJourneyComponent', 'selector': 'tw-customer-journey'},{'name': 'TwCustomerSentimentComponent', 'selector': 'tw-customer-sentiment'},{'name': 'TwcVoiceComponent', 'selector': 'twc-voice'},{'name': 'TwcWorkbenchComponent', 'selector': 'twc-workbench'},{'name': 'TwEmailControlsComponent', 'selector': 'tw-email-controls'},{'name': 'TwEmailPanelComponent', 'selector': 'tw-email-panel'},{'name': 'TwGamificationComponent', 'selector': 'tw-gamification'},{'name': 'TwInstantMessagingComponent', 'selector': 'tw-instant-messaging'},{'name': 'TwLogoutComponent', 'selector': 'tw-logout'},{'name': 'TwNotificationsComponent', 'selector': 'tw-notifications'},{'name': 'TwPanelComponent', 'selector': 'tw-panel'},{'name': 'TwPendingCallbacksComponent', 'selector': 'tw-pending-callbacks'},{'name': 'TwPieChartComponent', 'selector': 'tw-pie-chart.component'},{'name': 'TwRegisterCallbackComponent', 'selector': 'tw-register-callback'},{'name': 'TwSampleComponent', 'selector': 'tw-sample'},{'name': 'TwSuActiveAgentsComponent', 'selector': 'tw-su-active-agents'},{'name': 'TwSuAgentActivityComponent', 'selector': 'tw-su-agent-activity'},{'name': 'TwSuAgentActivityDetailsComponent', 'selector': 'tw-su-agent-activity-details'},{'name': 'TwSuAgentInteractionsComponent', 'selector': 'tw-su-agent-interactions'},{'name': 'TwSuCallsInQueueComponent', 'selector': 'tw-su-calls-in-queue.component'},{'name': 'TwSuChannelsComponent', 'selector': 'tw-su-channels.component'},{'name': 'TwSuGamificationComponent', 'selector': 'tw-su-gamification'},{'name': 'TwSuIntentListComponent', 'selector': 'tw-su-intent-list'},{'name': 'TwSuStatusComponent', 'selector': 'tw-su-status.component'},{'name': 'TwTemplateComponent', 'selector': 'tw-template'},{'name': 'TwToolbarMenuComponent', 'selector': 'tw-toolbar-menu'},{'name': 'TwTransferInteractionComponent', 'selector': 'tw-transfer-interaction'},{'name': 'TwUnknownComponent', 'selector': 'tw-unknown'},{'name': 'TwVideoControlsComponent', 'selector': 'tw-video-controls'},{'name': 'TwVoiceBotTranscriptsComponent', 'selector': 'tw-voice-bot-transcripts'},{'name': 'TwVoiceCannedResponsesComponent', 'selector': 'tw-voice-canned-responses'},{'name': 'TwVoiceControlsComponent', 'selector': 'tw-voice-controls'},{'name': 'TwVoicePanelComponent', 'selector': 'tw-voice-panel'},{'name': 'TwWallboardComponent', 'selector': 'tw-wallboard'},{'name': 'TwWorkbenchPanelComponent', 'selector': 'tw-workbench-panel'},{'name': 'TwWorkCodesComponent', 'selector': 'tw-work-codes'},{'name': 'TwWrapperComponent', 'selector': 'tw-wrapper'},{'name': 'VerticalLayout1Component', 'selector': 'vertical-layout-1'},{'name': 'WidgetFabComponent', 'selector': 'widget-fab'},{'name': 'WidgetPreviewComponent', 'selector': 'widget-preview'},{'name': 'WorkbenchEmailComponent', 'selector': 'workbench-email'}];
+    var DIRECTIVES = [{'name': 'FuseIfOnDomDirective', 'selector': '[fuseIfOnDom]'},{'name': 'FuseInnerScrollDirective', 'selector': '.inner-scroll'},{'name': 'FuseMatSidenavHelperDirective', 'selector': '[fuseMatSidenavHelper]'},{'name': 'FuseMatSidenavTogglerDirective', 'selector': '[fuseMatSidenavToggler]'},{'name': 'FusePerfectScrollbarDirective', 'selector': '[fusePerfectScrollbar]'},{'name': 'FuseWidgetToggleDirective', 'selector': '[fuseWidgetToggle]'},{'name': 'QuillDirective', 'selector': '[quill]'},{'name': 'TWChartDirective', 'selector': '[twChart]'},{'name': 'TwTemplateDirective', 'selector': '[widgetTemplate]'}];
     var ACTUAL_COMPONENT = {'name': 'TwSuAgentInteractionsComponent'};
 </script>
 <script src="../js/tree.js"></script>

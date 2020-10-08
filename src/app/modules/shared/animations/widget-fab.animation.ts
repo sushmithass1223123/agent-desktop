@@ -9,6 +9,9 @@ import {
     trigger
 } from '@angular/animations';
 
+/**
+ * Fab Animations
+ */
 export const widgetFabAnimations = [
     trigger('fabToggler', [
         state('inactive', style({

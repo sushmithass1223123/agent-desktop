@@ -960,10 +960,10 @@
     <div class="tab-pane fade  tab-source-code" id="c-source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { WorkCode } from &#x27;tmac-sdk&#x27;;
 
-export interface ResData&lt;T&gt; {
+export interface ResData&lt;T &#x3D; any&gt; {
     loading: boolean;
     error: boolean;
-    msg: string;
+    msg?: string;
     data?: T;
 }
 
@@ -977,12 +977,22 @@ export interface ResGamification {
     TeamName: string;
     TotalBadges: ResGamificationBadge[];
     TotalPoints: number;
+    GoldCoins: number;
+    BronzeCoins: number;
+    SilverCoins: number;
+    InfluencerBadgeUrl: string;
+    InfluencerBadges: number;
+    MasterBadgeUrl: string;
+    MasterBadges: number;
+    NoviceBadgeUrl: string;
+    NoviceBadges: number;
 }
 
 export interface ResGamificationBadge {
     BadgeId: number;
     BadgeName: string;
     BadgeUrl: string;
+    BadgePoints?: number;
 }
 
 export interface ResLoadWorkCodes {

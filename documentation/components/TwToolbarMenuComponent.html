@@ -64,6 +64,13 @@
     <code>src/app/modules/t-widgets/tw-toolbar/tw-toolbar-menu/tw-toolbar-menu.component.ts</code>
 </p>
 
+    <p class="comment">
+        <h3>Description</h3>
+    </p>
+    <p class="comment">
+        <p>Toolbar menu</p>
+
+    </p>
 
     <p class="comment">
         <h3>Extends</h3>
@@ -198,7 +205,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">src/app/modules/t-widgets/tw-toolbar/tw-toolbar-menu/tw-toolbar-menu.component.ts:14</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">src/app/modules/t-widgets/tw-toolbar/tw-toolbar-menu/tw-toolbar-menu.component.ts:23</a></div>
                             </td>
                         </tr>
 
@@ -218,15 +225,21 @@
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                        <i>Type : </i>        <code><a href="../interfaces/IWidget.html" target="_self" >IWidget</a></code>
 
                     </td>
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="12" class="link-to-prism">src/app/modules/t-widgets/tw-toolbar/tw-toolbar-menu/tw-toolbar-menu.component.ts:12</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="18" class="link-to-prism">src/app/modules/t-widgets/tw-toolbar/tw-toolbar-menu/tw-toolbar-menu.component.ts:18</a></div>
                             </td>
                         </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>App config json data</p>
+</div>
+                    </td>
+                </tr>
             </tbody>
         </table>
 </section>
@@ -260,14 +273,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="27"
-                            class="link-to-prism">src/app/modules/t-widgets/tw-toolbar/tw-toolbar-menu/tw-toolbar-menu.component.ts:27</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="42"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-toolbar/tw-toolbar-menu/tw-toolbar-menu.component.ts:42</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Lifecyclle hook</p>
+</div>
 
                     <div class="io-description">
                         <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
@@ -299,14 +314,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="20"
-                            class="link-to-prism">src/app/modules/t-widgets/tw-toolbar/tw-toolbar-menu/tw-toolbar-menu.component.ts:20</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="32"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-toolbar/tw-toolbar-menu/tw-toolbar-menu.component.ts:32</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Lifecycle hook</p>
+</div>
 
                     <div class="io-description">
                         <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
@@ -336,7 +353,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                            <i>Type : </i>    <code>[]</code>
+                            <i>Type : </i>        <code><a href="../interfaces/IWidget.html" target="_self" >IWidget[]</a></code>
 
                         </td>
                     </tr>
@@ -347,10 +364,16 @@
                     </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">src/app/modules/t-widgets/tw-toolbar/tw-toolbar-menu/tw-toolbar-menu.component.ts:14</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">src/app/modules/t-widgets/tw-toolbar/tw-toolbar-menu/tw-toolbar-menu.component.ts:23</a></div>
                             </td>
                         </tr>
 
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Toolbar menu widget</p>
+</div>
+                    </td>
+                </tr>
 
             </tbody>
         </table>
@@ -362,7 +385,11 @@
     <div class="tab-pane fade  tab-source-code" id="c-source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, OnInit, OnDestroy, Input, ViewEncapsulation } from &#x27;@angular/core&#x27;;
 import { TWidgetWrapper } from &#x27;@twidgets/utils&#x27;;
+import { IWidget } from &#x27;app/interfaces&#x27;;
 
+/**
+ * Toolbar menu
+ */
 @Component({
     selector: &#x27;tw-toolbar-menu&#x27;,
     templateUrl: &#x27;./tw-toolbar-menu.component.html&#x27;,
@@ -370,15 +397,23 @@ import { TWidgetWrapper } from &#x27;@twidgets/utils&#x27;;
     encapsulation: ViewEncapsulation.None
 })
 export class TwToolbarMenuComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+    /**
+     * App config json data
+     */
+    @Input() data: IWidget;
 
-    @Input() data: any;
-
-    toolbarMenuWidget &#x3D; [];
+    /**
+     * Toolbar menu widget
+     */
+    toolbarMenuWidget: IWidget[] &#x3D; [];
 
     constructor() {
         super();
     }
 
+    /**
+     * Lifecycle hook
+     */
     ngOnInit(): void {
         this.initWrapper(this.data);
 
@@ -386,6 +421,9 @@ export class TwToolbarMenuComponent extends TWidgetWrapper implements OnInit, On
         this.toolbarMenuWidget &#x3D; this.data.Data.Widgets || [];
     }
 
+    /**
+     * Lifecyclle hook
+     */
     ngOnDestroy(): void {
         this.destroyWrapper();
     }
@@ -396,13 +434,19 @@ export class TwToolbarMenuComponent extends TWidgetWrapper implements OnInit, On
     <div class="tab-pane fade " id="c-templateData">
         <pre class="line-numbers"><code class="language-html">&lt;div class&#x3D;&quot;tw-navbar-menu&quot;&gt;
     &lt;div class&#x3D;&quot;menu-item&quot; *ngFor&#x3D;&quot;let widget of toolbarMenuWidget&quot;&gt;
-        &lt;tw-aux-timer [data]&#x3D;&quot;widget&quot; *ngIf&#x3D;&quot;widget.Type &#x3D;&#x3D;&#x3D; &#x27;tw-aux-timer&#x27;&quot; fxHide fxShow.gt-xs&gt;&lt;/tw-aux-timer&gt;
-        &lt;tw-agent-details [data]&#x3D;&quot;widget&quot; *ngIf&#x3D;&quot;widget.Type &#x3D;&#x3D;&#x3D; &#x27;tw-agent-details&#x27;&quot;&gt;&lt;/tw-agent-details&gt;
-        &lt;tw-aux-codes [data]&#x3D;&quot;widget&quot; *ngIf&#x3D;&quot;widget.Type &#x3D;&#x3D;&#x3D; &#x27;tw-aux-codes&#x27;&quot;&gt;&lt;/tw-aux-codes&gt;
-        &lt;tw-notifications [data]&#x3D;&quot;widget&quot; *ngIf&#x3D;&quot;widget.Type &#x3D;&#x3D;&#x3D; &#x27;tw-notifications&#x27;&quot; fxHide fxShow.gt-xs&gt;&lt;/tw-notifications&gt;
-        &lt;tw-instant-messaging [data]&#x3D;&quot;widget&quot; *ngIf&#x3D;&quot;widget.Type &#x3D;&#x3D;&#x3D; &#x27;tw-instant-messaging&#x27;&quot; fxHide fxShow.gt-xs&gt;&lt;/tw-instant-messaging&gt;
-        &lt;tw-logout [data]&#x3D;&quot;widget&quot; *ngIf&#x3D;&quot;widget.Type &#x3D;&#x3D;&#x3D; &#x27;tw-logout&#x27;&quot;&gt;&lt;/tw-logout&gt;
-        &lt;tw-broadcast [data]&#x3D;&quot;widget&quot; *ngIf&#x3D;&quot;widget.Type &#x3D;&#x3D;&#x3D; &#x27;tw-broadcast&#x27;&quot; fxHide fxShow.gt-sm&gt;&lt;/tw-broadcast&gt;
+        &lt;tw-aux-timer [data]&#x3D;&quot;widget&quot; *ngIf&#x3D;&quot;widget.Type &#x3D;&#x3D;&#x3D; &#x27;tw-aux-timer&#x27; &amp;&amp; widget.Config.Enabled&quot; fxHide fxShow.gt-xs&gt;&lt;/tw-aux-timer&gt;
+        &lt;tw-agent-details [data]&#x3D;&quot;widget&quot; *ngIf&#x3D;&quot;widget.Type &#x3D;&#x3D;&#x3D; &#x27;tw-agent-details&#x27; &amp;&amp; widget.Config.Enabled&quot;&gt;&lt;/tw-agent-details&gt;
+        &lt;tw-notifications [data]&#x3D;&quot;widget&quot; *ngIf&#x3D;&quot;widget.Type &#x3D;&#x3D;&#x3D; &#x27;tw-notifications&#x27; &amp;&amp; widget.Config.Enabled&quot; fxHide fxShow.gt-xs&gt;&lt;/tw-notifications&gt;
+        &lt;tw-aux-codes [data]&#x3D;&quot;widget&quot; *ngIf&#x3D;&quot;widget.Type &#x3D;&#x3D;&#x3D; &#x27;tw-aux-codes&#x27; &amp;&amp; widget.Config.Enabled&quot;&gt;&lt;/tw-aux-codes&gt;
+        &lt;tw-instant-messaging
+            [data]&#x3D;&quot;widget&quot;
+            *ngIf&#x3D;&quot;widget.Type &#x3D;&#x3D;&#x3D; &#x27;tw-instant-messaging&#x27; &amp;&amp; widget.Config.Enabled&quot;
+            fxHide
+            fxShow.gt-xs
+        &gt;&lt;/tw-instant-messaging&gt;
+        &lt;tw-logout [data]&#x3D;&quot;widget&quot; *ngIf&#x3D;&quot;widget.Type &#x3D;&#x3D;&#x3D; &#x27;tw-logout&#x27; &amp;&amp; widget.Config.Enabled&quot;&gt;&lt;/tw-logout&gt;
+        &lt;tw-broadcast [data]&#x3D;&quot;widget&quot; *ngIf&#x3D;&quot;widget.Type &#x3D;&#x3D;&#x3D; &#x27;tw-broadcast&#x27; &amp;&amp; widget.Config.Enabled&quot; fxHide fxShow.gt-sm&gt;&lt;/tw-broadcast&gt;
+        &lt;tw-create-interaction [data]&#x3D;&quot;widget&quot; *ngIf&#x3D;&quot;widget.Type &#x3D;&#x3D;&#x3D; &#x27;tw-create-interaction&#x27; &amp;&amp; widget.Config.Enabled&quot;&gt;&lt;/tw-create-interaction&gt;
     &lt;/div&gt;
 &lt;/div&gt;
 </code></pre>
@@ -460,9 +504,9 @@ export class TwToolbarMenuComponent extends TWidgetWrapper implements OnInit, On
 <script src="../js/libs/htmlparser.js"></script>
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
-        var COMPONENT_TEMPLATE = '<div><div class="tw-navbar-menu">    <div class="menu-item" *ngFor="let widget of toolbarMenuWidget">        <tw-aux-timer [data]="widget" *ngIf="widget.Type === \'tw-aux-timer\'" fxHide fxShow.gt-xs></tw-aux-timer>        <tw-agent-details [data]="widget" *ngIf="widget.Type === \'tw-agent-details\'"></tw-agent-details>        <tw-aux-codes [data]="widget" *ngIf="widget.Type === \'tw-aux-codes\'"></tw-aux-codes>        <tw-notifications [data]="widget" *ngIf="widget.Type === \'tw-notifications\'" fxHide fxShow.gt-xs></tw-notifications>        <tw-instant-messaging [data]="widget" *ngIf="widget.Type === \'tw-instant-messaging\'" fxHide fxShow.gt-xs></tw-instant-messaging>        <tw-logout [data]="widget" *ngIf="widget.Type === \'tw-logout\'"></tw-logout>        <tw-broadcast [data]="widget" *ngIf="widget.Type === \'tw-broadcast\'" fxHide fxShow.gt-sm></tw-broadcast>    </div></div></div>'
-    var COMPONENTS = [{'name': 'AlertDialogComponent', 'selector': 'alert-dialog'},{'name': 'AppComponent', 'selector': 'app'},{'name': 'AppThemeOptionsComponent', 'selector': 'app-theme-options'},{'name': 'AvatarComponent', 'selector': 'avatar'},{'name': 'ChatPanelComponent', 'selector': 'chat-panel'},{'name': 'ConfirmDialogComponent', 'selector': 'confirm-dialog'},{'name': 'ContentComponent', 'selector': 'content'},{'name': 'FooterComponent', 'selector': 'footer'},{'name': 'FuseConfirmDialogComponent', 'selector': 'fuse-confirm-dialog'},{'name': 'FuseCountdownComponent', 'selector': 'fuse-countdown'},{'name': 'FuseDemoContentComponent', 'selector': 'fuse-demo-content'},{'name': 'FuseDemoSidebarComponent', 'selector': 'fuse-demo-sidebar'},{'name': 'FuseHighlightComponent', 'selector': 'fuse-highlight'},{'name': 'FuseMaterialColorPickerComponent', 'selector': 'fuse-material-color-picker'},{'name': 'FuseNavHorizontalCollapsableComponent', 'selector': 'fuse-nav-horizontal-collapsable'},{'name': 'FuseNavHorizontalItemComponent', 'selector': 'fuse-nav-horizontal-item'},{'name': 'FuseNavigationComponent', 'selector': 'fuse-navigation'},{'name': 'FuseNavVerticalCollapsableComponent', 'selector': 'fuse-nav-vertical-collapsable'},{'name': 'FuseNavVerticalGroupComponent', 'selector': 'fuse-nav-vertical-group'},{'name': 'FuseNavVerticalItemComponent', 'selector': 'fuse-nav-vertical-item'},{'name': 'FuseProgressBarComponent', 'selector': 'fuse-progress-bar'},{'name': 'FuseSearchBarComponent', 'selector': 'fuse-search-bar'},{'name': 'FuseShortcutsComponent', 'selector': 'fuse-shortcuts'},{'name': 'FuseSidebarComponent', 'selector': 'fuse-sidebar'},{'name': 'FuseThemeOptionsComponent', 'selector': 'fuse-theme-options'},{'name': 'FuseWidgetComponent', 'selector': 'fuse-widget'},{'name': 'HorizontalLayout1Component', 'selector': 'horizontal-layout-1'},{'name': 'LoginComponent', 'selector': 'login'},{'name': 'MainComponent', 'selector': 'main'},{'name': 'NavbarComponent', 'selector': 'navbar'},{'name': 'QuickPanelComponent', 'selector': 'quick-panel'},{'name': 'ResourceNotFoundComponent', 'selector': 'resource-not-found'},{'name': 'SnackbarComponent', 'selector': 'snackbar'},{'name': 'ToolbarComponent', 'selector': 'toolbar'},{'name': 'TwAccountInformationComponent', 'selector': 'tw-account-information'},{'name': 'TwActiveInteractionsComponent', 'selector': 'tw-active-interactions'},{'name': 'TwAdCallbacksComponent', 'selector': 'tw-ad-callbacks'},{'name': 'TwAdFeedbackComponent', 'selector': 'tw-ad-feedback'},{'name': 'TwAdGamificationComponent', 'selector': 'tw-ad-gamification'},{'name': 'TwAdInteractionDetailsComponent', 'selector': 'tw-ad-interaction-details'},{'name': 'TwAdPerformanceComponent', 'selector': 'tw-ad-performance'},{'name': 'TwAdScoreComponent', 'selector': 'tw-ad-score'},{'name': 'TwAdTotalAvComponent', 'selector': 'tw-ad-total-av'},{'name': 'TwAdTotalCallsComponent', 'selector': 'tw-ad-total-calls'},{'name': 'TwAdTotalChatsComponent', 'selector': 'app-tw-ad-total-chats'},{'name': 'TwAdTotalInteractionsComponent', 'selector': 'tw-ad-total-interactions'},{'name': 'TwAgentAssistComponent', 'selector': 'tw-agent-assist'},{'name': 'TwAgentDetailsComponent', 'selector': 'tw-agent-details'},{'name': 'TwAhtTcComponent', 'selector': 'tw-aht-tc'},{'name': 'TwAmdocsBccComponent', 'selector': 'tw-amdocs-bcc'},{'name': 'TwAudioControlsComponent', 'selector': 'tw-audio-controls'},{'name': 'TwAuxCodesComponent', 'selector': 'tw-aux-codes'},{'name': 'TwAuxStatusChartComponent', 'selector': 'tw-aux-status-chart.component'},{'name': 'TwAuxTimerComponent', 'selector': 'tw-aux-timer'},{'name': 'TwBroadcastComponent', 'selector': 'tw-broadcast'},{'name': 'TwCannedResponsesComponent', 'selector': 'tw-canned-responses'},{'name': 'TwCardComponent', 'selector': 'tw-card'},{'name': 'TwCardHeaderComponent', 'selector': 'tw-card-header'},{'name': 'TwcCustomComponent', 'selector': 'twc-custom'},{'name': 'TwChatControlsComponent', 'selector': 'tw-chat-controls'},{'name': 'TwChatPanelComponent', 'selector': 'tw-chat-panel'},{'name': 'TwcHomeComponent', 'selector': 'twc-home'},{'name': 'TwcNoInteractionComponent', 'selector': 'twc-no-interaction'},{'name': 'TwcNoWidgetsComponent', 'selector': 'twc-no-widgets'},{'name': 'TwcSupervisorComponent', 'selector': 'twc-supervisor'},{'name': 'TwcTextchatComponent', 'selector': 'twc-textchat'},{'name': 'TwcUnknownComponent', 'selector': 'twc-unknown'},{'name': 'TwCustomComponent', 'selector': 'tw-custom'},{'name': 'TwCustomerDetailsComponent', 'selector': 'tw-customer-details'},{'name': 'TwCustomerJourneyComponent', 'selector': 'tw-customer-journey'},{'name': 'TwCustomerSentimentComponent', 'selector': 'tw-customer-sentiment'},{'name': 'TwcVoiceComponent', 'selector': 'twc-voice'},{'name': 'TwHeatMapComponent', 'selector': 'tw-heat-map'},{'name': 'TwInstantMessagingComponent', 'selector': 'tw-instant-messaging'},{'name': 'TwInteractionSelectorComponent', 'selector': 'tw-interaction-selector'},{'name': 'TwLogoutComponent', 'selector': 'tw-logout'},{'name': 'TwNotificationsComponent', 'selector': 'tw-notifications'},{'name': 'TwPanelComponent', 'selector': 'tw-panel'},{'name': 'TwRegisterCallbackComponent', 'selector': 'tw-register-callback'},{'name': 'TwSampleComponent', 'selector': 'tw-sample'},{'name': 'TwSuActiveAgentsComponent', 'selector': 'tw-su-active-agents'},{'name': 'TwSuAgentActivityComponent', 'selector': 'tw-su-agent-activity'},{'name': 'TwSuAgentActivityDetailsComponent', 'selector': 'tw-su-agent-activity-details'},{'name': 'TwSuAgentInteractionsComponent', 'selector': 'tw-su-agent-interactions'},{'name': 'TwSuAverageHandleTimeComponent', 'selector': 'tw-su-average-handle-time'},{'name': 'TwSuCallsInQueueComponent', 'selector': 'tw-su-calls-in-queue.component'},{'name': 'TwSuChannelsComponent', 'selector': 'tw-su-channels.component'},{'name': 'TwSuChannelsStatusComponent', 'selector': 'tw-su-channels-status'},{'name': 'TwSuGamificationComponent', 'selector': 'tw-su-gamification'},{'name': 'TwSuIntentListComponent', 'selector': 'tw-su-intent-list'},{'name': 'TwSuStatusComponent', 'selector': 'tw-su-status.component'},{'name': 'TwSuTotalCallsComponent', 'selector': 'tw-su-total-calls.component'},{'name': 'TwSuTransferredConferencedCallsComponent', 'selector': 'tw-su-transferred-conferenced-calls'},{'name': 'TwTemplateComponent', 'selector': 'tw-template'},{'name': 'TwToolbarMenuComponent', 'selector': 'tw-toolbar-menu'},{'name': 'TwUnknownComponent', 'selector': 'tw-unknown'},{'name': 'TwVideoControlsComponent', 'selector': 'tw-video-controls'},{'name': 'TwVoiceBotTranscriptsComponent', 'selector': 'tw-voice-bot-transcripts'},{'name': 'TwVoiceControlsComponent', 'selector': 'tw-voice-controls'},{'name': 'TwVoicePanelComponent', 'selector': 'tw-voice-panel'},{'name': 'TwWallboardComponent', 'selector': 'tw-wallboard'},{'name': 'TwWorkCodesComponent', 'selector': 'tw-work-codes'},{'name': 'TwWrapperComponent', 'selector': 'tw-wrapper'},{'name': 'VerticalLayout1Component', 'selector': 'vertical-layout-1'},{'name': 'WidgetFabComponent', 'selector': 'widget-fab'},{'name': 'WidgetPreviewComponent', 'selector': 'widget-preview'}];
-    var DIRECTIVES = [{'name': 'FuseIfOnDomDirective', 'selector': '[fuseIfOnDom]'},{'name': 'FuseInnerScrollDirective', 'selector': '.inner-scroll'},{'name': 'FuseMatSidenavHelperDirective', 'selector': '[fuseMatSidenavHelper]'},{'name': 'FuseMatSidenavTogglerDirective', 'selector': '[fuseMatSidenavToggler]'},{'name': 'FusePerfectScrollbarDirective', 'selector': '[fusePerfectScrollbar]'},{'name': 'FuseWidgetToggleDirective', 'selector': '[fuseWidgetToggle]'},{'name': 'TWChartDirective', 'selector': '[twChart]'},{'name': 'TwTemplateDirective', 'selector': '[widgetTemplate]'}];
+        var COMPONENT_TEMPLATE = '<div><div class="tw-navbar-menu">    <div class="menu-item" *ngFor="let widget of toolbarMenuWidget">        <tw-aux-timer [data]="widget" *ngIf="widget.Type === \'tw-aux-timer\' && widget.Config.Enabled" fxHide fxShow.gt-xs></tw-aux-timer>        <tw-agent-details [data]="widget" *ngIf="widget.Type === \'tw-agent-details\' && widget.Config.Enabled"></tw-agent-details>        <tw-notifications [data]="widget" *ngIf="widget.Type === \'tw-notifications\' && widget.Config.Enabled" fxHide fxShow.gt-xs></tw-notifications>        <tw-aux-codes [data]="widget" *ngIf="widget.Type === \'tw-aux-codes\' && widget.Config.Enabled"></tw-aux-codes>        <tw-instant-messaging            [data]="widget"            *ngIf="widget.Type === \'tw-instant-messaging\' && widget.Config.Enabled"            fxHide            fxShow.gt-xs        ></tw-instant-messaging>        <tw-logout [data]="widget" *ngIf="widget.Type === \'tw-logout\' && widget.Config.Enabled"></tw-logout>        <tw-broadcast [data]="widget" *ngIf="widget.Type === \'tw-broadcast\' && widget.Config.Enabled" fxHide fxShow.gt-sm></tw-broadcast>        <tw-create-interaction [data]="widget" *ngIf="widget.Type === \'tw-create-interaction\' && widget.Config.Enabled"></tw-create-interaction>    </div></div></div>'
+    var COMPONENTS = [{'name': 'AlertDialogComponent', 'selector': 'alert-dialog'},{'name': 'AppComponent', 'selector': 'app'},{'name': 'AppConfirmDialogComponent', 'selector': 'app-confirm-dialog'},{'name': 'AppSnackbarComponent', 'selector': 'app-snackbar'},{'name': 'AppThemeOptionsComponent', 'selector': 'app-theme-options'},{'name': 'AvatarComponent', 'selector': 'avatar'},{'name': 'ContentComponent', 'selector': 'content'},{'name': 'CreateSmsComponent', 'selector': 'app-create-sms'},{'name': 'CustomDialogComponent', 'selector': 'custom-dialog'},{'name': 'FooterComponent', 'selector': 'footer'},{'name': 'FuseConfirmDialogComponent', 'selector': 'fuse-confirm-dialog'},{'name': 'FuseCountdownComponent', 'selector': 'fuse-countdown'},{'name': 'FuseDemoContentComponent', 'selector': 'fuse-demo-content'},{'name': 'FuseDemoSidebarComponent', 'selector': 'fuse-demo-sidebar'},{'name': 'FuseHighlightComponent', 'selector': 'fuse-highlight'},{'name': 'FuseMaterialColorPickerComponent', 'selector': 'fuse-material-color-picker'},{'name': 'FuseNavHorizontalCollapsableComponent', 'selector': 'fuse-nav-horizontal-collapsable'},{'name': 'FuseNavHorizontalItemComponent', 'selector': 'fuse-nav-horizontal-item'},{'name': 'FuseNavigationComponent', 'selector': 'fuse-navigation'},{'name': 'FuseNavVerticalCollapsableComponent', 'selector': 'fuse-nav-vertical-collapsable'},{'name': 'FuseNavVerticalGroupComponent', 'selector': 'fuse-nav-vertical-group'},{'name': 'FuseNavVerticalItemComponent', 'selector': 'fuse-nav-vertical-item'},{'name': 'FuseProgressBarComponent', 'selector': 'fuse-progress-bar'},{'name': 'FuseSearchBarComponent', 'selector': 'fuse-search-bar'},{'name': 'FuseShortcutsComponent', 'selector': 'fuse-shortcuts'},{'name': 'FuseSidebarComponent', 'selector': 'fuse-sidebar'},{'name': 'FuseThemeOptionsComponent', 'selector': 'fuse-theme-options'},{'name': 'FuseWidgetComponent', 'selector': 'fuse-widget'},{'name': 'HorizontalLayout1Component', 'selector': 'horizontal-layout-1'},{'name': 'InstantMessagingComponent', 'selector': 'instant-messaging'},{'name': 'LoginComponent', 'selector': 'login'},{'name': 'MainComponent', 'selector': 'main'},{'name': 'NavbarComponent', 'selector': 'navbar'},{'name': 'NoDataAvailableComponent', 'selector': 'no-data-available'},{'name': 'QuickPanelComponent', 'selector': 'quick-panel'},{'name': 'RaceCarTrackComponent', 'selector': 'race-car-track'},{'name': 'ReminderTaskDialogComponent', 'selector': 'reminder-task-dialog'},{'name': 'ResourceNotFoundComponent', 'selector': 'resource-not-found'},{'name': 'SnackbarComponent', 'selector': 'snackbar'},{'name': 'ToolbarComponent', 'selector': 'toolbar'},{'name': 'TwAccountInformationComponent', 'selector': 'tw-account-information'},{'name': 'TwActiveInteractionsComponent', 'selector': 'tw-active-interactions'},{'name': 'TwAdCallbacksComponent', 'selector': 'tw-ad-callbacks'},{'name': 'TwAdFeedbackComponent', 'selector': 'tw-ad-feedback'},{'name': 'TwAdGamificationComponent', 'selector': 'tw-ad-gamification'},{'name': 'TwAdInteractionDetailsComponent', 'selector': 'tw-ad-interaction-details'},{'name': 'TwAdPerformanceComponent', 'selector': 'tw-ad-performance'},{'name': 'TwAdScoreComponent', 'selector': 'tw-ad-score'},{'name': 'TwAdTotalInteractionsComponent', 'selector': 'tw-ad-total-interactions'},{'name': 'TwAgentAssistComponent', 'selector': 'tw-agent-assist'},{'name': 'TwAgentDetailsComponent', 'selector': 'tw-agent-details'},{'name': 'TwAhtTcComponent', 'selector': 'tw-aht-tc'},{'name': 'TwAmdocsBccComponent', 'selector': 'tw-amdocs-bcc'},{'name': 'TwAudioControlsComponent', 'selector': 'tw-audio-controls'},{'name': 'TwAuxCodesComponent', 'selector': 'tw-aux-codes'},{'name': 'TwAuxStatusChartComponent', 'selector': 'tw-aux-status-chart.component'},{'name': 'TwAuxTimerComponent', 'selector': 'tw-aux-timer'},{'name': 'TwBroadcastComponent', 'selector': 'tw-broadcast'},{'name': 'TwCannedResponsesComponent', 'selector': 'tw-canned-responses'},{'name': 'TwCardComponent', 'selector': 'tw-card'},{'name': 'TwCardHeaderComponent', 'selector': 'tw-card-header'},{'name': 'TwcCustomComponent', 'selector': 'twc-custom'},{'name': 'TwcEmailComponent', 'selector': 'twc-email'},{'name': 'TwChatControlsComponent', 'selector': 'tw-chat-controls'},{'name': 'TwChatPanelComponent', 'selector': 'tw-chat-panel'},{'name': 'TwcHomeComponent', 'selector': 'twc-home'},{'name': 'TwcNoInteractionComponent', 'selector': 'twc-no-interaction'},{'name': 'TwcNoWidgetsComponent', 'selector': 'twc-no-widgets'},{'name': 'TwCreateInteractionComponent', 'selector': 'tw-create-interaction'},{'name': 'TwcSupervisorComponent', 'selector': 'twc-supervisor'},{'name': 'TwcTextchatComponent', 'selector': 'twc-textchat'},{'name': 'TwcUnknownComponent', 'selector': 'twc-unknown'},{'name': 'TwCustomComponent', 'selector': 'tw-custom'},{'name': 'TwCustomerDetailsComponent', 'selector': 'tw-customer-details'},{'name': 'TwCustomerJourneyComponent', 'selector': 'tw-customer-journey'},{'name': 'TwCustomerSentimentComponent', 'selector': 'tw-customer-sentiment'},{'name': 'TwcVoiceComponent', 'selector': 'twc-voice'},{'name': 'TwcWorkbenchComponent', 'selector': 'twc-workbench'},{'name': 'TwEmailControlsComponent', 'selector': 'tw-email-controls'},{'name': 'TwEmailPanelComponent', 'selector': 'tw-email-panel'},{'name': 'TwGamificationComponent', 'selector': 'tw-gamification'},{'name': 'TwInstantMessagingComponent', 'selector': 'tw-instant-messaging'},{'name': 'TwLogoutComponent', 'selector': 'tw-logout'},{'name': 'TwNotificationsComponent', 'selector': 'tw-notifications'},{'name': 'TwPanelComponent', 'selector': 'tw-panel'},{'name': 'TwPendingCallbacksComponent', 'selector': 'tw-pending-callbacks'},{'name': 'TwPieChartComponent', 'selector': 'tw-pie-chart.component'},{'name': 'TwRegisterCallbackComponent', 'selector': 'tw-register-callback'},{'name': 'TwSampleComponent', 'selector': 'tw-sample'},{'name': 'TwSuActiveAgentsComponent', 'selector': 'tw-su-active-agents'},{'name': 'TwSuAgentActivityComponent', 'selector': 'tw-su-agent-activity'},{'name': 'TwSuAgentActivityDetailsComponent', 'selector': 'tw-su-agent-activity-details'},{'name': 'TwSuAgentInteractionsComponent', 'selector': 'tw-su-agent-interactions'},{'name': 'TwSuCallsInQueueComponent', 'selector': 'tw-su-calls-in-queue.component'},{'name': 'TwSuChannelsComponent', 'selector': 'tw-su-channels.component'},{'name': 'TwSuGamificationComponent', 'selector': 'tw-su-gamification'},{'name': 'TwSuIntentListComponent', 'selector': 'tw-su-intent-list'},{'name': 'TwSuStatusComponent', 'selector': 'tw-su-status.component'},{'name': 'TwTemplateComponent', 'selector': 'tw-template'},{'name': 'TwToolbarMenuComponent', 'selector': 'tw-toolbar-menu'},{'name': 'TwTransferInteractionComponent', 'selector': 'tw-transfer-interaction'},{'name': 'TwUnknownComponent', 'selector': 'tw-unknown'},{'name': 'TwVideoControlsComponent', 'selector': 'tw-video-controls'},{'name': 'TwVoiceBotTranscriptsComponent', 'selector': 'tw-voice-bot-transcripts'},{'name': 'TwVoiceCannedResponsesComponent', 'selector': 'tw-voice-canned-responses'},{'name': 'TwVoiceControlsComponent', 'selector': 'tw-voice-controls'},{'name': 'TwVoicePanelComponent', 'selector': 'tw-voice-panel'},{'name': 'TwWallboardComponent', 'selector': 'tw-wallboard'},{'name': 'TwWorkbenchPanelComponent', 'selector': 'tw-workbench-panel'},{'name': 'TwWorkCodesComponent', 'selector': 'tw-work-codes'},{'name': 'TwWrapperComponent', 'selector': 'tw-wrapper'},{'name': 'VerticalLayout1Component', 'selector': 'vertical-layout-1'},{'name': 'WidgetFabComponent', 'selector': 'widget-fab'},{'name': 'WidgetPreviewComponent', 'selector': 'widget-preview'},{'name': 'WorkbenchEmailComponent', 'selector': 'workbench-email'}];
+    var DIRECTIVES = [{'name': 'FuseIfOnDomDirective', 'selector': '[fuseIfOnDom]'},{'name': 'FuseInnerScrollDirective', 'selector': '.inner-scroll'},{'name': 'FuseMatSidenavHelperDirective', 'selector': '[fuseMatSidenavHelper]'},{'name': 'FuseMatSidenavTogglerDirective', 'selector': '[fuseMatSidenavToggler]'},{'name': 'FusePerfectScrollbarDirective', 'selector': '[fusePerfectScrollbar]'},{'name': 'FuseWidgetToggleDirective', 'selector': '[fuseWidgetToggle]'},{'name': 'QuillDirective', 'selector': '[quill]'},{'name': 'TWChartDirective', 'selector': '[twChart]'},{'name': 'TwTemplateDirective', 'selector': '[widgetTemplate]'}];
     var ACTUAL_COMPONENT = {'name': 'TwToolbarMenuComponent'};
 </script>
 <script src="../js/tree.js"></script>

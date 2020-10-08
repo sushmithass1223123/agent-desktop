@@ -5,12 +5,18 @@ import { Observable } from 'rxjs';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { SDKClient } from 'tmac-sdk';
 
+/**
+ * Need more Description 
+ * Interaction Manager Service
+ */
 @Injectable({
     providedIn: 'root'
 })
 export class InteractionManagerService {
 
-    // Private
+    /**
+     * Holds all interaction details
+     */
     private _interactionsSubject: BehaviorSubject<InteractionRef[]>;
 
     constructor() {
@@ -32,7 +38,10 @@ export class InteractionManagerService {
     // -----------------------------------------------------------------------------------------------------
     // @ Public Methods
     // -----------------------------------------------------------------------------------------------------
-
+    /**
+     * Adds incoming interaction to the subject
+     * @param {InteractionRef} payload 
+     */
     addInteraction(payload: InteractionRef): void {
         // check if the data is null
         if (!payload) {
@@ -49,6 +58,11 @@ export class InteractionManagerService {
         this._interactionsSubject.next(interactions);
     }
 
+    /**
+     * Updates interaction info
+     * @param {Number} interactionId 
+     * @param {any} value 
+     */
     updateInteraction(interactionId: number, value: any): void {
         // check if the key and value are not null
         if (!interactionId || !value) {
@@ -105,6 +119,10 @@ export class InteractionManagerService {
         }
     }
 
+    /**
+     * Deleted interaction by interaction Id
+     * @param {number} interactionId 
+     */
     removeInteraction(interactionId: number): void {
         // Get the value from the behavior subject
         let interactions = this._interactionsSubject.getValue();
@@ -124,7 +142,11 @@ export class InteractionManagerService {
             this._interactionsSubject.next(interactions);
         }
     }
-
+    
+    /**
+     * Gets interaction counts 
+     * returns total and active interactions
+     */
     getInteractionCount(): InteractionCount {
         // get all the interactions
         const interactions = this._interactionsSubject.getValue();

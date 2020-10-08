@@ -1,12 +1,18 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
+/**
+ * Content Page Service
+ */
 @Injectable({
     providedIn: 'root'
 })
 export class ContentPageService {
 
-    // Private
+    /**
+     * View Mode Subject
+     * Need More Description
+     */
     private _viewModeSubject: BehaviorSubject<any>;
 
     constructor() {

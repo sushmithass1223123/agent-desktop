@@ -1,6 +1,10 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 
+/**
+ * Need more Description 
+ * Tw Panel Compoenent
+ */
 @Component({
     selector: 'tw-panel',
     templateUrl: './tw-panel.component.html',
@@ -8,7 +12,9 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
     encapsulation: ViewEncapsulation.None
 })
 export class TwPanelComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-    // holds all the data related to this widget from the config
+    /**
+     * holds all the data related to this widget from the config
+     */
     @Input() data: any;
 
     /**

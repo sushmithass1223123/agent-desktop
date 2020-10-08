@@ -12,6 +12,9 @@ import { takeUntil } from 'rxjs/operators';
 import { AVChannel, AVControlMessageReceivedEvent, AVEvent, IAgentData, SDKClient, TEnums, TextChatDisconnectedEvent, TUtils } from 'tmac-sdk';
 import { TwChatControlsComponent } from '../tw-chat-controls/tw-chat-controls.component';
 
+/**
+ * Audo controls Component
+ */
 @Component({
     selector: 'tw-audio-controls',
     templateUrl: './tw-audio-controls.component.html',
@@ -20,32 +23,101 @@ import { TwChatControlsComponent } from '../tw-chat-controls/tw-chat-controls.co
 })
 export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
 
-    // holds all the data related to this widget from the config
+    /**
+     * holds all the data related to this widget from the config    
+     */
     @Input() data: IWidget;
 
+    /**
+     * Fuse config
+     */
     fuseConfig: any;
+    /**
+     * App config
+     */
     appConfig: any;
 
+    /**
+     * Widget Data 
+     */
     widgetData: {
+        /**
+         * Customer Name
+         */
         customerName: string;
+        /**
+         * Chat config
+         */
         chatConfig: any;
+        /**
+         * Direction
+         * Need more description
+         */
         direction: string;
+        /**
+         * Need more description
+         */
         opener: TwChatControlsComponent;
     };
+    /**
+     * User info
+     */
     user: IAgentData;
+    /**
+     * AV info
+     */
     avConn: AVChannel;
+    /**
+     * Interaction ID
+     */
     interactionId: number;
+    /**
+     * Session Id
+     */
     sessionID: string;
+    /**
+     * User list
+     */
     userList: any[] = [];
+    /**
+     * Start time
+     */
     startTime: Date;
+    /**
+     * Call Duration
+     */
     duration: number;
+    /**
+     * Need more description
+     */
     mos = '0.00';
+    /**
+     * Need more description
+     */
     status = 'initial';
+    /**
+     * Connected Flag
+     */
     connected: boolean;
+    /**
+     * Need more description
+     */
     showUI: boolean;
+    /**
+     * Mute flag
+     */
     muted: boolean;
+    /**
+     * Hold flag
+     */
     hold: boolean;
+    /**
+     * Local Screen Sharing flag
+     */
     screenSharing: boolean;
+    /**
+     * Remote Screenshare flag
+     */
     remoteScreenSharing: boolean;
 
     /**
@@ -144,6 +216,11 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * Create AV connection
+     * @method createAVConnection
+     * @param {AVControlMessageReceivedEvent} avEvent 
+     */
     private createAVConnection(avEvent: AVControlMessageReceivedEvent): void {
         // create a AV channel connection
         const connection = new AVChannel(
@@ -175,6 +252,11 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         }
     }
 
+    /**
+     * AVControlMessageReceivedEvent Handler
+     * @method AVControlMessageReceivedEvent
+     * @param {AVControlMessageReceivedEvent} evt 
+     */
     private AVControlMessageReceivedEvent = (evt: AVControlMessageReceivedEvent) => {
         // check the interaction
         if (evt.InteractionID !== this.interactionId) {
@@ -185,6 +267,11 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         this.avConn?.onMessage(evt.Message);
     }
 
+    /**
+     * AVEvent Handler
+     * @method onAVEvent
+     * @param {AVEvent} evt 
+     */
     private onAVEvent = (evt: AVEvent) => {
         // console.log('##### onAVEvent #####', evt);
 
@@ -312,6 +399,12 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         }
     }
 
+    
+    /**
+     * TextChatDisconnectedEvent Handler
+     * @method TextChatDisconnectedEvent
+     * @param {TextChatDisconnectedEvent} evt 
+     */
     private TextChatDisconnectedEvent = (evt: TextChatDisconnectedEvent) => {
         // check the interaction
         if (evt.InteractionID !== this.interactionId) {
@@ -321,6 +414,11 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         this.destroyWidget();
     }
 
+    
+    /**
+     * Widget Cleanup
+     * @method destroyWidget
+     */
     private destroyWidget(): void {
         // close the audio call widget
         this._aotWidgetService.destroyWidget(this.data.ID);
@@ -330,6 +428,11 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
 
+    
+    /**
+     * Mute call
+     * @method muteCall
+     */
     public muteCall(): void {
         // check the muted flag
         if (this.muted) {
@@ -344,6 +447,11 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         this.muted = !this.muted;
     }
 
+
+    /**
+     * Hold call
+     * @method holdCall
+     */
     public holdCall(): void {
         // check the muted flag
         if (this.hold) {
@@ -358,6 +466,11 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         this.hold = !this.hold;
     }
 
+    
+    /**
+     * Share Screen
+     * @method shareScreen
+     */
     public shareScreen(): void {
         // check if to start or stop
         if (this.screenSharing) {
@@ -370,6 +483,11 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         }
     }
 
+    
+    /**
+     * End call
+     * @method endCall
+     */
     public endCall(): void {
         // end the call
         // if there is only customer then endCall else dropCall

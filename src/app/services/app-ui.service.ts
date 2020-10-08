@@ -1,19 +1,25 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarRef, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
-import { AlertDialogComponent } from '@modules/shared/alert-dialog/alert-dialog.component';
-import { AppConfirmDialogComponent } from '@modules/shared/app-confirm-dialog/app-confirm-dialog.component';
-import { AppSnackbarComponent } from '@modules/shared/app-snackbar/app-snackbar.component';
-import { CustomDialogComponent } from '@modules/shared/custom-dialog/custom-dialog.component';
-import { ReminderTaskDialogComponent } from '@modules/shared/reminder-task-dialog/reminder-task-dialog.component';
+import {
+    AlertDialogComponent,
+    AppConfirmDialogComponent,
+    AppSnackbarComponent,
+    CustomDialogComponent,
+    ReminderTaskDialogComponent,
+    SnackbarComponent
+} from '@modules/shared/components';
 import { AppAlertDialogTypes, AppConfirmDialogTypes, AppNotification, AppSnackBarArgs, ReminderTaskDialogTypes, SnackbarStateTypes } from 'app/interfaces';
 import * as _ from 'lodash';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { TUtils } from 'tmac-sdk';
-import { SnackbarComponent } from '../modules/shared/snackbar/snackbar.component';
 import { AppDataService } from './app-data.service';
 
+/**
+ * App ui service
+ * for communication across distant components  
+ */
 @Injectable({
     providedIn: 'root'
 })

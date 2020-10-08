@@ -1,15 +1,17 @@
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+import { fuseAnimations } from '@fuse/animations';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { takeUntil } from 'rxjs/operators';
-import { TwWrapperComponent } from '@modules/t-widgets/tw-wrapper/tw-wrapper.component';
-import { MatTableDataSource } from '@angular/material/table';
 import { random } from 'lodash';
-import { MatSort } from '@angular/material/sort';
-import { MatPaginator } from '@angular/material/paginator';
-import { fuseAnimations } from '@fuse/animations';
+import { takeUntil } from 'rxjs/operators';
 
+/**
+ * Feedback compnent
+ */
 @Component({
     selector: 'tw-ad-feedback',
     templateUrl: './tw-ad-feedback.component.html',
@@ -18,26 +20,52 @@ import { fuseAnimations } from '@fuse/animations';
     animations: fuseAnimations
 })
 export class TwAdFeedbackComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-    // holds all the data related to this widget from the config
+    /**
+     * holds all the data related to this widget from the config
+     */
     @Input() data: any;
 
+    /**
+     * Mat sort ref
+     */
     @ViewChild(MatSort, { static: true }) sort: MatSort;
+    /**
+     * Mat Paginator ref
+     */
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
+    /**
+     * Ratings size
+     */
     ratings = Array(5).fill(1);
+    /**
+     * Static stars
+     */
     stars = 4;
 
+    /**
+     * feedback date
+     */
     date: number;
 
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store the fuse config for theme
-    // -----------------------------------------------------------
+    /**
+     * [OPTIONAL] to store the fuse config for theme
+     */
     fuseConfig: any;
 
+    /**
+     * Data config
+     */
     dataConfig: {
+        /**
+         * Source for reusability
+         */
         Source: 'dashboard' | 'supervisor';
     };
 
+    /**
+     * Feedback details table
+     */
     feedbackDetailsTable = {
         source: new MatTableDataSource(
             Array(10)
@@ -52,9 +80,9 @@ export class TwAdFeedbackComponent extends TWidgetWrapper implements OnInit, OnD
         columns: ['InteractionID', 'Channel', 'Feedback', 'Score']
     };
 
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store entire app config and get update
-    // -----------------------------------------------------------
+    /**
+     * [OPTIONAL] to store entire app config and get update
+     */
     appConfig: any;
 
     /**

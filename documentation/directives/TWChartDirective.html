@@ -58,6 +58,14 @@
             <code>src/app/modules/shared/directives/tw-chart.directive.ts</code>
         </p>
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Directive chart
+show legends on maximise</p>
+
+            </p>
 
 
 
@@ -128,7 +136,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="8" class="link-to-prism">src/app/modules/shared/directives/tw-chart.directive.ts:8</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/modules/shared/directives/tw-chart.directive.ts:15</a></div>
                             </td>
                         </tr>
 
@@ -167,12 +175,19 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="13"
-                            class="link-to-prism">src/app/modules/shared/directives/tw-chart.directive.ts:13</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="24"
+                            class="link-to-prism">src/app/modules/shared/directives/tw-chart.directive.ts:24</a></div>
                 </td>
             </tr>
 
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Listen to maximized event</p>
+</div>
+
+                </td>
+            </tr>
         </tbody>
     </table>
 </section>
@@ -211,10 +226,16 @@
                     </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="8" class="link-to-prism">src/app/modules/shared/directives/tw-chart.directive.ts:8</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/modules/shared/directives/tw-chart.directive.ts:15</a></div>
                             </td>
                         </tr>
 
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Content child</p>
+</div>
+                    </td>
+                </tr>
 
             </tbody>
         </table>
@@ -228,14 +249,25 @@
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { ContentChild, Directive, HostListener } from &#x27;@angular/core&#x27;;
 import { BaseChartDirective } from &#x27;ng2-charts&#x27;;
 
+/**
+ * Directive chart
+ * show legends on maximise
+ */
 @Directive({
     selector: &#x27;[twChart]&#x27;
 })
 export class TWChartDirective {
+    /**
+     * Content child
+     */
     @ContentChild(BaseChartDirective) chart: BaseChartDirective;
 
-    constructor() {}
+    constructor() { }
 
+    /**
+     * Listen to maximized event
+     * @param {Boolean} state 
+     */
     @HostListener(&#x27;maximizeEvent&#x27;, [&#x27;$event&#x27;])
     maximizeEvent(state: boolean): void {
         if (this.chart) {

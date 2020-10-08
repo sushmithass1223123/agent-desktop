@@ -5,6 +5,9 @@ import * as _ from 'lodash';
 import { join } from 'lodash';
 import { IUIEvent, SDKClient, TextChatRemoteUserConnectedEvent, CallerIntentEvent, IncomingCallEvent, IVRDataEvent, UUIDataEvent, CCLDataEvent, OutgoingCallEvent } from 'tmac-sdk';
 
+/**
+ * Custommer details widget
+ */
 @Component({
     selector: 'tw-customer-details',
     templateUrl: './tw-customer-details.component.html',
@@ -12,14 +15,35 @@ import { IUIEvent, SDKClient, TextChatRemoteUserConnectedEvent, CallerIntentEven
     encapsulation: ViewEncapsulation.None
 })
 export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+    /**
+     * App config data
+     */
     @Input() data: any;
 
+    /**
+     * Current interaction data
+     */
     interactionId: number;
+    /**
+     * Customer info
+     */
     customerInfo: CustomerInfo[] = [];
+    /**
+     * Value source
+     */
     valueSource: string[] = [];
 
+    /**
+     * Maximised event emitter
+     */
     @Output() maximizeEvent = new EventEmitter();
+    /**
+     * Float event emitter
+     */
     @Output() floatEvent = new EventEmitter();
+    /**
+     * Collapsed event emitter
+     */
     @Output() collapseEvent = new EventEmitter();
 
     constructor(private _tmacEventService: TMACEventService) {
@@ -30,6 +54,10 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
     // @ Lifecycle hooks
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * Lifecycle hook
+     * @method
+     */
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
@@ -58,6 +86,11 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
         SDKClient.events.on('CCLDataEvent', this.CCLDataEvent);
     }
 
+    
+    /**
+     * Lifecycle hook
+     * @method
+     */
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
@@ -72,34 +105,67 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
         SDKClient.events.off('CCLDataEvent', this.CCLDataEvent);
     }
 
+    
+    /**
+     * IncomingCallEvent handler
+     * @param {IncomingCallEvent} evt 
+     */
     private IncomingCallEvent = (evt: IncomingCallEvent) => {
         this.processCustomerDetails(evt);
     }
 
+    /**
+     * OutgoingCallEvent handelr
+     * @param {OutgoingCallEvent} evt 
+     */
     private OutgoingCallEvent = (evt: OutgoingCallEvent) => {
         this.processCustomerDetails(evt);
     }
 
+    /**
+     * TextChatRemoteUserConnectedEvent Handler
+     * @param {TextChatRemoteUserConnectedEvent} evt 
+     */
     private TextChatRemoteUserConnectedEvent = (evt: TextChatRemoteUserConnectedEvent) => {
         this.processCustomerDetails(evt);
     }
 
+    /**
+     * CallerIntentEvent handler
+     * @param {CallerIntentEvent} evt 
+     */
     private CallerIntentEvent = (evt: CallerIntentEvent) => {
         this.processCustomerDetails(evt);
     }
 
+    /**
+     * IVRDataEvent Handler
+     * @param {IVRDataEvent} evt 
+     */
     private IVRDataEvent = (evt: IVRDataEvent) => {
         this.processCustomerDetails(evt);
     }
 
+    /**
+     * UUIDataEvent Handelr
+     * @param {UUIDataEvent} evt 
+     */
     private UUIDataEvent = (evt: UUIDataEvent) => {
         this.processCustomerDetails(evt);
     }
 
+    /**
+     * CCLDataEvent Handler
+     * @param {CCLDataEvent} evt 
+     */
     private CCLDataEvent = (evt: CCLDataEvent) => {
         this.processCustomerDetails(evt);
     }
 
+    /**
+     * IUIEvent Handelr
+     * @param {IUIEvent} evt 
+     */
     private processCustomerDetails = (evt: IUIEvent) => {
         // check the interaction
         if (evt.InteractionID !== this.interactionId) {
@@ -125,10 +191,28 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
     }
 }
 
+/**
+ * Customer info Model
+ */
 export interface CustomerInfo {
+    /**
+     * Title
+     */
     Title: string;
+    /**
+     * Value Source
+     */
     ValueSource: string;
+    /**
+     * Value
+     */
     Value?: string;
+    /**
+     * Unit
+     */
     Unit: string;
+    /**
+     * Default Value
+     */
     DefaultValue: string;
 }

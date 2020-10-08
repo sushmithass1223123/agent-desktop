@@ -7,6 +7,9 @@ import * as _ from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 import { AgentNotificaitonEvent, SDKClient } from 'tmac-sdk';
 
+/**
+ * Notfications Component
+ */
 @Component({
     selector: 'tw-notifications',
     templateUrl: './tw-notifications.component.html',
@@ -15,11 +18,22 @@ import { AgentNotificaitonEvent, SDKClient } from 'tmac-sdk';
     animations: fuseAnimations
 })
 export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-
+    /**
+     * App config data
+     */
     @Input() data: any;
 
+    /**
+     * Opened Flag
+     */
     opened = false;
+    /**
+     * Unread notifications
+     */
     unreadCount = 0;
+    /**
+     * Notifications list
+     */
     notifications: AppNotification[];
 
     constructor(
@@ -28,6 +42,10 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
         super();
     }
 
+    /**
+     * Lifecycle hooks 
+     * @method
+     */
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
@@ -47,6 +65,11 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
             );
     }
 
+    
+    /**
+     * Lifecycle hooks 
+     * @method
+     */
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
@@ -58,6 +81,11 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
         this.clearAllNotifications();
     }
 
+    /**
+     * AgentNotificaitonEvent Handler
+     * @method AgentNotificaitonEvent
+     * @param {AgentNotificaitonEvent} evt 
+     */
     private AgentNotificaitonEvent = (evt: AgentNotificaitonEvent) => {
         // check if the interaction id is there then return
         if (evt.InteractionID > 0) {
@@ -92,6 +120,11 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
         });
     }
 
+    /**
+     * Toggle Menu
+     * @method menuOpened
+     * @param {Boolean} opened 
+     */
     menuOpened(opened: boolean): void {
         this.opened = opened;
         if (this.opened) {
@@ -99,10 +132,19 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
         }
     }
 
+    /**
+     * Clear single Notification
+     * @method clearNotification
+     * @param {AppNotification} item 
+     */
     clearNotification(item: AppNotification): void {
         this._appUIService.removeNotification(item.id);
     }
 
+    /**
+     * Clear notifications
+     * @method clearAllNotifications
+     */
     clearAllNotifications(): void {
         this._appUIService.clearAllNotifications();
     }

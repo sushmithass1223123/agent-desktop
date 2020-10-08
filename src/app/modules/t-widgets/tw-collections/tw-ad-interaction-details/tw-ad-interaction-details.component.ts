@@ -6,6 +6,9 @@ import { fuseAnimations } from '@fuse/animations';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { SDKClient, InteractionData } from 'tmac-sdk';
 
+/**
+ * Agent Interactions details Table widget
+ */
 @Component({
     selector: 'tw-ad-interaction-details',
     templateUrl: './tw-ad-interaction-details.component.html',
@@ -14,17 +17,43 @@ import { SDKClient, InteractionData } from 'tmac-sdk';
     animations: fuseAnimations
 })
 export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+    /**
+     * app config data
+     */
     @Input() data: any;
 
+    /**
+     * Table sort ref 
+     */
     @ViewChild(MatSort, { static: true }) sort: MatSort;
+    
+    /**
+     * Table Paginator ref
+     */
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
+    /**
+     * Maximized state
+     */
     maximized = false;
+    /**
+     * Interaction List
+     */
     interactionList: any[] = [];
 
+    /**
+     * Minimized displayed columns
+     */
     mindisplayedColumns: string[] = ['Channel', 'Direction', 'User', 'CreatedTime'];
+
+    /**
+     * Maximized displayed columns
+     */
     maxdisplayedColumns: string[] = ['Channel', 'SubChannel', 'Direction', 'User', 'Dnis', 'Intent', 'CreatedTime', 'ClosedTime', 'ActiveTime'];
 
+    /**
+     * Interaction Details table data
+     */
     interactionDetailsTable = {
         source: new MatTableDataSource([]),
         columns: this.mindisplayedColumns
@@ -34,6 +63,10 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         super();
     }
 
+    /**
+     * Lifecycle hooks
+     * @method
+     */
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
@@ -41,6 +74,10 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         SDKClient.events.on('AgentInteractionDetailsEvent', this.AgentInteractionDetailsEvent);
     }
 
+    /**
+     * Lifecycle hooks
+     * @method
+     */
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
@@ -48,6 +85,10 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         SDKClient.events.off('AgentInteractionDetailsEvent', this.AgentInteractionDetailsEvent);
     }
 
+    /**
+     * AgentInteractionDetailsEvent hanlder
+     * @param {InteractionData} data 
+     */
     private AgentInteractionDetailsEvent = (data: InteractionData[]) => {
         this.interactionList = [...this.interactionList, ...data];
 
@@ -57,6 +98,10 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
 
     }
 
+    /**
+     * Maximize event
+     * @param {Boolean} state 
+     */
     maximizeEvent(state: boolean): void {
         this.maximized = state;
         if (state) {

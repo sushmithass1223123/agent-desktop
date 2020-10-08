@@ -35,6 +35,9 @@ import {
     TEnums, TUtils
 } from 'tmac-sdk';
 
+/**
+ * Voice Controls Component
+ */
 @Component({
     selector: 'tw-voice-controls',
     templateUrl: './tw-voice-controls.component.html',
@@ -43,19 +46,51 @@ import {
 })
 export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
 
+    /**
+     * Daat from App config
+     */
     @Input() data: IWidget;
 
+    /**
+     * Maximise event emitter
+     */
     @Output() maximizeEvent = new EventEmitter();
+
+    /**
+     * Float event emitter
+     */
     @Output() floatEvent = new EventEmitter();
+    /**
+     * Collapse event emitter
+     */
     @Output() collapseEvent = new EventEmitter();
 
+    /**
+     * Fuse Config
+     */
     fuseConfig: FuseConfig;
+
+    /**
+     * App config
+     */
     appConfig: any;
 
+    /**
+     * Interaction Id
+     */
     interactionId: number;
+    /**
+     * Interaction List
+     */
     interactionList: InteractionRef[] = [];
 
+    /**
+     * Agent info
+     */
     user: IAgentData;
+    /**
+     * Need more description
+     */
     callerID = 'NA';
     startTime = '00:00:00';
     sessionID = 'NA';
@@ -93,6 +128,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     // @ Lifecycle hooks
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * Lifecycle hook
+     * @method OnInit
+     */
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
@@ -164,6 +203,11 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         this.registerToEvents();
     }
 
+    
+    /**
+     * Lifecycle hook
+     * @method OnDestroy
+     */
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
@@ -174,6 +218,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     // @ Private methods
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * Register to SDK events
+     * @method registerToEvents
+     */
     private registerToEvents(): void {
         // get the event from event bag to make sure no events are missed
         const eventBag = this._tmacEventService.get(this.interactionId);
@@ -205,6 +253,11 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         SDKClient.events.on('IVRDataEvent', this.IVRDataEvent);
     }
 
+
+    /**
+     * Clear event listeners
+     * @method deRegisterFromEvents
+     */
     private deRegisterFromEvents(): void {
         // deregister from tmac events
         SDKClient.events.off('CallConnectedEvent', this.CallConnectedEvent);
@@ -229,6 +282,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
     }
 
+    /**
+     * CallConnectedEvent handler
+     * @param {CallConnectedEvent} evt 
+     */
     private CallConnectedEvent = (evt: CallConnectedEvent) => {
         // check the interaction
         if (evt.InteractionID !== this.interactionId) {
@@ -254,6 +311,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         });
     }
 
+    /**
+     * CallDisconnectedEvent handler
+     * @param {CallDisconnectedEvent} evt 
+     */
     private CallDisconnectedEvent = (evt: CallDisconnectedEvent) => {
         // check the interaction
         if (evt.InteractionID !== this.interactionId) {
@@ -280,6 +341,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         }
     }
 
+    /**
+     * CallHoldEvent Handler
+     * @param {CallHoldEvent} evt 
+     */
     private CallHoldEvent = (evt: CallHoldEvent) => {
         // check the interaction
         if (evt.InteractionID !== this.interactionId) {
@@ -297,6 +362,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         this._fuseProgressBarService.hide();
     }
 
+    /**
+     * CallHoldReconnectEvent handler
+     * @param {CallHoldReconnectEvent} evt 
+     */
     private CallHoldReconnectEvent = (evt: CallHoldReconnectEvent) => {
         // check the interaction
         if (evt.InteractionID !== this.interactionId) {
@@ -314,6 +383,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         this._fuseProgressBarService.hide();
     }
 
+    /**
+     * CallTransferInitiatedEvent handler
+     * @param {CallTransferInitiatedEvent} evt 
+     */
     private CallTransferInitiatedEvent = (evt: CallTransferInitiatedEvent) => {
         // check the interaction
         if (evt.InteractionID !== this.interactionId) {
@@ -321,6 +394,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         }
     }
 
+    /**
+     * CallTransferLineDisconnectEvent handler
+     * @param {CallTransferLineDisconnectEvent} evt 
+     */
     private CallTransferLineDisconnectEvent = (evt: CallTransferLineDisconnectEvent) => {
         // check the interaction
         if (evt.InteractionID !== this.interactionId) {
@@ -328,6 +405,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         }
     }
 
+    /**
+     * CallTransferRemoteConnectedEvent Handler
+     * @param {CallTransferRemoteConnectedEvent} evt 
+     */
     private CallTransferRemoteConnectedEvent = (evt: CallTransferRemoteConnectedEvent) => {
         // check the interaction
         if (evt.InteractionID !== this.interactionId) {
@@ -335,6 +416,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         }
     }
 
+    /**
+     * CallConferenceInitiatedEvent Handler
+     * @param {CallConferenceInitiatedEvent} evt 
+     */
     private CallConferenceInitiatedEvent = (evt: CallConferenceInitiatedEvent) => {
         // check the interaction
         if (evt.InteractionID !== this.interactionId) {
@@ -342,6 +427,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         }
     }
 
+    /**
+     * CallConferenceCompletedEvent Handler
+     * @param {CallConferenceCompletedEvent} evt 
+     */
     private CallConferenceCompletedEvent = (evt: CallConferenceCompletedEvent) => {
         // check the interaction
         if (evt.InteractionID !== this.interactionId) {
@@ -349,6 +438,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         }
     }
 
+    /**
+     * CallConferenceLineDisconnectEvent Handler
+     * @param {CallConferenceLineDisconnectEvent} evt 
+     */
     private CallConferenceLineDisconnectEvent = (evt: CallConferenceLineDisconnectEvent) => {
         // check the interaction
         if (evt.InteractionID !== this.interactionId) {
@@ -356,6 +449,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         }
     }
 
+    /**
+     * CallConferenceRemoteConnectedEvent Handler
+     * @param {CallConferenceRemoteConnectedEvent} evt 
+     */
     private CallConferenceRemoteConnectedEvent = (evt: CallConferenceRemoteConnectedEvent) => {
         // check the interaction
         if (evt.InteractionID !== this.interactionId) {
@@ -363,6 +460,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         }
     }
 
+    /**
+     * MediaServerEvent Handler
+     * @param {MediaServerEvent} evt 
+     */
     private MediaServerEvent = (evt: MediaServerEvent) => {
         try {
             // check the interaction
@@ -425,6 +526,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         }
     }
 
+    /**
+     * VoiceCannedResponseEvent Handler
+     * @param {VoiceCannedResponseEvent} evt 
+     */
     private VoiceCannedResponseEvent = (evt: { AudioBuffer: ArrayBuffer, InteractionID: number, Item: AgentInteractionTemplate }) => {
         // check the interaction
         if (evt.InteractionID !== this.interactionId) {
@@ -470,6 +575,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         });
     }
 
+    /**
+     * CallerIntentEvent Handler
+     * @param {CallerIntentEvent} evt 
+     */
     private CallerIntentEvent = (evt: CallerIntentEvent) => {
         // check the interaction
         if (evt.InteractionID !== this.interactionId) {
@@ -480,6 +589,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         this.intent = evt.IntentName;
     }
 
+    /**
+     * IVRDataEvent Handler
+     * @param {IVRDataEvent} evt 
+     */
     private IVRDataEvent = (evt: IVRDataEvent) => {
         // check the interaction
         if (evt.InteractionID !== this.interactionId) {
@@ -489,6 +602,11 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         this.last4IVR = [evt.LastMenu_4, evt.LastMenu_3, evt.LastMenu_2, evt.LastMenu];
     }
 
+    /**
+     * Create AV connection
+     * @method createAVConnection
+     * @param {String} direction 
+     */
     private createAVConnection(direction: string): AVChannel {
         try {
             // set MS call to true
@@ -529,6 +647,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         return null;
     }
 
+    /**
+     * AVEvent Handler
+     * @param {AVEvent} evt 
+     */
     private onAVEvent = (evt: AVEvent) => {
         // swtich the av events
         switch (evt.event) {
@@ -566,6 +688,11 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         }
     }
 
+    /**
+     * Process AV event
+     * @method processEventAV
+     * @param {any} evt 
+     */
     private processEventAV(evt: any): void {
         switch (evt.event) {
             case 'connected':
@@ -586,6 +713,13 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         }
     }
 
+    /**
+     * Toggle Button
+     * Need More description
+     * @method toggleButton
+     * @param {Boolean} show 
+     * @param {MatButton} btn 
+     */
     private toggleButton(show: boolean, btn: MatButton): void {
         if (show) {
             // show the progress bar 
@@ -601,6 +735,11 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         }
     }
 
+    /**
+     * Close interaction
+     * @method closeInteraction
+     * @param {MatButton} btn 
+     */
     private closeInteraction(btn: MatButton): void {
         this.toggleButton(true, btn);
         SDKClient.closeInteraction(this.interactionId.toString(), null)
@@ -622,6 +761,11 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             });
     }
 
+    /**
+     * Disconnect Call
+     * @method disconnectCall
+     * @param {MatButton} btn 
+     */
     private disconnectCall(btn: MatButton): void {
         // toggle the button
         this.toggleButton(true, btn);
@@ -648,6 +792,11 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * Select Interaction
+     * @method selectInteraction
+     * @param {InteractionRef} item 
+     */
     public selectInteraction(item: InteractionRef): void {
         // if same interaction is seleted then return
         if (this.interactionId === item.interactionId) {
@@ -659,6 +808,11 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         });
     }
 
+    /**
+     * Answer call
+     * @method answerCall
+     * @param {MatButton} btn 
+     */
     public answerCall(btn: MatButton): void {
         // check if ms call then do not call api, just process the media server messages
         if (this.isMSCall) {
@@ -693,6 +847,11 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             });
     }
 
+    /**
+     * Confirm Call Disconnection
+     * @method confirmDisconnectCall
+     * @param {MatButton} btn 
+     */
     public confirmDisconnectCall(btn: MatButton): void {
         // config force login
         const confirmDialogRef = this._appUIService.showAppConfirmDialog('endInteraction');
@@ -704,6 +863,11 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         });
     }
 
+    /**
+     * Hold Call
+     * @method holdCall
+     * @param {MatButton} btn 
+     */
     public holdCall(btn: MatButton): void {
         // toggle the button
         this.toggleButton(true, btn);
@@ -731,6 +895,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             });
     }
 
+    /**
+     * Unhold Call
+     * @param {MatButton} btn 
+     */
     public unHoldCall(btn: MatButton): void {
         // toggle the button
         this.toggleButton(true, btn);
@@ -758,6 +926,12 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             });
     }
 
+    /**
+     * Player Action
+     * Need More Description
+     * @method playerAction
+     * @param {Number} action 
+     */
     public playerAction(action: number): void {
         if (action === 1) {
             // play
@@ -776,6 +950,11 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         }
     }
 
+    /**
+     * Confirm Close Interaction
+     * @method confirmCloseInteraction
+     * @param {MatButton} btn 
+     */
     public confirmCloseInteraction(btn: MatButton): void {
         // config force login
         const confirmDialogRef = this._appUIService.showAppConfirmDialog('closeInteraction');

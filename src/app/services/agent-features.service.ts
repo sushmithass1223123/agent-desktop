@@ -1,26 +1,74 @@
 import { Injectable } from '@angular/core';
 import { AgentFeatures, SDKClient, TUtils } from 'tmac-sdk';
 import { AppUiService } from './app-ui.service';
+
+/**
+ * Navigator
+ * Need more description
+ */
 declare const navigator: Navigator | any;
 
+/**
+ * Need more Description
+ * Service for agent features
+ */
 @Injectable({
     providedIn: 'root'
 })
 export class AgentFeaturesService {
 
+    /**
+     * Processed
+     * Need More Description
+     */
     private _processed: boolean;
 
+    /**
+     * Agent Features
+     */
     private _agentFeatureInfo: {
+        /**
+         * Permissions granted to user
+         */
         permissions: {
+            /**
+             * Whether camera access is enabled
+             */
             camera: boolean;
+            /**
+             * Need more Description
+             * Whether display is enabled
+             */
             display: boolean;
+            /**
+             * Whether location acces is enabled
+             */
             location: boolean;
         },
+        /**
+         * Current features data
+         */
         data: {
+            /**
+             * Camera stream
+             */
             cameraStream: MediaStream,
+            /**
+             * Need more Description
+             * Current display stream
+             */
             displayStream: MediaStream,
+            /**
+             * Current Location
+             */
             location: {
+                /**
+                 * Latitude
+                 */
                 latitude: number;
+                /**
+                 * Longitude
+                 */
                 longitude: number;
             };
         }
@@ -43,6 +91,11 @@ export class AgentFeaturesService {
         };
     }
 
+    /**
+     * Need more Description
+     * Event to take snapshot
+     * @param {any} evt 
+     */
     private AgentSnapShotEvent = async (evt: any) => {
         // init variables
         let screenshot = '';
@@ -81,6 +134,10 @@ export class AgentFeaturesService {
         });
     }
 
+    /**
+     * Need more Description
+     * @param {string} type 
+     */
     private async getUrlFromStream(type: string): Promise<string> {
         // media stream reference
         let stream: MediaStream;
@@ -127,6 +184,9 @@ export class AgentFeaturesService {
         });
     }
 
+    /**
+     * Capture camera stream
+     */
     private captureCameraStream(): void {
         // check if the permission got
         if (!SDKClient.getAgentData().isLoggedIn || this._agentFeatureInfo.permissions.camera) {
@@ -163,6 +223,9 @@ export class AgentFeaturesService {
         );
     }
 
+    /**
+     * Capture Displayed stream
+     */
     private captureDisplayStream(): void {
         // check if the permission got
         if (!SDKClient.getAgentData().isLoggedIn || this._agentFeatureInfo.permissions.display) {
@@ -205,6 +268,9 @@ export class AgentFeaturesService {
             });
     }
 
+    /**
+     * Capture current location
+     */
     private captureLocation(): void {
         // get geolocation
         navigator.geolocation.getCurrentPosition(
@@ -224,6 +290,9 @@ export class AgentFeaturesService {
             });
     }
 
+    /**
+     * Subscribe to the available features
+     */
     public subscribe(): void {
         TUtils.Logger.console('info', 'AgentFeaturesService.subscribe');
         // listen to AgentSnapShotEvent
@@ -264,6 +333,9 @@ export class AgentFeaturesService {
         });
     }
 
+    /**
+     * Unsubscribe from all subscriptions
+     */
     public unsubscribe(): void {
         TUtils.Logger.console('info', 'AgentFeaturesService.unsubscribe');
 

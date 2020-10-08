@@ -4,78 +4,186 @@ import { Moment } from 'moment';
 import { Color, SingleOrMultiDataSet } from 'ng2-charts';
 
 export interface TWChartPieceLabel {
-    // render 'label', 'value', 'percentage', 'image' or custom function, default is 'percentage'
+    /**
+     * render 'label', 'value', 'percentage', 'image' or custom function, default is 'percentage'
+     */
     render: 'value';
 
-    // precision for percentage, default is 0
+    /**
+     * precision for percentage, default is 0
+     */
     precision: number;
-
-    // identifies whether or not labels of value 0 are displayed, default is false
+    /**
+     * 
+     *  identifies whether or not labels of value 0 are displayed, default is false
+     */
     showZero: boolean;
 
-    // font size, default is defaultFontSize
+    /**
+     * 
+     *  font size, default is defaultFontSize
+     */
     fontSize: number;
 
-    // font color, can be color array for each data or function for dynamic color, default is defaultFontColor
+    /**
+     * 
+     *  font color, can be color array for each data or function for dynamic color, default is defaultFontColor
+     */
     fontColor: string;
 
-    // font style, default is defaultFontStyle
+    /**
+     * 
+     *  font style, default is defaultFontStyle
+     */
     fontStyle: 'normal' | 'bold' | 'italic';
 
-    // font family, default is defaultFontFamily
+    /**
+     * 
+     *  font family, default is defaultFontFamily
+     */
     fontFamily: string;
 
-    // draw label in arc, default is false
+    /**
+     * 
+     *  draw label in arc, default is false
+     */
     arc: boolean;
 
-    // position to draw label, available value is 'default', 'border' and 'outside'
-    // default is 'default'
+    /**
+     * position to draw label, available value is 'default', 'border' and 'outside'
+     * position to draw label, available value is 'default', 'border' and 'outside'
+     */
     position: 'default' | 'border' | 'outside';
 
-    // draw label even it's overlap, default is false
+    /**
+     *  draw label even it's overlap, default is false
+     */
     overlap: boolean;
 
-    // show the real calculated percentages from the values and don't apply the additional logic to fit the percentages to 100 in total, default is false
+    /**
+     * show the real calculated percentages from the values and don't apply the additional logic to fit the percentages to 100 in total, default is false
+     */
     showActualPercentages: boolean;
 
-    // set images when `render` is 'image'
+    /**
+     * set images when `render` is 'image'
+     */
     images: {
+        /**
+         * Sorce of image
+         */
         src: string;
+        /**
+         * Width of image
+         */
         width: number;
+        /**
+         * Height of image
+         */
         height: number;
     }[];
 
-    // available only when position = 'outside'
-    // if value = true show a callout arrow to label
+    /**
+     * available only when position = 'outside'
+     * if value = true show a callout arrow to label
+     */
     segment: boolean;
 
-    // available only when position = 'outside'
-    // stroke color for segment (if value = 'auto' use series backgroundColor)
+    /**
+     * available only when position = 'outside'
+     * stroke color for segment (if value = 'auto' use series backgroundColor)
+     */
     segmentColor: string;
 }
 
 export interface TwChartConfig {
+    /**
+     * Data for chart
+     */
     data?: SingleOrMultiDataSet[];
+    /**
+     * Multiple Datasets for chart
+     */
     datasets?: ChartDataSets[];
+    /**
+     * Labels for chart
+     */
     labels?: string[] | number[];
-    options: ChartOptions & { setFeedbackEmoji?: boolean; pieceLabel?: Partial<TWChartPieceLabel> };
+    /**
+     * Options for chart
+     */
+    options: ChartOptions & {
+        /**
+         * Set feedback Emoji
+         */
+        setFeedbackEmoji?: boolean;
+        /**
+         * Piece label 
+         */
+        pieceLabel?: Partial<TWChartPieceLabel>
+    };
+    /**
+     * Colors for chart
+     */
     colors?: Color[];
+    /**
+     * Legends for chart
+     */
     legend?: boolean;
+    /**
+     * Type of chart
+     */
     type?: string;
+    /**
+     * Refresh method for chart
+     */
     refresh?: () => void;
 }
 
 export interface ChatTranscripts {
+    /**
+     * Sender
+     */
     who?: string;
+    /**
+     * Is agent flag
+     */
     isAgent?: boolean;
+    /**
+     * Message Id
+     */
     messageId?: string;
+    /**
+     * Message
+     */
     message?: string;
+    /**
+     * Type
+     */
     type?: string;
+    /**
+     * Time
+     */
     time?: Date | Moment;
+    /**
+     * Divider
+     */
     divider?: boolean;
+    /**
+     * Attachment
+     */
     attachment?: {
+        /**
+         * Source
+         */
         src: string;
+        /**
+         * Type 
+         */
         type: string;
+        /**
+         * Name
+         */
         name: string;
     };
 }

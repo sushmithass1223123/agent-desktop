@@ -1,10 +1,17 @@
 import { Directive, ElementRef, OnInit } from '@angular/core';
 
+/**
+ * Quill directive
+ */
 @Directive({
     selector: '[quill]'
 })
 export class QuillDirective implements OnInit {
-    constructor(private el: ElementRef) {}
+    constructor(private el: ElementRef) { }
 
-    ngOnInit() {}
+    /**
+     * Lifecycle hook
+     * @method
+     */
+    ngOnInit(): void { }
 }

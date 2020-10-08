@@ -1,11 +1,13 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { AppUiService } from '@services/app-ui.service';
 import { TWidgetWrapper } from '@twidgets/utils';
 import { IAUXCodes, IResponse, SDKClient } from 'tmac-sdk';
 
+/**
+ * Logout button component
+ */
 @Component({
     selector: 'tw-logout',
     templateUrl: './tw-logout.component.html',
@@ -14,20 +16,32 @@ import { IAUXCodes, IResponse, SDKClient } from 'tmac-sdk';
 })
 export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestroy {
 
+    /**
+     * App config json data
+     */
     @Input() data: any;
 
+    /**
+     * Logout Aux
+     */
     logoutAux = '';
+    /**
+     * Can logout flag
+     */
     canLogout: boolean;
 
     constructor(
         private _router: Router,
-        private _dialog: MatDialog,
         private _fuseProgressBarService: FuseProgressBarService,
         private _appUIService: AppUiService
     ) {
         super();
     }
 
+    /**
+     * Lifecycle hook
+     * @method
+     */
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
@@ -43,6 +57,10 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
         this.findLogoutAux();
     }
 
+    /**
+     * Lifecycle hookk
+     * @method
+     */
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
@@ -51,10 +69,18 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
         SDKClient.events.off('AgentStatusChangeEvent', this.AgentStatusChangeEvent);
     }
 
+    /**
+     * Trigered when agent changes status
+     * @method
+     */
     private AgentStatusChangeEvent = () => {
         this.findLogoutAux();
     }
 
+    /**
+     * Check if the agent can logout
+     * @method
+     */
     private findLogoutAux(): void {
         // check if logout aux provided
         if (!this.logoutAux) {

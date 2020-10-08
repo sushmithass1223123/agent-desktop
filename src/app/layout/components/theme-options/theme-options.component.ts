@@ -11,6 +11,10 @@ import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { FuseConfig } from '@fuse/types';
 import { ThemeSelector } from 'app/layout/utils/theme-selector';
 
+/**
+ * Need more Description 
+ * Theme options Component
+ */
 @Component({
     selector: 'app-theme-options',
     templateUrl: './theme-options.component.html',

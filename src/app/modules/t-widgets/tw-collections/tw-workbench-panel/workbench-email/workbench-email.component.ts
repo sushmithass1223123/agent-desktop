@@ -16,6 +16,9 @@ import * as moment from 'moment';
 import { takeUntil } from 'rxjs/operators';
 import { SDKClient } from 'tmac-sdk';
 
+/**
+ * Workbench Email
+ */
 @Component({
     selector: 'workbench-email', // make sure you set the selector starts with <widget-name>
     templateUrl: './workbench-email.component.html',
@@ -24,29 +27,48 @@ import { SDKClient } from 'tmac-sdk';
     animations: fuseAnimations
 })
 export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-    // holds all the data related to this widget from the config
+    /**
+     * holds all the data related to this widget from the config
+     */
     @Input() data: IWidget;
 
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store the fuse config for theme
-    // -----------------------------------------------------------
+    /**
+     * [OPTIONAL] to store the fuse config for theme
+     */
     fuseConfig: FuseConfig;
 
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store entire app config and get update
-    // -----------------------------------------------------------
+    /**
+     * [OPTIONAL] to store entire app config and get update
+     */
     appConfig: any;
 
+    /**
+     * Search key
+     */
     searchTerm = '';
+    /**
+     * Selected Mail
+     */
     selectedMail: number;
-    emailSearchRes: ResData<{ selected: any }> = {
-        error: false,
-        loading: false,
-        msg: '',
-        data: {
-            selected: false
-        }
-    };
+    /**
+     * Email Search Stateful request
+     */
+    emailSearchRes: ResData<{
+        /**
+         * Selected email
+         */
+        selected: any
+    }> = {
+            error: false,
+            loading: false,
+            msg: '',
+            data: {
+                selected: false
+            }
+        };
+    /**
+     * Advanced search form group
+     */
     advancedSearchForm = new FormGroup({
         email: new FormControl(''),
         queue: new FormControl(''),
@@ -58,7 +80,13 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
         content: new FormControl('')
     });
 
+    /**
+     * Tree Controls
+     */
     treeControl = new NestedTreeControl<any>((node) => node.children);
+    /**
+     * Tree Data source
+     */
     dataSource = new MatTreeNestedDataSource<any>();
 
     /**
@@ -128,10 +156,24 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * Filter emails
+     * TODO
+     * @method filterEmails
+     */
     filterEmails(): void { }
 
+    /**
+     * Check if tree node has child
+     * @param {number} _ 
+     * @param {any} node 
+     */
     hasChild = (_: number, node: any) => !!node.children && node.children.length > 0;
 
+    /**
+     * Advbanced Search
+     * @method advancedSearch
+     */
     advancedSearch(): void {
         if (!this.data.Data.WorkbenchUrl) {
             this.emailSearchRes = {
@@ -219,6 +261,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
             );
     }
 
+    /**
+     * Pull email
+     * @method pullEmail
+     */
     pullEmail(): void {
         const { agentId } = SDKClient.getAgentData();
         const { SessionId, RouteId } = this.emailSearchRes.data.selected;

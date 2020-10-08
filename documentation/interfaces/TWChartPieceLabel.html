@@ -158,6 +158,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>draw label in arc, default is false</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -187,6 +193,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>font color, can be color array for each data or function for dynamic color, default is defaultFontColor</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -216,6 +228,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>font family, default is defaultFontFamily</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -245,6 +263,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>font size, default is defaultFontSize</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -274,6 +298,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>font style, default is defaultFontStyle</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -303,6 +333,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>set images when <code>render</code> is &#39;image&#39;</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -332,6 +368,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>draw label even it&#39;s overlap, default is false</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -361,6 +403,13 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>position to draw label, available value is &#39;default&#39;, &#39;border&#39; and &#39;outside&#39;
+position to draw label, available value is &#39;default&#39;, &#39;border&#39; and &#39;outside&#39;</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -390,6 +439,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>precision for percentage, default is 0</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -413,6 +468,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>render &#39;label&#39;, &#39;value&#39;, &#39;percentage&#39;, &#39;image&#39; or custom function, default is &#39;percentage&#39;</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -442,6 +503,13 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>available only when position = &#39;outside&#39;
+if value = true show a callout arrow to label</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -471,6 +539,13 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>available only when position = &#39;outside&#39;
+stroke color for segment (if value = &#39;auto&#39; use series backgroundColor)</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -500,6 +575,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>show the real calculated percentages from the values and don&#39;t apply the additional logic to fit the percentages to 100 in total, default is false</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -529,6 +610,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>identifies whether or not labels of value 0 are displayed, default is false</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -536,99 +623,344 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { ChartDataSets, ChartOptions } from &#x27;chart.js&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from &#x27;@angular/material/snack-bar&#x27;;
+import { ChartDataSets, ChartOptions } from &#x27;chart.js&#x27;;
+import { Moment } from &#x27;moment&#x27;;
 import { Color, SingleOrMultiDataSet } from &#x27;ng2-charts&#x27;;
 
 export interface TWChartPieceLabel {
-    // render &#x27;label&#x27;, &#x27;value&#x27;, &#x27;percentage&#x27;, &#x27;image&#x27; or custom function, default is &#x27;percentage&#x27;
+    /**
+     * render &#x27;label&#x27;, &#x27;value&#x27;, &#x27;percentage&#x27;, &#x27;image&#x27; or custom function, default is &#x27;percentage&#x27;
+     */
     render: &#x27;value&#x27;;
 
-    // precision for percentage, default is 0
+    /**
+     * precision for percentage, default is 0
+     */
     precision: number;
-
-    // identifies whether or not labels of value 0 are displayed, default is false
+    /**
+     * 
+     *  identifies whether or not labels of value 0 are displayed, default is false
+     */
     showZero: boolean;
 
-    // font size, default is defaultFontSize
+    /**
+     * 
+     *  font size, default is defaultFontSize
+     */
     fontSize: number;
 
-    // font color, can be color array for each data or function for dynamic color, default is defaultFontColor
+    /**
+     * 
+     *  font color, can be color array for each data or function for dynamic color, default is defaultFontColor
+     */
     fontColor: string;
 
-    // font style, default is defaultFontStyle
+    /**
+     * 
+     *  font style, default is defaultFontStyle
+     */
     fontStyle: &#x27;normal&#x27; | &#x27;bold&#x27; | &#x27;italic&#x27;;
 
-    // font family, default is defaultFontFamily
+    /**
+     * 
+     *  font family, default is defaultFontFamily
+     */
     fontFamily: string;
 
-    // draw label in arc, default is false
+    /**
+     * 
+     *  draw label in arc, default is false
+     */
     arc: boolean;
 
-    // position to draw label, available value is &#x27;default&#x27;, &#x27;border&#x27; and &#x27;outside&#x27;
-    // default is &#x27;default&#x27;
+    /**
+     * position to draw label, available value is &#x27;default&#x27;, &#x27;border&#x27; and &#x27;outside&#x27;
+     * position to draw label, available value is &#x27;default&#x27;, &#x27;border&#x27; and &#x27;outside&#x27;
+     */
     position: &#x27;default&#x27; | &#x27;border&#x27; | &#x27;outside&#x27;;
 
-    // draw label even it&#x27;s overlap, default is false
+    /**
+     *  draw label even it&#x27;s overlap, default is false
+     */
     overlap: boolean;
 
-    // show the real calculated percentages from the values and don&#x27;t apply the additional logic to fit the percentages to 100 in total, default is false
+    /**
+     * show the real calculated percentages from the values and don&#x27;t apply the additional logic to fit the percentages to 100 in total, default is false
+     */
     showActualPercentages: boolean;
 
-    // set images when &#x60;render&#x60; is &#x27;image&#x27;
+    /**
+     * set images when &#x60;render&#x60; is &#x27;image&#x27;
+     */
     images: {
+        /**
+         * Sorce of image
+         */
         src: string;
+        /**
+         * Width of image
+         */
         width: number;
+        /**
+         * Height of image
+         */
         height: number;
     }[];
 
-    // available only when position &#x3D; &#x27;outside&#x27;
-    // if value &#x3D; true show a callout arrow to label
+    /**
+     * available only when position &#x3D; &#x27;outside&#x27;
+     * if value &#x3D; true show a callout arrow to label
+     */
     segment: boolean;
 
-    // available only when position &#x3D; &#x27;outside&#x27;
-    // stroke color for segment (if value &#x3D; &#x27;auto&#x27; use series backgroundColor)
+    /**
+     * available only when position &#x3D; &#x27;outside&#x27;
+     * stroke color for segment (if value &#x3D; &#x27;auto&#x27; use series backgroundColor)
+     */
     segmentColor: string;
 }
 
 export interface TwChartConfig {
+    /**
+     * Data for chart
+     */
     data?: SingleOrMultiDataSet[];
+    /**
+     * Multiple Datasets for chart
+     */
     datasets?: ChartDataSets[];
+    /**
+     * Labels for chart
+     */
     labels?: string[] | number[];
-    options: ChartOptions &amp; { setFeedbackEmoji?: boolean; pieceLabel?: Partial&lt;TWChartPieceLabel&gt; };
+    /**
+     * Options for chart
+     */
+    options: ChartOptions &amp; {
+        /**
+         * Set feedback Emoji
+         */
+        setFeedbackEmoji?: boolean;
+        /**
+         * Piece label 
+         */
+        pieceLabel?: Partial&lt;TWChartPieceLabel&gt;
+    };
+    /**
+     * Colors for chart
+     */
     colors?: Color[];
+    /**
+     * Legends for chart
+     */
     legend?: boolean;
+    /**
+     * Type of chart
+     */
+    type?: string;
+    /**
+     * Refresh method for chart
+     */
     refresh?: () &#x3D;&gt; void;
 }
 
 export interface ChatTranscripts {
+    /**
+     * Sender
+     */
     who?: string;
+    /**
+     * Is agent flag
+     */
+    isAgent?: boolean;
+    /**
+     * Message Id
+     */
     messageId?: string;
+    /**
+     * Message
+     */
     message?: string;
+    /**
+     * Type
+     */
     type?: string;
-    time?: string;
+    /**
+     * Time
+     */
+    time?: Date | Moment;
+    /**
+     * Divider
+     */
     divider?: boolean;
+    /**
+     * Attachment
+     */
     attachment?: {
+        /**
+         * Source
+         */
         src: string;
+        /**
+         * Type 
+         */
         type: string;
+        /**
+         * Name
+         */
         name: string;
     };
 }
 
 export interface AppNotification {
+    /**
+     * ID of the app notification
+     */
     id?: string;
+    /**
+     * Icon of the app notification
+     */
     icon?: string;
+    /**
+     * Message of app notification
+     */
     message: string;
+    /**
+     * Time of the app notification
+     */
     time?: string | Date;
-    status: string;
+    /**
+     * Status of the app notification 
+     */
+    status: &#x27;new&#x27; | &#x27;read&#x27;;
+    /**
+     * To show alert or not
+     */
+    showAlert?: boolean;
 }
+
+export type SnackbarStateTypes &#x3D; &#x27;info&#x27; | &#x27;loading&#x27; | &#x27;warning&#x27; | &#x27;success&#x27; | &#x27;failure&#x27;;
 
 export type AppAlertDialogTypes &#x3D; &#x27;success&#x27; | &#x27;info&#x27; | &#x27;warning&#x27; | &#x27;error&#x27;;
 
 export interface AppAlertDialogData {
+    /**
+     * Heading of app alert
+     */
     heading: string;
+    /**
+     * Message of app alert
+     */
     message: string;
+    /**
+     * Method to close the app alert
+     */
     close: () &#x3D;&gt; void;
+    /**
+     * Type of app alert which is of type AppAlertDialogTypes
+     */
     type: AppAlertDialogTypes;
+}
+
+export type ReminderTaskDialogTypes &#x3D; &#x27;makecall&#x27; | &#x27;meeting&#x27; | &#x27;changestate&#x27; | &#x27;dacrequest&#x27; | &#x27;tcmwqvoice&#x27; | &#x27;reminder&#x27;;
+
+export interface ReminderTaskDialogData {
+    /**
+     * Title of the reminder task dialog
+     */
+    title: string;
+    /**
+     * Message of the reminder task dialog
+     */
+    message: string;
+    /**
+     * Method to accept the reminder task
+     */
+    accept: () &#x3D;&gt; void;
+    /**
+     * Method to reject the reminder task
+     */
+    reject: () &#x3D;&gt; void;
+    /**
+     * Method to snooze the reminder task
+     */
+    snooze: (time?: number) &#x3D;&gt; void;
+    /**
+     * Type of reminder task of type ReminderTaskDialogTypes
+     */
+    type: ReminderTaskDialogTypes;
+}
+
+export type AppConfirmDialogTypes &#x3D; &#x27;takeoverSession&#x27; | &#x27;endInteraction&#x27; | &#x27;closeInteraction&#x27; | &#x27;logout&#x27; | &#x27;generic&#x27;;
+
+export interface AppConfirmDialogData {
+    /**
+     * Title of the confirmation dialog
+     */
+    title: string;
+    /**
+     * Message of the confirmation dialog
+     */
+    message: string;
+    /**
+     * Type of confirmation of type AppConfirmDialogTypes
+     */
+    type: AppConfirmDialogTypes;
+    /**
+     * Method to confirm
+     */
+    confirm: () &#x3D;&gt; void;
+    /**
+     * Method to cancel
+     */
+    cancel: () &#x3D;&gt; void;
+}
+
+export interface AppSnackBarArgs {
+    /**
+     * Message to show in snackbar
+     */
+    message: string;
+    /**
+     * State of snackbar of [ &#x27;info&#x27; | &#x27;success&#x27; | &#x27;warning&#x27; | &#x27;error&#x27;], info by default
+     */
+    state?: &#x27;info&#x27; | &#x27;success&#x27; | &#x27;warning&#x27; | &#x27;danger&#x27;;
+    /**
+     * Vertical Postion of snackbar of type MatSnackBarVerticalPosition, default &#x27;top&#x27;
+     */
+    vPos?: MatSnackBarVerticalPosition;
+    /**
+     * Horizontal Postion of snackbar of type MatSnackBarVerticalPosition, default &#x27;center&#x27;
+     */
+    hPos?: MatSnackBarHorizontalPosition;
+    /**
+     * Duration of snackbar, 5000 by default
+     */
+    duration?: number;
+}
+
+export interface CustomDialogData {
+    /**
+     * Type of custom dialog
+     */
+    type: &#x27;alert&#x27; | &#x27;prompt&#x27; | &#x27;confirm&#x27;;
+    /**
+     * Title of custom dialog
+     */
+    title?: string;
+    /**
+     * Message for the dialog
+     */
+    message: any;
+    /**
+     * Done callback
+     */
+    done: (data?: any) &#x3D;&gt; void;
+    /**
+     * Cancel callback
+     */
+    cancel: () &#x3D;&gt; void;
 }
 </code></pre>
     </div>

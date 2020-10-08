@@ -9,22 +9,61 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AgentNotificaitonEvent, SDKClient } from 'tmac-sdk';
 
+/**
+ * Contact model
+ */
 interface Contact {
+    /**
+     * avatar url
+     */
     avatar: string;
+    /**
+     * Id
+     */
     id: string;
+    /**
+     * Mood
+     */
     mood: string;
+    /**
+     * Name of user
+     */
     name: string;
+    /**
+     * Status of user
+     */
     status: string;
+    /**
+     * number of Unread messages from user
+     */
     unread: number;
+    /**
+     * TMAC server
+     */
     tmacServer: string;
+    /**
+     * custom Class
+     */
     class: string;
 }
 
+/**
+ * Chat
+ */
 interface Chat {
+    /**
+     * Chat dialog
+     */
     dialog: AgentNotificaitonEvent[];
+    /**
+     * Chat Id
+     */
     id: string;
 }
 
+/**
+ * Instant Messaging Component
+ */
 @Component({
     selector: 'instant-messaging',
     templateUrl: './instant-messaging.component.html',
@@ -32,31 +71,67 @@ interface Chat {
     encapsulation: ViewEncapsulation.None
 })
 export class InstantMessagingComponent implements OnInit, AfterViewInit, OnDestroy {
+    /**
+     * contact List
+     */
     contacts: Contact[] = [];
 
+    /**
+     * all chats
+     */
     allChats: Record<string, Chat> = {};
 
+    /**
+     * agentStatus Classes
+     */
     agentStatusClasses = {
         'On Call': 'do-not-disturb',
         Available: 'online'
     };
 
+    /**
+     * Current Chat
+     */
     chat: Chat;
+    /**
+     * Selected Contact
+     */
     selectedContact: Contact;
+    /**
+     * sidebar folded flag
+     */
     sidebarFolded: boolean;
+    /**
+     * user
+     */
     user: any;
 
+    /**
+     * reply form ref
+     */
     @ViewChild('replyForm')
     private _replyForm: NgForm;
 
+    /**
+     * reply input ref
+     */
     @ViewChild('replyInput')
     private _replyInput: ElementRef;
 
+    /**
+     * Perfect scrollbar ref
+     */
     @ViewChildren(FusePerfectScrollbarDirective)
     private _fusePerfectScrollbarDirectives: QueryList<FusePerfectScrollbarDirective>;
 
     // Private
+    /**
+     * Chat scrollbar ref
+     */
     private _chatViewScrollbar: FusePerfectScrollbarDirective;
+    /**
+     * Unsubscribe all subject
+     */
     private _unsubscribeAll: Subject<any>;
 
     /**
@@ -279,6 +354,10 @@ export class InstantMessagingComponent implements OnInit, AfterViewInit, OnDestr
         this._prepareChatForReplies();
     }
 
+    /**
+     * AgentNotificaitonEvent handler
+     * @param {AgentNotificaitonEvent} evt 
+     */
     AgentNotificaitonEvent = (evt: AgentNotificaitonEvent): void => {
         if (evt.InteractionID > 0 || evt.Type !== 'IM') {
             return;
@@ -294,6 +373,10 @@ export class InstantMessagingComponent implements OnInit, AfterViewInit, OnDestr
         }
     };
 
+    /**
+     * TeamAgentListEvent Handler
+     * @param {any[]} evt 
+     */
     TeamAgentListEvent = (evt: any[]): void => {
         const agents = groupBy(this.contacts, 'id');
         this.contacts = sortBy(evt, 'AgentName').map((x) => ({

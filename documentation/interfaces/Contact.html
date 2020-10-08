@@ -61,9 +61,16 @@
             <h3>File</h3>
         </p>
         <p class="comment">
-            <code>src/app/layout/components/chat-panel/chat-panel.component.ts</code>
+            <code>src/app/layout/components/instant-messaging/instant-messaging.component.ts</code>
         </p>
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Contact model</p>
+
+            </p>
 
 
         <section>
@@ -140,6 +147,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>avatar url</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -169,6 +182,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>custom Class</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -198,6 +217,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Id</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -227,6 +252,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Mood</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -256,6 +287,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Name of user</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -285,6 +322,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Status of user</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -314,6 +357,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>TMAC server</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -343,6 +392,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>number of Unread messages from user</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -355,70 +410,145 @@ import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, QueryList, Vie
 import { NgForm } from &#x27;@angular/forms&#x27;;
 import { FuseSidebarService } from &#x27;@fuse/components/sidebar/sidebar.service&#x27;;
 import { FusePerfectScrollbarDirective } from &#x27;@fuse/directives/fuse-perfect-scrollbar/fuse-perfect-scrollbar.directive&#x27;;
-import { ChatPanelService } from &#x27;app/layout/components/chat-panel/chat-panel.service&#x27;;
+import { InstantMessagingService } from &#x27;app/layout/components/instant-messaging/instant-messaging.service&#x27;;
 import { groupBy, sortBy } from &#x27;lodash&#x27;;
 import { Subject } from &#x27;rxjs&#x27;;
 import { takeUntil } from &#x27;rxjs/operators&#x27;;
 import { AgentNotificaitonEvent, SDKClient } from &#x27;tmac-sdk&#x27;;
 
+/**
+ * Contact model
+ */
 interface Contact {
+    /**
+     * avatar url
+     */
     avatar: string;
+    /**
+     * Id
+     */
     id: string;
+    /**
+     * Mood
+     */
     mood: string;
+    /**
+     * Name of user
+     */
     name: string;
+    /**
+     * Status of user
+     */
     status: string;
+    /**
+     * number of Unread messages from user
+     */
     unread: number;
+    /**
+     * TMAC server
+     */
     tmacServer: string;
+    /**
+     * custom Class
+     */
     class: string;
 }
 
+/**
+ * Chat
+ */
 interface Chat {
+    /**
+     * Chat dialog
+     */
     dialog: AgentNotificaitonEvent[];
+    /**
+     * Chat Id
+     */
     id: string;
 }
 
+/**
+ * Instant Messaging Component
+ */
 @Component({
-    selector: &#x27;chat-panel&#x27;,
-    templateUrl: &#x27;./chat-panel.component.html&#x27;,
-    styleUrls: [&#x27;./chat-panel.component.scss&#x27;],
+    selector: &#x27;instant-messaging&#x27;,
+    templateUrl: &#x27;./instant-messaging.component.html&#x27;,
+    styleUrls: [&#x27;./instant-messaging.component.scss&#x27;],
     encapsulation: ViewEncapsulation.None
 })
-export class ChatPanelComponent implements OnInit, AfterViewInit, OnDestroy {
+export class InstantMessagingComponent implements OnInit, AfterViewInit, OnDestroy {
+    /**
+     * contact List
+     */
     contacts: Contact[] &#x3D; [];
 
+    /**
+     * all chats
+     */
     allChats: Record&lt;string, Chat&gt; &#x3D; {};
 
+    /**
+     * agentStatus Classes
+     */
     agentStatusClasses &#x3D; {
         &#x27;On Call&#x27;: &#x27;do-not-disturb&#x27;,
         Available: &#x27;online&#x27;
     };
 
+    /**
+     * Current Chat
+     */
     chat: Chat;
+    /**
+     * Selected Contact
+     */
     selectedContact: Contact;
+    /**
+     * sidebar folded flag
+     */
     sidebarFolded: boolean;
+    /**
+     * user
+     */
     user: any;
 
+    /**
+     * reply form ref
+     */
     @ViewChild(&#x27;replyForm&#x27;)
     private _replyForm: NgForm;
 
+    /**
+     * reply input ref
+     */
     @ViewChild(&#x27;replyInput&#x27;)
     private _replyInput: ElementRef;
 
+    /**
+     * Perfect scrollbar ref
+     */
     @ViewChildren(FusePerfectScrollbarDirective)
     private _fusePerfectScrollbarDirectives: QueryList&lt;FusePerfectScrollbarDirective&gt;;
 
     // Private
+    /**
+     * Chat scrollbar ref
+     */
     private _chatViewScrollbar: FusePerfectScrollbarDirective;
+    /**
+     * Unsubscribe all subject
+     */
     private _unsubscribeAll: Subject&lt;any&gt;;
 
     /**
      * Constructor
      *
-     * @param {ChatPanelService} _chatPanelService
+     * @param {InstantMessagingService} _InstantMessagingService
      * @param {HttpClient} _httpClient
      * @param {FuseSidebarService} _fuseSidebarService
      */
-    constructor(private _chatPanelService: ChatPanelService, private _httpClient: HttpClient, private _fuseSidebarService: FuseSidebarService) {
+    constructor(private _InstantMessagingService: InstantMessagingService, private _httpClient: HttpClient, private _fuseSidebarService: FuseSidebarService) {
         // Set the defaults
         this.selectedContact &#x3D; null;
         this.sidebarFolded &#x3D; true;
@@ -631,8 +761,12 @@ export class ChatPanelComponent implements OnInit, AfterViewInit, OnDestroy {
         this._prepareChatForReplies();
     }
 
+    /**
+     * AgentNotificaitonEvent handler
+     * @param {AgentNotificaitonEvent} evt 
+     */
     AgentNotificaitonEvent &#x3D; (evt: AgentNotificaitonEvent): void &#x3D;&gt; {
-        if (evt.Type !&#x3D;&#x3D; &#x27;IM&#x27;) {
+        if (evt.InteractionID &gt; 0 || evt.Type !&#x3D;&#x3D; &#x27;IM&#x27;) {
             return;
         }
         if (!this.allChats[evt.FromAgentId]) {
@@ -646,6 +780,10 @@ export class ChatPanelComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     };
 
+    /**
+     * TeamAgentListEvent Handler
+     * @param {any[]} evt 
+     */
     TeamAgentListEvent &#x3D; (evt: any[]): void &#x3D;&gt; {
         const agents &#x3D; groupBy(this.contacts, &#x27;id&#x27;);
         this.contacts &#x3D; sortBy(evt, &#x27;AgentName&#x27;).map((x) &#x3D;&gt; ({
