@@ -5,6 +5,9 @@ import { AppDataService } from '@services/app-data.service';
 import { ContentPageService } from '@services/content-page.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 
+/**
+ * Voice panel component
+ */
 @Component({
     selector: 'tw-voice-panel',
     templateUrl: './tw-voice-panel.component.html',
@@ -13,10 +16,19 @@ import { InteractionManagerService } from '@services/interaction-manager.service
 })
 export class TwVoicePanelComponent extends TWidgetWrapper implements OnInit, OnDestroy, AfterViewInit {
 
+    /**
+     * App config json data
+     */
     @Input() data: any;
 
+    /**
+     * Voice panel Widget list
+     */
     voicePanelWidgets = [];
 
+    /**
+     * Default values for maximize state
+     */
     maximized = [
         {
             'tw-voice-controls': false,
@@ -25,6 +37,9 @@ export class TwVoicePanelComponent extends TWidgetWrapper implements OnInit, OnD
         }
     ];
 
+    /**
+     * Default values for collapsed state
+     */
     collapsed = [
         {
             'tw-voice-controls': false,
@@ -33,6 +48,9 @@ export class TwVoicePanelComponent extends TWidgetWrapper implements OnInit, OnD
         }
     ];
 
+    /**
+     * Default values for floating state
+     */
     floating = [
         {
             'tw-voice-controls': false,
@@ -42,7 +60,6 @@ export class TwVoicePanelComponent extends TWidgetWrapper implements OnInit, OnD
     ];
 
     constructor(
-        private _appDataService: AppDataService,
         private _contentPageService: ContentPageService,
         private _interactionManagerService: InteractionManagerService
     ) {
@@ -53,6 +70,10 @@ export class TwVoicePanelComponent extends TWidgetWrapper implements OnInit, OnD
     // @ Lifecycle hooks
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * Lifecycle hook
+     * @method
+     */
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
@@ -66,6 +87,10 @@ export class TwVoicePanelComponent extends TWidgetWrapper implements OnInit, OnD
         });
     }
 
+    /**
+     * Lifecycle hook
+     * @method
+     */
     ngAfterViewInit(): void {
         // check if the current page is textchat page
         if (this._interactionManagerService.getInteractionCount().active <= 1 &&
@@ -76,19 +101,38 @@ export class TwVoicePanelComponent extends TWidgetWrapper implements OnInit, OnD
         }
     }
 
+    /**
+     * Lifecycle hook
+     * @method
+     */
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
     }
 
+    /**
+     * On maximised event handler
+     * @param {Boolean} ismaximized 
+     * @param {String} type 
+     */
     onmaximized(ismaximized: boolean, type: string): void {
         this.maximized[type] = ismaximized;
     }
 
+    /**
+     * On collapsed event handler
+     * @param {Boolean} isCollapsed 
+     * @param {String} type 
+     */
     onCollapsed(isCollapsed: boolean, type: string): void {
         this.collapsed[type] = isCollapsed;
     }
 
+    /**
+     * On floating event handler
+     * @param {Boolean} isFloating 
+     * @param {String} type 
+     */
     onFloating(isFloating: boolean, type: string): void {
         this.floating[type] = isFloating;
     }

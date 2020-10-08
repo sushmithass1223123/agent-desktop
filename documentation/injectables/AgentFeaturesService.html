@@ -59,6 +59,14 @@
             <code>src/app/services/agent-features.service.ts</code>
         </p>
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Need more Description
+Service for agent features</p>
+
+            </p>
 
 
 
@@ -111,17 +119,17 @@
                                 <a href="#captureLocation">captureLocation</a>
                             </li>
                             <li>
-                                    <span class="modifier">Public</span>
-                                <a href="#clearAgentFeatures">clearAgentFeatures</a>
-                            </li>
-                            <li>
                                     <span class="modifier">Private</span>
                                     <span class="modifier">Async</span>
                                 <a href="#getUrlFromStream">getUrlFromStream</a>
                             </li>
                             <li>
                                     <span class="modifier">Public</span>
-                                <a href="#processAgentFeatures">processAgentFeatures</a>
+                                <a href="#subscribe">subscribe</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#unsubscribe">unsubscribe</a>
                             </li>
                         </ul>
                     </td>
@@ -141,12 +149,12 @@
             <tbody>
                 <tr>
                     <td class="col-md-4">
-<code>constructor(_appDataService: <a href="../injectables/AppDataService.html">AppDataService</a>)</code>
+<code>constructor(_appUIService: <a href="../injectables/AppUiService.html">AppUiService</a>)</code>
                     </td>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="27" class="link-to-prism">src/app/services/agent-features.service.ts:27</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="75" class="link-to-prism">src/app/services/agent-features.service.ts:75</a></div>
                             </td>
                         </tr>
 
@@ -164,10 +172,10 @@
                                         </thead>
                                         <tbody>
                                                 <tr>
-                                                        <td>_appDataService</td>
+                                                        <td>_appUIService</td>
                                                   
                                                         <td>
-                                                                        <code><a href="../injectables/AppDataService.html" target="_self" >AppDataService</a></code>
+                                                                        <code><a href="../injectables/AppUiService.html" target="_self" >AppUiService</a></code>
                                                         </td>
                                                   
                                                     <td>
@@ -213,14 +221,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="131"
-                            class="link-to-prism">src/app/services/agent-features.service.ts:131</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="190"
+                            class="link-to-prism">src/app/services/agent-features.service.ts:190</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Capture camera stream</p>
+</div>
 
                     <div class="io-description">
                         <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
@@ -254,14 +264,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="167"
-                            class="link-to-prism">src/app/services/agent-features.service.ts:167</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="229"
+                            class="link-to-prism">src/app/services/agent-features.service.ts:229</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Capture Displayed stream</p>
+</div>
 
                     <div class="io-description">
                         <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
@@ -295,55 +307,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="209"
-                            class="link-to-prism">src/app/services/agent-features.service.ts:209</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="274"
+                            class="link-to-prism">src/app/services/agent-features.service.ts:274</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-
-                    <div class="io-description">
-                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
-
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="clearAgentFeatures"></a>
-                    <span class="name">
-                        <b>
-                            <span class="modifier">Public</span>
-                            clearAgentFeatures
-                        </b>
-                        <a href="#clearAgentFeatures"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                    <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>clearAgentFeatures()</code>
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="266"
-                            class="link-to-prism">src/app/services/agent-features.service.ts:266</a></div>
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="col-md-4">
+                    <div class="io-description"><p>Capture current location</p>
+</div>
 
                     <div class="io-description">
                         <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
@@ -378,14 +351,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="85"
-                            class="link-to-prism">src/app/services/agent-features.service.ts:85</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="141"
+                            class="link-to-prism">src/app/services/agent-features.service.ts:141</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Need more Description</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -430,34 +405,79 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="processAgentFeatures"></a>
+                    <a name="subscribe"></a>
                     <span class="name">
                         <b>
                             <span class="modifier">Public</span>
-                            processAgentFeatures
+                            subscribe
                         </b>
-                        <a href="#processAgentFeatures"><span class="icon ion-ios-link"></span></a>
+                        <a href="#subscribe"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
             <tr>
                 <td class="col-md-4">
                     <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>processAgentFeatures()</code>
+                    <code>subscribe()</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="228"
-                            class="link-to-prism">src/app/services/agent-features.service.ts:228</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="296"
+                            class="link-to-prism">src/app/services/agent-features.service.ts:296</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Subscribe to the available features</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="unsubscribe"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Public</span>
+                            unsubscribe
+                        </b>
+                        <a href="#unsubscribe"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>unsubscribe()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="339"
+                            class="link-to-prism">src/app/services/agent-features.service.ts:339</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Unsubscribe from all subscriptions</p>
+</div>
 
                     <div class="io-description">
                         <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
@@ -494,10 +514,16 @@
                     </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="13" class="link-to-prism">src/app/services/agent-features.service.ts:13</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="29" class="link-to-prism">src/app/services/agent-features.service.ts:29</a></div>
                             </td>
                         </tr>
 
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Agent Features</p>
+</div>
+                    </td>
+                </tr>
 
             </tbody>
         </table>
@@ -522,10 +548,17 @@
                     </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="11" class="link-to-prism">src/app/services/agent-features.service.ts:11</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="24" class="link-to-prism">src/app/services/agent-features.service.ts:24</a></div>
                             </td>
                         </tr>
 
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Processed
+Need More Description</p>
+</div>
+                    </td>
+                </tr>
 
             </tbody>
         </table>
@@ -549,11 +582,37 @@
                     </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="47" class="link-to-prism">src/app/services/agent-features.service.ts:47</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="99" class="link-to-prism">src/app/services/agent-features.service.ts:99</a></div>
                             </td>
                         </tr>
 
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Need more Description
+Event to take snapshot</p>
+</div>
+                    </td>
+                </tr>
 
+                    <tr>
+                        <td class="col-md-4">
+                          <div class="io-description">
+                                  <b>Parameters :</b>
+                                  <table class="params">
+                                      <thead>
+                                          <tr>
+                                                <td>Name</td>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                                <tr>
+                                                        <td>evt</td>
+                                                </tr>
+                                      </tbody>
+                                  </table>
+                          </div>
+                        </td>
+                    </tr>
             </tbody>
         </table>
 </section>
@@ -564,33 +623,83 @@
     <div class="tab-pane fade  tab-source-code" id="c-source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &#x27;@angular/core&#x27;;
 import { AgentFeatures, SDKClient, TUtils } from &#x27;tmac-sdk&#x27;;
-import { AppDataService } from &#x27;./app-data.service&#x27;;
+import { AppUiService } from &#x27;./app-ui.service&#x27;;
+
+/**
+ * Navigator
+ * Need more description
+ */
 declare const navigator: Navigator | any;
 
+/**
+ * Need more Description
+ * Service for agent features
+ */
 @Injectable({
     providedIn: &#x27;root&#x27;
 })
 export class AgentFeaturesService {
 
+    /**
+     * Processed
+     * Need More Description
+     */
     private _processed: boolean;
 
+    /**
+     * Agent Features
+     */
     private _agentFeatureInfo: {
+        /**
+         * Permissions granted to user
+         */
         permissions: {
+            /**
+             * Whether camera access is enabled
+             */
             camera: boolean;
+            /**
+             * Need more Description
+             * Whether display is enabled
+             */
             display: boolean;
+            /**
+             * Whether location acces is enabled
+             */
             location: boolean;
         },
+        /**
+         * Current features data
+         */
         data: {
+            /**
+             * Camera stream
+             */
             cameraStream: MediaStream,
+            /**
+             * Need more Description
+             * Current display stream
+             */
             displayStream: MediaStream,
+            /**
+             * Current Location
+             */
             location: {
+                /**
+                 * Latitude
+                 */
                 latitude: number;
+                /**
+                 * Longitude
+                 */
                 longitude: number;
             };
         }
     };
 
-    constructor(private _appDataService: AppDataService) {
+    constructor(
+        private _appUIService: AppUiService
+    ) {
         this._agentFeatureInfo &#x3D; {
             permissions: {
                 camera: false,
@@ -603,11 +712,13 @@ export class AgentFeaturesService {
                 location: null
             }
         };
-
-        // listen to AgentSnapShotEvent
-        SDKClient.events.on(&#x27;AgentSnapShotEvent&#x27;, this.AgentSnapShotEvent);
     }
 
+    /**
+     * Need more Description
+     * Event to take snapshot
+     * @param {any} evt 
+     */
     private AgentSnapShotEvent &#x3D; async (evt: any) &#x3D;&gt; {
         // init variables
         let screenshot &#x3D; &#x27;&#x27;;
@@ -646,6 +757,10 @@ export class AgentFeaturesService {
         });
     }
 
+    /**
+     * Need more Description
+     * @param {string} type 
+     */
     private async getUrlFromStream(type: string): Promise&lt;string&gt; {
         // media stream reference
         let stream: MediaStream;
@@ -692,6 +807,9 @@ export class AgentFeaturesService {
         });
     }
 
+    /**
+     * Capture camera stream
+     */
     private captureCameraStream(): void {
         // check if the permission got
         if (!SDKClient.getAgentData().isLoggedIn || this._agentFeatureInfo.permissions.camera) {
@@ -707,7 +825,7 @@ export class AgentFeaturesService {
             (stream: MediaStream) &#x3D;&gt; {
                 stream.getVideoTracks()[0].onended &#x3D; () &#x3D;&gt; {
                     this._agentFeatureInfo.permissions.camera &#x3D; false;
-                    this._appDataService.showMessage(&#x27;Ended: Please give access to the camera for supervisor&#x27;);
+                    this._appUIService.showSnackbar(&#x27;Ended: Please give access to the camera for supervisor&#x27;, &#x27;failure&#x27;);
                     setTimeout(() &#x3D;&gt; {
                         this.captureCameraStream();
                     }, 1000);
@@ -718,7 +836,7 @@ export class AgentFeaturesService {
             },
             (error: MediaStreamError) &#x3D;&gt; {
                 this._agentFeatureInfo.permissions.camera &#x3D; false;
-                this._appDataService.showMessage(&#x27;Error: Please give access to the camera for supervisor&#x27;);
+                this._appUIService.showSnackbar(&#x27;Error: Please give access to the camera for supervisor&#x27;, &#x27;failure&#x27;);
                 setTimeout(() &#x3D;&gt; {
                     this.captureCameraStream();
                 }, 4000);
@@ -728,6 +846,9 @@ export class AgentFeaturesService {
         );
     }
 
+    /**
+     * Capture Displayed stream
+     */
     private captureDisplayStream(): void {
         // check if the permission got
         if (!SDKClient.getAgentData().isLoggedIn || this._agentFeatureInfo.permissions.display) {
@@ -739,7 +860,7 @@ export class AgentFeaturesService {
             .then((stream: any) &#x3D;&gt; {
                 stream.getVideoTracks()[0].onended &#x3D; () &#x3D;&gt; {
                     this._agentFeatureInfo.permissions.display &#x3D; false;
-                    this._appDataService.showMessage(&#x27;Ended: Please share your entire screen for supervisor&#x27;);
+                    this._appUIService.showSnackbar(&#x27;Ended: Please share your entire screen for supervisor&#x27;, &#x27;failure&#x27;);
                     setTimeout(() &#x3D;&gt; {
                         this.captureDisplayStream();
                     }, 1000);
@@ -761,7 +882,7 @@ export class AgentFeaturesService {
             })
             .catch((error: MediaStreamError) &#x3D;&gt; {
                 this._agentFeatureInfo.permissions.display &#x3D; false;
-                this._appDataService.showMessage(&#x27;Error: Please share your entire screen for supervisor&#x27;);
+                this._appUIService.showSnackbar(&#x27;Error: Please share your entire screen for supervisor&#x27;, &#x27;failure&#x27;);
                 setTimeout(() &#x3D;&gt; {
                     this.captureDisplayStream();
                 }, 2000);
@@ -770,6 +891,9 @@ export class AgentFeaturesService {
             });
     }
 
+    /**
+     * Capture current location
+     */
     private captureLocation(): void {
         // get geolocation
         navigator.geolocation.getCurrentPosition(
@@ -789,13 +913,18 @@ export class AgentFeaturesService {
             });
     }
 
-    public processAgentFeatures(): void {
-        TUtils.Logger.console(&#x27;log&#x27;, &#x27;processAgentFeatures&#x27;);
+    /**
+     * Subscribe to the available features
+     */
+    public subscribe(): void {
+        TUtils.Logger.console(&#x27;info&#x27;, &#x27;AgentFeaturesService.subscribe&#x27;);
+        // listen to AgentSnapShotEvent
+        SDKClient.events.on(&#x27;AgentSnapShotEvent&#x27;, this.AgentSnapShotEvent);
         // get the agent features from SDK
         const agentFeatures &#x3D; SDKClient.getAgentData().featuresList;
         // check the list
         if (agentFeatures.length &#x3D;&#x3D;&#x3D; 0) {
-            TUtils.Logger.log(&#x27;processAgentFeatures: agent features are empty!&#x27;);
+            TUtils.Logger.log(&#x27;AgentFeaturesService.subscribe: agent features are empty!&#x27;);
             return;
         }
         // loop through the features and process
@@ -827,7 +956,12 @@ export class AgentFeaturesService {
         });
     }
 
-    public clearAgentFeatures(): void {
+    /**
+     * Unsubscribe from all subscriptions
+     */
+    public unsubscribe(): void {
+        TUtils.Logger.console(&#x27;info&#x27;, &#x27;AgentFeaturesService.unsubscribe&#x27;);
+
         // unregister from AgentSnapShotEvent
         SDKClient.events.off(&#x27;AgentSnapShotEvent&#x27;, this.AgentSnapShotEvent);
 

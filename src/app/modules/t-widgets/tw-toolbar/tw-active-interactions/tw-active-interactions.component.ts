@@ -10,6 +10,9 @@ import { InteractionRef } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
 import { AVChannel, IResponse, SDKClient } from 'tmac-sdk';
 
+/**
+ * Active interactions
+ */
 @Component({
     selector: 'tw-active-interactions',
     templateUrl: './tw-active-interactions.component.html',
@@ -19,9 +22,20 @@ import { AVChannel, IResponse, SDKClient } from 'tmac-sdk';
 })
 export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
 
+    /**
+     * App json data
+     */
     @Input() data: any;
 
+    /**
+     * Interaction list
+     */
     interactionList: InteractionRef[] = [];
+
+    /**
+     * Need more description
+     * Current view mode
+     */
     currentViewMode: string;
 
     constructor(
@@ -33,6 +47,10 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
         super();
     }
 
+    /**
+     * Lifecycle hook
+     * @method
+     */
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
@@ -56,11 +74,21 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
             });
     }
 
+
+    /**
+     * Lifecycle hook
+     * @method
+     */
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
     }
 
+    /**
+     * Toggle button
+     * @param {boolean} show 
+     * @param {MatButton} btn 
+     */
     private toggleButton(show: boolean, btn: MatButton): void {
         if (show) {
             // show the progress bar 
@@ -76,6 +104,10 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
         }
     }
 
+    /**
+     * Open Interaction
+     * @param {InteractionRef} item 
+     */
     public openInteraction(item: InteractionRef): void {
         const data: any = new Object();
 
@@ -105,6 +137,11 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
         }
     }
 
+    /**
+     * Hold call
+     * @param {InteractionRef} item 
+     * @param {MatButton} btn 
+     */
     public holdCall(item: InteractionRef, btn: MatButton): void {
         // toggle the button
         this.toggleButton(true, btn);
@@ -132,6 +169,11 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
             });
     }
 
+    /**
+     * UnHold call
+     * @param {InteractionRef} item 
+     * @param {MatButton} btn 
+     */
     public unHoldCall(item: InteractionRef, btn: MatButton): void {
         // toggle the button
         this.toggleButton(true, btn);
@@ -159,6 +201,11 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
             });
     }
 
+    /**
+     * Disconnect Call
+     * @param {InteractionRef} item 
+     * @param {MatButton} btn 
+     */
     public disconnectCall(item: InteractionRef, btn: MatButton): void {
         // toggle the button
         this.toggleButton(true, btn);

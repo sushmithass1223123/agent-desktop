@@ -59,6 +59,13 @@
             <code>src/app/services/content-page.service.ts</code>
         </p>
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Content Page Service</p>
+
+            </p>
 
 
 
@@ -130,7 +137,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="10" class="link-to-prism">src/app/services/content-page.service.ts:10</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/app/services/content-page.service.ts:16</a></div>
                             </td>
                         </tr>
 
@@ -165,8 +172,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="40"
-                            class="link-to-prism">src/app/services/content-page.service.ts:40</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="46"
+                            class="link-to-prism">src/app/services/content-page.service.ts:46</a></div>
                 </td>
             </tr>
 
@@ -211,10 +218,17 @@
                     </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="10" class="link-to-prism">src/app/services/content-page.service.ts:10</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/app/services/content-page.service.ts:16</a></div>
                             </td>
                         </tr>
 
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>View Mode Subject
+Need More Description</p>
+</div>
+                    </td>
+                </tr>
 
             </tbody>
         </table>
@@ -240,7 +254,7 @@
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">src/app/services/content-page.service.ts:33</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="39" class="link-to-prism">src/app/services/content-page.service.ts:39</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -262,7 +276,7 @@
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">src/app/services/content-page.service.ts:25</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="31" class="link-to-prism">src/app/services/content-page.service.ts:31</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -310,12 +324,18 @@
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &#x27;@angular/core&#x27;;
 import { BehaviorSubject, Observable } from &#x27;rxjs&#x27;;
 
+/**
+ * Content Page Service
+ */
 @Injectable({
     providedIn: &#x27;root&#x27;
 })
 export class ContentPageService {
 
-    // Private
+    /**
+     * View Mode Subject
+     * Need More Description
+     */
     private _viewModeSubject: BehaviorSubject&lt;any&gt;;
 
     constructor() {

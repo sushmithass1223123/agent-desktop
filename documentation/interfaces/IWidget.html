@@ -88,6 +88,10 @@
                                         <a href="#Description">Description</a>
                                 </li>
                                 <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#destroy">destroy</a>
+                                </li>
+                                <li>
                                         <a href="#ID">ID</a>
                                 </li>
                                 <li>
@@ -96,6 +100,10 @@
                                 </li>
                                 <li>
                                         <a href="#Name">Name</a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#OnDestroy">OnDestroy</a>
                                 </li>
                                 <li>
                                         <a href="#Type">Type</a>
@@ -138,6 +146,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Widget Configs</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -167,6 +181,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Widget Custom Data</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -196,6 +216,53 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Widget Description</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="destroy"></a>
+                                        <span class="name"><b>destroy</b><a href="#destroy"><span class="icon ion-ios-link"></span></a></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>destroy:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/function" target="_blank" >function</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/function" target="_blank" >function</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Need more description
+Widget on destroy callback</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -225,6 +292,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Widget Id</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -259,6 +332,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Widget Interaction Details</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -288,6 +367,53 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Name of the Widget</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="OnDestroy"></a>
+                                        <span class="name"><b>OnDestroy</b><a href="#OnDestroy"><span class="icon ion-ios-link"></span></a></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>OnDestroy:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/function" target="_blank" >function</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/function" target="_blank" >function</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Need more description
+Widget on destroy callback</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -317,6 +443,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Type of widget from widget library</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -327,44 +459,131 @@
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { TWidget } from &#x27;@modules/t-widgets/utils&#x27;;
 
 export interface IWidget {
+    /**
+     * Name of the Widget
+     */
     Name: string;
+    /**
+     * Widget Id
+     */
     ID: string;
+    /**
+     * Widget Description
+     */
     Description: string;
+    /**
+     * Type of widget from widget library
+     */
     Type: string;
+    /**
+     * Widget Configs
+     */
     Config: IWidgetConfig;
+    /**
+     * Widget Custom Data
+     */
     Data: any;
+    /**
+     * Widget Interaction Details
+     */
     InteractionDetails?: any;
+    /**
+     * Need more description
+     * Widget on destroy callback
+     */
+    destroy?: () &#x3D;&gt; void;
+    /**
+     * Need more description
+     * Widget on destroy callback
+     */
+    OnDestroy?: () &#x3D;&gt; boolean;
 }
 
 export interface InteractionWidgets {
+    /**
+     * Interaction Id
+     */
     interactionId: number;
+    /**
+     * Widgets
+     */
     widgets: {
+        /**
+         * Static Widgets
+         */
         static: TWidget[];
+        /**
+         * Dynamic Widgets
+         */
         dynamic: TWidget[];
-        aot?: TWidget[]
+        /**
+         * AOT widgets
+         */
+        aot?: TWidget[];
     };
 }
 
 export interface IWidgetConfig {
+    /**
+     * Enabled flag
+     */
+    Enabled: boolean;
+    /**
+     * Static flag
+     */
     Static: boolean;
+    /**
+     * Anchor flag
+     */
     Anchor: boolean;
+    /**
+     * AOT flag
+     */
     AOT: boolean;
+    /**
+     * Icon of Widget
+     */
     Icon: string;
+    /**
+     * class of widget
+     */
     Class: string;
+    /**
+     * Widget position
+     */
     Position: IWidgetPosition;
-    Actions: any[];
-    ViewState: string;
-    PinState: boolean;
-    FloatState: boolean;
-    Resizable: boolean;
+    /**
+     * Available widget actions
+     */
+    Actions: IAction[];
+    /**
+     * Initail state of widget
+     */
+    ViewState: &#x27;restore&#x27; | &#x27;maximize&#x27; | &#x27;minimize&#x27; | &#x27;hidden&#x27; | &#x27;float&#x27;;
+    /**
+     * Header flag
+     */
     Header: boolean;
-    Disabled: boolean;
 }
 
+export type IAction &#x3D; &#x27;restore&#x27; | &#x27;maximize&#x27; | &#x27;minimize&#x27; | &#x27;destroy&#x27; | &#x27;float&#x27;;
+
 export interface IWidgetPosition {
+    /**
+     * X axis position
+     */
     X: number;
+    /**
+     * Y axis position
+     */
     Y: number;
+    /**
+     * Height of widget
+     */
     H?: number;
+    /**
+     * Width of widget
+     */
     W?: number;
 }
 </code></pre>

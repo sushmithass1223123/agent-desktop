@@ -2,12 +2,21 @@ import { Injectable } from '@angular/core';
 import * as _ from 'lodash';
 import { BehaviorSubject, Observable } from 'rxjs';
 
+/**
+ * Service to inject the data for widget from App config json
+ */
 @Injectable({
     providedIn: 'root'
 })
 export class AppDataService {
-    // Private
+
+    /**
+     * Need more Description
+     */
     private _configSubject: BehaviorSubject<any>;
+    /**
+     * App Config Json subject
+     */
     private _appConfigSubject: BehaviorSubject<any>;
 
     constructor() {
@@ -54,6 +63,9 @@ export class AppDataService {
         this._appConfigSubject.next(config);
     }
 
+    /**
+     * Get App Config
+     */
     get appConfig(): any | Observable<any> {
         return this._appConfigSubject.asObservable();
     }

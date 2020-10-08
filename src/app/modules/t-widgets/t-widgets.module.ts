@@ -7,6 +7,9 @@ import { TwContentModule } from './tw-content/tw-content.module';
 import { TwTemplateModule } from './tw-template/tw-template.module';
 import { TwToolbarModule } from './tw-toolbar/tw-toolbar.module';
 
+/**
+ * Widgts module list
+ */
 const widgetModules = [
     TwToolbarModule,
     TwContentModule,
@@ -14,6 +17,9 @@ const widgetModules = [
     TwCollectionsModule
 ];
 
+/**
+ * Widgets Module
+ */
 @NgModule({
     declarations: [],
     providers: [

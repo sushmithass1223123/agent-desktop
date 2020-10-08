@@ -1,0 +1,1580 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>agent-desktop documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	      <link rel="stylesheet" href="../styles/style.css">
+    </head>
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top visible-xs">
+            <a href="../" class="navbar-brand">agent-desktop documentation</a>
+            <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="hidden-xs menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+<ol class="breadcrumb">
+  <li>Components</li>
+  <li>WorkbenchEmailComponent</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="active">
+            <a href="#info" role="tab" id="info-tab" data-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li >
+            <a href="#source" role="tab" id="source-tab" data-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li >
+            <a href="#templateData" role="tab" id="templateData-tab" data-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li >
+            <a href="#styleData" role="tab" id="styleData-tab" data-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li >
+            <a href="#tree" role="tab" id="tree-tab" data-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="c-info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>src/app/modules/t-widgets/tw-collections/tw-workbench-panel/workbench-email/workbench-email.component.ts</code>
+</p>
+
+    <p class="comment">
+        <h3>Description</h3>
+    </p>
+    <p class="comment">
+        <p>Workbench Email</p>
+
+    </p>
+
+    <p class="comment">
+        <h3>Extends</h3>
+    </p>
+    <p class="comment">
+                <code><a href="../classes/TWidget.html" target="_self" >TWidgetWrapper</a></code>
+    </p>
+
+    <p class="comment">
+        <h3>Implements</h3>
+    </p>
+    <p class="comment">
+                    <code><a href="https://angular.io/api/core/OnInit" target="_blank" >OnInit</a></code>
+                    <code><a href="https://angular.io/api/core/OnDestroy" target="_blank" >OnDestroy</a></code>
+    </p>
+
+
+<section>
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover">
+        <tbody>
+
+
+            <tr>
+                <td class="col-md-3">encapsulation</td>
+                <td class="col-md-9"><code>ViewEncapsulation.None</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>workbench-email</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./workbench-email.component.scss</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./workbench-email.component.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section>
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#advancedSearchForm">advancedSearchForm</a>
+                            </li>
+                            <li>
+                                <a href="#appConfig">appConfig</a>
+                            </li>
+                            <li>
+                                <a href="#dataSource">dataSource</a>
+                            </li>
+                            <li>
+                                <a href="#emailSearchRes">emailSearchRes</a>
+                            </li>
+                            <li>
+                                <a href="#fuseConfig">fuseConfig</a>
+                            </li>
+                            <li>
+                                <a href="#hasChild">hasChild</a>
+                            </li>
+                            <li>
+                                <a href="#searchTerm">searchTerm</a>
+                            </li>
+                            <li>
+                                <a href="#selectedMail">selectedMail</a>
+                            </li>
+                            <li>
+                                <a href="#treeControl">treeControl</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#advancedSearch">advancedSearch</a>
+                            </li>
+                            <li>
+                                <a href="#ngOnDestroy">ngOnDestroy</a>
+                            </li>
+                            <li>
+                                <a href="#ngOnInit">ngOnInit</a>
+                            </li>
+                            <li>
+                                <a href="#pullEmail">pullEmail</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Inputs</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#data">data</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section>
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(_fuseConfigService: <a href="../injectables/FuseConfigService.html">FuseConfigService</a>, _appDataService: <a href="../injectables/AppDataService.html">AppDataService</a>, http: <a href="https://angular.io/api/common/http/HttpClient" target="_blank">HttpClient</a>, domSanitizer: <a href="https://angular.io/api/platform-browser/DomSanitizer" target="_blank">DomSanitizer</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="90" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-workbench-panel/workbench-email/workbench-email.component.ts:90</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div class="io-description"><p>Constructor</p>
+</div>
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>_fuseConfigService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/FuseConfigService.html" target="_self" >FuseConfigService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>_appDataService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/AppDataService.html" target="_self" >AppDataService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>http</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="https://angular.io/api/common/http/HttpClient" target="_blank" >HttpClient</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>domSanitizer</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="https://angular.io/api/platform-browser/DomSanitizer" target="_blank" >DomSanitizer</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+    <section>
+    <h3 id="inputs">Inputs</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="data"></a>
+                        <b>data</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/IWidget.html" target="_self" >IWidget</a></code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-workbench-panel/workbench-email/workbench-email.component.ts:33</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>holds all the data related to this widget from the config</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+
+
+    <section>
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="advancedSearch"></a>
+                    <span class="name">
+                        <b>
+                            advancedSearch
+                        </b>
+                        <a href="#advancedSearch"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>advancedSearch()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="170"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-workbench-panel/workbench-email/workbench-email.component.ts:170</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Advbanced Search</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngOnDestroy"></a>
+                    <span class="name">
+                        <b>
+                            ngOnDestroy
+                        </b>
+                        <a href="#ngOnDestroy"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngOnDestroy()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="146"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-workbench-panel/workbench-email/workbench-email.component.ts:146</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngOnInit"></a>
+                    <span class="name">
+                        <b>
+                            ngOnInit
+                        </b>
+                        <a href="#ngOnInit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngOnInit()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="125"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-workbench-panel/workbench-email/workbench-email.component.ts:125</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>A callback method that is invoked immediately after the default change detector has checked the directive&#39;s data-bound properties for the first time,
+and before any of the view or content children have been checked. It is invoked only once when the directive is instantiated.</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="pullEmail"></a>
+                    <span class="name">
+                        <b>
+                            pullEmail
+                        </b>
+                        <a href="#pullEmail"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>pullEmail()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="261"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-workbench-panel/workbench-email/workbench-email.component.ts:261</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Pull email</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section>
+    
+        <h3 id="inputs">
+            Properties
+        </h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="advancedSearchForm"></a>
+                        <span class="name">
+                            <b>
+                            advancedSearchForm</b>
+                            <a href="#advancedSearchForm"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>new FormGroup({
+        email: new FormControl(&#x27;&#x27;),
+        queue: new FormControl(&#x27;&#x27;),
+        fromDate: new FormControl(&#x27;&#x27;),
+        fromTime: new FormControl(&#x27;&#x27;),
+        toDate: new FormControl(&#x27;&#x27;),
+        toTime: new FormControl(&#x27;&#x27;),
+        subject: new FormControl(&#x27;&#x27;),
+        content: new FormControl(&#x27;&#x27;)
+    })</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="72" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-workbench-panel/workbench-email/workbench-email.component.ts:72</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Advanced search form group</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="appConfig"></a>
+                        <span class="name">
+                            <b>
+                            appConfig</b>
+                            <a href="#appConfig"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="43" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-workbench-panel/workbench-email/workbench-email.component.ts:43</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>[OPTIONAL] to store entire app config and get update</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="dataSource"></a>
+                        <span class="name">
+                            <b>
+                            dataSource</b>
+                            <a href="#dataSource"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>new MatTreeNestedDataSource&lt;any&gt;()</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="90" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-workbench-panel/workbench-email/workbench-email.component.ts:90</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Tree Data source</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="emailSearchRes"></a>
+                        <span class="name">
+                            <b>
+                            emailSearchRes</b>
+                            <a href="#emailSearchRes"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="../interfaces/ResData.html" target="_self" >ResData&lt;literal type&gt;</a></code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>{
+            error: false,
+            loading: false,
+            msg: &#x27;&#x27;,
+            data: {
+                selected: false
+            }
+        }</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-workbench-panel/workbench-email/workbench-email.component.ts:56</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Email Search Stateful request</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="fuseConfig"></a>
+                        <span class="name">
+                            <b>
+                            fuseConfig</b>
+                            <a href="#fuseConfig"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="../interfaces/FuseConfig.html" target="_self" >FuseConfig</a></code>
+
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="38" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-workbench-panel/workbench-email/workbench-email.component.ts:38</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>[OPTIONAL] to store the fuse config for theme</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="hasChild"></a>
+                        <span class="name">
+                            <b>
+                            hasChild</b>
+                            <a href="#hasChild"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>() &#x3D;&gt; {...}</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="164" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-workbench-panel/workbench-email/workbench-email.component.ts:164</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Check if tree node has child</p>
+</div>
+                    </td>
+                </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                          <div class="io-description">
+                                  <b>Parameters :</b>
+                                  <table class="params">
+                                      <thead>
+                                          <tr>
+                                                <td>Name</td>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                                <tr>
+                                                        <td>_</td>
+                                                </tr>
+                                                <tr>
+                                                        <td>node</td>
+                                                </tr>
+                                      </tbody>
+                                  </table>
+                          </div>
+                        </td>
+                    </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="searchTerm"></a>
+                        <span class="name">
+                            <b>
+                            searchTerm</b>
+                            <a href="#searchTerm"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>&#x27;&#x27;</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="48" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-workbench-panel/workbench-email/workbench-email.component.ts:48</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Search key</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="selectedMail"></a>
+                        <span class="name">
+                            <b>
+                            selectedMail</b>
+                            <a href="#selectedMail"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="52" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-workbench-panel/workbench-email/workbench-email.component.ts:52</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Selected Mail</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="treeControl"></a>
+                        <span class="name">
+                            <b>
+                            treeControl</b>
+                            <a href="#treeControl"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>new NestedTreeControl&lt;any&gt;((node) &#x3D;&gt; node.children)</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="86" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-workbench-panel/workbench-email/workbench-email.component.ts:86</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Tree Controls</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+</section>
+
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="c-source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { NestedTreeControl } from &#x27;@angular/cdk/tree&#x27;;
+import { HttpClient } from &#x27;@angular/common/http&#x27;;
+import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from &#x27;@angular/core&#x27;;
+import { FormControl, FormGroup } from &#x27;@angular/forms&#x27;;
+import { MatTreeNestedDataSource } from &#x27;@angular/material/tree&#x27;;
+import { DomSanitizer } from &#x27;@angular/platform-browser&#x27;;
+import { fuseAnimations } from &#x27;@fuse/animations&#x27;;
+import { FuseConfigService } from &#x27;@fuse/services/config.service&#x27;;
+import { FuseConfig } from &#x27;@fuse/types&#x27;;
+import { TWidgetWrapper } from &#x27;@modules/t-widgets/utils&#x27;;
+import { AppDataService } from &#x27;@services/app-data.service&#x27;;
+import { COMMON_ERR_MESSAGE } from &#x27;app/constants&#x27;;
+import { IWidget, ResData } from &#x27;app/interfaces&#x27;;
+import { groupBy } from &#x27;lodash&#x27;;
+import * as moment from &#x27;moment&#x27;;
+import { takeUntil } from &#x27;rxjs/operators&#x27;;
+import { SDKClient } from &#x27;tmac-sdk&#x27;;
+
+/**
+ * Workbench Email
+ */
+@Component({
+    selector: &#x27;workbench-email&#x27;, // make sure you set the selector starts with &lt;widget-name&gt;
+    templateUrl: &#x27;./workbench-email.component.html&#x27;,
+    styleUrls: [&#x27;./workbench-email.component.scss&#x27;],
+    encapsulation: ViewEncapsulation.None,
+    animations: fuseAnimations
+})
+export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+    /**
+     * holds all the data related to this widget from the config
+     */
+    @Input() data: IWidget;
+
+    /**
+     * [OPTIONAL] to store the fuse config for theme
+     */
+    fuseConfig: FuseConfig;
+
+    /**
+     * [OPTIONAL] to store entire app config and get update
+     */
+    appConfig: any;
+
+    /**
+     * Search key
+     */
+    searchTerm &#x3D; &#x27;&#x27;;
+    /**
+     * Selected Mail
+     */
+    selectedMail: number;
+    /**
+     * Email Search Stateful request
+     */
+    emailSearchRes: ResData&lt;{
+        /**
+         * Selected email
+         */
+        selected: any
+    }&gt; &#x3D; {
+            error: false,
+            loading: false,
+            msg: &#x27;&#x27;,
+            data: {
+                selected: false
+            }
+        };
+    /**
+     * Advanced search form group
+     */
+    advancedSearchForm &#x3D; new FormGroup({
+        email: new FormControl(&#x27;&#x27;),
+        queue: new FormControl(&#x27;&#x27;),
+        fromDate: new FormControl(&#x27;&#x27;),
+        fromTime: new FormControl(&#x27;&#x27;),
+        toDate: new FormControl(&#x27;&#x27;),
+        toTime: new FormControl(&#x27;&#x27;),
+        subject: new FormControl(&#x27;&#x27;),
+        content: new FormControl(&#x27;&#x27;)
+    });
+
+    /**
+     * Tree Controls
+     */
+    treeControl &#x3D; new NestedTreeControl&lt;any&gt;((node) &#x3D;&gt; node.children);
+    /**
+     * Tree Data source
+     */
+    dataSource &#x3D; new MatTreeNestedDataSource&lt;any&gt;();
+
+    /**
+     * Constructor
+     * @param {FuseConfigService} _fuseConfigService
+     * @param {AppDataService} _appDataService
+     */
+    constructor(
+        // @ [OPTIONAL]
+        private _fuseConfigService: FuseConfigService,
+        // @ [OPTIONAL]
+        private _appDataService: AppDataService,
+        private http: HttpClient,
+        private domSanitizer: DomSanitizer
+    ) {
+        super();
+        const today &#x3D; new Date();
+        const yesterday &#x3D; new Date();
+        yesterday.setDate(today.getDate() - 1);
+        this.advancedSearchForm.patchValue({
+            fromDate: yesterday,
+            fromTime: &#x60;${yesterday.getHours()}:${yesterday.getMinutes()}&#x60;,
+            toDate: today,
+            toTime: &#x60;${today.getHours()}:${today.getMinutes()}&#x60;
+        });
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+    // @ Lifecycle hooks
+    // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * A callback method that is invoked immediately after the default change detector has checked the directive&#x27;s data-bound properties for the first time,
+     * and before any of the view or content children have been checked. It is invoked only once when the directive is instantiated.
+     */
+    ngOnInit(): void {
+        // -----------------------------------------------------------
+        // @ [OPTIONAL] to get the fuse config
+        // -----------------------------------------------------------
+        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) &#x3D;&gt; {
+            this.fuseConfig &#x3D; config;
+        });
+
+        // -----------------------------------------------------------
+        // @ [OPTIONAL] to get the app config
+        // -----------------------------------------------------------
+        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) &#x3D;&gt; {
+            this.appConfig &#x3D; config;
+        });
+
+        this.advancedSearch();
+    }
+
+    /**
+     * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
+     */
+    ngOnDestroy(): void {
+        // call the wrapper destroy method
+        this.destroyWrapper();
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+    // @  Private Methods
+    // -----------------------------------------------------------------------------------------------------
+
+    // -----------------------------------------------------------------------------------------------------
+    // @  Public Methods
+    // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * Check if tree node has child
+     * @param {number} _ 
+     * @param {any} node 
+     */
+    hasChild &#x3D; (_: number, node: any) &#x3D;&gt; !!node.children &amp;&amp; node.children.length &gt; 0;
+
+    /**
+     * Advbanced Search
+     * @method advancedSearch
+     */
+    advancedSearch(): void {
+        if (!this.data.Data.WorkbenchUrl) {
+            this.emailSearchRes &#x3D; {
+                loading: false,
+                error: true,
+                msg: &#x27;WorkbenchUrl not provided&#x27;,
+                data: { selected: this.emailSearchRes.data.selected || false }
+            };
+            return;
+        }
+
+        const { agentId } &#x3D; SDKClient.getAgentData();
+
+        const searchFields &#x3D; this.advancedSearchForm.value;
+
+        let startDate: any &#x3D; &#x27;&#x27;;
+        let endDate: any &#x3D; &#x27;&#x27;;
+
+        if (searchFields.fromDate) {
+            startDate &#x3D; new Date(searchFields.fromDate);
+            startDate.setHours(searchFields.fromTime?.split(&#x27;:&#x27;)[0] || &#x27;00&#x27;);
+            startDate.setMinutes(searchFields.fromTime?.split(&#x27;:&#x27;)[1] || &#x27;00&#x27;);
+            startDate.setSeconds(0);
+            startDate &#x3D; moment(startDate).format(&#x27;YYYYMMDDHHmmss&#x27;);
+        }
+
+        if (searchFields.toDate) {
+            endDate &#x3D; new Date(searchFields.toDate);
+            endDate.setHours(searchFields.toTime?.split(&#x27;:&#x27;)[0] || &#x27;00&#x27;);
+            endDate.setMinutes(searchFields.toTime?.split(&#x27;:&#x27;)[1] || &#x27;00&#x27;);
+            endDate.setSeconds(0);
+            endDate &#x3D; moment(endDate).format(&#x27;YYYYMMDDHHmmss&#x27;);
+        }
+
+        this.emailSearchRes.loading &#x3D; true;
+
+        this.http
+            .post(this.data.Data.WorkbenchUrl + &#x27;/email/search&#x27;, {
+                skills: searchFields.skills ? [searchFields.skills] : [],
+                email: searchFields.email,
+                agent: &#x27;&#x27;,
+                startDate,
+                endDate,
+                subject: searchFields.subject,
+                content: searchFields.content
+            })
+            .subscribe(
+                (res: any) &#x3D;&gt; {
+                    if (res.status &#x3D;&#x3D;&#x3D; &#x27;SUCCESS&#x27;) {
+                        const mails &#x3D; res.result.map((x: any) &#x3D;&gt; {
+                            const mailRes &#x3D; JSON.parse(x.data);
+                            mailRes.addedTime &#x3D; x.addedTime;
+                            mailRes.body &#x3D; this.domSanitizer.bypassSecurityTrustHtml(mailRes.body);
+                            return mailRes;
+                        });
+                        const byMailList &#x3D; groupBy(mails, &#x27;To&#x27;);
+                        const nodes &#x3D; Object.keys(byMailList).map((name) &#x3D;&gt; {
+                            const test &#x3D; groupBy(byMailList[name], &#x27;Skill&#x27;);
+                            return { name, children: Object.keys(test).map((n) &#x3D;&gt; ({ name: n, children: test[n] })) };
+                        });
+                        this.emailSearchRes &#x3D; {
+                            loading: false,
+                            error: false,
+                            msg: &#x27;&#x27;,
+                            data: { selected: this.emailSearchRes.data.selected || false }
+                        };
+                        this.dataSource.data &#x3D; nodes;
+                    } else {
+                        this.emailSearchRes &#x3D; {
+                            loading: false,
+                            error: true,
+                            msg: COMMON_ERR_MESSAGE,
+                            data: { selected: this.emailSearchRes.data.selected || false }
+                        };
+                    }
+                },
+                () &#x3D;&gt; {
+                    this.emailSearchRes &#x3D; {
+                        loading: false,
+                        error: true,
+                        msg: COMMON_ERR_MESSAGE,
+                        data: { selected: this.emailSearchRes.data.selected || false }
+                    };
+                }
+            );
+    }
+
+    /**
+     * Pull email
+     * @method pullEmail
+     */
+    pullEmail(): void {
+        const { agentId } &#x3D; SDKClient.getAgentData();
+        const { SessionId, RouteId } &#x3D; this.emailSearchRes.data.selected;
+        this.http
+            .post(this.data.Data.WorkbenchUrl + &#x27;/email/pull&#x27;, {
+                tmacServer: &#x27;&#x27;,
+                agentId,
+                items: [
+                    {
+                        sessionId: SessionId,
+                        routeId: RouteId,
+                        conversationId: &#x27;&#x27;
+                    }
+                ]
+            })
+            .subscribe(
+                (res: any) &#x3D;&gt; {
+                    if (res.status &#x3D;&#x3D;&#x3D; &#x27;FAILED&#x27;) {
+                        console.log({ err: res });
+                        return;
+                    }
+                },
+                (err) &#x3D;&gt; {
+                    console.log(err);
+                }
+            );
+    }
+}
+
+// for more info visit - https://angular.io/api/core
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="c-templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;div
+    fxLayout
+    fxLayoutAlign&#x3D;&quot;space-evenly center&quot;
+    class&#x3D;&quot;email-workbench w-100-p h-100-p&quot;
+    [ngClass]&#x3D;&quot;
+        fuseConfig.layout.anchorWidget.customBackgroundColor &#x3D;&#x3D;&#x3D; true &amp;&amp; data.Config.Anchor
+            ? fuseConfig.layout.anchorWidget.bodyBackground
+            : fuseConfig.layout.widget.customBackgroundColor &#x3D;&#x3D;&#x3D; true
+            ? fuseConfig.layout.widget.bodyBackground
+            : &#x27;&#x27;
+    &quot;
+&gt;
+    &lt;div fxFlex&#x3D;&quot;33&quot; (click)&#x3D;&quot;advancedSearchMenu.classList.remove(&#x27;show&#x27;)&quot; class&#x3D;&quot;email-list border-radius-20&quot; fusePerfectScrollbar&gt;
+        &lt;div fxLayout fxLayoutAlign&#x3D;&quot;center center&quot; (click)&#x3D;&quot;$event.stopPropagation()&quot; class&#x3D;&quot;search-input my-8 border-radius-20 position-relative&quot;&gt;
+            &lt;mat-form-field class&#x3D;&quot;custom with-border form-field w-100-p&quot; appearance&#x3D;&quot;outline&quot;&gt;
+                &lt;input class&#x3D;&quot;login-input&quot; matInput placeholder&#x3D;&quot;Search&quot; [(ngModel)]&#x3D;&quot;searchTerm&quot; (input)&#x3D;&quot;filterEmails()&quot; /&gt;
+                &lt;button *ngIf&#x3D;&quot;!searchTerm; else clearBtn&quot; mat-icon-button matSuffix disabled&gt;
+                    &lt;mat-icon matSuffix&gt;search&lt;/mat-icon&gt;
+                &lt;/button&gt;
+                &lt;ng-template #clearBtn&gt;
+                    &lt;button
+                        mat-button
+                        color&#x3D;&quot;accent&quot;
+                        matSuffix
+                        mat-icon-button
+                        aria-label&#x3D;&quot;Clear&quot;
+                        [@animate]&#x3D;&quot;{ value: &#x27;*&#x27;, params: { delay: &#x27;100ms&#x27;, x: &#x27;100%&#x27; } }&quot;
+                        (click)&#x3D;&quot;searchTerm &#x3D; &#x27;&#x27;; filterEmails()&quot;
+                    &gt;
+                        &lt;mat-icon&gt;close&lt;/mat-icon&gt;
+                    &lt;/button&gt;
+                &lt;/ng-template&gt;
+            &lt;/mat-form-field&gt;
+            &lt;button mat-icon-button class&#x3D;&quot;ml-4&quot; (click)&#x3D;&quot;advancedSearchMenu.classList.toggle(&#x27;show&#x27;)&quot; matTooltip&#x3D;&quot;Advance Search&quot;&gt;
+                &lt;mat-icon&gt;more_vert&lt;/mat-icon&gt;
+            &lt;/button&gt;
+            &lt;button mat-icon-button (click)&#x3D;&quot;advancedSearch()&quot; matTooltip&#x3D;&quot;Refresh&quot;&gt;
+                &lt;mat-icon&gt;refresh&lt;/mat-icon&gt;
+            &lt;/button&gt;
+            &lt;div
+                #advancedSearchMenu
+                class&#x3D;&quot;advanced-search-form mat-elevation-z2 position-absolute border-radius-20 animate__animated animate__fadeInDown animate__faster&quot;
+            &gt;
+                &lt;p class&#x3D;&quot;text-center text-bold&quot;&gt;Advanced Search&lt;/p&gt;
+                &lt;form
+                    [formGroup]&#x3D;&quot;advancedSearchForm&quot;
+                    class&#x3D;&quot;px-12&quot;
+                    (ngSubmit)&#x3D;&quot;advancedSearch(); advancedSearchMenu.classList.toggle(&#x27;show&#x27;)&quot;
+                    novalidate
+                    fxLayout&#x3D;&quot;row wrap&quot;
+                    fxLayoutAlign&#x3D;&quot;space-evenly&quot;
+                &gt;
+                    &lt;mat-form-field class&#x3D;&quot;form-field custom with-border&quot; fxFlex&#x3D;&quot;48&quot; appearance&#x3D;&quot;outline&quot;&gt;
+                        &lt;input matInput formControlName&#x3D;&quot;email&quot; type&#x3D;&quot;text&quot; placeholder&#x3D;&quot;Email&quot; /&gt;
+                    &lt;/mat-form-field&gt;
+                    &lt;mat-form-field class&#x3D;&quot;form-field custom with-border&quot; fxFlex&#x3D;&quot;48&quot; appearance&#x3D;&quot;outline&quot;&gt;
+                        &lt;input matInput formControlName&#x3D;&quot;queue&quot; type&#x3D;&quot;text&quot; placeholder&#x3D;&quot;Queue&quot; /&gt;
+                    &lt;/mat-form-field&gt;
+
+                    &lt;mat-form-field class&#x3D;&quot;form-field custom with-border&quot; fxFlex&#x3D;&quot;48&quot; appearance&#x3D;&quot;outline&quot;&gt;
+                        &lt;input matInput formControlName&#x3D;&quot;fromDate&quot; [matDatepicker]&#x3D;&quot;fromDatePicker&quot; placeholder&#x3D;&quot;From Data&quot; /&gt;
+                        &lt;mat-datepicker-toggle matSuffix [for]&#x3D;&quot;fromDatePicker&quot;&gt;&lt;/mat-datepicker-toggle&gt;
+                        &lt;mat-datepicker #fromDatePicker&gt;&lt;/mat-datepicker&gt;
+                    &lt;/mat-form-field&gt;
+                    &lt;mat-form-field class&#x3D;&quot;form-field custom with-border&quot; fxFlex&#x3D;&quot;48&quot; appearance&#x3D;&quot;outline&quot;&gt;
+                        &lt;input matInput formControlName&#x3D;&quot;fromTime&quot; type&#x3D;&quot;time&quot; placeholder&#x3D;&quot;From Time&quot; /&gt;
+                        &lt;!-- &lt;span class&#x3D;&quot;btn-time&quot;&gt; &lt;mat-icon&gt;access_time&lt;/mat-icon&gt; &lt;/span&gt; --&gt;
+                    &lt;/mat-form-field&gt;
+
+                    &lt;mat-form-field class&#x3D;&quot;form-field custom with-border&quot; fxFlex&#x3D;&quot;48&quot; appearance&#x3D;&quot;outline&quot;&gt;
+                        &lt;input matInput formControlName&#x3D;&quot;toDate&quot; [matDatepicker]&#x3D;&quot;toDatePicker&quot; placeholder&#x3D;&quot;To Date&quot; /&gt;
+                        &lt;mat-datepicker-toggle matSuffix [for]&#x3D;&quot;toDatePicker&quot;&gt;&lt;/mat-datepicker-toggle&gt;
+                        &lt;mat-datepicker #toDatePicker&gt;&lt;/mat-datepicker&gt;
+                    &lt;/mat-form-field&gt;
+
+                    &lt;mat-form-field class&#x3D;&quot;form-field custom with-border&quot; fxFlex&#x3D;&quot;48&quot; appearance&#x3D;&quot;outline&quot;&gt;
+                        &lt;input matInput formControlName&#x3D;&quot;toTime&quot; type&#x3D;&quot;time&quot; placeholder&#x3D;&quot;To Time&quot; /&gt;
+                        &lt;!-- &lt;span class&#x3D;&quot;btn-time&quot;&gt; &lt;mat-icon&gt;access_time&lt;/mat-icon&gt; &lt;/span&gt; --&gt;
+                    &lt;/mat-form-field&gt;
+
+                    &lt;mat-form-field class&#x3D;&quot;form-field custom with-border&quot; fxFlex&#x3D;&quot;48&quot; appearance&#x3D;&quot;outline&quot;&gt;
+                        &lt;input matInput formControlName&#x3D;&quot;subject&quot; type&#x3D;&quot;text&quot; placeholder&#x3D;&quot;Subject&quot; /&gt;
+                    &lt;/mat-form-field&gt;
+                    &lt;mat-form-field class&#x3D;&quot;form-field custom with-border&quot; fxFlex&#x3D;&quot;48&quot; appearance&#x3D;&quot;outline&quot;&gt;
+                        &lt;input matInput formControlName&#x3D;&quot;content&quot; type&#x3D;&quot;text&quot; placeholder&#x3D;&quot;Content&quot; /&gt;
+                    &lt;/mat-form-field&gt;
+                    &lt;button mat-raised-button class&#x3D;&quot;adv-search-btn w-100-p h-40 mb-8 border-radius-20&quot; matTooltip&#x3D;&quot;Search&quot;&gt;Search&lt;/button&gt;
+                &lt;/form&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div class&#x3D;&quot;email-list-groups&quot;&gt;
+            &lt;mat-tree [dataSource]&#x3D;&quot;dataSource&quot; [treeControl]&#x3D;&quot;treeControl&quot; class&#x3D;&quot;tw-list-item border-radius-10 email-tree&quot;&gt;
+                &lt;mat-tree-node *matTreeNodeDef&#x3D;&quot;let node&quot; class&#x3D;&quot;tw-list pb-8&quot; matTreeNodeToggle&gt;
+                    &lt;li
+                        class&#x3D;&quot;mat-tree-node tw-list-item selectable&quot;
+                        (click)&#x3D;&quot;emailSearchRes.data.selected &#x3D; node&quot;
+                        mat-ripple
+                        [ngClass]&#x3D;&quot;
+                            fuseConfig.layout.anchorWidget.customBackgroundColor &#x3D;&#x3D;&#x3D; true &amp;&amp; data.Config.Anchor
+                                ? fuseConfig.layout.anchorWidget.contentBackground
+                                : fuseConfig.layout.widget.customBackgroundColor &#x3D;&#x3D;&#x3D; true
+                                ? fuseConfig.layout.widget.contentBackground
+                                : &#x27;&#x27;
+                        &quot;
+                    &gt;
+                        &lt;div fxLayout fxLayoutAlign&#x3D;&quot;space-between&quot; class&#x3D;&quot;w-100-p&quot;&gt;
+                            &lt;div fxFlex&#x3D;&quot;70&quot;&gt;
+                                &lt;p class&#x3D;&quot;font-weight-600 my-4&quot;&gt;{{ node.From }}&lt;/p&gt;
+                                &lt;p class&#x3D;&quot;my-4&quot;&gt;Subject: {{ node.Subject }}&lt;/p&gt;
+                                &lt;!-- &lt;div [innerHtml]&#x3D;&quot;node.body&quot; class&#x3D;&quot;my-4 text-truncate&quot;&gt;&lt;/div&gt; --&gt;
+                            &lt;/div&gt;
+                            &lt;div fxFlex&#x3D;&quot;20&quot;&gt;
+                                &lt;span&gt; {{ node.addedTime | date: &#x27;mediumDate&#x27; }} &lt;/span&gt;
+                                &lt;br /&gt;
+                                &lt;span&gt; {{ node.addedTime | date: &#x27;shortTime&#x27; }} &lt;/span&gt;
+                            &lt;/div&gt;
+                        &lt;/div&gt;
+                    &lt;/li&gt;
+                &lt;/mat-tree-node&gt;
+                &lt;mat-nested-tree-node *matTreeNodeDef&#x3D;&quot;let node; when: hasChild&quot; [ngClass]&#x3D;&quot;{ active: treeControl.isExpanded(node) }&quot;&gt;
+                    &lt;li
+                        matTreeNodeToggle
+                        class&#x3D;&quot;mb-8 border-radius-20&quot;
+                        [ngClass]&#x3D;&quot;
+                            fuseConfig.layout.anchorWidget.customBackgroundColor &#x3D;&#x3D;&#x3D; true &amp;&amp; data.Config.Anchor
+                                ? fuseConfig.layout.anchorWidget.bodyBackground
+                                : fuseConfig.layout.widget.customBackgroundColor &#x3D;&#x3D;&#x3D; true
+                                ? fuseConfig.layout.widget.bodyBackground
+                                : &#x27;&#x27;
+                        &quot;
+                    &gt;
+                        &lt;div class&#x3D;&quot;mat-tree-node&quot;&gt;
+                            &lt;button mat-icon-button [attr.aria-label]&#x3D;&quot;&#x27;Toggle &#x27; + node.name&quot;&gt;
+                                &lt;mat-icon class&#x3D;&quot;mat-icon-rtl-mirror&quot;&gt;
+                                    {{ treeControl.isExpanded(node) ? &#x27;expand_more&#x27; : &#x27;chevron_right&#x27; }}
+                                &lt;/mat-icon&gt;
+                            &lt;/button&gt;
+                            &lt;span class&#x3D;&quot;font-weight-700&quot;&gt;
+                                {{ node.name }}
+                            &lt;/span&gt;
+                        &lt;/div&gt;
+                        &lt;ul [class.email-tree-invisible]&#x3D;&quot;!treeControl.isExpanded(node)&quot;&gt;
+                            &lt;ng-container matTreeNodeOutlet&gt;&lt;/ng-container&gt;
+                        &lt;/ul&gt;
+                    &lt;/li&gt;
+                &lt;/mat-nested-tree-node&gt;
+            &lt;/mat-tree&gt;
+        &lt;/div&gt;
+
+        &lt;div
+            *ngIf&#x3D;&quot;dataSource.data.length &#x3D;&#x3D;&#x3D; 0 &amp;&amp; !emailSearchRes.loading &amp;&amp; !emailSearchRes.error&quot;
+            (click)&#x3D;&quot;advancedSearchMenu.classList.remove(&#x27;show&#x27;)&quot;
+            class&#x3D;&quot;w-100-p h-50-p&quot;
+            fxLayout
+            fxLayoutAlign&#x3D;&quot;center center&quot;
+        &gt;
+            &lt;span class&#x3D;&quot;hint-mail-text hint-text&quot;&gt;
+                &lt;span&gt;There are no emails&lt;/span&gt;
+            &lt;/span&gt;
+        &lt;/div&gt;
+
+        &lt;div *ngIf&#x3D;&quot;emailSearchRes.error&quot; class&#x3D;&quot;loader&quot;&gt;
+            &lt;span&gt;
+                {{ emailSearchRes.msg }}
+            &lt;/span&gt;
+        &lt;/div&gt;
+
+        &lt;div *ngIf&#x3D;&quot;emailSearchRes.loading&quot; class&#x3D;&quot;loader&quot;&gt;
+            &lt;mat-spinner&gt;&lt;/mat-spinner&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div fxFlex&#x3D;&quot;66&quot; class&#x3D;&quot;email-open border-radius-20&quot; fusePerfectScrollbar&gt;
+        &lt;div *ngIf&#x3D;&quot;emailSearchRes.data.selected&quot; fxLayout fxLayoutAlign&#x3D;&quot;end&quot; fxLayoutGap&#x3D;&quot;10px&quot; class&#x3D;&quot;my-20 w-95-p&quot;&gt;
+            &lt;button mat-flat-button class&#x3D;&quot;border-radius-20&quot;&gt;Transfer&lt;/button&gt;
+            &lt;button mat-flat-button class&#x3D;&quot;border-radius-20&quot;&gt;Advance&lt;/button&gt;
+            &lt;button mat-flat-button class&#x3D;&quot;border-radius-20&quot; (click)&#x3D;&quot;pullEmail()&quot;&gt;Pull&lt;/button&gt;
+            &lt;button mat-flat-button class&#x3D;&quot;border-radius-20&quot;&gt;Push&lt;/button&gt;
+        &lt;/div&gt;
+
+        &lt;div
+            *ngIf&#x3D;&quot;emailSearchRes.data.selected&quot;
+            class&#x3D;&quot;email-open__body w-95-p mx-auto border-radius-20 pt-20 pb-40 px-28 mb-20&quot;
+            [ngClass]&#x3D;&quot;
+                fuseConfig.layout.anchorWidget.customBackgroundColor &#x3D;&#x3D;&#x3D; true &amp;&amp; data.Config.Anchor
+                    ? fuseConfig.layout.anchorWidget.contentBackground
+                    : fuseConfig.layout.widget.customBackgroundColor &#x3D;&#x3D;&#x3D; true
+                    ? fuseConfig.layout.widget.contentBackground
+                    : &#x27;&#x27;
+            &quot;
+        &gt;
+            &lt;div fxLayout fxLayoutAlign&#x3D;&quot;space-between&quot;&gt;
+                &lt;div fxFlex&#x3D;&quot;80&quot;&gt;
+                    &lt;p class&#x3D;&quot;font-weight-600 my-4&quot;&gt;To : {{ emailSearchRes.data.selected.To }}&lt;/p&gt;
+                    &lt;p class&#x3D;&quot;my-4&quot;&gt;From : {{ emailSearchRes.data.selected.From }}&lt;/p&gt;
+                &lt;/div&gt;
+                &lt;div fxFlex&#x3D;&quot;15&quot;&gt;
+                    &lt;p class&#x3D;&quot;my-4&quot;&gt;{{ emailSearchRes.data.selected.addedTime | date: &#x27;longDate&#x27; }}&lt;/p&gt;
+                    &lt;p class&#x3D;&quot;my-4&quot;&gt;{{ emailSearchRes.data.selected.addedTime | date: &#x27;shortTime&#x27; }}&lt;/p&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;span&gt;Subject : {{ emailSearchRes.data.selected.Subject }}&lt;/span&gt;
+            &lt;div [innerHtml]&#x3D;&quot;emailSearchRes.data.selected.body&quot;&gt;&lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div *ngIf&#x3D;&quot;!emailSearchRes.data.selected&quot; fxLayout&#x3D;&quot;column&quot; fxLayoutAlign&#x3D;&quot;center center&quot; class&#x3D;&quot;w-100-p h-100-p&quot;&gt;
+            &lt;mat-icon class&#x3D;&quot;s-128 mb-16 select-message-icon hint-text&quot;&gt; email &lt;/mat-icon&gt;
+            &lt;span class&#x3D;&quot;hint-mail-text&quot;&gt;
+                &lt;span&gt;Select an email to read&lt;/span&gt;
+            &lt;/span&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="c-styleData">
+                <p class="comment">
+                    <code>./workbench-email.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">workbench-email {
+    .email-list {
+        height: 98%;
+        box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+    }
+
+    .mat-form-field.custom .mat-form-field-wrapper {
+        padding: 0 !important;
+        margin: 0;
+    }
+    .mat-form-field-infinix {
+        padding: 2px 0px !important;
+    }
+    .email-open {
+        height: 98%;
+        box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+    }
+
+    .search-input {
+        position: relative;
+        margin: auto;
+        z-index: 1;
+        width: calc(100% - 20px);
+    }
+
+    .loader {
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        z-index: 5;
+        background-color: rgba(black, 0.1);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .advanced-search-form {
+        display: none;
+        &amp;.show {
+            display: block;
+        }
+    }
+
+    .email-tree-invisible {
+        display: none;
+        // &amp;.ul {
+        //     border: none !important;
+        // }
+    }
+
+    mat-nested-tree-node {
+        &amp;.active li {
+            position: relative;
+            overflow: hidden;
+            &amp;::before {
+                content: &#x27;&#x27;;
+                width: 2px;
+                height: 100%;
+                position: absolute;
+                left: 0;
+            }
+        }
+    }
+
+    .email-tree {
+        background: transparent !important;
+    }
+
+    .email-tree ul,
+    .email-tree li {
+        margin-bottom: 0;
+        list-style-type: none;
+    }
+
+    mat-tree-node {
+        cursor: pointer;
+        padding-left: 0 !important;
+        ul {
+            padding-inline-start: 0px !important;
+        }
+    }
+
+    .email-tree ul {
+        padding-inline-start: 15px;
+        margin-top: 0;
+    }
+
+    .email-tree li {
+        margin-top: 0;
+    }
+
+    .hint-mail-text {
+        font-size: 28px;
+        font-weight: 500;
+    }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="c-tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><div    fxLayout    fxLayoutAlign="space-evenly center"    class="email-workbench w-100-p h-100-p"    [ngClass]="        fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor            ? fuseConfig.layout.anchorWidget.bodyBackground            : fuseConfig.layout.widget.customBackgroundColor === true            ? fuseConfig.layout.widget.bodyBackground            : \'\'    ">    <div fxFlex="33" (click)="advancedSearchMenu.classList.remove(\'show\')" class="email-list border-radius-20" fusePerfectScrollbar>        <div fxLayout fxLayoutAlign="center center" (click)="$event.stopPropagation()" class="search-input my-8 border-radius-20 position-relative">            <mat-form-field class="custom with-border form-field w-100-p" appearance="outline">                <input class="login-input" matInput placeholder="Search" [(ngModel)]="searchTerm" (input)="filterEmails()" />                <button *ngIf="!searchTerm; else clearBtn" mat-icon-button matSuffix disabled>                    <mat-icon matSuffix>search</mat-icon>                </button>                <ng-template #clearBtn>                    <button                        mat-button                        color="accent"                        matSuffix                        mat-icon-button                        aria-label="Clear"                        [@animate]="{ value: \'*\', params: { delay: \'100ms\', x: \'100%\' } }"                        (click)="searchTerm = \'\'; filterEmails()"                    >                        <mat-icon>close</mat-icon>                    </button>                </ng-template>            </mat-form-field>            <button mat-icon-button class="ml-4" (click)="advancedSearchMenu.classList.toggle(\'show\')" matTooltip="Advance Search">                <mat-icon>more_vert</mat-icon>            </button>            <button mat-icon-button (click)="advancedSearch()" matTooltip="Refresh">                <mat-icon>refresh</mat-icon>            </button>            <div                #advancedSearchMenu                class="advanced-search-form mat-elevation-z2 position-absolute border-radius-20 animate__animated animate__fadeInDown animate__faster"            >                <p class="text-center text-bold">Advanced Search</p>                <form                    [formGroup]="advancedSearchForm"                    class="px-12"                    (ngSubmit)="advancedSearch(); advancedSearchMenu.classList.toggle(\'show\')"                    novalidate                    fxLayout="row wrap"                    fxLayoutAlign="space-evenly"                >                    <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">                        <input matInput formControlName="email" type="text" placeholder="Email" />                    </mat-form-field>                    <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">                        <input matInput formControlName="queue" type="text" placeholder="Queue" />                    </mat-form-field>                    <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">                        <input matInput formControlName="fromDate" [matDatepicker]="fromDatePicker" placeholder="From Data" />                        <mat-datepicker-toggle matSuffix [for]="fromDatePicker"></mat-datepicker-toggle>                        <mat-datepicker #fromDatePicker></mat-datepicker>                    </mat-form-field>                    <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">                        <input matInput formControlName="fromTime" type="time" placeholder="From Time" />                        <!-- <span class="btn-time"> <mat-icon>access_time</mat-icon> </span> -->                    </mat-form-field>                    <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">                        <input matInput formControlName="toDate" [matDatepicker]="toDatePicker" placeholder="To Date" />                        <mat-datepicker-toggle matSuffix [for]="toDatePicker"></mat-datepicker-toggle>                        <mat-datepicker #toDatePicker></mat-datepicker>                    </mat-form-field>                    <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">                        <input matInput formControlName="toTime" type="time" placeholder="To Time" />                        <!-- <span class="btn-time"> <mat-icon>access_time</mat-icon> </span> -->                    </mat-form-field>                    <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">                        <input matInput formControlName="subject" type="text" placeholder="Subject" />                    </mat-form-field>                    <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">                        <input matInput formControlName="content" type="text" placeholder="Content" />                    </mat-form-field>                    <button mat-raised-button class="adv-search-btn w-100-p h-40 mb-8 border-radius-20" matTooltip="Search">Search</button>                </form>            </div>        </div>        <div class="email-list-groups">            <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="tw-list-item border-radius-10 email-tree">                <mat-tree-node *matTreeNodeDef="let node" class="tw-list pb-8" matTreeNodeToggle>                    <li                        class="mat-tree-node tw-list-item selectable"                        (click)="emailSearchRes.data.selected = node"                        mat-ripple                        [ngClass]="                            fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor                                ? fuseConfig.layout.anchorWidget.contentBackground                                : fuseConfig.layout.widget.customBackgroundColor === true                                ? fuseConfig.layout.widget.contentBackground                                : \'\'                        "                    >                        <div fxLayout fxLayoutAlign="space-between" class="w-100-p">                            <div fxFlex="70">                                <p class="font-weight-600 my-4">{{ node.From }}</p>                                <p class="my-4">Subject: {{ node.Subject }}</p>                                <!-- <div [innerHtml]="node.body" class="my-4 text-truncate"></div> -->                            </div>                            <div fxFlex="20">                                <span> {{ node.addedTime | date: \'mediumDate\' }} </span>                                <br />                                <span> {{ node.addedTime | date: \'shortTime\' }} </span>                            </div>                        </div>                    </li>                </mat-tree-node>                <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild" [ngClass]="{ active: treeControl.isExpanded(node) }">                    <li                        matTreeNodeToggle                        class="mb-8 border-radius-20"                        [ngClass]="                            fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor                                ? fuseConfig.layout.anchorWidget.bodyBackground                                : fuseConfig.layout.widget.customBackgroundColor === true                                ? fuseConfig.layout.widget.bodyBackground                                : \'\'                        "                    >                        <div class="mat-tree-node">                            <button mat-icon-button [attr.aria-label]="\'Toggle \' + node.name">                                <mat-icon class="mat-icon-rtl-mirror">                                    {{ treeControl.isExpanded(node) ? \'expand_more\' : \'chevron_right\' }}                                </mat-icon>                            </button>                            <span class="font-weight-700">                                {{ node.name }}                            </span>                        </div>                        <ul [class.email-tree-invisible]="!treeControl.isExpanded(node)">                            <ng-container matTreeNodeOutlet></ng-container>                        </ul>                    </li>                </mat-nested-tree-node>            </mat-tree>        </div>        <div            *ngIf="dataSource.data.length === 0 && !emailSearchRes.loading && !emailSearchRes.error"            (click)="advancedSearchMenu.classList.remove(\'show\')"            class="w-100-p h-50-p"            fxLayout            fxLayoutAlign="center center"        >            <span class="hint-mail-text hint-text">                <span>There are no emails</span>            </span>        </div>        <div *ngIf="emailSearchRes.error" class="loader">            <span>                {{ emailSearchRes.msg }}            </span>        </div>        <div *ngIf="emailSearchRes.loading" class="loader">            <mat-spinner></mat-spinner>        </div>    </div>    <div fxFlex="66" class="email-open border-radius-20" fusePerfectScrollbar>        <div *ngIf="emailSearchRes.data.selected" fxLayout fxLayoutAlign="end" fxLayoutGap="10px" class="my-20 w-95-p">            <button mat-flat-button class="border-radius-20">Transfer</button>            <button mat-flat-button class="border-radius-20">Advance</button>            <button mat-flat-button class="border-radius-20" (click)="pullEmail()">Pull</button>            <button mat-flat-button class="border-radius-20">Push</button>        </div>        <div            *ngIf="emailSearchRes.data.selected"            class="email-open__body w-95-p mx-auto border-radius-20 pt-20 pb-40 px-28 mb-20"            [ngClass]="                fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor                    ? fuseConfig.layout.anchorWidget.contentBackground                    : fuseConfig.layout.widget.customBackgroundColor === true                    ? fuseConfig.layout.widget.contentBackground                    : \'\'            "        >            <div fxLayout fxLayoutAlign="space-between">                <div fxFlex="80">                    <p class="font-weight-600 my-4">To : {{ emailSearchRes.data.selected.To }}</p>                    <p class="my-4">From : {{ emailSearchRes.data.selected.From }}</p>                </div>                <div fxFlex="15">                    <p class="my-4">{{ emailSearchRes.data.selected.addedTime | date: \'longDate\' }}</p>                    <p class="my-4">{{ emailSearchRes.data.selected.addedTime | date: \'shortTime\' }}</p>                </div>            </div>            <span>Subject : {{ emailSearchRes.data.selected.Subject }}</span>            <div [innerHtml]="emailSearchRes.data.selected.body"></div>        </div>        <div *ngIf="!emailSearchRes.data.selected" fxLayout="column" fxLayoutAlign="center center" class="w-100-p h-100-p">            <mat-icon class="s-128 mb-16 select-message-icon hint-text"> email </mat-icon>            <span class="hint-mail-text">                <span>Select an email to read</span>            </span>        </div>    </div></div></div>'
+    var COMPONENTS = [{'name': 'AlertDialogComponent', 'selector': 'alert-dialog'},{'name': 'AppComponent', 'selector': 'app'},{'name': 'AppConfirmDialogComponent', 'selector': 'app-confirm-dialog'},{'name': 'AppSnackbarComponent', 'selector': 'app-snackbar'},{'name': 'AppThemeOptionsComponent', 'selector': 'app-theme-options'},{'name': 'AvatarComponent', 'selector': 'avatar'},{'name': 'ContentComponent', 'selector': 'content'},{'name': 'CreateSmsComponent', 'selector': 'app-create-sms'},{'name': 'CustomDialogComponent', 'selector': 'custom-dialog'},{'name': 'FooterComponent', 'selector': 'footer'},{'name': 'FuseConfirmDialogComponent', 'selector': 'fuse-confirm-dialog'},{'name': 'FuseCountdownComponent', 'selector': 'fuse-countdown'},{'name': 'FuseDemoContentComponent', 'selector': 'fuse-demo-content'},{'name': 'FuseDemoSidebarComponent', 'selector': 'fuse-demo-sidebar'},{'name': 'FuseHighlightComponent', 'selector': 'fuse-highlight'},{'name': 'FuseMaterialColorPickerComponent', 'selector': 'fuse-material-color-picker'},{'name': 'FuseNavHorizontalCollapsableComponent', 'selector': 'fuse-nav-horizontal-collapsable'},{'name': 'FuseNavHorizontalItemComponent', 'selector': 'fuse-nav-horizontal-item'},{'name': 'FuseNavigationComponent', 'selector': 'fuse-navigation'},{'name': 'FuseNavVerticalCollapsableComponent', 'selector': 'fuse-nav-vertical-collapsable'},{'name': 'FuseNavVerticalGroupComponent', 'selector': 'fuse-nav-vertical-group'},{'name': 'FuseNavVerticalItemComponent', 'selector': 'fuse-nav-vertical-item'},{'name': 'FuseProgressBarComponent', 'selector': 'fuse-progress-bar'},{'name': 'FuseSearchBarComponent', 'selector': 'fuse-search-bar'},{'name': 'FuseShortcutsComponent', 'selector': 'fuse-shortcuts'},{'name': 'FuseSidebarComponent', 'selector': 'fuse-sidebar'},{'name': 'FuseThemeOptionsComponent', 'selector': 'fuse-theme-options'},{'name': 'FuseWidgetComponent', 'selector': 'fuse-widget'},{'name': 'HorizontalLayout1Component', 'selector': 'horizontal-layout-1'},{'name': 'InstantMessagingComponent', 'selector': 'instant-messaging'},{'name': 'LoginComponent', 'selector': 'login'},{'name': 'MainComponent', 'selector': 'main'},{'name': 'NavbarComponent', 'selector': 'navbar'},{'name': 'NoDataAvailableComponent', 'selector': 'no-data-available'},{'name': 'QuickPanelComponent', 'selector': 'quick-panel'},{'name': 'RaceCarTrackComponent', 'selector': 'race-car-track'},{'name': 'ReminderTaskDialogComponent', 'selector': 'reminder-task-dialog'},{'name': 'ResourceNotFoundComponent', 'selector': 'resource-not-found'},{'name': 'SnackbarComponent', 'selector': 'snackbar'},{'name': 'ToolbarComponent', 'selector': 'toolbar'},{'name': 'TwAccountInformationComponent', 'selector': 'tw-account-information'},{'name': 'TwActiveInteractionsComponent', 'selector': 'tw-active-interactions'},{'name': 'TwAdCallbacksComponent', 'selector': 'tw-ad-callbacks'},{'name': 'TwAdFeedbackComponent', 'selector': 'tw-ad-feedback'},{'name': 'TwAdGamificationComponent', 'selector': 'tw-ad-gamification'},{'name': 'TwAdInteractionDetailsComponent', 'selector': 'tw-ad-interaction-details'},{'name': 'TwAdPerformanceComponent', 'selector': 'tw-ad-performance'},{'name': 'TwAdScoreComponent', 'selector': 'tw-ad-score'},{'name': 'TwAdTotalInteractionsComponent', 'selector': 'tw-ad-total-interactions'},{'name': 'TwAgentAssistComponent', 'selector': 'tw-agent-assist'},{'name': 'TwAgentDetailsComponent', 'selector': 'tw-agent-details'},{'name': 'TwAhtTcComponent', 'selector': 'tw-aht-tc'},{'name': 'TwAmdocsBccComponent', 'selector': 'tw-amdocs-bcc'},{'name': 'TwAudioControlsComponent', 'selector': 'tw-audio-controls'},{'name': 'TwAuxCodesComponent', 'selector': 'tw-aux-codes'},{'name': 'TwAuxStatusChartComponent', 'selector': 'tw-aux-status-chart.component'},{'name': 'TwAuxTimerComponent', 'selector': 'tw-aux-timer'},{'name': 'TwBroadcastComponent', 'selector': 'tw-broadcast'},{'name': 'TwCannedResponsesComponent', 'selector': 'tw-canned-responses'},{'name': 'TwCardComponent', 'selector': 'tw-card'},{'name': 'TwCardHeaderComponent', 'selector': 'tw-card-header'},{'name': 'TwcCustomComponent', 'selector': 'twc-custom'},{'name': 'TwcEmailComponent', 'selector': 'twc-email'},{'name': 'TwChatControlsComponent', 'selector': 'tw-chat-controls'},{'name': 'TwChatPanelComponent', 'selector': 'tw-chat-panel'},{'name': 'TwcHomeComponent', 'selector': 'twc-home'},{'name': 'TwcNoInteractionComponent', 'selector': 'twc-no-interaction'},{'name': 'TwcNoWidgetsComponent', 'selector': 'twc-no-widgets'},{'name': 'TwCreateInteractionComponent', 'selector': 'tw-create-interaction'},{'name': 'TwcSupervisorComponent', 'selector': 'twc-supervisor'},{'name': 'TwcTextchatComponent', 'selector': 'twc-textchat'},{'name': 'TwcUnknownComponent', 'selector': 'twc-unknown'},{'name': 'TwCustomComponent', 'selector': 'tw-custom'},{'name': 'TwCustomerDetailsComponent', 'selector': 'tw-customer-details'},{'name': 'TwCustomerJourneyComponent', 'selector': 'tw-customer-journey'},{'name': 'TwCustomerSentimentComponent', 'selector': 'tw-customer-sentiment'},{'name': 'TwcVoiceComponent', 'selector': 'twc-voice'},{'name': 'TwcWorkbenchComponent', 'selector': 'twc-workbench'},{'name': 'TwEmailControlsComponent', 'selector': 'tw-email-controls'},{'name': 'TwEmailPanelComponent', 'selector': 'tw-email-panel'},{'name': 'TwGamificationComponent', 'selector': 'tw-gamification'},{'name': 'TwInstantMessagingComponent', 'selector': 'tw-instant-messaging'},{'name': 'TwLogoutComponent', 'selector': 'tw-logout'},{'name': 'TwNotificationsComponent', 'selector': 'tw-notifications'},{'name': 'TwPanelComponent', 'selector': 'tw-panel'},{'name': 'TwPendingCallbacksComponent', 'selector': 'tw-pending-callbacks'},{'name': 'TwPieChartComponent', 'selector': 'tw-pie-chart.component'},{'name': 'TwRegisterCallbackComponent', 'selector': 'tw-register-callback'},{'name': 'TwSampleComponent', 'selector': 'tw-sample'},{'name': 'TwSuActiveAgentsComponent', 'selector': 'tw-su-active-agents'},{'name': 'TwSuAgentActivityComponent', 'selector': 'tw-su-agent-activity'},{'name': 'TwSuAgentActivityDetailsComponent', 'selector': 'tw-su-agent-activity-details'},{'name': 'TwSuAgentInteractionsComponent', 'selector': 'tw-su-agent-interactions'},{'name': 'TwSuCallsInQueueComponent', 'selector': 'tw-su-calls-in-queue.component'},{'name': 'TwSuChannelsComponent', 'selector': 'tw-su-channels.component'},{'name': 'TwSuGamificationComponent', 'selector': 'tw-su-gamification'},{'name': 'TwSuIntentListComponent', 'selector': 'tw-su-intent-list'},{'name': 'TwSuStatusComponent', 'selector': 'tw-su-status.component'},{'name': 'TwTemplateComponent', 'selector': 'tw-template'},{'name': 'TwToolbarMenuComponent', 'selector': 'tw-toolbar-menu'},{'name': 'TwTransferInteractionComponent', 'selector': 'tw-transfer-interaction'},{'name': 'TwUnknownComponent', 'selector': 'tw-unknown'},{'name': 'TwVideoControlsComponent', 'selector': 'tw-video-controls'},{'name': 'TwVoiceBotTranscriptsComponent', 'selector': 'tw-voice-bot-transcripts'},{'name': 'TwVoiceCannedResponsesComponent', 'selector': 'tw-voice-canned-responses'},{'name': 'TwVoiceControlsComponent', 'selector': 'tw-voice-controls'},{'name': 'TwVoicePanelComponent', 'selector': 'tw-voice-panel'},{'name': 'TwWallboardComponent', 'selector': 'tw-wallboard'},{'name': 'TwWorkbenchPanelComponent', 'selector': 'tw-workbench-panel'},{'name': 'TwWorkCodesComponent', 'selector': 'tw-work-codes'},{'name': 'TwWrapperComponent', 'selector': 'tw-wrapper'},{'name': 'VerticalLayout1Component', 'selector': 'vertical-layout-1'},{'name': 'WidgetFabComponent', 'selector': 'widget-fab'},{'name': 'WidgetPreviewComponent', 'selector': 'widget-preview'},{'name': 'WorkbenchEmailComponent', 'selector': 'workbench-email'}];
+    var DIRECTIVES = [{'name': 'FuseIfOnDomDirective', 'selector': '[fuseIfOnDom]'},{'name': 'FuseInnerScrollDirective', 'selector': '.inner-scroll'},{'name': 'FuseMatSidenavHelperDirective', 'selector': '[fuseMatSidenavHelper]'},{'name': 'FuseMatSidenavTogglerDirective', 'selector': '[fuseMatSidenavToggler]'},{'name': 'FusePerfectScrollbarDirective', 'selector': '[fusePerfectScrollbar]'},{'name': 'FuseWidgetToggleDirective', 'selector': '[fuseWidgetToggle]'},{'name': 'QuillDirective', 'selector': '[quill]'},{'name': 'TWChartDirective', 'selector': '[twChart]'},{'name': 'TwTemplateDirective', 'selector': '[widgetTemplate]'}];
+    var ACTUAL_COMPONENT = {'name': 'WorkbenchEmailComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+                   
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> result-matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'WorkbenchEmailComponent.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+       <!-- Required to polyfill modern browsers as code is ES5 for IE... -->
+       <script src="../js/libs/custom-elements-es5-adapter.js" charset="utf-8" defer></script>
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+       <script src="../js/libs/zepto.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

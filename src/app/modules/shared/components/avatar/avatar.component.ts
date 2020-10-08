@@ -1,5 +1,9 @@
 import { Component, OnInit, ViewEncapsulation, Input } from '@angular/core';
 import { AVATAR_COLORS } from 'app/constants';
+
+/**
+ * Avatar component
+ */
 @Component({
     selector: 'avatar',
     templateUrl: './avatar.component.html',
@@ -7,26 +11,54 @@ import { AVATAR_COLORS } from 'app/constants';
     encapsulation: ViewEncapsulation.None
 })
 export class AvatarComponent implements OnInit {
+    /**
+     * Photo Url
+     */
     @Input()
     public photoUrl: string;
 
+    /**
+     * Icono to show
+     */
     @Input()
     public matIcon: string;
 
+    /**
+     * Name of the user 
+     */
     @Input()
     public name: string;
 
+    /**
+     * Classes
+     */
     @Input()
     public classes: string;
 
+    /**
+     * Custom circle color
+     */
     @Input()
     public circleColor: string;
 
+    /**
+     * Show initials of name
+     */
     public showInitials = false;
+    /**
+     * Initials
+     */
     public initials: string;
 
+    /**
+     * Colors for avatar
+     */
     private colors = AVATAR_COLORS;
 
+    /**
+     * Lifecycle hooks
+     * @method
+     */
     ngOnInit(): void {
         if (!this.photoUrl && !this.matIcon) {
             this.showInitials = true;
@@ -35,6 +67,10 @@ export class AvatarComponent implements OnInit {
         }
     }
 
+    /**
+     * Get initial
+     * @param {String} name
+     */
     getInitial(name: string): string {
         let initials = '';
         for (let i = 0; i < name.length; i++) {

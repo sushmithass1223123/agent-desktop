@@ -9,11 +9,17 @@ import { takeUntil } from 'rxjs/operators';
 import { SDKClient, AgentStateDurationList } from 'tmac-sdk';
 import { sortBy } from 'lodash';
 
+/**
+ * Colors for chart
+ */
 const multiColors: any = {
     backgroundColor: [...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS].map((c) => c.backgroundColor),
     hoverBackgroundColor: [...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS].map((c) => c.hoverBackgroundColor)
 };
 
+/**
+ * Aux Chart component
+ */
 @Component({
     selector: 'tw-aux-status-chart.component',
     templateUrl: './tw-aux-status-chart.component.html',
@@ -21,19 +27,30 @@ const multiColors: any = {
     encapsulation: ViewEncapsulation.None
 })
 export class TwAuxStatusChartComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-    // holds all the data related to this widget from the config
+    /**
+     * holds all the data related to this widget from the config
+     */
     @Input() data: any;
 
     // -----------------------------------------------------------
     // @ [OPTIONAL] to store the fuse config for theme
     // -----------------------------------------------------------
+    /**
+     * holds all the data from the fuse config
+     */
     fuseConfig: FuseConfig;
 
     // -----------------------------------------------------------
     // @ [OPTIONAL] to store entire app config and get update
     // -----------------------------------------------------------
+    /**
+     * App config
+     */
     appConfig: any;
 
+    /**
+     * Status Chart details
+     */
     statusChart: TwChartConfig = {
         datasets: [{ data: [] }],
         options: {
@@ -105,6 +122,10 @@ export class TwAuxStatusChartComponent extends TWidgetWrapper implements OnInit,
         this.destroyWrapper();
     }
 
+    /**
+     * AgentStatusDetailsEvent handler
+     * @param {AgentStateDurationList} evt 
+     */
     AgentStatusDetailsEvent = (evt: AgentStateDurationList) => {
         const datasets = { Duration: [] };
         const labels = [];

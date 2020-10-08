@@ -13,6 +13,9 @@ import { Observable } from 'rxjs';
 import { map, startWith, takeUntil } from 'rxjs/operators';
 import { SDKClient, WorkCode, WorkCodeAddedEvent } from 'tmac-sdk';
 
+/**
+ * Work codes Component
+ */
 @Component({
     selector: 'tw-work-codes',
     templateUrl: './tw-work-codes.component.html',
@@ -20,22 +23,40 @@ import { SDKClient, WorkCode, WorkCodeAddedEvent } from 'tmac-sdk';
     encapsulation: ViewEncapsulation.None
 })
 export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-    // holds all the data related to this widget from the config
+    /**
+     * holds all the data related to this widget from the config
+     */
     @Input() data: IWidget;
 
     // -----------------------------------------------------------
     // @ [OPTIONAL] to store the fuse config for theme
     // -----------------------------------------------------------
+    /**
+     * Fuse config
+     */
     fuseConfig: any;
 
     // -----------------------------------------------------------
     // @ [OPTIONAL] to store entire app config and get update
     // -----------------------------------------------------------
+    /**
+     * App config
+     */
     appConfig: any;
 
+    /**
+     * Work Code input ref
+     */
     @ViewChild('workCodeInput') workCodeInput: ElementRef<HTMLInputElement>;
+
+    /**
+     * Mat autocomplete ref
+     */
     @ViewChild('auto') matAutocomplete: MatAutocomplete;
 
+    /**
+     * Load work codes stateful request
+     */
     loadWorkCodesReq: ResData<Record<string, WorkCode[]>> = {
         data: {
             listData: []
@@ -44,18 +65,46 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         loading: false,
         msg: ''
     };
+
+    /**
+     * Filtered options
+     */
     filteredOptions: Observable<Record<string, WorkCode[]>>;
 
+    /**
+     * Data Configuration
+     */
     DataConf: {
+        /**
+         * Source for reusablility
+         */
         Source: string;
+        /**
+         * Workcodes By team flag
+         */
         ByTeam: boolean;
+        /**
+         * Workcodes By Group flag
+         */
         ByGroup: boolean;
     };
 
+    /**
+     * Selected Workcodes
+     */
     selectedWorkCodes: any[] = [];
+    /**
+     * Separator Keys
+     */
     separatorKeysCodes: number[] = [ENTER, COMMA];
+    /**
+     * Work Code Form Control
+     */
     workCodeCtrl = new FormControl();
 
+    /**
+     * Interaction ID
+     */
     interactionId: number;
 
     /**
@@ -125,6 +174,10 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * Get ALl work codes Req
+     * @method getAllWorkCodes
+     */
     private async getAllWorkCodes(): Promise<void> {
         try {
             const loadWCRes = await SDKClient.loadCallWorkCodes(this.DataConf.ByTeam, null);
@@ -162,10 +215,20 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         }
     }
 
+    /**
+     * TeamrWorkCodeDetailsEvent handler
+     * @method TeamrWorkCodeDetailsEvent
+     * @param {any} workCodeList 
+     */
     private TeamrWorkCodeDetailsEvent = (workCodeList: any) => {
         this.selectedWorkCodes = orderBy(workCodeList, ['Count'], ['desc']);
     }
 
+    /**
+     * WorkCodeAddedEvent Handler
+     * @method WorkCodeAddedEvent
+     * @param {WorkCodeAddedEvent} evt 
+     */
     private WorkCodeAddedEvent = (evt: WorkCodeAddedEvent) => {
         // check for interaction
         if (evt.InteractionID !== this.interactionId) {
@@ -189,6 +252,10 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * Initial Setup
+     * @method setup 
+     */
     public setup(): void {
         if (this.DataConf.Source === 'interaction') {
             // assign the interaction id
@@ -205,6 +272,11 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         }
     }
 
+    /**
+     * Set Work Code
+     * @method setWorkCode
+     * @param {MatAutocompleteSelectedEvent} option 
+     */
     public setWorkCode(option: MatAutocompleteSelectedEvent): void {
         this._appUiService.showSnackbar('Setting work code', 'loading');
         SDKClient.setCallWorkCode(
@@ -237,6 +309,11 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
             });
     }
 
+    /**
+     * Remove Work Code
+     * @method removeWorkCode
+     * @param {WorkCode} option 
+     */
     public removeWorkCode(option: WorkCode): void {
         this._appUiService.showSnackbar('Removing work code', 'loading');
 
@@ -261,6 +338,11 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
             });
     }
 
+    /**
+     * Filter Options
+     * @method _filterOptions
+     * @param {String} name 
+     */
     _filterOptions(name: string): Record<string, WorkCode[]> {
         let filteredData: any;
         if (this.DataConf.ByGroup) {
@@ -277,6 +359,12 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         return filteredData;
     }
 
+    /**
+     * Get option value after merging
+     * @method getOptionValue
+     * @param {any} x 
+     * @param {any} y 
+     */
     getOptionValue(x: any, y: any): any {
         return { ...x, ...y };
     }

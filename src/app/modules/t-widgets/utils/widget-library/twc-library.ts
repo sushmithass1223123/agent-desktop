@@ -10,7 +10,15 @@ import { TwcTextchatComponent } from '@modules/t-widgets/tw-content/twc-textchat
 import { TwcWorkbenchComponent } from '@modules/t-widgets/tw-content/twc-workbench/twc-workbench.component';
 import { TwcEmailComponent } from '@modules/t-widgets/tw-content/twc-email/twc-email.component';
 
+/**
+ * TWC widgets library and creation
+ * @class TWContentLibrary
+ */
 export class TWContentLibrary {
+    /**
+     * Static widget library
+     * @static widgetLibrary
+     */
     static widgetLibrary: Record<string, Type<any>> = {
         // 'twc-sample': SampleContentComponent,
         'twc-home': TwcHomeComponent,
@@ -23,10 +31,19 @@ export class TWContentLibrary {
         'twc-email': TwcEmailComponent
     };
 
+    /**
+     * Get all widgets
+     * @static
+     */
     public static getAllWidgets(): Record<string, Type<any>> {
         return { ...this.widgetLibrary };
     }
 
+    /**
+     * Get widget by type with injected data
+     * @param {string} type 
+     * @param {any} data 
+     */
     public static getWidget(type: string, data: any): TWidget {
         const widget = this.widgetLibrary[type];
         // check the widget is found

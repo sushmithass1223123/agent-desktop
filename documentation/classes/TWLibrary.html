@@ -63,6 +63,13 @@
             <code>src/app/modules/t-widgets/utils/widget-library/tw-library.ts</code>
         </p>
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Widgets library</p>
+
+            </p>
 
 
 
@@ -144,16 +151,10 @@
         &#x27;tw-wallboard&#x27;: TwWallboardComponent,
         &#x27;tw-voice-panel&#x27;: TwVoicePanelComponent,
         &#x27;tw-chat-panel&#x27;: TwChatPanelComponent,
-        &#x27;tw-ad-total-calls&#x27;: TwAdTotalCallsComponent,
         &#x27;tw-ad-total-interactions&#x27;: TwAdTotalInteractionsComponent,
-        &#x27;tw-ad-total-av&#x27;: TwAdTotalAvComponent,
-        &#x27;tw-ad-total-chats&#x27;: TwAdTotalChatsComponent,
         &#x27;tw-ad-interaction-details&#x27;: TwAdInteractionDetailsComponent,
         &#x27;tw-ad-callbacks&#x27;: TwAdCallbacksComponent,
-        &#x27;tw-su-total-calls&#x27;: TwSuTotalCallsComponent,
         &#x27;tw-su-calls-in-queue&#x27;: TwSuCallsInQueueComponent,
-        &#x27;tw-su-transferred-conferenced-calls&#x27;: TwSuTransferredConferencedCallsComponent,
-        &#x27;tw-su-channels-status&#x27;: TwSuChannelsStatusComponent,
         &#x27;tw-su-channels&#x27;: TwSuChannelsComponent,
         &#x27;tw-su-status&#x27;: TwSuStatusComponent,
         &#x27;tw-su-active-agents&#x27;: TwSuActiveAgentsComponent,
@@ -176,16 +177,30 @@
         &#x27;tw-su-intent-list&#x27;: TwSuIntentListComponent,
         &#x27;tw-voice-bot-transcripts&#x27;: TwVoiceBotTranscriptsComponent,
         &#x27;tw-register-callback&#x27;: TwRegisterCallbackComponent,
-        &#x27;tw-su-agent-interactions&#x27;: TwSuAgentInteractionsComponent
+        &#x27;tw-su-agent-interactions&#x27;: TwSuAgentInteractionsComponent,
+        &#x27;tw-pie-chart&#x27;: TwPieChartComponent,
+        &#x27;tw-transfer-interaction&#x27;: TwTransferInteractionComponent,
+        &#x27;tw-voice-canned-responses&#x27;: TwVoiceCannedResponsesComponent,
+        &#x27;tw-workbench-panel&#x27;: TwWorkbenchPanelComponent,
+        &#x27;tw-email-panel&#x27;: TwEmailPanelComponent,
+        &#x27;tw-email-controls&#x27;: TwEmailControlsComponent,
+        &#x27;tw-pending-callbacks&#x27;: TwPendingCallbacksComponent,
+        &#x27;tw-gamification&#x27;: TwGamificationComponent
     }</code>
                         </td>
                     </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="44" class="link-to-prism">src/app/modules/t-widgets/utils/widget-library/tw-library.ts:44</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="52" class="link-to-prism">src/app/modules/t-widgets/utils/widget-library/tw-library.ts:52</a></div>
                             </td>
                         </tr>
 
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>coded components for library</p>
+</div>
+                    </td>
+                </tr>
 
             </tbody>
         </table>
@@ -220,14 +235,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="85"
-                            class="link-to-prism">src/app/modules/t-widgets/utils/widget-library/tw-library.ts:85</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="101"
+                            class="link-to-prism">src/app/modules/t-widgets/utils/widget-library/tw-library.ts:101</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>Get widget by type with added input data</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -298,57 +315,59 @@ import { TwAdGamificationComponent } from &#x27;@modules/t-widgets/tw-collection
 import { TwAdInteractionDetailsComponent } from &#x27;@modules/t-widgets/tw-collections/tw-ad-interaction-details/tw-ad-interaction-details.component&#x27;;
 import { TwAdPerformanceComponent } from &#x27;@modules/t-widgets/tw-collections/tw-ad-performance/tw-ad-performance.component&#x27;;
 import { TwAdScoreComponent } from &#x27;@modules/t-widgets/tw-collections/tw-ad-score/tw-ad-score.component&#x27;;
-import { TwAdTotalAvComponent } from &#x27;@modules/t-widgets/tw-collections/tw-ad-total-av/tw-ad-total-av.component&#x27;;
-import { TwAdTotalCallsComponent } from &#x27;@modules/t-widgets/tw-collections/tw-ad-total-calls/tw-ad-total-calls.component&#x27;;
-import { TwAdTotalChatsComponent } from &#x27;@modules/t-widgets/tw-collections/tw-ad-total-chats/tw-ad-total-chats.component&#x27;;
 import { TwAdTotalInteractionsComponent } from &#x27;@modules/t-widgets/tw-collections/tw-ad-total-interactions/tw-ad-total-interactions.component&#x27;;
 import { TwAgentAssistComponent } from &#x27;@modules/t-widgets/tw-collections/tw-agent-assist/tw-agent-assist.component&#x27;;
+import { TwAhtTcComponent } from &#x27;@modules/t-widgets/tw-collections/tw-aht-tc/tw-aht-tc.component&#x27;;
 import { TwAmdocsBccComponent } from &#x27;@modules/t-widgets/tw-collections/tw-amdocs-bcc/tw-amdocs-bcc.component&#x27;;
 import { TwAudioControlsComponent } from &#x27;@modules/t-widgets/tw-collections/tw-audio-controls/tw-audio-controls.component&#x27;;
+import { TwAuxStatusChartComponent } from &#x27;@modules/t-widgets/tw-collections/tw-aux-status-chart/tw-aux-status-chart.component&#x27;;
 import { TwCannedResponsesComponent } from &#x27;@modules/t-widgets/tw-collections/tw-canned-responses/tw-canned-responses.component&#x27;;
 import { TwChatPanelComponent } from &#x27;@modules/t-widgets/tw-collections/tw-chat-panel/tw-chat-panel.component&#x27;;
 import { TwCustomComponent } from &#x27;@modules/t-widgets/tw-collections/tw-custom/tw-custom.component&#x27;;
 import { TwCustomerSentimentComponent } from &#x27;@modules/t-widgets/tw-collections/tw-customer-sentiment/tw-customer-sentiment.component&#x27;;
+import { TwEmailControlsComponent } from &#x27;@modules/t-widgets/tw-collections/tw-email-controls/tw-email-controls.component&#x27;;
+import { TwEmailPanelComponent } from &#x27;@modules/t-widgets/tw-collections/tw-email-panel/tw-email-panel.component&#x27;;
+import { TwGamificationComponent } from &#x27;@modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component&#x27;;
+import { TwPendingCallbacksComponent } from &#x27;@modules/t-widgets/tw-collections/tw-pending-callbacks/tw-pending-callbacks.component&#x27;;
+import { TwPieChartComponent } from &#x27;@modules/t-widgets/tw-collections/tw-pie-chart/tw-pie-chart.component&#x27;;
+import { TwRegisterCallbackComponent } from &#x27;@modules/t-widgets/tw-collections/tw-register-callback/tw-register-callback.component&#x27;;
 import { TwSampleComponent } from &#x27;@modules/t-widgets/tw-collections/tw-sample/tw-sample.component&#x27;;
 import { TwSuActiveAgentsComponent } from &#x27;@modules/t-widgets/tw-collections/tw-su-active-agents/tw-su-active-agents.component&#x27;;
 import { TwSuAgentActivityComponent } from &#x27;@modules/t-widgets/tw-collections/tw-su-agent-activity/tw-su-agent-activity.component&#x27;;
+import { TwSuAgentInteractionsComponent } from &#x27;@modules/t-widgets/tw-collections/tw-su-agent-interactions/tw-su-agent-interactions.component&#x27;;
 import { TwSuCallsInQueueComponent } from &#x27;@modules/t-widgets/tw-collections/tw-su-calls-in-queue/tw-su-calls-in-queue.component&#x27;;
-import { TwSuChannelsStatusComponent } from &#x27;@modules/t-widgets/tw-collections/tw-su-channels-status/tw-su-channels-status.component&#x27;;
 import { TwSuChannelsComponent } from &#x27;@modules/t-widgets/tw-collections/tw-su-channels/tw-su-channels.component&#x27;;
 import { TwSuGamificationComponent } from &#x27;@modules/t-widgets/tw-collections/tw-su-gamification/tw-su-gamification.component&#x27;;
+import { TwSuIntentListComponent } from &#x27;@modules/t-widgets/tw-collections/tw-su-intent-list/tw-su-intent-list.component&#x27;;
 import { TwSuStatusComponent } from &#x27;@modules/t-widgets/tw-collections/tw-su-status/tw-su-status.component&#x27;;
-import { TwSuTotalCallsComponent } from &#x27;@modules/t-widgets/tw-collections/tw-su-total-calls/tw-su-total-calls.component&#x27;;
-import { TwSuTransferredConferencedCallsComponent } from &#x27;@modules/t-widgets/tw-collections/tw-su-transferred-conferenced-calls/tw-su-transferred-conferenced-calls.component&#x27;;
-import { TwWorkCodesComponent } from &#x27;@modules/t-widgets/tw-collections/tw-work-codes/tw-work-codes.component&#x27;;
+import { TwTransferInteractionComponent } from &#x27;@modules/t-widgets/tw-collections/tw-transfer-interaction/tw-transfer-interaction.component&#x27;;
 import { TwUnknownComponent } from &#x27;@modules/t-widgets/tw-collections/tw-unknown/tw-unknown.component&#x27;;
 import { TwVideoControlsComponent } from &#x27;@modules/t-widgets/tw-collections/tw-video-controls/tw-video-controls.component&#x27;;
+import { TwVoiceBotTranscriptsComponent } from &#x27;@modules/t-widgets/tw-collections/tw-voice-bot-transcripts/tw-voice-bot-transcripts.component&#x27;;
+import { TwVoiceCannedResponsesComponent } from &#x27;@modules/t-widgets/tw-collections/tw-voice-canned-responses/tw-voice-canned-responses.component&#x27;;
 import { TwVoicePanelComponent } from &#x27;@modules/t-widgets/tw-collections/tw-voice-panel/tw-voice-panel.component&#x27;;
 import { TwWallboardComponent } from &#x27;@modules/t-widgets/tw-collections/tw-wallboard/tw-wallboard.component&#x27;;
+import { TwWorkCodesComponent } from &#x27;@modules/t-widgets/tw-collections/tw-work-codes/tw-work-codes.component&#x27;;
+import { TwWorkbenchPanelComponent } from &#x27;@modules/t-widgets/tw-collections/tw-workbench-panel/tw-workbench-panel.component&#x27;;
 import { TWidget } from &#x27;@modules/t-widgets/utils/t-widget&#x27;;
-import { TwAuxStatusChartComponent } from &#x27;@modules/t-widgets/tw-collections/tw-aux-status-chart/tw-aux-status-chart.component&#x27;;
-import { TwAhtTcComponent } from &#x27;@modules/t-widgets/tw-collections/tw-aht-tc/tw-aht-tc.component&#x27;;
-import { TwSuIntentListComponent } from &#x27;@modules/t-widgets/tw-collections/tw-su-intent-list/tw-su-intent-list.component&#x27;;
-import { TwVoiceBotTranscriptsComponent } from &#x27;@modules/t-widgets/tw-collections/tw-voice-bot-transcripts/tw-voice-bot-transcripts.component&#x27;;
-import { TwRegisterCallbackComponent } from &#x27;@modules/t-widgets/tw-collections/tw-register-callback/tw-register-callback.component&#x27;;
-import { TwSuAgentInteractionsComponent } from &#x27;@modules/t-widgets/tw-collections/tw-su-agent-interactions/tw-su-agent-interactions.component&#x27;;
 
+/**
+ * Widgets library
+ */
 export class TWLibrary {
+    /**
+     * coded components for library
+     */
     static widgetLibrary: Record&lt;string, Type&lt;any&gt;&gt; &#x3D; {
         &#x27;tw-sample&#x27;: TwSampleComponent,
         &#x27;tw-custom&#x27;: TwCustomComponent,
         &#x27;tw-wallboard&#x27;: TwWallboardComponent,
         &#x27;tw-voice-panel&#x27;: TwVoicePanelComponent,
         &#x27;tw-chat-panel&#x27;: TwChatPanelComponent,
-        &#x27;tw-ad-total-calls&#x27;: TwAdTotalCallsComponent,
         &#x27;tw-ad-total-interactions&#x27;: TwAdTotalInteractionsComponent,
-        &#x27;tw-ad-total-av&#x27;: TwAdTotalAvComponent,
-        &#x27;tw-ad-total-chats&#x27;: TwAdTotalChatsComponent,
         &#x27;tw-ad-interaction-details&#x27;: TwAdInteractionDetailsComponent,
         &#x27;tw-ad-callbacks&#x27;: TwAdCallbacksComponent,
-        &#x27;tw-su-total-calls&#x27;: TwSuTotalCallsComponent,
         &#x27;tw-su-calls-in-queue&#x27;: TwSuCallsInQueueComponent,
-        &#x27;tw-su-transferred-conferenced-calls&#x27;: TwSuTransferredConferencedCallsComponent,
-        &#x27;tw-su-channels-status&#x27;: TwSuChannelsStatusComponent,
         &#x27;tw-su-channels&#x27;: TwSuChannelsComponent,
         &#x27;tw-su-status&#x27;: TwSuStatusComponent,
         &#x27;tw-su-active-agents&#x27;: TwSuActiveAgentsComponent,
@@ -371,8 +390,22 @@ export class TWLibrary {
         &#x27;tw-su-intent-list&#x27;: TwSuIntentListComponent,
         &#x27;tw-voice-bot-transcripts&#x27;: TwVoiceBotTranscriptsComponent,
         &#x27;tw-register-callback&#x27;: TwRegisterCallbackComponent,
-        &#x27;tw-su-agent-interactions&#x27;: TwSuAgentInteractionsComponent
+        &#x27;tw-su-agent-interactions&#x27;: TwSuAgentInteractionsComponent,
+        &#x27;tw-pie-chart&#x27;: TwPieChartComponent,
+        &#x27;tw-transfer-interaction&#x27;: TwTransferInteractionComponent,
+        &#x27;tw-voice-canned-responses&#x27;: TwVoiceCannedResponsesComponent,
+        &#x27;tw-workbench-panel&#x27;: TwWorkbenchPanelComponent,
+        &#x27;tw-email-panel&#x27;: TwEmailPanelComponent,
+        &#x27;tw-email-controls&#x27;: TwEmailControlsComponent,
+        &#x27;tw-pending-callbacks&#x27;: TwPendingCallbacksComponent,
+        &#x27;tw-gamification&#x27;: TwGamificationComponent
     };
+
+    /**
+     * Get widget by type with added input data
+     * @param type
+     * @param data
+     */
 
     public static getWidget(type: string, data: any): TWidget {
         const widget &#x3D; this.widgetLibrary[type];

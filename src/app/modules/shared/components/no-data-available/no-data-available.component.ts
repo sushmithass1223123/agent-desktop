@@ -1,13 +1,23 @@
 import { Component, Input, OnInit } from '@angular/core';
 
+/**
+ * Display when no dta aavailable in widget to show
+ */
 @Component({
     selector: 'no-data-available',
     templateUrl: './no-data-available.component.html',
     styleUrls: ['./no-data-available.component.scss']
 })
 export class NoDataAvailableComponent implements OnInit {
-    @Input() msg?: string = 'No Data Available';
-    constructor() {}
+    /**
+     * Custom message
+     */
+    @Input() msg = 'No Data Available';
+    constructor() { }
 
-    ngOnInit(): void {}
+    /**
+     * Llifecycle hoook
+     * @method
+     */
+    ngOnInit(): void { }
 }

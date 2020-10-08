@@ -9,6 +9,9 @@ import { takeUntil } from 'rxjs/operators';
 import { SDKClient, TeamIntentDataList } from 'tmac-sdk';
 import * as _ from 'lodash';
 
+/**
+ * Intent list componrnt
+ */
 @Component({
     selector: 'tw-su-intent-list',
     templateUrl: './tw-su-intent-list.component.html',

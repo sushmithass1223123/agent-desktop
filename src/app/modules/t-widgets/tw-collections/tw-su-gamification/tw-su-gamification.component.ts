@@ -2,13 +2,16 @@ import { Component, Input, OnDestroy, OnInit, ViewEncapsulation, ViewChild } fro
 import { FuseConfigService } from '@fuse/services/config.service';
 import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { takeUntil } from 'rxjs/operators';
-import { GamificationService } from '@services/gamification.service';
+import { map, takeUntil } from 'rxjs/operators';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { sortBy } from 'lodash';
 import { ResData } from 'app/interfaces';
+import { HttpClient } from '@angular/common/http';
 
+/**
+ * Supervisor Gamification Component
+ */
 @Component({
     selector: 'tw-su-gamification',
     templateUrl: './tw-su-gamification.component.html',
@@ -16,32 +19,52 @@ import { ResData } from 'app/interfaces';
     encapsulation: ViewEncapsulation.None
 })
 export class TwSuGamificationComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-    // holds all the data related to this widget from the config
+    /**
+     * holds all the data related to this widget from the config
+     */
     @Input() data: any;
 
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store the fuse config for theme
-    // -----------------------------------------------------------
+    /**
+     * Optional to store the fuse config for theme
+     */
     fuseConfig: any;
 
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store entire app config and get update
-    // -----------------------------------------------------------
+    /**
+     * [OPTIONAL] to store entire app config and get update
+     */
     appConfig: any;
 
+    /**
+     * Gamificartion Request status
+     */
     gamificationReqStatus: ResData<null> = {
         error: false,
         loading: true,
         msg: ''
     };
+    /***
+     * Maximized Status
+     */
     maximized = false;
+    /**
+     * Maximized Table Columns
+     */
     maximizedTableColumns = ['Position', 'AgentName', 'TotalBadges', 'TeamName', 'TotalPoints'];
+    /**
+     * Minimized table columns
+     */
     minimizedTableColumns = ['Position', 'AgentName', 'TotalPoints'];
+    /**
+     * Leaderboard table
+     */
     leaderboardTable = {
         source: new MatTableDataSource([]),
         columns: this.minimizedTableColumns
     };
 
+    /**
+     * Mat table sort ref
+     */
     @ViewChild(MatSort) set sortContent(content: MatSort) {
         if (content) {
             // initially setter gets called with undefined
@@ -59,7 +82,7 @@ export class TwSuGamificationComponent extends TWidgetWrapper implements OnInit,
         private _fuseConfigService: FuseConfigService,
         // @ [OPTIONAL]
         private _appDataService: AppDataService,
-        public gamificationService: GamificationService
+        private http: HttpClient
     ) {
         super();
     }
@@ -108,20 +131,34 @@ export class TwSuGamificationComponent extends TWidgetWrapper implements OnInit,
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * Setup Leaderboard
+     * @method setupLeaderBoard
+     */
     setupLeaderBoard(): void {
-        this.gamificationService.fetchLeaderBoard(this.data.Data.LeaderBoardUrl).subscribe(
-            (leaders) => {
-                if (leaders && leaders.length) {
-                    this.leaderboardTable.source = new MatTableDataSource(sortBy(leaders, 'Position'));
+        this.http
+            .post<Record<'d', string>>(this.data.Data.LeaderBoardUrl, {})
+            .pipe(
+                map((x) => JSON.parse(x.d)),
+                takeUntil(this.unsubscribeAll)
+            ).subscribe(
+                (leaders) => {
+                    if (leaders && leaders.length) {
+                        this.leaderboardTable.source = new MatTableDataSource(sortBy(leaders, 'Position'));
+                    }
+                    this.gamificationReqStatus = { msg: '', error: false, loading: false };
+                },
+                () => {
+                    this.gamificationReqStatus = { msg: 'Something went wrong', error: true, loading: false };
                 }
-                this.gamificationReqStatus = { msg: '', error: false, loading: false };
-            },
-            () => {
-                this.gamificationReqStatus = { msg: 'Something went wrong', error: true, loading: false };
-            }
-        );
+            );
     }
 
+    /**
+     * Maximize event
+     * @method maximizeEvent
+     * @param {bBoolean} state
+     */
     maximizeEvent(state: boolean): void {
         this.maximized = state;
         if (state) {

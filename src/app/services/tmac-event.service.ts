@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { ReminderTaskDialogComponent } from '@modules/shared/reminder-task-dialog/reminder-task-dialog.component';
+import { ReminderTaskDialogComponent } from '@modules/shared/components';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { IAction, IWidget, QuizEvent } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';

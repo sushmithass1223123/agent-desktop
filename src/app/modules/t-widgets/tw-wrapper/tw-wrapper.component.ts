@@ -6,6 +6,10 @@ import { TwWidgetModel } from 'app/models';
 import { Subject } from 'rxjs/internal/Subject';
 import { takeUntil } from 'rxjs/operators';
 
+/**
+ * TW Wrapper component
+ * All widgets rendered inside this
+ */
 @Component({
     selector: 'tw-wrapper',
     templateUrl: './tw-wrapper.component.html',
@@ -14,25 +18,70 @@ import { takeUntil } from 'rxjs/operators';
 })
 export class TwWrapperComponent implements OnInit, OnDestroy {
 
+    /**
+     * Data form app config
+     */
     @Input() data: IWidget;
 
+    /**
+     * Maximise event emitter
+     */
     @Output() maximizeEvent = new EventEmitter();
+
+    /**
+     * Collapse event emitter
+     */
     @Output() collapseEvent = new EventEmitter();
+
+    /**
+     * Float event emitter
+     */
     @Output() floatEvent = new EventEmitter();
+
+    /**
+     * Destroy event emitter
+     */
     @Output() destroyEvent = new EventEmitter();
 
+    /**
+     * Fuse Config
+     */
     fuseConfig: FuseConfig;
 
+    /**
+     * Drag Position
+     */
     dragPosition: any = '';
 
+    /**
+     * Host Class
+     */
     @HostBinding('class.position-relative')
+
+    /**
+     * Floating state
+     */
     floating = false;
+    /**
+     * Maximized state
+     */
     maximized = false;
+    /**
+     * Collapsed state
+     */
     collapsed = false;
+    /**
+     * Hidden
+     */
     hidden = false;
+    /**
+     * AOT
+     */
     aot = false;
 
-    // Private
+    /**
+     * Unsubscribe all subject
+     */
     _unsubscribeAll: Subject<any>;
 
     /**

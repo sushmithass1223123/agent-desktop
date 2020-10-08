@@ -5,6 +5,9 @@ import { takeUntil } from 'rxjs/operators';
 import { TUtils } from 'tmac-sdk';
 import { AppDataService } from './app-data.service';
 
+/**
+ * Service for AOT - Always On Top Widgets
+ */
 @Injectable({
     providedIn: 'root'
 })

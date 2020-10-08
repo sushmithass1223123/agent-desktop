@@ -4,15 +4,34 @@ import { takeUntil } from 'rxjs/operators';
 import { TUtils, IAgentData, SDKClient, AgentStateDurationList, SignalRWrapper } from 'tmac-sdk';
 import { AppDataService } from './app-data.service';
 
+/**
+ * Dashboard Service
+ */
 @Injectable({
     providedIn: 'root'
 })
 export class DashboardService {
 
+    /**
+     * Unsubscribe all subject
+     */
     private _unsubscribeAll: Subject<any>;
+    /**
+     * Subscribed flag
+     */
     private _subscribed: boolean;
+    /**
+     * Need More Description
+     * Service Urls
+     */
     private _serviceUrls: string[];
+    /**
+     * SignalR instance
+     */
     private _signalRInstance: SignalRWrapper;
+    /**
+     * Dashboard Seervice subject
+     */
     private _dashboardServiceSubject: BehaviorSubject<string>;
 
     constructor(private _appDataService: AppDataService) {
@@ -20,6 +39,9 @@ export class DashboardService {
         this._dashboardServiceSubject = new BehaviorSubject('');
     }
 
+    /**
+     * Start signalr
+     */
     private startService(): void {
         TUtils.Logger.console('info', 'DashboardService.startService');
 
@@ -176,16 +198,34 @@ export class DashboardService {
         this._dashboardServiceSubject = new BehaviorSubject('');
     }
 
+    /**
+     * Trigger Agent Data
+     * @param {String} agentId 
+     * @param {Boolean} start 
+     * @param {number} duration 
+     */
     public triggerAgentData(agentId: string, start: boolean, duration: number): void {
         TUtils.Logger.console('info', `DashboardService.triggerAgentData: start=${start}`);
         this._signalRInstance.hub.invoke('GetAgentData', this._signalRInstance.hub.connection.id, agentId, start, duration);
     }
 
+    /**
+     * Trigger Active agents
+     * @param {String} agentId 
+     * @param {String} teamId 
+     * @param {Boolean} start 
+     * @param {Number} duration 
+     */
     public triggerActiveAgents(agentId: string, teamId: string, start: boolean, duration: number): void {
         TUtils.Logger.console('info', `DashboardService.triggerActiveAgents: start=${start}`);
         this._signalRInstance.hub.invoke('GetActiveAgentList', this._signalRInstance.hub.connection.id, agentId, teamId, start, duration);
     }
 
+    /**
+     * Trigger agent Interactions
+     * @param {String} agentId 
+     * @param {Boolean} start 
+     */
     public triggerAgentInteractions(agentId: string, start: boolean): void {
         TUtils.Logger.console('info', `DashboardService.triggerAgentInteractions: agentId=${agentId}, start=${start}`);
         this._signalRInstance.hub.invoke('GetActiveInteractionList', this._signalRInstance.hub.connection.id, agentId, start);

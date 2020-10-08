@@ -64,6 +64,13 @@
     <code>src/app/app.component.ts</code>
 </p>
 
+    <p class="comment">
+        <h3>Description</h3>
+    </p>
+    <p class="comment">
+        <p>App / root component</p>
+
+    </p>
 
 
     <p class="comment">
@@ -221,12 +228,12 @@
             <tbody>
                 <tr>
                     <td class="col-md-4">
-<code>constructor(document: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, _fuseConfigService: <a href="../injectables/FuseConfigService.html">FuseConfigService</a>, _fuseNavigationService: <a href="../injectables/FuseNavigationService.html">FuseNavigationService</a>, _fuseSplashScreenService: <a href="../injectables/FuseSplashScreenService.html">FuseSplashScreenService</a>, _fuseTranslationLoaderService: <a href="../injectables/FuseTranslationLoaderService.html">FuseTranslationLoaderService</a>, _translateService: TranslateService, _platform: Platform, _titleService: <a href="https://angular.io/api/platform-browser/Title" target="_blank">Title</a>, _appDataService: <a href="../injectables/AppDataService.html">AppDataService</a>, _router: <a href="https://angular.io/api/router/Router" target="_blank">Router</a>)</code>
+<code>constructor(document: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, _fuseConfigService: <a href="../injectables/FuseConfigService.html">FuseConfigService</a>, _fuseNavigationService: <a href="../injectables/FuseNavigationService.html">FuseNavigationService</a>, _fuseSplashScreenService: <a href="../injectables/FuseSplashScreenService.html">FuseSplashScreenService</a>, _fuseTranslationLoaderService: <a href="../injectables/FuseTranslationLoaderService.html">FuseTranslationLoaderService</a>, _platform: Platform, _translateService: TranslateService, _titleService: <a href="https://angular.io/api/platform-browser/Title" target="_blank">Title</a>, _appDataService: <a href="../injectables/AppDataService.html">AppDataService</a>, _router: <a href="https://angular.io/api/router/Router" target="_blank">Router</a>, _appUIService: <a href="../injectables/AppUiService.html">AppUiService</a>)</code>
                     </td>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="61" class="link-to-prism">src/app/app.component.ts:61</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="102" class="link-to-prism">src/app/app.component.ts:102</a></div>
                             </td>
                         </tr>
 
@@ -306,10 +313,10 @@
                                                     
                                                 </tr>
                                                 <tr>
-                                                        <td>_translateService</td>
+                                                        <td>_platform</td>
                                                   
                                                         <td>
-                                                                    <code>TranslateService</code>
+                                                                    <code>Platform</code>
                                                         </td>
                                                   
                                                     <td>
@@ -318,10 +325,10 @@
                                                     
                                                 </tr>
                                                 <tr>
-                                                        <td>_platform</td>
+                                                        <td>_translateService</td>
                                                   
                                                         <td>
-                                                                    <code>Platform</code>
+                                                                    <code>TranslateService</code>
                                                         </td>
                                                   
                                                     <td>
@@ -358,6 +365,18 @@
                                                   
                                                         <td>
                                                                         <code><a href="https://angular.io/api/router/Router" target="_blank" >Router</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>_appUIService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/AppUiService.html" target="_self" >AppUiService</a></code>
                                                         </td>
                                                   
                                                     <td>
@@ -405,12 +424,19 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="39"
-                            class="link-to-prism">src/app/app.component.ts:39</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="80"
+                            class="link-to-prism">src/app/app.component.ts:80</a></div>
                 </td>
             </tr>
 
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Disable opening console / refreshing</p>
+</div>
+
+                </td>
+            </tr>
         </tbody>
     </table>
 </section>
@@ -444,14 +470,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="208"
-                            class="link-to-prism">src/app/app.component.ts:208</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="261"
+                            class="link-to-prism">src/app/app.component.ts:261</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>To get config for the app</p>
+</div>
 
                     <div class="io-description">
                         <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
@@ -486,14 +514,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="265"
-                            class="link-to-prism">src/app/app.component.ts:265</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="337"
+                            class="link-to-prism">src/app/app.component.ts:337</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>To get developement config</p>
+</div>
 
                     <div class="io-description">
                         <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
@@ -528,14 +558,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="237"
-                            class="link-to-prism">src/app/app.component.ts:237</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="293"
+                            class="link-to-prism">src/app/app.component.ts:293</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>To get production config</p>
+</div>
 
                     <div class="io-description">
                         <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
@@ -567,8 +599,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="198"
-                            class="link-to-prism">src/app/app.component.ts:198</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="245"
+                            class="link-to-prism">src/app/app.component.ts:245</a></div>
                 </td>
             </tr>
 
@@ -608,8 +640,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="165"
-                            class="link-to-prism">src/app/app.component.ts:165</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="203"
+                            class="link-to-prism">src/app/app.component.ts:203</a></div>
                 </td>
             </tr>
 
@@ -651,14 +683,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="271"
-                            class="link-to-prism">src/app/app.component.ts:271</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="348"
+                            class="link-to-prism">src/app/app.component.ts:348</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>To set TMAC config</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -726,10 +760,16 @@
                     </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="36" class="link-to-prism">src/app/app.component.ts:36</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="73" class="link-to-prism">src/app/app.component.ts:73</a></div>
                             </td>
                         </tr>
 
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Unsubscribe all subject</p>
+</div>
+                    </td>
+                </tr>
 
             </tbody>
         </table>
@@ -753,10 +793,17 @@
                     </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/app/app.component.ts:28</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="53" class="link-to-prism">src/app/app.component.ts:53</a></div>
                             </td>
                         </tr>
 
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Need more description
+Config</p>
+</div>
+                    </td>
+                </tr>
 
             </tbody>
         </table>
@@ -785,10 +832,16 @@
                     </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="31" class="link-to-prism">src/app/app.component.ts:31</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="63" class="link-to-prism">src/app/app.component.ts:63</a></div>
                             </td>
                         </tr>
 
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Dev config path</p>
+</div>
+                    </td>
+                </tr>
 
             </tbody>
         </table>
@@ -812,10 +865,16 @@
                     </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="26" class="link-to-prism">src/app/app.component.ts:26</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="43" class="link-to-prism">src/app/app.component.ts:43</a></div>
                             </td>
                         </tr>
 
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>fuse Config data</p>
+</div>
+                    </td>
+                </tr>
 
             </tbody>
         </table>
@@ -838,10 +897,16 @@
                     </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">src/app/app.component.ts:33</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="68" class="link-to-prism">src/app/app.component.ts:68</a></div>
                             </td>
                         </tr>
 
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>loading state</p>
+</div>
+                    </td>
+                </tr>
 
             </tbody>
         </table>
@@ -865,10 +930,17 @@
                     </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="27" class="link-to-prism">src/app/app.component.ts:27</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="48" class="link-to-prism">src/app/app.component.ts:48</a></div>
                             </td>
                         </tr>
 
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Need more Description
+Navigation </p>
+</div>
+                    </td>
+                </tr>
 
             </tbody>
         </table>
@@ -897,10 +969,16 @@
                     </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="30" class="link-to-prism">src/app/app.component.ts:30</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="58" class="link-to-prism">src/app/app.component.ts:58</a></div>
                             </td>
                         </tr>
 
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Production conofig path</p>
+</div>
+                    </td>
+                </tr>
 
             </tbody>
         </table>
@@ -914,12 +992,13 @@
 import { DOCUMENT } from &#x27;@angular/common&#x27;;
 import { Component, HostListener, Inject, OnDestroy, OnInit } from &#x27;@angular/core&#x27;;
 import { Title } from &#x27;@angular/platform-browser&#x27;;
-import { Router } from &#x27;@angular/router&#x27;;
+import { ActivatedRoute, Router } from &#x27;@angular/router&#x27;;
 import { FuseNavigationService } from &#x27;@fuse/components/navigation/navigation.service&#x27;;
 import { FuseConfigService } from &#x27;@fuse/services/config.service&#x27;;
 import { FuseSplashScreenService } from &#x27;@fuse/services/splash-screen.service&#x27;;
 import { FuseTranslationLoaderService } from &#x27;@fuse/services/translation-loader.service&#x27;;
 import { TranslateService } from &#x27;@ngx-translate/core&#x27;;
+import { AppUiService } from &#x27;@services/app-ui.service&#x27;;
 import { locale as navigationEnglish } from &#x27;app/navigation/i18n/en&#x27;;
 import { locale as navigationTurkish } from &#x27;app/navigation/i18n/tr&#x27;;
 import { navigation } from &#x27;app/navigation/navigation&#x27;;
@@ -929,24 +1008,64 @@ import { IResponse, SDKClient, TEnums, TUtils } from &#x27;tmac-sdk&#x27;;
 import { environment } from &#x27;../environments/environment&#x27;;
 import { AppDataService } from &#x27;./services/app-data.service&#x27;;
 
+// declare global
+declare global {
+    interface Window {
+        /**
+         * SDK Client global
+         */
+        SDKClient: typeof SDKClient;
+    }
+}
+
+/**
+ * App / root component
+ */
 @Component({
     selector: &#x27;app&#x27;,
     templateUrl: &#x27;./app.component.html&#x27;,
     styleUrls: [&#x27;./app.component.scss&#x27;]
 })
 export class AppComponent implements OnInit, OnDestroy {
+    /**
+     * fuse Config data
+     */
     fuseConfig: any;
+    /**
+     * Need more Description
+     * Navigation 
+     */
     navigation: any;
+    /**
+     * Need more description
+     * Config
+     */
     config: any;
 
+    /**
+     * Production conofig path
+     */
     prodConfigPath &#x3D; &#x27;assets/app-config.json&#x27;;
+
+    /**
+     * Dev config path
+     */
     devConfigPath &#x3D; &#x27;assets/app-config-dev.json&#x27;;
 
+    /**
+     * loading state
+     */
     loaded &#x3D; false;
 
-    // Private
+    /**
+     * Unsubscribe all subject
+     */
     private _unsubscribeAll: Subject&lt;any&gt;;
 
+    /**
+     * Disable opening console / refreshing
+     * @param {KeyboardEvent} event 
+     */
     @HostListener(&#x27;document:keydown&#x27;, [&#x27;$event&#x27;])
     handleKeyboardEvent(event: KeyboardEvent): any {
         if (!this.config) {
@@ -983,6 +1102,10 @@ export class AppComponent implements OnInit, OnDestroy {
      * @param {FuseTranslationLoaderService} _fuseTranslationLoaderService
      * @param {Platform} _platform
      * @param {TranslateService} _translateService
+     * @param {Title} _titleService
+     * @param {AppDataService} _appDataService
+     * @param {TitRouterle} _router
+     * @param {AppUiService} _appUIService
      */
     constructor(
         @Inject(DOCUMENT) private document: any,
@@ -990,11 +1113,12 @@ export class AppComponent implements OnInit, OnDestroy {
         private _fuseNavigationService: FuseNavigationService,
         private _fuseSplashScreenService: FuseSplashScreenService,
         private _fuseTranslationLoaderService: FuseTranslationLoaderService,
-        private _translateService: TranslateService,
         private _platform: Platform,
+        private _translateService: TranslateService,
         private _titleService: Title,
         private _appDataService: AppDataService,
         private _router: Router,
+        private _appUIService: AppUiService
     ) {
         // Get default navigation
         this.navigation &#x3D; navigation;
@@ -1057,14 +1181,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
         // Set the private defaults
         this._unsubscribeAll &#x3D; new Subject();
-
-        // do not load config for preview page
-        if (this._router.url &#x3D;&#x3D;&#x3D; &#x27;/preview&#x27;) {
-            return;
-        }
-
-        // Get the app config
-        this.getConfig();
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -1075,6 +1191,15 @@ export class AppComponent implements OnInit, OnDestroy {
      * On init
      */
     ngOnInit(): void {
+
+        // do not load config for preview page
+        if (this._router.url &#x3D;&#x3D;&#x3D; &#x27;/preview&#x27;) {
+            return;
+        }
+
+        // Get the app config
+        this.getConfig();
+
         // Subscribe to config changes
         this._fuseConfigService.config
             .pipe(takeUntil(this._unsubscribeAll))
@@ -1111,12 +1236,18 @@ export class AppComponent implements OnInit, OnDestroy {
         // Unsubscribe from all subscriptions
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
+
+        // subscribe to app ui service
+        this._appUIService.unsubscribe();
     }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Private methods
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * To get config for the app
+     */
     private async getConfig(): Promise&lt;any&gt; {
         let data &#x3D; null;
         try {
@@ -1146,6 +1277,9 @@ export class AppComponent implements OnInit, OnDestroy {
         this.setTMACConfig(data);
     }
 
+    /**
+     * To get production config
+     */
     private async getProductionConfig(): Promise&lt;any&gt; {
         // get the config
         const respnse &#x3D; await fetch(this.prodConfigPath);
@@ -1162,9 +1296,22 @@ export class AppComponent implements OnInit, OnDestroy {
             this._appDataService.appConfig &#x3D; data;
         }
 
+        // check the config mode
+        if (data.ConfigMode &#x3D;&#x3D;&#x3D; &#x27;local&#x27;) {
+            TUtils.Logger.console(&#x27;info&#x27;, &#x27;Config mode&#x3D;local, load config from app-config-dev.json&#x27;);
+            // get the config from local for developement
+            return await this.getDevelopementConfig();
+        }
+
+        TUtils.Logger.console(&#x27;info&#x27;, &#x27;Config mode&#x3D;remote, load config from server&#x27;);
+
         // get the login json from proxy
         const loginJson: IResponse &#x3D; await TUtils.HttpClient.sendRequest({
             url: &#x60;${data.ProxyUrl}/GetTmacLoginJson&#x60;,
+            header: {
+                &#x27;Content-Type&#x27;: &#x27;application/json&#x27;
+            },
+            responseType: &#x27;json&#x27;,
             requestArgs: { id: &#x27;&#x27; },
             method: &#x27;POST&#x27;,
             retry: 3
@@ -1174,12 +1321,20 @@ export class AppComponent implements OnInit, OnDestroy {
         return loginJson.response ? JSON.parse(loginJson.response.d) : null;
     }
 
+    /**
+     * To get developement config
+     */
     private async getDevelopementConfig(): Promise&lt;any&gt; {
         // get the config
         const respnse &#x3D; await fetch(this.devConfigPath);
         return await respnse.json();
     }
 
+    /**
+     * To set TMAC config
+     * 
+     * @param config
+     */
     private setTMACConfig(config: any): void {
         // check if the config is null
         if (config !&#x3D;&#x3D; null) {
@@ -1212,6 +1367,12 @@ export class AppComponent implements OnInit, OnDestroy {
                 customScripts:
                     [...config.AppConfigs.SDK.CustomSripts]
             });
+
+            // check the environment and set window variable
+            if (!environment.production) {
+                // set a global variable to access SDK client on development mode
+                window.SDKClient &#x3D; SDKClient;
+            }
         }
         else {
             // we will route to not-found page
@@ -1227,8 +1388,10 @@ export class AppComponent implements OnInit, OnDestroy {
                     }
                 });
         }
-    }
 
+        // subscribe to app ui service
+        this._appUIService.subscribe();
+    }
 }
 </code></pre>
     </div>
@@ -1283,8 +1446,8 @@ export class AppComponent implements OnInit, OnDestroy {
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
         var COMPONENT_TEMPLATE = '<div><!--    *ngIf="true" hack is required here for router-outlet to work    correctly. Otherwise, it won\'t register the changes on the    layout and won\'t update the view. --><router-outlet *ngIf="true && loaded"></router-outlet></div>'
-    var COMPONENTS = [{'name': 'AlertDialogComponent', 'selector': 'alert-dialog'},{'name': 'AppComponent', 'selector': 'app'},{'name': 'AppThemeOptionsComponent', 'selector': 'app-theme-options'},{'name': 'AvatarComponent', 'selector': 'avatar'},{'name': 'ChatPanelComponent', 'selector': 'chat-panel'},{'name': 'ConfirmDialogComponent', 'selector': 'confirm-dialog'},{'name': 'ContentComponent', 'selector': 'content'},{'name': 'FooterComponent', 'selector': 'footer'},{'name': 'FuseConfirmDialogComponent', 'selector': 'fuse-confirm-dialog'},{'name': 'FuseCountdownComponent', 'selector': 'fuse-countdown'},{'name': 'FuseDemoContentComponent', 'selector': 'fuse-demo-content'},{'name': 'FuseDemoSidebarComponent', 'selector': 'fuse-demo-sidebar'},{'name': 'FuseHighlightComponent', 'selector': 'fuse-highlight'},{'name': 'FuseMaterialColorPickerComponent', 'selector': 'fuse-material-color-picker'},{'name': 'FuseNavHorizontalCollapsableComponent', 'selector': 'fuse-nav-horizontal-collapsable'},{'name': 'FuseNavHorizontalItemComponent', 'selector': 'fuse-nav-horizontal-item'},{'name': 'FuseNavigationComponent', 'selector': 'fuse-navigation'},{'name': 'FuseNavVerticalCollapsableComponent', 'selector': 'fuse-nav-vertical-collapsable'},{'name': 'FuseNavVerticalGroupComponent', 'selector': 'fuse-nav-vertical-group'},{'name': 'FuseNavVerticalItemComponent', 'selector': 'fuse-nav-vertical-item'},{'name': 'FuseProgressBarComponent', 'selector': 'fuse-progress-bar'},{'name': 'FuseSearchBarComponent', 'selector': 'fuse-search-bar'},{'name': 'FuseShortcutsComponent', 'selector': 'fuse-shortcuts'},{'name': 'FuseSidebarComponent', 'selector': 'fuse-sidebar'},{'name': 'FuseThemeOptionsComponent', 'selector': 'fuse-theme-options'},{'name': 'FuseWidgetComponent', 'selector': 'fuse-widget'},{'name': 'HorizontalLayout1Component', 'selector': 'horizontal-layout-1'},{'name': 'LoginComponent', 'selector': 'login'},{'name': 'MainComponent', 'selector': 'main'},{'name': 'NavbarComponent', 'selector': 'navbar'},{'name': 'QuickPanelComponent', 'selector': 'quick-panel'},{'name': 'ResourceNotFoundComponent', 'selector': 'resource-not-found'},{'name': 'SnackbarComponent', 'selector': 'snackbar'},{'name': 'ToolbarComponent', 'selector': 'toolbar'},{'name': 'TwAccountInformationComponent', 'selector': 'tw-account-information'},{'name': 'TwActiveInteractionsComponent', 'selector': 'tw-active-interactions'},{'name': 'TwAdCallbacksComponent', 'selector': 'tw-ad-callbacks'},{'name': 'TwAdFeedbackComponent', 'selector': 'tw-ad-feedback'},{'name': 'TwAdGamificationComponent', 'selector': 'tw-ad-gamification'},{'name': 'TwAdInteractionDetailsComponent', 'selector': 'tw-ad-interaction-details'},{'name': 'TwAdPerformanceComponent', 'selector': 'tw-ad-performance'},{'name': 'TwAdScoreComponent', 'selector': 'tw-ad-score'},{'name': 'TwAdTotalAvComponent', 'selector': 'tw-ad-total-av'},{'name': 'TwAdTotalCallsComponent', 'selector': 'tw-ad-total-calls'},{'name': 'TwAdTotalChatsComponent', 'selector': 'app-tw-ad-total-chats'},{'name': 'TwAdTotalInteractionsComponent', 'selector': 'tw-ad-total-interactions'},{'name': 'TwAgentAssistComponent', 'selector': 'tw-agent-assist'},{'name': 'TwAgentDetailsComponent', 'selector': 'tw-agent-details'},{'name': 'TwAhtTcComponent', 'selector': 'tw-aht-tc'},{'name': 'TwAmdocsBccComponent', 'selector': 'tw-amdocs-bcc'},{'name': 'TwAudioControlsComponent', 'selector': 'tw-audio-controls'},{'name': 'TwAuxCodesComponent', 'selector': 'tw-aux-codes'},{'name': 'TwAuxStatusChartComponent', 'selector': 'tw-aux-status-chart.component'},{'name': 'TwAuxTimerComponent', 'selector': 'tw-aux-timer'},{'name': 'TwBroadcastComponent', 'selector': 'tw-broadcast'},{'name': 'TwCannedResponsesComponent', 'selector': 'tw-canned-responses'},{'name': 'TwCardComponent', 'selector': 'tw-card'},{'name': 'TwCardHeaderComponent', 'selector': 'tw-card-header'},{'name': 'TwcCustomComponent', 'selector': 'twc-custom'},{'name': 'TwChatControlsComponent', 'selector': 'tw-chat-controls'},{'name': 'TwChatPanelComponent', 'selector': 'tw-chat-panel'},{'name': 'TwcHomeComponent', 'selector': 'twc-home'},{'name': 'TwcNoInteractionComponent', 'selector': 'twc-no-interaction'},{'name': 'TwcNoWidgetsComponent', 'selector': 'twc-no-widgets'},{'name': 'TwcSupervisorComponent', 'selector': 'twc-supervisor'},{'name': 'TwcTextchatComponent', 'selector': 'twc-textchat'},{'name': 'TwcUnknownComponent', 'selector': 'twc-unknown'},{'name': 'TwCustomComponent', 'selector': 'tw-custom'},{'name': 'TwCustomerDetailsComponent', 'selector': 'tw-customer-details'},{'name': 'TwCustomerJourneyComponent', 'selector': 'tw-customer-journey'},{'name': 'TwCustomerSentimentComponent', 'selector': 'tw-customer-sentiment'},{'name': 'TwcVoiceComponent', 'selector': 'twc-voice'},{'name': 'TwHeatMapComponent', 'selector': 'tw-heat-map'},{'name': 'TwInstantMessagingComponent', 'selector': 'tw-instant-messaging'},{'name': 'TwInteractionSelectorComponent', 'selector': 'tw-interaction-selector'},{'name': 'TwLogoutComponent', 'selector': 'tw-logout'},{'name': 'TwNotificationsComponent', 'selector': 'tw-notifications'},{'name': 'TwPanelComponent', 'selector': 'tw-panel'},{'name': 'TwRegisterCallbackComponent', 'selector': 'tw-register-callback'},{'name': 'TwSampleComponent', 'selector': 'tw-sample'},{'name': 'TwSuActiveAgentsComponent', 'selector': 'tw-su-active-agents'},{'name': 'TwSuAgentActivityComponent', 'selector': 'tw-su-agent-activity'},{'name': 'TwSuAgentActivityDetailsComponent', 'selector': 'tw-su-agent-activity-details'},{'name': 'TwSuAgentInteractionsComponent', 'selector': 'tw-su-agent-interactions'},{'name': 'TwSuAverageHandleTimeComponent', 'selector': 'tw-su-average-handle-time'},{'name': 'TwSuCallsInQueueComponent', 'selector': 'tw-su-calls-in-queue.component'},{'name': 'TwSuChannelsComponent', 'selector': 'tw-su-channels.component'},{'name': 'TwSuChannelsStatusComponent', 'selector': 'tw-su-channels-status'},{'name': 'TwSuGamificationComponent', 'selector': 'tw-su-gamification'},{'name': 'TwSuIntentListComponent', 'selector': 'tw-su-intent-list'},{'name': 'TwSuStatusComponent', 'selector': 'tw-su-status.component'},{'name': 'TwSuTotalCallsComponent', 'selector': 'tw-su-total-calls.component'},{'name': 'TwSuTransferredConferencedCallsComponent', 'selector': 'tw-su-transferred-conferenced-calls'},{'name': 'TwTemplateComponent', 'selector': 'tw-template'},{'name': 'TwToolbarMenuComponent', 'selector': 'tw-toolbar-menu'},{'name': 'TwUnknownComponent', 'selector': 'tw-unknown'},{'name': 'TwVideoControlsComponent', 'selector': 'tw-video-controls'},{'name': 'TwVoiceBotTranscriptsComponent', 'selector': 'tw-voice-bot-transcripts'},{'name': 'TwVoiceControlsComponent', 'selector': 'tw-voice-controls'},{'name': 'TwVoicePanelComponent', 'selector': 'tw-voice-panel'},{'name': 'TwWallboardComponent', 'selector': 'tw-wallboard'},{'name': 'TwWorkCodesComponent', 'selector': 'tw-work-codes'},{'name': 'TwWrapperComponent', 'selector': 'tw-wrapper'},{'name': 'VerticalLayout1Component', 'selector': 'vertical-layout-1'},{'name': 'WidgetFabComponent', 'selector': 'widget-fab'},{'name': 'WidgetPreviewComponent', 'selector': 'widget-preview'}];
-    var DIRECTIVES = [{'name': 'FuseIfOnDomDirective', 'selector': '[fuseIfOnDom]'},{'name': 'FuseInnerScrollDirective', 'selector': '.inner-scroll'},{'name': 'FuseMatSidenavHelperDirective', 'selector': '[fuseMatSidenavHelper]'},{'name': 'FuseMatSidenavTogglerDirective', 'selector': '[fuseMatSidenavToggler]'},{'name': 'FusePerfectScrollbarDirective', 'selector': '[fusePerfectScrollbar]'},{'name': 'FuseWidgetToggleDirective', 'selector': '[fuseWidgetToggle]'},{'name': 'TWChartDirective', 'selector': '[twChart]'},{'name': 'TwTemplateDirective', 'selector': '[widgetTemplate]'}];
+    var COMPONENTS = [{'name': 'AlertDialogComponent', 'selector': 'alert-dialog'},{'name': 'AppComponent', 'selector': 'app'},{'name': 'AppConfirmDialogComponent', 'selector': 'app-confirm-dialog'},{'name': 'AppSnackbarComponent', 'selector': 'app-snackbar'},{'name': 'AppThemeOptionsComponent', 'selector': 'app-theme-options'},{'name': 'AvatarComponent', 'selector': 'avatar'},{'name': 'ContentComponent', 'selector': 'content'},{'name': 'CreateSmsComponent', 'selector': 'app-create-sms'},{'name': 'CustomDialogComponent', 'selector': 'custom-dialog'},{'name': 'FooterComponent', 'selector': 'footer'},{'name': 'FuseConfirmDialogComponent', 'selector': 'fuse-confirm-dialog'},{'name': 'FuseCountdownComponent', 'selector': 'fuse-countdown'},{'name': 'FuseDemoContentComponent', 'selector': 'fuse-demo-content'},{'name': 'FuseDemoSidebarComponent', 'selector': 'fuse-demo-sidebar'},{'name': 'FuseHighlightComponent', 'selector': 'fuse-highlight'},{'name': 'FuseMaterialColorPickerComponent', 'selector': 'fuse-material-color-picker'},{'name': 'FuseNavHorizontalCollapsableComponent', 'selector': 'fuse-nav-horizontal-collapsable'},{'name': 'FuseNavHorizontalItemComponent', 'selector': 'fuse-nav-horizontal-item'},{'name': 'FuseNavigationComponent', 'selector': 'fuse-navigation'},{'name': 'FuseNavVerticalCollapsableComponent', 'selector': 'fuse-nav-vertical-collapsable'},{'name': 'FuseNavVerticalGroupComponent', 'selector': 'fuse-nav-vertical-group'},{'name': 'FuseNavVerticalItemComponent', 'selector': 'fuse-nav-vertical-item'},{'name': 'FuseProgressBarComponent', 'selector': 'fuse-progress-bar'},{'name': 'FuseSearchBarComponent', 'selector': 'fuse-search-bar'},{'name': 'FuseShortcutsComponent', 'selector': 'fuse-shortcuts'},{'name': 'FuseSidebarComponent', 'selector': 'fuse-sidebar'},{'name': 'FuseThemeOptionsComponent', 'selector': 'fuse-theme-options'},{'name': 'FuseWidgetComponent', 'selector': 'fuse-widget'},{'name': 'HorizontalLayout1Component', 'selector': 'horizontal-layout-1'},{'name': 'InstantMessagingComponent', 'selector': 'instant-messaging'},{'name': 'LoginComponent', 'selector': 'login'},{'name': 'MainComponent', 'selector': 'main'},{'name': 'NavbarComponent', 'selector': 'navbar'},{'name': 'NoDataAvailableComponent', 'selector': 'no-data-available'},{'name': 'QuickPanelComponent', 'selector': 'quick-panel'},{'name': 'RaceCarTrackComponent', 'selector': 'race-car-track'},{'name': 'ReminderTaskDialogComponent', 'selector': 'reminder-task-dialog'},{'name': 'ResourceNotFoundComponent', 'selector': 'resource-not-found'},{'name': 'SnackbarComponent', 'selector': 'snackbar'},{'name': 'ToolbarComponent', 'selector': 'toolbar'},{'name': 'TwAccountInformationComponent', 'selector': 'tw-account-information'},{'name': 'TwActiveInteractionsComponent', 'selector': 'tw-active-interactions'},{'name': 'TwAdCallbacksComponent', 'selector': 'tw-ad-callbacks'},{'name': 'TwAdFeedbackComponent', 'selector': 'tw-ad-feedback'},{'name': 'TwAdGamificationComponent', 'selector': 'tw-ad-gamification'},{'name': 'TwAdInteractionDetailsComponent', 'selector': 'tw-ad-interaction-details'},{'name': 'TwAdPerformanceComponent', 'selector': 'tw-ad-performance'},{'name': 'TwAdScoreComponent', 'selector': 'tw-ad-score'},{'name': 'TwAdTotalInteractionsComponent', 'selector': 'tw-ad-total-interactions'},{'name': 'TwAgentAssistComponent', 'selector': 'tw-agent-assist'},{'name': 'TwAgentDetailsComponent', 'selector': 'tw-agent-details'},{'name': 'TwAhtTcComponent', 'selector': 'tw-aht-tc'},{'name': 'TwAmdocsBccComponent', 'selector': 'tw-amdocs-bcc'},{'name': 'TwAudioControlsComponent', 'selector': 'tw-audio-controls'},{'name': 'TwAuxCodesComponent', 'selector': 'tw-aux-codes'},{'name': 'TwAuxStatusChartComponent', 'selector': 'tw-aux-status-chart.component'},{'name': 'TwAuxTimerComponent', 'selector': 'tw-aux-timer'},{'name': 'TwBroadcastComponent', 'selector': 'tw-broadcast'},{'name': 'TwCannedResponsesComponent', 'selector': 'tw-canned-responses'},{'name': 'TwCardComponent', 'selector': 'tw-card'},{'name': 'TwCardHeaderComponent', 'selector': 'tw-card-header'},{'name': 'TwcCustomComponent', 'selector': 'twc-custom'},{'name': 'TwcEmailComponent', 'selector': 'twc-email'},{'name': 'TwChatControlsComponent', 'selector': 'tw-chat-controls'},{'name': 'TwChatPanelComponent', 'selector': 'tw-chat-panel'},{'name': 'TwcHomeComponent', 'selector': 'twc-home'},{'name': 'TwcNoInteractionComponent', 'selector': 'twc-no-interaction'},{'name': 'TwcNoWidgetsComponent', 'selector': 'twc-no-widgets'},{'name': 'TwCreateInteractionComponent', 'selector': 'tw-create-interaction'},{'name': 'TwcSupervisorComponent', 'selector': 'twc-supervisor'},{'name': 'TwcTextchatComponent', 'selector': 'twc-textchat'},{'name': 'TwcUnknownComponent', 'selector': 'twc-unknown'},{'name': 'TwCustomComponent', 'selector': 'tw-custom'},{'name': 'TwCustomerDetailsComponent', 'selector': 'tw-customer-details'},{'name': 'TwCustomerJourneyComponent', 'selector': 'tw-customer-journey'},{'name': 'TwCustomerSentimentComponent', 'selector': 'tw-customer-sentiment'},{'name': 'TwcVoiceComponent', 'selector': 'twc-voice'},{'name': 'TwcWorkbenchComponent', 'selector': 'twc-workbench'},{'name': 'TwEmailControlsComponent', 'selector': 'tw-email-controls'},{'name': 'TwEmailPanelComponent', 'selector': 'tw-email-panel'},{'name': 'TwGamificationComponent', 'selector': 'tw-gamification'},{'name': 'TwInstantMessagingComponent', 'selector': 'tw-instant-messaging'},{'name': 'TwLogoutComponent', 'selector': 'tw-logout'},{'name': 'TwNotificationsComponent', 'selector': 'tw-notifications'},{'name': 'TwPanelComponent', 'selector': 'tw-panel'},{'name': 'TwPendingCallbacksComponent', 'selector': 'tw-pending-callbacks'},{'name': 'TwPieChartComponent', 'selector': 'tw-pie-chart.component'},{'name': 'TwRegisterCallbackComponent', 'selector': 'tw-register-callback'},{'name': 'TwSampleComponent', 'selector': 'tw-sample'},{'name': 'TwSuActiveAgentsComponent', 'selector': 'tw-su-active-agents'},{'name': 'TwSuAgentActivityComponent', 'selector': 'tw-su-agent-activity'},{'name': 'TwSuAgentActivityDetailsComponent', 'selector': 'tw-su-agent-activity-details'},{'name': 'TwSuAgentInteractionsComponent', 'selector': 'tw-su-agent-interactions'},{'name': 'TwSuCallsInQueueComponent', 'selector': 'tw-su-calls-in-queue.component'},{'name': 'TwSuChannelsComponent', 'selector': 'tw-su-channels.component'},{'name': 'TwSuGamificationComponent', 'selector': 'tw-su-gamification'},{'name': 'TwSuIntentListComponent', 'selector': 'tw-su-intent-list'},{'name': 'TwSuStatusComponent', 'selector': 'tw-su-status.component'},{'name': 'TwTemplateComponent', 'selector': 'tw-template'},{'name': 'TwToolbarMenuComponent', 'selector': 'tw-toolbar-menu'},{'name': 'TwTransferInteractionComponent', 'selector': 'tw-transfer-interaction'},{'name': 'TwUnknownComponent', 'selector': 'tw-unknown'},{'name': 'TwVideoControlsComponent', 'selector': 'tw-video-controls'},{'name': 'TwVoiceBotTranscriptsComponent', 'selector': 'tw-voice-bot-transcripts'},{'name': 'TwVoiceCannedResponsesComponent', 'selector': 'tw-voice-canned-responses'},{'name': 'TwVoiceControlsComponent', 'selector': 'tw-voice-controls'},{'name': 'TwVoicePanelComponent', 'selector': 'tw-voice-panel'},{'name': 'TwWallboardComponent', 'selector': 'tw-wallboard'},{'name': 'TwWorkbenchPanelComponent', 'selector': 'tw-workbench-panel'},{'name': 'TwWorkCodesComponent', 'selector': 'tw-work-codes'},{'name': 'TwWrapperComponent', 'selector': 'tw-wrapper'},{'name': 'VerticalLayout1Component', 'selector': 'vertical-layout-1'},{'name': 'WidgetFabComponent', 'selector': 'widget-fab'},{'name': 'WidgetPreviewComponent', 'selector': 'widget-preview'},{'name': 'WorkbenchEmailComponent', 'selector': 'workbench-email'}];
+    var DIRECTIVES = [{'name': 'FuseIfOnDomDirective', 'selector': '[fuseIfOnDom]'},{'name': 'FuseInnerScrollDirective', 'selector': '.inner-scroll'},{'name': 'FuseMatSidenavHelperDirective', 'selector': '[fuseMatSidenavHelper]'},{'name': 'FuseMatSidenavTogglerDirective', 'selector': '[fuseMatSidenavToggler]'},{'name': 'FusePerfectScrollbarDirective', 'selector': '[fusePerfectScrollbar]'},{'name': 'FuseWidgetToggleDirective', 'selector': '[fuseWidgetToggle]'},{'name': 'QuillDirective', 'selector': '[quill]'},{'name': 'TWChartDirective', 'selector': '[twChart]'},{'name': 'TwTemplateDirective', 'selector': '[widgetTemplate]'}];
     var ACTUAL_COMPONENT = {'name': 'AppComponent'};
 </script>
 <script src="../js/tree.js"></script>

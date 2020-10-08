@@ -9,6 +9,9 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 
+/**
+ * Navbar component
+ */
 @Component({
     selector: 'navbar',
     templateUrl: './navbar.component.html',
@@ -16,20 +19,49 @@ import { InteractionManagerService } from '@services/interaction-manager.service
     encapsulation: ViewEncapsulation.None
 })
 export class NavbarComponent implements OnInit, OnDestroy {
+    /**
+     * App config data
+     */
     @Input()
+    /**
+     * Layout orientation
+     */
     layout = 'vertical';
 
+    /**
+     * Sidebar list options ref
+     */
     @ViewChildren('sidebarListOption') sidebarListOptions: QueryList<MatListOption>;
 
+    /**
+     * Fuse config
+     */
     fuseConfig: any;
 
+    /**
+     * Widgets on top section of widgets
+     */
     topWidgets: any[];
+    /**
+     * Widgets on bottom section of widgets
+     */
     bottomWidgets: any[];
+    /**
+     * Selected Widget
+     */
     selected: any;
+    /**
+     * Brand / tetherfi Logo
+     */
     brandLogo = null;
+    /**
+     * Customer logo
+     */
     customerLogo = null;
 
-    // Private
+    /**
+     * Unsubscribe All subject
+     */
     private _unsubscribeAll: Subject<any>;
 
     /**
@@ -147,10 +179,20 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this._unsubscribeAll.complete();
     }
 
+    /**
+     * Select Tab
+     * @method selectTab
+     * @param {any} item 
+     */
     selectTab(item: any): void {
         this._contentPageService.mode = item.Data.Path;
     }
 
+    /**
+     * Toggle Sidebar Open
+     * @method toggleSidebarOpen
+     * @param {string} key 
+     */
     toggleSidebarOpen(key: string): void {
         this._fuseSidebarService.getSidebar(key).toggleOpen();
     }

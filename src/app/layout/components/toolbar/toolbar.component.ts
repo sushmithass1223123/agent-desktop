@@ -10,31 +10,65 @@ import { AppDataService } from 'app/services/app-data.service';
 import { IWidget } from 'app/interfaces';
 import { SDKClient } from 'tmac-sdk';
 
+/**
+ * Toolbar component
+ */
 @Component({
     selector: 'toolbar',
     templateUrl: './toolbar.component.html',
     styleUrls: ['./toolbar.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-
 export class ToolbarComponent implements OnInit, OnDestroy {
+    /**
+     * Horizontal Navbar
+     */
     horizontalNavbar: boolean;
+    /**
+     * Right navbar
+     */
     rightNavbar: boolean;
+    /**
+     * Hidden Navbar
+     */
     hiddenNavbar: boolean;
-
+    
+    /**
+     * Selected Language
+     */
     selectedLanguage: any;
 
+    /**
+     * Navbar Widgets
+     */
     navbarWidgets = [];
 
+    /**
+     * Active Interaction Widget
+     */
     activeInteractionWidget = null;
+    /**
+     * Toolbar Widget
+     */
     toolbarMenuWidget = null;
 
+    /**
+     * Connectivity Status
+     */
     connectivityStatus: {
+        /**
+         * Status 
+         */
         status: -1,
+        /**
+         * Event mode
+         */
         eventMode: '';
     };
 
-    // Private
+    /**
+     * Unsubscribe all subject
+     */
     private _unsubscribeAll: Subject<any>;
 
     /**

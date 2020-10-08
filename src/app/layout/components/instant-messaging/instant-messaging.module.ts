@@ -13,6 +13,9 @@ import { InstantMessagingComponent } from './instant-messaging.component';
 import { InstantMessagingService } from './instant-messaging.service';
 import { SharedModule } from '@modules/shared/shared.module';
 
+/**
+ * Instant messaging component
+ */
 @NgModule({
     declarations: [InstantMessagingComponent],
     providers: [InstantMessagingService],

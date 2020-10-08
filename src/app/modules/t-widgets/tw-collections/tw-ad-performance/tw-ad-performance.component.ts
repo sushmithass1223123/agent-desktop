@@ -1,16 +1,17 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { AppDataService } from '@services/app-data.service';
-import { GamificationService } from '@services/gamification.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { GAMIFICATION_METRIC_LABELS } from 'app/constants';
 import { ResData } from 'app/interfaces';
-import { BaseChartDirective } from 'ng2-charts';
 import { interval } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { SDKClient } from 'tmac-sdk';
 
+/**
+ * Performance chart data
+ */
 @Component({
     selector: 'tw-ad-performance',
     templateUrl: './tw-ad-performance.component.html',
@@ -18,16 +19,27 @@ import { SDKClient } from 'tmac-sdk';
     encapsulation: ViewEncapsulation.None
 })
 export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-    // holds all the data related to this widget from the config
+    /**
+     * holds all the data related to this widget from the config
+     */
     @Input() data: any;
 
+    /**
+     * Gamification Metric Label
+     */
     GAMIFICATION_METRIC_LABELS = GAMIFICATION_METRIC_LABELS;
 
+    /**
+     * performance chart data
+     */
     performanceChartProgress = {
         badge: {},
         goal: {}
     };
 
+    /**
+     * Gamification Stateful request
+     */
     gamificationReqStatus: ResData<null> = {
         error: false,
         loading: true,

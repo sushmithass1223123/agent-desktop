@@ -1,11 +1,14 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { widgetFabAnimations } from '@modules/shared/animations/widget-fab.animation';
-import { CreateSmsComponent } from '@modules/shared/create-sms/create-sms.component';
+import { CreateSmsComponent } from '@modules/shared/components';
 import { AppUiService } from '@services/app-ui.service';
 import { IWidget } from 'app/interfaces';
 import { CommandResultEvent, IResponse, SDKClient } from 'tmac-sdk';
 
+/**
+ * Create interaction
+ */
 @Component({
     selector: 'tw-create-interaction',
     templateUrl: './tw-create-interaction.component.html',
