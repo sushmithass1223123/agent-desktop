@@ -1,24 +1,16 @@
 import { NgModule } from '@angular/core';
-import { FuseProgressBarModule, FuseSidebarModule } from '@fuse/components';
-import { FuseSharedModule } from '@fuse/shared.module';
+import { LoginModule } from '@modules/core/login/login.module';
+import { MainModule } from '@modules/core/main/main.module';
 import { SharedModule } from '@modules/shared/shared.module';
-import { LayoutModule } from 'app/layout/layout.module';
-import { LoginComponent } from './login/login.component';
-import { MainComponent } from './main/main.component';
-import { WidgetPreviewComponent } from './widget-preview/widget-preview.component';
-import { TWidgetsModule } from '@modules/t-widgets/t-widgets.module';
+import { WidgetPreviewModule } from '@modules/core/widget-preview/widget-preview.module';
 
 @NgModule({
-    declarations: [LoginComponent, MainComponent, WidgetPreviewComponent],
+    declarations: [],
     imports: [
-        // Fuse modules
-        FuseProgressBarModule,
-        FuseSharedModule,
-        FuseSidebarModule,
-
+        LoginModule,
+        MainModule,
         SharedModule,
-        LayoutModule,
-        TWidgetsModule
+        WidgetPreviewModule
     ]
 })
 export class CoreModule { }

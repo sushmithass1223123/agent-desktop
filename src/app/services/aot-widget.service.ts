@@ -23,11 +23,7 @@ export class AOTWidgetService {
 
     constructor(
         private _appDataService: AppDataService
-    ) {
-        // init the subject
-        this._unsubscribeAll = new Subject();
-        this._widgetsSubject = new BehaviorSubject([]);
-    }
+    ) { }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Accessors
@@ -45,6 +41,10 @@ export class AOTWidgetService {
      */
     public subscribe(): void {
         TUtils.Logger.console('info', 'AOTWidgetService.subscribe');
+
+        // init the subject
+        this._unsubscribeAll = new Subject();
+        this._widgetsSubject = new BehaviorSubject([]);
 
         // get the config and check for AOT widgets
         this._appDataService.config
@@ -149,5 +149,8 @@ export class AOTWidgetService {
         // unsubscribe from all subscriptions
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
+
+        this._widgetsSubject.next([]);
+        this._widgetsSubject.complete();
     }
 }

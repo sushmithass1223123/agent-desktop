@@ -10,6 +10,7 @@
         <div class="title" fxLayout="row" fxLayoutAlign="start center">
             <img [src]="selectedContact.avatar" *ngIf="selectedContact.avatar" class="avatar mx-16" />
             <avatar
+                circleColor="#5A4980"
                 [name]="selectedContact.name"
                 [matTooltip]="selectedContact.name"
                 classes="w-44 h-44 border-radius-100 mx-8"
@@ -35,7 +36,7 @@
     <!-- Contacts -->
     <div id="contacts-list" fusePerfectScrollbar [fusePerfectScrollbarOptions]="{ suppressScrollX: true }">
         <div
-            *ngFor="let contact of contacts"
+            *ngFor="let contact of contacts; trackBy: trackByID"
             class="contacts-list-item"
             [ngClass]="contact.class"
             [class.active]="contact.id === selectedContact?.id"
@@ -64,7 +65,7 @@
 
     <!-- Chat -->
     <div id="chat" fxLayout="column" fxFlex="1 1 auto">
-        <div id="messages" class="messages" fxFlex="1 1 auto" fusePerfectScrollbar>
+        <div id="messages" class="messages animate__animated animate__slideInUp animate__faster" fxFlex="1 1 auto" fusePerfectScrollbar>
             <ng-container *ngIf="chat && chat.dialog && chat.dialog.length > 0">
                 <div
                     *ngFor="let message of chat.dialog; let i = index"
@@ -76,17 +77,6 @@
                         'last-of-group': isLastMessageOfGroup(message, i)
                     }"
                 >
-                    <ng-container *ngIf="shouldShowContactAvatar(message, i)">
-                        <img *ngIf="selectedContact.avatar" src="{{ selectedContact.avatar }}" class="avatar" />
-                        <avatar
-                            class="avatar"
-                            [name]="selectedContact.name"
-                            [matTooltip]="selectedContact.name"
-                            classes="w-44 h-44 border-radius-100"
-                            *ngIf="!selectedContact.avatar"
-                        ></avatar>
-                    </ng-container>
-
                     <div class="bubble">
                         <div class="message">{{ message.Message }}</div>
                         <div class="time secondary-text">{{ message.CreatedTime | date: 'short' }}</div>

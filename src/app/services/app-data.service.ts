@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import * as _ from 'lodash';
+import { merge } from 'lodash';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 /**
@@ -37,7 +37,7 @@ export class AppDataService {
         let config = this._configSubject.getValue();
 
         // Merge the new config
-        config = _.merge({}, config, value);
+        config = merge({}, config, value);
 
         // Notify the observers
         this._configSubject.next(config);
@@ -57,7 +57,7 @@ export class AppDataService {
         let config = this._appConfigSubject.getValue();
 
         // Merge the new config
-        config = _.merge({}, config, value);
+        config = merge({}, config, value);
 
         // Notify the observers
         this._appConfigSubject.next(config);

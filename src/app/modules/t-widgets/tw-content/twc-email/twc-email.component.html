@@ -8,12 +8,20 @@
         <div fxFill fxFlex fxLayout="row wrap" fxLayoutAlign=" none">
             <!-- TODO -->
             <!-- [fxFlex.gt-md]="item.widgets.dynamic.length ? 33 : 100" -->
-            <div fxFlex.gt-md="33">
-                <tw-template class="static-widget-grid" *ngIf="item.widgets.static.length > 0" [widgets]="item.widgets.static"></tw-template>
-            </div>
-            <div fxFlex.gt-md="66">
-                <tw-template class="dynamic-widget-grid" *ngIf="item.widgets.dynamic.length > 0" [widgets]="item.widgets.dynamic"></tw-template>
-            </div>
+
+            <tw-template
+                fxFlex.gt-md="33"
+                class="static-widget-grid"
+                *ngIf="item.widgets.static.length > 0"
+                [widgets]="item.widgets.static"
+            ></tw-template>
+
+            <tw-template
+                fxFlex.gt-md="66"
+                class="dynamic-widget-grid"
+                *ngIf="item.widgets.dynamic.length > 0"
+                [widgets]="item.widgets.dynamic"
+            ></tw-template>
 
             <div class="tw-aot-fab" cdkDrag cdkDragBoundary=".tw-widget-container" *ngIf="item.widgets.aot?.length > 0">
                 <widget-fab [fabWidgets]="item.widgets.aot"></widget-fab>

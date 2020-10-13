@@ -27,7 +27,7 @@ import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { ChatTranscripts, InteractionRef, IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
-import * as _ from 'lodash';
+import { map } from 'lodash';
 import * as moment from 'moment';
 import { Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
@@ -827,7 +827,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     private messageSentEvent(evt: TextChatMessageSentEvent | TextChatMessageTemplateSentEvent): void {
         try {
             // check the interaction
-            if (evt.InteractionID !== this.interactionId) {
+            if (evt.InteractionID !== this.interactionId || this.status === 'disconnected') {
                 return;
             }
 
@@ -1260,7 +1260,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     interactionId: this.interactionId.toString(),
                     type,
                     sessionId: this.sessionID,
-                    conferenceAgents: _.map(this.conferenceAgentList, (item) => ({
+                    conferenceAgents: map(this.conferenceAgentList, (item) => ({
                         AgentId: item.AgentId,
                         TmacServer: item.TmacServer
                     }))

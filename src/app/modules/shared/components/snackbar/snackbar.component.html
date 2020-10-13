@@ -1,6 +1,7 @@
 <div fxFlayout fxLayoutAlign="space-between center">
-    <span> {{ data.message }} </span>
+    <div [innerHTML]="data.message"></div>
     <mat-icon
+        *ngIf="data.state !== 'close'"
         class="ml-8"
         [ngClass]="{
             spin: data.loading,
@@ -12,4 +13,7 @@
     >
         {{ data.icon }}
     </mat-icon>
+    <button mat-icon-button *ngIf="data.state === 'close'" color="warn">
+        <mat-icon (click)="close()">close</mat-icon>
+    </button>
 </div>

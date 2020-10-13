@@ -107,20 +107,7 @@ export class TMACEventService {
         private _interactionManagerService: InteractionManagerService,
         private _appUIService: AppUiService,
         private _aotWidgetService: AOTWidgetService
-    ) {
-        // intialize all the subject
-        this._unsubscribeAll = new Subject();
-        this._constructDisposeEventSubject = new BehaviorSubject({});
-        this._tmacEventArray = new Array();
-        this._remiderTaskDialog = {
-            makeCall: null,
-            meeting: null,
-            changeState: null,
-            dacRequest: null,
-            tcmWQVoice: null,
-            reminder: []
-        };
-    }
+    ) { }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Accessors
@@ -129,7 +116,7 @@ export class TMACEventService {
     /**
      * getter for interaction construct/dispose events
      */
-    get constructDisposeEvents(): any | Observable<any[]> {
+    get constructDisposeEvents(): any | Observable<any> {
         return this._constructDisposeEventSubject.asObservable();
     }
 
@@ -141,7 +128,7 @@ export class TMACEventService {
      * TMAC event listener function
      * @param evt TMAC event
      */
-    private onTMACEvents = (evt: IUIEvent) => {
+    private onTMACEvent = (evt: IUIEvent) => {
         if (evt.InteractionID > 0) {
             // add all the interaction events to the array
             this._tmacEventArray.push(evt);
@@ -725,15 +712,30 @@ export class TMACEventService {
     public subscribe(): void {
         TUtils.Logger.console('info', 'TMACEventService.subscribe');
 
-        // subscribe to app config
-        this._appDataService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
-            // assign the config
-            this.appConfig = config;
-            // get the AOT widgets
-            this._aotWidgets = config.Main.AOT.Widgets;
-        });
+        // intialize all the subject
+        this._unsubscribeAll = new Subject();
+        this._constructDisposeEventSubject = new BehaviorSubject({});
+        this._tmacEventArray = new Array();
+        this._remiderTaskDialog = {
+            makeCall: null,
+            meeting: null,
+            changeState: null,
+            dacRequest: null,
+            tcmWQVoice: null,
+            reminder: []
+        };
 
-        SDKClient.events.on('onTMACEvent', this.onTMACEvents);
+        // subscribe to app config
+        this._appDataService.config
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((config: any) => {
+                // assign the config
+                this.appConfig = config;
+                // get the AOT widgets
+                this._aotWidgets = config.Main.AOT.Widgets;
+            });
+
+        SDKClient.events.on('onTMACEvent', this.onTMACEvent);
         SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
         SDKClient.events.on('GenericInteractionEvent', this.GenericInteractionEvent);
         SDKClient.events.on('TCMDirectAgentNotifyTimeoutEvent', this.TCMDirectAgentNotifyTimeoutEvent);
@@ -741,6 +743,9 @@ export class TMACEventService {
         SDKClient.events.on('HoldTimerEvent', this.HoldTimerEvent);
         SDKClient.events.on('QuizEvent', this.QuizEvent);
         SDKClient.events.on('AgentReminderEvent', this.AgentReminderEvent);
+
+        // subscribe to InteractionManagerService
+        this._interactionManagerService.subscribe();
     }
 
     /**
@@ -749,7 +754,7 @@ export class TMACEventService {
     public unsubscribe(): void {
         TUtils.Logger.console('info', 'TMACEventService.unsubscribe');
 
-        SDKClient.events.off('onTMACEvent', this.onTMACEvents);
+        SDKClient.events.off('onTMACEvent', this.onTMACEvent);
         SDKClient.events.off('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
         SDKClient.events.off('GenericInteractionEvent', this.GenericInteractionEvent);
         SDKClient.events.off('TCMDirectAgentNotifyTimeoutEvent', this.TCMDirectAgentNotifyTimeoutEvent);
@@ -761,6 +766,22 @@ export class TMACEventService {
         // unsubscribe from all subscriptions
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
+
+        this._constructDisposeEventSubject.next(null);
+        this._constructDisposeEventSubject.complete();
+
+        this._tmacEventArray = new Array();
+        this._remiderTaskDialog = {
+            makeCall: null,
+            meeting: null,
+            changeState: null,
+            dacRequest: null,
+            tcmWQVoice: null,
+            reminder: []
+        };
+
+        // unsubscribe from InteractionManagerService
+        this._interactionManagerService.unsubscribe();
     }
 
     /**

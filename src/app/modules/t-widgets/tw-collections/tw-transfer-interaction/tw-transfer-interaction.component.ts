@@ -8,7 +8,7 @@ import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
-import * as _ from 'lodash';
+import { map, orderBy } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 import { AgentModel, IResponse, SDKClient } from 'tmac-sdk';
 
@@ -161,7 +161,7 @@ export class TwTransferInteractionComponent extends TWidgetWrapper implements On
                         response = response.filter(r => r.SkillName.startsWith(this.channelPrefix));
                     }
                     // assign all the skills
-                    this.allSkills = _.orderBy(response, ['SkillName'], ['asc']);
+                    this.allSkills = orderBy(response, ['SkillName'], ['asc']);
                 }
             });
 
@@ -266,7 +266,7 @@ export class TwTransferInteractionComponent extends TWidgetWrapper implements On
             .then((dt: IResponse) => {
                 this.agentListTable.loading = false;
                 let list = this.agentListTable.agentList;
-                list = _.map(list, (item: AgentModel) => {
+                list = map(list, (item: AgentModel) => {
                     if (item.LoginID === row.LoginID) {
                         item.CurrentAgentStatus = dt.response.ResultMessage;
                     }

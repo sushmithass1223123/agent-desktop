@@ -4,8 +4,8 @@
     (collapseEvent)="collapseEvent.emit($event)"
     (floatEvent)="floatEvent.emit($event)"
 >
-    <div class="w-100-p h-100-p voice-controls" fusePerfectScrollbar [fusePerfectScrollbarOptions]="{ suppressScrollX: true }">
-        <div fxFill fxLayout="row" fxLayoutAlign=" none">
+    <div fxLayout="column" class="w-100-p h-100-p voice-controls">
+        <div fxFlex fxLayout="row" fxLayoutAlign=" none" class="h-75-p">
             <div
                 fxLayout="column"
                 fxLayoutAlign=" center"
@@ -22,166 +22,174 @@
                     (click)="selectInteraction(item)"
                 ></avatar>
             </div>
-            <div fxFlex fxLayout="column" fxLayoutAlign=" none">
-                <div
-                    fxFlex
-                    fxLayout="column"
-                    fxLayoutAlign=" none"
-                    class="w-100-p px-12 py-8 border-radius-20 interaction-details"
-                    [ngClass]="
-                        fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
-                            ? fuseConfig.layout.anchorWidget.contentBackground
-                            : fuseConfig.layout.widget.customBackgroundColor === true
-                            ? fuseConfig.layout.widget.contentBackground
-                            : ''
-                    "
-                >
-                    <div fxFlex fxLayout="column" fxLayoutAlign="start none">
-                        <div fxLayout="row" fxLayoutAlign="space-between none">
-                            <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>alarm_on</mat-icon> {{ startTime }}</div>
-                            <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>construction</mat-icon> {{ sessionID }}</div>
-                        </div>
-                        <div fxLayout="row" fxLayoutAlign="space-between none" class="mt-4">
-                            <div fxLayout="row" fxLayoutAlign=" center">
-                                <mat-icon>timer</mat-icon>
-                                <div>
-                                    {{ (duration | date: 'H:mm:ss':'UTC') || '00:00:00' }}
-                                </div>
-                            </div>
-                            <div fxLayout="row" fxLayoutAlign=" center">
-                                <mat-icon>directions</mat-icon> <span class="text-bold">{{ direction }}</span>
-                            </div>
-                            <div fxLayout="row" fxLayoutAlign=" center">
-                                <mat-icon>grading</mat-icon> <span class="text-bold">{{ intent }}</span>
+            <div
+                fxFlex
+                fxLayout="column"
+                fxLayoutAlign=" none"
+                class="w-100-p px-12 py-8 border-radius-20 interaction-details"
+                [ngClass]="
+                    fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                        ? fuseConfig.layout.anchorWidget.contentBackground
+                        : fuseConfig.layout.widget.customBackgroundColor === true
+                        ? fuseConfig.layout.widget.contentBackground
+                        : ''
+                "
+            >
+                <div fxFlex fxLayout="column" fxLayoutAlign="start none">
+                    <div fxLayout="row" fxLayoutAlign="space-between none">
+                        <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>alarm_on</mat-icon> {{ startTime }}</div>
+                        <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>construction</mat-icon> {{ sessionID }}</div>
+                    </div>
+                    <div fxLayout="row" fxLayoutAlign="space-between none" class="mt-4">
+                        <div fxLayout="row" fxLayoutAlign=" center">
+                            <mat-icon>timer</mat-icon>
+                            <div>
+                                {{ (duration | date: 'H:mm:ss':'UTC') || '00:00:00' }}
                             </div>
                         </div>
-                        <div fxFlex *ngIf="audioPlayer" fxLayout="row" fxLayoutAlign=" center" class="w-100-p">
-                            <button
-                                *ngIf="audioPlayer._adpState === 'paused'"
-                                mat-icon-button
-                                class="mr-4 bg-success player-button"
-                                matTooltip="Play"
-                                (click)="playerAction(1)"
-                            >
-                                <mat-icon>play_circle_outline</mat-icon>
-                            </button>
-                            <button
-                                *ngIf="audioPlayer._adpState === 'playing'"
-                                mat-icon-button
-                                class="mr-4 bg-warning player-button"
-                                matTooltip="Pause"
-                                (click)="playerAction(2)"
-                            >
-                                <mat-icon>pause_circle_outline</mat-icon>
-                            </button>
-                            <button mat-icon-button class="mr-4 bg-danger player-button" matTooltip="Stop" (click)="playerAction(3)">
-                                <mat-icon>stop</mat-icon>
-                            </button>
-                            <marquee direction="left">Currently playing '{{ audioPlayer.fileName }}'</marquee>
+                        <div fxLayout="row" fxLayoutAlign=" center">
+                            <mat-icon>directions</mat-icon> <span class="text-bold">{{ direction }}</span>
+                        </div>
+                        <div fxLayout="row" fxLayoutAlign=" center">
+                            <mat-icon>grading</mat-icon> <span class="text-bold">{{ intent }}</span>
                         </div>
                     </div>
-                    <div
-                        *ngIf="data.Data.IVR?.MenuEnabled"
-                        fxLayout="row"
-                        fxLayoutAlign=" none"
-                        class="mt-8 px-12 border-radius-30 position-relative ivr-history"
-                    >
-                        <div class="ivr-label">IVR History</div>
-                        <ul class="breadcrumbs">
-                            <li>
-                                <span>{{ last4IVR[0] || 'NA' }}</span>
-                            </li>
-                            <li>
-                                <span>{{ last4IVR[1] || 'NA' }}</span>
-                            </li>
-                            <li>
-                                <span>{{ last4IVR[2] || 'NA' }}</span>
-                            </li>
-                            <li>
-                                <span>{{ last4IVR[3] || 'NA' }}</span>
-                            </li>
-                        </ul>
+                    <div fxFlex *ngIf="audioPlayer" fxLayout="row" fxLayoutAlign=" center" class="w-100-p">
+                        <button
+                            *ngIf="audioPlayer._adpState === 'paused'"
+                            mat-icon-button
+                            class="mr-4 bg-success player-button"
+                            matTooltip="Play"
+                            (click)="playerAction(1)"
+                        >
+                            <mat-icon>play_circle_outline</mat-icon>
+                        </button>
+                        <button
+                            *ngIf="audioPlayer._adpState === 'playing'"
+                            mat-icon-button
+                            class="mr-4 bg-warning player-button"
+                            matTooltip="Pause"
+                            (click)="playerAction(2)"
+                        >
+                            <mat-icon>pause_circle_outline</mat-icon>
+                        </button>
+                        <button mat-icon-button class="mr-4 bg-danger player-button" matTooltip="Stop" (click)="playerAction(3)">
+                            <mat-icon>stop</mat-icon>
+                        </button>
+                        <marquee direction="left">Currently playing '{{ audioPlayer.fileName }}'</marquee>
                     </div>
                 </div>
-                <div fxLayout="row" fxLayoutAlign=" none" class="call-controls">
-                    <button
-                        *ngIf="status !== 'disconnected'"
-                        mat-flat-button
-                        class="success"
-                        [disabled]="status !== 'incoming'"
-                        #answerBtn
-                        matTooltip="Answer"
-                        (click)="answerCall(answerBtn)"
-                    >
-                        <mat-icon>call</mat-icon>
-                    </button>
-                    <button
-                        *ngIf="status !== 'disconnected'"
-                        mat-flat-button
-                        class="danger"
-                        [disabled]="status !== 'connected' && status !== 'outgoing'"
-                        #disconnectBtn
-                        matTooltip="Disconnect"
-                        (click)="confirmDisconnectCall(disconnectBtn)"
-                    >
-                        <mat-icon>call_end</mat-icon>
-                    </button>
-                    <button
-                        *ngIf="status !== 'hold' && status !== 'disconnected'"
-                        mat-flat-button
-                        class="warning"
-                        [disabled]="status !== 'connected'"
-                        #holdBtn
-                        matTooltip="Hold"
-                        (click)="holdCall(holdBtn)"
-                    >
-                        <mat-icon>phone_paused</mat-icon>
-                    </button>
-                    <button *ngIf="status === 'hold'" mat-flat-button class="success" #unHoldBtn matTooltip="Unhold" (click)="unHoldCall(unHoldBtn)">
-                        <mat-icon>phone_in_talk</mat-icon>
-                    </button>
-                    <button
-                        *ngIf="data.Data?.TransferAllowed && status !== 'disconnected'"
-                        mat-flat-button
-                        [disabled]="status !== 'connected'"
-                        matTooltip="Transfer"
-                        (click)="openTransferConferenceDialog('Transfer', 'phone_forwarded')"
-                    >
-                        <mat-icon>phone_forwarded</mat-icon>
-                    </button>
-                    <button
-                        *ngIf="data.Data?.ConferenceAllowed && status !== 'disconnected'"
-                        mat-flat-button
-                        [disabled]="status !== 'connected'"
-                        matTooltip="Conference"
-                        (click)="openTransferConferenceDialog('Conference', 'group')"
-                    >
-                        <mat-icon>group</mat-icon>
-                    </button>
-                    <button
-                        *ngIf="data.Data.IVR?.Transfer?.Allowed && status !== 'disconnected'"
-                        mat-flat-button
-                        [disabled]="status !== 'connected'"
-                        matTooltip="IVR Transfer"
-                    >
-                        <mat-icon>phonelink_ring</mat-icon>
-                    </button>
-                    <button mat-flat-button matTooltip="Interaction Comment" (click)="saveInteractionComments()">
-                        <mat-icon>comment</mat-icon>
-                    </button>
-                    <button
-                        *ngIf="status === 'disconnected'"
-                        mat-flat-button
-                        class="border-radius-20 animate__animated animate__slideInRight animate__faster"
-                        color="warn"
-                        #closeBtn
-                        (click)="confirmCloseInteraction(closeBtn)"
-                        matTooltip="Close Interaction"
-                    >
-                        Close
-                    </button>
+                <div
+                    *ngIf="data.Data.IVR?.MenuEnabled"
+                    fxLayout="row"
+                    fxLayoutAlign=" none"
+                    class="mt-8 px-12 border-radius-30 position-relative ivr-history"
+                >
+                    <div class="ivr-label">IVR History</div>
+                    <ul class="breadcrumbs">
+                        <li>
+                            <span>{{ last4IVR[0] || 'NA' }}</span>
+                        </li>
+                        <li>
+                            <span>{{ last4IVR[1] || 'NA' }}</span>
+                        </li>
+                        <li>
+                            <span>{{ last4IVR[2] || 'NA' }}</span>
+                        </li>
+                        <li>
+                            <span>{{ last4IVR[3] || 'NA' }}</span>
+                        </li>
+                    </ul>
                 </div>
             </div>
+        </div>
+        <div fxLayout="row wrap" fxLayoutAlign=" none" class="call-controls">
+            <button
+                *ngIf="status !== 'disconnected'"
+                mat-flat-button
+                class="success"
+                [disabled]="status !== 'incoming'"
+                #answerBtn
+                matTooltip="Answer"
+                (click)="answerCall(answerBtn)"
+            >
+                <mat-icon>call</mat-icon>
+            </button>
+            <button
+                *ngIf="status !== 'disconnected'"
+                mat-flat-button
+                class="danger"
+                [disabled]="status !== 'connected' && status !== 'outgoing'"
+                #disconnectBtn
+                matTooltip="Disconnect"
+                (click)="confirmDisconnectCall(disconnectBtn)"
+            >
+                <mat-icon>call_end</mat-icon>
+            </button>
+            <button
+                *ngIf="status !== 'hold' && status !== 'disconnected'"
+                mat-flat-button
+                class="warning"
+                [disabled]="status !== 'connected'"
+                #holdBtn
+                matTooltip="Hold"
+                (click)="holdCall(holdBtn)"
+            >
+                <mat-icon>phone_paused</mat-icon>
+            </button>
+            <button *ngIf="status === 'hold'" mat-flat-button class="success" #unHoldBtn matTooltip="Unhold" (click)="unHoldCall(unHoldBtn)">
+                <mat-icon>phone_in_talk</mat-icon>
+            </button>
+            <button
+                mat-flat-button
+                *ngIf="isMSCall && status !== 'disconnected'"
+                [disabled]="status !== 'connected'"
+                [matTooltip]="muted ? 'Un Mute' : 'Mute'"
+                (click)="muteUnMuteCall()"
+                [ngClass]="{ 'mat-warn': muted }"
+            >
+                <mat-icon> mic_off </mat-icon>
+            </button>
+            <button
+                *ngIf="data.Data?.TransferAllowed && status !== 'disconnected'"
+                mat-flat-button
+                [disabled]="status !== 'connected'"
+                matTooltip="Transfer"
+                (click)="openTransferConferenceDialog('Transfer', 'phone_forwarded')"
+            >
+                <mat-icon>phone_forwarded</mat-icon>
+            </button>
+            <button
+                *ngIf="data.Data?.ConferenceAllowed && status !== 'disconnected'"
+                mat-flat-button
+                [disabled]="status !== 'connected'"
+                matTooltip="Conference"
+                (click)="openTransferConferenceDialog('Conference', 'group')"
+            >
+                <mat-icon>group</mat-icon>
+            </button>
+            <button
+                *ngIf="data.Data.IVR?.Transfer?.Allowed && status !== 'disconnected'"
+                mat-flat-button
+                [disabled]="status !== 'connected'"
+                matTooltip="IVR Transfer"
+            >
+                <mat-icon>phonelink_ring</mat-icon>
+            </button>
+            <button mat-flat-button matTooltip="Interaction Comment" (click)="saveInteractionComments()">
+                <mat-icon>comment</mat-icon>
+            </button>
+            <button
+                *ngIf="status === 'disconnected'"
+                mat-flat-button
+                class="border-radius-20 animate__animated animate__slideInRight animate__faster"
+                color="warn"
+                #closeBtn
+                (click)="confirmCloseInteraction(closeBtn)"
+                matTooltip="Close Interaction"
+            >
+                Close
+            </button>
         </div>
     </div>
 

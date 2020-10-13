@@ -34,10 +34,7 @@ export class DashboardService {
      */
     private _dashboardServiceSubject: BehaviorSubject<string>;
 
-    constructor(private _appDataService: AppDataService) {
-        this._unsubscribeAll = new Subject();
-        this._dashboardServiceSubject = new BehaviorSubject('');
-    }
+    constructor(private _appDataService: AppDataService) { }
 
     /**
      * Start signalr
@@ -165,6 +162,9 @@ export class DashboardService {
 
         TUtils.Logger.console('info', 'DashboardService.subscribe');
 
+        this._unsubscribeAll = new Subject();
+        this._dashboardServiceSubject = new BehaviorSubject('');
+
         this._appDataService.config
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((config: any) => {
@@ -191,11 +191,15 @@ export class DashboardService {
 
         TUtils.Logger.console('info', 'DashboardService.unsubscribe');
 
+
         // unsubscribe from all subscriptions
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
+
+        this._dashboardServiceSubject.next('');
+        this._dashboardServiceSubject.complete();
+
         this._subscribed = false;
-        this._dashboardServiceSubject = new BehaviorSubject('');
     }
 
     /**

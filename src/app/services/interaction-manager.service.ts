@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { InteractionRef, InteractionCount } from 'app/interfaces';
-import * as _ from 'lodash';
+import { map } from 'lodash';
 import { Observable } from 'rxjs';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
-import { SDKClient } from 'tmac-sdk';
+import { SDKClient, TUtils } from 'tmac-sdk';
 
 /**
  * Need more Description 
@@ -19,10 +19,7 @@ export class InteractionManagerService {
      */
     private _interactionsSubject: BehaviorSubject<InteractionRef[]>;
 
-    constructor() {
-        // intialize all the subject
-        this._interactionsSubject = new BehaviorSubject([]);
-    }
+    constructor() { }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Accessors
@@ -38,6 +35,28 @@ export class InteractionManagerService {
     // -----------------------------------------------------------------------------------------------------
     // @ Public Methods
     // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * To subscribe to InteractionManagerService service
+     */
+    public subscribe(): void {
+        TUtils.Logger.console('info', 'InteractionManagerService.subscribe');
+
+        // intialize the subject
+        this._interactionsSubject = new BehaviorSubject([]);
+    }
+
+    /**
+     * To unsubscribe to InteractionManagerService service
+     */
+    public unsubscribe(): void {
+        TUtils.Logger.console('info', 'InteractionManagerService.unsubscribe');
+
+        // unsubscribe from the subject
+        this._interactionsSubject.next([]);
+        this._interactionsSubject.complete();
+    }
+
     /**
      * Adds incoming interaction to the subject
      * @param {InteractionRef} payload 
@@ -56,6 +75,8 @@ export class InteractionManagerService {
 
         // notify the observers
         this._interactionsSubject.next(interactions);
+
+        console.log('###ADD###', { payload, interactions });
     }
 
     /**
@@ -81,7 +102,7 @@ export class InteractionManagerService {
         let updated = false;
 
         // update the interaction value
-        const updatedInteractions = _.map(interactions, item => {
+        const updatedInteractions = map(interactions, item => {
             const currentItem = { ...item };
             // check the item for isActive
             if (Object.keys(value).includes('isActive')) {
@@ -116,6 +137,8 @@ export class InteractionManagerService {
         // notify the observers if updated
         if (updated) {
             this._interactionsSubject.next(updatedInteractions);
+
+            console.log('### UPDATE ###', interactions);
         }
     }
 
@@ -142,7 +165,7 @@ export class InteractionManagerService {
             this._interactionsSubject.next(interactions);
         }
     }
-    
+
     /**
      * Gets interaction counts 
      * returns total and active interactions

@@ -10,6 +10,9 @@ import { takeUntil } from 'rxjs/operators';
 import { CommandResultEvent, IResponse, SDKClient, TUtils } from 'tmac-sdk';
 import { environment } from '../../../../environments/environment';
 
+/**
+ * LoginComponent
+ */
 @Component({
     selector: 'login',
     templateUrl: './login.component.html',
@@ -18,11 +21,14 @@ import { environment } from '../../../../environments/environment';
     animations: fuseAnimations
 })
 export class LoginComponent implements OnInit, OnDestroy {
-    // Private
+    /**
+     * Unsubscribe all subject
+     */
     private _unsubscribeAll: Subject<any>;
-
+    /**
+     * Face login video element
+     */
     @ViewChild('video', { static: false }) videoElement: ElementRef;
-
     /**
      * App configuration
      */
@@ -150,18 +156,53 @@ export class LoginComponent implements OnInit, OnDestroy {
      * Domain list enabled flag from config
      */
     domainListEnabled = false;
+    /**
+     * To prompt agent Id on invalid lan Id or not
+     */
     promptAgentIdOnInvalidLanId = false;
+    /**
+     * Agent Id enabled flag
+     */
     agentIdEnabled = false;
+    /**
+     * Password enabled flag
+     */
     passwordEnabled = false;
+    /**
+     * To show/hide password field
+     */
     hidePassword = true;
+    /**
+     * Station enabled flag
+     */
     stationEnabled = false;
+    /**
+     * Login mode
+     */
     loginModeEnabled = false;
+    /**
+     * PBX checked flag
+     */
     pbxChecked = false;
+    /**
+     * MS checked flag
+     */
     msChecked = false;
-
+    /**
+     * To store domain list
+     */
     domainList = [];
+    /**
+     * Loading flag
+     */
     loading = false;
+    /**
+     * Version property
+     */
     version = '';
+    /**
+     * Self video stream
+     */
     selfVideo: MediaStream;
 
     constructor(
@@ -206,6 +247,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         this._activatedRouter.paramMap.subscribe(paramMap => {
             // check if lanId in param
             if (paramMap.has('lanId')) {
+
             }
         });
 
@@ -240,7 +282,9 @@ export class LoginComponent implements OnInit, OnDestroy {
     // @  Methods
     // -----------------------------------------------------------------------------------------------------
 
-    // to load the config
+    /**
+     * To load the config
+     */
     private loadConfig(): void {
         // Subscribe to config changes
         this._appDataService.config
@@ -251,6 +295,11 @@ export class LoginComponent implements OnInit, OnDestroy {
             });
     }
 
+    /**
+     * To process app config loaded
+     * 
+     * @param config 
+     */
     private configLoaded(config: any): void {
         // check if the config is not null
         if (config !== null) {
@@ -294,6 +343,9 @@ export class LoginComponent implements OnInit, OnDestroy {
         }
     }
 
+    /**
+     * Start camera for face auth
+     */
     private startCamera(): void {
         // capture selfview
         navigator.getUserMedia(
@@ -310,6 +362,9 @@ export class LoginComponent implements OnInit, OnDestroy {
         );
     }
 
+    /**
+     * To do face authentication
+     */
     private async doFaceAuthentication(): Promise<boolean> {
         // create a canvas
         const canvas = document.createElement('canvas');
@@ -388,7 +443,9 @@ export class LoginComponent implements OnInit, OnDestroy {
         }
     }
 
-    // to get data from server
+    /**
+     * To get data from server
+     */
     private getData(): void {
         // get the TMAC server version
         SDKClient.getTMACVersion('', null)
@@ -403,10 +460,18 @@ export class LoginComponent implements OnInit, OnDestroy {
         }
     }
 
+    /**
+     * To show/hide station input
+     */
     public toggleStation(): void {
         this.stationEnabled = this.pbxChecked || this.msChecked;
     }
 
+    /**
+     * To process login
+     * 
+     * @param {boolean} force 
+     */
     public async login(force: boolean): Promise<void> {
         // set loading to true
         this.loading = true;
@@ -440,12 +505,10 @@ export class LoginComponent implements OnInit, OnDestroy {
             },
             null
         ).then((result: IResponse) => {
-            setTimeout(() => {
-                // set loading to true
-                this.loading = false;
-                // process the login response
-                this.loginResponse(result);
-            }, 1000);
+            // set loading to true
+            this.loading = false;
+            // process the login response
+            this.loginResponse(result);
         })
             .catch(() => {
                 // set loading to true
@@ -480,14 +543,16 @@ export class LoginComponent implements OnInit, OnDestroy {
                             this._appDataService.config = JSON.parse(response.OtherData.ItemTwo);
                             TUtils.Logger.console('info', 'App config updated!');
                         }
-
+                        // get the agent ID
+                        const agentId = response.Data.AgentID;
                         // login success
                         // we will route to main page
-                        this._router.navigate(['main'], {
+                        this._router.navigate([`main/${agentId}`], {
                             queryParamsHandling: 'preserve',
                             preserveFragment: true,
                             state: {
-                                fromUrl: 'login'
+                                routeFrom: 'login',
+                                agentId
                             }
                         });
                         // check if face auth enabled, then stop camera

@@ -108,6 +108,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     mediaServerMessages = [];
     audioPlayer: any;
     /**
+     * MS call muted flag
+     */
+    muted: boolean;
+    /**
      * Transfer/Conference widgetf
      */
     tranfConfWidget: IWidget;
@@ -203,7 +207,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         this.registerToEvents();
     }
 
-    
+
     /**
      * Lifecycle hook
      * @method OnDestroy
@@ -893,6 +897,30 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     this._appUIService.showSnackbar('Hold call failed', 'failure');
                 }
             });
+    }
+
+    /**
+     * To mute/un mute MS call
+     * @method muteUnMuteCall
+     */
+    public muteUnMuteCall(): void {
+        // check if ms call then only process
+        if (!this.isMSCall) {
+            return;
+        }
+        // get the connection variable
+        const connection: AVChannel = this.avConns[this.sessionID];
+        // check the muted flag
+        if (this.muted) {
+            // un mute the call
+            connection.unMute(true, false);
+        }
+        else {
+            // mute the call
+            connection.mute(true, false);
+        }
+        // set the reference varaible
+        this.muted = !this.muted;
     }
 
     /**

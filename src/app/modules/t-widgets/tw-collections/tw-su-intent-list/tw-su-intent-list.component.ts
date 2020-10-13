@@ -7,7 +7,7 @@ import { TwChartConfig } from 'app/interfaces';
 import { ChartDataSets } from 'chart.js';
 import { takeUntil } from 'rxjs/operators';
 import { SDKClient, TeamIntentDataList } from 'tmac-sdk';
-import * as _ from 'lodash';
+import { orderBy } from 'lodash';
 
 /**
  * Intent list componrnt
@@ -111,7 +111,7 @@ export class TwSuIntentListComponent extends TWidgetWrapper implements OnInit, O
         const datasets = { Count: [] };
         const labels = [];
         let intents = intentList?.Intents || [];
-        intents = _.orderBy(intents, ['Count'], ['desc']);
+        intents = orderBy(intents, ['Count'], ['desc']);
         intents.forEach((c) => {
             datasets.Count.push(c.Count);
             labels.push(c.Intent || 'Unknown');

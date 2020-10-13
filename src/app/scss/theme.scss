@@ -49,7 +49,7 @@
     @include common-theme($theme);
 
     // Layout components
-    @include chat-panel-theme($theme);
+    @include instant-messaging-theme($theme);
     @include toolbar-theme($theme);
     @include app-theme-options-theme($theme);
 
