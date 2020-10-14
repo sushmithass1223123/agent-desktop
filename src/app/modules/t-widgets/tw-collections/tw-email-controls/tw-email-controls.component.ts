@@ -243,7 +243,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             BCC: [],
             CC: [],
             To: From ? [From] : [],
-            Body: Body,
+            Body: `<hr /> ${
+                this.domSanitizer.bypassSecurityTrustHtml(Body)['changingThisBreaksApplicationSecurity']['changingThisBreaksApplicationSecurity']
+            }`,
             Subject: `RE: ${Subject}`,
             Files: []
         };
@@ -255,19 +257,23 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             BCC: [],
             CC: CCList ? CCList.split(',') : [],
             To: From ? [From] : [],
-            Body: '',
+            Body: `<hr /> ${
+                this.domSanitizer.bypassSecurityTrustHtml(Body)['changingThisBreaksApplicationSecurity']['changingThisBreaksApplicationSecurity']
+            }`,
             Subject: `RE: ${Subject}`,
             Files: []
         };
     }
 
     showForwardEmailEditor(): void {
-        const { Subject } = this.getInboxMessageReq.data;
+        const { Subject, Body } = this.getInboxMessageReq.data;
         this.replyInfo = {
             BCC: [],
             CC: [],
             To: [],
-            Body: '',
+            Body: `<hr /> ${
+                this.domSanitizer.bypassSecurityTrustHtml(Body)['changingThisBreaksApplicationSecurity']['changingThisBreaksApplicationSecurity']
+            }`,
             Subject: `FW: ${Subject}`,
             Files: []
         };
