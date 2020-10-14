@@ -5,9 +5,28 @@ import { FuseSharedModule } from '@fuse/shared.module';
 import * as Chart from 'chart.js';
 // import 'chartjs-plugin-piechart-outlabels';
 import { ChartsModule } from 'ng2-charts';
-import { AlertDialogComponent, AppConfirmDialogComponent, AppSnackbarComponent, AvatarComponent, CreateSmsComponent, CustomDialogComponent, NoDataAvailableComponent, ReminderTaskDialogComponent, ResourceNotFoundComponent, SnackbarComponent, WidgetFabComponent } from './components';
-import { QuillDirective, TWChartDirective } from './directives';
+import {
+    AlertDialogComponent,
+    MatQuillModule,
+    AppConfirmDialogComponent,
+    AppSnackbarComponent,
+    AvatarComponent,
+    CreateEmailComponent,
+    CreateSmsComponent,
+    CustomDialogComponent,
+    NoDataAvailableComponent,
+    ReminderTaskDialogComponent,
+    ResourceNotFoundComponent,
+    SnackbarComponent,
+    WidgetFabComponent
+} from './components';
+import { TWChartDirective } from './directives';
 import { MaterialModule } from './material.module';
+import Quill from 'quill';
+import { QuillModule } from 'ngx-quill';
+
+const SizeStyle = Quill.import('attributors/style/size');
+Quill.register(SizeStyle, true);
 
 Chart.defaults.global.responsive = true;
 Chart.defaults.global.legend.position = 'right';
@@ -25,7 +44,7 @@ Chart.defaults.global.plugins = {
 /**
  * Shared Modules
  */
-const sharedModules = [MaterialModule, FuseSharedModule, LeafletModule, ChartsModule];
+const sharedModules = [MaterialModule, FuseSharedModule, LeafletModule, ChartsModule, MatQuillModule];
 
 /**
  * Shared components
@@ -43,8 +62,8 @@ const sharedComponents = [
     AppSnackbarComponent,
     CreateSmsComponent,
     NoDataAvailableComponent,
-    QuillDirective,
-    TWChartDirective
+    TWChartDirective,
+    CreateEmailComponent
 ];
 
 /**
@@ -52,7 +71,7 @@ const sharedComponents = [
  */
 @NgModule({
     declarations: sharedComponents,
-    imports: [CommonModule, ...sharedModules],
+    imports: [CommonModule, ...sharedModules, QuillModule.forRoot()],
     exports: [...sharedModules, ...sharedComponents]
 })
-export class SharedModule { }
+export class SharedModule {}

@@ -10,39 +10,27 @@
     (collapseEvent)="collapseEvent.emit($event)"
     (floatEvent)="floatEvent.emit($event)"
 >
-    <div fxLayout="column" fxFill class="w-100-p h-100-p email-controls">
-        <!-- your code goes here -->
-        <div class="header-controls my-4">
-            <div fxLayout fxLayoutGap="10px" fxLayoutAlign="end center">
-                <button
-                    mat-raised-button
-                    class="border-radius-20 animate__animated animate__slideInRight animate__faster"
-                    color="warn"
-                    #closeBtn
-                    (click)="closeEmail($event)"
-                    matTooltip="Close Interaction"
-                >
-                    Close
-                </button>
-
-                <button mat-icon-button>
-                    <mat-icon>forward</mat-icon>
-                </button>
-
-                <button mat-icon-button>
-                    <mat-icon>delete</mat-icon>
-                </button>
-
-                <button mat-icon-button>
-                    <mat-icon>add</mat-icon>
-                </button>
-            </div>
-        </div>
-
+    <div fxLayout class="w-100-p h-100-p" fxLayoutAlign="center">
         <div
-            fxFlex="100"
             fxLayout="column"
-            class="email-content position-relative p-12 border-radius-20"
+            fxLayoutAlign=" center"
+            class="w-60 h-100-p pr-4 py-8 interactions"
+            fusePerfectScrollbar
+            [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
+        >
+            <avatar matTooltip="Uers" matTooltipPosition="after" matIcon="user"></avatar>
+            <avatar
+                *ngFor="let item of interactionList"
+                name="{{ item.user }}"
+                [ngClass]="item.status + ' ' + (item.interactionId === interactionId ? 'active' : '')"
+                matTooltip="{{ item.user }}"
+                matTooltipPosition="after"
+                (click)="selectInteraction(item)"
+            ></avatar>
+        </div>
+        <div
+            fxLayout="column"
+            class="h-100-p email-controls border-radius-20"
             [ngClass]="
                 fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
                     ? fuseConfig.layout.anchorWidget.contentBackground
@@ -50,52 +38,119 @@
                     ? fuseConfig.layout.widget.contentBackground
                     : ''
             "
+            fusePerfectScrollbar
         >
-            <div class="email-content p-8">
-                <div fxLayout fxLayoutAlign="space-between" class="font-weight-700">
-                    <span fxLayout="row" fxLayoutAlign=" center" matTooltip="Intent">
-                        <mat-icon>grading</mat-icon> <span class="text-bold">{{ intent }}</span>
-                    </span>
-                    <span fxLayout="row" fxLayoutAlign=" center" matTooltip="Sentiment">
-                        <mat-icon>person</mat-icon>
-                        <img *ngIf="sentiment === 'Positive'" class="w-24" src="assets/images/vectors/positive-score.svg" alt="" />
-                        <img *ngIf="sentiment === 'Neutral'" class="w-24" src="assets/images/vectors/neutral-score.svg" alt="" />
-                        <img *ngIf="sentiment === 'Negative'" class="w-24" src="assets/images/vectors/negative-score.svg" alt="" />
-                        <ng-container *ngIf="sentiment === 'NA'"> NA </ng-container>
-                    </span>
-                </div>
-                <div fxLayout fxLayoutAlign="space-between" class="font-weight-700 mt-8">
-                    <span>{{ getInboxMessageReq.data.AgentName }} ({{ getInboxMessageReq.data.From }}) </span>
-                    <div>
-                        <span>{{ getInboxMessageReq.data.CreatedTime | date: 'mediumDate' }}</span>
-                        <br />
-                        <span>{{ getInboxMessageReq.data.CreatedTime | date: 'shortTime' }}</span>
-                    </div>
-                </div>
+            <div class="header-controls my-8 px-12">
+                <div fxLayout fxLayoutGap="10px" fxLayoutAlign="end center">
+                    <button
+                        *ngIf="!replyInfo"
+                        mat-raised-button
+                        class="border-radius-20 animate__animated animate__slideInRight animate__faster"
+                        color="warn"
+                        #closeBtn
+                        (click)="closeEmail($event)"
+                        matTooltip="Close Interaction"
+                    >
+                        Close
+                    </button>
 
-                <div fxLayout fxLayoutAlign="end" fxLayoutGap="5px" class="mt-12">
-                    <button mat-flat-button class="border-radius-20">Transfer</button>
-                    <button mat-flat-button class="border-radius-20">Reply</button>
-                    <button mat-flat-button class="border-radius-20">Reply All</button>
-                    <button mat-flat-button class="border-radius-20">Forward</button>
+                    <button
+                        *ngIf="replyInfo"
+                        mat-raised-button
+                        class="border-radius-20 animate__animated animate__slideInRight animate__faster"
+                        color="accent"
+                        (click)="closeEditor()"
+                        matTooltip="Close Editor"
+                    >
+                        <span> Cancel </span>
+                    </button>
+
+                    <button
+                        *ngIf="replyInfo"
+                        mat-raised-button
+                        class="border-radius-20 animate__animated animate__slideInRight animate__faster"
+                        color="primary"
+                        (click)="sendEmail()"
+                        matTooltip="Send Email"
+                    >
+                        <span> Send </span>
+                        <mat-icon>send</mat-icon>
+                    </button>
+
+                    <!-- <button mat-icon-button (click)="forwardEmail()">
+                        <mat-icon>forward</mat-icon>
+                    </button>
+
+                    <button mat-icon-button>
+                        <mat-icon>delete</mat-icon>
+                    </button>
+
+                    <button mat-icon-button>
+                        <mat-icon>add</mat-icon>
+                    </button> -->
                 </div>
             </div>
-            <div fxFlex fusePerfectScrollbar>
-                <span class="my-8">Subject : {{ getInboxMessageReq.data.Subject }}</span>
-                <div class="email-content-body py-8 position-absolute w-100-p h-100-p">
-                    <div *ngIf="!getInboxMessageReq.loading && !getInboxMessageReq.error" [innerHtml]="getInboxMessageReq.data?.Body"></div>
 
-                    <div *ngIf="getInboxMessageReq.loading" fxLayout fxLayoutAlign="center center" class="w-100-p h-100-p">
-                        <mat-spinner></mat-spinner>
+            <ng-container *ngIf="replyInfo">
+                <create-email [emailInfo]="replyInfo" #createEmailRef></create-email>
+            </ng-container>
+
+            <div
+                *ngIf="!replyInfo"
+                fxFlex="100"
+                fxLayout="column"
+                [ngClass]="{ 'border-left-sm-primary w-90-p mt-12 ml-16': replyInfo }"
+                class="email-content position-relative p-12 pb-32"
+            >
+                <div class="p-8">
+                    <div fxLayout fxLayoutAlign="space-between" class="font-weight-700">
+                        <span fxLayout="row" fxLayoutAlign=" center" matTooltip="Intent">
+                            <mat-icon>grading</mat-icon> <span class="text-bold">{{ intent }}</span>
+                        </span>
+                        <span fxLayout="row" fxLayoutAlign=" center" matTooltip="Sentiment">
+                            <mat-icon>person</mat-icon>
+                            <img *ngIf="sentiment === 'Positive'" class="w-24" src="assets/images/vectors/positive-score.svg" alt="" />
+                            <img *ngIf="sentiment === 'Neutral'" class="w-24" src="assets/images/vectors/neutral-score.svg" alt="" />
+                            <img *ngIf="sentiment === 'Negative'" class="w-24" src="assets/images/vectors/negative-score.svg" alt="" />
+                            <ng-container *ngIf="sentiment === 'NA'"> NA </ng-container>
+                        </span>
+                    </div>
+                    <div fxLayout fxLayoutAlign="space-between" class="font-weight-700 mt-8">
+                        <span>{{ getInboxMessageReq.data.AgentName }} ({{ getInboxMessageReq.data.From }}) </span>
+                        <div>
+                            <span>{{ getInboxMessageReq.data.CreatedTime | date: 'mediumDate' }}</span>
+                            <br />
+                            <span>{{ getInboxMessageReq.data.CreatedTime | date: 'shortTime' }}</span>
+                        </div>
                     </div>
 
-                    <div *ngIf="getInboxMessageReq.error" fxLayout="column" fxLayoutAlign="center center" class="w-100-p h-100-p">
-                        <p>{{ getInboxMessageReq.msg }}</p>
-                        <button mat-button color="primary" (click)="getFullEmail()">Retry</button>
+                    <div *ngIf="!replyInfo" fxLayout fxLayoutAlign="end" fxLayoutGap="5px" class="mt-12">
+                        <button mat-flat-button class="border-radius-20">Transfer</button>
+                        <button mat-flat-button class="border-radius-20" (click)="showReplyEditor()">Reply</button>
+                        <button mat-flat-button class="border-radius-20" (click)="showReplyAllEmailEditor()">Reply All</button>
+                        <button mat-flat-button class="border-radius-20" (click)="showForwardEmailEditor()">Forward</button>
                     </div>
                 </div>
-            </div>
-            <!-- <div fxLayout fxLayoutAlign="space-between center" class="email-bottom-controls">
+                <div
+                    class="email-content h-100-p"
+                    fusePerfectScrollbar
+                    [fusePerfectScrollbarOptions]="{ suppressScrollX: true, suppressScrollY: true }"
+                >
+                    <span class="my-8">Subject : {{ getInboxMessageReq.data.Subject }} </span>
+                    <div class="email-content-body py-8 position-absolute w-100-p h-100-p">
+                        <div *ngIf="!getInboxMessageReq.loading && !getInboxMessageReq.error" [innerHtml]="getInboxMessageReq.data?.Body"></div>
+
+                        <div *ngIf="getInboxMessageReq.loading" fxLayout fxLayoutAlign="center center" class="w-100-p h-100-p">
+                            <mat-spinner></mat-spinner>
+                        </div>
+
+                        <div *ngIf="getInboxMessageReq.error" fxLayout="column" fxLayoutAlign="center center" class="w-100-p h-100-p">
+                            <p>{{ getInboxMessageReq.msg }}</p>
+                            <button mat-button color="primary" (click)="getFullEmail()">Retry</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- <div fxLayout fxLayoutAlign="space-between center" class="email-bottom-controls">
                 <div class="left-controls">
                     <button mat-icon-button matTooltip="Attach file">
                         <mat-icon> attachment </mat-icon>
@@ -117,7 +172,7 @@
                     </button>
                 </div>
             </div> -->
+            </div>
         </div>
     </div>
-    <!-- your code goes here -->
 </tw-wrapper>
