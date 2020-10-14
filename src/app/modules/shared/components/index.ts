@@ -3,9 +3,11 @@ export * from './app-confirm-dialog/app-confirm-dialog.component';
 export * from './app-snackbar/app-snackbar.component';
 export * from './avatar/avatar.component';
 export * from './create-sms/create-sms.component';
-export * from "./custom-dialog/custom-dialog.component";
+export * from './custom-dialog/custom-dialog.component';
 export * from './no-data-available/no-data-available.component';
 export * from './reminder-task-dialog/reminder-task-dialog.component';
 export * from './resource-not-found/resource-not-found.component';
 export * from './snackbar/snackbar.component';
 export * from './widget-fab/widget-fab.component';
+export * from './create-email/create-email.component'
+export * from './create-email/mat-quill.module'

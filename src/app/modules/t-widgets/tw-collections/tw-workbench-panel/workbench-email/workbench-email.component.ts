@@ -110,7 +110,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
             fromDate: yesterday,
             fromTime: `${yesterday.getHours()}:${yesterday.getMinutes()}`,
             toDate: today,
-            toTime: `${today.getHours()}:${today.getMinutes()}`
+            toTime: `${'00'}:${'00'}`
         });
     }
 

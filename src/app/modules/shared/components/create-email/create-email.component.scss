@@ -1,0 +1,53 @@
+// create-email {
+.editor-container {
+    min-height: 250px;
+    border: 1px solid #ccc !important;
+}
+
+.ql-toolbar {
+    margin-bottom: 10px;
+    border-radius: 20px;
+}
+
+.dark-mode {
+    .ql-toolbar .ql-stroke {
+        fill: none;
+        stroke: #fff;
+    }
+
+    .ql-toolbar .ql-fill {
+        fill: #fff !important;
+        stroke: none;
+    }
+
+    .ql-toolbar .ql-picker {
+        color: #fff;
+    }
+}
+
+create-email {
+    .select-box {
+        border-radius: 20px;
+        background-color: rgb(0 0 0 / 0.1);
+        .mat-form-field-wrapper {
+            padding-bottom: 0 !important;
+        }
+    }
+    mat-form-field.custom .mat-form-field-wrapper .mat-form-field-infix {
+        padding-top: 5px !important;
+        padding-bottom: 5px !important;
+    }
+}
+// .editor-container {
+//     padding: 10px;
+//     border-radius: 20px;
+//     border: none;
+//     padding: 0px 15px;
+// }
+// .ql-toolbar {
+//     border: none;
+// }
+// .mat-form-field-wrapper {
+//     padding-bottom: 10px;
+// }
+// }

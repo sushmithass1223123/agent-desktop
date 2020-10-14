@@ -24,7 +24,13 @@
                         "polyfills": "src/polyfills.ts",
                         "tsConfig": "tsconfig.app.json",
                         "assets": ["src/favicon.ico", "src/assets", "src/manifest.webmanifest"],
-                        "styles": ["src/styles.scss", "./node_modules/animate.css/animate.min.css", "./node_modules/leaflet/dist/leaflet.css"],
+                        "styles": [
+                            "src/styles.scss",
+                            "./node_modules/animate.css/animate.min.css",
+                            "./node_modules/leaflet/dist/leaflet.css",
+                            "./node_modules/quill/dist/quill.core.css",
+                            "./node_modules/quill/dist/quill.snow.css"
+                        ],
                         "scripts": [],
                         "showCircularDependencies": false,
                         "allowedCommonJsDependencies": [

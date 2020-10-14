@@ -161,9 +161,12 @@
         </div>
 
         <div *ngIf="emailSearchRes.error" class="loader">
-            <span>
-                {{ emailSearchRes.msg }}
-            </span>
+            <div fxFlex="100">
+                <p class="text-center">
+                    {{ emailSearchRes.msg }}
+                </p>
+                <button class="mx-auto d-block" mat-raised-button color="primary" (click)="advancedSearch()"  >Retry</button>
+            </div>
         </div>
 
         <div *ngIf="emailSearchRes.loading" class="loader">
