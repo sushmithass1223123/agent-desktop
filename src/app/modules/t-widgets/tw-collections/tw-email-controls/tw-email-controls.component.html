@@ -43,6 +43,7 @@
             <div class="header-controls my-8 px-12">
                 <div fxLayout fxLayoutGap="10px" fxLayoutAlign="end center">
                     <button
+                        *ngIf="!replyInfo"
                         mat-raised-button
                         class="border-radius-20 animate__animated animate__slideInRight animate__faster"
                         color="warn"
@@ -51,6 +52,17 @@
                         matTooltip="Close Interaction"
                     >
                         Close
+                    </button>
+
+                    <button
+                        *ngIf="replyInfo"
+                        mat-raised-button
+                        class="border-radius-20 animate__animated animate__slideInRight animate__faster"
+                        color="accent"
+                        (click)="closeEditor()"
+                        matTooltip="Close Editor"
+                    >
+                        <span> Cancel </span>
                     </button>
 
                     <button
@@ -84,6 +96,7 @@
             </ng-container>
 
             <div
+                *ngIf="!replyInfo"
                 fxFlex="100"
                 fxLayout="column"
                 [ngClass]="{ 'border-left-sm-primary w-90-p mt-12 ml-16': replyInfo }"

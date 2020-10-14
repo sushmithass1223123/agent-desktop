@@ -50,14 +50,26 @@ export class CreateEmailComponent implements OnInit {
         }
     };
 
+    /**
+     * Suggested users for autocomplete
+     */
     suggestedUsers: {
+        /**
+         * Available users
+         */
         all: string[];
+        /**
+         * Filtered users
+         */
         filtered: string[];
     } = {
         all: ['rahil@email.com', 'rahil2@email.com', 'rahil3@email.com'],
         filtered: []
     };
 
+    /**
+     * Email form control
+     */
     emailCtrl = new FormGroup({
         directRecipients: new FormControl(),
         ccdRecipients: new FormControl([]),
@@ -65,26 +77,50 @@ export class CreateEmailComponent implements OnInit {
         emailBody: new FormControl('')
     });
 
+    /**
+     * Separator code keys
+     */
     separatorKeysCodes: number[] = [ENTER, COMMA];
+    /**
+     * Recipient input ref
+     */
     @ViewChild('recipientsInput') recipientsInput: ElementRef<HTMLInputElement>;
 
+    /**
+     * Recipients available fields
+     */
     recipients: Record<string, string> = {
         To: '',
         CC: '',
         BCC: ''
     };
 
+    /**
+     * Available templates
+     */
     availableTemplates = {
         Hello: '<h1>Hello World ! </h1>',
         Bye: '<h3>Good bye ! </h3>'
     };
 
+    /**
+     * Files currently uploadeng
+     */
     uploadingFiles = [];
 
+    /**
+     * Show CC / BCC
+     */
     showCcBcc = false;
 
+    /**
+     * Email Info
+     */
     email: CreateEmailInfo;
 
+    /**
+     * Email info received from parent
+     */
     @Input() emailInfo?: CreateEmailInfo;
 
     constructor(private appUiService: AppUiService) {
@@ -112,7 +148,12 @@ export class CreateEmailComponent implements OnInit {
         };
     }
 
-    selectUser(key: string, evt: MatAutocompleteSelectedEvent) {
+    /**
+     * Selects User from list of email interactions
+     * @param {String} key
+     * @param {MatAutocompleteSelectedEvent} evt
+     */
+    selectUser(key: string, evt: MatAutocompleteSelectedEvent): void {
         if (!this.email[key]) {
             this.email[key] = [];
         }
@@ -123,25 +164,49 @@ export class CreateEmailComponent implements OnInit {
         // console.log(this.recipients , key);
     }
 
-    removeUser(key: string, user: string) {
+    /**
+     * Remove User / Interaction
+     * @param {String} key
+     * @param {String} user
+     */
+    removeUser(key: string, user: string): void {
         this.email[key] = this.email[key].filter((x) => x !== user);
     }
 
-    filterUsers(key: string, user: string) {
+    /**
+     * Filter user based on searchkey
+     * @param {String} key
+     * @param {String} user
+     */
+    filterUsers(key: string, user: string): void {
         this.suggestedUsers.filtered = this.suggestedUsers.all.filter((x) => x.toLowerCase().includes(user.toLowerCase()));
+        if (!this.suggestedUsers.filtered.length) {
+            this.suggestedUsers.filtered.push(user);
+        }
     }
 
-    removePrevSuggestions() {
+    /**
+     * Remove Previous Suggestions
+     */
+    removePrevSuggestions(): void {
         if (!this.suggestedUsers) {
             this.suggestedUsers.filtered = [];
         }
     }
 
-    onContentChanged(evt: any) {
+    /**
+     * test functionn for quill editor
+     * @param {any} evt
+     */
+    onContentChanged(evt: any): void {
         console.log(evt.html);
     }
 
-    async onFileInput(evt: Event) {
+    /**
+     * Attach files to email
+     * @param {Event} evt
+     */
+    async onFileInput(evt: Event): Promise<void> {
         try {
             const input = evt.target as HTMLInputElement;
             this.uploadingFiles.push(input.files[0].name);
@@ -168,10 +233,18 @@ export class CreateEmailComponent implements OnInit {
         }
     }
 
-    removeFiles(fileId: string) {
+    /**
+     * Remove files from attachment
+     * @param {String} fileId
+     */
+    removeFiles(fileId: string): void {
         this.email.Files = this.email.Files.filter((x) => x.Id !== fileId);
     }
 
+    /**
+     * Convert file to base64
+     * @param {File} file 
+     */
     convertToBase64(file: File): Promise<any> {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -181,7 +254,11 @@ export class CreateEmailComponent implements OnInit {
         });
     }
 
+    /**
+     * Select template for email
+     * @param {MatSelectChange} html 
+     */
     selectTemplate(html: MatSelectChange): void {
-        this.email.Body = html.value;
+        this.email.Body = `${html.value} ${this.email.Body}`;
     }
 }

@@ -13,9 +13,13 @@ import { InteractionManagerService } from '@services/interaction-manager.service
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { InteractionRef, IWidget, ResData } from 'app/interfaces';
 import { CreateEmailInfo } from 'app/models';
+import { interval, Observable, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
 import { IAgentData, IResponse, SDKClient } from 'tmac-sdk';
 
+/**
+ * Email controls component
+ */
 @Component({
     selector: 'tw-email-controls',
     templateUrl: './tw-email-controls.component.html',
@@ -42,15 +46,39 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         msg: ''
     };
 
+    /**
+     * Fuse config
+     */
     fuseConfig: FuseConfig;
 
+    /**
+     * Maximise event
+     */
     @Output() maximizeEvent = new EventEmitter();
+    /**
+     * Float event
+     */
     @Output() floatEvent = new EventEmitter();
+    /**
+     * Collapse event
+     */
     @Output() collapseEvent = new EventEmitter();
 
+    /**
+     * Maximized flag
+     */
     maximized: boolean;
+    /**
+     * Interaction list
+     */
     interactionList: InteractionRef[];
+    /**
+     * Current intreaction
+     */
     interactionId: number;
+    /**
+     * User info
+     */
     user: IAgentData;
     /**
      * Email intent
@@ -61,10 +89,22 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     sentiment: string;
 
+    /**
+     * Reply info for create email component
+     */
     replyInfo?: CreateEmailInfo;
 
+    /**
+     * Perfect scrollbar ref
+     */
     @ViewChildren(FusePerfectScrollbarDirective) directiveScrolls: QueryList<FusePerfectScrollbarDirective>;
+
+    /**
+     * Create email compopnnet ref
+     */
     @ViewChild('createEmailRef') createEmailRef: CreateEmailComponent;
+
+    draftPolling: Subscription;
 
     constructor(
         private _fuseConfigService: FuseConfigService,
@@ -146,6 +186,10 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     // @ Private methods
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * Gets full email details
+     * @param {String} SessionId
+     */
     getFullEmail(SessionId?: string): void {
         SDKClient.getInboxEmail(SessionId || this.getInboxMessageReq.data.SessionId)
             .then((res) => {
@@ -166,6 +210,10 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             });
     }
 
+    /**
+     * Closes emails
+     * @param {MatButton} btn
+     */
     closeEmail(btn: MatButton): void {
         // confirm close interaction
         const confirmDialogRef = this._appUIService.showAppConfirmDialog('closeInteraction');
@@ -189,6 +237,10 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         });
     }
 
+    /**
+     * Closes current interaction
+     * @param {MatButton} btn
+     */
     closeInteraction(btn: MatButton): void {
         // show the progress bar
         this._fuseProgressBarService.show();
@@ -233,54 +285,91 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         });
     }
 
+    /**
+     * Forward Email
+     */
     forwardEmail(): void {
         console.log(this.createEmailRef.email);
     }
 
+    /**
+     * Show reply email form
+     */
     showReplyEditor(): void {
-        const { Body, Subject, From } = this.getInboxMessageReq.data;
+        const { Body, Subject, From, ToList, CreatedTime } = this.getInboxMessageReq.data;
         this.replyInfo = {
             BCC: [],
             CC: [],
             To: From ? [From] : [],
-            Body: `<hr /> ${
-                this.domSanitizer.bypassSecurityTrustHtml(Body)['changingThisBreaksApplicationSecurity']['changingThisBreaksApplicationSecurity']
-            }`,
+            Body: `
+            <p style="border-bottom : 3px solid gray;"> </p>
+            <div> <strong> From: </strong> <span> ${From} </span> </div>
+            <div> <strong> Sent: </strong> <span> ${CreatedTime} </span> </div>
+            <div> <strong> To: </strong> <span> ${ToList} </span> </div>
+            <div> <strong> Subject: </strong> <span> ${Subject} </span> </div>
+            <br /> 
+            ${this.domSanitizer.bypassSecurityTrustHtml(Body)['changingThisBreaksApplicationSecurity']['changingThisBreaksApplicationSecurity']}`,
             Subject: `RE: ${Subject}`,
             Files: []
         };
+        this.saveEmailAsDraft();
     }
 
+    /**
+     * Show reply all email editor
+     */
     showReplyAllEmailEditor(): void {
-        const { Body, Subject, From, CCList } = this.getInboxMessageReq.data;
+        const { Body, Subject, From, CCList, CreatedTime, ToList } = this.getInboxMessageReq.data;
         this.replyInfo = {
             BCC: [],
             CC: CCList ? CCList.split(',') : [],
             To: From ? [From] : [],
-            Body: `<hr /> ${
-                this.domSanitizer.bypassSecurityTrustHtml(Body)['changingThisBreaksApplicationSecurity']['changingThisBreaksApplicationSecurity']
-            }`,
+            Body: `
+            <p style="border-bottom : 3px solid gray;"> </p>
+            <div> <strong> From: </strong> <span> ${From} </span> </div>
+            <div> <strong> Sent: </strong> <span> ${CreatedTime} </span> </div>
+            <div> <strong> To: </strong> <span> ${ToList} </span> </div>
+            <div> <strong> Subject: </strong> <span> ${Subject} </span> </div>
+            <br /> 
+             ${this.domSanitizer.bypassSecurityTrustHtml(Body)['changingThisBreaksApplicationSecurity']['changingThisBreaksApplicationSecurity']}`,
             Subject: `RE: ${Subject}`,
             Files: []
         };
+        this.saveEmailAsDraft();
     }
 
+    /**
+     * Show forward email editor
+     */
     showForwardEmailEditor(): void {
-        const { Subject, Body } = this.getInboxMessageReq.data;
+        const { Subject, Body, From, CreatedTime, ToList } = this.getInboxMessageReq.data;
         this.replyInfo = {
             BCC: [],
             CC: [],
             To: [],
-            Body: `<hr /> ${
-                this.domSanitizer.bypassSecurityTrustHtml(Body)['changingThisBreaksApplicationSecurity']['changingThisBreaksApplicationSecurity']
-            }`,
+            Body: `
+            <p style="border-bottom : 3px solid gray;"> </p>
+            <div> <strong> From: </strong> <span> ${From} </span> </div>
+            <div> <strong> Sent: </strong> <span> ${CreatedTime} </span> </div>
+            <div> <strong> To: </strong> <span> ${ToList} </span> </div>
+            <div> <strong> Subject: </strong> <span> ${Subject} </span> </div>
+            <br /> 
+             ${this.domSanitizer.bypassSecurityTrustHtml(Body)['changingThisBreaksApplicationSecurity']['changingThisBreaksApplicationSecurity']}`,
             Subject: `FW: ${Subject}`,
             Files: []
         };
+        this.saveEmailAsDraft();
     }
 
+    /**
+     * Send Email
+     */
     sendEmail(): void {
         const { BCC, CC, To, Subject, Files } = this.createEmailRef.email;
+        if (!To.length) {
+            this._appUIService.showSnackbar('Please add a recipient', 'failure');
+            return;
+        }
         const attachmentFileList = Files.map((x) => x.Url);
         SDKClient.sendEmail({
             attachmentFileList: attachmentFileList && attachmentFileList.length ? attachmentFileList.join(',') : '',
@@ -295,7 +384,6 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             typeOfResponse: ''
         })
             .then((res) => {
-                console.log({ res });
                 const message = {
                     SentToCustomer: 'to customer',
                     SentToCheckerSession: 'to checker'
@@ -306,5 +394,35 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 console.log({ err });
                 this._appUIService.showSnackbar('Something went wrong', 'failure');
             });
+    }
+
+    /**
+     * Save email as Draft
+     */
+    saveEmailAsDraft(): void {
+        if (this.createEmailRef) {
+            const { BCC, CC, To, Subject, Files } = this.createEmailRef.email;
+            SDKClient.saveEmailDraft({
+                bccList: BCC.join(','),
+                body: '',
+                ccList: CC.join(','),
+                inboxSessionId: this.getInboxMessageReq.data.SessionID,
+                outboxSessionId: '',
+                routeId: '',
+                subject: Subject,
+                toList: To.join(','),
+                typeOfResponse: ''
+            });
+        }
+        const polling = interval(10000);
+        this.draftPolling = polling.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => this.saveEmailAsDraft());
+    }
+
+    /**
+     * Closes the editor
+     */
+    closeEditor(): void {
+        this.replyInfo = null;
+        this.draftPolling.unsubscribe();
     }
 }
