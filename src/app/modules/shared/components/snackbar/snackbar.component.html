@@ -2,7 +2,9 @@
     <div [innerHTML]="data.message"></div>
     <mat-icon
         *ngIf="data.state !== 'close'"
-        class="ml-8"
+        matRipple
+        (click)="close()"
+        class="ml-8 border-radius-20"
         [ngClass]="{
             spin: data.loading,
             'text-info': data.state === 'info' || data.state === 'loading',

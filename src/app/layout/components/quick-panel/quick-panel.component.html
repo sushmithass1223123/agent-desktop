@@ -74,7 +74,7 @@
         <h3 matSubheader>
             <span>Pinned Widgets</span>
         </h3>
-        <div class="p-8 pt-0">
+        <div class="p-16 pt-0">
             <ng-container *ngFor="let widget of pinnedAOTs">
                 <button mat-mini-fab color="secondary" *ngIf="widget.Config.Enabled" class="fab-secondary mr-8 mb-8" (click)="openAOTWidget(widget)">
                     <mat-icon [matTooltip]="widget.Name || 'Widget'">{{ widget.Config.Icon || 'widget' }}</mat-icon>

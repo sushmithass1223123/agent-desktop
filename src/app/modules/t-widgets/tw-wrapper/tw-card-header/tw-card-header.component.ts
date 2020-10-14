@@ -6,6 +6,7 @@ import { AppDataService } from '@services/app-data.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { map } from 'lodash';
+import { AppUiService } from '@services/app-ui.service';
 
 /**
  * Card header component
@@ -62,7 +63,8 @@ export class TwCardHeaderComponent implements OnInit, OnDestroy {
 
     constructor(
         private _aotWidgetService: AOTWidgetService,
-        private _appDataService: AppDataService
+        private _appDataService: AppDataService,
+        private _appUIService: AppUiService
     ) {
         this._unsubscribeAll = new Subject();
     }
@@ -122,6 +124,8 @@ export class TwCardHeaderComponent implements OnInit, OnDestroy {
 
         // check if pinned
         if (this.data.Config.Pinned) {
+            this._appUIService.showSnackbar('Widget added to pinned list');
+            // check widget in AOT list
             if (thisInAOT) {
                 aots = map(aots, (widget: IWidget) => {
                     if (widget.Key === this.data.Key) {
@@ -135,6 +139,8 @@ export class TwCardHeaderComponent implements OnInit, OnDestroy {
             }
         }
         else {
+            this._appUIService.showSnackbar('Widget removed from pinned list');
+            // check widget in AOT list
             if (thisInAOT) {
                 aots = map(aots, (widget: IWidget) => {
                     if (widget.Key === this.data.Key) {
@@ -153,7 +159,7 @@ export class TwCardHeaderComponent implements OnInit, OnDestroy {
             ...this._appConfig, ...{
                 Main: {
                     AOT: {
-                        Widgets: aots
+                        Widgets: [...aots]
                     }
                 }
             }

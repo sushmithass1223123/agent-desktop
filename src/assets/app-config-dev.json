@@ -633,7 +633,8 @@
                                         },
                                         "Actions": [
                                             "minimize",
-                                            "destroy"
+                                            "destroy",
+                                            "pin"
                                         ],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -3035,6 +3036,7 @@
                 {
                     "Name": "TRS",
                     "Description": "",
+                    "Key": "TRS",
                     "Type": "tw-custom",
                     "Config": {
                         "Enabled": true,
@@ -3051,7 +3053,8 @@
                         },
                         "Actions": [
                             "minimize",
-                            "destroy"
+                            "destroy",
+                            "pin"
                         ],
                         "ViewState": "restore",
                         "Header": true,
@@ -3066,6 +3069,7 @@
                 {
                     "Name": "Register Callback",
                     "Description": "",
+                    "Key": "RegisterCallback",
                     "Type": "tw-register-callback",
                     "Config": {
                         "Enabled": true,
@@ -3082,7 +3086,8 @@
                         },
                         "Actions": [
                             "minimize",
-                            "destroy"
+                            "destroy",
+                            "pin"
                         ],
                         "ViewState": "restore",
                         "Header": true,
