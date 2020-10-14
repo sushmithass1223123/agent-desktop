@@ -8,7 +8,7 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AGENT_FEATURES_MAP, COMMON_ERR_MESSAGE } from 'app/constants';
 import { IWidget, QuizEventJsonData } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
-import * as _ from 'lodash';
+import { orderBy } from 'lodash';
 import { random } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 import { AgentFeatures, AgentTabCount, IAgentData, IAUXCodes, IResponse, SDKClient, SuAgentDataModel, SuAgentModel, TUtils } from 'tmac-sdk';
@@ -178,12 +178,12 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             agentListData.forEach((item2: SuAgentDataModel) => {
                 if (item2.AgentLoginID === item1.AgentLoginID) {
                     this.agentList[index1] = { ...item1, ...item2 };
-                    this.agentList[index1].ChannelCount = _.orderBy(this.agentList[index1].ChannelCount, ['CurrentCount'], ['desc']);
+                    this.agentList[index1].ChannelCount = orderBy(this.agentList[index1].ChannelCount, ['CurrentCount'], ['desc']);
                 }
             });
         });
 
-        this.agentList = _.orderBy(this.agentList, ['AgentName'], ['desc']);
+        this.agentList = orderBy(this.agentList, ['AgentName'], ['desc']);
         this.filteredAgents = this.agentList;
 
         if (this.searchTerm) {
@@ -296,8 +296,6 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
      * @param {AgentFeatures} feature 
      */
     public performAgentAction(agent: SuAgentModel, feature: AgentFeatures): void {
-        console.log('performAgentAction', { agent, feature });
-
         switch (feature.Feature) {
             case 'AllowSupervisorToCapturePicture':
                 this._appUIService.showSnackbar('Please wait, retrieving information...', 'loading');

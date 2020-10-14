@@ -20,7 +20,19 @@ const appRoutes: Routes = [
             }
         ]
     },
-    { path: 'main', component: MainComponent },
+    {
+        path: 'main',
+        children: [
+            {
+                path: '',
+                component: MainComponent
+            },
+            {
+                path: ':agentId',
+                component: MainComponent
+            }
+        ]
+    },
     { path: 'preview', component: WidgetPreviewComponent },
     { path: 'not-found', component: ResourceNotFoundComponent }
 ];

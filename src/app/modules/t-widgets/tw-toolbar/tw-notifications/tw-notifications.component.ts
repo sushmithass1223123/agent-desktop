@@ -3,7 +3,7 @@ import { fuseAnimations } from '@fuse/animations';
 import { AppUiService } from '@services/app-ui.service';
 import { TWidgetWrapper } from '@twidgets/utils';
 import { AppNotification } from 'app/interfaces';
-import * as _ from 'lodash';
+import { orderBy } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 import { AgentNotificaitonEvent, SDKClient } from 'tmac-sdk';
 
@@ -60,12 +60,12 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
                     if (notifications.length > 0 && !this.opened) {
                         ++this.unreadCount;
                     }
-                    this.notifications = _.orderBy(notifications, ['time'], ['desc']);
+                    this.notifications = orderBy(notifications, ['time'], ['desc']);
                 }
             );
     }
 
-    
+
     /**
      * Lifecycle hooks 
      * @method

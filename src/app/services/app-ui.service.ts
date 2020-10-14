@@ -10,7 +10,7 @@ import {
     SnackbarComponent
 } from '@modules/shared/components';
 import { AppAlertDialogTypes, AppConfirmDialogTypes, AppNotification, AppSnackBarArgs, ReminderTaskDialogTypes, SnackbarStateTypes } from 'app/interfaces';
-import * as _ from 'lodash';
+import { map } from 'lodash';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { TUtils } from 'tmac-sdk';
@@ -55,11 +55,7 @@ export class AppUiService {
         private _matSnackBar: MatSnackBar,
         private _matDialog: MatDialog,
         private _appDataService: AppDataService
-    ) {
-        // init the subject
-        this._unsubscribeAll = new Subject();
-        this._appNotificationsSubject = new BehaviorSubject([]);
-    }
+    ) { }
 
     // -----------------------------------------------------------------------------------------------------
     // Snackbar methods
@@ -84,7 +80,7 @@ export class AppUiService {
             info: 'info',
             success: 'done',
             warning: 'warning',
-            failure: 'close',
+            failure: 'error',
             loading: 'loop'
         };
         const durationField = state === 'loading' ? {} : { duration };
@@ -311,7 +307,7 @@ export class AppUiService {
 
         // if id is given, it can be a update
         if (notification.id) {
-            notifications = _.map(notifications, (item) => {
+            notifications = map(notifications, (item) => {
                 if (item.id === notification.id) {
                     return { ...item, ...notification };
                 }
@@ -370,6 +366,10 @@ export class AppUiService {
     public subscribe(): void {
         TUtils.Logger.console('info', 'AppUiService.subscribe');
 
+        // init the subject
+        this._unsubscribeAll = new Subject();
+        this._appNotificationsSubject = new BehaviorSubject([]);
+
         // get the config and check for AOT widgets
         this._appDataService.config
             .pipe(takeUntil(this._unsubscribeAll))
@@ -388,5 +388,8 @@ export class AppUiService {
         // unsubscribe from all subscriptions
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
+
+        this._appNotificationsSubject.next([]);
+        this._appNotificationsSubject.complete();
     }
 }

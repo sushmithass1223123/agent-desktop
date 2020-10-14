@@ -1,8 +1,7 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import * as _ from 'lodash';
-import { join } from 'lodash';
+import { join, get } from 'lodash';
 import { IUIEvent, SDKClient, TextChatRemoteUserConnectedEvent, CallerIntentEvent, IncomingCallEvent, IVRDataEvent, UUIDataEvent, CCLDataEvent, OutgoingCallEvent } from 'tmac-sdk';
 
 /**
@@ -86,7 +85,7 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
         SDKClient.events.on('CCLDataEvent', this.CCLDataEvent);
     }
 
-    
+
     /**
      * Lifecycle hook
      * @method
@@ -105,7 +104,7 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
         SDKClient.events.off('CCLDataEvent', this.CCLDataEvent);
     }
 
-    
+
     /**
      * IncomingCallEvent handler
      * @param {IncomingCallEvent} evt 
@@ -186,7 +185,7 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
             const valueMap = join(valueSourceSplit, '.');
 
             // get the value from path or default value
-            item.Value = _.get(evt, valueMap, item.DefaultValue);
+            item.Value = get(evt, valueMap, item.DefaultValue);
         });
     }
 }

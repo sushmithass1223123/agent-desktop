@@ -1,9 +1,7 @@
-import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren, ViewEncapsulation } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { FusePerfectScrollbarDirective } from '@fuse/directives/fuse-perfect-scrollbar/fuse-perfect-scrollbar.directive';
-import { InstantMessagingService } from 'app/layout/components/instant-messaging/instant-messaging.service';
 import { groupBy, sortBy } from 'lodash';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -141,7 +139,9 @@ export class InstantMessagingComponent implements OnInit, AfterViewInit, OnDestr
      * @param {HttpClient} _httpClient
      * @param {FuseSidebarService} _fuseSidebarService
      */
-    constructor(private _InstantMessagingService: InstantMessagingService, private _httpClient: HttpClient, private _fuseSidebarService: FuseSidebarService) {
+    constructor(
+        private _fuseSidebarService: FuseSidebarService
+    ) {
         // Set the defaults
         this.selectedContact = null;
         this.sidebarFolded = true;
@@ -167,6 +167,7 @@ export class InstantMessagingComponent implements OnInit, AfterViewInit, OnDestr
             .subscribe((folded) => {
                 this.sidebarFolded = folded;
             });
+
         SDKClient.events.on('TeamAgentListEvent', this.TeamAgentListEvent);
         SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
     }
@@ -187,6 +188,7 @@ export class InstantMessagingComponent implements OnInit, AfterViewInit, OnDestr
         // Unsubscribe from all subscriptions
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
+
         SDKClient.events.off('TeamAgentListEvent', this.TeamAgentListEvent);
         SDKClient.events.off('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
     }
@@ -362,16 +364,18 @@ export class InstantMessagingComponent implements OnInit, AfterViewInit, OnDestr
         if (evt.InteractionID > 0 || evt.Type !== 'IM') {
             return;
         }
+
         if (!this.allChats[evt.FromAgentId]) {
             this.allChats[evt.FromAgentId] = { dialog: [], id: evt.FromAgentId };
         }
+
         this.allChats[evt.FromAgentId].dialog.push(evt);
         if (evt.FromAgentId !== this.selectedContact?.id) {
             this.contacts = this.contacts.map((x) => ({ ...x, unread: x.id === evt.FromAgentId ? x.unread + 1 : x.unread }));
         } else {
             this.chat = this.allChats[evt.FromAgentId];
         }
-    };
+    }
 
     /**
      * TeamAgentListEvent Handler
@@ -389,5 +393,15 @@ export class InstantMessagingComponent implements OnInit, AfterViewInit, OnDestr
             unread: agents[x.AgentLoginID] ? agents[x.AgentLoginID][0].unread : 0,
             tmacServer: x.TmacServer
         }));
-    };
+    }
+
+    /**
+     * Track by for avoiding rerender
+     * @method trackByID
+     * @param {number} index 
+     * @param {any} contact 
+     */
+    public trackByID(index: number, contact: any): string {
+        return contact.ID;
+    }
 }

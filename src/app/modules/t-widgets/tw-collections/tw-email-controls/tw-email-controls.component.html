@@ -39,6 +39,7 @@
                     : ''
             "
             fusePerfectScrollbar
+            [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
         >
             <div class="header-controls my-8 px-12">
                 <div fxLayout fxLayoutGap="10px" fxLayoutAlign="end center">
@@ -62,7 +63,7 @@
                         (click)="closeEditor()"
                         matTooltip="Close Editor"
                     >
-                        <span> Cancel </span>
+                        Cancel
                     </button>
 
                     <button
@@ -73,8 +74,7 @@
                         (click)="sendEmail()"
                         matTooltip="Send Email"
                     >
-                        <span> Send </span>
-                        <mat-icon>send</mat-icon>
+                        Send
                     </button>
 
                     <!-- <button mat-icon-button (click)="forwardEmail()">

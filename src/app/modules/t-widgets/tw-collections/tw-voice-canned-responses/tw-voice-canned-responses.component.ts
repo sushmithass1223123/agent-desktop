@@ -2,7 +2,7 @@ import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
-import * as _ from 'lodash';
+import { groupBy } from 'lodash';
 import { AgentInteractionTemplate, CallDisconnectedEvent, IResponse, SDKClient, TUtils } from 'tmac-sdk';
 
 @Component({
@@ -48,7 +48,7 @@ export class TwVoiceCannedResponsesComponent extends TWidgetWrapper implements O
                 const response: AgentInteractionTemplate[] = dt.response;
                 // check the response
                 if (response.length > 0) {
-                    this.voiceTemplates = _.groupBy(response, 'Category');
+                    this.voiceTemplates = groupBy(response, 'Category');
                 }
             });
 

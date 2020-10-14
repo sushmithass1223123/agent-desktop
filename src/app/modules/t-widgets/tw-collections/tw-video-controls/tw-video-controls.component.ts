@@ -9,7 +9,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { IWidget } from 'app/interfaces';
-import * as _ from 'lodash';
+import { map } from 'lodash';
 import { timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AVChannel, AVControlMessageReceivedEvent, AVEvent, IAgentData, IResponse, SDKClient, TEnums, TextChatDisconnectedEvent, TUtils } from 'tmac-sdk';
@@ -277,7 +277,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         this.avConn?.onMessage(evt.Message);
     }
 
-    
+
     /**
      * AVEvent Handler
      * @method onAVEvent
@@ -387,7 +387,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                 this.destroyWidget();
                 break;
             case 'onVoiceActivity':
-                _.map(this.userList, (user: any) => {
+                map(this.userList, (user: any) => {
                     // set the level to 0
                     user.level = 0;
                     // check for matching stream id and change the level
@@ -408,7 +408,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                 this.destroyWidget();
                 break;
             default:
-                console.log(`unhandled:: [${evt.event}]`, evt);
+            // console.log(`unhandled:: [${evt.event}]`, evt);
         }
     }
 
@@ -502,7 +502,6 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
      * @param {any} user 
      */
     public takeSnapShot(user: any): void {
-        console.log(this.remoteVideoElements, user);
         this.remoteVideoElements?.forEach((element: ElementRef) => {
             if (element.nativeElement.id === user.stream.id) {
                 // create a canvas

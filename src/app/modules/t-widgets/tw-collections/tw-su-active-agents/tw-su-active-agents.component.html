@@ -79,10 +79,22 @@
                             </span>
                         </div>
                         <div fxLayout="column" fxLayoutAlign=" none" class="ml-16">
-                            <span class="font-weight-700"> {{ item.FirstName + '/' + item.AgentLoginID }}</span>
-                            <span>{{ item.CurrentAgentStatus }}</span>
+                            <span class="font-weight-700" *ngIf="item.AgentLoginID !== selectedAgent">
+                                <span matTooltip="First Name">{{ item.FirstName }}</span>
+                                /
+                                <span matTooltip="Agent ID">{{ item.AgentLoginID }}</span>
+                            </span>
+                            <div class="font-weight-700" *ngIf="item.AgentLoginID === selectedAgent" matTooltip="Agent Name">
+                                {{ item.AgentName }}
+                            </div>
+                            <div class="font-weight-700" *ngIf="item.AgentLoginID === selectedAgent">
+                                <span matTooltip="Agent ID">{{ item.AgentLoginID }}</span>
+                                /
+                                <span matTooltip="Station">{{ item.StationID }}</span>
+                            </div>
+                            <span matTooltip="Current Status">{{ item.CurrentAgentStatus }}</span>
                             <span
-                                class=""
+                                matTooltip="Status Duration"
                                 [ngClass]="{
                                     'text-alt-success': item.CurrentStatusDuration > 0 && item.CurrentStatusDuration <= 60,
                                     'text-alt-warning': item.CurrentStatusDuration > 60 && item.CurrentStatusDuration <= 120,

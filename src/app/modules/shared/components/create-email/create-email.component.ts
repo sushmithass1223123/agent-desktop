@@ -63,9 +63,9 @@ export class CreateEmailComponent implements OnInit {
          */
         filtered: string[];
     } = {
-        all: ['rahil@email.com', 'rahil2@email.com', 'rahil3@email.com'],
-        filtered: []
-    };
+            all: ['rahil@email.com', 'rahil2@email.com', 'rahil3@email.com'],
+            filtered: []
+        };
 
     /**
      * Email form control
@@ -98,10 +98,7 @@ export class CreateEmailComponent implements OnInit {
     /**
      * Available templates
      */
-    availableTemplates = {
-        Hello: '<h1>Hello World ! </h1>',
-        Bye: '<h3>Good bye ! </h3>'
-    };
+    availableTemplates = {};
 
     /**
      * Files currently uploadeng
@@ -161,7 +158,6 @@ export class CreateEmailComponent implements OnInit {
         this.recipientsInput.nativeElement.value = '';
         this.recipients[key] = '';
         this.removePrevSuggestions();
-        // console.log(this.recipients , key);
     }
 
     /**
@@ -199,7 +195,6 @@ export class CreateEmailComponent implements OnInit {
      * @param {any} evt
      */
     onContentChanged(evt: any): void {
-        console.log(evt.html);
     }
 
     /**

@@ -75,8 +75,6 @@ export class TwTemplateComponent implements AfterContentInit {
             return;
         }
 
-        // console.log(`TwTemplateComponent: ${widget.data.Type}`, widget);
-
         // create the component factory
         const componentFactory = this._componentFactoryResolver.resolveComponentFactory(widget.component);
 

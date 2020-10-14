@@ -150,7 +150,6 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             this.interactionList = interactions.filter((i: InteractionRef) => i.type === 'email');
             if (this.interactionList.length) {
                 const interaction = this.interactionList.find((x) => x.isActive).otherData;
-                console.log(interaction);
                 const { Subject, From, CreatedTime, SessionId } = interaction;
                 this.getInboxMessageReq = {
                     error: false,
@@ -289,7 +288,6 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Forward Email
      */
     forwardEmail(): void {
-        console.log(this.createEmailRef.email);
     }
 
     /**

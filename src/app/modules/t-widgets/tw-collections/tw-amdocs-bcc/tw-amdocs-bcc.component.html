@@ -16,14 +16,14 @@
     >
         <div fxLayout>
             <p fxFlex="20" fxLayoutAlign=" center" class="px-8">Case ID</p>
-            <mat-form-field fxFlex appearance="outline" class="custom case-id">
+            <mat-form-field fxFlex appearance="outline" class="custom with-bg case-id">
                 <input matInput required placeholder="Case ID" [(ngModel)]="caseData.caseId" />
                 <mat-error> Case ID is required </mat-error>
             </mat-form-field>
         </div>
         <div fxFlex fxLayout>
             <p fxFlex="20" fxLayoutAlign=" flex-start" class="px-8 mt-16">Case Notes</p>
-            <mat-form-field fxFlex floatLabel="never" appearance="standard" class="custom case-note">
+            <mat-form-field fxFlex floatLabel="never" appearance="standard" class="custom with-bg case-note">
                 <textarea fxFlex matInput placeholder="Enter case notes here..." [(ngModel)]="caseData.caseText"></textarea>
                 <button class="submit-btn bg-success border-radius-20" (click)="addCase()" mat-button>Submit</button>
             </mat-form-field>

@@ -74,22 +74,7 @@ export class AgentFeaturesService {
         }
     };
 
-    constructor(
-        private _appUIService: AppUiService
-    ) {
-        this._agentFeatureInfo = {
-            permissions: {
-                camera: false,
-                display: false,
-                location: false
-            },
-            data: {
-                cameraStream: null,
-                displayStream: null,
-                location: null
-            }
-        };
-    }
+    constructor(private _appUIService: AppUiService) { }
 
     /**
      * Need more Description
@@ -295,8 +280,23 @@ export class AgentFeaturesService {
      */
     public subscribe(): void {
         TUtils.Logger.console('info', 'AgentFeaturesService.subscribe');
+
+        this._agentFeatureInfo = {
+            permissions: {
+                camera: false,
+                display: false,
+                location: false
+            },
+            data: {
+                cameraStream: null,
+                displayStream: null,
+                location: null
+            }
+        };
+
         // listen to AgentSnapShotEvent
         SDKClient.events.on('AgentSnapShotEvent', this.AgentSnapShotEvent);
+
         // get the agent features from SDK
         const agentFeatures = SDKClient.getAgentData().featuresList;
         // check the list
@@ -358,5 +358,18 @@ export class AgentFeaturesService {
                 });
             }
         }
+
+        this._agentFeatureInfo = {
+            permissions: {
+                camera: false,
+                display: false,
+                location: false
+            },
+            data: {
+                cameraStream: null,
+                displayStream: null,
+                location: null
+            }
+        };
     }
 }

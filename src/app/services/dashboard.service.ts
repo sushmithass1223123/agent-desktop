@@ -33,11 +33,12 @@ export class DashboardService {
      * Dashboard Seervice subject
      */
     private _dashboardServiceSubject: BehaviorSubject<string>;
+    /**
+     * Service started flag
+     */
+    private _serviceStarted: boolean;
 
-    constructor(private _appDataService: AppDataService) {
-        this._unsubscribeAll = new Subject();
-        this._dashboardServiceSubject = new BehaviorSubject('');
-    }
+    constructor(private _appDataService: AppDataService) { }
 
     /**
      * Start signalr
@@ -143,6 +144,9 @@ export class DashboardService {
 
             // assign to local variable
             this._signalRInstance = signalR;
+
+            // set the started flag to true
+            this._serviceStarted = true;
         }
     }
 
@@ -165,13 +169,16 @@ export class DashboardService {
 
         TUtils.Logger.console('info', 'DashboardService.subscribe');
 
+        this._unsubscribeAll = new Subject();
+        this._dashboardServiceSubject = new BehaviorSubject('');
+
         this._appDataService.config
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((config: any) => {
                 // check whether the Urls are provided in config
                 this._serviceUrls = config.Main.Content.Urls?.DashboardServerUrls || [];
                 // if urls are there then start service
-                if (this._serviceUrls.length > 0) {
+                if (this._serviceUrls.length > 0 && !this._serviceStarted) {
                     this.startService();
                 }
             });
@@ -191,11 +198,15 @@ export class DashboardService {
 
         TUtils.Logger.console('info', 'DashboardService.unsubscribe');
 
+
         // unsubscribe from all subscriptions
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
+
+        this._dashboardServiceSubject.next('');
+        this._dashboardServiceSubject.complete();
+
         this._subscribed = false;
-        this._dashboardServiceSubject = new BehaviorSubject('');
     }
 
     /**

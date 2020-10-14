@@ -11,7 +11,7 @@ import { AppUiService } from 'app/services/app-ui.service';
 import * as moment from 'moment';
 import { SDKClient, IUIEvent, CCLDataEvent, TextChatRemoteUserConnectedEvent } from 'tmac-sdk';
 import { join } from 'lodash';
-import * as _ from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Register Callback Widget component
@@ -242,7 +242,7 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
             const valueMap = join(valueSourceSplit, '.');
 
             // assign to the map
-            this.dataMapValues[key] = _.get(evt, valueMap, this.dataMap[key].DefaultValue);
+            this.dataMapValues[key] = get(evt, valueMap, this.dataMap[key].DefaultValue);
         }
     }
 

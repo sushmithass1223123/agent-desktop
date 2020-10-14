@@ -1,9 +1,6 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { AppUiService } from '@services/app-ui.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
-import { TwWidgetModel } from 'app/models';
-import { AgentNotificaitonEvent, SDKClient } from 'tmac-sdk';
 
 /**
  * Chat Panel Component

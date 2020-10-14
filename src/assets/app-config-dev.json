@@ -152,7 +152,7 @@
                         },
                         "Data": {
                             "Path": "/home",
-                            "Active": false
+                            "Active": true
                         }
                     },
                     {
@@ -204,7 +204,7 @@
                         },
                         "Data": {
                             "Path": "/email",
-                            "Active": true
+                            "Active": false
                         }
                     },
                     {
@@ -351,7 +351,8 @@
                                         },
                                         "Actions": [],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "Source": "dashboard"
@@ -377,11 +378,11 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "pin",
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "Source": "tw-ad-total-interactions",
@@ -406,11 +407,11 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "pin",
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "Source": "dashboard"
@@ -434,11 +435,11 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "pin",
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "Source": "tw-aux-status-chart",
@@ -463,11 +464,11 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "pin",
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {}
                                 },
@@ -489,11 +490,11 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "pin",
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "AgentProgressUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetProgress"
@@ -517,11 +518,11 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "pin",
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "LeaderBoardUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetLeaderBoard",
@@ -546,11 +547,11 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "pin",
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "GetCallbacksUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Contact/GetContactSessionByAgent"
@@ -574,11 +575,11 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "pin",
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "Source": "dashboard"
@@ -602,11 +603,11 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "pin",
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {}
                                 }
@@ -632,10 +633,12 @@
                                         },
                                         "Actions": [
                                             "minimize",
-                                            "destroy"
+                                            "destroy",
+                                            "pin"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "AutoOpen": false,
@@ -663,11 +666,11 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "pin",
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "LeaderBoardUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetLeaderBoard",
@@ -695,7 +698,8 @@
                                         },
                                         "Actions": [],
                                         "ViewState": "restore",
-                                        "Header": false
+                                        "Header": false,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "AutoOpen": false,
@@ -723,10 +727,12 @@
                                         },
                                         "Actions": [
                                             "minimize",
-                                            "destroy"
+                                            "destroy",
+                                            "pin"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "AutoOpen": false,
@@ -771,7 +777,8 @@
                                         },
                                         "Actions": [],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "TASUrl": "https://dice.tetherfi.cloud/TAS/Quiz/Index"
@@ -797,11 +804,11 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "pin",
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "Source": "tw-ad-total-interactions",
@@ -826,11 +833,11 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "pin",
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "Source": "supervisor"
@@ -853,11 +860,11 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "pin",
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "Source": "tw-su-calls-in-queue",
@@ -882,11 +889,11 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "pin",
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "Source": "tw-su-intent-list"
@@ -909,11 +916,11 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "pin",
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "Source": "supervisor"
@@ -937,11 +944,11 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "pin",
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {}
                                 },
@@ -963,11 +970,11 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "pin",
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "Source": "tw-su-status",
@@ -991,11 +998,11 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "pin",
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "Source": "supervisor",
@@ -1025,11 +1032,11 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "pin",
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "LeaderBoardUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetLeaderBoard"
@@ -1054,11 +1061,11 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "pin",
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "AutoOpen": false,
@@ -1103,7 +1110,8 @@
                                         },
                                         "Actions": [],
                                         "ViewState": "restore",
-                                        "Header": false
+                                        "Header": false,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "Widgets": [
@@ -1128,10 +1136,8 @@
                                                         "float"
                                                     ],
                                                     "ViewState": "restore",
-                                                    "PinState": false,
-                                                    "FloatState": false,
-                                                    "Resizable": false,
-                                                    "Header": true
+                                                    "Header": true,
+                                                    "Pinned": false
                                                 },
                                                 "Data": {
                                                     "TransferAllowed": true,
@@ -1179,10 +1185,8 @@
                                                         "minimize"
                                                     ],
                                                     "ViewState": "restore",
-                                                    "PinState": false,
-                                                    "FloatState": false,
-                                                    "Resizable": false,
-                                                    "Header": true
+                                                    "Header": true,
+                                                    "Pinned": false
                                                 },
                                                 "Data": {
                                                     "CustomerInfo": [
@@ -1251,10 +1255,8 @@
                                                         "minimize"
                                                     ],
                                                     "ViewState": "restore",
-                                                    "PinState": false,
-                                                    "FloatState": false,
-                                                    "Resizable": false,
-                                                    "Header": true
+                                                    "Header": true,
+                                                    "Pinned": false
                                                 },
                                                 "Data": {
                                                     "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
@@ -1284,11 +1286,11 @@
                                             "Y": 2
                                         },
                                         "Actions": [
-                                            "pin",
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "Confidence": 0.5,
@@ -1323,11 +1325,11 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "pin",
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "IsAuthenticated": true
@@ -1351,11 +1353,11 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "pin",
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {}
                                 },
@@ -1377,11 +1379,11 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "pin",
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {}
                                 },
@@ -1403,11 +1405,11 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "pin",
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "Source": "interaction",
@@ -1433,11 +1435,11 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "pin",
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {}
                                 }
@@ -1466,7 +1468,8 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "GetCampaignsUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Campaign/GetCampaigns",
@@ -1503,11 +1506,11 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "pin",
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "TCMProxy": "https://dice.tetherfi.cloud/TCM_Proxy"
@@ -1536,7 +1539,8 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "AutoOpen": false,
@@ -1567,7 +1571,8 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "AutoOpen": false,
@@ -1598,7 +1603,8 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {}
                                 },
@@ -1625,7 +1631,8 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "AutoOpen": false,
@@ -1656,7 +1663,8 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "AutoOpen": false,
@@ -1687,7 +1695,8 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "AutoOpen": false,
@@ -1718,7 +1727,8 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "AutoOpen": false,
@@ -1763,7 +1773,8 @@
                                         },
                                         "Actions": [],
                                         "ViewState": "restore",
-                                        "Header": false
+                                        "Header": false,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "Widgets": [
@@ -1788,10 +1799,8 @@
                                                         "float"
                                                     ],
                                                     "ViewState": "restore",
-                                                    "PinState": false,
-                                                    "FloatState": false,
-                                                    "Resizable": false,
-                                                    "Header": true
+                                                    "Header": true,
+                                                    "Pinned": false
                                                 },
                                                 "Data": {
                                                     "TransferAllowed": true,
@@ -1855,10 +1864,8 @@
                                                         "minimize"
                                                     ],
                                                     "ViewState": "restore",
-                                                    "PinState": false,
-                                                    "FloatState": false,
-                                                    "Resizable": false,
-                                                    "Header": true
+                                                    "Header": true,
+                                                    "Pinned": false
                                                 },
                                                 "Data": {
                                                     "CustomerInfo": [
@@ -1939,10 +1946,8 @@
                                                         "minimize"
                                                     ],
                                                     "ViewState": "minimize",
-                                                    "PinState": false,
-                                                    "FloatState": false,
-                                                    "Resizable": false,
-                                                    "Header": true
+                                                    "Header": true,
+                                                    "Pinned": false
                                                 },
                                                 "Data": {
                                                     "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
@@ -1972,11 +1977,11 @@
                                             "Y": 2
                                         },
                                         "Actions": [
-                                            "pin",
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "Confidence": 0.5,
@@ -2011,11 +2016,11 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "pin",
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "IsAuthenticated": true
@@ -2039,11 +2044,11 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "pin",
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {}
                                 },
@@ -2065,11 +2070,11 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "pin",
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {}
                                 },
@@ -2091,11 +2096,11 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "pin",
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "Source": "interaction",
@@ -2121,11 +2126,11 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "pin",
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {}
                                 }
@@ -2154,7 +2159,8 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "GetCampaignsUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Campaign/GetCampaigns",
@@ -2194,7 +2200,8 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "AutoOpen": false,
@@ -2225,7 +2232,8 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "AutoOpen": false,
@@ -2256,7 +2264,8 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "AutoOpen": false,
@@ -2287,7 +2296,8 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "AutoOpen": false,
@@ -2318,7 +2328,8 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "AutoOpen": false,
@@ -2349,7 +2360,8 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "AutoOpen": false,
@@ -2394,7 +2406,8 @@
                                         },
                                         "Actions": [],
                                         "ViewState": "restore",
-                                        "Header": false
+                                        "Header": false,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "Widgets": [
@@ -2419,10 +2432,8 @@
                                                         "float"
                                                     ],
                                                     "ViewState": "restore",
-                                                    "PinState": false,
-                                                    "FloatState": false,
-                                                    "Resizable": false,
-                                                    "Header": true
+                                                    "Header": true,
+                                                    "Pinned": false
                                                 },
                                                 "Data": {}
                                             },
@@ -2446,10 +2457,8 @@
                                                         "minimize"
                                                     ],
                                                     "ViewState": "restore",
-                                                    "PinState": false,
-                                                    "FloatState": false,
-                                                    "Resizable": false,
-                                                    "Header": true
+                                                    "Header": true,
+                                                    "Pinned": false
                                                 },
                                                 "Data": {
                                                     "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
@@ -2479,11 +2488,11 @@
                                             "Y": 2
                                         },
                                         "Actions": [
-                                            "pin",
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "Confidence": 0.5,
@@ -2518,11 +2527,11 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "pin",
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "IsAuthenticated": true
@@ -2546,11 +2555,11 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "pin",
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {}
                                 },
@@ -2572,11 +2581,11 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "pin",
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "Source": "interaction",
@@ -2602,11 +2611,11 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "pin",
                                             "float"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {}
                                 }
@@ -2635,7 +2644,8 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "GetCampaignsUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Campaign/GetCampaigns",
@@ -2675,7 +2685,8 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "AutoOpen": false,
@@ -2706,7 +2717,8 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "AutoOpen": false,
@@ -2737,7 +2749,8 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "AutoOpen": false,
@@ -2768,7 +2781,8 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "AutoOpen": false,
@@ -2799,7 +2813,8 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "AutoOpen": false,
@@ -2830,7 +2845,8 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
-                                        "Header": true
+                                        "Header": true,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "AutoOpen": false,
@@ -3020,6 +3036,7 @@
                 {
                     "Name": "TRS",
                     "Description": "",
+                    "Key": "TRS",
                     "Type": "tw-custom",
                     "Config": {
                         "Enabled": true,
@@ -3036,13 +3053,12 @@
                         },
                         "Actions": [
                             "minimize",
-                            "destroy"
+                            "destroy",
+                            "pin"
                         ],
                         "ViewState": "restore",
-                        "PinState": false,
-                        "FloatState": false,
-                        "Resizable": false,
-                        "Header": true
+                        "Header": true,
+                        "Pinned": true
                     },
                     "Data": {
                         "AutoOpen": false,
@@ -3053,6 +3069,7 @@
                 {
                     "Name": "Register Callback",
                     "Description": "",
+                    "Key": "RegisterCallback",
                     "Type": "tw-register-callback",
                     "Config": {
                         "Enabled": true,
@@ -3069,13 +3086,12 @@
                         },
                         "Actions": [
                             "minimize",
-                            "destroy"
+                            "destroy",
+                            "pin"
                         ],
                         "ViewState": "restore",
-                        "PinState": false,
-                        "FloatState": false,
-                        "Resizable": false,
-                        "Header": true
+                        "Header": true,
+                        "Pinned": true
                     },
                     "Data": {
                         "AutoOpen": false,

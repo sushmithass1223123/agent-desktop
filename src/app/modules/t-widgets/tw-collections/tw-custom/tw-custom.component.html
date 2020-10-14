@@ -14,9 +14,11 @@
         <iframe
             *ngIf="url; else noURL"
             [src]="url"
+            [id]="'frame_' + data.ID"
             class="frame"
             frameborder="0"
             seamless="seamless"
+            (load)="frameLoaded()"
             allow="geolocation; microphone; camera;"
         ></iframe>
 

@@ -1,7 +1,12 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { FuseConfig } from '@fuse/types';
 import { IWidget } from 'app/interfaces';
 import { AOTWidgetService } from '@services/aot-widget.service';
+import { AppDataService } from '@services/app-data.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { map } from 'lodash';
+import { AppUiService } from '@services/app-ui.service';
 
 /**
  * Card header component
@@ -13,7 +18,7 @@ import { AOTWidgetService } from '@services/aot-widget.service';
     styleUrls: ['./tw-card-header.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class TwCardHeaderComponent implements OnInit {
+export class TwCardHeaderComponent implements OnInit, OnDestroy {
     /**
      * Data from app config
      */
@@ -47,14 +52,41 @@ export class TwCardHeaderComponent implements OnInit {
      */
     @Output() destroy = new EventEmitter();
 
+    /**
+     * Un subscribe all subject
+     */
+    private _unsubscribeAll: Subject<any>;
+    /**
+     * App config
+     */
+    private _appConfig: any;
+
     constructor(
-        private _aotWidgetService: AOTWidgetService
-    ) { }
+        private _aotWidgetService: AOTWidgetService,
+        private _appDataService: AppDataService,
+        private _appUIService: AppUiService
+    ) {
+        this._unsubscribeAll = new Subject();
+    }
 
     /**
-     * Lifecycle hook
+     * Lifecycle hook OnInit
      */
-    ngOnInit(): void { }
+    ngOnInit(): void {
+        this._appDataService.config
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((config: any) => {
+                this._appConfig = config;
+            });
+    }
+
+    /**
+     * Lifecycle hook OnDestroy
+     */
+    ngOnDestroy(): void {
+        this._unsubscribeAll.next();
+        this._unsubscribeAll.complete();
+    }
 
     /**
      * Maximize method
@@ -75,6 +107,63 @@ export class TwCardHeaderComponent implements OnInit {
      */
     collapseWidget(): void {
         this.collapse.emit();
+    }
+
+    /**
+     * To pin a widget
+     */
+    pinWidget(): void {
+        // add the widget to the list
+        this.data.Config.Pinned = !this.data.Config.Pinned;
+
+        // get the main AOT list
+        let aots = this._appConfig.Main.AOT.Widgets || [];
+
+        // check this widget in list
+        const thisInAOT = aots.filter((widget: IWidget) => widget.Key === this.data.Key)?.[0];
+
+        // check if pinned
+        if (this.data.Config.Pinned) {
+            this._appUIService.showSnackbar('Widget added to pinned list');
+            // check widget in AOT list
+            if (thisInAOT) {
+                aots = map(aots, (widget: IWidget) => {
+                    if (widget.Key === this.data.Key) {
+                        widget.Config.Pinned = true;
+                    }
+                    return widget;
+                });
+            }
+            else {
+                aots.push(this.data);
+            }
+        }
+        else {
+            this._appUIService.showSnackbar('Widget removed from pinned list');
+            // check widget in AOT list
+            if (thisInAOT) {
+                aots = map(aots, (widget: IWidget) => {
+                    if (widget.Key === this.data.Key) {
+                        widget.Config.Pinned = false;
+                    }
+                    return widget;
+                });
+            }
+            else {
+                aots = aots.filter((widget: IWidget) => widget.Key !== this.data.Key);
+            }
+        }
+
+        // update the service data
+        this._appDataService.config = {
+            ...this._appConfig, ...{
+                Main: {
+                    AOT: {
+                        Widgets: [...aots]
+                    }
+                }
+            }
+        };
     }
 
     /**

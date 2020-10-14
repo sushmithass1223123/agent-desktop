@@ -307,8 +307,7 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
 
                                 // if (this.currentUser.coins[0] && this.currentUser.coins[0].name === 'Gold') {
                                 this.currentUser.coins = this.currentUser.coins.filter((x) => !x.static) || [];
-                                //     console.log(this.currentUser.coins);
-                                // }
+
                                 this.currentUser.coins.unshift(...sortBy(coins, 'order'));
                                 this.setCurrenAgentLevel();
                             }
@@ -448,7 +447,7 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
     OnLoadMetricsToAgent = (evt: any): void => {
         // const JsonData = JSON.parse(evt.JsonData);
         // console.log({ ...evt, JsonData: { ...JsonData, eventdata: JSON.parse(JsonData.eventdata) } });
-    };
+    }
 
     /**
      * Assign points events

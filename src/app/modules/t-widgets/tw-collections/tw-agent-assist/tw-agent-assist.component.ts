@@ -5,7 +5,7 @@ import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
-import * as _ from 'lodash';
+import { orderBy } from 'lodash';
 import { AgentAssistDataEvent, CallerIntentEvent, GenericEvent, IUIEvent, SDKClient, TextChatRemoteUserConnectedEvent } from 'tmac-sdk';
 
 @Component({
@@ -168,7 +168,7 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
                 }
             }
             // oder by the count
-            this.nlpData = _.orderBy(this.nlpData, ['Count'], ['desc']);
+            this.nlpData = orderBy(this.nlpData, ['Count'], ['desc']);
         }
     }
 
@@ -284,7 +284,7 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         }
 
         // oder by the count
-        this.nlpData = _.orderBy(this.nlpData, ['Count'], ['desc']);
+        this.nlpData = orderBy(this.nlpData, ['Count'], ['desc']);
     }
 
     /**

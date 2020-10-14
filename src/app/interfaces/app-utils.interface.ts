@@ -215,7 +215,7 @@ export interface AppNotification {
     showAlert?: boolean;
 }
 
-export type SnackbarStateTypes = 'info' | 'loading' | 'warning' | 'success' | 'failure';
+export type SnackbarStateTypes = 'info' | 'loading' | 'warning' | 'success' | 'failure' | 'close';
 
 export type AppAlertDialogTypes = 'success' | 'info' | 'warning' | 'error';
 

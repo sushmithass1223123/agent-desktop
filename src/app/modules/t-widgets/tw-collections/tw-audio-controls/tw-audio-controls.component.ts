@@ -6,7 +6,7 @@ import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
-import * as _ from 'lodash';
+import { map } from 'lodash';
 import { timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AVChannel, AVControlMessageReceivedEvent, AVEvent, IAgentData, SDKClient, TEnums, TextChatDisconnectedEvent, TUtils } from 'tmac-sdk';
@@ -273,8 +273,6 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
      * @param {AVEvent} evt 
      */
     private onAVEvent = (evt: AVEvent) => {
-        // console.log('##### onAVEvent #####', evt);
-
         // swtich the av events
         switch (evt.event) {
             case 'onIncoming':
@@ -374,7 +372,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
                 this.destroyWidget();
                 break;
             case 'onVoiceActivity':
-                _.map(this.userList, (user: any) => {
+                map(this.userList, (user: any) => {
                     // set the level to 0
                     user.level = 0;
                     // check for matching stream id and change the level
@@ -395,11 +393,11 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
                 this.destroyWidget();
                 break;
             default:
-                console.log(`unhandled:: [${evt.event}]`, evt);
+                // console.log(`unhandled:: [${evt.event}]`, evt);
         }
     }
 
-    
+
     /**
      * TextChatDisconnectedEvent Handler
      * @method TextChatDisconnectedEvent
@@ -414,7 +412,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         this.destroyWidget();
     }
 
-    
+
     /**
      * Widget Cleanup
      * @method destroyWidget
@@ -428,7 +426,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
 
-    
+
     /**
      * Mute call
      * @method muteCall
@@ -466,7 +464,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         this.hold = !this.hold;
     }
 
-    
+
     /**
      * Share Screen
      * @method shareScreen
@@ -483,7 +481,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         }
     }
 
-    
+
     /**
      * End call
      * @method endCall

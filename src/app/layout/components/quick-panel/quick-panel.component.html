@@ -42,9 +42,9 @@
         </mat-list-item>
     </mat-list>
 
-    <mat-divider></mat-divider>
+    <!-- <mat-divider></mat-divider> -->
 
-    <mat-list>
+    <!-- <mat-list>
         <h3 matSubheader>
             <span>Quick Settings</span>
         </h3>
@@ -66,6 +66,21 @@
                 <h3>Retro Thrusters</h3>
             </mat-slide-toggle>
         </mat-list-item>
+    </mat-list> -->
+
+    <mat-divider></mat-divider>
+
+    <mat-list>
+        <h3 matSubheader>
+            <span>Pinned Widgets</span>
+        </h3>
+        <div class="p-16 pt-0">
+            <ng-container *ngFor="let widget of pinnedAOTs">
+                <button mat-mini-fab color="secondary" *ngIf="widget.Config.Enabled" class="fab-secondary mr-8 mb-8" (click)="openAOTWidget(widget)">
+                    <mat-icon [matTooltip]="widget.Name || 'Widget'">{{ widget.Config.Icon || 'widget' }}</mat-icon>
+                </button>
+            </ng-container>
+        </div>
     </mat-list>
 
     <mat-divider></mat-divider>
