@@ -75,8 +75,6 @@ export class InteractionManagerService {
 
         // notify the observers
         this._interactionsSubject.next(interactions);
-
-        console.log('###ADD###', { payload, interactions });
     }
 
     /**
@@ -137,8 +135,6 @@ export class InteractionManagerService {
         // notify the observers if updated
         if (updated) {
             this._interactionsSubject.next(updatedInteractions);
-
-            console.log('### UPDATE ###', interactions);
         }
     }
 

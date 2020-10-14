@@ -273,8 +273,6 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
      * @param {AVEvent} evt 
      */
     private onAVEvent = (evt: AVEvent) => {
-        // console.log('##### onAVEvent #####', evt);
-
         // swtich the av events
         switch (evt.event) {
             case 'onIncoming':
@@ -395,7 +393,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
                 this.destroyWidget();
                 break;
             default:
-                console.log(`unhandled:: [${evt.event}]`, evt);
+                // console.log(`unhandled:: [${evt.event}]`, evt);
         }
     }
 

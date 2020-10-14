@@ -67,7 +67,6 @@ export class QuickPanelComponent implements OnInit, OnDestroy {
         this._appDataService.config
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((config: any) => {
-                console.log('config updated', config);
                 if (config) {
                     this.pinnedAOTs = config.Main.AOT.Widgets?.filter((w: IWidget) => w.Config.Pinned === true);
                 }

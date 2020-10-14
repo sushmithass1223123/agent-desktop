@@ -151,8 +151,6 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
      * @param event 
      */
     private sendEventsToWindow(evt: any): void {
-        console.log(`${this.data.ID} - ${evt.EventName}`);
-
         const iframe = document.getElementById('frame_' + this.data.ID);
         // get the element
         const element = this.oinWidget ? this.oinWidget : iframe ? (iframe as HTMLIFrameElement).contentWindow : null;

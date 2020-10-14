@@ -296,8 +296,6 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
      * @param {AgentFeatures} feature 
      */
     public performAgentAction(agent: SuAgentModel, feature: AgentFeatures): void {
-        console.log('performAgentAction', { agent, feature });
-
         switch (feature.Feature) {
             case 'AllowSupervisorToCapturePicture':
                 this._appUIService.showSnackbar('Please wait, retrieving information...', 'loading');

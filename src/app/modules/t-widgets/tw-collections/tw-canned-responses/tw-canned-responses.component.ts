@@ -270,13 +270,11 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
      */
     changeMode(event: MatSelectChange): void {
         if (event.value === 'manual') {
-            console.log('Cancelling listeners');
             SDKClient.events.off('OnNLPDataEvent', this.OnNLPDataEvent);
             SDKClient.events.off('CallerIntentEvent', this.CallerIntentEvent);
             SDKClient.events.off('WorkCodeAddedEvent', this.WorkCodeAddedEvent);
             this.clearAllData();
         } else {
-            console.log('Llistening');
             SDKClient.events.on('OnNLPDataEvent', this.OnNLPDataEvent);
             SDKClient.events.on('CallerIntentEvent', this.CallerIntentEvent);
             SDKClient.events.on('WorkCodeAddedEvent', this.WorkCodeAddedEvent);

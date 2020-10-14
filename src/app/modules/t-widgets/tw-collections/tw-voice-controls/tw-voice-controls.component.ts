@@ -665,10 +665,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 TUtils.Logger.log('Exception in TwVoiceControlsComponent.onAVEvent', evt.data);
                 break;
             case 'onConnected':
-                console.log('onAVEvent - onConnected');
                 break;
             case 'onDisconnected':
-                console.log('onAVEvent - onDisconnected');
                 // clear tone of disconnect on dial or incoming
                 this._appUIService.clearAudio();
                 break;
@@ -688,7 +686,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 delete this.avConns[this.sessionID];
                 break;
             default:
-                console.log(`unhandled:: [${evt.event}]`, evt);
+                // console.log(`unhandled:: [${evt.event}]`, evt);
         }
     }
 

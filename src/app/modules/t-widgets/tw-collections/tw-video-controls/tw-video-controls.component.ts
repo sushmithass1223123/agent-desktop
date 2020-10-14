@@ -408,7 +408,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                 this.destroyWidget();
                 break;
             default:
-                console.log(`unhandled:: [${evt.event}]`, evt);
+            // console.log(`unhandled:: [${evt.event}]`, evt);
         }
     }
 
@@ -502,7 +502,6 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
      * @param {any} user 
      */
     public takeSnapShot(user: any): void {
-        console.log(this.remoteVideoElements, user);
         this.remoteVideoElements?.forEach((element: ElementRef) => {
             if (element.nativeElement.id === user.stream.id) {
                 // create a canvas

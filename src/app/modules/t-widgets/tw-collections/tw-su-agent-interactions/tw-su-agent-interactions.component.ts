@@ -131,7 +131,6 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
     // -----------------------------------------------------------------------------------------------------
 
     private TeamAgentInteractionDetailsEvent = (data: SuAgentInteractionModel[]) => {
-        console.log('TeamAgentInteractionDetailsEvent', data);
         // if the list is empty the return
         if (data.length === 0) {
             return;

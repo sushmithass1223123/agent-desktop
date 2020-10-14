@@ -152,7 +152,7 @@
                         },
                         "Data": {
                             "Path": "/home",
-                            "Active": false
+                            "Active": true
                         }
                     },
                     {
@@ -204,7 +204,7 @@
                         },
                         "Data": {
                             "Path": "/email",
-                            "Active": true
+                            "Active": false
                         }
                     },
                     {
