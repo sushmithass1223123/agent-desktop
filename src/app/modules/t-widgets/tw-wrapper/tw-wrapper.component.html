@@ -37,7 +37,7 @@
                 [data]="data"
                 [fuseConfig]="fuseConfig"
                 *ngIf="data.Config.Header"
-                [widgetState]="{ maximized: maximized, floating: floating, collapsed: collapsed, aot: aot }"
+                [widgetState]="{ maximized: maximized, floating: floating, collapsed: collapsed, aot: aot, pinned: pinned }"
                 (maximize)="maximize()"
                 (float)="float()"
                 (collapse)="collapse()"

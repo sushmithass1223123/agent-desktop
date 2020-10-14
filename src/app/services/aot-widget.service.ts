@@ -58,6 +58,8 @@ export class AOTWidgetService {
                         if (widget.Data?.AutoOpen) {
                             setTimeout(() => {
                                 this.addWidget(widget);
+                                // set auto open to false so that when config is updated it wont open again
+                                widget.Data.AutoOpen = false;
                             }, 3000);
                         }
                     });

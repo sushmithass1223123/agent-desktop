@@ -59,6 +59,7 @@ export class TwWidgetModel {
             },
             Actions: [],
             ViewState: 'restore',
+            Pinned: false,
             Header: true
         };
         this.Data = new Object();

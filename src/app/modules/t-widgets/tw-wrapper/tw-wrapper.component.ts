@@ -78,6 +78,10 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
      * AOT
      */
     aot = false;
+    /**
+     * Pinned
+     */
+    pinned = false;
 
     /**
      * Unsubscribe all subject
@@ -95,7 +99,9 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
     // -----------------------------------------------------------------------------------------------------
     // @ Lifecycle hooks
     // -----------------------------------------------------------------------------------------------------
-
+    /**
+     * OnInit
+     */
     ngOnInit(): void {
         // Subscribe to the config changes
         this._fuseConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((fuseConfig: any) => {
@@ -123,14 +129,23 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
             const x = (this.data.Config.Position.W || 10) / 2;
             this.dragPosition = { x: -x, y: -50 };
         }
+
+        // assign the Pinned config
+        this.pinned = this.data.Config.Pinned;
     }
 
+    /**
+     * OnDestroy
+     */
     ngOnDestroy(): void {
         // Unsubscribe from all subscriptions
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
     }
 
+    /**
+     * Widget maximzed callback
+     */
     maximize(): void {
         this.maximized = !this.maximized;
         // check if collapsed then expand
@@ -140,6 +155,9 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
         this.maximizeEvent.emit(this.maximized);
     }
 
+    /**
+     *  Widget float callback
+     */
     float(): void {
         this.floating = !this.floating;
         if (this.floating) {
@@ -154,11 +172,17 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
         this.floatEvent.emit(this.floating);
     }
 
+    /**
+     *  Widget collapse callback
+     */
     collapse(): void {
         this.collapsed = !this.collapsed;
         this.collapseEvent.emit(this.collapsed);
     }
 
+    /**
+     * Widget destroy callback
+     */
     destroy(): void {
         this.destroyEvent.emit();
     }

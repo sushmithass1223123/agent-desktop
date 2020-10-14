@@ -6,6 +6,10 @@ export interface IWidget {
      */
     Name: string;
     /**
+     * Widget Key
+     */
+    Key?: string;
+    /**
      * Widget Id
      */
     ID: string;
@@ -102,6 +106,10 @@ export interface IWidgetConfig {
      * Initail state of widget
      */
     ViewState: 'restore' | 'maximize' | 'minimize' | 'hidden' | 'float';
+    /**
+     * Pinned widget
+     */
+    Pinned: boolean;
     /**
      * Header flag
      */

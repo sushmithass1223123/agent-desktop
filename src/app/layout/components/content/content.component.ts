@@ -3,7 +3,6 @@ import { TWidget } from '@modules/t-widgets/utils';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { IWidget } from 'app/interfaces';
 import { AppDataService } from 'app/services/app-data.service';
-import { ContentPageService } from 'app/services/content-page.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -18,24 +17,27 @@ import { takeUntil } from 'rxjs/operators';
 })
 export class ContentComponent implements OnInit, OnDestroy {
 
-    // Private
+    /**
+     * Unsubscribe all subject
+     */
     private _unsubscribeAll: Subject<any>;
-
-    viewMode = '';
+    /**
+     * Content widget list
+     */
     contentWidgets: TWidget[] = [];
-    aotWidget: TWidget;
+    /**
+     * AOT widget list
+     */
     aotWidgets: IWidget[];
 
     /**
      * Constructor
      *
-     * @param {AppDataService} _appDataService
-     * @param {ContentPageService} _contentPageService
+     * @param {AppDataService} _appDataService 
      * @param {AOTWidgetService} _aotWidgetService
      */
     constructor(
         private _appDataService: AppDataService,
-        private _contentPageService: ContentPageService,
         private _aotWidgetService: AOTWidgetService
     ) {
         // Set the private defaults
@@ -44,8 +46,11 @@ export class ContentComponent implements OnInit, OnDestroy {
 
     // -----------------------------------------------------------------------------------------------------
     // @ Lifecycle hooks
-    // -----------------------------------------------------------------------------------------------------    
+    // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * On Init
+     */
     ngOnInit(): void {
         // Subscribe to config changes
         this._appDataService.config
@@ -83,13 +88,5 @@ export class ContentComponent implements OnInit, OnDestroy {
 
         // unsubscribe to the AOT widget service
         this._aotWidgetService.unsubscribe();
-    }
-
-    // -----------------------------------------------------------------------------------------------------
-    // @  Methods
-    // -----------------------------------------------------------------------------------------------------    
-
-    updateViewMode(mode: string): void {
-        this._contentPageService.mode = mode;
     }
 }

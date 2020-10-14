@@ -33,6 +33,10 @@ export class DashboardService {
      * Dashboard Seervice subject
      */
     private _dashboardServiceSubject: BehaviorSubject<string>;
+    /**
+     * Service started flag
+     */
+    private _serviceStarted: boolean;
 
     constructor(private _appDataService: AppDataService) { }
 
@@ -140,6 +144,9 @@ export class DashboardService {
 
             // assign to local variable
             this._signalRInstance = signalR;
+
+            // set the started flag to true
+            this._serviceStarted = true;
         }
     }
 
@@ -171,7 +178,7 @@ export class DashboardService {
                 // check whether the Urls are provided in config
                 this._serviceUrls = config.Main.Content.Urls?.DashboardServerUrls || [];
                 // if urls are there then start service
-                if (this._serviceUrls.length > 0) {
+                if (this._serviceUrls.length > 0 && !this._serviceStarted) {
                     this.startService();
                 }
             });
