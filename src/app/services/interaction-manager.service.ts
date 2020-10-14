@@ -142,7 +142,7 @@ export class InteractionManagerService {
             this._interactionsSubject.next(interactions);
         }
     }
-    
+
     /**
      * Gets interaction counts 
      * returns total and active interactions

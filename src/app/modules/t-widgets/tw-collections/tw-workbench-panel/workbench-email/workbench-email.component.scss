@@ -33,6 +33,9 @@ workbench-email {
         display: flex;
         justify-content: center;
         align-items: center;
+        .mx-auto {
+            margin: auto;
+        }
     }
 
     .advanced-search-form {
