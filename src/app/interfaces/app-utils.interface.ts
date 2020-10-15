@@ -337,3 +337,48 @@ export interface CustomDialogData {
      */
     cancel: () => void;
 }
+
+export interface AgentSkillListData {
+    /**
+     * Type of dialog
+     */
+    type: 'makeCall' | 'transferCall' | 'conferenceCall' | 'transferChat' | 'conferenceChat' | 'transferEmail' | 'transferFax';
+    /**
+     * Title of dialog
+     */
+    title?: string;
+    /**
+     * Agent settings
+     */
+    agent: {
+        /**
+         * Agent allowed flag
+         */
+        allowed: boolean;
+        /**
+         * BlindD allowed flag
+         */
+        blind: boolean;
+        /**
+         * Allowed states to do action
+         */
+        allowedStates?: string[];
+    };
+    /**
+     * Skill settings
+     */
+    skill: {
+        /**
+         * Agent allowed flag
+         */
+        allowed: boolean;
+        /**
+         * BlindD allowed flag
+         */
+        blind: boolean;
+    };
+    /**
+     * Interaction Id
+     */
+    interactionId?: number;
+}

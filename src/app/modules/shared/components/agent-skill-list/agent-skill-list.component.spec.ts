@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CreateSMSComponent } from './create-sms.component';
+import { AgentSkillListComponent } from './agent-skill-list.component';
 
-describe('CreateSMSComponent', () => {
-  let component: CreateSMSComponent;
-  let fixture: ComponentFixture<CreateSMSComponent>;
+describe('AgentSkillListComponent', () => {
+  let component: AgentSkillListComponent;
+  let fixture: ComponentFixture<AgentSkillListComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CreateSMSComponent ]
+      declarations: [ AgentSkillListComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CreateSMSComponent);
+    fixture = TestBed.createComponent(AgentSkillListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

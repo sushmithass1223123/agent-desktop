@@ -1,4 +1,4 @@
-tw-transfer-interaction {
+agent-skill-list {
     .mat-card-content {
         background: inherit !important;
         padding: 0 !important;
@@ -64,6 +64,11 @@ tw-transfer-interaction {
                     margin-right: 0;
                 }
             }
+        }
+
+        .mat-progress-bar {
+            position: absolute;
+            left: 0;
         }
     }
 }

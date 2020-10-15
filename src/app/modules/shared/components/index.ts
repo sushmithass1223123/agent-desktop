@@ -9,5 +9,6 @@ export * from './reminder-task-dialog/reminder-task-dialog.component';
 export * from './resource-not-found/resource-not-found.component';
 export * from './snackbar/snackbar.component';
 export * from './widget-fab/widget-fab.component';
-export * from './create-email/create-email.component'
-export * from './create-email/mat-quill.module'
+export * from './create-email/create-email.component';
+export * from './create-email/mat-quill.module';
+export * from './agent-skill-list/agent-skill-list.component';

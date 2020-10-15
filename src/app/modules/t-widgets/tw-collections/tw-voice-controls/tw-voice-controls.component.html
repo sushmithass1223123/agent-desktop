@@ -58,7 +58,7 @@
                         <button
                             *ngIf="audioPlayer._adpState === 'paused'"
                             mat-icon-button
-                            class="mr-4 bg-success player-button"
+                            class="mr-4 bg-success custom-btn"
                             matTooltip="Play"
                             (click)="playerAction(1)"
                         >
@@ -67,13 +67,13 @@
                         <button
                             *ngIf="audioPlayer._adpState === 'playing'"
                             mat-icon-button
-                            class="mr-4 bg-warning player-button"
+                            class="mr-4 bg-warning custom-btn"
                             matTooltip="Pause"
                             (click)="playerAction(2)"
                         >
                             <mat-icon>pause_circle_outline</mat-icon>
                         </button>
-                        <button mat-icon-button class="mr-4 bg-danger player-button" matTooltip="Stop" (click)="playerAction(3)">
+                        <button mat-icon-button class="mr-4 bg-danger custom-btn" matTooltip="Stop" (click)="playerAction(3)">
                             <mat-icon>stop</mat-icon>
                         </button>
                         <marquee direction="left">Currently playing '{{ audioPlayer.fileName }}'</marquee>
@@ -151,20 +151,20 @@
                 <mat-icon> mic_off </mat-icon>
             </button>
             <button
-                *ngIf="data.Data?.TransferAllowed && status !== 'disconnected'"
+                *ngIf="data.Data?.Transfer.Allowed && status !== 'disconnected'"
                 mat-flat-button
                 [disabled]="status !== 'connected'"
                 matTooltip="Transfer"
-                (click)="openTransferConferenceDialog('Transfer', 'phone_forwarded')"
+                (click)="openTransferConferenceDialog('transfer')"
             >
                 <mat-icon>phone_forwarded</mat-icon>
             </button>
             <button
-                *ngIf="data.Data?.ConferenceAllowed && status !== 'disconnected'"
+                *ngIf="data.Data?.Conference.Allowed && status !== 'disconnected'"
                 mat-flat-button
                 [disabled]="status !== 'connected'"
                 matTooltip="Conference"
-                (click)="openTransferConferenceDialog('Conference', 'group')"
+                (click)="openTransferConferenceDialog('conference')"
             >
                 <mat-icon>group</mat-icon>
             </button>
@@ -189,6 +189,30 @@
                 matTooltip="Close Interaction"
             >
                 Close
+            </button>
+
+            <button
+                *ngIf="confirmCall"
+                mat-flat-button
+                class="border-radius-20 animate__animated animate__slideInDown animate__faster"
+                color="primary"
+                #confirmBtn
+                (click)="confirmCallFn(true, confirmBtn)"
+                matTooltip="Confirm"
+            >
+                Confirm
+            </button>
+
+            <button
+                *ngIf="confirmCall"
+                mat-flat-button
+                class="border-radius-20 animate__animated animate__slideInDown animate__faster"
+                color="warn"
+                #cancelBtn
+                (click)="confirmCallFn(false, cancelBtn)"
+                matTooltip="Cancel"
+            >
+                Cancel
             </button>
         </div>
     </div>

@@ -120,16 +120,22 @@
                                         {
                                             "Name": "Send SMS",
                                             "Enable": true,
+                                            "EnableState": "",
                                             "Type": "sms",
                                             "Icon": "sms",
-                                            "Status": ""
+                                            "Data": {}
                                         },
                                         {
                                             "Name": "Make Call",
                                             "Enable": true,
+                                            "EnableState": "",
                                             "Type": "voice",
                                             "Icon": "call",
-                                            "Status": ""
+                                            "Data": {
+                                                "AllowedState": [
+                                                    "Available"
+                                                ]
+                                            }
                                         }
                                     ]
                                 }
@@ -1140,8 +1146,30 @@
                                                     "Pinned": false
                                                 },
                                                 "Data": {
-                                                    "TransferAllowed": true,
-                                                    "ConferenceAllowed": true,
+                                                    "Transfer": {
+                                                        "Allowed": true,
+                                                        "Agent": {
+                                                            "Allowed": true,
+                                                            "Blind": false,
+                                                            "AllowedStates": []
+                                                        },
+                                                        "Skil": {
+                                                            "Allowed": true,
+                                                            "Blind": false
+                                                        }
+                                                    },
+                                                    "Conference": {
+                                                        "Allowed": true,
+                                                        "Agent": {
+                                                            "Allowed": true,
+                                                            "Blind": false,
+                                                            "AllowedStates": []
+                                                        },
+                                                        "Skil": {
+                                                            "Allowed": true,
+                                                            "Blind": false
+                                                        }
+                                                    },
                                                     "IVR": {
                                                         "MenuEnabled": true,
                                                         "DefaultMenu": [
@@ -1819,7 +1847,6 @@
                                                     "SnapshotAllowed": true,
                                                     "ShowUserLabel": false,
                                                     "ChatTemplate": {
-                                                        "ButtonEnabled": true,
                                                         "Filter": "startswith",
                                                         "FilterByTime": true,
                                                         "UpdateThreshold": 0

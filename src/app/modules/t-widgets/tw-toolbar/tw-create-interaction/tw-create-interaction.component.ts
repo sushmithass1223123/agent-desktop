@@ -1,10 +1,9 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { widgetFabAnimations } from '@modules/shared/animations/widget-fab.animation';
-import { CreateSmsComponent } from '@modules/shared/components';
+import { AgentSkillListComponent, CreateSMSComponent } from '@modules/shared/components';
 import { AppUiService } from '@services/app-ui.service';
 import { IWidget } from 'app/interfaces';
-import { CommandResultEvent, IResponse, SDKClient } from 'tmac-sdk';
 
 /**
  * Create interaction
@@ -50,44 +49,66 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
      * To create an outgoing interaction
      * 
      * @param channel
+     * @param data
      */
-    addInteraction(channel: string): void {
+    addInteraction(channel: string, data: any): void {
         this.channels = [];
         switch (channel.toLowerCase()) {
             case 'sms':
-                this._matDialog.open(CreateSmsComponent, {
+                this._matDialog.open(CreateSMSComponent, {
                     panelClass: 'create-sms-dialog'
                 });
                 break;
             case 'voice':
-                const dialogRef = this._appUIService.showCustomDialog('prompt', 'Enter number to make a call', 'Make Call');
-                dialogRef.afterClosed().subscribe((resp) => {
-                    if (resp) {
-                        SDKClient.makeCall({
-                            interactionId: '0',
-                            number: resp,
-                            source: '',
-                            sourceId: ''
-                        })
-                            .then((dt: IResponse) => {
-                                // get the response
-                                const result: CommandResultEvent = dt.response;
-                                // check the response
-                                if (result.ResultCode === 0) {
-                                    // make call success
-                                    this._appUIService.showSnackbar(`Make call to ${resp} successful`);
-                                } else {
-                                    // make call failed
-                                    this._appUIService.showSnackbar('Make call failed, please try manually', 'failure');
-                                }
-                            })
-                            .catch(() => {
-                                // make call error
-                                this._appUIService.showSnackbar('Make call error, please try manually', 'failure');
-                            });
-                    }
-                }
-                );
+                this._matDialog.open(AgentSkillListComponent, {
+                    data: {
+                        title: 'Make Call',
+                        type: 'makeCall',
+                        agent: {
+                            allowed: true,
+                            blind: false,
+                            allowedStates: data.AllowedState
+                        },
+                        skill: {
+                            allowed: false,
+                            blind: false
+                        }
+                    },
+                    panelClass: 'agent-skill-dialog',
+                    minWidth: '30%',
+                    maxWidth: '100%',
+                    height: '60%',
+                    disableClose: true
+                });
+
+                // const dialogRef = this._appUIService.showCustomDialog('prompt', 'Enter number to make a call', 'Make Call');
+                // dialogRef.afterClosed().subscribe((resp) => {
+                //     if (resp) {
+                //         SDKClient.makeCall({
+                //             interactionId: '0',
+                //             number: resp,
+                //             source: '',
+                //             sourceId: ''
+                //         })
+                //             .then((dt: IResponse) => {
+                //                 // get the response
+                //                 const result: CommandResultEvent = dt.response;
+                //                 // check the response
+                //                 if (result.ResultCode === 0) {
+                //                     // make call success
+                //                     this._appUIService.showSnackbar(`Make call to ${resp} successful`);
+                //                 } else {
+                //                     // make call failed
+                //                     this._appUIService.showSnackbar('Make call failed, please try manually', 'failure');
+                //                 }
+                //             })
+                //             .catch(() => {
+                //                 // make call error
+                //                 this._appUIService.showSnackbar('Make call error, please try manually', 'failure');
+                //             });
+                //     }
+                // }
+                // );
                 break;
         }
     }

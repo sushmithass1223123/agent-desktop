@@ -31,7 +31,6 @@ import { TwSuChannelsComponent } from '@modules/t-widgets/tw-collections/tw-su-c
 import { TwSuGamificationComponent } from '@modules/t-widgets/tw-collections/tw-su-gamification/tw-su-gamification.component';
 import { TwSuIntentListComponent } from '@modules/t-widgets/tw-collections/tw-su-intent-list/tw-su-intent-list.component';
 import { TwSuStatusComponent } from '@modules/t-widgets/tw-collections/tw-su-status/tw-su-status.component';
-import { TwTransferInteractionComponent } from '@modules/t-widgets/tw-collections/tw-transfer-interaction/tw-transfer-interaction.component';
 import { TwUnknownComponent } from '@modules/t-widgets/tw-collections/tw-unknown/tw-unknown.component';
 import { TwVideoControlsComponent } from '@modules/t-widgets/tw-collections/tw-video-controls/tw-video-controls.component';
 import { TwVoiceBotTranscriptsComponent } from '@modules/t-widgets/tw-collections/tw-voice-bot-transcripts/tw-voice-bot-transcripts.component';
@@ -83,7 +82,6 @@ export class TWLibrary {
         'tw-register-callback': TwRegisterCallbackComponent,
         'tw-su-agent-interactions': TwSuAgentInteractionsComponent,
         'tw-pie-chart': TwPieChartComponent,
-        'tw-transfer-interaction': TwTransferInteractionComponent,
         'tw-voice-canned-responses': TwVoiceCannedResponsesComponent,
         'tw-workbench-panel': TwWorkbenchPanelComponent,
         'tw-email-panel': TwEmailPanelComponent,

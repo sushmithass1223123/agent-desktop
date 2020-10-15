@@ -185,6 +185,7 @@ export class DashboardService {
 
         // set the flag
         this._subscribed = true;
+        this._serviceStarted = false;
     }
 
     /**
@@ -207,6 +208,7 @@ export class DashboardService {
         this._dashboardServiceSubject.complete();
 
         this._subscribed = false;
+        this._serviceStarted = false;
     }
 
     /**

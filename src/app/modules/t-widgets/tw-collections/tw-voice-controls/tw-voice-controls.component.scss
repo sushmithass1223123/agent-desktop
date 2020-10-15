@@ -30,12 +30,6 @@ tw-voice-controls {
             .interaction-details {
                 line-height: 1.8;
 
-                .player-button {
-                    &.mat-button-disabled {
-                        opacity: 0.5;
-                    }
-                }
-
                 .ivr-history {
                     border: 1px solid #d5d5d5;
 
@@ -62,7 +56,7 @@ tw-voice-controls {
                     }
 
                     margin: 8px 4px 0px;
-                    width: 60px;
+                    // width: 60px;
                     height: 40px;
                     border-radius: 20px;
 
