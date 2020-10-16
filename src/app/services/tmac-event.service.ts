@@ -544,12 +544,12 @@ export class TMACEventService {
         const { PhoneNumber } = evt.Item;
         const { agentId, deviceId } = SDKClient.getAgentData();
         // inform TCM proxy about the assignment
-        const tcmProyUrl = this.appConfig.Main.Content.Urls.TCMClient || '';
+        const tcmClientUrl = this.appConfig.Main.Content.Urls.TCMClient || '';
         // only notify that callback request is assigned if it was assigned the first time and not if the UI is reloaded or re-login
         if (!evt.RecoveryEvent) {
-            if (tcmProyUrl) {
+            if (tcmClientUrl) {
                 TUtils.HttpClient.sendRequest({
-                    url: tcmProyUrl + '/OnDacNotificationEvent',
+                    url: tcmClientUrl + '/OnDacNotificationEvent',
                     header: {
                         'Content-Type': 'application/json'
                     },

@@ -360,9 +360,13 @@ export interface AgentSkillListData {
          */
         blind: boolean;
         /**
+         * Source to select
+         */
+        source: 'station' | 'agentId';
+        /**
          * Allowed states to do action
          */
-        allowedStates?: string[];
+        allowedStates: string[];
     };
     /**
      * Skill settings
@@ -376,6 +380,14 @@ export interface AgentSkillListData {
          * BlindD allowed flag
          */
         blind: boolean;
+        /**
+         * Source to select
+         */
+        source: 'skill' | 'vdn';
+        /**
+         * Channel prefix to filter skill list
+         */
+        channelPrfix: string[];
     };
     /**
      * Interaction Id

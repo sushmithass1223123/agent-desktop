@@ -12,7 +12,7 @@ import { AgentSkillListData } from 'app/interfaces';
 import { orderBy } from 'lodash';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AgentModel, CommandResultEvent, IResponse, SDKClient } from 'tmac-sdk';
+import { AgentModel, CommandResultEvent, FavouriteSkill, IResponse, QueueStatusEvent, SDKClient } from 'tmac-sdk';
 
 /**
  * Agent Skill List Component
@@ -108,10 +108,6 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
      */
     skillListTable: {
         /**
-         * Current skill list ref
-         */
-        skillList: any[],
-        /**
          *  Mat table data 
          */
         tableData: {
@@ -145,10 +141,6 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
      * Selected skill for agent list filter
      */
     selectedSkill: any;
-    /**
-     * Channel to transfer/conference
-     */
-    channelPrefix: string;
     /**
      * Open search form flag
      */
@@ -194,7 +186,6 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
 
 
         this.skillListTable = {
-            skillList: [],
             tableData: {
                 columns: ['Name', 'VDN', 'ID', 'Stf', 'Avl', 'CIQ'],
                 selection: new SelectionModel<any>(false, []),
@@ -224,7 +215,6 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         switch (type) {
             case 'makeCall':
                 this.icon = 'add_ic_call';
-                this.showSwitcher = false;
                 this.actionTooltip = 'Call';
                 break;
             case 'transferCall':
@@ -260,9 +250,6 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 break;
         }
 
-        // this.channelPrefix = this.data?.Data?.ChannelPrefix || '';
-        this.channelPrefix = '';
-
         this._fuseConfigService.config
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe(
@@ -274,19 +261,22 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         // get wallboard skills
         SDKClient.getTmacWallboardSkills()
             .then((dt) => {
-                let response: any[] = dt.response;
-                if (response.length > 0) {
-                    // filter the skill for the channel
-                    if (this.channelPrefix) {
-                        response = response.filter(r => r.SkillName.startsWith(this.channelPrefix));
-                    }
+                if (dt.response.length > 0) {
                     // assign all the skills
-                    this.allSkills = orderBy(response, ['SkillName'], ['asc']);
+                    this.allSkills = orderBy(dt.response, ['SkillName'], ['asc']);
                 }
             });
 
-        // load agent list
-        this.loadAgentList(false);
+        // check if agent allowed then load agent list
+        if (this.data?.agent.allowed) {
+            this.loadAgentList(false);
+        }
+
+        if (this.data?.skill.allowed) {
+            this.loadSkillList();
+        }
+
+
         // check for blind 
         this.checkForBlind();
     }
@@ -305,7 +295,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
     /**
      * To check blind button is allowed
      */
-    checkForBlind(): void {
+    private checkForBlind(): void {
         if (this.activeSwitcher === 'agentList') {
             this.blindAllowed = this.data?.agent.blind;
         }
@@ -417,6 +407,10 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
 
         // check for blind 
         this.checkForBlind();
+        // clear the selection
+        this.selectedItem = '';
+        // clear all filter
+        this.clearAllFilter();
     }
 
     /**
@@ -437,10 +431,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
     clearAllFilter(): void {
         // clear skill filter
         this.clearSkillFilter();
-        // set the selected item to null
-        this.selectedItem = '';
-        // select the row in grid
-        this.agentListTable.tableData.selection.clear();
+        this.clearSelected();
     }
 
     /**
@@ -454,7 +445,23 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
     }
 
     /**
+     * To clear selected item
+     */
+    clearSelected(): void {
+        this.selectedItem = '';
+        // clear grid selection if any
+        if (this.activeSwitcher === 'agentList') {
+            this.agentListTable.tableData.selection.clear();
+        }
+        else {
+            this.skillListTable.tableData.selection.clear();
+        }
+    }
+
+    /**
      * To load agent list
+     * 
+     * @param {boolean} reload
      */
     loadAgentList(reload: boolean): void {
         this.loading = true;
@@ -479,6 +486,41 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
             })
             .catch(() => {
                 this.loading = false;
+                this._appUIService.showSnackbar('Error in loading agent list', 'failure');
+            });
+    }
+
+    /**
+     * To load skill list 
+     */
+    loadSkillList(): void {
+        this.loading = true;
+        // get agent list
+        SDKClient.getFavouriteSkills()
+            .then((dt) => {
+                this.loading = false;
+                // check if data found
+                if (dt.response.length > 0) {
+                    // check the prefix list
+                    const channelPrefix = this.data?.skill.channelPrfix || [];
+                    let list: FavouriteSkill[] = [];
+                    if (channelPrefix.length > 0) {
+                        channelPrefix.forEach(prefix => {
+                            const filtered = dt.response.filter((item) => {
+                                if (item.Name.toLowerCase().startsWith(prefix.toLowerCase())) {
+                                    return item;
+                                }
+                            });
+                            list = [...list, ...filtered];
+                        });
+                    }
+                    this.skillListTable.tableData.source.data = list;
+                    this.skillListTable.tableData.source.sort = this.sort;
+                }
+            })
+            .catch(() => {
+                this.loading = false;
+                this._appUIService.showSnackbar('Error in loading skill list', 'failure');
             });
     }
 
@@ -506,6 +548,8 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 this.loading = false;
                 // get the allowed state list
                 const allowedStates = this.data?.agent.allowedStates || [];
+                // source to select
+                const source = this.data?.agent.source || 'agentId';
                 // change the status
                 row.CurrentAgentStatus = dt.response.ResultMessage;
                 // get the new state
@@ -514,7 +558,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                     // select the row in grid
                     this.agentListTable.tableData.selection.select(row);
                     // assign the selected item
-                    this.selectedItem = row.LoginID;
+                    this.selectedItem = source === 'agentId' ? row.LoginID : row.StationID;
                 }
                 else {
                     this._appUIService.showSnackbar(`Agent ${row.AgentName} is not in valid state`, 'failure');
@@ -523,6 +567,56 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
             .catch(() => {
                 this._appUIService.showSnackbar(`Error in getting agent ${row.AgentName} current state`, 'failure');
                 row.CurrentAgentStatus = currentStatus;
+                this.loading = false;
+            });
+    }
+
+    /**
+     * To process skill selected from list
+     */
+    selectSkill(row: FavouriteSkill): void {
+        // if already loading then return
+        if (this.loading) {
+            return;
+        }
+        // clear the selection
+        this.selectedItem = '';
+        this.skillListTable.tableData.selection.clear();
+        this.loading = true;
+        row.Staff = 'loading';
+        row.Avail = 'loading';
+        row.CIQ = 'loading';
+        // get queue status from server
+        SDKClient.getQueueStatus(row.ID)
+            .then(dt => {
+                this.loading = false;
+                // source to select
+                const source = this.data?.skill.source || 'skill';
+                // check the response is proper
+                if (dt.response.EventName === 'QueueStatusEvent') {
+                    // cast the response
+                    dt.response = dt.response as QueueStatusEvent;
+                    // assign the values
+                    row.Staff = dt.response.Skill.AgentsStaffed.toString();
+                    row.Avail = dt.response.Skill.AgentAvailable.toString();
+                    row.CIQ = dt.response.Skill.CallsInQueue.toString();
+                    // select the row in grid
+                    this.skillListTable.tableData.selection.select(row);
+                    // assign the selected item
+                    this.selectedItem = source === 'skill' ? row.ID : row.VDN;
+                }
+                else {
+                    this._appUIService.showSnackbar(`Failed to get skill ${row.ID} status`, 'failure');
+                    row.Staff = 'NA';
+                    row.Avail = 'NA';
+                    row.CIQ = 'NA';
+                }
+            })
+            .catch(() => {
+                this._appUIService.showSnackbar(`Error in getting skill ${row.ID} status`, 'failure');
+                row.Staff = 'NA';
+                row.Avail = 'NA';
+                row.CIQ = 'NA';
                 this.loading = false;
             });
     }

@@ -132,6 +132,7 @@
                                             "Type": "voice",
                                             "Icon": "call",
                                             "Data": {
+                                                "Source": "agentId",
                                                 "AllowedState": [
                                                     "Available"
                                                 ]
@@ -1151,11 +1152,16 @@
                                                         "Agent": {
                                                             "Allowed": true,
                                                             "Blind": false,
+                                                            "Source": "station",
                                                             "AllowedStates": []
                                                         },
-                                                        "Skil": {
+                                                        "Skill": {
                                                             "Allowed": true,
-                                                            "Blind": false
+                                                            "Blind": false,
+                                                            "Source": "skill",
+                                                            "ChannelPrefix": [
+                                                                "VO"
+                                                            ]
                                                         }
                                                     },
                                                     "Conference": {
@@ -1163,11 +1169,16 @@
                                                         "Agent": {
                                                             "Allowed": true,
                                                             "Blind": false,
+                                                            "Source": "station",
                                                             "AllowedStates": []
                                                         },
-                                                        "Skil": {
+                                                        "Skill": {
                                                             "Allowed": true,
-                                                            "Blind": false
+                                                            "Blind": false,
+                                                            "Source": "skill",
+                                                            "ChannelPrefix": [
+                                                                "VO"
+                                                            ]
                                                         }
                                                     },
                                                     "IVR": {
@@ -3196,7 +3207,7 @@
             },
             "offerOptions": {
                 "offerToReceiveAudio": true,
-                "offerToReceiveVideo": true,
+                "offerToReceiveVideo": false,
                 "iceRestart": true
             },
             "answerOptions": {
@@ -3219,7 +3230,8 @@
             "audioMixerEnabled": true,
             "audioVideoConnectionMode": 0,
             "enableCdcAutoSelection": false,
-            "tryToMergeSingleTrackStreamsFromDifferentSources": false
+            "tryToMergeSingleTrackStreamsFromDifferentSources": false,
+            "sendACK": false
         },
         "SDK": {
             "Proxy": {

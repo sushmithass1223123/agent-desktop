@@ -42,6 +42,7 @@
             >
                 <!-- <h1 mat-dialog-title>Compose SMS</h1> -->
                 <div mat-dialog-content class="h-100-p">
+                    <mat-progress-bar *ngIf="loading" mode="query"></mat-progress-bar>
                     <div fxFlex fxFill fxLayout="column">
                         <div
                             class="w-100-p px-16 pt-0 pb-12 border-radius-20"
@@ -69,7 +70,7 @@
                                             aria-label="Clear"
                                             matTooltip="Clear"
                                             (keypress)="numberOnly($event)"
-                                            (click)="selectedItem = ''"
+                                            (click)="clearSelected()"
                                         >
                                             <mat-icon>close</mat-icon>
                                         </button>
@@ -98,7 +99,7 @@
                                     (click)="executeAction(true)"
                                 >
                                     <mat-icon *ngIf="!loading">{{ icon }}</mat-icon>
-                                    <mat-spinner *ngIf="loading" diameter="30" class="my-4"></mat-spinner>
+                                    <mat-spinner *ngIf="loading" diameter="28" class="my-4"></mat-spinner>
                                 </button>
 
                                 <button
@@ -110,13 +111,13 @@
                                     (click)="executeAction(false)"
                                 >
                                     <mat-icon *ngIf="!loading">double_arrow</mat-icon>
-                                    <mat-spinner *ngIf="loading" diameter="30" class="my-4"></mat-spinner>
+                                    <mat-spinner *ngIf="loading" diameter="28" class="my-4"></mat-spinner>
                                 </button>
                             </div>
                         </div>
                         <div
                             fxFlex
-                            class="w-100-p py-8 px-16 border-radius-20 grid-layout position-relative"
+                            class="w-100-p py-8 px-16 border-radius-20 grid-layout"
                             [ngClass]="
                                 fuseConfig.layout.anchorWidget.customBackgroundColor === true
                                     ? fuseConfig.layout.anchorWidget.contentBackground
@@ -131,7 +132,14 @@
                                         fxFlex
                                         class="switch-item"
                                         *ngFor="let item of switcherList"
-                                        [ngClass]="{ 'bg-success': activeSwitcher === item.key }"
+                                        [ngClass]="
+                                            activeSwitcher === item.key &&
+                                            (fuseConfig.layout.anchorWidget.customBackgroundColor === true
+                                                ? fuseConfig.layout.anchorWidget.bodyBackground
+                                                : fuseConfig.layout.widget.customBackgroundColor === true
+                                                ? fuseConfig.layout.widget.bodyBackground
+                                                : '')
+                                        "
                                         (click)="switchTab(item)"
                                     >
                                         {{ item.label }}
@@ -267,8 +275,6 @@
                                             fusePerfectScrollbar
                                             [fusePerfectScrollbarOptions]="{ suppressScrollX: true, updateOnRouteChange: true }"
                                         >
-                                            <mat-progress-bar *ngIf="loading" mode="query"></mat-progress-bar>
-
                                             <mat-table
                                                 class="h-100-p"
                                                 matSort
@@ -365,12 +371,19 @@
                                             fusePerfectScrollbar
                                             [fusePerfectScrollbarOptions]="{ suppressScrollX: true, updateOnRouteChange: true }"
                                         >
-                                            <mat-table class="h-100-p" matSort matSortDisableClear [dataSource]="skillListTable.tableData.source">
+                                            <mat-table
+                                                class="h-100-p"
+                                                matSort
+                                                matSortDisableClear
+                                                [dataSource]="skillListTable.tableData.source"
+                                                matSortActive="Name"
+                                                matSortDirection="asc"
+                                            >
                                                 <ng-container matColumnDef="Name">
-                                                    <mat-header-cell *matHeaderCellDef mat-sort-header>
+                                                    <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="30">
                                                         <span> Name </span>
                                                     </mat-header-cell>
-                                                    <mat-cell *matCellDef="let row"> {{ row.Name }} </mat-cell>
+                                                    <mat-cell *matCellDef="let row" fxFlex="30"> {{ row.Name }} </mat-cell>
                                                 </ng-container>
 
                                                 <ng-container matColumnDef="VDN">
@@ -387,21 +400,35 @@
 
                                                 <ng-container matColumnDef="Stf">
                                                     <mat-header-cell *matHeaderCellDef mat-sort-header> Stf </mat-header-cell>
-                                                    <mat-cell *matCellDef="let row"> {{ row.Staff }} </mat-cell>
+                                                    <mat-cell *matCellDef="let row">
+                                                        <mat-spinner *ngIf="row.Staff === 'loading'" diameter="20"></mat-spinner>
+                                                        <span *ngIf="row.Staff !== 'loading'">{{ row.Staff || 'NA' }} </span>
+                                                    </mat-cell>
                                                 </ng-container>
 
                                                 <ng-container matColumnDef="Avl">
                                                     <mat-header-cell *matHeaderCellDef mat-sort-header> Avl </mat-header-cell>
-                                                    <mat-cell *matCellDef="let row"> {{ row.Avail }} </mat-cell>
+                                                    <mat-cell *matCellDef="let row">
+                                                        <mat-spinner *ngIf="row.Avail === 'loading'" diameter="20"></mat-spinner>
+                                                        <span *ngIf="row.Avail !== 'loading'">{{ row.Avail || 'NA' }} </span>
+                                                    </mat-cell>
                                                 </ng-container>
 
                                                 <ng-container matColumnDef="CIQ">
                                                     <mat-header-cell *matHeaderCellDef mat-sort-header> CIQ </mat-header-cell>
-                                                    <mat-cell *matCellDef="let row"> {{ row.CIQ }} </mat-cell>
+                                                    <mat-cell *matCellDef="let row">
+                                                        <mat-spinner *ngIf="row.CIQ === 'loading'" diameter="20"></mat-spinner>
+                                                        <span *ngIf="row.CIQ !== 'loading'">{{ row.CIQ || 'NA' }} </span>
+                                                    </mat-cell>
                                                 </ng-container>
 
                                                 <mat-header-row *matHeaderRowDef="skillListTable.tableData.columns; sticky: true"></mat-header-row>
-                                                <mat-row *matRowDef="let row; columns: skillListTable.tableData.columns"></mat-row>
+                                                <mat-row
+                                                    *matRowDef="let row; columns: skillListTable.tableData.columns"
+                                                    (click)="selectSkill(row)"
+                                                    class="selectable"
+                                                    [ngClass]="{ selected: !!skillListTable.tableData.selection.isSelected(row) }"
+                                                ></mat-row>
                                             </mat-table>
                                             <p *ngIf="skillListTable.tableData.source.data.length === 0" class="text-center m-0 mat-title">
                                                 No Data Available
