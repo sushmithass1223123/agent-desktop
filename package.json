@@ -31,6 +31,7 @@
         "@angular/router": "10.0.5",
         "@angular/service-worker": "10.0.5",
         "@asymmetrik/ngx-leaflet": "8.1.0",
+        "@ctrl/ngx-emoji-mart": "4.0.2",
         "@ngx-translate/core": "13.0.0",
         "animate.css": "4.1.0",
         "chart.js": "2.9.3",
@@ -49,6 +50,7 @@
         "rxjs": "6.6.0",
         "tmac-sdk": "git+https://gitlab+deploy-token-7:D2KjyBLzEdXx_jqMtEvz@git.tetherfi.com:1443/tetherfi_product/products/tmac/ui/tmac-sdk.git",
         "tslib": "2.0.0",
+        "twemoji": "13.0.1",
         "web-animations-js": "2.3.2",
         "xstate": "4.13.0",
         "zone.js": "0.10.3"

@@ -368,13 +368,24 @@
                         >
                             <button
                                 *ngIf="data.Data.EmojiAllowed"
+                                cdkOverlayOrigin
+                                #emojiOverlay="cdkOverlayOrigin"
+                                (click)="showEmojiOverlay = !showEmojiOverlay"
                                 [disabled]="status !== 'connected'"
                                 class="emoji-button"
+                                type="button"
                                 mat-icon-button
                                 aria-label="Select Emoji"
                                 matTooltip="Emoji"
                             >
                                 <mat-icon>sentiment_satisfied_alt</mat-icon>
+                                <ng-template
+                                    cdkConnectedOverlay
+                                    [cdkConnectedOverlayOrigin]="emojiOverlay"
+                                    [cdkConnectedOverlayOpen]="showEmojiOverlay"
+                                >
+                                    <emoji-mart (emojiClick)="addEmoji($event)" [darkMode]="fuseConfig.colorTheme.includes('dark')" set="apple" [showPreview]="false"></emoji-mart>
+                                </ng-template>
                             </button>
 
                             <mat-form-field
@@ -394,6 +405,9 @@
                                     [rows]="1"
                                     [matTextareaAutosize]="true"
                                 ></textarea>
+                                <!-- (click)="toggled = !toggled"
+                                    [(emojiPickerIf)]="toggled" -->
+                                <!-- <i [emojiPickerDirection]="'top'" (emojiPickerSelect)="addEmoji($event)">😄</i> -->
                                 <!-- <mat-autocomplete #auto="matAutocomplete">
                                     <mat-option *ngFor="let option of options" [value]="option">
                                         {{ option }}

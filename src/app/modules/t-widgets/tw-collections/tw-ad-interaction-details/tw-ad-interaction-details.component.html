@@ -17,8 +17,8 @@
             </ng-container>
 
             <ng-container matColumnDef="Channel">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Channel</mat-header-cell>
-                <mat-cell *matCellDef="let element">
+                <mat-header-cell *matHeaderCellDef mat-sort-header [fxFlex]="maximized ? 10 : 20">Channel</mat-header-cell>
+                <mat-cell *matCellDef="let element" [fxFlex]="maximized ? 10 : 20">
                     <mat-icon class="channel-icon" color="primary">
                         {{
                             element.Channel === 'Voice'
@@ -34,8 +34,8 @@
             </ng-container>
 
             <ng-container matColumnDef="Direction">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Direction</mat-header-cell>
-                <mat-cell *matCellDef="let element">
+                <mat-header-cell *matHeaderCellDef mat-sort-header [fxFlex]="maximized ? 10 : 20">Direction</mat-header-cell>
+                <mat-cell *matCellDef="let element" [fxFlex]="maximized ? 10 : 20">
                     <mat-icon class="channel-icon" color="accent">
                         {{ element.Direction === 'In' ? 'south' : 'north' }}
                     </mat-icon>
@@ -50,15 +50,15 @@
             </ng-container>
 
             <ng-container matColumnDef="User">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>User</mat-header-cell>
-                <mat-cell *matCellDef="let element">
+                <mat-header-cell *matHeaderCellDef mat-sort-header [fxFlex]="maximized ? 15 : ''">User</mat-header-cell>
+                <mat-cell *matCellDef="let element" class="text-left px-8" [fxFlex]="maximized ? 15 : ''">
                     {{ element.User || 'NA' }}
                 </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="Dnis">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>DNIS</mat-header-cell>
-                <mat-cell *matCellDef="let element">
+                <mat-header-cell *matHeaderCellDef mat-sort-header [fxFlex]="maximized ? 15 : ''">DNIS</mat-header-cell>
+                <mat-cell *matCellDef="let element" class="text-left px-8" [fxFlex]="maximized ? 15 : ''">
                     {{ element.Dnis || 'NA' }}
                 </mat-cell>
             </ng-container>
@@ -83,8 +83,8 @@
             </ng-container>
 
             <ng-container matColumnDef="ActiveTime">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>ActiveTime</mat-header-cell>
-                <mat-cell *matCellDef="let element">
+                <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="10">ActiveTime</mat-header-cell>
+                <mat-cell *matCellDef="let element" fxFlex="10">
                     {{ element.ActiveTime * 1000 | date: 'H:mm:ss':'UTC' }}
                 </mat-cell>
             </ng-container>
@@ -95,5 +95,83 @@
 
         <p *ngIf="interactionDetailsTable.source.data.length === 0" class="text-center m-0 mat-title">No Data Available</p>
     </div>
-    <mat-paginator *ngIf="maximized" [pageSizeOptions]="maximized ? [30, 40, 50] : [3, 6, 12]" showFirstLastButtons> </mat-paginator>
+    <div *ngIf="maximized" fxLayout fxLayoutAlign="space-between">
+        <div fxLayout fxLayoutAlign="center center">
+            <button
+                cdkOverlayOrigin
+                #advancedSearchOverlay="cdkOverlayOrigin"
+                (click)="showAdvancedSearchOverlay = !showAdvancedSearchOverlay"
+                mat-button
+                color="primary"
+            >
+                <mat-icon>search</mat-icon>
+                Advanced Search
+            </button>
+
+            <ng-template
+                cdkConnectedOverlay
+                [cdkConnectedOverlayOrigin]="advancedSearchOverlay"
+                [cdkConnectedOverlayOpen]="showAdvancedSearchOverlay"
+            >
+                <div
+                    class="mat-elevation-z1 p-12"
+                    [ngClass]="
+                        fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                            ? fuseConfig.layout.anchorWidget.bodyBackground
+                            : fuseConfig.layout.widget.customBackgroundColor === true
+                            ? fuseConfig.layout.widget.bodyBackground
+                            : ''
+                    "
+                >
+                    <form fxLayout="column" [formGroup]="advancedSearchForm" novalidate>
+                        <mat-form-field fxFlex="25">
+                            <mat-label>Channel</mat-label>
+                            <input matInput type="text" formControlName="Channel" />
+                        </mat-form-field>
+
+                        <mat-form-field fxFlex="25">
+                            <mat-label>Sub Channel</mat-label>
+                            <input matInput type="text" formControlName="SubChannel" />
+                        </mat-form-field>
+
+                        <mat-form-field fxFlex="25">
+                            <mat-label>Direction</mat-label>
+                            <input matInput type="text" formControlName="Direction" />
+                        </mat-form-field>
+
+                        <mat-form-field fxFlex="25">
+                            <mat-label>User</mat-label>
+                            <input matInput type="text" formControlName="User" />
+                        </mat-form-field>
+
+                        <mat-form-field fxFlex="25">
+                            <mat-label>DNIS</mat-label>
+                            <input matInput type="text" formControlName="Dnis" />
+                        </mat-form-field>
+
+                        <mat-form-field fxFlex="25">
+                            <mat-label>Created Time</mat-label>
+                            <mat-date-range-input [rangePicker]="createdTimePicker">
+                                <input matStartDate placeholder="Start date" formControlName="CreatedTimeStart" />
+                                <input matEndDate placeholder="End date" formControlName="CreatedTimeEnd" />
+                            </mat-date-range-input>
+                            <mat-datepicker-toggle matSuffix [for]="createdTimePicker"></mat-datepicker-toggle>
+                            <mat-date-range-picker #createdTimePicker></mat-date-range-picker>
+                        </mat-form-field>
+
+                        <mat-form-field fxFlex="25">
+                            <mat-label>Closed Time</mat-label>
+                            <mat-date-range-input [rangePicker]="closedTimePicker">
+                                <input matStartDate placeholder="Start date" formControlName="ClosedTimeStart" />
+                                <input matEndDate placeholder="End date" formControlName="ClosedTimeEnd" />
+                            </mat-date-range-input>
+                            <mat-datepicker-toggle matSuffix [for]="closedTimePicker"></mat-datepicker-toggle>
+                            <mat-date-range-picker #closedTimePicker></mat-date-range-picker>
+                        </mat-form-field>
+                    </form>
+                </div>
+            </ng-template>
+        </div>
+        <mat-paginator [pageSizeOptions]="maximized ? [30, 40, 50] : [3, 6, 12]" showFirstLastButtons> </mat-paginator>
+    </div>
 </tw-wrapper>

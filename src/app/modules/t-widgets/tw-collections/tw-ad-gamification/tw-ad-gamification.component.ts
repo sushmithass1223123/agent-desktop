@@ -45,6 +45,11 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
     appConfig: any;
 
     /**
+     * Polling Subscription
+     */
+    pollingSubscription: Subscription;
+
+    /**
      * Constructor
      * @param {FuseConfigService} _fuseConfigService
      * @param {AppDataService} _appDataService
@@ -87,8 +92,8 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
         });
 
         this.setBadges();
-        interval(10000).pipe(takeUntil(this.unsubscribeAll)).subscribe(this.setBadges);
-        this.setupBadgeListeners();
+        SDKClient.events.on('InteractionClosedEvent', this.startPolling);
+        // this.setupBadgeListeners();
     }
 
     /**
@@ -104,8 +109,14 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
 
-    private setupBadgeListeners(): void {
-        SDKClient.events.on('InteractionClosedEvent', this.setBadges);
+    /**
+     * Starts polling for gAmification data
+     */
+    startPolling = (): void => {
+        if (this.pollingSubscription) {
+            this.pollingSubscription.unsubscribe();
+        }
+        this.pollingSubscription = interval(10000).pipe(takeUntil(this.unsubscribeAll)).subscribe(this.setBadges);
     }
 
     /**

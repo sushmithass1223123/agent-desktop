@@ -37,3 +37,8 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+
+# my stuff
+./src/assets/app-config-dev.json
+.gitignore
