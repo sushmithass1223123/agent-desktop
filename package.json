@@ -1,6 +1,6 @@
 {
     "name": "agent-desktop",
-    "version": "1.0.1016-b1",
+    "version": "1.0.1022-b1",
     "license": "",
     "scripts": {
         "ng": "ng",
@@ -13,7 +13,7 @@
         "lint": "ng lint",
         "docs": "compodoc -p tsconfig.base.json -s",
         "e2e": "ng e2e",
-        "bundle-report": "webpack-bundle-analyzer dist/stats.json"
+        "bundle-report": "webpack-bundle-analyzer dist/agent-desktop/stats.json"
     },
     "private": true,
     "dependencies": {

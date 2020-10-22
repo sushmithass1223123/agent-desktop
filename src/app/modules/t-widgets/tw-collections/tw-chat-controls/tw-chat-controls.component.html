@@ -1,4 +1,4 @@
-<tw-wrapper [data]="data" (maximizeEvent)="onMaximized($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)">
+<tw-wrapper [data]="data" (maximizeEvent)="maximized = $event" (collapseEvent)="collapsed = $event" (floatEvent)="floating = $event">
     <div class="w-100-p h-100-p chat-controls">
         <div fxLayout="column" fxLayoutAlign=" none" class="w-100-p px-12 py-4 border-radius-20 interaction-details">
             <div fxLayout="row" fxLayoutAlign="space-between none">

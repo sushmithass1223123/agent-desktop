@@ -1,5 +1,5 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, HostBinding, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -115,7 +115,9 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         };
     };
 
-    maximized = false;
+    @HostBinding('class.maximize') maximized = false;
+    @HostBinding('class.float') floating = false;
+    @HostBinding('class.minimize') collapsed = false;
 
     constructor(
         private _fuseConfigService: FuseConfigService,
@@ -184,6 +186,18 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             this.customerJourneyTable.tableData.source.filter = stringifiedSearch === '{}' ? '' : stringifiedSearch;
         });
         SDKClient.events.on('InteractionHistoryReadyEvent', this.InteractionHistoryReadyEvent);
+
+        switch (this.data.Config.ViewState) {
+            case 'float':
+                this.floating = true;
+                break;
+            case 'maximize':
+                this.maximized = true;
+                break;
+            case 'minimize':
+                this.collapsed = true;
+                break;
+        }
     }
 
     // Custom filter method fot Angular Material Datatable
@@ -290,15 +304,6 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     }
 
     /**
-     * Maximize event from Wrapper
-     * @param {Boolean} state
-     */
-    public onMaximizeEvent(state: boolean): void {
-        this.maximizeEvent.emit(state);
-        this.maximized = state;
-    }
-
-    /**
      * Get actions of selected sessionId
      * @param {String} sessionId selected Session Id
      */
@@ -319,8 +324,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
 
     /**
      * To open sentiment dashboard for a session
-     * 
-     * @param sessionId 
+     *
+     * @param sessionId
      */
     public openSentimentDashboard(sessionId: string): void {
         let url = this.data.Data.SentimentDashboardUrl;

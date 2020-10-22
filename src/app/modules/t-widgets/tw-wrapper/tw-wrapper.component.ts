@@ -17,7 +17,6 @@ import { takeUntil } from 'rxjs/operators';
     encapsulation: ViewEncapsulation.None
 })
 export class TwWrapperComponent implements OnInit, OnDestroy {
-
     /**
      * Data form app config
      */
@@ -57,7 +56,6 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
      * Host Class
      */
     @HostBinding('class.position-relative')
-
     /**
      * Floating state
      */

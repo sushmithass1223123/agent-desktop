@@ -1,8 +1,18 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, HostBinding, Input, OnDestroy, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { join, get } from 'lodash';
-import { IUIEvent, SDKClient, TextChatRemoteUserConnectedEvent, CallerIntentEvent, IncomingCallEvent, IVRDataEvent, UUIDataEvent, CCLDataEvent, OutgoingCallEvent } from 'tmac-sdk';
+import { get, join } from 'lodash';
+import {
+    CallerIntentEvent,
+    CCLDataEvent,
+    IncomingCallEvent,
+    IUIEvent,
+    IVRDataEvent,
+    OutgoingCallEvent,
+    SDKClient,
+    TextChatRemoteUserConnectedEvent,
+    UUIDataEvent
+} from 'tmac-sdk';
 
 /**
  * Custommer details widget
@@ -27,10 +37,10 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
      * Customer info
      */
     customerInfo: CustomerInfo[] = [];
-    /**
-     * Value source
-     */
-    valueSource: string[] = [];
+
+    @HostBinding('class.maximize') maximized = false;
+    @HostBinding('class.float') floating = false;
+    @HostBinding('class.minimize') collapsed = false;
 
     /**
      * Maximised event emitter
@@ -65,7 +75,7 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
         this.interactionId = this.data.InteractionDetails.InteractionID;
 
         // get the customer info config
-        this.customerInfo = [...this.data.Data.CustomerInfo] || [];
+        this.customerInfo = this.data.Data.CustomerInfo.map((a: any) => ({ ...a }));
 
         // get the event from event bag to make sure no events are missed
         const eventBag = this._tmacEventService.get(this.interactionId);
@@ -83,8 +93,19 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
         SDKClient.events.on('IVRDataEvent', this.IVRDataEvent);
         SDKClient.events.on('UUIDataEvent', this.UUIDataEvent);
         SDKClient.events.on('CCLDataEvent', this.CCLDataEvent);
-    }
 
+        switch (this.data.Config.ViewState) {
+            case 'float':
+                this.floating = true;
+                break;
+            case 'maximize':
+                this.maximized = true;
+                break;
+            case 'minimize':
+                this.collapsed = true;
+                break;
+        }
+    }
 
     /**
      * Lifecycle hook
@@ -104,66 +125,65 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
         SDKClient.events.off('CCLDataEvent', this.CCLDataEvent);
     }
 
-
     /**
      * IncomingCallEvent handler
-     * @param {IncomingCallEvent} evt 
+     * @param {IncomingCallEvent} evt
      */
     private IncomingCallEvent = (evt: IncomingCallEvent) => {
         this.processCustomerDetails(evt);
-    }
+    };
 
     /**
      * OutgoingCallEvent handelr
-     * @param {OutgoingCallEvent} evt 
+     * @param {OutgoingCallEvent} evt
      */
     private OutgoingCallEvent = (evt: OutgoingCallEvent) => {
         this.processCustomerDetails(evt);
-    }
+    };
 
     /**
      * TextChatRemoteUserConnectedEvent Handler
-     * @param {TextChatRemoteUserConnectedEvent} evt 
+     * @param {TextChatRemoteUserConnectedEvent} evt
      */
     private TextChatRemoteUserConnectedEvent = (evt: TextChatRemoteUserConnectedEvent) => {
         this.processCustomerDetails(evt);
-    }
+    };
 
     /**
      * CallerIntentEvent handler
-     * @param {CallerIntentEvent} evt 
+     * @param {CallerIntentEvent} evt
      */
     private CallerIntentEvent = (evt: CallerIntentEvent) => {
         this.processCustomerDetails(evt);
-    }
+    };
 
     /**
      * IVRDataEvent Handler
-     * @param {IVRDataEvent} evt 
+     * @param {IVRDataEvent} evt
      */
     private IVRDataEvent = (evt: IVRDataEvent) => {
         this.processCustomerDetails(evt);
-    }
+    };
 
     /**
      * UUIDataEvent Handelr
-     * @param {UUIDataEvent} evt 
+     * @param {UUIDataEvent} evt
      */
     private UUIDataEvent = (evt: UUIDataEvent) => {
         this.processCustomerDetails(evt);
-    }
+    };
 
     /**
      * CCLDataEvent Handler
-     * @param {CCLDataEvent} evt 
+     * @param {CCLDataEvent} evt
      */
     private CCLDataEvent = (evt: CCLDataEvent) => {
         this.processCustomerDetails(evt);
-    }
+    };
 
     /**
      * IUIEvent Handelr
-     * @param {IUIEvent} evt 
+     * @param {IUIEvent} evt
      */
     private processCustomerDetails = (evt: IUIEvent) => {
         // check the interaction
@@ -187,7 +207,7 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
             // get the value from path or default value
             item.Value = get(evt, valueMap, item.DefaultValue);
         });
-    }
+    };
 }
 
 /**

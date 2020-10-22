@@ -1,4 +1,16 @@
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    ComponentFactoryResolver,
+    ComponentRef,
+    Input,
+    OnDestroy,
+    OnInit,
+    ViewChild,
+    ViewContainerRef,
+    ViewEncapsulation
+} from '@angular/core';
+import { TWidget, TWLibrary } from '@modules/t-widgets/utils';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 
@@ -13,11 +25,16 @@ import { IWidget } from 'app/interfaces';
     styleUrls: ['./tw-chat-panel.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class TwChatPanelComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+export class TwChatPanelComponent extends TWidgetWrapper implements OnInit, OnDestroy, AfterViewInit {
     /**
      * To hold all the data related to this widget from the config
      */
     @Input() data: IWidget;
+
+    /**
+     * dynamic
+     */
+    @ViewChild('widgetTemplates', { read: ViewContainerRef, static: true }) widgetTemplates: ViewContainerRef;
     /**
      * To hold chat panel widget
      */
@@ -33,7 +50,7 @@ export class TwChatPanelComponent extends TWidgetWrapper implements OnInit, OnDe
         {
             'tw-voice-controls': false,
             'tw-customer-details': false,
-            'tw-customer-journey': false,
+            'tw-customer-journey': false
         }
     ];
     /**
@@ -43,7 +60,7 @@ export class TwChatPanelComponent extends TWidgetWrapper implements OnInit, OnDe
         {
             'tw-voice-controls': false,
             'tw-customer-details': false,
-            'tw-customer-journey': false,
+            'tw-customer-journey': false
         }
     ];
     /**
@@ -53,14 +70,14 @@ export class TwChatPanelComponent extends TWidgetWrapper implements OnInit, OnDe
         {
             'tw-voice-controls': false,
             'tw-customer-details': false,
-            'tw-customer-journey': false,
+            'tw-customer-journey': false
         }
     ];
 
     /**
-     * Constructor 
+     * Constructor
      */
-    constructor() {
+    constructor(private _componentFactoryResolver: ComponentFactoryResolver) {
         super();
     }
 
@@ -95,10 +112,35 @@ export class TwChatPanelComponent extends TWidgetWrapper implements OnInit, OnDe
         this.unsubscribeAll.complete();
     }
 
+    ngAfterViewInit() {
+        this.chatPanelWidgets?.forEach((widget: IWidget) => {
+            // filter and load the enabled widgets
+            if (widget.Config.Enabled) {
+                this.loadComponent(widget);
+            }
+        });
+    }
+
+    /**
+     * Lifecycle Hook
+     * @method
+     */
+    private loadComponent(widgetModel: IWidget): void {
+        const widget: TWidget = TWLibrary.getWidget(widgetModel.Type, widgetModel);
+
+        // create the component factory
+        const componentFactory = this._componentFactoryResolver.resolveComponentFactory(widget.component);
+
+        // get the view container reference from widget host
+        const componentRef = this.widgetTemplates.createComponent(componentFactory);
+
+        // add the data params
+        componentRef.instance.data = widgetModel;
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @ Private methods
     // -----------------------------------------------------------------------------------------------------
-
 
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods

@@ -13,8 +13,11 @@ import { TwAmdocsBccComponent } from '@modules/t-widgets/tw-collections/tw-amdoc
 import { TwAudioControlsComponent } from '@modules/t-widgets/tw-collections/tw-audio-controls/tw-audio-controls.component';
 import { TwAuxStatusChartComponent } from '@modules/t-widgets/tw-collections/tw-aux-status-chart/tw-aux-status-chart.component';
 import { TwCannedResponsesComponent } from '@modules/t-widgets/tw-collections/tw-canned-responses/tw-canned-responses.component';
+import { TwChatControlsComponent } from '@modules/t-widgets/tw-collections/tw-chat-controls/tw-chat-controls.component';
 import { TwChatPanelComponent } from '@modules/t-widgets/tw-collections/tw-chat-panel/tw-chat-panel.component';
 import { TwCustomComponent } from '@modules/t-widgets/tw-collections/tw-custom/tw-custom.component';
+import { TwCustomerDetailsComponent } from '@modules/t-widgets/tw-collections/tw-customer-details/tw-customer-details.component';
+import { TwCustomerJourneyComponent } from '@modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.component';
 import { TwCustomerSentimentComponent } from '@modules/t-widgets/tw-collections/tw-customer-sentiment/tw-customer-sentiment.component';
 import { TwEmailControlsComponent } from '@modules/t-widgets/tw-collections/tw-email-controls/tw-email-controls.component';
 import { TwEmailPanelComponent } from '@modules/t-widgets/tw-collections/tw-email-panel/tw-email-panel.component';
@@ -87,7 +90,10 @@ export class TWLibrary {
         'tw-email-panel': TwEmailPanelComponent,
         'tw-email-controls': TwEmailControlsComponent,
         'tw-pending-callbacks': TwPendingCallbacksComponent,
-        'tw-gamification': TwGamificationComponent
+        'tw-gamification': TwGamificationComponent,
+        'tw-chat-controls': TwChatControlsComponent,
+        'tw-customer-details': TwCustomerDetailsComponent,
+        'tw-customer-journey': TwCustomerJourneyComponent
     };
 
     /**

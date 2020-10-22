@@ -5,38 +5,38 @@ tw-chat-panel {
     .tw-chat-panel {
         max-height: calc(100vh - 86px);
         gap: 8px;
-        .tw-chat-controls,
-        .tw-customer-details,
-        .tw-customer-journey {
+        tw-chat-controls,
+        tw-customer-details,
+        tw-customer-journey {
             transition: all 0.6s ease-in-out;
-            &.maximized {
+            &.maximize {
                 flex: 0;
-                &.collapsed {
+                &.minimize {
                     flex: 0;
                 }
             }
-            &.collapsed {
+            &.minimize {
                 flex: 0;
             }
-            &.floating {
+            &.float {
                 flex: 1;
-                &.collapsed {
+                &.minimize {
                     flex: inherit;
                 }
             }
         }
 
-        .tw-chat-controls,
-        .tw-customer-journey {
+        tw-chat-controls,
+        tw-customer-journey {
             flex: 1;
             height: 32.5%;
         }
 
-        .tw-customer-details {
+        tw-customer-details {
             height: 20%;
         }
 
-        .tw-chat-controls {
+        tw-chat-controls {
             flex: 2;
         }
 

@@ -50,7 +50,6 @@ import { TwWorkCodesComponent } from './tw-work-codes/tw-work-codes.component';
 import { TwWorkbenchPanelComponent } from './tw-workbench-panel/tw-workbench-panel.component';
 import { WorkbenchEmailComponent } from './tw-workbench-panel/workbench-email/workbench-email.component';
 
-
 /**
  * Collections components
  */
@@ -113,4 +112,4 @@ const collectionComponents = [
     imports: [SharedModule, TwWrapperModule],
     exports: collectionComponents
 })
-export class TwCollectionsModule { }
+export class TwCollectionsModule {}

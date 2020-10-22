@@ -1,59 +1,18 @@
 <tw-wrapper [data]="data">
     <div fxFlex fxFill fxLayout="column" class="tw-chat-panel">
-        <ng-container *ngFor="let widget of chatPanelWidgets">
-            <tw-chat-controls
-                [data]="widget"
-                *ngIf="widget.Type === 'tw-chat-controls'"
-                [ngClass]="
-                    widget.Type +
-                    ' ' +
-                    (maximized[widget.Type] || widget.Config.ViewState === 'maximize' ? 'maximized' : '') +
-                    ' ' +
-                    (collapsed[widget.Type] || widget.Config.ViewState === 'minimize' ? 'collapsed' : '') +
-                    ' ' +
-                    (floating[widget.Type] || widget.Config.ViewState === 'float' ? 'floating' : '')
-                "
-                (maximizeEvent)="onmaximized($event, widget.Type)"
-                (collapseEvent)="onCollapsed($event, widget.Type)"
-                (floatEvent)="onFloating($event, widget.Type)"
-            >
-            </tw-chat-controls>
-
-            <tw-customer-details
-                [data]="widget"
-                *ngIf="widget.Type === 'tw-customer-details'"
-                [ngClass]="
-                    widget.Type +
-                    ' ' +
-                    (maximized[widget.Type] || widget.Config.ViewState === 'maximize' ? 'maximized' : '') +
-                    ' ' +
-                    (collapsed[widget.Type] || widget.Config.ViewState === 'minimize' ? 'collapsed' : '') +
-                    ' ' +
-                    (floating[widget.Type] || widget.Config.ViewState === 'float' ? 'floating' : '')
-                "
-                (maximizeEvent)="onmaximized($event, widget.Type)"
-                (collapseEvent)="onCollapsed($event, widget.Type)"
-                (floatEvent)="onFloating($event, widget.Type)"
-            >
-            </tw-customer-details>
-
-            <tw-customer-journey
-                [data]="widget"
-                *ngIf="widget.Type === 'tw-customer-journey'"
-                [ngClass]="
-                    widget.Type +
-                    ' ' +
-                    (maximized[widget.Type] || widget.Config.ViewState === 'maximize' ? 'maximized' : '') +
-                    ' ' +
-                    (collapsed[widget.Type] || widget.Config.ViewState === 'minimize' ? 'collapsed' : '') +
-                    ' ' +
-                    (floating[widget.Type] || widget.Config.ViewState === 'float' ? 'floating' : '')
-                "
-                (maximizeEvent)="onmaximized($event, widget.Type)"
-                (collapseEvent)="onCollapsed($event, widget.Type)"
-                (floatEvent)="onFloating($event, widget.Type)"
-            >
-            </tw-customer-journey>
-        </ng-container>
+        <ng-template #widgetTemplates></ng-template>
+        <!-- <tw-template
+            *ngFor="let widget of chatPanelWidgets"
+            [widget]="widget"
+            [ngClass]="
+                widget.Type +
+                (maximized[widget.Type] || widget.Config.ViewState === 'maximize' ? ' maximized' : '') +
+                (collapsed[widget.Type] || widget.Config.ViewState === 'minimize' ? ' collapsed' : '') +
+                (floating[widget.Type] || widget.Config.ViewState === 'float' ? ' floating' : '')
+            "
+            (maximizeEvent)="onmaximized($event, widget.Type)"
+            (collapseEvent)="onCollapsed($event, widget.Type)"
+            (floatEvent)="onFloating($event, widget.Type)"
+        ></tw-template> -->
     </div>
 </tw-wrapper>
