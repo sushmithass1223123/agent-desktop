@@ -5,7 +5,7 @@ import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { GAMIFICATION_METRIC_LABELS } from 'app/constants';
 import { ResData } from 'app/interfaces';
-import { interval } from 'rxjs';
+import { interval, Subscription } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { SDKClient } from 'tmac-sdk';
 
@@ -62,6 +62,11 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
         super();
     }
 
+    /**
+     * Polling subscription
+     */
+    pollingSubscription: Subscription;
+
     // -----------------------------------------------------------------------------------------------------
     // @ Lifecycle hooks
     // -----------------------------------------------------------------------------------------------------
@@ -75,7 +80,17 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
         this.initWrapper(this.data);
 
         this.setChartData();
-        interval(10000).pipe(takeUntil(this.unsubscribeAll)).subscribe(this.setChartData);
+        SDKClient.events.on('InteractionClosedEvent', this.startPolling);
+    }
+
+    /**
+     * Starts polling for performance data
+     */
+    startPolling = () => {
+        if (this.pollingSubscription) {
+            this.pollingSubscription.unsubscribe();
+        }
+        this.pollingSubscription = interval(10000).pipe(takeUntil(this.unsubscribeAll)).subscribe(this.setChartData);
     }
 
     /**
@@ -84,6 +99,7 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+        SDKClient.events.off('InteractionClosedEvent', this.startPolling);
     }
 
     /**

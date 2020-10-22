@@ -109,14 +109,14 @@
                 <ng-container matColumnDef="SessionID">
                     <mat-header-cell fxFlex="20" *matHeaderCellDef>
                         <span mat-sort-header> Session Id </span>
-                        <mat-icon [matMenuTriggerFor]="sessionSearch">search</mat-icon>
+                        <!-- <mat-icon [matMenuTriggerFor]="sessionSearch">search</mat-icon>
                         <mat-menu #sessionSearch="matMenu" class="search-input p-4">
                             <div fxLayout="column">
                                 <mat-form-field (click)="$event.stopPropagation()" appearance="outline" class="custom with-border form-field">
                                     <input type="text" matInput class="p-0 login-input" formControlName="SessionID" />
                                 </mat-form-field>
                             </div>
-                        </mat-menu>
+                        </mat-menu> -->
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxFlex="20">{{ element.SessionID || 'NA' }}</mat-cell>
                 </ng-container>
@@ -124,14 +124,14 @@
                 <ng-container matColumnDef="InteractionDate">
                     <mat-header-cell fxFlex="15" *matHeaderCellDef class="d-flex w-100-p">
                         <span mat-sort-header> Received At </span>
-                        <mat-icon [matMenuTriggerFor]="receivedAtSearch" mat-ripple>search</mat-icon>
+                        <!-- <mat-icon [matMenuTriggerFor]="receivedAtSearch" mat-ripple>search</mat-icon>
                         <mat-menu #receivedAtSearch="matMenu" class="search-input p-4">
                             <div fxLayout="column">
                                 <mat-form-field (click)="$event.stopPropagation()" appearance="outline" class="custom with-border form-field">
                                     <input type="text" matInput class="p-0 login-input" formControlName="InteractionDate" />
                                 </mat-form-field>
                             </div>
-                        </mat-menu>
+                        </mat-menu> -->
                     </mat-header-cell>
                     <mat-cell fxFlex="15" *matCellDef="let element">{{ element.InteractionDate || 'NA' }}</mat-cell>
                 </ng-container>
@@ -139,14 +139,14 @@
                 <ng-container matColumnDef="Channel">
                     <mat-header-cell *matHeaderCellDef>
                         <span mat-sort-header> Channel </span>
-                        <mat-icon [matMenuTriggerFor]="channelSearch" mat-ripple>search</mat-icon>
+                        <!-- <mat-icon [matMenuTriggerFor]="channelSearch" mat-ripple>search</mat-icon>
                         <mat-menu #channelSearch="matMenu" class="search-input p-4">
                             <div fxLayout="column">
                                 <mat-form-field (click)="$event.stopPropagation()" appearance="outline" class="custom with-border form-field">
                                     <input type="text" matInput class="p-0 login-input" formControlName="Channel" />
                                 </mat-form-field>
                             </div>
-                        </mat-menu>
+                        </mat-menu> -->
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" [ngSwitch]="element.Channel | lowercase">
                         <ng-container *ngSwitchCase="'textchat'">
@@ -172,14 +172,14 @@
                 <ng-container matColumnDef="CIF">
                     <mat-header-cell *matHeaderCellDef>
                         <span mat-sort-header> CIF </span>
-                        <mat-icon [matMenuTriggerFor]="cifSearch" mat-ripple>search</mat-icon>
+                        <!-- <mat-icon [matMenuTriggerFor]="cifSearch" mat-ripple>search</mat-icon>
                         <mat-menu #cifSearch="matMenu" class="search-input p-4">
                             <div fxLayout="column">
                                 <mat-form-field (click)="$event.stopPropagation()" appearance="outline" class="custom with-border form-field">
                                     <input type="text" matInput class="p-0 login-input" formControlName="CIF" />
                                 </mat-form-field>
                             </div>
-                        </mat-menu>
+                        </mat-menu> -->
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">{{ element.CIF || 'NA' }}</mat-cell>
                 </ng-container>
@@ -187,14 +187,14 @@
                 <ng-container matColumnDef="EmailID">
                     <mat-header-cell *matHeaderCellDef>
                         <span mat-sort-header> Email </span>
-                        <mat-icon [matMenuTriggerFor]="emailSearch" mat-ripple>search</mat-icon>
+                        <!-- <mat-icon [matMenuTriggerFor]="emailSearch" mat-ripple>search</mat-icon>
                         <mat-menu #emailSearch="matMenu" class="search-input p-4">
                             <div fxLayout="column">
                                 <mat-form-field (click)="$event.stopPropagation()" appearance="outline" class="custom with-border form-field">
                                     <input type="text" matInput class="p-0 login-input" formControlName="EmailID" />
                                 </mat-form-field>
                             </div>
-                        </mat-menu>
+                        </mat-menu> -->
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">{{ element.EmailID || 'NA' }}</mat-cell>
                 </ng-container>
@@ -202,14 +202,14 @@
                 <ng-container matColumnDef="NRIC">
                     <mat-header-cell *matHeaderCellDef>
                         <span mat-sort-header> NRIC </span>
-                        <mat-icon [matMenuTriggerFor]="nricSearch" mat-ripple>search</mat-icon>
+                        <!-- <mat-icon [matMenuTriggerFor]="nricSearch" mat-ripple>search</mat-icon>
                         <mat-menu #nricSearch="matMenu" class="search-input p-4">
                             <div fxLayout="column">
                                 <mat-form-field (click)="$event.stopPropagation()" appearance="outline" class="custom with-border form-field">
                                     <input type="text" matInput class="p-0 login-input" formControlName="NRIC" />
                                 </mat-form-field>
                             </div>
-                        </mat-menu>
+                        </mat-menu> -->
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">{{ element.NRIC || 'NA' }}</mat-cell>
                 </ng-container>
@@ -217,14 +217,14 @@
                 <ng-container matColumnDef="PhoneNumber">
                     <mat-header-cell *matHeaderCellDef>
                         <span mat-sort-header> Phone </span>
-                        <mat-icon [matMenuTriggerFor]="phoneSearch" mat-ripple>search</mat-icon>
+                        <!-- <mat-icon [matMenuTriggerFor]="phoneSearch" mat-ripple>search</mat-icon>
                         <mat-menu #phoneSearch="matMenu" class="search-input p-4">
                             <div fxLayout="column">
                                 <mat-form-field (click)="$event.stopPropagation()" appearance="outline" class="custom with-border form-field">
                                     <input type="text" matInput class="p-0 login-input" formControlName="PhoneNumber" />
                                 </mat-form-field>
                             </div>
-                        </mat-menu>
+                        </mat-menu> -->
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">{{ element.PhoneNumber || 'NA' }}</mat-cell>
                 </ng-container>
@@ -232,14 +232,14 @@
                 <ng-container matColumnDef="OverallSentiment">
                     <mat-header-cell *matHeaderCellDef>
                         <span mat-sort-header> Sentiment </span>
-                        <mat-icon [matMenuTriggerFor]="sentimentSearch" mat-ripple>search</mat-icon>
+                        <!-- <mat-icon [matMenuTriggerFor]="sentimentSearch" mat-ripple>search</mat-icon>
                         <mat-menu #sentimentSearch="matMenu" class="search-input p-4">
                             <div fxLayout="column">
                                 <mat-form-field (click)="$event.stopPropagation()" appearance="outline" class="custom with-border form-field">
                                     <input type="text" matInput class="p-0 login-input" formControlName="OverallSentiment" />
                                 </mat-form-field>
                             </div>
-                        </mat-menu>
+                        </mat-menu> -->
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <img
@@ -330,14 +330,84 @@
                     *matRowDef="let row; columns: customerJourneyTable.tableData.columns"
                 ></mat-row>
             </mat-table>
-            <mat-paginator
-                *ngIf="customerJourneyTable.tableData.source.data.length > 5"
-                (page)="pageEvent()"
-                [pageSizeOptions]="[10, 20, 50, 100]"
-                showFirstLastButtons
-            >
-            </mat-paginator>
 
+            <div *ngIf="customerJourneyTable.tableData.source.data.length > 5" fxLayout fxLayoutAlign="space-between">
+                <ng-template
+                    cdkConnectedOverlay
+                    [cdkConnectedOverlayOrigin]="advancedSearchOverlay"
+                    [cdkConnectedOverlayOpen]="showAdvancedSearchOverlay"
+                    [cdkConnectedOverlayHasBackdrop]="true"
+                    (backdropClick)="showAdvancedSearchOverlay = false"
+                >
+                    <div
+                        class="mat-elevation-z1 p-12"
+                        [ngClass]="
+                            fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                                ? fuseConfig.layout.anchorWidget.bodyBackground
+                                : fuseConfig.layout.widget.customBackgroundColor === true
+                                ? fuseConfig.layout.widget.bodyBackground
+                                : ''
+                        "
+                    >
+                        <form fxLayout="column" [formGroup]="searchForm" (ngSubmit)="doAdvancedSearch(); showAdvancedSearchOverlay = false;" novalidate>
+                            <mat-form-field fxFlex="25">
+                                <mat-label>SessionID</mat-label>
+                                <input matInput type="text" formControlName="SessionID" />
+                            </mat-form-field>
+
+                            <mat-form-field fxFlex="25">
+                                <mat-label>PhoneNumber</mat-label>
+                                <input matInput type="text" formControlName="PhoneNumber" />
+                            </mat-form-field>
+
+                            <mat-form-field fxFlex="25">
+                                <mat-label>Channel</mat-label>
+                                <input matInput type="text" formControlName="Channel" />
+                            </mat-form-field>
+
+                            <mat-form-field fxFlex="25">
+                                <mat-label>CIF</mat-label>
+                                <input matInput type="text" formControlName="CIF" />
+                            </mat-form-field>
+
+                            <mat-form-field fxFlex="25">
+                                <mat-label>NRIC</mat-label>
+                                <input matInput type="text" formControlName="NRIC" />
+                            </mat-form-field>
+
+                            <mat-form-field fxFlex="25">
+                                <mat-label>Interaction Date</mat-label>
+                                <mat-date-range-input [rangePicker]="interactionDatePicker">
+                                    <input matStartDate placeholder="Start date" formControlName="InteractionDateStart" />
+                                    <input matEndDate placeholder="End date" formControlName="InteractionDateEnd" />
+                                </mat-date-range-input>
+                                <mat-datepicker-toggle matSuffix [for]="interactionDatePicker"></mat-datepicker-toggle>
+                                <mat-date-range-picker #interactionDatePicker></mat-date-range-picker>
+                            </mat-form-field>
+
+                            <mat-form-field fxFlex="25">
+                                <mat-label>Overall Sentiment</mat-label>
+                                <input matInput type="text" formControlName="OverallSentiment" />
+                            </mat-form-field>
+                            <button mat-button color="primary">Search</button>
+                        </form>
+                    </div>
+                </ng-template>
+
+                <button
+                    cdkOverlayOrigin
+                    #advancedSearchOverlay="cdkOverlayOrigin"
+                    (click)="showAdvancedSearchOverlay = !showAdvancedSearchOverlay"
+                    mat-button
+                    [hasBackdrop]="true"
+                    (backdropClick)="showAdvancedSearchOverlay = false"
+                    color="primary"
+                >
+                    <mat-icon>search</mat-icon>
+                    Advanced Search
+                </button>
+                <mat-paginator (page)="pageEvent()" [pageSizeOptions]="[10, 20, 50, 100]" showFirstLastButtons> </mat-paginator>
+            </div>
             <p *ngIf="customerJourneyTable.tableData.source.data.length === 0" class="text-center m-0 mat-title">No Data Available</p>
         </div>
         <div
