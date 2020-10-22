@@ -5,7 +5,7 @@ import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { ResData } from 'app/interfaces';
 import { uniqBy } from 'lodash';
-import { interval } from 'rxjs';
+import { interval, Subscription } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { SDKClient } from 'tmac-sdk';
 
@@ -41,6 +41,11 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
     // @ [OPTIONAL] to store entire app config and get update
     // -----------------------------------------------------------
     appConfig: any;
+
+    /**
+     * Polling Subscription
+     */
+    pollingSubscription: Subscription;
 
     /**
      * Constructor
@@ -85,8 +90,8 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
         });
 
         this.setBadges();
-        interval(10000).pipe(takeUntil(this.unsubscribeAll)).subscribe(this.setBadges);
-        this.setupBadgeListeners();
+        SDKClient.events.on('InteractionClosedEvent', this.startPolling);
+        // this.setupBadgeListeners();
     }
 
     /**
@@ -102,8 +107,14 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
 
-    private setupBadgeListeners(): void {
-        SDKClient.events.on('InteractionClosedEvent', this.setBadges);
+    /**
+     * Starts polling for gAmification data
+     */
+    startPolling = (): void => {
+        if (this.pollingSubscription) {
+            this.pollingSubscription.unsubscribe();
+        }
+        this.pollingSubscription = interval(10000).pipe(takeUntil(this.unsubscribeAll)).subscribe(this.setBadges);
     }
 
     /**

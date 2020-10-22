@@ -1,9 +1,12 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { fuseAnimations } from '@fuse/animations';
+import { FuseConfigService } from '@fuse/services/config.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
+import { takeUntil } from 'rxjs/operators';
 import { SDKClient, InteractionData } from 'tmac-sdk';
 
 /**
@@ -18,15 +21,25 @@ import { SDKClient, InteractionData } from 'tmac-sdk';
 })
 export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     /**
+     * Shows Advanced Seargc Overlay
+     */
+    showAdvancedSearchOverlay = false;
+
+    /**
      * app config data
      */
     @Input() data: any;
 
     /**
-     * Table sort ref 
+     * Table sort ref
      */
     @ViewChild(MatSort, { static: true }) sort: MatSort;
-    
+
+    /**
+     * Fuse config data
+     */
+    @Input() fuseConfig: any;
+
     /**
      * Table Paginator ref
      */
@@ -59,7 +72,23 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         columns: this.mindisplayedColumns
     };
 
-    constructor() {
+    /**
+     * Advanced search form
+     */
+    advancedSearchForm = new FormGroup({
+        Channel: new FormControl(),
+        SubChannel: new FormControl(),
+        Direction: new FormControl(),
+        User: new FormControl(),
+        Dnis: new FormControl(),
+        Intent: new FormControl(),
+        CreatedTimeStart: new FormControl(),
+        CreatedTimeEnd: new FormControl(),
+        ClosedTimeStart: new FormControl(),
+        ClosedTimeEnd: new FormControl()
+    });
+
+    constructor(private _fuseConfigService: FuseConfigService) {
         super();
     }
 
@@ -70,6 +99,26 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
+
+        // subscribe to fuse
+        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+            this.fuseConfig = config;
+        });
+        const dateCols = ['CreatedTimeStart', 'CreatedTimeEnd', 'ClosedTimeStart', 'ClosedTimeEnd'];
+        this.advancedSearchForm.valueChanges.subscribe((res) => {
+            const searchKey = {};
+            Object.keys(res).forEach((k) => {
+                if (res[k]) {
+                    if (dateCols.includes(k)) {
+                        searchKey[k] = res[k].toString().trim().toLowerCase();
+                    } else {
+                        searchKey[k] = res[k].trim().toLowerCase();
+                    }
+                }
+            });
+            const stringifiedSearch = JSON.stringify(searchKey);
+            this.interactionDetailsTable.source.filter = stringifiedSearch === '{}' ? '' : stringifiedSearch;
+        });
 
         SDKClient.events.on('AgentInteractionDetailsEvent', this.AgentInteractionDetailsEvent);
     }
@@ -86,8 +135,89 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
     }
 
     /**
+     * Custom filter method fot Angular Material Datatable
+     */
+    createFilter(): (data: any, filter: string) => boolean {
+        let filterFunction = (data: any, filter: string): boolean => {
+            let searchTerms = JSON.parse(filter);
+            let isFilterSet = false;
+            for (const col in searchTerms) {
+                if (searchTerms[col].toString() !== '') {
+                    isFilterSet = true;
+                } else {
+                    delete searchTerms[col];
+                }
+            }
+            const createdDateCols = ['CreatedTimeStart', 'CreatedTimeEnd'];
+            const closedDateCols = ['ClosedTimeStart', 'ClosedTimeEnd'];
+            let nameSearch = () => {
+                let found = false;
+                if (isFilterSet) {
+                    Object.keys(searchTerms).map((col) => {
+                        // for (const col in searchTerms) {
+                        searchTerms[col]
+                            .trim()
+                            .toLowerCase()
+                            .split(' ')
+                            .forEach((word: any) => {
+                                if (createdDateCols.includes(col)) {
+                                    const start = new Date(searchTerms['CreatedTimeStart']).getTime();
+                                    const endDate = new Date(searchTerms['CreatedTimeEnd']);
+                                    endDate.setHours(24);
+                                    const end = endDate.getTime();
+                                    const actualDate = new Date(data['CreatedDateTime']).getTime();
+
+                                    if (start && !end) {
+                                        if (actualDate >= start) {
+                                            found = true;
+                                        }
+                                    } else if (!start && end) {
+                                        if (actualDate <= end) {
+                                            found = true;
+                                        }
+                                    } else if (start && end) {
+                                        if (actualDate >= start && actualDate <= end) {
+                                            found = true;
+                                        }
+                                    }
+                                } else if (closedDateCols.includes(col)) {
+                                    const start = new Date(searchTerms['ClosedTimeStart']).getTime();
+                                    const endDate = new Date(searchTerms['ClosedTimeEnd']);
+                                    endDate.setHours(24);
+                                    const end = endDate.getTime();
+                                    const actualDate = new Date(data['ClosedDateTime']).getTime();
+                                    if (start && !end) {
+                                        if (actualDate >= start) {
+                                            found = true;
+                                        }
+                                    } else if (!start && end) {
+                                        if (actualDate <= end) {
+                                            found = true;
+                                        }
+                                    } else if (start && end) {
+                                        if (actualDate >= start && actualDate <= end) {
+                                            found = true;
+                                        }
+                                    }
+                                } else if (data[col].toString().toLowerCase().indexOf(word) !== -1) {
+                                    found = true;
+                                }
+                            });
+                        // }
+                    });
+                    return found;
+                } else {
+                    return true;
+                }
+            };
+            return nameSearch();
+        };
+        return filterFunction;
+    }
+
+    /**
      * AgentInteractionDetailsEvent hanlder
-     * @param {InteractionData} data 
+     * @param {InteractionData} data
      */
     private AgentInteractionDetailsEvent = (data: InteractionData[]) => {
         this.interactionList = [...this.interactionList, ...data];
@@ -95,12 +225,12 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         this.interactionDetailsTable.source = new MatTableDataSource(this.interactionList);
         this.interactionDetailsTable.source.sort = this.sort;
         this.interactionDetailsTable.source.paginator = this.paginator;
-
-    }
+        this.interactionDetailsTable.source.filterPredicate = this.createFilter();
+    };
 
     /**
      * Maximize event
-     * @param {Boolean} state 
+     * @param {Boolean} state
      */
     maximizeEvent(state: boolean): void {
         this.maximized = state;

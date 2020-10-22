@@ -17,6 +17,7 @@ import { IWidget, ResData } from 'app/interfaces';
 import { sortBy, uniqBy } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 import { IGetInteractionHistory, InteractionAction, InteractionHistory, InteractionHistoryReadyEvent, IUIEvent, SDKClient } from 'tmac-sdk';
+import * as moment from 'moment';
 
 /**
  * Customer journey component
@@ -45,13 +46,19 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      */
     searchForm = new FormGroup({
         SessionID: new FormControl(''),
-        InteractionDate: new FormControl(''),
+        InteractionDateStart: new FormControl(),
+        InteractionDateEnd: new FormControl(),
         Channel: new FormControl(''),
         CIF: new FormControl(''),
         NRIC: new FormControl(''),
         PhoneNumber: new FormControl(''),
         OverallSentiment: new FormControl('')
     });
+
+    /**
+     * Show advanced search form
+     */
+    showAdvancedSearchOverlay = false;
 
     /**
      * session actions timeline
@@ -117,6 +124,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
 
     maximized = false;
 
+    interactionDateCols = ['InteractionDateStart', 'InteractionDateEnd'];
+
     constructor(
         private _fuseConfigService: FuseConfigService,
         private _tmacEventService: TMACEventService,
@@ -173,21 +182,43 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         // this.customerJourneyTable.tableData.source.filter = JSON.stringify({ SessionID: 'dev200922183239_1055' });
 
         this.customerJourneyTable.tableData.source.filterPredicate = this.createFilter();
-        this.searchForm.valueChanges.subscribe((res) => {
-            const searchKey = {};
-            Object.keys(res).forEach((k) => {
-                if (res[k]) {
-                    searchKey[k] = res[k].trim().toLowerCase();
-                }
-            });
-            const stringifiedSearch = JSON.stringify(searchKey);
-            this.customerJourneyTable.tableData.source.filter = stringifiedSearch === '{}' ? '' : stringifiedSearch;
-        });
+        // this.searchForm.valueChanges.subscribe((res) => {
+        //     const searchKey = {};
+        //     Object.keys(res).forEach((k) => {
+        //         if (res[k]) {
+        //             if (this.interactionDateCols.includes(k)) {
+        //                 searchKey[k] = res[k].toString();
+        //             } else {
+        //                 searchKey[k] = res[k].trim().toLowerCase();
+        //             }
+        //         }
+        //     });
+        //     const stringifiedSearch = JSON.stringify(searchKey);
+        //     this.customerJourneyTable.tableData.source.filter = stringifiedSearch === '{}' ? '' : stringifiedSearch;
+        // });
         SDKClient.events.on('InteractionHistoryReadyEvent', this.InteractionHistoryReadyEvent);
     }
 
-    // Custom filter method fot Angular Material Datatable
-    createFilter() {
+    doAdvancedSearch(): void {
+        const res = this.searchForm.value;
+        const searchKey = {};
+        Object.keys(res).forEach((k) => {
+            if (res[k]) {
+                if (this.interactionDateCols.includes(k)) {
+                    searchKey[k] = new Date(res[k].toString()).getTime();
+                } else {
+                    searchKey[k] = res[k].trim().toLowerCase();
+                }
+            }
+        });
+        const stringifiedSearch = JSON.stringify(searchKey);
+        this.customerJourneyTable.tableData.source.filter = stringifiedSearch === '{}' ? '' : stringifiedSearch;
+    }
+
+    /**
+     * Custom filter method fot Angular Material Datatable
+     */
+    createFilter(): (data: any, filter: string) => boolean {
         let filterFunction = (data: any, filter: string): boolean => {
             let searchTerms = JSON.parse(filter);
             let isFilterSet = false;
@@ -204,16 +235,37 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 if (isFilterSet) {
                     Object.keys(searchTerms).map((col) => {
                         // for (const col in searchTerms) {
-                        searchTerms[col]
-                            .trim()
-                            .toLowerCase()
-                            .split(' ')
-                            .forEach((word: any) => {
-                                if (data[col].toString().toLowerCase().indexOf(word) !== -1 && isFilterSet) {
+                        if (this.interactionDateCols.includes(col)) {
+                            const start = searchTerms['InteractionDateStart'];
+                            const endDate = new Date(parseInt(searchTerms['InteractionDateEnd'], 10));
+                            endDate.setHours(24);
+                            const end = endDate.getTime();
+                            const actualDate = moment(data['InteractionDate'], 'DD/MM/yyyy HH:mm:ss').valueOf();
+                            if (start && !end) {
+                                if (actualDate >= start) {
                                     found = true;
                                 }
-                            });
-                        // }
+                            } else if (!start && end) {
+                                if (actualDate <= end) {
+                                    found = true;
+                                }
+                            } else if (start && end) {
+                                if (actualDate >= start && actualDate <= end) {
+                                    found = true;
+                                }
+                            }
+                        } else {
+                            searchTerms[col]
+                                .trim()
+                                .toLowerCase()
+                                .split(' ')
+                                .forEach((word: any) => {
+                                    if (data[col].toString().toLowerCase().indexOf(word) !== -1 && isFilterSet) {
+                                        found = true;
+                                    }
+                                });
+                            // }
+                        }
                     });
                     return found;
                 } else {
@@ -319,8 +371,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
 
     /**
      * To open sentiment dashboard for a session
-     * 
-     * @param sessionId 
+     *
+     * @param sessionId
      */
     public openSentimentDashboard(sessionId: string): void {
         let url = this.data.Data.SentimentDashboardUrl;

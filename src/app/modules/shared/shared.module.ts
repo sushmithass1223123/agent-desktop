@@ -3,6 +3,8 @@ import { NgModule } from '@angular/core';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { FuseSharedModule } from '@fuse/shared.module';
 import * as Chart from 'chart.js';
+import { PickerModule } from '@ctrl/ngx-emoji-mart';
+// import { NgxEmojiPickerModule } from 'ngx-emoji-picker';
 // import 'chartjs-plugin-piechart-outlabels';
 import { ChartsModule } from 'ng2-charts';
 import {
@@ -44,7 +46,7 @@ Chart.defaults.global.plugins = {
 /**
  * Shared Modules
  */
-const sharedModules = [MaterialModule, FuseSharedModule, LeafletModule, ChartsModule, MatQuillModule];
+const sharedModules = [MaterialModule, FuseSharedModule, LeafletModule, ChartsModule, MatQuillModule, PickerModule];
 
 /**
  * Shared components

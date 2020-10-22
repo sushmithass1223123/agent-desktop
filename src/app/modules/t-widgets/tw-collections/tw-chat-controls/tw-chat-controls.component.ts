@@ -118,6 +118,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     tranfConfWidget: IWidget;
 
+    showEmojiOverlay = false
+
     @ViewChildren(FusePerfectScrollbarDirective) directiveScrolls: QueryList<FusePerfectScrollbarDirective>;
     @ViewChildren('replyInput') replyInputField: any;
     @ViewChild('replyForm') replyForm: NgForm;
@@ -1078,13 +1080,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
     /**
      * To send a message to the remote end
-     * 
      * @param event Input event
      */
     public reply(event: any): void {
         event.preventDefault();
-
-        if (!this.replyForm.form.value.message.trim()) {
+        if (!this.replyForm.form.value.message?.trim()) {
             return;
         }
 
@@ -1374,4 +1374,16 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             this.tranfConfWidget = widget;
         }
     }
+
+    /**
+     * Adds emoji to reply
+     * @param {any} evt 
+     */
+    addEmoji(evt: any): void {
+        this.replyForm.value.message = `${this.replyInput.value} ${evt.emoji.native} `;
+        this.replyInput.value = `${this.replyInput.value} ${evt.emoji.native} `;
+        this.showEmojiOverlay = false;
+        this.replyInput.focus();
+    }
+
 }

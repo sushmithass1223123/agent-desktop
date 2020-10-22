@@ -387,6 +387,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                     SentToCheckerSession: 'to checker'
                 };
                 this._appUIService.showSnackbar(`Message sent ${message[res.response.CurrentStatus]}`, 'success');
+                this.draftPolling?.unsubscribe();
             })
             .catch((err) => {
                 console.log({ err });
