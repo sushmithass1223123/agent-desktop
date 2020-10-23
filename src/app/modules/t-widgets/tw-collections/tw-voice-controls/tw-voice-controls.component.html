@@ -182,7 +182,7 @@
             <button
                 *ngIf="status === 'disconnected'"
                 mat-flat-button
-                class="border-radius-20 animate__animated animate__slideInRight animate__faster"
+                class="border-radius-20"
                 color="warn"
                 #closeBtn
                 (click)="confirmCloseInteraction(closeBtn)"
@@ -194,7 +194,7 @@
             <button
                 *ngIf="confirmCall"
                 mat-flat-button
-                class="border-radius-20 animate__animated animate__slideInDown animate__faster"
+                class="border-radius-20"
                 color="primary"
                 #confirmBtn
                 (click)="confirmCallFn(true, confirmBtn)"
@@ -206,7 +206,7 @@
             <button
                 *ngIf="confirmCall"
                 mat-flat-button
-                class="border-radius-20 animate__animated animate__slideInDown animate__faster"
+                class="border-radius-20"
                 color="warn"
                 #cancelBtn
                 (click)="confirmCallFn(false, cancelBtn)"

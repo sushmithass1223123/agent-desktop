@@ -62,7 +62,7 @@ export class TwSuAgentActivityComponent extends TWidgetWrapper implements OnInit
         this.activityList.forEach((item: any) => {
             // create activity details widget
             const widget = new TwWidgetModel(item.dateTime, 'tw-su-agent-activity-details', 'local_activity');
-            widget.Config.Actions = ['minimize'];
+            widget.Config.Actions = ['collapse'];
             widget.Config.ViewState = 'restore';
             widget.Data.ActivityDetails = item;
 

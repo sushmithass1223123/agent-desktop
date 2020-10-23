@@ -124,7 +124,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
 
     @HostBinding('class.maximize') maximized = false;
     @HostBinding('class.float') floating = false;
-    @HostBinding('class.minimize') collapsed = false;
+    @HostBinding('class.collapse') collapsed = false;
 
     interactionDateCols = ['InteractionDateStart', 'InteractionDateEnd'];
 
@@ -152,6 +152,9 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     // @ Lifecycle hooks
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * On Init
+     */
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
@@ -181,24 +184,9 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             this[evt.EventName]?.(evt);
         });
 
-        // this.customerJourneyTable.tableData.source.filter = JSON.stringify({ SessionID: 'dev200922183239_1055' });
+        SDKClient.events.on('InteractionHistoryReadyEvent', this.InteractionHistoryReadyEvent);
 
         this.customerJourneyTable.tableData.source.filterPredicate = this.createFilter();
-        // this.searchForm.valueChanges.subscribe((res) => {
-        //     const searchKey = {};
-        //     Object.keys(res).forEach((k) => {
-        //         if (res[k]) {
-        //             if (this.interactionDateCols.includes(k)) {
-        //                 searchKey[k] = res[k].toString();
-        //             } else {
-        //                 searchKey[k] = res[k].trim().toLowerCase();
-        //             }
-        //         }
-        //     });
-        //     const stringifiedSearch = JSON.stringify(searchKey);
-        //     this.customerJourneyTable.tableData.source.filter = stringifiedSearch === '{}' ? '' : stringifiedSearch;
-        // });
-        SDKClient.events.on('InteractionHistoryReadyEvent', this.InteractionHistoryReadyEvent);
 
         switch (this.data.Config.ViewState) {
             case 'float':
@@ -207,7 +195,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             case 'maximize':
                 this.maximized = true;
                 break;
-            case 'minimize':
+            case 'collapse':
                 this.collapsed = true;
                 break;
         }

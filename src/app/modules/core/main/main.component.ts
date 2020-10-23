@@ -1,5 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { AfterContentInit, Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { FuseConfigService } from '@fuse/services/config.service';
@@ -67,10 +68,20 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
         private _agentFeaturesService: AgentFeaturesService,
         // this service must not be removed, this will listen to some TMAC events
         private _tmacEventsService: TMACEventService,
-        private _activatedRouter: ActivatedRoute
+        private _activatedRouter: ActivatedRoute,
+        private _titleService: Title
     ) {
         // Set the private defaults
         this._unsubscribeAll = new Subject();
+
+        // subscribe to _activatedRouter for loging agent id
+        this._activatedRouter.paramMap
+            .subscribe(paramMap => {
+                // check if agentId in param
+                if (paramMap.has('agentId')) {
+                    this.agentId = paramMap.get('agentId');
+                }
+            });
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -81,14 +92,6 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
      * On init
      */
     ngOnInit(): void {
-        // subscribe to _activatedRouter for loging agent id
-        this._activatedRouter.paramMap.subscribe(paramMap => {
-            // check if lanId in param
-            if (paramMap.has('agentId')) {
-                this.agentId = paramMap.get('agentId');
-            }
-        });
-
         // register to all the tmac events in service
         this._tmacEventsService.subscribe();
 
@@ -103,17 +106,11 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
         this._appDataService.config
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((config: any) => {
-                this.appConfig = config;
+                if (Object.keys(config).length) {
+                    this.appConfig = config;
+                    this.setTheme();
+                }
             });
-
-        // apply the theme
-        const themeName = this.appConfig.AppConfigs.Theme || '';
-        if (themeName) {
-            const theme = ThemeSelector.getFuseConfigByTheme(themeName, false);
-            this._fuseConfigService.config = {
-                ...theme
-            };
-        }
     }
 
     /**
@@ -137,38 +134,62 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
 
         // remove the processed features
         this._agentFeaturesService.unsubscribe();
-
-        // deregister from tmac events
-        SDKClient.events.off('AgentForcedLogoffEvent', this.forcedLogoffEvent);
     }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Private methods
     // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * Set the app config
+     */
+    private setTheme(): void {
+        // apply the theme
+        const themeName = this.appConfig.AppConfigs.Theme || '';
+        if (themeName) {
+            const theme = ThemeSelector.getFuseConfigByTheme(themeName, false);
+            this._fuseConfigService.config = {
+                ...theme
+            };
+        }
+    }
+
     /**
      * To verify the login
      */
     private async checkLogin(): Promise<any> {
+
         // get the route history
         const route = history.state?.routeFrom;
         // for production build if the main url is opened directly route to login page
         if (environment.production && (!route || route !== 'login')) {
             // we will route to login page
-            this._router.navigate(['login']);
+            this.routeToLogin();
+            return;
         }
 
         // get the logging agent id
         const agentId = history.state?.agentId || this.agentId;
         // check the agent Id
         if (agentId) {
+            if (route !== 'login') {
+                const config = await this._appDataService.getConfig(agentId);
+                this.appConfig = config;
+                this.setTheme();
+            }
             // get the login data
             const loginData = await SDKClient.getLoginData(agentId);
             // check if the login data is available, if not route back to login page
             if (loginData === null || !loginData.agentData.isLoggedIn) {
                 // we will route to login page
-                this._router.navigate(['login']);
+                this.routeToLogin();
+                return;
             }
             else {
+                const stationEnabled = loginData.agentData.lanId !== loginData.agentData.deviceId;
+                const station = loginData.agentData.deviceId;
+                const title = this._titleService.getTitle();
+                this._titleService.setTitle(title + ' - A: ' + agentId + (stationEnabled ? '/ S: ' + station : ''));
                 this.pollForEvent();
             }
             // print the agent data and sdk client
@@ -178,8 +199,16 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
         }
         else {
             // we will route to login page
-            this._router.navigate(['login']);
+            this.routeToLogin();
         }
+    }
+
+    /**
+     * Route to login
+     */
+    private routeToLogin(): void {
+        // we will route to login page
+        this._router.navigate(['login']);
     }
 
     /**
@@ -191,54 +220,11 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
         // set the loaded to true
         this.loaded = true;
 
-        // listen to force log off event
-        SDKClient.events.on('AgentForcedLogoffEvent', this.forcedLogoffEvent);
-
         // process the agent features
         this._agentFeaturesService.subscribe();
 
         // register for get events
         SDKClient.getEvents();
-    }
-
-    /**
-     * To process AgentForcedLogoffEvent
-     * @param {AgentForcedLogoffEvent} evt
-     */
-    forcedLogoffEvent = (evt: AgentForcedLogoffEvent) => {
-        let description = '';
-        switch (evt.Type) {
-            case 'SupervisorInitiatedLogout':
-                description = 'You are logged out by the supervisor!';
-                break;
-            case 'SessionNotFound':
-                description = 'There is no session found in server, please re-login!';
-                break;
-            case 'SessionKeyExpired':
-                description = 'Your existing session expired as you are logged in using another session!';
-                break;
-            case 'NotLoggedIntoACD':
-                description = '';
-                break;
-            case 'AgentInfoNotFound':
-                description = 'Agent information not found, please re-login!';
-                break;
-            default:
-                description = 'Your existing session expired as you are logged in using another session!';
-        }
-
-        // we will route to not-found page
-        this._router.navigate(['not-found'],
-            {
-                queryParamsHandling: 'preserve',
-                preserveFragment: true,
-                state: {
-                    subtitle: 'Oops',
-                    title: '',
-                    description,
-                    login: true
-                }
-            });
     }
 
     // -----------------------------------------------------------------------------------------------------

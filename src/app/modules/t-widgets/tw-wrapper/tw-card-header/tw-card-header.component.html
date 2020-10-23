@@ -48,7 +48,7 @@
     </button>
 
     <button
-        *ngIf="data.Config.Actions.includes('minimize') || widgetState.floating || widgetState.maximized"
+        *ngIf="data.Config.Actions.includes('collapse') || widgetState.floating || widgetState.maximized"
         mat-icon-button
         [matTooltip]="widgetState.collapsed ? 'Expand' : 'Collapse'"
         (click)="collapseWidget()"

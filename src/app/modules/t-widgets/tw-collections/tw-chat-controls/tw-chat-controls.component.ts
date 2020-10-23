@@ -73,7 +73,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
     @HostBinding('class.maximize') maximized = false;
     @HostBinding('class.float') floating = false;
-    @HostBinding('class.minimize') collapsed = false;
+    @HostBinding('class.collapse') collapsed = false;
 
     interactionList: InteractionRef[];
     interactionId: number;
@@ -120,7 +120,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * Transfer/Conference widgetf
      */
     tranfConfWidget: IWidget;
-
+    /**
+     * Flag to show emoji overlay
+     */
     showEmojiOverlay = false;
 
     @ViewChildren(FusePerfectScrollbarDirective) directiveScrolls: QueryList<FusePerfectScrollbarDirective>;
@@ -208,7 +210,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             case 'maximize':
                 this.maximized = true;
                 break;
-            case 'minimize':
+            case 'collapse':
                 this.collapsed = true;
                 break;
         }
@@ -998,7 +1000,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         widget.Config.Anchor = true;
         widget.Config.Position.W = param === 'audio' ? 600 : 800;
         widget.Config.Position.H = param === 'audio' ? 275 : 550;
-        widget.Config.Actions = param === 'audio' ? ['minimize'] : ['minimize', 'maximize'];
+        widget.Config.Actions = param === 'audio' ? ['collapse'] : ['collapse', 'maximize'];
         // widget.Data.AVConn = this.avConn;
         widget.Data.CustomerName = this.customerName;
         widget.Data.Direction = direction;
@@ -1088,6 +1090,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         event.preventDefault();
         if (!this.replyForm.form.value.message?.trim()) {
             return;
+        }
+
+        // close the emoji overlay if opened
+        if (this.showEmojiOverlay) {
+            this.showEmojiOverlay = false;
         }
 
         // send the typed message
@@ -1356,7 +1363,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             const widget = new TwWidgetModel(`${type} Chat`, 'tw-custom', icon);
             widget.Config.Position.W = 550;
             widget.Config.Position.H = 550;
-            widget.Config.Actions = ['minimize', 'destroy'];
+            widget.Config.Actions = ['collapse', 'destroy'];
             widget.Config.ViewState = 'restore';
 
             // get agent data
@@ -1380,9 +1387,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * @param {any} evt
      */
     addEmoji(evt: any): void {
-        this.replyForm.value.message = `${this.replyInput.value} ${evt.emoji.native} `;
-        this.replyInput.value = `${this.replyInput.value} ${evt.emoji.native} `;
-        this.showEmojiOverlay = false;
+        this.replyForm.value.message = `${this.replyInput.value}${evt.emoji.native}`;
+        this.replyInput.value = `${this.replyInput.value}${evt.emoji.native}`;
+        // this.showEmojiOverlay = false;
         this.replyInput.focus();
     }
+
 }

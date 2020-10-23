@@ -1,10 +1,13 @@
-import { HostBinding, ElementRef, Directive, Input } from '@angular/core';
+import { Directive, ElementRef, HostBinding } from '@angular/core';
 import { ContentPageService } from '@services/content-page.service';
+import { IWidget } from 'app/interfaces';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { InteractionWidgets, IWidget } from 'app/interfaces';
 import { TUtils } from 'tmac-sdk';
 
+/**
+ * TW content wrapper directive
+ */
 @Directive()
 // tslint:disable-next-line: directive-class-suffix
 export class TWContentWrapper {
@@ -21,19 +24,6 @@ export class TWContentWrapper {
      */
     @HostBinding('id') id = '';
 
-    /**
-     * Holds all the data related to this widget from the config
-     */
-    @Input() data: IWidget;
-
-    /**
-     * Holds all the interaction related widgets and process on new interacion for interaction content page
-     */
-    interactions: InteractionWidgets[] = [];
-    /**
-     * Currently active email interaction
-     */
-    activeInteraction: number;
     /**
      * Holds all widget's custom data
      */

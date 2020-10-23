@@ -105,7 +105,7 @@ export interface IWidgetConfig {
     /**
      * Initail state of widget
      */
-    ViewState: 'restore' | 'maximize' | 'minimize' | 'hidden' | 'float';
+    ViewState: 'restore' | 'maximize' | 'collapse' | 'hidden' | 'float';
     /**
      * Pinned widget
      */
@@ -116,7 +116,7 @@ export interface IWidgetConfig {
     Header: boolean;
 }
 
-export type IAction = 'restore' | 'maximize' | 'minimize' | 'destroy' | 'float' | 'pin';
+export type IAction = 'restore' | 'maximize' | 'collapse' | 'destroy' | 'float' | 'pin';
 
 export interface IWidgetPosition {
     /**

@@ -11,16 +11,16 @@ tw-chat-panel {
             transition: all 0.6s ease-in-out;
             &.maximize {
                 flex: 0;
-                &.minimize {
+                &.collapse {
                     flex: 0;
                 }
             }
-            &.minimize {
+            &.collapse {
                 flex: 0;
             }
             &.float {
                 flex: 1;
-                &.minimize {
+                &.collapse {
                     flex: inherit;
                 }
             }

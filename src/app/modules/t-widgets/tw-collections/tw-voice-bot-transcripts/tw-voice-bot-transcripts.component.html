@@ -29,7 +29,7 @@
                         <!-- MESSAGE -->
                         <div
                             *ngFor="let message of chatTranscripts; let i = index"
-                            class="message-row animate__animated animate__slideInUp animate__faster"
+                            class="message-row"
                             [ngClass]="{
                                 me: message?.who === user.agentName,
                                 contact: message?.who !== user.agentName

@@ -37,10 +37,18 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
      * Customer info
      */
     customerInfo: CustomerInfo[] = [];
-
+    /**
+     * Maximized flag
+     */
     @HostBinding('class.maximize') maximized = false;
+    /**
+     * Float flag
+     */
     @HostBinding('class.float') floating = false;
-    @HostBinding('class.minimize') collapsed = false;
+    /**
+     * Collapsed flag
+     */
+    @HostBinding('class.collapse') collapsed = false;
 
     /**
      * Maximised event emitter
@@ -75,7 +83,7 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
         this.interactionId = this.data.InteractionDetails.InteractionID;
 
         // get the customer info config
-        this.customerInfo = this.data.Data.CustomerInfo.map((a: any) => ({ ...a }));
+        this.customerInfo = this.data.Data.CustomerInfo;
 
         // get the event from event bag to make sure no events are missed
         const eventBag = this._tmacEventService.get(this.interactionId);
@@ -101,7 +109,7 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
             case 'maximize':
                 this.maximized = true;
                 break;
-            case 'minimize':
+            case 'collapse':
                 this.collapsed = true;
                 break;
         }

@@ -3,6 +3,7 @@ import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { ContentPageService } from 'app/services/content-page.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { AGENT_DATA_MAP } from 'app/constants';
+import { IWidget } from 'app/interfaces';
 
 @Component({
     selector: 'twc-custom',
@@ -11,6 +12,10 @@ import { AGENT_DATA_MAP } from 'app/constants';
     encapsulation: ViewEncapsulation.None
 })
 export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDestroy {
+    /**
+     * Holds all the data related to this widget from the config
+     */
+    @Input() data: IWidget;
     /**
      * Frame loaded flag
      */

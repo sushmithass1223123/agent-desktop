@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseConfigService } from '@fuse/services/config.service';
@@ -204,6 +205,10 @@ export class LoginComponent implements OnInit, OnDestroy {
      * Self video stream
      */
     selfVideo: MediaStream;
+    /**
+     * App loaded flag
+     */
+    loaded: boolean;
 
     constructor(
         private _fuseConfigService: FuseConfigService,
@@ -211,7 +216,8 @@ export class LoginComponent implements OnInit, OnDestroy {
         private _appDataService: AppDataService,
         private _router: Router,
         private _appUIService: AppUiService,
-        private _activatedRouter: ActivatedRoute
+        private _titleService: Title,
+        private _activatedRoute: ActivatedRoute
     ) {
         // Configure the layout
         this._fuseConfigService.config = {
@@ -233,6 +239,20 @@ export class LoginComponent implements OnInit, OnDestroy {
 
         // Set the private defaults
         this._unsubscribeAll = new Subject();
+
+        // set loaded flag
+        this.loaded = false;
+
+        // subscribe to _activatedRoute for loging agent id
+        this._activatedRoute.paramMap.subscribe(paramMap => {
+            // check if agentId in param
+            if (paramMap.has('agentId')) {
+                this.loadConfig(paramMap.get('agentId'));
+            }
+            else {
+                this.loadConfig();
+            }
+        });
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -243,13 +263,8 @@ export class LoginComponent implements OnInit, OnDestroy {
      * On init
      */
     ngOnInit(): void {
-
-        this._activatedRouter.paramMap.subscribe(paramMap => {
-            // check if lanId in param
-            if (paramMap.has('lanId')) {
-
-            }
-        });
+        const title = this._titleService.getTitle();
+        this._titleService.setTitle(title.split('-')[0].trim());
 
         this.loginForm = this._formBuilder.group({
             domain: ['', Validators.required],
@@ -258,15 +273,6 @@ export class LoginComponent implements OnInit, OnDestroy {
             password: ['', Validators.required],
             station: ['', Validators.required]
         });
-
-        this.loadConfig();
-
-        // open self view if face auth is enabled
-        if (this.faceAuthEnabled) {
-            this.startCamera();
-        }
-
-        this.getData();
     }
 
     /**
@@ -284,14 +290,16 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     /**
      * To load the config
+     * 
+     * @param agentId 
      */
-    private loadConfig(): void {
-        // Subscribe to config changes
-        this._appDataService.config
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((config: any) => {
+    loadConfig(agentId?: string): void {
+        // load the config
+        this._appDataService.getConfig(agentId)
+            .then(config => {
                 this.appConfig = config;
                 this.configLoaded(config);
+                this.getData();
             });
     }
 
@@ -337,9 +345,17 @@ export class LoginComponent implements OnInit, OnDestroy {
                     this.stationEnabled = false;
                 }
             }
+
+            // open self view if face auth is enabled
+            if (this.faceAuthEnabled) {
+                this.startCamera();
+            }
+
+            // set loaded flag
+            this.loaded = true;
         } else {
             // we will route to error page
-            this._router.navigate(['error']);
+            this._router.navigate(['not-found']);
         }
     }
 
@@ -545,6 +561,7 @@ export class LoginComponent implements OnInit, OnDestroy {
                         }
                         // get the agent ID
                         const agentId = response.Data.AgentID;
+
                         // login success
                         // we will route to main page
                         this._router.navigate([`main/${agentId}`], {

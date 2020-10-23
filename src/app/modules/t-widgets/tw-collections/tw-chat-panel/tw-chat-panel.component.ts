@@ -2,17 +2,19 @@ import {
     AfterViewInit,
     Component,
     ComponentFactoryResolver,
-    ComponentRef,
     Input,
     OnDestroy,
     OnInit,
+    Type,
     ViewChild,
     ViewContainerRef,
     ViewEncapsulation
 } from '@angular/core';
-import { TWidget, TWLibrary } from '@modules/t-widgets/utils';
-import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
+import { TWidgetWrapper } from '@modules/t-widgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
+import { TwChatControlsComponent } from '../tw-chat-controls/tw-chat-controls.component';
+import { TwCustomerDetailsComponent } from '../tw-customer-details/tw-customer-details.component';
+import { TwCustomerJourneyComponent } from '../tw-customer-journey/tw-customer-journey.component';
 
 /**
  * Chat Panel Component
@@ -30,11 +32,10 @@ export class TwChatPanelComponent extends TWidgetWrapper implements OnInit, OnDe
      * To hold all the data related to this widget from the config
      */
     @Input() data: IWidget;
-
     /**
-     * dynamic
+     * Widget template
      */
-    @ViewChild('widgetTemplates', { read: ViewContainerRef, static: true }) widgetTemplates: ViewContainerRef;
+    @ViewChild('widgetTemplate', { read: ViewContainerRef, static: true }) widgetTemplate: ViewContainerRef;
     /**
      * To hold chat panel widget
      */
@@ -43,36 +44,15 @@ export class TwChatPanelComponent extends TWidgetWrapper implements OnInit, OnDe
      * ID of the interaction
      */
     interactionId: number;
+
     /**
-     * Maximized flag for each chat panel widget
+     * Static widget collection
      */
-    maximized = [
-        {
-            'tw-voice-controls': false,
-            'tw-customer-details': false,
-            'tw-customer-journey': false
-        }
-    ];
-    /**
-     * * Collapsed flag for each chat panel widget
-     */
-    collapsed = [
-        {
-            'tw-voice-controls': false,
-            'tw-customer-details': false,
-            'tw-customer-journey': false
-        }
-    ];
-    /**
-     * * Floating flag for each chat panel widget
-     */
-    floating = [
-        {
-            'tw-voice-controls': false,
-            'tw-customer-details': false,
-            'tw-customer-journey': false
-        }
-    ];
+    widgetLibrary: Record<string, Type<any>> = {
+        'tw-chat-controls': TwChatControlsComponent,
+        'tw-customer-details': TwCustomerDetailsComponent,
+        'tw-customer-journey': TwCustomerJourneyComponent
+    };
 
     /**
      * Constructor
@@ -112,7 +92,10 @@ export class TwChatPanelComponent extends TWidgetWrapper implements OnInit, OnDe
         this.unsubscribeAll.complete();
     }
 
-    ngAfterViewInit() {
+    /**
+     * After View Init
+     */
+    ngAfterViewInit(): void {
         this.chatPanelWidgets?.forEach((widget: IWidget) => {
             // filter and load the enabled widgets
             if (widget.Config.Enabled) {
@@ -126,48 +109,14 @@ export class TwChatPanelComponent extends TWidgetWrapper implements OnInit, OnDe
      * @method
      */
     private loadComponent(widgetModel: IWidget): void {
-        const widget: TWidget = TWLibrary.getWidget(widgetModel.Type, widgetModel);
 
         // create the component factory
-        const componentFactory = this._componentFactoryResolver.resolveComponentFactory(widget.component);
+        const componentFactory = this._componentFactoryResolver.resolveComponentFactory(this.widgetLibrary[widgetModel.Type]);
 
         // get the view container reference from widget host
-        const componentRef = this.widgetTemplates.createComponent(componentFactory);
+        const componentRef = this.widgetTemplate.createComponent(componentFactory);
 
         // add the data params
         componentRef.instance.data = widgetModel;
-    }
-
-    // -----------------------------------------------------------------------------------------------------
-    // @ Private methods
-    // -----------------------------------------------------------------------------------------------------
-
-    // -----------------------------------------------------------------------------------------------------
-    // @ Public methods
-    // -----------------------------------------------------------------------------------------------------
-
-    /**
-     * To updted the maximized reference of widget based on type
-     * @param isMaximized Maximized flag
-     * @param type Widget type
-     */
-    public onmaximized(isMaximized: boolean, type: string): void {
-        this.maximized[type] = isMaximized;
-    }
-    /**
-     * To updted the collapsed reference of widget based on type
-     * @param isCollapsed Collapsed flag
-     * @param type Widget type
-     */
-    public onCollapsed(isCollapsed: boolean, type: string): void {
-        this.collapsed[type] = isCollapsed;
-    }
-    /**
-     * To updted the floating reference of widget based on type
-     * @param isFloating Floating flag
-     * @param type Widget type
-     */
-    public onFloating(isFloating: boolean, type: string): void {
-        this.floating[type] = isFloating;
     }
 }

@@ -46,7 +46,7 @@
                     <button
                         *ngIf="!replyInfo"
                         mat-raised-button
-                        class="border-radius-20 animate__animated animate__slideInRight animate__faster"
+                        class="border-radius-20"
                         color="warn"
                         #closeBtn
                         (click)="closeEmail($event)"
@@ -58,7 +58,7 @@
                     <button
                         *ngIf="replyInfo"
                         mat-raised-button
-                        class="border-radius-20 animate__animated animate__slideInRight animate__faster"
+                        class="border-radius-20"
                         color="accent"
                         (click)="closeEditor()"
                         matTooltip="Close Editor"
@@ -69,7 +69,7 @@
                     <button
                         *ngIf="replyInfo"
                         mat-raised-button
-                        class="border-radius-20 animate__animated animate__slideInRight animate__faster"
+                        class="border-radius-20"
                         color="primary"
                         (click)="sendEmail()"
                         matTooltip="Send Email"

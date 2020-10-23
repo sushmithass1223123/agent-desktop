@@ -1,7 +1,7 @@
 <div class="">
     <button
         mat-icon-button
-        class="notification-btn animate__animated"
+        class="notification-btn"
         [ngClass]="{ opened: opened, animate__headShake: unreadCount > 0 }"
         [matMenuTriggerFor]="menu"
         aria-label="Notification dropdown"
@@ -59,7 +59,7 @@
         <div
             fxLayout
             *ngIf="notifications.length === 0"
-            class="item item animate__animated animate__slideInUp animate__faster"
+            class="item item animate__animated animate__fadeIn animate__faster"
             (click)="$event.stopPropagation()"
         >
             <div fxLayout fxLayoutAlign="center center" class="p-8 mr-8">

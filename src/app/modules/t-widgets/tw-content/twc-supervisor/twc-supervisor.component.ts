@@ -14,6 +14,10 @@ import { IAgentData, SDKClient } from 'tmac-sdk';
 })
 export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, OnDestroy {
     /**
+     * Holds all the data related to this widget from the config
+     */
+    @Input() data: IWidget;
+    /**
      * To hold agent data
      */
     agentData: IAgentData;

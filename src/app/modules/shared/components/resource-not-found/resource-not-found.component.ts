@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 
 /**
@@ -28,7 +29,10 @@ export class ResourceNotFoundComponent implements OnInit {
      */
     login = true;
 
-    constructor(private _router: Router) { }
+    constructor(
+        private _router: Router,
+        private _titleService: Title
+    ) { }
 
     /**
      * Lifecycles Hook
@@ -39,6 +43,8 @@ export class ResourceNotFoundComponent implements OnInit {
         this.title = history.state.title || '';
         this.description = history.state.description || '';
         this.login = history.state.login || true;
+        const title = this._titleService.getTitle();
+        this._titleService.setTitle(title.split('-')[0].trim());
     }
 
     /**

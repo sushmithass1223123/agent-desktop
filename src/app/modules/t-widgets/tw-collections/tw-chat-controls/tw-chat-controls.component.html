@@ -219,7 +219,7 @@
                     <button
                         *ngIf="status !== 'connected'"
                         mat-raised-button
-                        class="border-radius-20 animate__animated animate__slideInRight animate__faster"
+                        class="border-radius-20"
                         color="warn"
                         #closeBtn
                         (click)="closeInteraction(closeBtn)"
@@ -236,7 +236,7 @@
                         <!-- MESSAGE -->
                         <div
                             *ngFor="let message of chatTranscripts; let i = index"
-                            class="message-row animate__animated animate__slideInUp animate__faster"
+                            class="message-row"
                             [ngClass]="{
                                 me: message.isAgent,
                                 contact: !message.isAgent,
@@ -383,8 +383,16 @@
                                     cdkConnectedOverlay
                                     [cdkConnectedOverlayOrigin]="emojiOverlay"
                                     [cdkConnectedOverlayOpen]="showEmojiOverlay"
+                                    cdkConnectedOverlayHasBackdrop
+                                    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+                                    (overlayOutsideClick)="showEmojiOverlay = false"
                                 >
-                                    <emoji-mart (emojiClick)="addEmoji($event)" [darkMode]="fuseConfig.colorTheme.includes('dark')" set="apple" [showPreview]="false"></emoji-mart>
+                                    <emoji-mart
+                                        (emojiClick)="addEmoji($event)"
+                                        [darkMode]="fuseConfig.colorTheme.includes('dark')"
+                                        [showPreview]="false"
+                                        isNative="true"
+                                    ></emoji-mart>
                                 </ng-template>
                             </button>
 
@@ -405,14 +413,6 @@
                                     [rows]="1"
                                     [matTextareaAutosize]="true"
                                 ></textarea>
-                                <!-- (click)="toggled = !toggled"
-                                    [(emojiPickerIf)]="toggled" -->
-                                <!-- <i [emojiPickerDirection]="'top'" (emojiPickerSelect)="addEmoji($event)">😄</i> -->
-                                <!-- <mat-autocomplete #auto="matAutocomplete">
-                                    <mat-option *ngFor="let option of options" [value]="option">
-                                        {{ option }}
-                                    </mat-option>
-                                </mat-autocomplete> -->
                             </mat-form-field>
 
                             <button
