@@ -5,6 +5,7 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatSelectChange } from '@angular/material/select';
 import { AppUiService } from '@services/app-ui.service';
 import { CreateEmailInfo } from 'app/models';
+import { groupBy } from 'lodash';
 import { SDKClient } from 'tmac-sdk';
 
 /**
@@ -96,7 +97,28 @@ export class CreateEmailComponent implements OnInit {
     /**
      * Available templates
      */
-    availableTemplates = {};
+    availableTemplates = {
+        departments: {},
+        setGroups: (departmentId: string) => {
+            SDKClient.getEmailTemplateGroups(departmentId).then(res => {
+                if (!this.availableTemplates.departments[departmentId]) {
+                    this.availableTemplates.departments[departmentId] = {
+                        groups: groupBy(res.response, 'GroupID'),
+                    };
+                }
+            });
+        },
+        setTemplates: (departmentId: string, groupId: string) => {
+            SDKClient.getEmailTemplates({ groupId, type: departmentId }).then(templateRes => {
+                this.availableTemplates.departments[departmentId].groups[groupId] = {
+                    templates: groupBy(templateRes.response, 'TemplateID'),
+                    setTemplate: (template: string) => {
+                        this.selectTemplate(template)
+                    }
+                };
+            });
+        }
+    };
 
     /**
      * Files currently uploadeng
@@ -141,6 +163,17 @@ export class CreateEmailComponent implements OnInit {
             Subject: this.emailInfo?.Subject || '',
             Files: this.emailInfo?.Files || []
         };
+
+        SDKClient.getEmailTemplateDepartments().then(res => {
+            this.availableTemplates.departments = groupBy(res.response, 'DepartmentID');
+        });
+        // SDKClient.getEmailTemplateGroups("")
+
+        // SDKClient.getEmailTemplates({
+        //     groupId: '',
+        //     type: '',
+        // });
+
     }
 
     /**
@@ -252,7 +285,7 @@ export class CreateEmailComponent implements OnInit {
      * Select template for email
      * @param {MatSelectChange} html 
      */
-    selectTemplate(html: MatSelectChange): void {
-        this.email.Body = `${html.value} ${this.email.Body}`;
+    selectTemplate(html: string): void {
+        this.email.Body = `${html} ${this.email.Body}`;
     }
 }

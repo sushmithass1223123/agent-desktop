@@ -90,12 +90,39 @@
             <mat-icon>attach_file</mat-icon>
             <input #attachFileRef type="file" (change)="onFileInput($event)" style="display: none" />
         </button>
-        <mat-form-field class="custom select-box w-50-p" appearance="outline">
-            <!-- (selectionChange)="changeMode($event)" -->
+
+        <mat-menu #departmentMenu="matMenu">
+            <ng-template matMenuContent>
+                <ng-container *ngFor="let dept of availableTemplates.departments | keyvalue">
+                    <button mat-menu-item [matMenuTriggerFor]="groupMenu" (menuOpened)="availableTemplates.setGroups(dept.key)">
+                        {{ dept.value.Name }}
+                    </button>
+                    <mat-menu #groupMenu="matMenu">
+                        <ng-template matMenuContent>
+                            <ng-container *ngIf="dept.value.groups">
+                                <button
+                                    mat-menu-item
+                                    *ngFor="let group of dept.value.groups | keyvalue"
+                                    (menuOpened)="availableTemplates.setTemplates(dept.key, group.key)"
+                                >
+                                    {{ group.value.Name }}
+                                </button>
+                            </ng-container>
+                        </ng-template>
+                    </mat-menu>
+                </ng-container>
+            </ng-template>
+        </mat-menu>
+
+        <button mat-button [matMenuTriggerFor]="departmentMenu">
+            Templates
+            <mat-icon>more_vert</mat-icon>
+        </button>
+        <!-- <mat-form-field class="custom select-box w-50-p" appearance="outline">
             <mat-select placeholder="Templates" (selectionChange)="selectTemplate($event)">
                 <mat-option *ngFor="let template of availableTemplates | keyvalue" [value]="template.value">{{ template.key }}</mat-option>
             </mat-select>
-        </mat-form-field>
+        </mat-form-field> -->
         <div fxFlex="100" fxLayout="row wrap" fxLayoutGap="10px" [ngClass]="{ 'mt-20': email.Files.length || uploadingFiles.length }">
             <!-- <div fxFlex="30" *ngFor="let file of email.Files" class="px-12 py-8 border-radius-20 mat-elevation-z2">
                 <p>{{ file }}</p>
