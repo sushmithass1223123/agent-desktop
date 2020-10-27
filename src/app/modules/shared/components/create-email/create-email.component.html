@@ -103,7 +103,12 @@
             <mat-chip-list #chipList aria-label="file selection">
                 <mat-chip class="p-16" *ngFor="let file of email.Files" removable (removed)="removeFiles(file.Id)">
                     <mat-icon>attach_file</mat-icon>
-                    <span class="ml-4"> {{ file.Name }} </span>
+                    <div class="ml-8 my-0">
+                        <p class="m-0">{{ file.Name }}</p>
+                        <a target="_blank" [href]="file.URL">
+                            <small>View file</small>
+                        </a>
+                    </div>
                     <mat-icon matChipRemove>cancel</mat-icon>
                 </mat-chip>
             </mat-chip-list>

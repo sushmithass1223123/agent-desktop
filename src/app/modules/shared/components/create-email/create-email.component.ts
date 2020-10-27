@@ -4,9 +4,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatSelectChange } from '@angular/material/select';
 import { AppUiService } from '@services/app-ui.service';
-import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { CreateEmailInfo } from 'app/models';
-import { QuillEditorComponent } from 'ngx-quill';
 import { SDKClient } from 'tmac-sdk';
 
 /**
@@ -204,10 +202,10 @@ export class CreateEmailComponent implements OnInit {
     async onFileInput(evt: Event): Promise<void> {
         try {
             const input = evt.target as HTMLInputElement;
-            this.uploadingFiles.push(input.files[0].name);
             if (input.files && input.files.length) {
+                this.uploadingFiles.push(input.files[0].name);
                 const Base64 = await this.convertToBase64(input.files[0]);
-                const res = await SDKClient.uploadFiles({
+                const { response } = await SDKClient.uploadFiles({
                     files: [
                         {
                             Base64,
@@ -219,7 +217,8 @@ export class CreateEmailComponent implements OnInit {
                         }
                     ]
                 });
-                this.email.Files.push({ Id: res[0].RelativePath, Name: res[0].name, Url: res[0].Url });
+
+                this.email.Files.push({ Id: response[0].RelativePath, Direction: 'OUT', Name: response[0].FileName, URL: response[0].Url });
                 this.uploadingFiles.pop();
             }
         } catch (e) {

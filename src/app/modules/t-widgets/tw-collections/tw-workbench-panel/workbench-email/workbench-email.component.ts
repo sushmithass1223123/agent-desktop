@@ -108,9 +108,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
         yesterday.setDate(today.getDate() - 1);
         this.advancedSearchForm.patchValue({
             fromDate: yesterday,
-            fromTime: `${yesterday.getHours()}:${yesterday.getMinutes()}`,
+            fromTime: `00:00`,
             toDate: today,
-            toTime: `${'00'}:${'00'}`
+            toTime: `${'23'}:${'59'}`
         });
     }
 
