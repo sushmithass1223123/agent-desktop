@@ -1,6 +1,6 @@
 {
     "name": "agent-desktop",
-    "version": "1.0.1028-b1",
+    "version": "1.0.1028-b2",
     "license": "",
     "scripts": {
         "ng": "ng",
@@ -8,6 +8,7 @@
         "start:mem": "node --max_old_space_size=6144 ./node_modules/@angular/cli/bin/ng serve --open",
         "build": "ng build --baseHref=/agent-desktop/",
         "build:prod": "ng build --prod --baseHref=/agent-desktop/",
+        "build:prod:extra": "ng build --prod --baseHref=/agent-desktop/ --extra-webpack-config webpack.extra.js",
         "build:prod:mem": "node --max_old_space_size=6144 ./node_modules/@angular/cli/bin/ng build --prod",
         "test": "ng test",
         "lint": "ng lint",
@@ -41,6 +42,7 @@
         "lodash": "4.17.19",
         "moment": "2.27.0",
         "ng2-charts": "2.4.0",
+        "ngx-build-plus": "10.1.1",
         "ngx-color-picker": "9.1.0",
         "ngx-cookie-service": "3.1.2",
         "ngx-quill": "12.0.1",
