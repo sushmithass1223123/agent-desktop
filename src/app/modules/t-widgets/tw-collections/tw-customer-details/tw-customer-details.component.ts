@@ -38,19 +38,6 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
      */
     customerInfo: CustomerInfo[] = [];
     /**
-     * Maximized flag
-     */
-    @HostBinding('class.maximize') maximized = false;
-    /**
-     * Float flag
-     */
-    @HostBinding('class.float') floating = false;
-    /**
-     * Collapsed flag
-     */
-    @HostBinding('class.collapse') collapsed = false;
-
-    /**
      * Maximised event emitter
      */
     @Output() maximizeEvent = new EventEmitter();
@@ -101,18 +88,6 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
         SDKClient.events.on('IVRDataEvent', this.IVRDataEvent);
         SDKClient.events.on('UUIDataEvent', this.UUIDataEvent);
         SDKClient.events.on('CCLDataEvent', this.CCLDataEvent);
-
-        switch (this.data.Config.ViewState) {
-            case 'float':
-                this.floating = true;
-                break;
-            case 'maximize':
-                this.maximized = true;
-                break;
-            case 'collapse':
-                this.collapsed = true;
-                break;
-        }
     }
 
     /**
@@ -139,7 +114,7 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
      */
     private IncomingCallEvent = (evt: IncomingCallEvent) => {
         this.processCustomerDetails(evt);
-    };
+    }
 
     /**
      * OutgoingCallEvent handelr
@@ -147,7 +122,7 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
      */
     private OutgoingCallEvent = (evt: OutgoingCallEvent) => {
         this.processCustomerDetails(evt);
-    };
+    }
 
     /**
      * TextChatRemoteUserConnectedEvent Handler
@@ -155,7 +130,7 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
      */
     private TextChatRemoteUserConnectedEvent = (evt: TextChatRemoteUserConnectedEvent) => {
         this.processCustomerDetails(evt);
-    };
+    }
 
     /**
      * CallerIntentEvent handler
@@ -163,7 +138,7 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
      */
     private CallerIntentEvent = (evt: CallerIntentEvent) => {
         this.processCustomerDetails(evt);
-    };
+    }
 
     /**
      * IVRDataEvent Handler
@@ -171,7 +146,7 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
      */
     private IVRDataEvent = (evt: IVRDataEvent) => {
         this.processCustomerDetails(evt);
-    };
+    }
 
     /**
      * UUIDataEvent Handelr
@@ -179,7 +154,7 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
      */
     private UUIDataEvent = (evt: UUIDataEvent) => {
         this.processCustomerDetails(evt);
-    };
+    }
 
     /**
      * CCLDataEvent Handler
@@ -187,7 +162,7 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
      */
     private CCLDataEvent = (evt: CCLDataEvent) => {
         this.processCustomerDetails(evt);
-    };
+    }
 
     /**
      * IUIEvent Handelr
@@ -215,7 +190,7 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
             // get the value from path or default value
             item.Value = get(evt, valueMap, item.DefaultValue);
         });
-    };
+    }
 }
 
 /**

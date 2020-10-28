@@ -13,7 +13,7 @@
     <mat-icon color="primary" *ngIf="subType.toLowerCase() === 'field'">roofing</mat-icon>
 </ng-template>
 
-<tw-wrapper [data]="data" (maximizeEvent)="maximized = $event" (collapseEvent)="collapsed = $event" (floatEvent)="floating=$event">
+<tw-wrapper [data]="data" (maximizeEvent)="onMaximized($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)">
     <div *ngIf="!customerJourneyTable.loading" class="customer-journey" [fxLayout]="maximized ? 'column' : 'row wrap'" fxLayoutGap="6px">
         <div *ngIf="!maximized" class="timeline" fusePerfectScrollbar [fusePerfectScrollbarOptions]="{ suppressScrollX: true }">
             <div
@@ -331,7 +331,8 @@
                     cdkConnectedOverlay
                     [cdkConnectedOverlayOrigin]="advancedSearchOverlay"
                     [cdkConnectedOverlayOpen]="showAdvancedSearchOverlay"
-                    [cdkConnectedOverlayHasBackdrop]="true"
+                    cdkConnectedOverlayHasBackdrop
+                    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
                     (backdropClick)="showAdvancedSearchOverlay = false"
                 >
                     <div
@@ -344,7 +345,12 @@
                                 : ''
                         "
                     >
-                        <form fxLayout="column" [formGroup]="searchForm" (ngSubmit)="doAdvancedSearch(); showAdvancedSearchOverlay = false;" novalidate>
+                        <form
+                            fxLayout="column"
+                            [formGroup]="searchForm"
+                            (ngSubmit)="doAdvancedSearch(); showAdvancedSearchOverlay = false"
+                            novalidate
+                        >
                             <mat-form-field fxFlex="25">
                                 <mat-label>SessionID</mat-label>
                                 <input matInput type="text" formControlName="SessionID" />
@@ -394,7 +400,6 @@
                     #advancedSearchOverlay="cdkOverlayOrigin"
                     (click)="showAdvancedSearchOverlay = !showAdvancedSearchOverlay"
                     mat-button
-                    [hasBackdrop]="true"
                     (backdropClick)="showAdvancedSearchOverlay = false"
                     color="primary"
                 >

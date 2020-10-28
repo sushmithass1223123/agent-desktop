@@ -71,10 +71,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     @Output() floatEvent = new EventEmitter();
     @Output() collapseEvent = new EventEmitter();
 
-    @HostBinding('class.maximize') maximized = false;
-    @HostBinding('class.float') floating = false;
-    @HostBinding('class.collapse') collapsed = false;
-
+    maximized: boolean;
     interactionList: InteractionRef[];
     interactionId: number;
     user: IAgentData;
@@ -202,18 +199,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // check if this chat is init by supervisor
         this.supervisorInit = this.lineId === 'bargein';
-
-        switch (this.data.Config.ViewState) {
-            case 'float':
-                this.floating = true;
-                break;
-            case 'maximize':
-                this.maximized = true;
-                break;
-            case 'collapse':
-                this.collapsed = true;
-                break;
-        }
     }
 
     /**

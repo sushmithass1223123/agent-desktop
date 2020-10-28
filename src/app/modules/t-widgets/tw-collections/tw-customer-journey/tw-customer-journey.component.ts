@@ -121,11 +121,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             selection: SelectionModel<InteractionHistory>;
         };
     };
-
-    @HostBinding('class.maximize') maximized = false;
-    @HostBinding('class.float') floating = false;
-    @HostBinding('class.collapse') collapsed = false;
-
+    maximized: boolean;
     interactionDateCols = ['InteractionDateStart', 'InteractionDateEnd'];
 
     constructor(
@@ -187,18 +183,6 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         SDKClient.events.on('InteractionHistoryReadyEvent', this.InteractionHistoryReadyEvent);
 
         this.customerJourneyTable.tableData.source.filterPredicate = this.createFilter();
-
-        switch (this.data.Config.ViewState) {
-            case 'float':
-                this.floating = true;
-                break;
-            case 'maximize':
-                this.maximized = true;
-                break;
-            case 'collapse':
-                this.collapsed = true;
-                break;
-        }
     }
 
     doAdvancedSearch(): void {
@@ -385,5 +369,13 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             width=${screen.width},
             height=${screen.height}`
         );
+    }
+
+    /**
+     * On widget maximized
+     */
+    public onMaximized(max: boolean): void {
+        this.maximized = !max;
+        this.maximizeEvent.emit(max);
     }
 }
