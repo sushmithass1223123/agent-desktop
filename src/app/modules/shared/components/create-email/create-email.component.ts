@@ -292,14 +292,16 @@ export class CreateEmailComponent implements OnInit {
      * @param {String} groupId selected group Id
      */
     setTemplates(departmentId: string, groupId: string): void {
-        SDKClient.getEmailTemplates({ groupId, type: '' }).then(templateRes => {
-            if (templateRes.response && templateRes.response.length) {
-                this.availableTemplates.departments[departmentId][0].groups[groupId][0].templates = groupBy(templateRes.response, 'ID');
-            }
-        }).catch(err => {
-            console.error(err);
-            this.appUiService.showSnackbar('Something went wrong while fetching templates', 'failure');
-        });
+        if (!this.availableTemplates.departments[departmentId]?.groups[groupId]) {
+            SDKClient.getEmailTemplates({ groupId, type: '' }).then(templateRes => {
+                if (templateRes.response && templateRes.response.length) {
+                    this.availableTemplates.departments[departmentId][0].groups[groupId][0].templates = groupBy(templateRes.response, 'ID');
+                }
+            }).catch(err => {
+                console.error(err);
+                this.appUiService.showSnackbar('Something went wrong while fetching templates', 'failure');
+            });
+        }
     }
 
 
