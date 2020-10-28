@@ -1,4 +1,8 @@
 tw-email-controls {
+    .mat-standard-chip {
+        min-height: 50px;
+    }
+
     .mat-card-content {
         background: inherit !important;
         box-shadow: none !important;

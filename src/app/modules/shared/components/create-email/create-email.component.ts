@@ -4,9 +4,8 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatSelectChange } from '@angular/material/select';
 import { AppUiService } from '@services/app-ui.service';
-import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { CreateEmailInfo } from 'app/models';
-import { QuillEditorComponent } from 'ngx-quill';
+import { groupBy } from 'lodash';
 import { SDKClient } from 'tmac-sdk';
 
 /**
@@ -98,7 +97,9 @@ export class CreateEmailComponent implements OnInit {
     /**
      * Available templates
      */
-    availableTemplates = {};
+    availableTemplates = {
+        departments: {},
+    };
 
     /**
      * Files currently uploadeng
@@ -143,6 +144,14 @@ export class CreateEmailComponent implements OnInit {
             Subject: this.emailInfo?.Subject || '',
             Files: this.emailInfo?.Files || []
         };
+
+        SDKClient.getEmailTemplateDepartments().then(res => {
+            this.availableTemplates.departments = groupBy(res.response, 'ID');
+            // this.availableTemplates.departments = res.response || [];
+        }).catch(err => {
+            console.error(err);
+            this.appUiService.showSnackbar('Something went wrong while fetching departments', 'failure');
+        });
     }
 
     /**
@@ -204,10 +213,10 @@ export class CreateEmailComponent implements OnInit {
     async onFileInput(evt: Event): Promise<void> {
         try {
             const input = evt.target as HTMLInputElement;
-            this.uploadingFiles.push(input.files[0].name);
             if (input.files && input.files.length) {
+                this.uploadingFiles.push(input.files[0].name);
                 const Base64 = await this.convertToBase64(input.files[0]);
-                const res = await SDKClient.uploadFiles({
+                const { response } = await SDKClient.uploadFiles({
                     files: [
                         {
                             Base64,
@@ -219,7 +228,8 @@ export class CreateEmailComponent implements OnInit {
                         }
                     ]
                 });
-                this.email.Files.push({ Id: res[0].RelativePath, Name: res[0].name, Url: res[0].Url });
+
+                this.email.Files.push({ Id: response[0].RelativePath, Direction: 'OUT', Name: response[0].FileName, URL: response[0].Url });
                 this.uploadingFiles.pop();
             }
         } catch (e) {
@@ -253,7 +263,46 @@ export class CreateEmailComponent implements OnInit {
      * Select template for email
      * @param {MatSelectChange} html 
      */
-    selectTemplate(html: MatSelectChange): void {
-        this.email.Body = `${html.value} ${this.email.Body}`;
+    selectTemplate(html: string): void {
+        this.email.Body = `${html} ${this.email.Body}`;
     }
+
+
+    /**
+     * Set groups for selected department
+     * @param {String} departmentId Department's Id
+     */
+    setGroups(departmentId: string): void {
+        if (!this.availableTemplates.departments[departmentId]?.groups) {
+            SDKClient.getEmailTemplateGroups(departmentId).then(res => {
+                if (res.response && res.response.length) {
+                    this.availableTemplates.departments[departmentId][0].groups = groupBy(res.response, 'ID');
+                }
+            }).catch(err => {
+                console.error(err);
+                this.appUiService.showSnackbar('Something went wrong while fetching groups', 'failure');
+            });
+        }
+    }
+
+
+    /**
+     * Set Templates for the group
+     * @param {String} departmentId  selected department Id
+     * @param {String} groupId selected group Id
+     */
+    setTemplates(departmentId: string, groupId: string): void {
+        if (!this.availableTemplates.departments[departmentId]?.groups[groupId]) {
+            SDKClient.getEmailTemplates({ groupId, type: '' }).then(templateRes => {
+                if (templateRes.response && templateRes.response.length) {
+                    this.availableTemplates.departments[departmentId][0].groups[groupId][0].templates = groupBy(templateRes.response, 'ID');
+                }
+            }).catch(err => {
+                console.error(err);
+                this.appUiService.showSnackbar('Something went wrong while fetching templates', 'failure');
+            });
+        }
+    }
+
+
 }
