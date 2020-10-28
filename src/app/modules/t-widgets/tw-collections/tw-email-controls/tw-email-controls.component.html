@@ -43,7 +43,7 @@
         >
             <div class="header-controls my-8 px-12">
                 <div fxLayout fxLayoutGap="10px" fxLayoutAlign="end center">
-                    <ng-container *ngIf="currentInteraction.RouteReason === 'CheckerQueue'">
+                    <ng-container *ngIf="this.getInboxMessageReq.data[interactionId].RouteReason === 'CheckerQueue'">
                         <button
                             mat-raised-button
                             class="border-radius-20 animate__animated animate__slideInRight animate__faster"
@@ -61,7 +61,7 @@
                         </button>
                     </ng-container>
 
-                    <ng-container *ngIf="currentInteraction.RouteReason === 'MakerQueue'">
+                    <ng-container *ngIf="this.getInboxMessageReq.data[interactionId].RouteReason === 'MakerQueue'">
                         <button
                             *ngIf="!replyInfo"
                             mat-raised-button
@@ -136,19 +136,19 @@
                         </span>
                     </div>
                     <span fxLayout="row" fxLayoutAlign=" center">
-                        <mat-icon>list_alt</mat-icon> <span class="text-bold"> {{ currentInteraction.Email_Mailbox }} </span>
+                        <mat-icon>list_alt</mat-icon> <span class="text-bold"> {{ this.getInboxMessageReq.data[interactionId].Email_Mailbox }} </span>
                     </span>
                     <div fxLayout fxLayoutAlign="space-between" class="font-weight-700 mt-8">
-                        <span>{{ currentInteraction.AgentName }} ({{ currentInteraction.From }}) </span>
+                        <span>{{ this.getInboxMessageReq.data[interactionId].AgentName }} ({{ this.getInboxMessageReq.data[interactionId].From }}) </span>
                         <div>
-                            <span>{{ currentInteraction.CreatedTime | date: 'mediumDate' }}</span>
+                            <span>{{ this.getInboxMessageReq.data[interactionId].CreatedTime | date: 'mediumDate' }}</span>
                             <br />
-                            <span>{{ currentInteraction.CreatedTime | date: 'shortTime' }}</span>
+                            <span>{{ this.getInboxMessageReq.data[interactionId].CreatedTime | date: 'shortTime' }}</span>
                         </div>
                     </div>
 
                     <div fxLayout fxLayoutAlign="end" fxLayoutGap="5px" class="mt-12">
-                        <ng-container *ngIf="currentInteraction.RouteReason === 'MakerQueue'">
+                        <ng-container *ngIf="this.getInboxMessageReq.data[interactionId].RouteReason === 'MakerQueue'">
                             <button mat-flat-button class="border-radius-20" [disabled]="getInboxMessageReq.error">Transfer</button>
                             <!-- [disabled]="getInboxMessageReq.error" -->
                             <button mat-flat-button class="border-radius-20" (click)="showReplyEditor()" >
@@ -171,11 +171,11 @@
                         fxFlex="100"
                         fxLayout="row wrap"
                         fxLayoutGap="10px"
-                        [ngClass]="{ 'mt-20': currentInteraction.AttachmetList && currentInteraction.AttachmetList.length }"
+                        [ngClass]="{ 'mt-20': this.getInboxMessageReq.data[interactionId].AttachmetList && this.getInboxMessageReq.data[interactionId].AttachmetList.length }"
                     >
                         <mat-chip-list #chipList aria-label="file selection">
                             <!-- (click)="openFile(file.Url)" -->
-                            <mat-chip class="p-8" *ngFor="let file of currentInteraction.AttachmetList">
+                            <mat-chip class="p-8" *ngFor="let file of this.getInboxMessageReq.data[interactionId].AttachmetList">
                                 <mat-icon>attach_file</mat-icon>
                                 <div class="ml-8 my-0">
                                     <p class="m-0">{{ file.Name }}</p>
@@ -192,11 +192,11 @@
                     fusePerfectScrollbar
                     [fusePerfectScrollbarOptions]="{ suppressScrollX: true, suppressScrollY: true }"
                 >
-                    <span class="my-8">Subject : {{ currentInteraction.Subject }} </span>
+                    <span class="my-8">Subject : {{ this.getInboxMessageReq.data[interactionId].Subject }} </span>
                     <div class="email-content-body py-8 position-absolute w-100-p h-100-p">
-                        <div *ngIf="!getInboxMessageReq.loading && !getInboxMessageReq.error" [innerHtml]="currentInteraction?.Body"></div>
+                        <div *ngIf="!getInboxMessageReq.loading && !getInboxMessageReq.error" [innerHtml]="this.getInboxMessageReq.data[interactionId].Body"></div>
 
-                        <div *ngIf="getInboxMessageReq.loading" fxLayout fxLayoutAlign="center center" class="w-100-p h-100-p">
+                        <div *ngIf="getInboxMessageReq.loading" fxLayout fxLayoutAlign="center center" class="w-100-p h-30-p">
                             <mat-spinner></mat-spinner>
                         </div>
 

@@ -99,25 +99,6 @@ export class CreateEmailComponent implements OnInit {
      */
     availableTemplates = {
         departments: {},
-        setGroups: (departmentId: string) => {
-            SDKClient.getEmailTemplateGroups(departmentId).then(res => {
-                if (!this.availableTemplates.departments[departmentId]) {
-                    this.availableTemplates.departments[departmentId] = {
-                        groups: groupBy(res.response, 'GroupID'),
-                    };
-                }
-            });
-        },
-        setTemplates: (departmentId: string, groupId: string) => {
-            SDKClient.getEmailTemplates({ groupId, type: departmentId }).then(templateRes => {
-                this.availableTemplates.departments[departmentId].groups[groupId] = {
-                    templates: groupBy(templateRes.response, 'TemplateID'),
-                    setTemplate: (template: string) => {
-                        this.selectTemplate(template)
-                    }
-                };
-            });
-        }
     };
 
     /**
@@ -165,15 +146,12 @@ export class CreateEmailComponent implements OnInit {
         };
 
         SDKClient.getEmailTemplateDepartments().then(res => {
-            this.availableTemplates.departments = groupBy(res.response, 'DepartmentID');
+            this.availableTemplates.departments = groupBy(res.response, 'ID');
+            // this.availableTemplates.departments = res.response || [];
+        }).catch(err => {
+            console.error(err);
+            this.appUiService.showSnackbar('Something went wrong while fetching departments', 'failure');
         });
-        // SDKClient.getEmailTemplateGroups("")
-
-        // SDKClient.getEmailTemplates({
-        //     groupId: '',
-        //     type: '',
-        // });
-
     }
 
     /**
@@ -288,4 +266,41 @@ export class CreateEmailComponent implements OnInit {
     selectTemplate(html: string): void {
         this.email.Body = `${html} ${this.email.Body}`;
     }
+
+
+    /**
+     * Set groups for selected department
+     * @param {String} departmentId Department's Id
+     */
+    setGroups(departmentId: string): void {
+        if (!this.availableTemplates.departments[departmentId]?.groups) {
+            SDKClient.getEmailTemplateGroups(departmentId).then(res => {
+                if (res.response && res.response.length) {
+                    this.availableTemplates.departments[departmentId][0].groups = groupBy(res.response, 'ID');
+                }
+            }).catch(err => {
+                console.error(err);
+                this.appUiService.showSnackbar('Something went wrong while fetching groups', 'failure');
+            });
+        }
+    }
+
+
+    /**
+     * Set Templates for the group
+     * @param {String} departmentId  selected department Id
+     * @param {String} groupId selected group Id
+     */
+    setTemplates(departmentId: string, groupId: string): void {
+        SDKClient.getEmailTemplates({ groupId, type: '' }).then(templateRes => {
+            if (templateRes.response && templateRes.response.length) {
+                this.availableTemplates.departments[departmentId][0].groups[groupId][0].templates = groupBy(templateRes.response, 'ID');
+            }
+        }).catch(err => {
+            console.error(err);
+            this.appUiService.showSnackbar('Something went wrong while fetching templates', 'failure');
+        });
+    }
+
+
 }
