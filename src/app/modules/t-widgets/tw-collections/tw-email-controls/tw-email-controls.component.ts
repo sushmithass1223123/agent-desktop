@@ -10,12 +10,12 @@ import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
+import { EMAIL_DRAFT_SAVE_INTERVAL } from 'app/constants';
 import { InteractionRef, IWidget, ResData } from 'app/interfaces';
 import { CreateEmailInfo } from 'app/models';
-import { update } from 'lodash';
 import { interval, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
-import { IAgentData, IncomingEmailEvent, IResponse, SDK, SDKClient } from 'tmac-sdk';
+import { IAgentData, IncomingEmailEvent, IResponse, SDKClient } from 'tmac-sdk';
 
 interface Email extends Partial<IncomingEmailEvent> {
     Subject: string,
@@ -162,11 +162,14 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             this.fuseConfig = config;
         });
 
+        console.log(this.data.InteractionDetails);
+
         this._interactionManagerService.interactions.pipe(takeUntil(this.unsubscribeAll)).subscribe((interactions: InteractionRef[]) => {
             // filter out the textchat interaction
             this.interactionList = interactions.filter((i: InteractionRef) => i.type === 'email');
             if (this.interactionList.length) {
                 const interaction: IncomingEmailEvent = this.interactionList.find((x) => x.isActive)?.otherData;
+                console.log(interaction);
                 this.interactionId = interaction.InteractionID;
                 if (interaction) {
                     const { InteractionID, Subject, From, CreatedTime, SessionId, RouteReason, RecoveryData: { Email_Mailbox } } = interaction;
@@ -489,7 +492,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             });
         }
         if (!this.draftPolling) {
-            const polling = interval(10000);
+            const polling = interval(EMAIL_DRAFT_SAVE_INTERVAL);
             this.draftPolling = polling.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => this.saveEmailAsDraft());
         }
     }
@@ -545,4 +548,23 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     openFile(fileUrl: string): void {
         window.open(fileUrl);
     }
+
+
+    /**
+     * Marks currently selected email as spam
+     */
+    markAsSpam(): void {
+        const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
+        SDKClient.getEmarkEmailAsSpammailTemplates({
+            fromAddress: currentInteraction.From,
+            routeId: currentInteraction.RouteId,
+            sessionId: currentInteraction.SessionId
+        }).then(res => {
+            console.log(res);
+        }).catch(err => {
+            console.error(err);
+            this._appUIService.showSnackbar('Unable to spam the email', 'failure');
+        })
+    }
+
 }

@@ -63,6 +63,15 @@
 
                     <ng-container *ngIf="this.getInboxMessageReq.data[interactionId].RouteReason === 'MakerQueue'">
                         <button
+                            *ngIf="!replyInfo && this.getInboxMessageReq.data[interactionId].Spam"
+                            mat-raised-button
+                            class="border-radius-20 animate__animated animate__slideInRight animate__faster"
+                            (click)="markAsSpam();"
+                        >
+                            Mark As Spam
+                        </button>
+
+                        <button
                             *ngIf="!replyInfo"
                             mat-raised-button
                             class="border-radius-20 animate__animated animate__slideInRight animate__faster"
@@ -72,6 +81,16 @@
                             matTooltip="Close Interaction"
                         >
                             Close
+                        </button>
+
+                        
+                        <button
+                            *ngIf="replyInfo"
+                            mat-raised-button
+                            class="border-radius-20 animate__animated animate__slideInRight animate__faster"
+                            (click)="saveEmailAsDraft();closeEditor();"
+                        >
+                            Save As Draft
                         </button>
 
                         <button
