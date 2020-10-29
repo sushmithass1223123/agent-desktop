@@ -19,14 +19,16 @@
             [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
         >
             <avatar matTooltip="Uers" matTooltipPosition="after" matIcon="user"></avatar>
-            <avatar
-                *ngFor="let item of interactionList"
-                name="{{ item.user }}"
-                [ngClass]="item.status + ' ' + (item.interactionId === interactionId ? 'active' : '')"
-                matTooltip="{{ item.user }}"
-                matTooltipPosition="after"
-                (click)="selectInteraction(item)"
-            ></avatar>
+            <ng-container *ngIf="this.interactionList">
+                <avatar
+                    *ngFor="let item of this.interactionList | keyvalue"
+                    name="{{ item.value.user }}"
+                    [ngClass]="item.value.status + ' ' + (item.value.interactionId === interactionId ? 'active' : '')"
+                    matTooltip="{{ item.value.user }}"
+                    matTooltipPosition="after"
+                    (click)="selectInteraction(item.value)"
+                ></avatar>
+            </ng-container>
         </div>
         <div
             fxLayout="column"
@@ -43,7 +45,7 @@
         >
             <div class="header-controls my-8 px-12">
                 <div fxLayout fxLayoutGap="10px" fxLayoutAlign="end center">
-                    <ng-container *ngIf="this.getInboxMessageReq.data[interactionId].RouteReason === 'CheckerQueue'">
+                    <ng-container *ngIf="this.currentInteraction.RouteReason === 'CheckerQueue'">
                         <button
                             mat-raised-button
                             class="border-radius-20 animate__animated animate__slideInRight animate__faster"
@@ -61,12 +63,12 @@
                         </button>
                     </ng-container>
 
-                    <ng-container *ngIf="this.getInboxMessageReq.data[interactionId].RouteReason === 'MakerQueue'">
+                    <ng-container *ngIf="this.currentInteraction.RouteReason === 'MakerQueue'">
                         <button
-                            *ngIf="!replyInfo && this.getInboxMessageReq.data[interactionId].Spam"
+                            *ngIf="!replyInfo && this.currentInteraction.Spam"
                             mat-raised-button
                             class="border-radius-20 animate__animated animate__slideInRight animate__faster"
-                            (click)="markAsSpam();"
+                            (click)="markAsSpam()"
                         >
                             Mark As Spam
                         </button>
@@ -83,12 +85,11 @@
                             Close
                         </button>
 
-                        
                         <button
                             *ngIf="replyInfo"
                             mat-raised-button
                             class="border-radius-20 animate__animated animate__slideInRight animate__faster"
-                            (click)="saveEmailAsDraft();closeEditor();"
+                            (click)="saveEmailAsDraft(); closeEditor()"
                         >
                             Save As Draft
                         </button>
@@ -144,7 +145,7 @@
                 <div class="p-8" fxLayout="column">
                     <div fxLayout fxLayoutAlign="space-between" class="font-weight-700">
                         <span fxLayout="row" fxLayoutAlign=" center" matTooltip="Intent">
-                            <mat-icon>grading</mat-icon> <span class="text-bold">{{ intent }}</span>
+                            <mat-icon>grading</mat-icon> <span class="text-bold">{{ intent || 'NA' }}</span>
                         </span>
                         <span fxLayout="row" fxLayoutAlign=" center" matTooltip="Sentiment">
                             <mat-icon>person</mat-icon>
@@ -155,22 +156,25 @@
                         </span>
                     </div>
                     <span fxLayout="row" fxLayoutAlign=" center">
-                        <mat-icon>list_alt</mat-icon> <span class="text-bold"> {{ this.getInboxMessageReq.data[interactionId].Email_Mailbox }} </span>
+                        <mat-icon>list_alt</mat-icon>
+                        <span class="text-bold"> {{ this.currentInteraction.Email_Mailbox || 'NA' }} </span>
                     </span>
                     <div fxLayout fxLayoutAlign="space-between" class="font-weight-700 mt-8">
-                        <span>{{ this.getInboxMessageReq.data[interactionId].AgentName }} ({{ this.getInboxMessageReq.data[interactionId].From }}) </span>
+                        <span
+                            >{{ this.currentInteraction.AgentName }} ({{ this.currentInteraction.From }})
+                        </span>
                         <div>
-                            <span>{{ this.getInboxMessageReq.data[interactionId].CreatedTime | date: 'mediumDate' }}</span>
+                            <span>{{ this.currentInteraction.CreatedTime | date: 'mediumDate' }}</span>
                             <br />
-                            <span>{{ this.getInboxMessageReq.data[interactionId].CreatedTime | date: 'shortTime' }}</span>
+                            <span>{{ this.currentInteraction.CreatedTime | date: 'shortTime' }}</span>
                         </div>
                     </div>
 
                     <div fxLayout fxLayoutAlign="end" fxLayoutGap="5px" class="mt-12">
-                        <ng-container *ngIf="this.getInboxMessageReq.data[interactionId].RouteReason === 'MakerQueue'">
+                        <ng-container *ngIf="this.currentInteraction.RouteReason === 'MakerQueue'">
                             <button mat-flat-button class="border-radius-20" [disabled]="getInboxMessageReq.error">Transfer</button>
-                            <!-- [disabled]="getInboxMessageReq.error" -->
-                            <button mat-flat-button class="border-radius-20" (click)="showReplyEditor()" >
+
+                            <button mat-flat-button class="border-radius-20" (click)="showReplyEditor()" [disabled]="getInboxMessageReq.error">
                                 Reply
                             </button>
                             <button
@@ -190,11 +194,15 @@
                         fxFlex="100"
                         fxLayout="row wrap"
                         fxLayoutGap="10px"
-                        [ngClass]="{ 'mt-20': this.getInboxMessageReq.data[interactionId].AttachmetList && this.getInboxMessageReq.data[interactionId].AttachmetList.length }"
+                        [ngClass]="{
+                            'mt-20':
+                                this.currentInteraction.AttachmetList &&
+                                this.currentInteraction.AttachmetList.length
+                        }"
                     >
                         <mat-chip-list #chipList aria-label="file selection">
                             <!-- (click)="openFile(file.Url)" -->
-                            <mat-chip class="p-8" *ngFor="let file of this.getInboxMessageReq.data[interactionId].AttachmetList">
+                            <mat-chip class="p-8" *ngFor="let file of this.currentInteraction.AttachmetList">
                                 <mat-icon>attach_file</mat-icon>
                                 <div class="ml-8 my-0">
                                     <p class="m-0">{{ file.Name }}</p>
@@ -206,14 +214,13 @@
                         </mat-chip-list>
                     </div>
                 </div>
-                <div
-                    class="email-content h-100-p"
-                    fusePerfectScrollbar
-                    [fusePerfectScrollbarOptions]="{ suppressScrollX: true, suppressScrollY: true }"
-                >
-                    <span class="my-8">Subject : {{ this.getInboxMessageReq.data[interactionId].Subject }} </span>
-                    <div class="email-content-body py-8 position-absolute w-100-p h-100-p">
-                        <div *ngIf="!getInboxMessageReq.loading && !getInboxMessageReq.error" [innerHtml]="this.getInboxMessageReq.data[interactionId].Body"></div>
+                <div class="email-content">
+                    <span class="my-8">Subject : {{ this.currentInteraction.Subject }} </span>
+                    <div class="email-content-body py-8 w-100-p">
+                        <div
+                            *ngIf="!getInboxMessageReq.loading && !getInboxMessageReq.error"
+                            [innerHtml]="this.currentInteraction.Body"
+                        ></div>
 
                         <div *ngIf="getInboxMessageReq.loading" fxLayout fxLayoutAlign="center center" class="w-100-p h-30-p">
                             <mat-spinner></mat-spinner>

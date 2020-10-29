@@ -10,25 +10,13 @@ import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { EMAIL_DRAFT_SAVE_INTERVAL } from 'app/constants';
+import { COMMON_ERR_MESSAGE, EMAIL_DRAFT_SAVE_INTERVAL } from 'app/constants';
 import { InteractionRef, IWidget, ResData } from 'app/interfaces';
 import { CreateEmailInfo } from 'app/models';
-import { interval, Subscription } from 'rxjs';
+import { interval, Observable, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
-import { IAgentData, IncomingEmailEvent, IResponse, SDKClient } from 'tmac-sdk';
-
-interface Email extends Partial<IncomingEmailEvent> {
-    Subject: string,
-    From: string,
-    SessionId: string,
-    RouteReason: string,
-    Email_Mailbox: string,
-    Body?: string,
-    AttachmetList?: string,
-    ToList?: string,
-    CCList?: string
-}
-
+import { distinctUntilChanged, filter, map, mergeAll } from 'rxjs/operators';
+import { IAgentData, IResponse, SDKClient } from 'tmac-sdk';
 
 /**
  * Email controls component
@@ -53,11 +41,10 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * stateful getInboxMessageReq request
      */
-    getInboxMessageReq: ResData<Record<string, Email> | null> = {
+    getInboxMessageReq: ResData<null> = {
         error: false,
         loading: false,
         msg: '',
-        data: null
     };
 
     /**
@@ -85,9 +72,18 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Interaction list
      */
-    interactionList: InteractionRef[];
+    // interactionList: Observable<InteractionRef[]>;
+    interactionList: InteractionRef[] = [];
     /**
-     * Current intreaction
+     * Current interaction
+     */
+    currentInteraction: any = {};
+    /**
+     * Email body responses
+     */
+    emailBodies: Record<string, any> = {};
+    /**
+     * Current intreaction id
      */
     interactionId: number;
     /**
@@ -162,34 +158,55 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             this.fuseConfig = config;
         });
 
-        console.log(this.data.InteractionDetails);
+        const emailInteractionObs: Observable<InteractionRef> = this._interactionManagerService.interactions.pipe(
+            takeUntil(this.unsubscribeAll),
+            mergeAll(),
+            filter((i: InteractionRef) => i.type === 'email'),
+        );
 
-        this._interactionManagerService.interactions.pipe(takeUntil(this.unsubscribeAll)).subscribe((interactions: InteractionRef[]) => {
-            // filter out the textchat interaction
-            this.interactionList = interactions.filter((i: InteractionRef) => i.type === 'email');
-            if (this.interactionList.length) {
-                const interaction: IncomingEmailEvent = this.interactionList.find((x) => x.isActive)?.otherData;
-                console.log(interaction);
-                this.interactionId = interaction.InteractionID;
-                if (interaction) {
-                    const { InteractionID, Subject, From, CreatedTime, SessionId, RouteReason, RecoveryData: { Email_Mailbox } } = interaction;
-                    this.getInboxMessageReq = {
-                        error: false,
-                        loading: true,
-                        data: {
-                            ...(this.getInboxMessageReq.data || {}), [InteractionID]: {
-                                Subject,
-                                CreatedTime,
-                                From,
-                                SessionId,
-                                RouteReason,
-                                Email_Mailbox,
-                            }
-                        }
-                    };
-                    this.getFullEmail(SessionId, InteractionID);
+        emailInteractionObs.pipe(
+            map(x => {
+                if (!this.interactionList.find(iRef => x.interactionId === iRef.interactionId)) {
+                    this.interactionList.push(x);
                 }
-            }
+                return x;
+            }),
+            filter(x => x.isActive),
+            distinctUntilChanged((prev, curr) => (prev.interactionId === curr.interactionId) && !this.getInboxMessageReq.loading),
+            map(async (interactionVal) => {
+                let interaction: any = interactionVal.otherData;
+                if (interaction) {
+                    this.interactionId = interaction.InteractionID;
+                    // const bodyExists = !!this.getInboxMessageReq.data[interaction.InteractionID]?.Body;
+                    // if (!bodyExists) {
+                    try {
+                        if (!this.emailBodies[interaction.InteractionID]) {
+                            this.getInboxMessageReq = { error: false, loading: true };
+                            const res = await (await SDKClient.getInboxEmail(interaction.SessionId)).response;
+                            this.emailBodies[interaction.InteractionID] = {
+                                Body: this.domSanitizer.bypassSecurityTrustHtml(res.Body),
+                                AttachmetList: res?.AttachmetList ? JSON.parse(res?.AttachmetList) : []
+                            };
+                        }
+                        interaction = {
+                            ...interaction,
+                            ...this.emailBodies[interaction.InteractionID]
+                        };
+                        this.getInboxMessageReq = { error: false, loading: false };
+                    } catch (err) {
+                        console.error(err);
+                        this.getInboxMessageReq = {
+                            error: true,
+                            loading: false,
+                            msg: COMMON_ERR_MESSAGE
+                        };
+                    }
+                    // }
+                }
+                return interaction;
+            })
+        ).subscribe(async x => {
+            this.currentInteraction = await x;
         });
 
         // set the user info
@@ -218,30 +235,26 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     getFullEmail(SessionId: string, InteractionID: number): void {
         SDKClient.getInboxEmail(SessionId)
             .then((res) => {
+                this.getInboxMessageReq = { error: false, loading: true };
                 if (!res) {
                     throw Error('Unexpected response from server');
                 }
-                const updatedEmail = {
-                    ...(this.getInboxMessageReq.data[InteractionID] || {}),
-                    ...res.response,
+                this.emailBodies[InteractionID] = {
                     Body: this.domSanitizer.bypassSecurityTrustHtml(res.response.Body),
                     AttachmetList: res.response?.AttachmetList ? JSON.parse(res.response?.AttachmetList) : []
                 };
-                this.getInboxMessageReq = {
-                    error: false,
-                    loading: false,
-                    data: {
-                        ...(this.getInboxMessageReq.data || {}),
-                        [InteractionID]: updatedEmail
-                    }
+                this.currentInteraction = {
+                    ...this.currentInteraction,
+                    ...this.emailBodies[InteractionID]
                 };
+                this.getInboxMessageReq = { error: false, loading: false };
             })
             .catch((e) => {
                 console.error(e);
                 this.getInboxMessageReq = {
-                    ...this.getInboxMessageReq,
                     error: true,
                     loading: false,
+                    msg: COMMON_ERR_MESSAGE
                 };
             });
     }
@@ -252,7 +265,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     closeEmail(btn: MatButton): void {
         // confirm close interaction
-        const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
+        // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
+        const currentInteraction = this.currentInteraction;
         const confirmDialogRef = this._appUIService.showAppConfirmDialog('closeInteraction');
         confirmDialogRef.afterClosed().subscribe((dialogResult: boolean) => {
             if (dialogResult) {
@@ -266,7 +280,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                     sessionId: currentInteraction.SessionId,
                     status: 'Close'
                 })
-                    .then(() => this.closeInteraction(btn))
+                    .then(() => {
+                        this.closeInteraction(btn);
+                    })
                     .catch(() => {
                         this._appUIService.showSnackbar('Close interaction failed!', 'failure');
                     });
@@ -311,11 +327,6 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     public selectInteraction(item: InteractionRef): void {
         this.replyInfo = null;
-        // Object.keys(this.getInboxMessageReq.data).forEach(x => {
-        //     if (this.getInboxMessageReq.data[x].InteractionID === item.interactionId) {
-        //         currentInteraction = this.getInboxMessageReq.data[x];
-        //     }
-        // });
 
         // if same interaction is seleted then return
         if (this.interactionId === item.interactionId) {
@@ -336,7 +347,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Show reply email form
      */
     showReplyEditor(): void {
-        const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
+        // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
+        const currentInteraction = this.currentInteraction;
         const { Body, Subject, From, ToList, CreatedTime } = currentInteraction;
         this.replyInfo = {
             BCC: [],
@@ -360,7 +372,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Show reply all email editor
      */
     showReplyAllEmailEditor(): void {
-        const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
+        // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
+        const currentInteraction = this.currentInteraction;
         const { Body, Subject, From, CCList, CreatedTime, ToList } = currentInteraction;
         this.replyInfo = {
             BCC: [],
@@ -384,7 +397,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Show forward email editor
      */
     showForwardEmailEditor(): void {
-        const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
+        // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
+        const currentInteraction = this.currentInteraction;
         const { Subject, Body, From, CreatedTime, ToList } = currentInteraction;
         this.replyInfo = {
             BCC: [],
@@ -408,7 +422,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Sends Email as Maker
      */
     sendEmailAsMaker(): void {
-        const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
+        // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
+        const currentInteraction = this.currentInteraction;
         const { BCC, CC, To, Subject, Files, Body } = this.createEmailRef.email;
         if (!To.length) {
             this._appUIService.showSnackbar('Please add a recipient', 'failure');
@@ -444,7 +459,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Sends email as Checker
      */
     sendEmailAsChecker(): void {
-        const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
+        // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
+        const currentInteraction = this.currentInteraction;
         const { AttachmetList, Body, ToList, CCList, Subject, } = currentInteraction;
         SDKClient.sendEmail({
             attachmentFileList: AttachmetList && AttachmetList.length ? JSON.stringify(AttachmetList) : '',
@@ -476,7 +492,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Save email as Draft
      */
     saveEmailAsDraft(): void {
-        const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
+        // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
+        const currentInteraction = this.currentInteraction;
         if (this.createEmailRef) {
             const { BCC, CC, To, Subject, Body, Files } = this.createEmailRef.email;
             SDKClient.saveEmailDraft({
@@ -509,7 +526,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Rejects email, only available for checkers
      */
     rejectEmail(): void {
-        const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
+        // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
+        const currentInteraction = this.currentInteraction;
         const dialogRef = this._appUIService.showCustomDialog('prompt', 'Enter the comments', 'Interaction Comment');
         dialogRef.afterClosed().subscribe((comment) => {
             if (comment) {
@@ -554,7 +572,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Marks currently selected email as spam
      */
     markAsSpam(): void {
-        const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
+        // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
+        const currentInteraction = this.currentInteraction;
         SDKClient.getEmarkEmailAsSpammailTemplates({
             fromAddress: currentInteraction.From,
             routeId: currentInteraction.RouteId,
@@ -564,7 +583,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         }).catch(err => {
             console.error(err);
             this._appUIService.showSnackbar('Unable to spam the email', 'failure');
-        })
+        });
     }
 
 }
