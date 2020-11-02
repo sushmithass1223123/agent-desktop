@@ -450,7 +450,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 this.draftPolling?.unsubscribe();
             })
             .catch((err) => {
-                console.log({ err });
+                console.error({ err });
                 this._appUIService.showSnackbar('Something went wrong', 'failure');
             });
     }
@@ -483,7 +483,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 this.draftPolling?.unsubscribe();
             })
             .catch((err) => {
-                console.log({ err });
+                console.error({ err });
                 this._appUIService.showSnackbar('Something went wrong', 'failure');
             });
     }
@@ -574,12 +574,14 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     markAsSpam(): void {
         // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
         const currentInteraction = this.currentInteraction;
-        SDKClient.getEmarkEmailAsSpammailTemplates({
+        const loader = this._appUIService.showSnackbar('Spamming email', 'loading');
+        SDKClient.markEmailAsSpam({
             fromAddress: currentInteraction.From,
             routeId: currentInteraction.RouteId,
-            sessionId: currentInteraction.SessionId
+            sessionId: currentInteraction.SessionId,
         }).then(res => {
-            console.log(res);
+            loader.dismiss();
+            this._appUIService.showSnackbar('Email marked as spam');
         }).catch(err => {
             console.error(err);
             this._appUIService.showSnackbar('Unable to spam the email', 'failure');

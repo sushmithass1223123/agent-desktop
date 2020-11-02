@@ -19,9 +19,9 @@
             [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
         >
             <avatar matTooltip="Uers" matTooltipPosition="after" matIcon="user"></avatar>
-            <ng-container *ngIf="this.interactionList">
+            <ng-container *ngIf="interactionList">
                 <avatar
-                    *ngFor="let item of this.interactionList | keyvalue"
+                    *ngFor="let item of interactionList | keyvalue"
                     name="{{ item.value.user }}"
                     [ngClass]="item.value.status + ' ' + (item.value.interactionId === interactionId ? 'active' : '')"
                     matTooltip="{{ item.value.user }}"
@@ -45,7 +45,7 @@
         >
             <div class="header-controls my-8 px-12">
                 <div fxLayout fxLayoutGap="10px" fxLayoutAlign="end center">
-                    <ng-container *ngIf="this.currentInteraction.RouteReason === 'CheckerQueue'">
+                    <ng-container *ngIf="currentInteraction.RouteReason === 'CheckerQueue'">
                         <button
                             mat-raised-button
                             class="border-radius-20 animate__animated animate__slideInRight animate__faster"
@@ -62,10 +62,9 @@
                             Reject
                         </button>
                     </ng-container>
-
-                    <ng-container *ngIf="this.currentInteraction.RouteReason === 'MakerQueue'">
+                    <ng-container *ngIf="currentInteraction.RouteReason === 'MakerQueue'">
                         <button
-                            *ngIf="!replyInfo && this.currentInteraction.Spam"
+                            *ngIf="!replyInfo && currentInteraction.IsEmailProbableSpam"
                             mat-raised-button
                             class="border-radius-20 animate__animated animate__slideInRight animate__faster"
                             (click)="markAsSpam()"
@@ -157,21 +156,19 @@
                     </div>
                     <span fxLayout="row" fxLayoutAlign=" center">
                         <mat-icon>list_alt</mat-icon>
-                        <span class="text-bold"> {{ this.currentInteraction.Email_Mailbox || 'NA' }} </span>
+                        <span class="text-bold"> {{ currentInteraction.Email_Mailbox || 'NA' }} </span>
                     </span>
                     <div fxLayout fxLayoutAlign="space-between" class="font-weight-700 mt-8">
-                        <span
-                            >{{ this.currentInteraction.AgentName }} ({{ this.currentInteraction.From }})
-                        </span>
+                        <span>{{ currentInteraction.AgentName }} ({{ currentInteraction.From }}) </span>
                         <div>
-                            <span>{{ this.currentInteraction.CreatedTime | date: 'mediumDate' }}</span>
+                            <span>{{ currentInteraction.CreatedTime | date: 'mediumDate' }}</span>
                             <br />
-                            <span>{{ this.currentInteraction.CreatedTime | date: 'shortTime' }}</span>
+                            <span>{{ currentInteraction.CreatedTime | date: 'shortTime' }}</span>
                         </div>
                     </div>
 
                     <div fxLayout fxLayoutAlign="end" fxLayoutGap="5px" class="mt-12">
-                        <ng-container *ngIf="this.currentInteraction.RouteReason === 'MakerQueue'">
+                        <ng-container *ngIf="currentInteraction.RouteReason === 'MakerQueue'">
                             <button mat-flat-button class="border-radius-20" [disabled]="getInboxMessageReq.error">Transfer</button>
 
                             <button mat-flat-button class="border-radius-20" (click)="showReplyEditor()" [disabled]="getInboxMessageReq.error">
@@ -195,14 +192,12 @@
                         fxLayout="row wrap"
                         fxLayoutGap="10px"
                         [ngClass]="{
-                            'mt-20':
-                                this.currentInteraction.AttachmetList &&
-                                this.currentInteraction.AttachmetList.length
+                            'mt-20': currentInteraction.AttachmetList && currentInteraction.AttachmetList.length
                         }"
                     >
                         <mat-chip-list #chipList aria-label="file selection">
                             <!-- (click)="openFile(file.Url)" -->
-                            <mat-chip class="p-8" *ngFor="let file of this.currentInteraction.AttachmetList">
+                            <mat-chip class="p-8" *ngFor="let file of currentInteraction.AttachmetList">
                                 <mat-icon>attach_file</mat-icon>
                                 <div class="ml-8 my-0">
                                     <p class="m-0">{{ file.Name }}</p>
@@ -215,12 +210,9 @@
                     </div>
                 </div>
                 <div class="email-content">
-                    <span class="my-8">Subject : {{ this.currentInteraction.Subject }} </span>
+                    <span class="my-8">Subject : {{ currentInteraction.Subject }} </span>
                     <div class="email-content-body py-8 w-100-p">
-                        <div
-                            *ngIf="!getInboxMessageReq.loading && !getInboxMessageReq.error"
-                            [innerHtml]="this.currentInteraction.Body"
-                        ></div>
+                        <div *ngIf="!getInboxMessageReq.loading && !getInboxMessageReq.error" [innerHtml]="currentInteraction.Body"></div>
 
                         <div *ngIf="getInboxMessageReq.loading" fxLayout fxLayoutAlign="center center" class="w-100-p h-30-p">
                             <mat-spinner></mat-spinner>
