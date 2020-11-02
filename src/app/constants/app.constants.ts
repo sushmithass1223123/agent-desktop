@@ -274,3 +274,8 @@ export const AGENT_FEATURES_MAP = {
         Label: 'View Details'
     }
 };
+
+/**
+ * Duration interval for saving email as draft in milliseconds
+ */
+export const EMAIL_DRAFT_SAVE_INTERVAL = 20000;

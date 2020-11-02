@@ -95,38 +95,36 @@
             <ng-template matMenuContent>
                 <ng-container *ngFor="let dept of availableTemplates.departments | keyvalue">
                     <button mat-menu-item [matMenuTriggerFor]="groupMenu" (menuOpened)="setGroups(dept.key)">
-                        {{ dept.value[0].Name }}
+                        {{ dept.value.Name }}
                     </button>
                     <mat-menu #groupMenu="matMenu">
                         <ng-template matMenuContent>
-                            <ng-container *ngIf="dept.value[0].groups">
+                            <ng-container *ngIf="dept.value.groups">
                                 <button
                                     mat-menu-item
                                     [matMenuTriggerFor]="templateMenu"
-                                    *ngFor="let group of dept.value[0].groups | keyvalue"
-                                    (menuOpened)="setTemplates(dept.value[0].ID, group.key)"
+                                    *ngFor="let group of dept.value.groups | keyvalue"
+                                    (menuOpened)="setTemplates(dept.value.ID, group.key)"
                                 >
-                                    {{ group.value[0].Name }}
+                                    {{ group.value.Name }}
                                     <mat-menu #templateMenu="matMenu">
                                         <ng-template matMenuContent>
-                                            <ng-container *ngIf="group.value[0].templates">
+                                            <ng-container *ngIf="group.value.templates">
                                                 <button
                                                     mat-menu-item
-                                                    *ngFor="let template of group.value[0].templates | keyvalue"
+                                                    *ngFor="let template of group.value.templates | keyvalue"
                                                     (menuOpened)="selectTemplate(template)"
-                                                    (click)="selectTemplate(template.value[0].BodyHTML)"
+                                                    (click)="selectTemplate(template.value.BodyHTML)"
                                                 >
-                                                    {{ template.value[0].Name }}
+                                                    {{ template.value.Name }}
                                                 </button>
                                             </ng-container>
-                                            <button mat-menu-item disabled *ngIf="!group.value[0].templates">
-                                                No templates for this group
-                                            </button>
+                                            <button mat-menu-item disabled *ngIf="!group.value.templates">No templates for this group</button>
                                         </ng-template>
                                     </mat-menu>
                                 </button>
                             </ng-container>
-                            <button mat-menu-item disabled *ngIf="!dept.value[0].groups">No groups for this department</button>
+                            <button mat-menu-item disabled *ngIf="!dept.value.groups">No groups for this department</button>
                         </ng-template>
                     </mat-menu>
                 </ng-container>
@@ -134,8 +132,8 @@
         </mat-menu>
 
         <button mat-button [matMenuTriggerFor]="departmentMenu">
-            Choose Templates
-            <mat-icon>more_vert</mat-icon>
+            <span class="mr-4"> Choose Template </span>
+            <mat-icon>description</mat-icon>
         </button>
         <!-- <mat-form-field class="custom select-box w-50-p" appearance="outline">
             <mat-select placeholder="Templates" (selectionChange)="selectTemplate($event)">
