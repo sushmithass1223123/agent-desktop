@@ -8,6 +8,9 @@ import { cloneDeep } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 import { IncomingCallEvent, InteractionClosedEvent, OutgoingCallEvent } from 'tmac-sdk';
 
+/**
+ * Voice content component
+ */
 @Component({
     selector: 'twc-voice',
     templateUrl: './twc-voice.component.html',

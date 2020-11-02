@@ -299,19 +299,15 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         SDKClient.events.on('CallDisconnectedEvent', this.CallDisconnectedEvent);
         SDKClient.events.on('CallHoldEvent', this.CallHoldEvent);
         SDKClient.events.on('CallHoldReconnectEvent', this.CallHoldReconnectEvent);
-
         SDKClient.events.on('CallTransferInitiatedEvent', this.CallTransferInitiatedEvent);
         SDKClient.events.on('CallTransferLineDisconnectEvent', this.CallTransferLineDisconnectEvent);
         SDKClient.events.on('CallTransferRemoteConnectedEvent', this.CallTransferRemoteConnectedEvent);
-
         SDKClient.events.on('CallConferenceInitiatedEvent', this.CallConferenceInitiatedEvent);
         SDKClient.events.on('CallConferenceCompletedEvent', this.CallConferenceCompletedEvent);
         SDKClient.events.on('CallConferenceLineDisconnectEvent', this.CallConferenceLineDisconnectEvent);
         SDKClient.events.on('CallConferenceRemoteConnectedEvent', this.CallConferenceRemoteConnectedEvent);
-
         SDKClient.events.on('MediaServerEvent', this.MediaServerEvent);
         SDKClient.events.on('VoiceCannedResponseEvent', this.VoiceCannedResponseEvent);
-
         SDKClient.events.on('CallerIntentEvent', this.CallerIntentEvent);
         SDKClient.events.on('IVRDataEvent', this.IVRDataEvent);
     }
@@ -327,22 +323,17 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         SDKClient.events.off('CallDisconnectedEvent', this.CallDisconnectedEvent);
         SDKClient.events.off('CallHoldEvent', this.CallHoldEvent);
         SDKClient.events.off('CallHoldReconnectEvent', this.CallHoldReconnectEvent);
-
         SDKClient.events.off('CallTransferInitiatedEvent', this.CallTransferInitiatedEvent);
         SDKClient.events.off('CallTransferLineDisconnectEvent', this.CallTransferLineDisconnectEvent);
         SDKClient.events.off('CallTransferRemoteConnectedEvent', this.CallTransferRemoteConnectedEvent);
-
         SDKClient.events.off('CallConferenceInitiatedEvent', this.CallConferenceInitiatedEvent);
         SDKClient.events.off('CallConferenceCompletedEvent', this.CallConferenceCompletedEvent);
         SDKClient.events.off('CallConferenceLineDisconnectEvent', this.CallConferenceLineDisconnectEvent);
         SDKClient.events.off('CallConferenceRemoteConnectedEvent', this.CallConferenceRemoteConnectedEvent);
-
         SDKClient.events.off('MediaServerEvent', this.MediaServerEvent);
         SDKClient.events.off('VoiceCannedResponseEvent', this.VoiceCannedResponseEvent);
-
         SDKClient.events.off('CallerIntentEvent', this.CallerIntentEvent);
         SDKClient.events.off('IVRDataEvent', this.IVRDataEvent);
-
     }
 
     /**

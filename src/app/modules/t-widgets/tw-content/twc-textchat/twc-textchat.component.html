@@ -7,7 +7,7 @@
     <div class="tw-interaction tw-widget-container" [ngClass]="item.interactionId === activeInteraction ? 'active' : ''">
         <div fxFill fxFlex fxLayout="row wrap" fxLayoutAlign=" none">
             <tw-template
-                fxFlex.gt-md="33"
+                [fxFlex.gt-md]="item.widgets.dynamic.length > 0 ? 33 : 100"
                 class="static-widget-grid"
                 *ngIf="item.widgets.static.length > 0"
                 [widgets]="item.widgets.static"

@@ -3,7 +3,7 @@ import { Component, Inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } fr
 import { MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatRow, MatTableDataSource } from '@angular/material/table';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
@@ -130,6 +130,19 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
      */
     selectedItem: string;
     /**
+     * Selected mat table row
+     */
+    selectedRow: {
+        /**
+         * Type of table
+         */
+        type: string;
+        /**
+         * Selected row
+         */
+        row: any;
+    };
+    /**
      * Comments ref
      */
     comments: string;
@@ -165,6 +178,10 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
      * Main action tooltip
      */
     actionTooltip: string;
+    /**
+     * Disable input flag
+     */
+    disableInput: boolean;
 
     /**
      * Constructor 
@@ -227,20 +244,24 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 this.actionTooltip = 'Consult';
                 break;
             case 'transferChat':
-                this.icon = '';
+                this.disableInput = true;
+                this.icon = 'forward';
                 this.showComments = true;
                 this.actionTooltip = 'Consult';
                 break;
             case 'conferenceChat':
+                this.disableInput = true;
                 this.icon = 'group_add';
                 this.showComments = true;
                 this.actionTooltip = 'Consult';
                 break;
             case 'transferEmail':
+                this.disableInput = true;
                 this.icon = 'forward_to_inbox';
                 this.actionTooltip = 'Transfer';
                 break;
             case 'transferFax':
+                this.disableInput = true;
                 this.icon = 'forward';
                 this.actionTooltip = 'Transfer';
                 break;
@@ -373,7 +394,39 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         }
         // if blind transfer
         else {
+            // TODO:: to implement blind transfer
+        }
+    }
 
+    /**
+     * To transfer a chat to agent/skill
+     * 
+     * @param {boolean} consult 
+     */
+    private transferChat(consult: boolean): void {
+        this.loading = true;
+        if (this.selectedRow?.type === 'agent') {
+            // if consault transfer
+            if (consult) {
+                SDKClient.sendTextChatTransferNotification({
+                    comment: this.comments,
+                    interactionId: this.interactionId.toString(),
+                    otherData: '',
+                    toAgentId: this.selectedItem,
+                    toTmacServer: this.selectedRow.row.TmacServer
+                });
+            }
+            else {
+
+            }
+        }
+        else if (this.selectedRow?.type === 'skill') {
+            // TODO:: implement skill transfer
+        }
+        else {
+            // no row selected
+            this._appUIService.showSnackbar('Error: No row selected to transfer chat', 'failure');
+            this.close();
         }
     }
 
@@ -432,6 +485,8 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         // clear skill filter
         this.clearSkillFilter();
         this.clearSelected();
+        // assign the selected row
+        this.selectedRow = null;
     }
 
     /**
@@ -559,6 +614,11 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                     this.agentListTable.tableData.selection.select(row);
                     // assign the selected item
                     this.selectedItem = source === 'agentId' ? row.LoginID : row.StationID;
+                    // assign the selected row
+                    this.selectedRow = {
+                        type: 'agent',
+                        row: row
+                    };
                 }
                 else {
                     this._appUIService.showSnackbar(`Agent ${row.AgentName} is not in valid state`, 'failure');
@@ -604,6 +664,11 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                     this.skillListTable.tableData.selection.select(row);
                     // assign the selected item
                     this.selectedItem = source === 'skill' ? row.ID : row.VDN;
+                    // assign the selected row
+                    this.selectedRow = {
+                        type: 'skill',
+                        row: row
+                    };
                 }
                 else {
                     this._appUIService.showSnackbar(`Failed to get skill ${row.ID} status`, 'failure');
@@ -646,6 +711,9 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 break;
             case 'transferCall':
                 this.transferCall(consult);
+                break;
+            case 'transferChat':
+                this.transferChat(consult);
                 break;
             default:
                 this._appUIService.showSnackbar('Error: No action selected to execute', 'failure');

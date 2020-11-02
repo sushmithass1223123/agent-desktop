@@ -19,6 +19,7 @@ import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-b
 import { FusePerfectScrollbarDirective } from '@fuse/directives/fuse-perfect-scrollbar/fuse-perfect-scrollbar.directive';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
+import { AgentSkillListComponent } from '@modules/shared/components';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
@@ -26,7 +27,7 @@ import { ContentPageService } from '@services/content-page.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { ChatTranscripts, InteractionRef, IWidget } from 'app/interfaces';
+import { AgentSkillListData, ChatTranscripts, InteractionRef, IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { map } from 'lodash';
 import * as moment from 'moment';
@@ -54,6 +55,9 @@ import {
     TUtils
 } from 'tmac-sdk';
 
+/**
+ * Chat control component
+ */
 @Component({
     selector: 'tw-chat-controls',
     templateUrl: './tw-chat-controls.component.html',
@@ -61,45 +65,146 @@ import {
     encapsulation: ViewEncapsulation.None
 })
 export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, OnDestroy, AfterViewInit {
+    /**
+     * To hold all the data related to this widget from the config
+     */
     @Input() data: IWidget;
-
+    /**
+     * App config
+     */
     appConfig: any;
-
+    /**
+     * Fuse config
+     */
     fuseConfig: FuseConfig;
-
+    /**
+     * To emit maximize event on widget maximize
+     */
     @Output() maximizeEvent = new EventEmitter();
+    /**
+     * To emit float event on widget maximize
+     */
     @Output() floatEvent = new EventEmitter();
+    /**
+     * To emit collapse event on widget maximize
+     */
     @Output() collapseEvent = new EventEmitter();
-
+    /**
+     * Widget maximized flag
+     */
     maximized: boolean;
+    /**
+     * Total interaction list
+     */
     interactionList: InteractionRef[];
+    /**
+     * Current interaction ID
+     */
     interactionId: number;
+    /**
+     * Agent ref
+     */
     user: IAgentData;
+    /**
+     * Reply input ref
+     */
     replyInput: any;
+    /**
+     * Current interaction session ID
+     */
     sessionID = 'NA';
+    /**
+     * Interaction start time
+     */
     startTime: Date;
+    /**
+     * Interaction duration
+     */
     duration: number;
+    /**
+     * Duration stop timer subject
+     */
     stopTimer = new Subject();
+    /**
+     * Interaction status
+     */
     status = 'NA';
+    /**
+     * Interaction intent
+     */
     intent = 'NA';
+    /**
+     * Conference type of interaction
+     */
     conferenceType = '';
+    /**
+     * Conference agent list
+     */
     conferenceAgentList: {
+        /**
+         * Agent ID of agent connected
+         */
         AgentId: string;
+        /**
+         * Agent name of agent connected
+         */
         AgentName: string;
+        /**
+         * Conference type of agent connected
+         */
         ConferenceType: string;
+        /**
+         * Tmac Server ID of agent connected
+         */
         TmacServer: string;
+        /**
+         * Connected agent is bot flag
+         */
         IsBotAgent: boolean;
     }[] = [];
+    /**
+     * To hold interaction chat transcripts
+     */
     chatTranscripts: ChatTranscripts[] = [];
+    /**
+     * Customer name ref
+     */
     customerName = 'Customer';
+    /**
+     * AV channel ref
+     */
     avConn: AVChannel;
+    /**
+     * AV call widget ref
+     */
     callWidget: IWidget;
+    /**
+     * Flag to disable AV escalate buttons
+     */
     disableAV: boolean;
+    /**
+     * File upload URL
+     */
     fileUploadUrl: any;
+    /**
+     * Interaction channel
+     */
     channel: string;
+    /**
+     * Social media manager flag
+     */
     isSMM: boolean;
+    /**
+     * Flag to show auto freeze button
+     */
     showAutoFreeze: boolean;
+    /**
+     * Interaction bargeIn by supervisor flag
+     */
     supervisorInit: boolean;
+    /**
+     * COnfirmation mat dialog ref
+     */
     confirmDialogRef: MatDialogRef<any, any>;
     /**
      * Bot connected to chat flag
@@ -121,9 +226,17 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * Flag to show emoji overlay
      */
     showEmojiOverlay = false;
-
+    /**
+     * Fuse scrollbar children directive ref
+     */
     @ViewChildren(FusePerfectScrollbarDirective) directiveScrolls: QueryList<FusePerfectScrollbarDirective>;
+    /**
+     * Reply input children ref
+     */
     @ViewChildren('replyInput') replyInputField: any;
+    /**
+     * Reply form ref
+     */
     @ViewChild('replyForm') replyForm: NgForm;
 
     /**
@@ -131,18 +244,18 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * @param {FuseConfigService} _fuseConfigService
      * @param {InteractionManagerService} _interactionManagerService
      * @param {TMACEventService} _tmacEventService
-     * @param {MatDialog} _dialog
+     * @param {MatDialog} _matDialog
      * @param {AppDataService} _appDataService
      * @param {FuseProgressBarService} _fuseProgressBarService
      * @param {ContentPageService} _contentPageService
      * @param {AOTWidgetService} _aotWidgetService
-     * @param {AppUiService} _appUIService
+     * @param {AppUiService} _appUIService,
      */
     constructor(
         private _fuseConfigService: FuseConfigService,
         private _interactionManagerService: InteractionManagerService,
         private _tmacEventService: TMACEventService,
-        private _dialog: MatDialog,
+        private _matDialog: MatDialog,
         private _appDataService: AppDataService,
         private _fuseProgressBarService: FuseProgressBarService,
         private _contentPageService: ContentPageService,
@@ -433,11 +546,29 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         evt.Transcript.forEach(
             (item:
                 {
+                    /**
+                     * ID of message
+                     */
                     Id: string;
+                    /**
+                     * Type of message
+                     */
                     Type: string;
+                    /**
+                     * Message
+                     */
                     Message: string;
+                    /**
+                     * Transferred agent's ID
+                     */
                     AgentID: string;
+                    /**
+                     * Datetime of message
+                     */
                     DateTime: string;
+                    /**
+                     * Transferred agent's name
+                     */
                     AgentName: string;
                 }) => {
                 // is agent flag
@@ -1340,31 +1471,49 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * @param type
      * @param icon
      */
-    public openTransferConferenceDialog(type: string, icon: string): void {
-        const customUrl = this.data.Data.TransferConferenceUtilsUrl;
-        // check if url is valid
-        if (customUrl) {
-            // create a widget model
-            const widget = new TwWidgetModel(`${type} Chat`, 'tw-custom', icon);
-            widget.Config.Position.W = 550;
-            widget.Config.Position.H = 550;
-            widget.Config.Actions = ['collapse', 'destroy'];
-            widget.Config.ViewState = 'restore';
-
-            // get agent data
-            const { agentId, deviceId, tmacServer } = SDKClient.getAgentData();
-            // get the conference type
-            const conferenceType = type === 'transfer' ? 'transfer' : 'conf';
-            const callType = type === 'transfer' ? 'TextChatTransfer' : 'TextChatConference';
-            // create map object for custom widget query string
-            widget.Data.MapObject = {
-                _requestArgs: `${agentId},${deviceId},${tmacServer},${callType},${this.interactionId},${this.sessionID},${this.chatMode},${this.lineId},${conferenceType}`
+    public openTransferConferenceDialog(type: string): void {
+        // get data based on type
+        const data: AgentSkillListData = type === 'transfer' ? {
+            title: 'Transfer Chat',
+            type: 'transferChat',
+            interactionId: this.interactionId,
+            agent: {
+                allowed: this.data.Data.Transfer.Agent.Allowed,
+                blind: this.data.Data.Transfer.Agent.Allowed,
+                source: this.data.Data.Transfer.Agent.Source,
+                allowedStates: this.data.Data.Transfer.Agent.AllowedStates
+            },
+            skill: {
+                allowed: this.data.Data.Transfer.Skill.Allowed,
+                blind: this.data.Data.Transfer.Skill.Allowed,
+                source: this.data.Data.Transfer.Skill.Source,
+                channelPrfix: this.data.Data.Transfer.Skill.ChannelPrefix
+            }
+        } : {
+                title: 'Conference Chat',
+                type: 'conferenceChat',
+                agent: {
+                    allowed: this.data.Data.Conference.Agent.Allowed,
+                    blind: this.data.Data.Conference.Agent.Allowed,
+                    source: this.data.Data.Conference.Agent.Source,
+                    allowedStates: this.data.Data.Conference.Agent.AllowedStates
+                },
+                skill: {
+                    allowed: this.data.Data.Conference.Skill.Allowed,
+                    blind: this.data.Data.Conference.Skill.Allowed,
+                    source: 'skill',
+                    channelPrfix: this.data.Data.Conference.Skill.ChannelPrefix
+                }
             };
-            widget.Data.Url = customUrl;
-            this._aotWidgetService.addWidget(widget);
-            // assign to the variable
-            this.tranfConfWidget = widget;
-        }
+        // open agent skill list component in dialog
+        this._matDialog.open(AgentSkillListComponent, {
+            data,
+            panelClass: 'agent-skill-dialog',
+            minWidth: '30%',
+            maxWidth: '100%',
+            height: '60%',
+            disableClose: true
+        });
     }
 
     /**

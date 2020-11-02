@@ -12,16 +12,14 @@
 // Core components theming
 @import 'src/app/modules/core/login/login.theme';
 
+// Shared componenents theming
+@import 'src/app/modules/shared/shared.theme';
+
 // Module components theming
 @import 'src/app/modules/t-widgets/tw-toolbar/tw-toolbar.theme';
 @import 'src/app/modules/t-widgets/tw-content/tw-content.theme';
 @import 'src/app/modules/t-widgets/tw-wrapper/tw-wrapper.theme';
-@import 'src/app/modules/t-widgets/tw-collections/tw-voice-controls/tw-voice-controls.theme';
-@import 'src/app/modules/t-widgets/tw-collections/tw-chat-controls/tw-chat-controls.theme';
-@import 'src/app/modules/t-widgets/tw-collections/tw-su-active-agents/tw-su-active-agents.theme';
-@import 'src/app/modules/t-widgets/tw-collections/tw-ad-callbacks/tw-ad-callbacks.theme';
-@import 'src/app/modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.theme';
-@import 'src/app/modules/t-widgets/tw-collections/tw-workbench-panel/tw-workbench-panel.theme';
+@import 'src/app/modules/t-widgets/tw-collections/tw-collections.theme';
 
 // Define a mixin for easier access
 @mixin app-core-theme($theme) {
@@ -56,14 +54,12 @@
     // Core components
     @include login-theme($theme);
 
+    // Shared components
+    @include shared-theme($theme);
+
     // T-Widgets components
     @include tw-toolbar-theme($theme);
     @include tw-content-theme($theme);
     @include tw-wrapper-theme($theme);
-    @include tw-voice-controls-theme($theme);
-    @include tw-chat-controls-theme($theme);
-    @include tw-su-active-agents-theme($theme);
-    @include tw-ad-callbacks-theme($theme);
-    @include tw-customer-journey-theme($theme);
-    @include tw-workbench-panel-theme($theme);
+    @include tw-collections-theme($theme);
 }
