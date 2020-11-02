@@ -146,8 +146,7 @@ export class CreateEmailComponent implements OnInit {
         };
 
         SDKClient.getEmailTemplateDepartments().then(res => {
-            this.availableTemplates.departments = groupBy(res.response, 'ID');
-            // this.availableTemplates.departments = res.response || [];
+            this.availableTemplates.departments = this.getDropdownKeyvaluePair(res.response, 'ID');
         }).catch(err => {
             console.error(err);
             this.appUiService.showSnackbar('Something went wrong while fetching departments', 'failure');
@@ -276,7 +275,7 @@ export class CreateEmailComponent implements OnInit {
         if (!this.availableTemplates.departments[departmentId]?.groups) {
             SDKClient.getEmailTemplateGroups(departmentId).then(res => {
                 if (res.response && res.response.length) {
-                    this.availableTemplates.departments[departmentId][0].groups = groupBy(res.response, 'ID');
+                    this.availableTemplates.departments[departmentId].groups = this.getDropdownKeyvaluePair(res.response, 'ID');
                 }
             }).catch(err => {
                 console.error(err);
@@ -292,10 +291,11 @@ export class CreateEmailComponent implements OnInit {
      * @param {String} groupId selected group Id
      */
     setTemplates(departmentId: string, groupId: string): void {
-        if (!this.availableTemplates.departments[departmentId]?.groups[groupId]) {
+        const groups = this.availableTemplates.departments[departmentId].groups;
+        if (!groups[groupId].templates) {
             SDKClient.getEmailTemplates({ groupId, type: '' }).then(templateRes => {
                 if (templateRes.response && templateRes.response.length) {
-                    this.availableTemplates.departments[departmentId][0].groups[groupId][0].templates = groupBy(templateRes.response, 'ID');
+                    groups[groupId].templates = this.getDropdownKeyvaluePair(templateRes.response, 'ID');
                 }
             }).catch(err => {
                 console.error(err);
@@ -304,5 +304,14 @@ export class CreateEmailComponent implements OnInit {
         }
     }
 
-
+    /**
+     * Groups by id and returns the value
+     */
+    getDropdownKeyvaluePair(records: any[], idKey: string): any {
+        const keyVal = {};
+        records.forEach(r => {
+            keyVal[r[idKey]] = r;
+        });
+        return keyVal;
+    }
 }

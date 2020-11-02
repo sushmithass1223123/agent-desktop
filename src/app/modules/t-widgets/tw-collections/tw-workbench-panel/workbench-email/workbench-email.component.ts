@@ -266,11 +266,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
      * @method pullEmail
      */
     pullEmail(): void {
-        const { agentId } = SDKClient.getAgentData();
+        const { agentId, tmacServer } = SDKClient.getAgentData();
         const { SessionId, RouteId } = this.emailSearchRes.data.selected;
         this.http
             .post(this.data.Data.WorkbenchUrl + '/email/pull', {
-                tmacServer: '',
+                tmacServer,
                 agentId,
                 items: [
                     {
