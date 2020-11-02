@@ -112,6 +112,9 @@
                 cdkConnectedOverlay
                 [cdkConnectedOverlayOrigin]="advancedSearchOverlay"
                 [cdkConnectedOverlayOpen]="showAdvancedSearchOverlay"
+                cdkConnectedOverlayHasBackdrop
+                cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+                (overlayOutsideClick)="showAdvancedSearchOverlay = false"
             >
                 <div
                     class="mat-elevation-z1 p-12"

@@ -47,6 +47,7 @@
                     ></avatar>
                 </div>
             </div>
+
             <div
                 fxLayout="column"
                 fxLayoutAlign=" none"
@@ -61,6 +62,18 @@
             >
                 <div fxLayout="row" fxLayoutAlign="end none" class="chat-actions">
                     <button
+                        *ngIf="showAutoFreeze"
+                        [disabled]="status !== 'connected'"
+                        mat-mini-fab
+                        color="warn"
+                        [ngClass]="status === 'connected' ? 'mat-elevation-z2' : ''"
+                        matTooltip="Freeze Auto Response"
+                        (click)="freezeAutoResponse()"
+                    >
+                        <mat-icon>sync_disabled</mat-icon>
+                    </button>
+
+                    <button
                         mat-mini-fab
                         color="default"
                         [ngClass]="
@@ -74,19 +87,6 @@
                         (click)="saveInteractionComments()"
                     >
                         <mat-icon>comment</mat-icon>
-                    </button>
-
-                    <button
-                        *ngIf="showAutoFreeze"
-                        [disabled]="status !== 'connected'"
-                        mat-mini-fab
-                        color="default"
-                        class="bg-danger"
-                        [ngClass]="status === 'connected' ? 'mat-elevation-z2' : ''"
-                        matTooltip="Freeze Auto Response"
-                        (click)="freezeAutoResponse()"
-                    >
-                        <mat-icon>sync_disabled</mat-icon>
                     </button>
 
                     <button
@@ -111,7 +111,7 @@
                     </button>
 
                     <button
-                        *ngIf="data.Data.TransferAllowed"
+                        *ngIf="data.Data?.Transfer.Allowed"
                         [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper' || this.botConnected"
                         mat-mini-fab
                         color="default"
@@ -123,13 +123,13 @@
                             (status === 'connected' ? 'mat-elevation-z2' : '')
                         "
                         matTooltip="Transfer"
-                        (click)="openTransferConferenceDialog('Transfer', 'forward')"
+                        (click)="openTransferConferenceDialog('transfer')"
                     >
                         <mat-icon>forward</mat-icon>
                     </button>
 
                     <button
-                        *ngIf="data.Data.ConferenceAllowed"
+                        *ngIf="data.Data?.Conference.Allowed"
                         [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper' || this.botConnected"
                         mat-mini-fab
                         color="default"
@@ -141,7 +141,7 @@
                             (status === 'connected' ? 'mat-elevation-z2' : '')
                         "
                         matTooltip="Conference"
-                        (click)="openTransferConferenceDialog('Conference', 'group')"
+                        (click)="openTransferConferenceDialog('conference')"
                     >
                         <mat-icon>group</mat-icon>
                     </button>
@@ -219,7 +219,7 @@
                     <button
                         *ngIf="status !== 'connected'"
                         mat-raised-button
-                        class="border-radius-20 animate__animated animate__slideInRight animate__faster"
+                        class="border-radius-20"
                         color="warn"
                         #closeBtn
                         (click)="closeInteraction(closeBtn)"
@@ -236,7 +236,7 @@
                         <!-- MESSAGE -->
                         <div
                             *ngFor="let message of chatTranscripts; let i = index"
-                            class="message-row animate__animated animate__slideInUp animate__faster"
+                            class="message-row"
                             [ngClass]="{
                                 me: message.isAgent,
                                 contact: !message.isAgent,
@@ -249,13 +249,7 @@
                                 fxLayout="column"
                                 fxLayoutAlign="start start"
                                 class="bubble mat-elevation-z1"
-                                [ngClass]="
-                                    (!message.isAgent && fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
-                                        ? fuseConfig.layout.anchorWidget.bodyBackground
-                                        : '') +
-                                    ' ' +
-                                    (maximized ? 'maximized' : '')
-                                "
+                                [ngClass]="{ maximized: maximized }"
                             >
                                 <div *ngIf="isFirstMessageOfGroup(message, i)" [ngClass]="!message.isAgent ? 'left-svg' : 'right-svg'">
                                     <!-- <svg *ngIf="!message.isAgent" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 13" width="8" height="13">
@@ -383,8 +377,16 @@
                                     cdkConnectedOverlay
                                     [cdkConnectedOverlayOrigin]="emojiOverlay"
                                     [cdkConnectedOverlayOpen]="showEmojiOverlay"
+                                    cdkConnectedOverlayHasBackdrop
+                                    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+                                    (overlayOutsideClick)="showEmojiOverlay = false"
                                 >
-                                    <emoji-mart (emojiClick)="addEmoji($event)" [darkMode]="fuseConfig.colorTheme.includes('dark')" set="apple" [showPreview]="false"></emoji-mart>
+                                    <emoji-mart
+                                        (emojiClick)="addEmoji($event)"
+                                        [darkMode]="fuseConfig.colorTheme.includes('dark')"
+                                        [showPreview]="false"
+                                        isNative="true"
+                                    ></emoji-mart>
                                 </ng-template>
                             </button>
 
@@ -405,14 +407,6 @@
                                     [rows]="1"
                                     [matTextareaAutosize]="true"
                                 ></textarea>
-                                <!-- (click)="toggled = !toggled"
-                                    [(emojiPickerIf)]="toggled" -->
-                                <!-- <i [emojiPickerDirection]="'top'" (emojiPickerSelect)="addEmoji($event)">😄</i> -->
-                                <!-- <mat-autocomplete #auto="matAutocomplete">
-                                    <mat-option *ngFor="let option of options" [value]="option">
-                                        {{ option }}
-                                    </mat-option>
-                                </mat-autocomplete> -->
                             </mat-form-field>
 
                             <button

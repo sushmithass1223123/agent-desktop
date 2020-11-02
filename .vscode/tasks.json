@@ -24,6 +24,14 @@
 			"problemMatcher": [],
 			"label": "ng: build:prod",
 			"detail": "ng build --prod --baseHref=/agent-desktop/"
+        },
+        {
+			"type": "npm",
+			"script": "build:prod:extra",
+			"group": "build",
+			"problemMatcher": [],
+			"label": "ng: build:prod:extra",
+			"detail": "ng build --prod --baseHref=/agent-desktop/ --extra-webpack-config webpack.extra.js"
 		}
     ]
 }

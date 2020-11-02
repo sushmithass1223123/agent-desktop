@@ -1,0 +1,309 @@
+@mixin tw-collections-theme($theme) {
+    $background: map-get($theme, background);
+    $foreground: map-get($theme, foreground);
+    $primary: map-get($theme, primary);
+    $accent: map-get($theme, accent);
+    $is-dark: map-get($theme, is-dark);
+    $mat-warn: map-get($theme, warn);
+
+    tw-voice-controls {
+        avatar {
+            .avatar-content {
+                @if ($is-dark == true) {
+                    color: #fafafa !important;
+                    background-color: rgba(0, 0, 0, 0.87) !important;
+                } @else {
+                    color: rgba(0, 0, 0, 0.87) !important;
+                    background-color: #fafafa !important;
+                }
+            }
+
+            &.connected {
+                .avatar-content {
+                    border: 2px solid map-get($primary, default);
+                }
+            }
+
+            &.disconnected {
+                .avatar-content {
+                    border: 1px solid map-get($mat-warn, default);
+                }
+            }
+
+            &.active {
+                .avatar-content {
+                    color: map-get($primary, default-contrast) !important;
+                    background-color: map-get($primary, default) !important;
+                }
+            }
+        }
+    }
+
+    tw-chat-controls {
+        #contacts-list {
+            background-color: map-get($background, app-bar);
+
+            .contacts-list-item {
+                &.active {
+                    background: map-get($background, hover);
+
+                    &:after {
+                        background-color: map-get($accent, default);
+                    }
+                }
+
+                .unread-count {
+                    background-color: map-get($accent, default);
+                    color: map-get($accent, default-contrast);
+                }
+
+                .status-icon {
+                    border-color: map-get($background, app-bar);
+                }
+            }
+        }
+
+        avatar {
+            .avatar-content {
+                @if ($is-dark == true) {
+                    color: #fafafa !important;
+                    background-color: rgba(0, 0, 0, 0.87) !important;
+                } @else {
+                    color: rgba(0, 0, 0, 0.87) !important;
+                    background-color: #fafafa !important;
+                }
+            }
+
+            &.connected {
+                .avatar-content {
+                    border: 2px solid mat-color($mat-green, 700);
+                }
+            }
+
+            &.disconnected {
+                .avatar-content {
+                    border: 2px solid map-get($mat-warn, default);
+                }
+            }
+        }
+
+        .chat-content {
+            @if ($is-dark == true) {
+                background-color: map-get($background, hover);
+            }
+        }
+
+        .chat-transcripts {
+            .message-row {
+                &.contact {
+                    .bubble {
+                        @if ($is-dark == true) {
+                            background-color: map-get($background, hover);
+                        } @else {
+                            background-color: map-get($accent, default);
+                            color: map-get($accent, default-contrast);
+                        }
+
+                        .left-svg {
+                            @if ($is-dark == true) {
+                                color: rgb(80 80 80) !important;
+                            } @else {
+                                color: #e0e0e0;
+                            }
+                        }
+                    }
+                }
+
+                &.me {
+                    .bubble {
+                        @if ($is-dark == true) {
+                            background-color: map-get($background, hover);
+                        } @else {
+                            color: rgba(0, 0, 0, 0.87);
+                            background-color: #e0e0e0;
+                        }
+
+                        .right-svg {
+                            @if ($is-dark == true) {
+                                color: rgb(80 80 80) !important;
+                            } @else {
+                                color: #e0e0e0;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .chat-footer {
+            .reply-form {
+                .message-text {
+                    background-color: map-get($background, app-bar);
+                    border-color: map-get($foreground, divider);
+
+                    .mat-form-field-wrapper {
+                        .mat-form-field-flex {
+                            .mat-form-field-infix {
+                                @if ($is-dark == true) {
+                                    background-color: map-get($background, hover);
+                                } @else {
+                                    background-color: white;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .send-message-button,
+                .emoji-button {
+                    mat-icon {
+                        @if ($is-dark == true) {
+                            color: #fff;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    tw-su-active-agents {
+        mat-form-field {
+            .mat-form-field-wrapper {
+                .mat-form-field-outline {
+                    @if ($is-dark) {
+                        background-color: map-get($background, hover);
+                    } @else {
+                        background-color: #ffffff;
+                    }
+                }
+            }
+        }
+
+        .agent-list {
+            .agent-item {
+                @if ($is-dark) {
+                    background-color: map-get($background, hover);
+                }
+
+                avatar {
+                    .avatar-content {
+                        color: map-get($foreground, text);
+                        @if ($is-dark) {
+                            background-color: map-get($accent, default) !important;
+                        } @else {
+                            background-color: #ffffff !important;
+                        }
+                    }
+                }
+            }
+        }
+
+        .channel-list {
+            .mat-card-avatar {
+                @if ($is-dark) {
+                    background-color: map-get($background, hover);
+                } @else {
+                    background-color: #ffffff;
+                }
+            }
+        }
+    }
+
+    tw-ad-callbacks {
+        .callback-total {
+            & > * {
+                @if ($is-dark) {
+                    background-color: map-get($background, hover);
+                }
+            }
+        }
+    }
+
+    tw-customer-journey {
+        .customer-journey {
+            .step {
+                @if ($is-dark) {
+                    background-color: map-get($background, hover);
+                }
+            }
+        }
+    }
+
+    tw-workbench-panel {
+        .mat-tab-label {
+            @if ($is-dark == true) {
+                color: #fafafa;
+                background-color: map-get($background, hover);
+            } @else {
+                color: rgba(0, 0, 0, 0.87);
+                background-color: #fafafa;
+            }
+
+            &-active {
+                @if ($is-dark == true) {
+                    background-color: map-get($background, hover);
+                }
+            }
+        }
+
+        workbench-email {
+            .search-input {
+                @if ($is-dark == true) {
+                    color: #fafafa;
+                    background-color: map-get($background, hover);
+                } @else {
+                    color: rgba(0, 0, 0, 0.87);
+                    background-color: #fafafa;
+                }
+            }
+
+            .email-workbench {
+                @if ($is-dark == true) {
+                    background-color: map-get($background, hover);
+                }
+
+                mat-nested-tree-node {
+                    &.active li {
+                        &::before {
+                            background: map-get($primary, 300);
+                        }
+                    }
+                }
+
+                .email-list {
+                    @if ($is-dark == true) {
+                        background-color: #303030;
+                    } @else {
+                        background-color: #fafafa;
+                    }
+
+                    .tw-list-item {
+                        &:hover {
+                            background-color: map-get($background, hover);
+                        }
+                    }
+                }
+
+                .email-open {
+                    @if ($is-dark == true) {
+                        background-color: #303030;
+                    } @else {
+                        background-color: #fafafa;
+                    }
+
+                    &__body {
+                        @if ($is-dark == true) {
+                            background-color: map-get($background, hover);
+                        }
+                    }
+                }
+
+                .email-open {
+                    @if ($is-dark == true) {
+                        background-color: #303030;
+                    }
+                }
+            }
+        }
+    }
+}

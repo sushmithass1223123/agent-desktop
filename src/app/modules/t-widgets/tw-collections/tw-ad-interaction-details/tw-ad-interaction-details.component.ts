@@ -199,7 +199,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
                                             found = true;
                                         }
                                     }
-                                } else if (data[col].toString().toLowerCase().indexOf(word) !== -1) {
+                                } else if (data[col]?.toString().toLowerCase().indexOf(word) !== -1) {
                                     found = true;
                                 }
                             });

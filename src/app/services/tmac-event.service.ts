@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { ReminderTaskDialogComponent } from '@modules/shared/components';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { IAction, IWidget, QuizEvent } from 'app/interfaces';
@@ -8,6 +9,7 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
     ACWTimerEvent,
+    AgentForcedLogoffEvent,
     AgentNotificaitonEvent,
     AgentReminder,
     AgentReminderEvent,
@@ -106,7 +108,8 @@ export class TMACEventService {
         private _appDataService: AppDataService,
         private _interactionManagerService: InteractionManagerService,
         private _appUIService: AppUiService,
-        private _aotWidgetService: AOTWidgetService
+        private _aotWidgetService: AOTWidgetService,
+        private _router: Router
     ) { }
 
     // -----------------------------------------------------------------------------------------------------
@@ -251,7 +254,7 @@ export class TMACEventService {
                     case 'vivr': {
                         // check if AOT cofngured for VIVR
                         const widget: IWidget = new TwWidgetModel(`Agent Assist - ${parsedMessage.Header}`, 'tw-custom', 'assistance');
-                        widget.Config.Actions = ['minimize', 'destroy'];
+                        widget.Config.Actions = ['collapse', 'destroy'];
                         widget.Config.Position.W = 450;
                         widget.Config.Position.H = 800;
                         widget.Data.Url = parsedMessage.Data;
@@ -544,12 +547,12 @@ export class TMACEventService {
         const { PhoneNumber } = evt.Item;
         const { agentId, deviceId } = SDKClient.getAgentData();
         // inform TCM proxy about the assignment
-        const tcmProyUrl = this.appConfig.Main.Content.Urls.TCMClient || '';
+        const tcmClientUrl = this.appConfig.Main.Content.Urls.TCMClient || '';
         // only notify that callback request is assigned if it was assigned the first time and not if the UI is reloaded or re-login
         if (!evt.RecoveryEvent) {
-            if (tcmProyUrl) {
+            if (tcmClientUrl) {
                 TUtils.HttpClient.sendRequest({
-                    url: tcmProyUrl + '/OnDacNotificationEvent',
+                    url: tcmClientUrl + '/OnDacNotificationEvent',
                     header: {
                         'Content-Type': 'application/json'
                     },
@@ -702,6 +705,46 @@ export class TMACEventService {
         });
     }
 
+    /**
+     * To process AgentForcedLogoffEvent
+     * @param {AgentForcedLogoffEvent} evt
+     */
+    AgentForcedLogoffEvent = (evt: AgentForcedLogoffEvent) => {
+        let description = '';
+        switch (evt.Type) {
+            case 'SupervisorInitiatedLogout':
+                description = 'You are logged out by the supervisor!';
+                break;
+            case 'SessionNotFound':
+                description = 'There is no session found in server, please re-login!';
+                break;
+            case 'SessionKeyExpired':
+                description = 'Your existing session expired as you are logged in using another session!';
+                break;
+            case 'NotLoggedIntoACD':
+                description = '';
+                break;
+            case 'AgentInfoNotFound':
+                description = 'Agent information not found, please re-login!';
+                break;
+            default:
+                description = 'Your existing session expired as you are logged in using another session!';
+        }
+
+        // we will route to not-found page
+        this._router.navigate(['not-found'],
+            {
+                queryParamsHandling: 'preserve',
+                preserveFragment: true,
+                state: {
+                    subtitle: 'Oops',
+                    title: '',
+                    description,
+                    login: true
+                }
+            });
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @ Public Methods
     // -----------------------------------------------------------------------------------------------------
@@ -729,10 +772,12 @@ export class TMACEventService {
         this._appDataService.config
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((config: any) => {
-                // assign the config
-                this.appConfig = config;
-                // get the AOT widgets
-                this._aotWidgets = config.Main.AOT.Widgets;
+                if (Object.keys(config).length) {
+                    // assign the config
+                    this.appConfig = config;
+                    // get the AOT widgets
+                    this._aotWidgets = config.Main.AOT.Widgets;
+                }
             });
 
         SDKClient.events.on('onTMACEvent', this.onTMACEvent);
@@ -743,6 +788,7 @@ export class TMACEventService {
         SDKClient.events.on('HoldTimerEvent', this.HoldTimerEvent);
         SDKClient.events.on('QuizEvent', this.QuizEvent);
         SDKClient.events.on('AgentReminderEvent', this.AgentReminderEvent);
+        SDKClient.events.on('AgentForcedLogoffEvent', this.AgentForcedLogoffEvent);
 
         // subscribe to InteractionManagerService
         this._interactionManagerService.subscribe();
@@ -762,6 +808,7 @@ export class TMACEventService {
         SDKClient.events.off('HoldTimerEvent', this.HoldTimerEvent);
         SDKClient.events.off('QuizEvent', this.QuizEvent);
         SDKClient.events.off('AgentReminderEvent', this.AgentReminderEvent);
+        SDKClient.events.off('AgentForcedLogoffEvent', this.AgentForcedLogoffEvent);
 
         // unsubscribe from all subscriptions
         this._unsubscribeAll.next();

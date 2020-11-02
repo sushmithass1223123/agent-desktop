@@ -200,7 +200,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     private createActivityWidget(item: any): void {
         // create activity details widget
         const widget = new TwWidgetModel(item.title, 'tw-su-agent-activity-details', 'local_activity');
-        widget.Config.Actions = ['minimize', 'destroy'];
+        widget.Config.Actions = ['collapse', 'destroy'];
         widget.Config.ViewState = 'maximize';
         widget.Config.Anchor = true;
         widget.Config.Position.X = 3;
@@ -412,7 +412,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         widget.Config.Anchor = true;
         widget.Config.Position.W = 800;
         widget.Config.Position.H = 300;
-        widget.Config.Actions = ['maximize', 'minimize', 'destroy'];
+        widget.Config.Actions = ['maximize', 'collapse', 'destroy'];
         widget.Data = item;
         this._aotWidgetService.addWidget(widget);
     }

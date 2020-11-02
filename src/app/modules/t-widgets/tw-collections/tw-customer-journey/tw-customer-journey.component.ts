@@ -1,5 +1,5 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, HostBinding, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -121,9 +121,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             selection: SelectionModel<InteractionHistory>;
         };
     };
-
-    maximized = false;
-
+    maximized: boolean;
     interactionDateCols = ['InteractionDateStart', 'InteractionDateEnd'];
 
     constructor(
@@ -150,6 +148,9 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     // @ Lifecycle hooks
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * On Init
+     */
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
@@ -179,24 +180,9 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             this[evt.EventName]?.(evt);
         });
 
-        // this.customerJourneyTable.tableData.source.filter = JSON.stringify({ SessionID: 'dev200922183239_1055' });
+        SDKClient.events.on('InteractionHistoryReadyEvent', this.InteractionHistoryReadyEvent);
 
         this.customerJourneyTable.tableData.source.filterPredicate = this.createFilter();
-        // this.searchForm.valueChanges.subscribe((res) => {
-        //     const searchKey = {};
-        //     Object.keys(res).forEach((k) => {
-        //         if (res[k]) {
-        //             if (this.interactionDateCols.includes(k)) {
-        //                 searchKey[k] = res[k].toString();
-        //             } else {
-        //                 searchKey[k] = res[k].trim().toLowerCase();
-        //             }
-        //         }
-        //     });
-        //     const stringifiedSearch = JSON.stringify(searchKey);
-        //     this.customerJourneyTable.tableData.source.filter = stringifiedSearch === '{}' ? '' : stringifiedSearch;
-        // });
-        SDKClient.events.on('InteractionHistoryReadyEvent', this.InteractionHistoryReadyEvent);
     }
 
     doAdvancedSearch(): void {
@@ -342,15 +328,6 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     }
 
     /**
-     * Maximize event from Wrapper
-     * @param {Boolean} state
-     */
-    public onMaximizeEvent(state: boolean): void {
-        this.maximizeEvent.emit(state);
-        this.maximized = state;
-    }
-
-    /**
      * Get actions of selected sessionId
      * @param {String} sessionId selected Session Id
      */
@@ -392,5 +369,13 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             width=${screen.width},
             height=${screen.height}`
         );
+    }
+
+    /**
+     * On widget maximized
+     */
+    public onMaximized(max: boolean): void {
+        this.maximized = !max;
+        this.maximizeEvent.emit(max);
     }
 }

@@ -3,6 +3,9 @@ import { Subject } from 'rxjs';
 import { IWidget } from 'app/interfaces';
 import { TUtils } from 'tmac-sdk';
 
+/**
+ * T Widget Wrapper directive
+ */
 @Directive()
 // tslint:disable-next-line: directive-class-suffix
 export class TWidgetWrapper {

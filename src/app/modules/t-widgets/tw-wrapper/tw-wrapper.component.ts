@@ -17,7 +17,6 @@ import { takeUntil } from 'rxjs/operators';
     encapsulation: ViewEncapsulation.None
 })
 export class TwWrapperComponent implements OnInit, OnDestroy {
-
     /**
      * Data form app config
      */
@@ -57,7 +56,6 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
      * Host Class
      */
     @HostBinding('class.position-relative')
-
     /**
      * Floating state
      */
@@ -116,7 +114,7 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
         // check the default view of widget
         if (this.data !== null && this.data.Config.ViewState !== 'restore') {
             this.maximized = this.data.Config.ViewState === 'maximize';
-            this.collapsed = this.data.Config.ViewState === 'minimize';
+            this.collapsed = this.data.Config.ViewState === 'collapse';
             this.floating = this.data.Config.ViewState === 'float';
             this.hidden = this.data.Config.ViewState === 'hidden';
         }

@@ -1,12 +1,16 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { InteractionRef, InteractionWidgets, IWidget } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
+import { cloneDeep } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 import { IncomingCallEvent, InteractionClosedEvent, OutgoingCallEvent } from 'tmac-sdk';
 
+/**
+ * Voice content component
+ */
 @Component({
     selector: 'twc-voice',
     templateUrl: './twc-voice.component.html',
@@ -14,6 +18,18 @@ import { IncomingCallEvent, InteractionClosedEvent, OutgoingCallEvent } from 'tm
     encapsulation: ViewEncapsulation.None
 })
 export class TwcVoiceComponent extends TWContentWrapper implements OnInit, OnDestroy {
+    /**
+     * Holds all the data related to this widget from the config
+     */
+    @Input() data: IWidget;
+    /**
+     * Holds all the interaction related widgets and process on new interacion for interaction content page
+     */
+    interactions: InteractionWidgets[] = [];
+    /**
+     * Currently active email interaction
+     */
+    activeInteraction: number;
 
     /**
      * Constructor
@@ -81,7 +97,7 @@ export class TwcVoiceComponent extends TWContentWrapper implements OnInit, OnDes
     private incomingOutgoingCallEvent = (evt: IncomingCallEvent | OutgoingCallEvent) => {
 
         // get the content widgets
-        const voiceWidgets = this.data.Data.Widgets || [];
+        const voiceWidgets = cloneDeep(this.data.Data.Widgets) || [];
 
         const staticWidgets = voiceWidgets.Static || [];
         const dynamicWidgets = JSON.parse(evt.WidgetConfigData) || voiceWidgets.Dynamic || [];

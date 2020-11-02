@@ -120,16 +120,23 @@
                                         {
                                             "Name": "Send SMS",
                                             "Enable": true,
+                                            "EnableState": "",
                                             "Type": "sms",
                                             "Icon": "sms",
-                                            "Status": ""
+                                            "Data": {}
                                         },
                                         {
                                             "Name": "Make Call",
                                             "Enable": true,
+                                            "EnableState": "",
                                             "Type": "voice",
                                             "Icon": "call",
-                                            "Status": ""
+                                            "Data": {
+                                                "Source": "agentId",
+                                                "AllowedState": [
+                                                    "Available"
+                                                ]
+                                            }
                                         }
                                     ]
                                 }
@@ -532,7 +539,7 @@
                                 {
                                     "Name": "Call-backs",
                                     "Description": "phone_callback",
-                                    "Key": "AgentPendigCallbacks",
+                                    "Key": "AgentPendingCallbacks",
                                     "Type": "tw-ad-callbacks",
                                     "Config": {
                                         "Enabled": true,
@@ -614,6 +621,77 @@
                             ],
                             "AOT": [
                                 {
+                                    "Name": "CRM-Zoho",
+                                    "Description": "",
+                                    "Key": "CRMZoho",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "Icon": "storage",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0,
+                                            "W": 800,
+                                            "H": 700
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {
+                                        "AutoOpen": true,
+                                        "OpenInNew": true,
+                                        "Url": "https://projects.zoho.com/portal/ilink#todomilestones/736040000007428009/customview/"
+                                    }
+                                },
+                                {
+                                    "Name": "Register Callback",
+                                    "Description": "",
+                                    "Key": "RegisterCallback",
+                                    "Type": "tw-register-callback",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "Icon": "phone_callback",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0,
+                                            "W": 300,
+                                            "H": 300
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {
+                                        "GetCampaignsUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Campaign/GetCampaigns",
+                                        "CreateContactCampaignUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Contact/CreateCampaignContact",
+                                        "DataMap": {
+                                            "Name": {
+                                                "ValueSource": "CCLDataEvent.CallerName",
+                                                "DefaultValue": "Mr. Tan"
+                                            },
+                                            "Phone": {
+                                                "ValueSource": "CCLDataEvent.RegisteredPhone",
+                                                "DefaultValue": "6596975347"
+                                            }
+                                        }
+                                    }
+                                },
+                                {
                                     "Name": "TRS",
                                     "Description": "",
                                     "Key": "TRS",
@@ -632,7 +710,7 @@
                                             "H": 740
                                         },
                                         "Actions": [
-                                            "minimize",
+                                            "collapse",
                                             "destroy",
                                             "pin"
                                         ],
@@ -726,7 +804,7 @@
                                             "H": 600
                                         },
                                         "Actions": [
-                                            "minimize",
+                                            "collapse",
                                             "destroy",
                                             "pin"
                                         ],
@@ -1045,6 +1123,7 @@
                                 {
                                     "Name": "Add Products",
                                     "Description": "",
+                                    "Key": "VirtualStore",
                                     "Type": "tw-custom",
                                     "Config": {
                                         "Enabled": true,
@@ -1132,7 +1211,7 @@
                                                     },
                                                     "Actions": [
                                                         "maximize",
-                                                        "minimize",
+                                                        "collapse",
                                                         "float"
                                                     ],
                                                     "ViewState": "restore",
@@ -1140,8 +1219,40 @@
                                                     "Pinned": false
                                                 },
                                                 "Data": {
-                                                    "TransferAllowed": true,
-                                                    "ConferenceAllowed": true,
+                                                    "Transfer": {
+                                                        "Allowed": true,
+                                                        "Agent": {
+                                                            "Allowed": true,
+                                                            "Blind": false,
+                                                            "Source": "station",
+                                                            "AllowedStates": []
+                                                        },
+                                                        "Skill": {
+                                                            "Allowed": true,
+                                                            "Blind": false,
+                                                            "Source": "skill",
+                                                            "ChannelPrefix": [
+                                                                "VO"
+                                                            ]
+                                                        }
+                                                    },
+                                                    "Conference": {
+                                                        "Allowed": true,
+                                                        "Agent": {
+                                                            "Allowed": true,
+                                                            "Blind": false,
+                                                            "Source": "station",
+                                                            "AllowedStates": []
+                                                        },
+                                                        "Skill": {
+                                                            "Allowed": true,
+                                                            "Blind": false,
+                                                            "Source": "skill",
+                                                            "ChannelPrefix": [
+                                                                "VO"
+                                                            ]
+                                                        }
+                                                    },
                                                     "IVR": {
                                                         "MenuEnabled": true,
                                                         "DefaultMenu": [
@@ -1182,7 +1293,7 @@
                                                     },
                                                     "Actions": [
                                                         "maximize",
-                                                        "minimize"
+                                                        "collapse"
                                                     ],
                                                     "ViewState": "restore",
                                                     "Header": true,
@@ -1252,7 +1363,7 @@
                                                     },
                                                     "Actions": [
                                                         "maximize",
-                                                        "minimize"
+                                                        "collapse"
                                                     ],
                                                     "ViewState": "restore",
                                                     "Header": true,
@@ -1300,7 +1411,7 @@
                                         "Width": 450,
                                         "Height": 800,
                                         "Actions": [
-                                            "minimize",
+                                            "collapse",
                                             "maximize",
                                             "destroy"
                                         ],
@@ -1333,6 +1444,37 @@
                                     },
                                     "Data": {
                                         "IsAuthenticated": true
+                                    }
+                                },
+                                {
+                                    "Name": "Voice Bio",
+                                    "Description": "",
+                                    "Key": "VoiceBio",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "Icon": "event_note",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 2,
+                                            "W": 700,
+                                            "H": 600
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/TVoiceBio/?agentid=_agentId"
                                     }
                                 },
                                 {
@@ -1418,7 +1560,7 @@
                                     }
                                 },
                                 {
-                                    "Name": "Voice-Bot Transcripts",
+                                    "Name": "Speech Transcripts",
                                     "Description": "",
                                     "Key": "SpeechTranscript",
                                     "Type": "tw-voice-bot-transcripts",
@@ -1446,6 +1588,37 @@
                             ],
                             "AOT": [
                                 {
+                                    "Name": "Reminders",
+                                    "Description": "",
+                                    "Key": "AgentReminders",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "Icon": "event_note",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0,
+                                            "W": 700,
+                                            "H": 600
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/agent-desktop/reminders/index.html?agentid=_agentId&tmacserver=TmacServer1"
+                                    }
+                                },
+                                {
                                     "Name": "Register Callback",
                                     "Description": "",
                                     "Key": "RegisterCallback",
@@ -1464,7 +1637,7 @@
                                             "H": 300
                                         },
                                         "Actions": [
-                                            "minimize",
+                                            "collapse",
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
@@ -1496,7 +1669,7 @@
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
-                                        "Icon": "phone_callback",
+                                        "Icon": "pending_actions",
                                         "Class": "",
                                         "Position": {
                                             "X": 0,
@@ -1535,7 +1708,7 @@
                                             "H": 700
                                         },
                                         "Actions": [
-                                            "minimize",
+                                            "collapse",
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
@@ -1567,7 +1740,7 @@
                                             "H": 700
                                         },
                                         "Actions": [
-                                            "minimize",
+                                            "collapse",
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
@@ -1599,7 +1772,7 @@
                                             "H": 300
                                         },
                                         "Actions": [
-                                            "minimize",
+                                            "collapse",
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
@@ -1623,11 +1796,11 @@
                                         "Position": {
                                             "X": 0,
                                             "Y": 0,
-                                            "W": 600,
-                                            "H": 600
+                                            "W": 900,
+                                            "H": 400
                                         },
                                         "Actions": [
-                                            "minimize",
+                                            "collapse",
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
@@ -1659,7 +1832,7 @@
                                             "H": 700
                                         },
                                         "Actions": [
-                                            "minimize",
+                                            "collapse",
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
@@ -1667,8 +1840,8 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "AutoOpen": false,
-                                        "OpenInNew": false,
+                                        "AutoOpen": true,
+                                        "OpenInNew": true,
                                         "Url": "https://projects.zoho.com/portal/ilink#todomilestones/736040000007428009/customview/"
                                     }
                                 },
@@ -1691,7 +1864,7 @@
                                             "H": 700
                                         },
                                         "Actions": [
-                                            "minimize",
+                                            "collapse",
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
@@ -1700,7 +1873,7 @@
                                     },
                                     "Data": {
                                         "AutoOpen": false,
-                                        "OpenInNew": false,
+                                        "OpenInNew": true,
                                         "Url": "https://singtel.bitrix24.com"
                                     }
                                 },
@@ -1723,7 +1896,7 @@
                                             "H": 800
                                         },
                                         "Actions": [
-                                            "minimize",
+                                            "collapse",
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
@@ -1734,6 +1907,32 @@
                                         "AutoOpen": false,
                                         "OpenInNew": false,
                                         "Url": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=userdata"
+                                    }
+                                },
+                                {
+                                    "Name": "Singtel-Contact Us",
+                                    "Description": "",
+                                    "Key": "SingtelContactUs",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "contact_support",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0
+                                        },
+                                        "Actions": [],
+                                        "ViewState": "restore",
+                                        "Header": false
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "OpenInNew": true,
+                                        "Url": "https://www.singtel.com/contact-us"
                                     }
                                 }
                             ]
@@ -1795,7 +1994,7 @@
                                                     },
                                                     "Actions": [
                                                         "maximize",
-                                                        "minimize",
+                                                        "collapse",
                                                         "float"
                                                     ],
                                                     "ViewState": "restore",
@@ -1803,8 +2002,40 @@
                                                     "Pinned": false
                                                 },
                                                 "Data": {
-                                                    "TransferAllowed": true,
-                                                    "ConferenceAllowed": true,
+                                                    "Transfer": {
+                                                        "Allowed": true,
+                                                        "Agent": {
+                                                            "Allowed": true,
+                                                            "Blind": false,
+                                                            "Source": "station",
+                                                            "AllowedStates": []
+                                                        },
+                                                        "Skill": {
+                                                            "Allowed": true,
+                                                            "Blind": false,
+                                                            "Source": "skill",
+                                                            "ChannelPrefix": [
+                                                                "CH"
+                                                            ]
+                                                        }
+                                                    },
+                                                    "Conference": {
+                                                        "Allowed": true,
+                                                        "Agent": {
+                                                            "Allowed": true,
+                                                            "Blind": false,
+                                                            "Source": "station",
+                                                            "AllowedStates": []
+                                                        },
+                                                        "Skill": {
+                                                            "Allowed": true,
+                                                            "Blind": false,
+                                                            "Source": "skill",
+                                                            "ChannelPrefix": [
+                                                                "CH"
+                                                            ]
+                                                        }
+                                                    },
                                                     "ImmediateCallbackAllowed": false,
                                                     "ScheduledCallbackAllowed": false,
                                                     "AudioEscalateEnabled": true,
@@ -1819,7 +2050,6 @@
                                                     "SnapshotAllowed": true,
                                                     "ShowUserLabel": false,
                                                     "ChatTemplate": {
-                                                        "ButtonEnabled": true,
                                                         "Filter": "startswith",
                                                         "FilterByTime": true,
                                                         "UpdateThreshold": 0
@@ -1861,7 +2091,7 @@
                                                     },
                                                     "Actions": [
                                                         "maximize",
-                                                        "minimize"
+                                                        "collapse"
                                                     ],
                                                     "ViewState": "restore",
                                                     "Header": true,
@@ -1943,9 +2173,9 @@
                                                     },
                                                     "Actions": [
                                                         "maximize",
-                                                        "minimize"
+                                                        "collapse"
                                                     ],
-                                                    "ViewState": "minimize",
+                                                    "ViewState": "collapse",
                                                     "Header": true,
                                                     "Pinned": false
                                                 },
@@ -1991,7 +2221,7 @@
                                         "Width": 450,
                                         "Height": 800,
                                         "Actions": [
-                                            "minimize",
+                                            "collapse",
                                             "maximize",
                                             "destroy"
                                         ],
@@ -2137,6 +2367,37 @@
                             ],
                             "AOT": [
                                 {
+                                    "Name": "Reminders",
+                                    "Description": "",
+                                    "Key": "AgentReminders",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "Icon": "event_note",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 0,
+                                            "W": 700,
+                                            "H": 600
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/agent-desktop/reminders/index.html?agentid=_agentId&tmacserver=TmacServer1"
+                                    }
+                                },
+                                {
                                     "Name": "Register Callback",
                                     "Description": "",
                                     "Key": "RegisterCallback",
@@ -2155,7 +2416,7 @@
                                             "H": 300
                                         },
                                         "Actions": [
-                                            "minimize",
+                                            "collapse",
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
@@ -2196,7 +2457,7 @@
                                             "H": 700
                                         },
                                         "Actions": [
-                                            "minimize",
+                                            "collapse",
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
@@ -2228,7 +2489,7 @@
                                             "H": 700
                                         },
                                         "Actions": [
-                                            "minimize",
+                                            "collapse",
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
@@ -2256,11 +2517,11 @@
                                         "Position": {
                                             "X": 0,
                                             "Y": 0,
-                                            "W": 600,
-                                            "H": 600
+                                            "W": 900,
+                                            "H": 400
                                         },
                                         "Actions": [
-                                            "minimize",
+                                            "collapse",
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
@@ -2292,7 +2553,7 @@
                                             "H": 700
                                         },
                                         "Actions": [
-                                            "minimize",
+                                            "collapse",
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
@@ -2300,8 +2561,8 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "AutoOpen": false,
-                                        "OpenInNew": false,
+                                        "AutoOpen": true,
+                                        "OpenInNew": true,
                                         "Url": "https://projects.zoho.com/portal/ilink#todomilestones/736040000007428009/customview/"
                                     }
                                 },
@@ -2324,7 +2585,7 @@
                                             "H": 700
                                         },
                                         "Actions": [
-                                            "minimize",
+                                            "collapse",
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
@@ -2333,7 +2594,7 @@
                                     },
                                     "Data": {
                                         "AutoOpen": false,
-                                        "OpenInNew": false,
+                                        "OpenInNew": true,
                                         "Url": "https://singtel.bitrix24.com"
                                     }
                                 },
@@ -2356,7 +2617,7 @@
                                             "H": 800
                                         },
                                         "Actions": [
-                                            "minimize",
+                                            "collapse",
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
@@ -2428,7 +2689,7 @@
                                                     },
                                                     "Actions": [
                                                         "maximize",
-                                                        "minimize",
+                                                        "collapse",
                                                         "float"
                                                     ],
                                                     "ViewState": "restore",
@@ -2454,7 +2715,7 @@
                                                     },
                                                     "Actions": [
                                                         "maximize",
-                                                        "minimize"
+                                                        "collapse"
                                                     ],
                                                     "ViewState": "restore",
                                                     "Header": true,
@@ -2502,7 +2763,7 @@
                                         "Width": 450,
                                         "Height": 800,
                                         "Actions": [
-                                            "minimize",
+                                            "collapse",
                                             "maximize",
                                             "destroy"
                                         ],
@@ -2640,7 +2901,7 @@
                                             "H": 300
                                         },
                                         "Actions": [
-                                            "minimize",
+                                            "collapse",
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
@@ -2681,7 +2942,7 @@
                                             "H": 700
                                         },
                                         "Actions": [
-                                            "minimize",
+                                            "collapse",
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
@@ -2713,7 +2974,7 @@
                                             "H": 700
                                         },
                                         "Actions": [
-                                            "minimize",
+                                            "collapse",
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
@@ -2741,11 +3002,11 @@
                                         "Position": {
                                             "X": 0,
                                             "Y": 0,
-                                            "W": 600,
-                                            "H": 600
+                                            "W": 900,
+                                            "H": 400
                                         },
                                         "Actions": [
-                                            "minimize",
+                                            "collapse",
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
@@ -2777,7 +3038,7 @@
                                             "H": 700
                                         },
                                         "Actions": [
-                                            "minimize",
+                                            "collapse",
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
@@ -2785,8 +3046,8 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "AutoOpen": false,
-                                        "OpenInNew": false,
+                                        "AutoOpen": true,
+                                        "OpenInNew": true,
                                         "Url": "https://projects.zoho.com/portal/ilink#todomilestones/736040000007428009/customview/"
                                     }
                                 },
@@ -2809,7 +3070,7 @@
                                             "H": 700
                                         },
                                         "Actions": [
-                                            "minimize",
+                                            "collapse",
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
@@ -2818,7 +3079,7 @@
                                     },
                                     "Data": {
                                         "AutoOpen": false,
-                                        "OpenInNew": false,
+                                        "OpenInNew": true,
                                         "Url": "https://singtel.bitrix24.com"
                                     }
                                 },
@@ -2841,7 +3102,7 @@
                                             "H": 800
                                         },
                                         "Actions": [
-                                            "minimize",
+                                            "collapse",
                                             "destroy"
                                         ],
                                         "ViewState": "restore",
@@ -3052,7 +3313,7 @@
                             "H": 740
                         },
                         "Actions": [
-                            "minimize",
+                            "collapse",
                             "destroy",
                             "pin"
                         ],
@@ -3085,7 +3346,7 @@
                             "H": 300
                         },
                         "Actions": [
-                            "minimize",
+                            "collapse",
                             "destroy",
                             "pin"
                         ],
@@ -3103,13 +3364,13 @@
         }
     },
     "AppConfigs": {
-        "TitleName": "TMAC",
+        "TitleName": "Agent Desktop",
         "Theme": "theme-default-2",
         "Logos": {
             "Favicon": "",
             "Default": {
                 "Large": {
-                    "Src": "https://tmac.tetherfilabs.com/tcie-web-app/assets/img/main-logo.png",
+                    "Src": "https://dice.tetherfi.cloud/agent-desktop/assets/images/logos/tetherfi.png",
                     "Width": 180,
                     "Height": 90
                 },
@@ -3122,16 +3383,16 @@
             },
             "Customer": {
                 "Large": {
-                    "Src": "https://tmac.tetherfilabs.com/Images/singtel_large.png",
+                    "Src": "https://dice.tetherfi.cloud/agent-desktop/assets/images/logos/tetherfi.png",
                     "Width": 160,
                     "Height": 88
                 },
                 "Small": {
-                    "Src": "https://tmac.tetherfilabs.com/Images/singtel_small.png",
+                    "Src": "https://dice.tetherfi.cloud/agent-desktop/assets/images/logos/tetherfi-logo-white.png",
                     "Width": 50,
                     "Height": 50
                 },
-                "Alt": "Singtel"
+                "Alt": "Tetherfi"
             }
         },
         "WindowSettings": {
@@ -3169,7 +3430,7 @@
             },
             "offerOptions": {
                 "offerToReceiveAudio": true,
-                "offerToReceiveVideo": true,
+                "offerToReceiveVideo": false,
                 "iceRestart": true
             },
             "answerOptions": {
@@ -3192,7 +3453,8 @@
             "audioMixerEnabled": true,
             "audioVideoConnectionMode": 0,
             "enableCdcAutoSelection": false,
-            "tryToMergeSingleTrackStreamsFromDifferentSources": false
+            "tryToMergeSingleTrackStreamsFromDifferentSources": false,
+            "sendACK": false
         },
         "SDK": {
             "Proxy": {

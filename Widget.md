@@ -38,7 +38,7 @@
 | Assist                        | TwAgentAssistComponent                   | tw-agent-assist               | :x:                | :x:                | :x: | :heavy_check_mark: | :heavy_check_mark: | 2    |                                                  |
 | Customer Sentiment            | TwCustomerSentimentComponent             | tw-customer-sentiment         | :x:                | :x:                | :x: | :heavy_check_mark: | :heavy_check_mark: | 2    |                                                  |
 
-# Add to app-config.json
+# Add to development.json
 
 -   Example :
 
@@ -56,7 +56,7 @@
             "X": 0,
             "Y": 2
         },
-        "Actions": ["maximize", "minimize", "float"],
+        "Actions": ["maximize", "collapse", "float"],
         "ViewState": "restore",
         "PinState": false,
         "FloatState": false,

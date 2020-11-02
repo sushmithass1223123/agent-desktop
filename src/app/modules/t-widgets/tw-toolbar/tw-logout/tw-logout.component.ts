@@ -102,10 +102,12 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
-
+    /**
+     * To logout user from TMAC
+     */
     logout(): void {
         // confirm logout 
-        const confirmDialogRef = this._appUIService.showAppConfirmDialog('logout')
+        const confirmDialogRef = this._appUIService.showAppConfirmDialog('logout');
         confirmDialogRef.afterClosed().subscribe((dialogResult) => {
             if (dialogResult) {
                 // logout error

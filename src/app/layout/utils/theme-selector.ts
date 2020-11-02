@@ -1,4 +1,6 @@
-
+/**
+ * Theme selector class
+ */
 export class ThemeSelector {
     /**
      * To get fuse theme by theme name
@@ -191,6 +193,7 @@ export class ThemeSelector {
                 }
             default:
                 {
+                    themeName = 'theme-default';
                     selectedTheme = {
                         layout: {
                             navbar: {

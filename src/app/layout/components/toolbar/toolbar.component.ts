@@ -1,13 +1,10 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
+import { FuseConfigService } from '@fuse/services/config.service';
+import { IWidget } from 'app/interfaces';
+import { AppDataService } from 'app/services/app-data.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import * as _ from 'lodash';
-
-import { FuseConfigService } from '@fuse/services/config.service';
-import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
-
-import { AppDataService } from 'app/services/app-data.service';
-import { IWidget } from 'app/interfaces';
 import { SDKClient } from 'tmac-sdk';
 
 /**
@@ -32,7 +29,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
      * Hidden Navbar
      */
     hiddenNavbar: boolean;
-    
+
     /**
      * Selected Language
      */

@@ -4,18 +4,19 @@ import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { FuseSharedModule } from '@fuse/shared.module';
 import * as Chart from 'chart.js';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
-// import { NgxEmojiPickerModule } from 'ngx-emoji-picker';
-// import 'chartjs-plugin-piechart-outlabels';
 import { ChartsModule } from 'ng2-charts';
+import { QuillModule } from 'ngx-quill';
+import Quill from 'quill';
 import {
+    AgentSkillListComponent,
     AlertDialogComponent,
-    MatQuillModule,
     AppConfirmDialogComponent,
     AppSnackbarComponent,
     AvatarComponent,
     CreateEmailComponent,
-    CreateSmsComponent,
+    CreateSMSComponent,
     CustomDialogComponent,
+    MatQuillModule,
     NoDataAvailableComponent,
     ReminderTaskDialogComponent,
     ResourceNotFoundComponent,
@@ -24,8 +25,6 @@ import {
 } from './components';
 import { TWChartDirective } from './directives';
 import { MaterialModule } from './material.module';
-import Quill from 'quill';
-import { QuillModule } from 'ngx-quill';
 
 const SizeStyle = Quill.import('attributors/style/size');
 Quill.register(SizeStyle, true);
@@ -62,10 +61,11 @@ const sharedComponents = [
     ReminderTaskDialogComponent,
     AppConfirmDialogComponent,
     AppSnackbarComponent,
-    CreateSmsComponent,
+    CreateSMSComponent,
     NoDataAvailableComponent,
     TWChartDirective,
-    CreateEmailComponent
+    CreateEmailComponent,
+    AgentSkillListComponent
 ];
 
 /**
@@ -76,4 +76,4 @@ const sharedComponents = [
     imports: [CommonModule, ...sharedModules, QuillModule.forRoot()],
     exports: [...sharedModules, ...sharedComponents]
 })
-export class SharedModule {}
+export class SharedModule { }

@@ -48,21 +48,21 @@
     </button>
 
     <button
+        *ngIf="data.Config.Actions.includes('collapse') || widgetState.floating || widgetState.maximized"
+        mat-icon-button
+        [matTooltip]="widgetState.collapsed ? 'Expand' : 'Collapse'"
+        (click)="collapseWidget()"
+    >
+        <mat-icon [ngClass]="{ 'rotate-180': !widgetState.collapsed }">expand_more</mat-icon>
+    </button>
+
+    <button
         *ngIf="(widgetState.floating || widgetState.maximized) && !data.Config.Class.includes('no-restore')"
         mat-icon-button
         matTooltip="Restore"
         (click)="widgetState.floating ? floatWidget() : maximizeWidget()"
     >
         <mat-icon>close_fullscreen</mat-icon>
-    </button>
-
-    <button
-        *ngIf="data.Config.Actions.includes('minimize') || widgetState.floating || widgetState.maximized"
-        mat-icon-button
-        [matTooltip]="widgetState.collapsed ? 'Expand' : 'Collapse'"
-        (click)="collapseWidget()"
-    >
-        <mat-icon [ngClass]="{ 'rotate-180': !widgetState.collapsed }">expand_more</mat-icon>
     </button>
 
     <button *ngIf="data.Config.Actions.includes('destroy')" mat-icon-button matTooltip="Close" (click)="destroyAOTWidget()">

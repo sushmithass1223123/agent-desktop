@@ -148,11 +148,13 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
         // check if ms call then do not call api, invoke webclient api hold
         if (item.otherData.isMSCall) {
             // get the connection variable
-            const connection: AVChannel = item.otherData.avConn;
-            // check if the connection is there and interaction is not on hold
-            if (connection && item.status !== 'hold') {
-                connection.hold();
-            }
+            const connections: AVChannel[] = item.otherData.avConn;
+            connections.forEach((connection) => {
+                // check if the connection is there and interaction is not on hold
+                if (connection && item.status !== 'hold') {
+                    connection.hold();
+                }
+            });
             return;
         }
         SDKClient.holdCall(item.interactionId.toString(), null)
@@ -179,12 +181,13 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
         this.toggleButton(true, btn);
         // check if ms call then do not call api, invoke webclient api hold
         if (item.otherData.isMSCall) {
-            // get the connection variable
-            const connection: AVChannel = item.otherData.avConn;
-            // check if the connection is there and interaction is on hold
-            if (connection && item.status === 'hold') {
-                connection.unHold();
-            }
+            const connections: AVChannel[] = item.otherData.avConn;
+            connections.forEach((connection) => {
+                // check if the connection is there and interaction is not on hold
+                if (connection && item.status === 'hold') {
+                    connection.unHold();
+                }
+            });
             return;
         }
         SDKClient.unHoldCall(item.interactionId.toString(), null)

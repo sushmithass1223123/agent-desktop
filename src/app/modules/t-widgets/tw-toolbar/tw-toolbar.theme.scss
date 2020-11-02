@@ -5,20 +5,6 @@
     $accent: map-get($theme, accent);
     $is-dark: map-get($theme, is-dark);
 
-    // .tw-navbar-menu {
-    //     .menu-item {
-    //         .mat-icon-button:not(.mat-button-disabled) {
-    //             .mat-icon {
-    //                 @if ($is-dark) {
-    //                     color: white;
-    //                 } @else {
-    //                     color: rgba(0, 0, 0, 0.64);
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
-
     tw-broadcast {
         .broadcast {
             @if ($is-dark) {

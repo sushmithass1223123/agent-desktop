@@ -12,27 +12,40 @@ import { takeUntil } from 'rxjs/internal/operators/takeUntil';
     templateUrl: './create-sms.component.html',
     styleUrls: ['./create-sms.component.scss']
 })
-export class CreateSmsComponent implements OnInit, OnDestroy {
+export class CreateSMSComponent implements OnInit, OnDestroy {
     /**
-     * --------------------------------------------------
-     *  @ [OPTIONAL] to store the fuse config for theme
-     * --------------------------------------------------
+     *  To store the fuse config for theme
      */
     fuseConfig: FuseConfig;
-
+    /**
+     * To unsubscribe from subscription subject
+     */
     unsubscribeAll = new Subject();
-
+    /**
+     * Contact list
+     */
     contacts = [];
 
-    constructor(private _fuseConfigService: FuseConfigService) {}
+    constructor(
+        private _fuseConfigService: FuseConfigService
+    ) { }
 
+    /**
+     * OnInit
+     */
     ngOnInit(): void {
-        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.fuseConfig = config;
-        });
+        this._fuseConfigService.config
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((config: any) => {
+                this.fuseConfig = config;
+            });
     }
 
+    /**
+     * OnDestroy
+     */
     ngOnDestroy(): void {
+        this.unsubscribeAll.next();
         this.unsubscribeAll.complete();
     }
 }

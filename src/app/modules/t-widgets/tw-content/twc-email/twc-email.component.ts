@@ -4,6 +4,7 @@ import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { InteractionRef, InteractionWidgets, IWidget } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
 import { InteractionManagerService } from 'app/services/interaction-manager.service';
+import { cloneDeep } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 import { IncomingEmailEvent, InteractionClosedEvent } from 'tmac-sdk';
 
@@ -14,6 +15,19 @@ import { IncomingEmailEvent, InteractionClosedEvent } from 'tmac-sdk';
     encapsulation: ViewEncapsulation.None
 })
 export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDestroy {
+
+    /**
+     * Holds all the data related to this widget from the config
+     */
+    @Input() data: IWidget;
+    /**
+     * Holds all the interaction related widgets and process on new interacion for interaction content page
+     */
+    interactions: InteractionWidgets[] = [];
+    /**
+     * Currently active email interaction
+     */
+    activeInteraction: number;
 
     constructor(
         public hostElement: ElementRef,
@@ -73,10 +87,10 @@ export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDes
      */
     private incomingEmailEvent = (evt: IncomingEmailEvent) => {
         // get the content widgets
-        const emailWidgets = this.data.Data.Widgets || [];
+        const emailWidgets = cloneDeep(this.data.Data.Widgets) || [];
 
         const staticWidgets = emailWidgets.Static || [];
-        const dynamicWidgets = JSON.parse(evt.WidgetConfigData) || emailWidgets.Dynamic || [];
+        const dynamicWidgets = [];
         const aotWidgets = emailWidgets.AOT || [];
 
         // loop the widgets and add append interaction details

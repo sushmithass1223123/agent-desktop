@@ -10,7 +10,7 @@
                     *ngIf="item.status !== 'hold'"
                     [disabled]="item.status !== 'connected'"
                     mat-icon-button
-                    class="w-36 h-36 bg-warning"
+                    class="w-36 h-36 custom-btn bg-warning"
                     #holdBtn
                     matTooltip="Hold"
                     (click)="holdCall(item, holdBtn)"
@@ -20,7 +20,7 @@
                 <button
                     *ngIf="item.status === 'hold'"
                     mat-icon-button
-                    class="w-36 h-36 bg-success"
+                    class="w-36 h-36 custom-btn bg-success"
                     #unHoldBtn
                     matTooltip="Unhold"
                     (click)="unHoldCall(item, unHoldBtn)"
@@ -30,7 +30,7 @@
                 <button
                     [disabled]="item.status !== 'connected' && item.status !== 'outgoing'"
                     mat-icon-button
-                    class="w-36 h-36 ml-4 bg-danger"
+                    class="w-36 h-36 ml-4 custom-btn bg-danger"
                     #disconnectBtn
                     matTooltip="Disconnect"
                     (click)="disconnectCall(item, disconnectBtn)"
@@ -42,8 +42,7 @@
 
         <avatar
             class="mx-4"
-            matIcon="{{ item.user === 'Customer' ? 'person' : null }}"
-            name="{{ item.user }}"
+            matIcon="chat"
             classes="w-44 h-44 border-radius-100"
             matTooltip="{{ item.user }}"
             circleColor="#5A4980"

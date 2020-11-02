@@ -31,7 +31,7 @@ export class WidgetPreviewComponent implements OnInit {
     /**
      * App config path
      */
-    appConfigPath = 'assets/app-config.json';
+    appConfigPath = 'assets/production.json';
     /**
      * App config
      */

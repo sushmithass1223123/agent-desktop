@@ -65,7 +65,7 @@
 
     <!-- Chat -->
     <div id="chat" fxLayout="column" fxFlex="1 1 auto">
-        <div id="messages" class="messages animate__animated animate__slideInUp animate__faster" fxFlex="1 1 auto" fusePerfectScrollbar>
+        <div id="messages" class="messages" fxFlex="1 1 auto" fusePerfectScrollbar>
             <ng-container *ngIf="chat && chat.dialog && chat.dialog.length > 0">
                 <div
                     *ngFor="let message of chat.dialog; let i = index"

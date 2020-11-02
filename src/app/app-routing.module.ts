@@ -6,7 +6,11 @@ import { WidgetPreviewComponent } from '@modules/core/widget-preview/widget-prev
 import { ResourceNotFoundComponent } from '@modules/shared/components';
 
 const appRoutes: Routes = [
-    { path: '', redirectTo: 'login', pathMatch: 'full' },
+    {
+        path: '',
+        redirectTo: 'login',
+        pathMatch: 'full'
+    },
     {
         path: 'login',
         children: [
@@ -15,7 +19,7 @@ const appRoutes: Routes = [
                 component: LoginComponent
             },
             {
-                path: ':lanId',
+                path: ':agentId',
                 component: LoginComponent
             }
         ]
@@ -33,10 +37,19 @@ const appRoutes: Routes = [
             }
         ]
     },
-    { path: 'preview', component: WidgetPreviewComponent },
-    { path: 'not-found', component: ResourceNotFoundComponent }
+    {
+        path: 'preview',
+        component: WidgetPreviewComponent
+    },
+    {
+        path: 'not-found',
+        component: ResourceNotFoundComponent
+    }
 ];
 
+/**
+ * App routing module
+ */
 @NgModule({
     imports: [RouterModule.forRoot(appRoutes)],
     exports: [RouterModule]

@@ -1,6 +1,7 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { DashboardService } from '@services/dashboard.service';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
+import { IWidget } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
 import { takeUntil } from 'rxjs/operators';
 import { IAgentData, SDKClient } from 'tmac-sdk';
@@ -15,6 +16,10 @@ import { IAgentData, SDKClient } from 'tmac-sdk';
     encapsulation: ViewEncapsulation.None
 })
 export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDestroy {
+    /**
+     * Holds all the data related to this widget from the config
+     */
+    @Input() data: IWidget;
     /**
      * To hold agent data
      */

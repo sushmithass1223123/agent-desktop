@@ -23,7 +23,7 @@
                 mat-mini-fab
                 color="secondary"
                 *ngFor="let channel of data.Data.Channels"
-                (click)="addInteraction(channel.Type)"
+                (click)="addInteraction(channel.Type, channel.Data)"
                 class="fab-secondary"
                 [matTooltip]="channel.Name"
             >
