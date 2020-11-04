@@ -18,15 +18,15 @@
             fusePerfectScrollbar
             [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
         >
-            <avatar matTooltip="Uers" matTooltipPosition="after" matIcon="user"></avatar>
+            <avatar matTooltipPosition="after" matIcon="user"></avatar>
             <ng-container *ngIf="interactionList">
                 <avatar
-                    *ngFor="let item of interactionList | keyvalue"
-                    name="{{ item.value.user }}"
-                    [ngClass]="item.value.status + ' ' + (item.value.interactionId === interactionId ? 'active' : '')"
-                    matTooltip="{{ item.value.user }}"
+                    *ngFor="let item of interactionList"
+                    name="{{ item.user }}"
+                    [ngClass]="item.status + ' ' + (item.interactionId === interactionId ? 'active' : '')"
+                    matTooltip="{{ item.user }}"
                     matTooltipPosition="after"
-                    (click)="selectInteraction(item.value)"
+                    (click)="selectInteraction(item)"
                 ></avatar>
             </ng-container>
         </div>
