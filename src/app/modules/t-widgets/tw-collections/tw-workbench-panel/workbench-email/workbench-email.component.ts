@@ -33,14 +33,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
     @Input() data: IWidget;
 
     /**
-     * [OPTIONAL] to store the fuse config for theme
+     * To store the fuse config for theme
      */
     fuseConfig: FuseConfig;
-
-    /**
-     * [OPTIONAL] to store entire app config and get update
-     */
-    appConfig: any;
 
     /**
      * Search key
@@ -95,10 +90,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
      * @param {AppDataService} _appDataService
      */
     constructor(
-        // @ [OPTIONAL]
         private _fuseConfigService: FuseConfigService,
-        // @ [OPTIONAL]
-        private _appDataService: AppDataService,
         private http: HttpClient,
         private domSanitizer: DomSanitizer
     ) {
@@ -124,17 +116,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
      */
     ngOnInit(): void {
         // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the fuse config
+        // To get the fuse config
         // -----------------------------------------------------------
         this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
             this.fuseConfig = config;
-        });
-
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the app config
-        // -----------------------------------------------------------
-        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.appConfig = config;
         });
 
         this.advancedSearch();

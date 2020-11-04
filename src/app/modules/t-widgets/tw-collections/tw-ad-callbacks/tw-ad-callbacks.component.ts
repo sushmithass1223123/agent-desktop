@@ -1,13 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { FuseConfigService } from '@fuse/services/config.service';
-import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { ACTIVE_CALL_STATUSES, COMMON_ERR_MESSAGE, PENDING_CALL_STATUSES } from 'app/constants';
 import { ResData } from 'app/interfaces';
 import { sortBy } from 'lodash';
 import * as moment from 'moment';
-import { takeUntil } from 'rxjs/operators';
 import { SDKClient } from 'tmac-sdk';
 
 /**
@@ -72,26 +69,10 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
     maximized = false;
 
     /**
-     * [OPTIONAL] to store the fuse config for theme
-     */
-    fuseConfig: any;
-
-    /**
-     * [OPTIONAL] to store entire app config and get update
-     */
-    appConfig: any;
-
-    /**
-     * Constructor
-     * @param {FuseConfigService} _fuseConfigService
-     * @param {AppDataService} _appDataService
+     * Constructor 
      */
     constructor(
-        // @ [OPTIONAL]
-        private _fuseConfigService: FuseConfigService,
-        // @ [OPTIONAL]
-        private _appDataService: AppDataService,
-        private http: HttpClient
+        private _http: HttpClient
     ) {
         super();
     }
@@ -108,23 +89,9 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the fuse config
-        // -----------------------------------------------------------
-        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.fuseConfig = config;
-        });
-
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the app config
-        // -----------------------------------------------------------
-        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.appConfig = config;
-        });
-
         this.dataConfig = this.data.Data;
         const { agentId } = SDKClient.getAgentData();
-        this.http.get(`${this.dataConfig.GetCallbacksUrl}?agentId=${agentId}`).subscribe(this.addNewCallbacks, () => {
+        this._http.get(`${this.dataConfig.GetCallbacksUrl}?agentId=${agentId}`).subscribe(this.addNewCallbacks, () => {
             this.getDashboardDataRes = {
                 error: true,
                 loading: false,

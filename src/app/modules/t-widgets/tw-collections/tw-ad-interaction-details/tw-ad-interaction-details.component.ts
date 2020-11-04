@@ -4,10 +4,8 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { fuseAnimations } from '@fuse/animations';
-import { FuseConfigService } from '@fuse/services/config.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { takeUntil } from 'rxjs/operators';
-import { SDKClient, InteractionData } from 'tmac-sdk';
+import { InteractionData, SDKClient } from 'tmac-sdk';
 
 /**
  * Agent Interactions details Table widget
@@ -34,11 +32,6 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
      * Table sort ref
      */
     @ViewChild(MatSort, { static: true }) sort: MatSort;
-
-    /**
-     * Fuse config data
-     */
-    @Input() fuseConfig: any;
 
     /**
      * Table Paginator ref
@@ -88,7 +81,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         ClosedTimeEnd: new FormControl()
     });
 
-    constructor(private _fuseConfigService: FuseConfigService) {
+    constructor() {
         super();
     }
 
@@ -100,10 +93,6 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        // subscribe to fuse
-        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.fuseConfig = config;
-        });
         const dateCols = ['CreatedTimeStart', 'CreatedTimeEnd', 'ClosedTimeStart', 'ClosedTimeEnd'];
         this.advancedSearchForm.valueChanges.subscribe((res) => {
             const searchKey = {};
@@ -226,7 +215,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         this.interactionDetailsTable.source.sort = this.sort;
         this.interactionDetailsTable.source.paginator = this.paginator;
         this.interactionDetailsTable.source.filterPredicate = this.createFilter();
-    };
+    }
 
     /**
      * Maximize event

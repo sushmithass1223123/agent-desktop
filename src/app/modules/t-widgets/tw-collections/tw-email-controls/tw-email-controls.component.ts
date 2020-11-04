@@ -461,17 +461,17 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     sendEmailAsChecker(): void {
         // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
         const currentInteraction = this.currentInteraction;
-        const { AttachmetList, Body, ToList, CCList, Subject, } = currentInteraction;
+        const { AttachmetList, Body, ToList, CCList, Subject } = currentInteraction;
         SDKClient.sendEmail({
             attachmentFileList: AttachmetList && AttachmetList.length ? JSON.stringify(AttachmetList) : '',
             bccList: '',
             body: Body['changingThisBreaksApplicationSecurity'],
-            ccList: CCList,
+            ccList: CCList || '',
             inboxSessionId: currentInteraction.SessionId,
             outboxSessionId: '',
             routeId: '',
             subject: Subject,
-            toList: ToList,
+            toList: ToList || '',
             typeOfResponse: 'approve'
         })
             .then((res) => {

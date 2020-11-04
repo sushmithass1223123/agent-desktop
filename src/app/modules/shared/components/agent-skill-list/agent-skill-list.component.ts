@@ -405,23 +405,86 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
      */
     private transferChat(consult: boolean): void {
         this.loading = true;
+        const type = this.data.otherData.type === 'conf' ? 'conference' : this.data.otherData.type;
+        // agent transfer/conf
         if (this.selectedRow?.type === 'agent') {
-            // if consault transfer
+            // if consault transfer/conf
             if (consult) {
                 SDKClient.sendTextChatTransferNotification({
                     comment: this.comments,
                     interactionId: this.interactionId.toString(),
-                    otherData: '',
+                    otherData: JSON.stringify({
+                        type: this.data.otherData.type,
+                        mode: this.data.otherData.mode
+                    }),
                     toAgentId: this.selectedItem,
                     toTmacServer: this.selectedRow.row.TmacServer
-                });
+                })
+                    .then(dt => {
+                        this.loading = false;
+                        if (dt.response.ResultCode >= 0) {
+                            this._appUIService.showSnackbar(`Chat ${type} notification sent to remote agent, Please wait for response.`);
+                        }
+                        else {
+                            this._appUIService.showSnackbar(dt.response.ResultMessage, 'failure');
+                        }
+                    })
+                    .catch(() => {
+                        this.loading = false;
+                        this._appUIService.showSnackbar(`Chat ${type} notification failed, please try again`, 'failure');
+                    });
             }
+            // blind transfer/confks
             else {
-
+                SDKClient.transferTextChat({
+                    chatMode: this.data.otherData.mode,
+                    comment: this.comments,
+                    conferenceType: this.data.otherData.type,
+                    interactionId: this.interactionId.toString(),
+                    lineId: this.data.otherData.lineId,
+                    sessionId: this.data.otherData.sessionId,
+                    toAgentId: this.selectedItem,
+                    toTmacServer: this.selectedRow.row.TmacServer
+                })
+                    .then(dt => {
+                        this.loading = false;
+                        // transfer success
+                        if (dt.response.ResultCode >= 0) {
+                            this.close();
+                        }
+                        // transfer error
+                        else {
+                            this._appUIService.showSnackbar(`Chat ${type} failed, please try again`, 'failure');
+                        }
+                    })
+                    .catch(() => {
+                        this.loading = false;
+                        this._appUIService.showSnackbar(`Chat ${type} error, please try again`, 'failure');
+                    });
             }
         }
+        // skill transfer/conf
         else if (this.selectedRow?.type === 'skill') {
-            // TODO:: implement skill transfer
+            this.loading = false;
+            SDKClient.transferTextChatToQueue({
+                chatMode: this.data.otherData.mode,
+                interactionId: this.interactionId.toString(),
+                isBlind: true,
+                skillId: this.selectedItem
+            })
+                .then(dt => {
+                    this.loading = false;
+                    if (dt.response.ResultCode >= 0) {
+                        this.close();
+                    }
+                    else {
+                        this._appUIService.showSnackbar(`Chat ${type} to queue failed, please try again`, 'failure');
+                    }
+                })
+                .catch(() => {
+                    this.loading = false;
+                    this._appUIService.showSnackbar(`Chat ${type} to queue error, please try again`, 'failure');
+                });
         }
         else {
             // no row selected

@@ -1,13 +1,11 @@
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
-import { FuseConfigService } from '@fuse/services/config.service';
-import { AppDataService } from '@services/app-data.service';
-import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { map, takeUntil } from 'rxjs/operators';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatSort } from '@angular/material/sort';
-import { sortBy } from 'lodash';
-import { ResData } from 'app/interfaces';
 import { HttpClient } from '@angular/common/http';
+import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
+import { ResData } from 'app/interfaces';
+import { sortBy } from 'lodash';
+import { map, takeUntil } from 'rxjs/operators';
 
 /**
  * Supervisor Gamification Component
@@ -23,16 +21,6 @@ export class TwSuGamificationComponent extends TWidgetWrapper implements OnInit,
      * holds all the data related to this widget from the config
      */
     @Input() data: any;
-
-    /**
-     * Optional to store the fuse config for theme
-     */
-    fuseConfig: any;
-
-    /**
-     * [OPTIONAL] to store entire app config and get update
-     */
-    appConfig: any;
 
     /**
      * Gamificartion Request status
@@ -74,15 +62,9 @@ export class TwSuGamificationComponent extends TWidgetWrapper implements OnInit,
 
     /**
      * Constructor
-     * @param {FuseConfigService} _fuseConfigService
-     * @param {AppDataService} _appDataService
      */
     constructor(
-        // @ [OPTIONAL]
-        private _fuseConfigService: FuseConfigService,
-        // @ [OPTIONAL]
-        private _appDataService: AppDataService,
-        private http: HttpClient
+        private _http: HttpClient
     ) {
         super();
     }
@@ -98,19 +80,6 @@ export class TwSuGamificationComponent extends TWidgetWrapper implements OnInit,
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the fuse config
-        // -----------------------------------------------------------
-        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.fuseConfig = config;
-        });
-
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the app config
-        // -----------------------------------------------------------
-        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.appConfig = config;
-        });
 
         this.setupLeaderBoard();
     }
@@ -136,7 +105,7 @@ export class TwSuGamificationComponent extends TWidgetWrapper implements OnInit,
      * @method setupLeaderBoard
      */
     setupLeaderBoard(): void {
-        this.http
+        this._http
             .post<Record<'d', string>>(this.data.Data.LeaderBoardUrl, {})
             .pipe(
                 map((x) => JSON.parse(x.d)),

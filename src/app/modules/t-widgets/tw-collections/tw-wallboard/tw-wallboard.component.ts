@@ -1,6 +1,7 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { SDKClient, WallboardRefreshEvent } from 'tmac-sdk';
 
@@ -35,7 +36,7 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
      * Columns displayed in table
      */
     displayedColumns: string[] = ['SkillName', 'AgentsStaffed', 'AgentAvailable', 'CallsInQueue'];
-    
+
     /**
      * Table Data source
      */
@@ -44,7 +45,9 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
     /**
      * @constructor
      */
-    constructor() {
+    constructor(
+        private _tmacEventService: TMACEventService
+    ) {
         super();
         this.source = '';
     }
@@ -59,14 +62,23 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
         // get source from config
         this.source = this.data.Data.Source;
 
-        // register to events
-        SDKClient.events.on(this.source === 'supervisor' ?
+        const eventName = this.source === 'supervisor' ?
             'TeamWallboardRefreshEvent' :
-            'WallboardRefreshEvent',
-            this.wallboardRefreshEvent);
+            'WallboardRefreshEvent';
+
+        // get the stock event
+        const event = this._tmacEventService.tmacEvents(eventName);
+        // if event
+        if (event) {
+            // process the event
+            this.wallboardRefreshEvent(event);
+        }
+
+        // register to events
+        SDKClient.events.on(eventName, this.wallboardRefreshEvent);
     }
 
-    
+
     /**
      * Lifecycle Hooks
      */
@@ -81,7 +93,7 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
             this.wallboardRefreshEvent);
     }
 
-    
+
     /**
      * Wallboard Refresh event handler
      * Updates table data on event

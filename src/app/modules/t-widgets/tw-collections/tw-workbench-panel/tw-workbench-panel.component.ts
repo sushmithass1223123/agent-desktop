@@ -1,11 +1,10 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AppDataService } from '@services/app-data.service';
 import { FuseConfigService } from '@fuse/services/config.service';
-import { takeUntil } from 'rxjs/operators';
-import { SDKClient } from 'tmac-sdk';
 import { FuseConfig } from '@fuse/types';
+import { AppDataService } from '@services/app-data.service';
+import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
     selector: 'tw-workbench-panel', // make sure you set the selector starts with tw-<widget-name>
@@ -25,11 +24,6 @@ export class TwWorkbenchPanelComponent extends TWidgetWrapper implements OnInit,
     fuseConfig: FuseConfig;
 
     /**
-     * to store entire app config and get update
-     */
-    appConfig: any;
-
-    /**
      * active class for the tab
      */
     tabActiveClass = '';
@@ -46,9 +40,7 @@ export class TwWorkbenchPanelComponent extends TWidgetWrapper implements OnInit,
      */
     constructor(
         // @ [OPTIONAL]
-        private _fuseConfigService: FuseConfigService,
-        // @ [OPTIONAL]
-        private _appDataService: AppDataService
+        private _fuseConfigService: FuseConfigService
     ) {
         super();
     }
@@ -83,13 +75,6 @@ export class TwWorkbenchPanelComponent extends TWidgetWrapper implements OnInit,
                 : this.fuseConfig.layout.widget.customBackgroundColor === true
                     ? this.fuseConfig.layout.widget.contentBackground
                     : '';
-        });
-
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the app config
-        // -----------------------------------------------------------
-        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.appConfig = config;
         });
     }
 

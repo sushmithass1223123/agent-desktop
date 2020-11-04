@@ -5,6 +5,9 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { AGENT_DATA_MAP } from 'app/constants';
 import { IWidget } from 'app/interfaces';
 
+/**
+ * Custom content component
+ */
 @Component({
     selector: 'twc-custom',
     templateUrl: './twc-custom.component.html',
@@ -24,6 +27,10 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
      * Url to load the frame
      */
     url: any;
+    /**
+     * flag to unload the page
+     */
+    unload: boolean;
 
     /**
      * Constructor
@@ -45,6 +52,7 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
+        this.unload = this.data.Data.Unload || false;
     }
 
     /**
@@ -81,6 +89,19 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
             setTimeout(() => {
                 this.loaded = true;
             }, 3000);
+        }
+    }
+
+    /**
+     * On page inactive callback
+     */
+    onInactive = () => {
+        // check if loaded and page is active
+        if (this.loaded && this.pageActive) {
+            if (this.unload) {
+                this.loaded = false;
+                this.url = null;
+            }
         }
     }
 

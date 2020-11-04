@@ -196,6 +196,7 @@ export class AppDataService {
                 timeout: config.AppConfigs.SDK.Proxy.Timeout || 30000
             },
             signalRProxy: {
+                enabled: config.AppConfigs.SDK.SignalRProxy.enabled || true,
                 logging: config.AppConfigs.SDK.SignalRProxy.Logging || false,
                 protocol: config.AppConfigs.SDK.SignalRProxy?.Protocol,
                 timeout: config.AppConfigs.SDK.SignalRProxy.Timeout || 30

@@ -3,6 +3,9 @@ import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { IWidget } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
 
+/**
+ * Workbench content component
+ */
 @Component({
     selector: 'twc-workbench',
     templateUrl: './twc-workbench.component.html',
@@ -26,6 +29,10 @@ export class TwcWorkbenchComponent extends TWContentWrapper implements OnInit, O
      * To hold AOT widgets
      */
     aotWidgets = [];
+    /**
+     * Loaded flag
+     */
+    loaded: boolean;
 
     /**
      * Constructor
@@ -53,9 +60,27 @@ export class TwcWorkbenchComponent extends TWContentWrapper implements OnInit, O
         this.dynamicWidgets = homeWidgets.Dynamic || [];
         this.aotWidgets = homeWidgets.AOT || [];
     }
-
+    /**
+     * OnDestroy
+     */
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+    }
+
+    /**
+     * On page active callback
+     */
+    onActive = () => {
+        this.loaded = true;
+    }
+
+    /**
+     * On page inactive callback
+     */
+    onInactive = () => {
+        if (this.loaded && this.pageActive) {
+            this.loaded = false;
+        }
     }
 }

@@ -118,8 +118,12 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-        SDKClient.events.off('TeamChannelListEvent', this.TeamChannelListEvent);
-        SDKClient.events.off('AgentChannelDetailsEvent', this.AgentChannelDetailsEvent);
+
+        if (this.dataConfig.Source === 'dashboard') {
+            SDKClient.events.off('AgentChannelDetailsEvent', this.AgentChannelDetailsEvent);
+        } else if (this.dataConfig.Source === 'supervisor') {
+            SDKClient.events.off('TeamChannelListEvent', this.TeamChannelListEvent);
+        }
     }
 
     // Methods for Source === 'dashboard' ::: Start

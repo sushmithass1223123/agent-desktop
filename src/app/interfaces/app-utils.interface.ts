@@ -393,4 +393,8 @@ export interface AgentSkillListData {
      * Interaction Id
      */
     interactionId?: number;
+    /**
+     * Any extra info to pass
+     */
+    otherData?: any;
 }
