@@ -11,13 +11,7 @@
     (floatEvent)="floatEvent.emit($event)"
 >
     <div fxLayout class="w-100-p h-100-p" fxLayoutAlign="center">
-        <div
-            fxLayout="column"
-            fxLayoutAlign=" center"
-            class="w-60 h-100-p pr-4 py-8 interactions"
-            fusePerfectScrollbar
-            [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
-        >
+        <div fxLayout="column" fxLayoutAlign=" center" class="w-60 h-100-p pr-4 py-8 interactions">
             <avatar matTooltipPosition="after" matIcon="user"></avatar>
             <ng-container *ngIf="interactionList">
                 <avatar
@@ -40,8 +34,6 @@
                     ? fuseConfig.layout.widget.contentBackground
                     : ''
             "
-            fusePerfectScrollbar
-            [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
         >
             <div class="header-controls my-8 px-12">
                 <div fxLayout fxLayoutGap="10px" fxLayoutAlign="end center">
@@ -209,9 +201,9 @@
                         </mat-chip-list>
                     </div>
                 </div>
-                <div class="email-content">
-                    <span class="my-8">Subject : {{ currentInteraction.Subject }} </span>
-                    <div class="email-content-body py-8 w-100-p">
+                <div class="email-content position-relative pt-16">
+                    <span>Subject : {{ currentInteraction.Subject }} </span>
+                    <div class="email-content-body py-8 position-absolute">
                         <div *ngIf="!getInboxMessageReq.loading && !getInboxMessageReq.error" [innerHtml]="currentInteraction.Body"></div>
 
                         <div *ngIf="getInboxMessageReq.loading" fxLayout fxLayoutAlign="center center" class="w-100-p h-30-p">
