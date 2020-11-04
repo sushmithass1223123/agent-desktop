@@ -15,7 +15,7 @@ import { InteractionRef, IWidget, ResData } from 'app/interfaces';
 import { CreateEmailInfo } from 'app/models';
 import { interval, Observable, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
-import { distinctUntilChanged, filter, map, mergeAll } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map, mergeAll, reduce, scan, switchMap } from 'rxjs/operators';
 import { IAgentData, IResponse, SDKClient } from 'tmac-sdk';
 
 /**
@@ -73,7 +73,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Interaction list
      */
     // interactionList: Observable<InteractionRef[]>;
-    interactionList: InteractionRef[] = [];
+    interactionList: InteractionRef[];
     /**
      * Current interaction
      */
@@ -158,27 +158,26 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             this.fuseConfig = config;
         });
 
-        const emailInteractionObs: Observable<InteractionRef> = this._interactionManagerService.interactions.pipe(
-            takeUntil(this.unsubscribeAll),
-            mergeAll(),
-            filter((i: InteractionRef) => i.type === 'email'),
-        );
+        const emailInteractionObs: Observable<InteractionRef[]> = this._interactionManagerService.interactions.pipe(takeUntil(this.unsubscribeAll));
+
+        // @TODO - Some weird issue when interaction closed , prev intraction emittted with current interaction active
+        // this.interactionList = emailInteractionObs.pipe(
+        //     scan((acc, val) => uniqBy(acc.concat(val), 'interactionId'), [])
+        // );
+
+        emailInteractionObs.subscribe((interactions) => {
+            // filter out the email interaction
+            this.interactionList = interactions.filter((i: InteractionRef) => i.type === 'email');
+        });
 
         emailInteractionObs.pipe(
-            map(x => {
-                if (!this.interactionList.find(iRef => x.interactionId === iRef.interactionId)) {
-                    this.interactionList.push(x);
-                }
-                return x;
-            }),
-            filter(x => x.isActive),
+            mergeAll(),
+            filter((i: InteractionRef) => i.type === 'email' && i.isActive),
             distinctUntilChanged((prev, curr) => (prev.interactionId === curr.interactionId) && !this.getInboxMessageReq.loading),
             map(async (interactionVal) => {
                 let interaction: any = interactionVal.otherData;
                 if (interaction) {
                     this.interactionId = interaction.InteractionID;
-                    // const bodyExists = !!this.getInboxMessageReq.data[interaction.InteractionID]?.Body;
-                    // if (!bodyExists) {
                     try {
                         if (!this.emailBodies[interaction.InteractionID]) {
                             this.getInboxMessageReq = { error: false, loading: true };
@@ -461,17 +460,17 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     sendEmailAsChecker(): void {
         // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
         const currentInteraction = this.currentInteraction;
-        const { AttachmetList, Body, ToList, CCList, Subject } = currentInteraction;
+        const { AttachmetList, Body, To, CC, Subject, } = currentInteraction;
         SDKClient.sendEmail({
             attachmentFileList: AttachmetList && AttachmetList.length ? JSON.stringify(AttachmetList) : '',
             bccList: '',
             body: Body['changingThisBreaksApplicationSecurity'],
-            ccList: CCList || '',
+            ccList: CC || '',
             inboxSessionId: currentInteraction.SessionId,
             outboxSessionId: '',
             routeId: '',
             subject: Subject,
-            toList: ToList || '',
+            toList: To || '',
             typeOfResponse: 'approve'
         })
             .then((res) => {
@@ -528,7 +527,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     rejectEmail(): void {
         // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
         const currentInteraction = this.currentInteraction;
-        const dialogRef = this._appUIService.showCustomDialog('prompt', 'Enter the comments', 'Interaction Comment');
+        const dialogRef = this._appUIService.showCustomDialog('prompt', 'Enter the comments', 'Reject Email');
         dialogRef.afterClosed().subscribe((comment) => {
             if (comment) {
                 Promise.all([
@@ -543,11 +542,17 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                     })]).then(res => {
                         const [rejectEmailRes, saveInteractionCommentRes] = res;
 
+                        if (rejectEmailRes.response > 0) {
+                            this._appUIService.showSnackbar('Email rejection failed');
+                        } else {
+                            this._appUIService.showSnackbar('Email rejected successfully');
+                        }
+
                         if (saveInteractionCommentRes.response > 0) {
-                            this._appUIService.showSnackbar('Interaction comment saved successfully');
+                            this._appUIService.showSnackbar('Comment saved successfully');
                         }
                         else {
-                            this._appUIService.showSnackbar('Interaction comment save failed', 'failure');
+                            this._appUIService.showSnackbar('Comment save failed', 'failure');
                         }
 
                         this._fuseProgressBarService.hide();

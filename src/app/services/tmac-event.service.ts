@@ -839,7 +839,6 @@ export class TMACEventService {
         SDKClient.events.on('AgentReminderEvent', this.AgentReminderEvent);
         SDKClient.events.on('AgentForcedLogoffEvent', this.AgentForcedLogoffEvent);
         SDKClient.events.on('TextChatTransferNotificationEvent', this.TextChatTransferNotificationEvent);
-        SDKClient.events.on('TextChatTransferFailed', this.TextChatTransferFailed);
 
         // subscribe to InteractionManagerService
         this._interactionManagerService.subscribe();
@@ -861,7 +860,6 @@ export class TMACEventService {
         SDKClient.events.off('AgentReminderEvent', this.AgentReminderEvent);
         SDKClient.events.off('AgentForcedLogoffEvent', this.AgentForcedLogoffEvent);
         SDKClient.events.off('TextChatTransferNotificationEvent', this.TextChatTransferNotificationEvent);
-        SDKClient.events.off('TextChatTransferFailed', this.TextChatTransferFailed);
 
         // unsubscribe from all subscriptions
         this._unsubscribeAll.next();
