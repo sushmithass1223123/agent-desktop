@@ -542,11 +542,17 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                     })]).then(res => {
                         const [rejectEmailRes, saveInteractionCommentRes] = res;
 
+                        if (rejectEmailRes.response > 0) {
+                            this._appUIService.showSnackbar('Email rejection failed');
+                        } else {
+                            this._appUIService.showSnackbar('Email rejected successfully');
+                        }
+
                         if (saveInteractionCommentRes.response > 0) {
-                            this._appUIService.showSnackbar('Interaction comment saved successfully');
+                            this._appUIService.showSnackbar('Comment saved successfully');
                         }
                         else {
-                            this._appUIService.showSnackbar('Interaction comment save failed', 'failure');
+                            this._appUIService.showSnackbar('Comment save failed', 'failure');
                         }
 
                         this._fuseProgressBarService.hide();
