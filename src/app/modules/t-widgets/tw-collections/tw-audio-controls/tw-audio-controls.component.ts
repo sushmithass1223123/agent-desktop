@@ -1,5 +1,4 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
@@ -127,8 +126,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         private _fuseConfigService: FuseConfigService,
         private _appDataService: AppDataService,
         private _aotWidgetService: AOTWidgetService,
-        private _appUIService: AppUiService,
-        private _dialog: MatDialog
+        private _appUIService: AppUiService
     ) {
         super();
     }
@@ -393,7 +391,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
                 this.destroyWidget();
                 break;
             default:
-                // console.log(`unhandled:: [${evt.event}]`, evt);
+            // console.log(`unhandled:: [${evt.event}]`, evt);
         }
     }
 

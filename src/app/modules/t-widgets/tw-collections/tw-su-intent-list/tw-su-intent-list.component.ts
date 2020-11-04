@@ -1,13 +1,10 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { FuseConfigService } from '@fuse/services/config.service';
-import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CHART_COLORS } from 'app/constants';
 import { TwChartConfig } from 'app/interfaces';
 import { ChartDataSets } from 'chart.js';
-import { takeUntil } from 'rxjs/operators';
-import { SDKClient, TeamIntentDataList } from 'tmac-sdk';
 import { orderBy } from 'lodash';
+import { SDKClient, TeamIntentDataList } from 'tmac-sdk';
 
 /**
  * Intent list componrnt
@@ -42,27 +39,10 @@ export class TwSuIntentListComponent extends TWidgetWrapper implements OnInit, O
 
     allDatasets: { datasets: ChartDataSets[]; labels: string[] } = { datasets: [], labels: [] };
 
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store the fuse config for theme
-    // -----------------------------------------------------------
-    fuseConfig: any;
-
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store entire app config and get update
-    // -----------------------------------------------------------
-    appConfig: any;
-
     /**
      * Constructor
-     * @param {FuseConfigService} _fuseConfigService
-     * @param {AppDataService} _appDataService
      */
-    constructor(
-        // @ [OPTIONAL]
-        private _fuseConfigService: FuseConfigService,
-        // @ [OPTIONAL]
-        private _appDataService: AppDataService
-    ) {
+    constructor() {
         super();
     }
 
@@ -77,19 +57,6 @@ export class TwSuIntentListComponent extends TWidgetWrapper implements OnInit, O
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the fuse config
-        // -----------------------------------------------------------
-        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.fuseConfig = config;
-        });
-
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the app config
-        // -----------------------------------------------------------
-        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.appConfig = config;
-        });
 
         SDKClient.events.on('TeamIntentListEvent', this.TeamIntentListEvent);
     }

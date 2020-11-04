@@ -38,27 +38,14 @@
             <div class="header-controls my-8 px-12">
                 <div fxLayout fxLayoutGap="10px" fxLayoutAlign="end center">
                     <ng-container *ngIf="currentInteraction.RouteReason === 'CheckerQueue'">
-                        <button
-                            mat-raised-button
-                            class="border-radius-20 animate__animated animate__slideInRight animate__faster"
-                            (click)="sendEmailAsChecker()"
-                            color="primary"
-                        >
-                            Approve
-                        </button>
-                        <button
-                            mat-raised-button
-                            class="border-radius-20 animate__animated animate__slideInRight animate__faster"
-                            (click)="rejectEmail()"
-                        >
-                            Reject
-                        </button>
+                        <button mat-raised-button class="border-radius-20" (click)="sendEmailAsChecker()" color="primary">Approve</button>
+                        <button mat-raised-button class="border-radius-20" (click)="rejectEmail()">Reject</button>
                     </ng-container>
                     <ng-container *ngIf="currentInteraction.RouteReason === 'MakerQueue'">
                         <button
                             *ngIf="!replyInfo && currentInteraction.IsEmailProbableSpam"
                             mat-raised-button
-                            class="border-radius-20 animate__animated animate__slideInRight animate__faster"
+                            class="border-radius-20"
                             (click)="markAsSpam()"
                         >
                             Mark As Spam
@@ -67,7 +54,7 @@
                         <button
                             *ngIf="!replyInfo"
                             mat-raised-button
-                            class="border-radius-20 animate__animated animate__slideInRight animate__faster"
+                            class="border-radius-20"
                             color="warn"
                             #closeBtn
                             (click)="closeEmail($event)"
@@ -76,19 +63,14 @@
                             Close
                         </button>
 
-                        <button
-                            *ngIf="replyInfo"
-                            mat-raised-button
-                            class="border-radius-20 animate__animated animate__slideInRight animate__faster"
-                            (click)="saveEmailAsDraft(); closeEditor()"
-                        >
+                        <button *ngIf="replyInfo" mat-raised-button class="border-radius-20" (click)="saveEmailAsDraft(); closeEditor()">
                             Save As Draft
                         </button>
 
                         <button
                             *ngIf="replyInfo"
                             mat-raised-button
-                            class="border-radius-20 animate__animated animate__slideInRight animate__faster"
+                            class="border-radius-20"
                             color="accent"
                             (click)="closeEditor()"
                             matTooltip="Close Editor"
@@ -99,7 +81,7 @@
                         <button
                             *ngIf="replyInfo"
                             mat-raised-button
-                            class="border-radius-20 animate__animated animate__slideInRight animate__faster"
+                            class="border-radius-20"
                             color="primary"
                             (click)="sendEmailAsMaker()"
                             matTooltip="Send Email"
@@ -131,8 +113,11 @@
                 fxFlex="100"
                 fxLayout="column"
                 [ngClass]="{ 'border-left-sm-primary w-90-p mt-12 ml-16': replyInfo }"
-                class="email-content position-relative p-12 pb-32"
+                class="email-content position-relative p-8"
             >
+                <div class="mat-title mb-0">
+                    {{ currentInteraction.Subject }}
+                </div>
                 <div class="p-8" fxLayout="column">
                     <div fxLayout fxLayoutAlign="space-between" class="font-weight-700">
                         <span fxLayout="row" fxLayoutAlign=" center" matTooltip="Intent">
@@ -201,9 +186,8 @@
                         </mat-chip-list>
                     </div>
                 </div>
-                <div class="email-content position-relative pt-16">
-                    <span>Subject : {{ currentInteraction.Subject }} </span>
-                    <div class="email-content-body py-8 position-absolute">
+                <div class="email-content position-relative py-12">
+                    <div class="email-content-body position-absolute">
                         <div *ngIf="!getInboxMessageReq.loading && !getInboxMessageReq.error" [innerHtml]="currentInteraction.Body"></div>
 
                         <div *ngIf="getInboxMessageReq.loading" fxLayout fxLayoutAlign="center center" class="w-100-p h-30-p">

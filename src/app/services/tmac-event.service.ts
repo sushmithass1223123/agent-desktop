@@ -5,6 +5,7 @@ import { ReminderTaskDialogComponent } from '@modules/shared/components';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { IAction, IWidget, QuizEvent } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
+import { map } from 'lodash';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
@@ -17,10 +18,13 @@ import {
     CommandResultEvent,
     GenericInteractionEvent,
     HoldTimerEvent,
+
     IResponse,
     IUIEvent,
     SDKClient,
     TCMDirectAgentNotifyTimeoutEvent,
+    TextChatTransferFailedEvent,
+    TextChatTransferNotificationEvent,
     TUtils
 } from 'tmac-sdk';
 import { AOTWidgetService } from './aot-widget.service';
@@ -45,10 +49,13 @@ export class TMACEventService {
      */
     appConfig: any;
     /**
-     * TMAC events storage array
+     * Interaction events storage array
+     */
+    private _interactionEventArray: any[];
+    /**
+     * TMAC events story array
      */
     private _tmacEventArray: any[];
-
     /**
      * Construct and Dispose TMAC event subject
      */
@@ -134,7 +141,7 @@ export class TMACEventService {
     private onTMACEvent = (evt: IUIEvent) => {
         if (evt.InteractionID > 0) {
             // add all the interaction events to the array
-            this._tmacEventArray.push(evt);
+            this._interactionEventArray.push(evt);
             // check for construct/dispose events
             if (evt.IsInteractionConstructEvent || evt.IsInteractionDisposeEvent) {
                 // for dispose event remove the reference from array
@@ -148,13 +155,28 @@ export class TMACEventService {
                 this._constructDisposeEventSubject.next(evt);
             }
         }
+        else {
+            let updated = false;
+            // check event is already there, then update
+            this._tmacEventArray = map(this._tmacEventArray, (tEvent: IUIEvent) => {
+                if (tEvent.EventName === evt.EventName) {
+                    tEvent = evt;
+                    updated = true;
+                }
+                return tEvent;
+            });
+            // if not updated then add
+            if (!updated) {
+                this._tmacEventArray.push(evt);
+            }
+        }
     }
 
     /**
      * To remove all the events from reference which related to an interaction
      */
     private remove(interactionId: number): void {
-        this._tmacEventArray = this._tmacEventArray.filter((i) => i.InteractionID !== interactionId);
+        this._interactionEventArray = this._interactionEventArray.filter((i) => i.InteractionID !== interactionId);
     }
 
     /**
@@ -745,6 +767,32 @@ export class TMACEventService {
             });
     }
 
+    /**
+     * To process TextChatTransferNotificationEvent
+     * @param {TextChatTransferNotificationEvent} evt
+     */
+    TextChatTransferNotificationEvent = (evt: TextChatTransferNotificationEvent) => {
+        // parse the otherData
+        const otherData = JSON.parse(evt.Data);
+        // get the type
+        const type = otherData.type === 'conf' ? 'conference' : 'transfer';
+        // get the mode
+        const mode = otherData.mode + ' chat';
+        let message = `Agent ${evt.FromAgentName} is trying to ${type} a ${mode}`;
+        // check if the comment is there
+        if (evt.Comment) {
+            message += `<br /> with comment: ${evt.Comment}`;
+        }
+        // get cofirmation
+        this._appUIService.showAppConfirmDialog(
+            'generic',
+            `Confirm ${mode} ${type}`,
+            message
+        ).afterClosed().subscribe((resp1) => {
+            evt.Response(resp1);
+        });
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @ Public Methods
     // -----------------------------------------------------------------------------------------------------
@@ -758,6 +806,7 @@ export class TMACEventService {
         // intialize all the subject
         this._unsubscribeAll = new Subject();
         this._constructDisposeEventSubject = new BehaviorSubject({});
+        this._interactionEventArray = new Array();
         this._tmacEventArray = new Array();
         this._remiderTaskDialog = {
             makeCall: null,
@@ -789,6 +838,7 @@ export class TMACEventService {
         SDKClient.events.on('QuizEvent', this.QuizEvent);
         SDKClient.events.on('AgentReminderEvent', this.AgentReminderEvent);
         SDKClient.events.on('AgentForcedLogoffEvent', this.AgentForcedLogoffEvent);
+        SDKClient.events.on('TextChatTransferNotificationEvent', this.TextChatTransferNotificationEvent);
 
         // subscribe to InteractionManagerService
         this._interactionManagerService.subscribe();
@@ -809,6 +859,7 @@ export class TMACEventService {
         SDKClient.events.off('QuizEvent', this.QuizEvent);
         SDKClient.events.off('AgentReminderEvent', this.AgentReminderEvent);
         SDKClient.events.off('AgentForcedLogoffEvent', this.AgentForcedLogoffEvent);
+        SDKClient.events.off('TextChatTransferNotificationEvent', this.TextChatTransferNotificationEvent);
 
         // unsubscribe from all subscriptions
         this._unsubscribeAll.next();
@@ -817,6 +868,7 @@ export class TMACEventService {
         this._constructDisposeEventSubject.next(null);
         this._constructDisposeEventSubject.complete();
 
+        this._interactionEventArray = new Array();
         this._tmacEventArray = new Array();
         this._remiderTaskDialog = {
             makeCall: null,
@@ -835,14 +887,29 @@ export class TMACEventService {
      * To get all the received events for an interaction.
      * Sometimes interaction events may be received by SDK before
      * app is finishing up with components creation.
+     * 
      * @param interactionId ID of the interaction
      */
-    public get(interactionId: number): any {
+    public interactionEvents(interactionId: number): any[] {
         // get the events based on interaction Id
-        const events = this._tmacEventArray.filter((i) => i.InteractionID === interactionId);
+        const events = this._interactionEventArray.filter((i) => i.InteractionID === interactionId);
         if (events.length > 0) {
             return events;
         }
         return [];
+    }
+
+    /**
+     * To get non-interaction TMAC event with event name
+     * 
+     * @param eventName Name of the event
+     */
+    public tmacEvents(eventName: string): any {
+        // get the event based on interaction Id
+        const event = this._tmacEventArray.filter((i: IUIEvent) => i.EventName === eventName);
+        if (event.length > 0) {
+            return event[0];
+        }
+        return null;
     }
 }

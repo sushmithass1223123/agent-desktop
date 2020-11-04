@@ -1,8 +1,5 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FuseConfigService } from '@fuse/services/config.service';
-import { FuseConfig } from '@fuse/types';
 import { TwWrapperComponent } from '@modules/t-widgets/tw-wrapper/tw-wrapper.component';
-import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CHART_COLORS } from 'app/constants';
 import { IWidget, TwChartConfig } from 'app/interfaces';
@@ -39,22 +36,6 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
      */
     @ViewChild(TwWrapperComponent) wrapperComponent: TwWrapperComponent;
 
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store the fuse config for theme
-    // -----------------------------------------------------------
-    /**
-     * holds all the data from the app config
-     */
-    fuseConfig: FuseConfig;
-
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store entire app config and get update
-    // -----------------------------------------------------------
-    /**
-     * App config
-     */
-    appConfig: any;
-
     /**
      * Chart data
      */
@@ -79,15 +60,8 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
 
     /**
      * Constructor
-     * @param {FuseConfigService} _fuseConfigService
-     * @param {AppDataService} _appDataService
      */
-    constructor(
-        // @ [OPTIONAL]
-        private _fuseConfigService: FuseConfigService,
-        // @ [OPTIONAL]
-        private _appDataService: AppDataService
-    ) {
+    constructor() {
         super();
     }
 
@@ -103,19 +77,6 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
         // call the wrapper init method
         this.initWrapper(this.data);
         this.chart.type = this.data.Data.ChartType || 'pie';
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the fuse config
-        // -----------------------------------------------------------
-        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.fuseConfig = config;
-        });
-
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the app config
-        // -----------------------------------------------------------
-        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.appConfig = config;
-        });
 
         if (this.data.Data.Source === 'tw-su-status' || this.data.Data.Source === 'tw-aux-status-chart') {
             SDKClient.events.on('TeamActiveStatusDetailsEvent', this.TeamActiveStatusDetailsEvent);

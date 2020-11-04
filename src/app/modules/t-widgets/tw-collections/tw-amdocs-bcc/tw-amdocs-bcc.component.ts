@@ -15,10 +15,6 @@ export class TwAmdocsBccComponent extends TWidgetWrapper implements OnInit, OnDe
     // holds all the data related to this widget from the config
     @Input() data: IWidget;
 
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store the fuse config for theme
-    // -----------------------------------------------------------
-    fuseConfig: any;
     caseData = {
         cases: [],
         submitted: false,
@@ -26,22 +22,10 @@ export class TwAmdocsBccComponent extends TWidgetWrapper implements OnInit, OnDe
         caseId: ''
     };
 
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store entire app config and get update
-    // -----------------------------------------------------------
-    appConfig: any;
-
     /**
-     * Constructor
-     * @param {FuseConfigService} _fuseConfigService
-     * @param {AppDataService} _appDataService
+     * Constructor 
      */
-    constructor(
-        // @ [OPTIONAL]
-        private _fuseConfigService: FuseConfigService,
-        // @ [OPTIONAL]
-        private _appDataService: AppDataService
-    ) {
+    constructor() {
         super();
     }
 
@@ -56,19 +40,6 @@ export class TwAmdocsBccComponent extends TWidgetWrapper implements OnInit, OnDe
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the fuse config
-        // -----------------------------------------------------------
-        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.fuseConfig = config;
-        });
-
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the app config
-        // -----------------------------------------------------------
-        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.appConfig = config;
-        });
 
         this.caseData.caseId = this.data.InteractionDetails?.UCID;
     }

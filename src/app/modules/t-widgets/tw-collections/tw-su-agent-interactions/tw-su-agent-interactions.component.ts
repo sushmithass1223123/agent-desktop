@@ -1,17 +1,14 @@
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
-import { FuseConfigService } from '@fuse/services/config.service';
-import { AppDataService } from '@services/app-data.service';
-import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { takeUntil } from 'rxjs/operators';
-import { DashboardService } from '@services/dashboard.service';
-import { IWidget } from 'app/interfaces';
-import { SDKClient, SuAgentInteractionModel, AgentFeatures, SuAgentModel, InteractionDataModel, IAgentData, IResponse } from 'tmac-sdk';
-import { MatSort } from '@angular/material/sort';
+import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { AGENT_FEATURES_MAP, COMMON_ERR_MESSAGE } from 'app/constants';
-import { AppUiService } from '@services/app-ui.service';
 import { AOTWidgetService } from '@services/aot-widget.service';
+import { AppUiService } from '@services/app-ui.service';
+import { DashboardService } from '@services/dashboard.service';
+import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
+import { AGENT_FEATURES_MAP, COMMON_ERR_MESSAGE } from 'app/constants';
+import { IWidget } from 'app/interfaces';
+import { AgentFeatures, IAgentData, InteractionDataModel, IResponse, SDKClient, SuAgentInteractionModel, SuAgentModel } from 'tmac-sdk';
 
 @Component({
     selector: 'tw-su-agent-interactions',
@@ -23,17 +20,6 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
 
     // holds all the data related to this widget from the config
     @Input() data: IWidget;
-
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store the fuse config for theme
-    // -----------------------------------------------------------
-    fuseConfig: any;
-
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store entire app config and get update
-    // -----------------------------------------------------------
-    appConfig: any;
-
 
     @ViewChild(MatSort, { static: true }) sort: MatSort;
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
@@ -58,8 +44,6 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
      * Constructor 
      */
     constructor(
-        private _fuseConfigService: FuseConfigService,
-        private _appDataService: AppDataService,
         private _dashboardService: DashboardService,
         private _appUIService: AppUiService,
         private _aotWidgetService: AOTWidgetService
@@ -80,27 +64,6 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the fuse config
-        // -----------------------------------------------------------
-        this._fuseConfigService.config
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(
-                (config: any) => {
-                    this.fuseConfig = config;
-                }
-            );
-
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the app config
-        // -----------------------------------------------------------
-        this._appDataService.config
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(
-                (config: any) => {
-                    this.appConfig = config;
-                }
-            );
 
         // assign the widget data
         this.configData = this.data.Data;

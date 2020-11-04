@@ -1,7 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { FuseConfigService } from '@fuse/services/config.service';
-import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { GAMIFICATION_METRIC_LABELS } from 'app/constants';
 import { ResData } from 'app/interfaces';
@@ -53,11 +51,10 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
 
     /**
      * Constructor
-     * @param {FuseConfigService} _fuseConfigService
-     * @param {AppDataService} _appDataService
+     * @param {HttpClient} _http 
      */
     constructor(
-        private http: HttpClient
+        private _http: HttpClient
     ) {
         super();
     }
@@ -113,8 +110,11 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
 
         const { agentId } = SDKClient.getAgentData();
 
-        this.http
-            .post<{ d: string }>(this.data.Data.AgentProgressUrl, { agentId })
+        this._http
+            .post<{
+                // tslint:disable-next-line: completed-docs
+                d: string
+            }>(this.data.Data.AgentProgressUrl, { agentId })
             .pipe(map((x) => JSON.parse(x.d)))
             .subscribe(
                 (metrics) => {
