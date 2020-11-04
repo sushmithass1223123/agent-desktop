@@ -16,7 +16,9 @@ tw-email-controls {
     }
 
     .email-content {
-        min-height: 500px;
+        // min-height: 500px;
+        height: 100%;
+        overflow: auto;
     }
 
     .email-content-body {
