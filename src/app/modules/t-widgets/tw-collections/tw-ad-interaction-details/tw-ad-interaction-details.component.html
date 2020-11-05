@@ -5,8 +5,7 @@
     <div
         class="w-100-p bg-inherit"
         [ngClass]="maximized ? 'h-90-p' : 'h-100-p'"
-        fusePerfectScrollbar
-        [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
+        class="custom-scroll"
     >
         <mat-table [dataSource]="interactionDetailsTable.source" matSort matSortDisableClear>
             <ng-container matColumnDef="SessionId">

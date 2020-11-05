@@ -18,6 +18,16 @@ html {
 
 ::-webkit-scrollbar-thumb {
     box-shadow: inset 0 0 0 8px rgba(0, 0, 0, 0.37) !important;
+    .custom-scroll:hover & {
+        background-color: red;
+    }
+}
+
+.custom-scroll {
+    overflow: auto;
+    ::-webkit-scrollbar-thumb {
+        box-shadow: none !important;
+    }
 }
 
 // ::-webkit-scrollbar-thumb:active {
