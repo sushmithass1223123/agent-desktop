@@ -1,7 +1,6 @@
-import { Component, ElementRef, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { DashboardService } from '@services/dashboard.service';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
-import { IWidget } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
 import { takeUntil } from 'rxjs/operators';
 import { IAgentData, SDKClient } from 'tmac-sdk';
@@ -16,10 +15,6 @@ import { IAgentData, SDKClient } from 'tmac-sdk';
     encapsulation: ViewEncapsulation.None
 })
 export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDestroy {
-    /**
-     * Holds all the data related to this widget from the config
-     */
-    @Input() data: IWidget;
     /**
      * To hold agent data
      */
@@ -123,11 +118,11 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
      */
     onActive = () => {
         if (!this.loaded) {
-            // // if inited only register, else register in init
-            // if (this.init) {
-            //     // register to service
-            //     this.registerToService(true);
-            // }
+            // if inited only register, else register in init
+            if (this.init) {
+                // register to service
+                this.registerToService(true);
+            }
             this.loaded = true;
         }
     }
@@ -138,7 +133,7 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
     onInactive = () => {
         if (this.loaded && this.pageActive) {
             this.loaded = false;
-            // this.registerToService(false);
+            this.registerToService(false);
         }
     }
 }

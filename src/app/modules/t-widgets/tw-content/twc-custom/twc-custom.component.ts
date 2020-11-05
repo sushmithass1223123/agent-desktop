@@ -1,9 +1,8 @@
-import { Component, OnInit, OnDestroy, Input, ElementRef, ViewEncapsulation } from '@angular/core';
-import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
-import { ContentPageService } from 'app/services/content-page.service';
+import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { AGENT_DATA_MAP } from 'app/constants';
-import { IWidget } from 'app/interfaces';
+import { ContentPageService } from 'app/services/content-page.service';
 
 /**
  * Custom content component
@@ -15,10 +14,6 @@ import { IWidget } from 'app/interfaces';
     encapsulation: ViewEncapsulation.None
 })
 export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDestroy {
-    /**
-     * Holds all the data related to this widget from the config
-     */
-    @Input() data: IWidget;
     /**
      * Frame loaded flag
      */

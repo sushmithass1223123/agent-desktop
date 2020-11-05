@@ -1,5 +1,9 @@
 <!-- No interaction template -->
-<twc-no-interaction *ngIf="interactions.length === 0" type="email"> </twc-no-interaction>
+<twc-no-interaction
+    *ngIf="interactions.length === 0"
+    type="email"
+    [ngStyle]="{ 'width.px': screenWidth, 'height.px': screenHeight }"
+></twc-no-interaction>
 
 <!-- Interaction template -->
 <ng-container *ngFor="let item of interactions; index as i">

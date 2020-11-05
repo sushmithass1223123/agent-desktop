@@ -1,10 +1,18 @@
 <!-- No interaction template -->
-<twc-no-interaction *ngIf="interactions.length === 0" type="voice"> </twc-no-interaction>
+<twc-no-interaction
+    *ngIf="interactions.length === 0"
+    type="voice"
+    [ngStyle]="{ 'width.px': screenWidth, 'height.px': screenHeight }"
+></twc-no-interaction>
 
 <!-- Interaction template -->
 <ng-container *ngFor="let item of interactions; index as i">
     <!-- widget template -->
-    <div class="tw-interaction tw-widget-container" [ngClass]="item.interactionId === activeInteraction ? 'active' : ''">
+    <div
+        class="tw-interaction tw-widget-container"
+        [ngClass]="item.interactionId === activeInteraction ? 'active' : ''"
+        [ngStyle]="{ 'width.px': screenWidth, 'height.px': screenHeight }"
+    >
         <div fxFill fxFlex fxLayout="row wrap" fxLayoutAlign=" none">
             <tw-template
                 [fxFlex.gt-md]="item.widgets.dynamic.length > 0 ? 33 : 100"

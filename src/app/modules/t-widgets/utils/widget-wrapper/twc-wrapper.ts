@@ -1,4 +1,4 @@
-import { Directive, ElementRef, HostBinding } from '@angular/core';
+import { Directive, ElementRef, HostBinding, HostListener, Input } from '@angular/core';
 import { ContentPageService } from '@services/content-page.service';
 import { IWidget } from 'app/interfaces';
 import { Subject } from 'rxjs';
@@ -23,7 +23,18 @@ export class TWContentWrapper {
      * Host binding for id
      */
     @HostBinding('id') id = '';
-
+    /**
+     * Holds all the data related to this widget from the config
+     */
+    @Input() data: IWidget;
+    /**
+     * Screen height
+     */
+    screenHeight: number;
+    /**
+     * Screen width
+     */
+    screenWidth: number;
     /**
      * Holds all widget's custom data
      */
@@ -36,14 +47,30 @@ export class TWContentWrapper {
      * Page active flag
      */
     pageActive: boolean;
+    /**
+     * To listen to the window resize
+     */
+    @HostListener('window:resize', ['$event'])
+    onResize(): void {
+        this.setWidthHeight();
+    }
 
     constructor(
         public hostElement: ElementRef,
         public contentPageService: ContentPageService
     ) {
-        // Set the unsubscribeAll defaults
+        // set the unsubscribeAll defaults
         this.unsubscribeAll = new Subject();
         this.pageActive = false;
+        this.setWidthHeight();
+    }
+
+    /**
+     * To set width/height
+     */
+    private setWidthHeight(): void {
+        this.screenHeight = window.innerHeight - 100;
+        this.screenWidth = window.innerWidth >= 599 ? window.innerWidth - 100 : window.innerWidth;
     }
 
     /**
@@ -128,4 +155,5 @@ export class TWContentWrapper {
      * On page inactive callback
      */
     onInactive = () => { };
+
 }
