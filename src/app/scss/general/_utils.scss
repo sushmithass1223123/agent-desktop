@@ -251,10 +251,3 @@
         cursor: default;
     }
 }
-
-.custom-scroll {
-    overflow: hidden;
-    &:hover {
-        overflow: overlay;
-    }
-}
