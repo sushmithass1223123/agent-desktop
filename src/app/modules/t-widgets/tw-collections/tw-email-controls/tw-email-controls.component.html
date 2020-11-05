@@ -11,7 +11,7 @@
     (floatEvent)="floatEvent.emit($event)"
 >
     <div fxLayout class="w-100-p h-100-p" fxLayoutAlign="center">
-        <div fxLayout="column" fxLayoutAlign=" center" class="w-60 h-100-p pr-4 py-8 interactions">
+        <div fxLayout="column" fxLayoutAlign=" center" class="h-100-p py-8 interactions">
             <avatar matTooltipPosition="after" matIcon="user"></avatar>
             <ng-container *ngIf="interactionList">
                 <avatar
@@ -186,8 +186,14 @@
                         </mat-chip-list>
                     </div>
                 </div>
+<<<<<<< HEAD
+                <div class="email-content position-relative pt-16">
+                    <span>Subject : {{ currentInteraction.Subject }} </span>
+                    <div class="email-content-body py-8 position-absolute">
+=======
                 <div class="email-content position-relative py-12">
                     <div class="email-content-body position-absolute">
+>>>>>>> 2103e0d594177be879296a419fc20f07fac1b9b7
                         <div *ngIf="!getInboxMessageReq.loading && !getInboxMessageReq.error" [innerHtml]="currentInteraction.Body"></div>
 
                         <div *ngIf="getInboxMessageReq.loading" fxLayout fxLayoutAlign="center center" class="w-100-p h-30-p">
