@@ -177,7 +177,7 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
             this.loaded = true;
             // send all interaction events to the frame/window
             if (this.interactionId) {
-                const events = this._tmacEventService.get(this.interactionId);
+                const events = this._tmacEventService.interactionEvents(this.interactionId);
                 // loop and send all the interaction events to frame
                 events?.forEach((item: any) => {
                     this.sendEventsToWindow(item);

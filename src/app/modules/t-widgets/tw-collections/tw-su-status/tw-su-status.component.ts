@@ -1,13 +1,9 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { FuseConfigService } from '@fuse/services/config.service';
-import { FuseConfig } from '@fuse/types';
-import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CHART_COLORS } from 'app/constants';
 import { TwChartConfig } from 'app/interfaces';
-import { takeUntil } from 'rxjs/operators';
-import { SDKClient, AgentStateDurationList } from 'tmac-sdk';
 import { sortBy } from 'lodash';
+import { AgentStateDurationList, SDKClient } from 'tmac-sdk';
 
 /**
  * Colors for chart
@@ -31,22 +27,6 @@ export class TwSuStatusComponent extends TWidgetWrapper implements OnInit, OnDes
      * holds all the data related to this widget from the config
      */
     @Input() data: any;
-
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store the fuse config for theme
-    // -----------------------------------------------------------
-    /**
-     * Fuse config data
-     */
-    fuseConfig: FuseConfig;
-
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store entire app config and get update
-    // -----------------------------------------------------------
-    /**
-     * App config
-     */
-    appConfig: any;
 
     /**
      * Status Chart Data
@@ -72,15 +52,8 @@ export class TwSuStatusComponent extends TWidgetWrapper implements OnInit, OnDes
 
     /**
      * Constructor
-     * @param {FuseConfigService} _fuseConfigService
-     * @param {AppDataService} _appDataService
      */
-    constructor(
-        // @ [OPTIONAL]
-        private _fuseConfigService: FuseConfigService,
-        // @ [OPTIONAL]
-        private _appDataService: AppDataService
-    ) {
+    constructor(  ) {
         super();
     }
 
@@ -95,20 +68,6 @@ export class TwSuStatusComponent extends TWidgetWrapper implements OnInit, OnDes
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the fuse config
-        // -----------------------------------------------------------
-        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.fuseConfig = config;
-        });
-
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the app config
-        // -----------------------------------------------------------
-        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.appConfig = config;
-        });
 
         SDKClient.events.on('TeamActiveStatusDetailsEvent', this.TeamActiveStatusDetailsEvent);
     }

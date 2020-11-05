@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostBinding, Input, OnDestroy, OnInit, Output, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { get, join } from 'lodash';
@@ -73,7 +73,7 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
         this.customerInfo = this.data.Data.CustomerInfo;
 
         // get the event from event bag to make sure no events are missed
-        const eventBag = this._tmacEventService.get(this.interactionId);
+        const eventBag = this._tmacEventService.interactionEvents(this.interactionId);
 
         // process the events if any
         eventBag.forEach((evt: IUIEvent) => {

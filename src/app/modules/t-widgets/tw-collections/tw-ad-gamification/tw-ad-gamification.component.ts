@@ -1,7 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { FuseConfigService } from '@fuse/services/config.service';
-import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { ResData } from 'app/interfaces';
 import { interval, Subscription } from 'rxjs';
@@ -34,15 +32,6 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
     };
 
     maximized = false;
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store the fuse config for theme
-    // -----------------------------------------------------------
-    fuseConfig: any;
-
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store entire app config and get update
-    // -----------------------------------------------------------
-    appConfig: any;
 
     /**
      * Polling Subscription
@@ -50,17 +39,11 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
     pollingSubscription: Subscription;
 
     /**
-     * Constructor
-     * @param {FuseConfigService} _fuseConfigService
-     * @param {AppDataService} _appDataService
+     * Constructor 
      * @param {gamificationService} GamificationService
      */
     constructor(
-        // @ [OPTIONAL]
-        private _fuseConfigService: FuseConfigService,
-        // @ [OPTIONAL]
-        private _appDataService: AppDataService,
-        private http: HttpClient
+        private _http: HttpClient
     ) {
         super();
     }
@@ -76,20 +59,6 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the fuse config
-        // -----------------------------------------------------------
-        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.fuseConfig = config;
-        });
-
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the app config
-        // -----------------------------------------------------------
-        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.appConfig = config;
-        });
 
         this.setBadges();
         SDKClient.events.on('InteractionClosedEvent', this.startPolling);
@@ -129,8 +98,11 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
         }
         const { agentId } = SDKClient.getAgentData();
         // const agentId = '50005';
-        this.http
-            .post<{ d: string }>(this.data.Data.LeaderBoardUrl, {})
+        this._http
+            .post<{
+                // tslint:disable-next-line: completed-docs
+                d: string
+            }>(this.data.Data.LeaderBoardUrl, {})
             .pipe(
                 map((x) => JSON.parse(x.d)),
                 takeUntil(this.unsubscribeAll)

@@ -50,6 +50,8 @@ import {
     TextChatRemoteUserConnectedEvent,
     TextChatSelfServiceDestinationEvent,
     TextChatTranscriptForTransferEvent,
+    TextChatTransferFailedEvent,
+    TextChatTransferSuccessEvent,
     TextChatTypingStateChangedEvent,
     TextChatUserMessageWaitTimerEvent,
     TUtils
@@ -203,7 +205,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     supervisorInit: boolean;
     /**
-     * COnfirmation mat dialog ref
+     * Confirmation mat dialog ref
      */
     confirmDialogRef: MatDialogRef<any, any>;
     /**
@@ -226,6 +228,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * Flag to show emoji overlay
      */
     showEmojiOverlay = false;
+    /**
+     * Transfer/conference dialog ref
+     */
+    transferConfDialogRef: MatDialogRef<any, any>;
     /**
      * Fuse scrollbar children directive ref
      */
@@ -353,7 +359,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     private registerToEvents(): void {
         // get the event from event bag to make sure no events are missed
-        const eventBag = this._tmacEventService.get(this.interactionId);
+        const eventBag = this._tmacEventService.interactionEvents(this.interactionId);
 
         // process the events if any
         eventBag.forEach((evt: IUIEvent) => {
@@ -375,6 +381,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         SDKClient.events.on('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
         SDKClient.events.on('TextChatAgentDisconnectedEvent', this.TextChatAgentDisconnectedEvent);
         SDKClient.events.on('CannedResposeEvent', this.CannedResposeEvent);
+        SDKClient.events.on('TextChatTransferSuccessEvent', this.TextChatTransferSuccessEvent);
+        SDKClient.events.on('TextChatTransferFailedEvent', this.TextChatTransferFailedEvent);
     }
 
     /**
@@ -396,6 +404,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         SDKClient.events.off('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
         SDKClient.events.off('TextChatAgentDisconnectedEvent', this.TextChatAgentDisconnectedEvent);
         SDKClient.events.off('CannedResposeEvent', this.CannedResposeEvent);
+        SDKClient.events.off('TextChatTransferSuccessEvent', this.TextChatTransferSuccessEvent);
+        SDKClient.events.off('TextChatTransferFailedEvent', this.TextChatTransferFailedEvent);
     }
 
     /**
@@ -893,6 +903,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             this._aotWidgetService.destroyWidget(this.tranfConfWidget.ID);
             this.tranfConfWidget = null;
         }
+        // close the conf/transfer if opened
+        this.transferConfDialogRef?.close();
     }
 
     /**
@@ -934,6 +946,24 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     }
 
     /**
+     * To process custom TextChatTransferSuccessEvent
+     * @param {TextChatTransferSuccessEvent} evt
+     */
+    private TextChatTransferSuccessEvent = () => {
+        this.transferConfDialogRef?.close();
+        this._appUIService.showSnackbar(`Chat transfer success`);
+    }
+
+    /**
+     * To process custom TextChatTransferFailedEvent
+     * @param {TextChatTransferFailedEvent} evt
+     */
+    private TextChatTransferFailedEvent = (evt: TextChatTransferFailedEvent) => {
+        this.transferConfDialogRef?.close();
+        this._appUIService.showSnackbar(`Chat transfer failed: ${evt.ResultMessage}`, 'failure');
+    }
+
+    /**
      * To process both TextChatMessageSentEvent and TextChatMessageTemplateSentEvent
      * @param evt TextChatMessageSentEvent | TextChatMessageTemplateSentEvent data
      */
@@ -968,7 +998,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     messageId,
                     message,
                     type,
-                    time: evt.CreatedTime ? new Date(Date.parse(evt.CreatedTime.toString())) : new Date(),
+                    time: new Date(Date.parse(evt.DateTime.toString())) || new Date(),
                     attachment
                 });
 
@@ -998,7 +1028,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * @param speed Speed of scroll
      */
     private scrollToBottom(speed?: number): void {
-        speed = speed || 400;
+        speed = speed || 200;
         if (this.directiveScrolls.last) {
             this.directiveScrolls.last.update();
 
@@ -1488,6 +1518,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 blind: this.data.Data.Transfer.Skill.Allowed,
                 source: this.data.Data.Transfer.Skill.Source,
                 channelPrfix: this.data.Data.Transfer.Skill.ChannelPrefix
+            },
+            otherData: {
+                type: 'transfer',
+                mode: this.chatMode,
+                sessionId: this.sessionID,
+                lineId: this.lineId
             }
         } : {
                 title: 'Conference Chat',
@@ -1506,7 +1542,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 }
             };
         // open agent skill list component in dialog
-        this._matDialog.open(AgentSkillListComponent, {
+        this.transferConfDialogRef = this._matDialog.open(AgentSkillListComponent, {
             data,
             panelClass: 'agent-skill-dialog',
             minWidth: '30%',

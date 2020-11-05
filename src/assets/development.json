@@ -1272,8 +1272,7 @@
                                                                 }
                                                             ]
                                                         }
-                                                    },
-                                                    "TransferConferenceUtilsUrl": "https://dice.tetherfi.cloud/TMAC_Trans_Conf/index.html?r=_requestArgs"
+                                                    }
                                                 }
                                             },
                                             {
@@ -2007,7 +2006,7 @@
                                                         "Agent": {
                                                             "Allowed": true,
                                                             "Blind": false,
-                                                            "Source": "station",
+                                                            "Source": "agentId",
                                                             "AllowedStates": []
                                                         },
                                                         "Skill": {
@@ -2024,7 +2023,7 @@
                                                         "Agent": {
                                                             "Allowed": true,
                                                             "Blind": false,
-                                                            "Source": "station",
+                                                            "Source": "agentId",
                                                             "AllowedStates": []
                                                         },
                                                         "Skill": {
@@ -2070,8 +2069,7 @@
                                                             "oncall",
                                                             "afterdisconnect"
                                                         ]
-                                                    },
-                                                    "TransferConferenceUtilsUrl": "https://dice.tetherfi.cloud/TMAC_Trans_Conf/index.html?r=_requestArgs"
+                                                    }
                                                 }
                                             },
                                             {
@@ -3175,7 +3173,8 @@
                     },
                     "Data": {
                         "Path": "/tdm-client",
-                        "Url": "https://dice.tetherfi.cloud/TDM_Client/"
+                        "Url": "https://dice.tetherfi.cloud/TDM_Client/",
+                        "Unload": true
                     }
                 },
                 {
@@ -3192,7 +3191,8 @@
                     },
                     "Data": {
                         "Path": "/tmeet",
-                        "Url": "https://dice.tetherfi.cloud/t-meet/"
+                        "Url": "https://dice.tetherfi.cloud/t-meet/",
+                        "Unload": true
                     }
                 },
                 {
@@ -3209,7 +3209,8 @@
                     },
                     "Data": {
                         "Path": "/dashboard",
-                        "Url": "https://dice.tetherfi.cloud/CustomerJourneyDashBoard/"
+                        "Url": "https://dice.tetherfi.cloud/CustomerJourneyDashBoard/",
+                        "Unload": true
                     }
                 },
                 {
@@ -3226,7 +3227,8 @@
                     },
                     "Data": {
                         "Path": "/sentimentdashboard",
-                        "Url": "https://dice.tetherfi.cloud/SentimentDashboard/?agentid=_agentId"
+                        "Url": "https://dice.tetherfi.cloud/SentimentDashboard/?agentid=_agentId",
+                        "Unload": true
                     }
                 },
                 {
@@ -3243,7 +3245,8 @@
                     },
                     "Data": {
                         "Path": "/kpidashboard",
-                        "Url": "https://dice.tetherfi.cloud/IWDashboards/IWDashboard/kpi"
+                        "Url": "https://dice.tetherfi.cloud/IWDashboards/IWDashboard/kpi",
+                        "Unload": true
                     }
                 },
                 {
@@ -3260,7 +3263,8 @@
                     },
                     "Data": {
                         "Path": "/sessiondashboard",
-                        "Url": "https://dice.tetherfi.cloud/IWDashboards/IWDashboard/session"
+                        "Url": "https://dice.tetherfi.cloud/IWDashboards/IWDashboard/session",
+                        "Unload": true
                     }
                 },
                 {
@@ -3277,7 +3281,8 @@
                     },
                     "Data": {
                         "Path": "/realtimestats",
-                        "Url": "https://dice.tetherfi.cloud/IWDashboards/VoiceStatsDashboard/RealTimeInteractionStats?dblb=Ivr"
+                        "Url": "https://dice.tetherfi.cloud/IWDashboards/VoiceStatsDashboard/RealTimeInteractionStats?dblb=Ivr",
+                        "Unload": false
                     }
                 }
             ],

@@ -3,11 +3,8 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { fuseAnimations } from '@fuse/animations';
-import { FuseConfigService } from '@fuse/services/config.service';
-import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { random } from 'lodash';
-import { takeUntil } from 'rxjs/operators';
 
 /**
  * Feedback compnent
@@ -49,11 +46,6 @@ export class TwAdFeedbackComponent extends TWidgetWrapper implements OnInit, OnD
     date: number;
 
     /**
-     * [OPTIONAL] to store the fuse config for theme
-     */
-    fuseConfig: any;
-
-    /**
      * Data config
      */
     dataConfig: {
@@ -81,21 +73,9 @@ export class TwAdFeedbackComponent extends TWidgetWrapper implements OnInit, OnD
     };
 
     /**
-     * [OPTIONAL] to store entire app config and get update
-     */
-    appConfig: any;
-
-    /**
      * Constructor
-     * @param {FuseConfigService} _fuseConfigService
-     * @param {AppDataService} _appDataService
      */
-    constructor(
-        // @ [OPTIONAL]
-        private _fuseConfigService: FuseConfigService,
-        // @ [OPTIONAL]
-        private _appDataService: AppDataService
-    ) {
+    constructor() {
         super();
     }
 
@@ -110,20 +90,6 @@ export class TwAdFeedbackComponent extends TWidgetWrapper implements OnInit, OnD
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the fuse config
-        // -----------------------------------------------------------
-        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.fuseConfig = config;
-        });
-
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the app config
-        // -----------------------------------------------------------
-        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.appConfig = config;
-        });
 
         this.dataConfig = this.data.Data;
         this.feedbackDetailsTable.source.sort = this.sort;

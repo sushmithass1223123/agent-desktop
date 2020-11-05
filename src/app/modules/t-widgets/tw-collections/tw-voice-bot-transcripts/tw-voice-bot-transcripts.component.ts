@@ -78,7 +78,7 @@ export class TwVoiceBotTranscriptsComponent extends TWidgetWrapper implements On
         this.interactionId = this.data.InteractionDetails.InteractionID;
 
         // get the event from event bag to make sure no events are missed
-        const eventBag = this._tmacEventService.get(this.interactionId);
+        const eventBag = this._tmacEventService.interactionEvents(this.interactionId);
 
         // process the events if any
         eventBag.forEach((evt: IUIEvent) => {

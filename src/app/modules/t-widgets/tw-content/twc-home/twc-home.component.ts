@@ -36,6 +36,14 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
      * To hold AOT widgets
      */
     aotWidgets = [];
+    /**
+     * Loaded flag
+     */
+    loaded: boolean;
+    /**
+     * Init flag
+     */
+    init: boolean;
 
     constructor(
         public hostElement: ElementRef,
@@ -55,6 +63,9 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
         // subscribe to dashboard service
         this._dashboardService.subscribe();
 
+        // get the agent data
+        this.agentData = SDKClient.getAgentData();
+
         // get the home content widgets
         const homeWidgets = this.data.Data.Widgets || [];
 
@@ -62,19 +73,19 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
         this.dynamicWidgets = homeWidgets.Dynamic || [];
         this.aotWidgets = homeWidgets.AOT || [];
 
-        // get the agent data
-        this.agentData = SDKClient.getAgentData();
-
         // subscribe to dashboard service
         this._dashboardService.connectionState
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((state: string) => {
                 // check the state
                 if (state === 'connected') {
-                    // start getting data
-                    this._dashboardService.triggerAgentData(this.agentData.agentId, true, 100);
+                    // register to service
+                    this.registerToService(true);
                 }
             });
+
+        // set init flag to true
+        this.init = true;
     }
 
     /**
@@ -84,10 +95,50 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
         // call the wrapper destroy method
         this.destroyWrapper();
 
-        // stop getting data
-        this._dashboardService.triggerAgentData(this.agentData.agentId, false, 100);
+        // de-register from service
+        this.registerToService(false);
 
         // unsubscribe to dashboard service
         this._dashboardService.unsubscribe();
+    }
+
+    /**
+     * To register and de-regsiter from service
+     * 
+     * @param register 
+     */
+    registerToService(register: boolean): void {
+        if (register) {
+            // start getting data
+            this._dashboardService.triggerAgentData(this.agentData.agentId, true, 100);
+        }
+        else {
+            // stop getting data
+            this._dashboardService.triggerAgentData(this.agentData.agentId, false, 100);
+        }
+    }
+
+    /**
+     * On page active callback
+     */
+    onActive = () => {
+        if (!this.loaded) {
+            // // if inited only register, else register in init
+            // if (this.init) {
+            //     // register to service
+            //     this.registerToService(true);
+            // }
+            this.loaded = true;
+        }
+    }
+
+    /**
+     * On page inactive callback
+     */
+    onInactive = () => {
+        if (this.loaded && this.pageActive) {
+            this.loaded = false;
+            // this.registerToService(false);
+        }
     }
 }
