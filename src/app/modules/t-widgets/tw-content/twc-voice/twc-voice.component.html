@@ -9,7 +9,7 @@
 <ng-container *ngFor="let item of interactions; index as i">
     <!-- widget template -->
     <div
-        class="tw-interaction tw-widget-container"
+        class="tw-interaction tw-widget-container custom-scroll"
         [ngClass]="item.interactionId === activeInteraction ? 'active' : ''"
         [ngStyle]="{ 'width.px': screenWidth, 'height.px': screenHeight }"
     >

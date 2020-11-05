@@ -1,4 +1,4 @@
-<div class="tw-widget-container" [ngStyle]="{ 'width.px': screenWidth, 'height.px': screenHeight }" *ngIf="loaded">
+<div class="tw-widget-container custom-scroll" [ngStyle]="{ 'width.px': screenWidth, 'height.px': screenHeight }" *ngIf="loaded">
     <div fxFill fxFlex fxLayout="row wrap" fxLayoutAlign=" none">
         <tw-template fxFlex.gt-md="33" class="static-widget-grid" *ngIf="staticWidgets?.length > 0" [widgets]="staticWidgets"></tw-template>
         <tw-template fxFlex.gt-md="66" class="dynamic-widget-grid" *ngIf="dynamicWidgets?.length > 0" [widgets]="dynamicWidgets"></tw-template>

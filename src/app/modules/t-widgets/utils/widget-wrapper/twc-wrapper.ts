@@ -69,7 +69,7 @@ export class TWContentWrapper {
      * To set width/height
      */
     private setWidthHeight(): void {
-        this.screenHeight = window.innerHeight - 100;
+        this.screenHeight = window.innerHeight - 90;
         this.screenWidth = window.innerWidth >= 599 ? window.innerWidth - 100 : window.innerWidth;
     }
 
