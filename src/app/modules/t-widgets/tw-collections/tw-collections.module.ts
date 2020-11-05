@@ -8,12 +8,10 @@ import { TwAdGamificationComponent } from './tw-ad-gamification/tw-ad-gamificati
 import { TwAdInteractionDetailsComponent } from './tw-ad-interaction-details/tw-ad-interaction-details.component';
 import { TwAdPerformanceComponent } from './tw-ad-performance/tw-ad-performance.component';
 import { TwAdScoreComponent } from './tw-ad-score/tw-ad-score.component';
-import { TwAdTotalInteractionsComponent } from './tw-ad-total-interactions/tw-ad-total-interactions.component';
 import { TwAgentAssistComponent } from './tw-agent-assist/tw-agent-assist.component';
 import { TwAhtTcComponent } from './tw-aht-tc/tw-aht-tc.component';
 import { TwAmdocsBccComponent } from './tw-amdocs-bcc/tw-amdocs-bcc.component';
 import { TwAudioControlsComponent } from './tw-audio-controls/tw-audio-controls.component';
-import { TwAuxStatusChartComponent } from './tw-aux-status-chart/tw-aux-status-chart.component';
 import { TwCannedResponsesComponent } from './tw-canned-responses/tw-canned-responses.component';
 import { TwChatControlsComponent } from './tw-chat-controls/tw-chat-controls.component';
 import { TwChatPanelComponent } from './tw-chat-panel/tw-chat-panel.component';
@@ -34,11 +32,7 @@ import { TwSuActiveAgentsComponent } from './tw-su-active-agents/tw-su-active-ag
 import { TwSuAgentActivityDetailsComponent } from './tw-su-agent-activity/tw-su-agent-activity-details/tw-su-agent-activity-details.component';
 import { TwSuAgentActivityComponent } from './tw-su-agent-activity/tw-su-agent-activity.component';
 import { TwSuAgentInteractionsComponent } from './tw-su-agent-interactions/tw-su-agent-interactions.component';
-import { TwSuCallsInQueueComponent } from './tw-su-calls-in-queue/tw-su-calls-in-queue.component';
-import { TwSuChannelsComponent } from './tw-su-channels/tw-su-channels.component';
 import { TwSuGamificationComponent } from './tw-su-gamification/tw-su-gamification.component';
-import { TwSuIntentListComponent } from './tw-su-intent-list/tw-su-intent-list.component';
-import { TwSuStatusComponent } from './tw-su-status/tw-su-status.component';
 import { TwUnknownComponent } from './tw-unknown/tw-unknown.component';
 import { TwVideoControlsComponent } from './tw-video-controls/tw-video-controls.component';
 import { TwVoiceBotTranscriptsComponent } from './tw-voice-bot-transcripts/tw-voice-bot-transcripts.component';
@@ -64,12 +58,8 @@ const collectionComponents = [
     TwVoiceControlsComponent,
     TwChatPanelComponent,
     TwChatControlsComponent,
-    TwAdTotalInteractionsComponent,
     TwAdInteractionDetailsComponent,
     TwAdCallbacksComponent,
-    TwSuCallsInQueueComponent,
-    TwSuChannelsComponent,
-    TwSuStatusComponent,
     TwAdFeedbackComponent,
     TwAdGamificationComponent,
     TwAdPerformanceComponent,
@@ -87,9 +77,7 @@ const collectionComponents = [
     TwCustomerSentimentComponent,
     TwAudioControlsComponent,
     TwVideoControlsComponent,
-    TwAuxStatusChartComponent,
     TwAhtTcComponent,
-    TwSuIntentListComponent,
     TwVoiceBotTranscriptsComponent,
     TwRegisterCallbackComponent,
     TwSuAgentInteractionsComponent,
