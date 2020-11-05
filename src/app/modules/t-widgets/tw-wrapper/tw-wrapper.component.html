@@ -9,7 +9,7 @@
     cdkDragBoundary="{{ aot ? '#container-2' : '.widget-grid' }}"
     [cdkDragDisabled]="maximized || (!floating && !aot)"
     [cdkDragFreeDragPosition]="dragPosition"
-    class="tw-card animate__animated animate__faster {{
+    class="tw-card animate__faster {{
         data.Config.Class + ' ' + (data.Config.Static ? 'tw-static-widget' : '') + ' ' + (maximized ? 'animate__zoomIn' : '')
     }}"
     [ngClass]="{ collapsed: collapsed, maximized: maximized, floating: floating, hidden: hidden, aot: aot }"

@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
@@ -18,10 +18,6 @@ import { IncomingCallEvent, InteractionClosedEvent, OutgoingCallEvent } from 'tm
     encapsulation: ViewEncapsulation.None
 })
 export class TwcVoiceComponent extends TWContentWrapper implements OnInit, OnDestroy {
-    /**
-     * Holds all the data related to this widget from the config
-     */
-    @Input() data: IWidget;
     /**
      * Holds all the interaction related widgets and process on new interacion for interaction content page
      */

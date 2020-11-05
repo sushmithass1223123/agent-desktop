@@ -181,13 +181,13 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                     try {
                         if (!this.emailBodies[interaction.InteractionID]) {
                             this.getInboxMessageReq = { error: false, loading: true };
-                            const res = await (
+                            const res = (
                                 await (interaction.RouteReason === 'CheckerQueue'
                                     ? SDKClient.getOutboxEmail(interaction.SessionId)
                                     : SDKClient.getInboxEmail(interaction.SessionId))).response;
                             this.emailBodies[interaction.InteractionID] = {
                                 Body: this.domSanitizer.bypassSecurityTrustHtml(res.Body),
-                                AttachmetList: res?.AttachmetList ? JSON.parse(res?.AttachmetList) : []
+                                AttachmetList: res?.Attachments || []
                             };
                             // interaction.Subject = interaction.Subject || res.Subject;
                             // interaction.To = interaction.To || res.ToList;
@@ -246,7 +246,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             }
             this.emailBodies[InteractionID] = {
                 Body: this.domSanitizer.bypassSecurityTrustHtml(res.response.Body),
-                AttachmetList: res.response?.AttachmetList ? JSON.parse(res.response?.AttachmetList) : []
+                AttachmetList: res.response?.Attachments || []
             };
             this.currentInteraction = {
                 ...this.currentInteraction,

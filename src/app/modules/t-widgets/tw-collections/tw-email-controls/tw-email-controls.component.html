@@ -186,14 +186,8 @@
                         </mat-chip-list>
                     </div>
                 </div>
-<<<<<<< HEAD
-                <div class="email-content position-relative pt-16">
-                    <span>Subject : {{ currentInteraction.Subject }} </span>
-                    <div class="email-content-body py-8 position-absolute">
-=======
                 <div class="email-content position-relative py-12">
                     <div class="email-content-body position-absolute">
->>>>>>> 2103e0d594177be879296a419fc20f07fac1b9b7
                         <div *ngIf="!getInboxMessageReq.loading && !getInboxMessageReq.error" [innerHtml]="currentInteraction.Body"></div>
 
                         <div *ngIf="getInboxMessageReq.loading" fxLayout fxLayoutAlign="center center" class="w-100-p h-30-p">
