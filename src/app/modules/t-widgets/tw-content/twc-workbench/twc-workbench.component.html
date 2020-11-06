@@ -1,4 +1,4 @@
-<div class="w-100-p h-100-p tw-widget-container" *ngIf="loaded">
+<div class="tw-widget-container" [ngStyle]="{ 'width.px': screenWidth, 'height.px': screenHeight }" *ngIf="loaded">
     <div fxFill fxFlex fxLayout="row wrap" fxLayoutAlign=" none">
         <tw-template fxFlex="100" class="static-widget-grid" *ngIf="staticWidgets?.length > 0" [widgets]="staticWidgets"></tw-template>
         <div class="tw-aot-fab" cdkDrag cdkDragBoundary=".tw-widget-container" *ngIf="aotWidgets.length > 0">

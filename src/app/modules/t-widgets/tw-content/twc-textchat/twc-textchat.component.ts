@@ -1,12 +1,12 @@
-import { Component, ElementRef, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { InteractionRef, InteractionWidgets, IWidget } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
 import { InteractionManagerService } from 'app/services/interaction-manager.service';
+import { cloneDeep } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 import { InteractionClosedEvent, TextChatIncomingEvent } from 'tmac-sdk';
-import { cloneDeep } from 'lodash';
 
 /***
  * TwcTextchatComponent
@@ -18,10 +18,6 @@ import { cloneDeep } from 'lodash';
     encapsulation: ViewEncapsulation.None
 })
 export class TwcTextchatComponent extends TWContentWrapper implements OnInit, OnDestroy {
-    /**
-     * Holds all the data related to this widget from the config
-     */
-    @Input() data: IWidget;
     /**
      * Holds all the interaction related widgets and process on new interacion for interaction content page
      */
