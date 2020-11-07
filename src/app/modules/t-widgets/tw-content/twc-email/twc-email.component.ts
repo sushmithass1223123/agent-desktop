@@ -85,11 +85,7 @@ export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDes
         const emailWidgets = cloneDeep(this.data.Data.Widgets) || [];
 
         const staticWidgets = emailWidgets.Static || [];
-<<<<<<< HEAD
-        const dynamicWidgets = JSON.parse(evt.WidgetConfigData) || [];
-=======
         const dynamicWidgets = JSON.parse(evt.WidgetConfigData) || emailWidgets.Dynamic || [];
->>>>>>> 2103e0d594177be879296a419fc20f07fac1b9b7
         const aotWidgets = emailWidgets.AOT || [];
 
         // loop the widgets and add append interaction details

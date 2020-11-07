@@ -15,7 +15,7 @@ import { InteractionRef, IWidget, ResData } from 'app/interfaces';
 import { CreateEmailInfo } from 'app/models';
 import { interval, Observable, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
-import { distinctUntilChanged, filter, map, mergeAll, reduce, scan, switchMap } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map, mergeAll } from 'rxjs/operators';
 import { IAgentData, IResponse, SDKClient } from 'tmac-sdk';
 
 /**
@@ -353,7 +353,6 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     showReplyEditor(): void {
         // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
-        this.saveEmailAsDraft();
         const currentInteraction = this.currentInteraction;
         const { Body, Subject, From, To, CreatedTime } = currentInteraction;
         this.replyInfo = {
@@ -500,8 +499,10 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     saveEmailAsDraft(): void {
         // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
         const currentInteraction = this.currentInteraction;
-        if (this.createEmailRef) {
-            const { BCC, CC, To, Subject, Body, Files } = this.createEmailRef.email;
+        const email = this.createEmailRef?.email || this.replyInfo;
+        if (email) {
+            // @TODO : Files arg not found while saving draft  
+            const { BCC, CC, To, Subject, Body, Files } = email;
             SDKClient.saveEmailDraft({
                 bccList: BCC.join(','),
                 body: Body.toString(),
