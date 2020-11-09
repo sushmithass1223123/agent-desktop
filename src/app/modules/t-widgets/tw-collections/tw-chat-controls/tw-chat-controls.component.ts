@@ -1503,10 +1503,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     public openTransferConferenceDialog(type: string): void {
         // get data based on type
-        const data: AgentSkillListData = type === 'transfer' ? {
+        let data: AgentSkillListData = type === 'transfer' ? {
             title: 'Transfer Chat',
             type: 'transferChat',
-            interactionId: this.interactionId,
             agent: {
                 allowed: this.data.Data.Transfer.Agent.Allowed,
                 blind: this.data.Data.Transfer.Agent.Allowed,
@@ -1518,12 +1517,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 blind: this.data.Data.Transfer.Skill.Allowed,
                 source: this.data.Data.Transfer.Skill.Source,
                 channelPrfix: this.data.Data.Transfer.Skill.ChannelPrefix
-            },
-            otherData: {
-                type: 'transfer',
-                mode: this.chatMode,
-                sessionId: this.sessionID,
-                lineId: this.lineId
             }
         } : {
                 title: 'Conference Chat',
@@ -1541,6 +1534,18 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     channelPrfix: this.data.Data.Conference.Skill.ChannelPrefix
                 }
             };
+
+        // add common properties
+        data = {
+            interactionId: this.interactionId,
+            ...data,
+            otherData: {
+                type: type === 'transfer' ? 'transfer' : 'conf',
+                mode: this.chatMode,
+                sessionId: this.sessionID,
+                lineId: this.lineId
+            }
+        };
         // open agent skill list component in dialog
         this.transferConfDialogRef = this._matDialog.open(AgentSkillListComponent, {
             data,
