@@ -25,7 +25,7 @@
         <!-- fxLayoutAlign="center center" -->
         <div fxFlex="20" class="top-performers-card">
             <p class="mat-title mb-8">Top Performers</p>
-            <div *ngIf="leaderBoardRes.data.length" fusePerfectScrollbar class="records-list h-100-p px-12">
+            <div *ngIf="leaderBoardRes.data.length" class="records-list h-100-p px-12 custom-scroll-adjust">
                 <div *ngFor="let p of leaderBoardRes.data; let i = index" fxLayout fxLayoutAlign="start center" class="mb-16">
                     <div class="w-20 h-20 text-center mat-elevation-z1 border-radius-100 position-absolute rank font-weight-700">{{ i + 1 }}</div>
                     <avatar
@@ -47,7 +47,7 @@
 
         <div fxFlex="20" class="leaderboard-card">
             <p class="mat-title mb-8">Leaderboard</p>
-            <div *ngIf="leaderBoardRes.data.length" fusePerfectScrollbar class="records-list h-100-p px-12">
+            <div *ngIf="leaderBoardRes.data.length" class="records-list h-100-p px-12 custom-scroll-adjust">
                 <div *ngFor="let p of leaderBoardRes.data" class="mb-12">
                     <span class="mat-body-2"> {{ p.AgentName || p.AgentId || 'Unknown' }} </span>
                     <div fxLayout fxLayoutAlign="space-between center" fxLayoutGap="10px">
@@ -185,7 +185,7 @@
 
         <div fxFlex="40" class="my-performance-card">
             <p class="mat-title mb-8">My Performance</p>
-            <div *ngIf="getAgentProgressRes.data.length" fusePerfectScrollbar class="records-list px-8">
+            <div *ngIf="getAgentProgressRes.data.length" class="records-list px-8 custom-scroll-adjust">
                 <div *ngFor="let p of getAgentProgressRes.data; trackBy: pointsAssigned" fxLayout fxLayoutAlign="space-between center" class="mb-16">
                     <ng-container [ngSwitch]="p.Channel | lowercase">
                         <mat-icon *ngSwitchCase="'textchat'"> chat </mat-icon>

@@ -40,6 +40,15 @@ tw-email-controls {
             border-radius: 16px;
             cursor: pointer;
         }
+        &.inactive {
+            position: relative;
+            left: -3px;
+        }
+
+        &.inactive {
+            position: relative;
+            left: -3px;
+        }
 
         &.active {
             .avatar-content {

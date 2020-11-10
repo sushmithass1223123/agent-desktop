@@ -1,8 +1,10 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { EventBufferService } from '@services/event-buffer.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
+import { distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { SDKClient, WallboardRefreshEvent } from 'tmac-sdk';
 
 /**
@@ -46,7 +48,8 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
      * @constructor
      */
     constructor(
-        private _tmacEventService: TMACEventService
+        private _tmacEventService: TMACEventService,
+        private eventBufferService: EventBufferService
     ) {
         super();
         this.source = '';
@@ -73,6 +76,15 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
             // process the event
             this.wallboardRefreshEvent(event);
         }
+
+        this.eventBufferService.getEvents(eventName)
+            .pipe(
+                // distinctUntilChanged()
+                takeUntil(this.unsubscribeAll),
+            )
+            .subscribe(x => {
+                // console.log('Awesome !!!', x);
+            });
 
         // register to events
         SDKClient.events.on(eventName, this.wallboardRefreshEvent);

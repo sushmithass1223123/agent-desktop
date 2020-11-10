@@ -137,7 +137,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             iframeUrl: '',
             lastId: '',
             tableData: {
-                columns: ['SessionID', 'InteractionDate', 'Channel', 'CIF', 'NRIC', 'PhoneNumber', 'OverallSentiment', 'Actions'],
+                columns: ['SessionID', 'InteractionDate', 'Channel', 'Intent', 'AgentName', 'CIF', 'NRIC', 'PhoneNumber', 'OverallSentiment', 'Actions'],
                 selection: new SelectionModel<InteractionHistory>(false, []),
                 source: new MatTableDataSource([])
             }

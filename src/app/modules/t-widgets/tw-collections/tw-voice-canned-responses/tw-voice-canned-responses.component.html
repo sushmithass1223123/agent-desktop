@@ -4,7 +4,7 @@
 
 <!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
 <tw-wrapper [data]="data">
-    <div fxLayout="column" fxFill class="px-8 h-256" fusePerfectScrollbar [fusePerfectScrollbarOptions]="{ suppressScrollX: true }">
+    <div fxLayout="column" fxFill class="px-8 h-256 custom-scroll-adjust">
         <mat-list *ngFor="let group of voiceTemplates | keyvalue" class="position-relative w-100-p">
             <div mat-subheader class="py-0 h-32">{{ group.key }}</div>
             <mat-list-item *ngFor="let template of group.value" class="mat-elevation-z1 border-radius-16 mb-8">
