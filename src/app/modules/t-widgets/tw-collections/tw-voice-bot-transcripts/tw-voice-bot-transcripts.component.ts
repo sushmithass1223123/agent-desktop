@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FusePerfectScrollbarDirective } from '@fuse/directives/fuse-perfect-scrollbar/fuse-perfect-scrollbar.directive';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { AppUiService } from '@services/app-ui.service';
@@ -23,8 +23,8 @@ export class TwVoiceBotTranscriptsComponent extends TWidgetWrapper implements On
     /**
      * Perfect scroll bar directive ref
      */
-    @ViewChild(FusePerfectScrollbarDirective)
-    directiveScroll: FusePerfectScrollbarDirective;
+    @ViewChild('transcripts')
+    directiveScroll: ElementRef<HTMLDivElement>;
     /**
      * To store the fuse config for theme
      */
@@ -171,10 +171,10 @@ export class TwVoiceBotTranscriptsComponent extends TWidgetWrapper implements On
     scrollToBottom(speed?: number): void {
         speed = speed || 400;
         if (this.directiveScroll) {
-            this.directiveScroll.update();
+            // this.directiveScroll.update();
 
             setTimeout(() => {
-                this.directiveScroll.scrollToBottom(0, speed);
+                this.directiveScroll.nativeElement.scrollTo(0, speed);
             });
         }
     }

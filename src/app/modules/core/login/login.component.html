@@ -3,7 +3,7 @@
         <div class="title" [@animate]="{ value: '*', params: { delay: '50ms', y: '25px' } }">Welcome to Agent Desktop!</div>
     </div>
 
-    <div id="login-form-wrapper" class="custom-scroll-adjust" [@animate]="{ value: '*', params: { delay: '300ms', x: '100%' } }">
+    <div id="login-form-wrapper" class="custom-scroll-adjust position-relative" [@animate]="{ value: '*', params: { delay: '300ms', x: '100%' } }">
         <div class="spinner" *ngIf="loading">
             <mat-spinner></mat-spinner>
         </div>

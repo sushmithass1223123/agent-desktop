@@ -30,7 +30,6 @@ export class EventBufferService {
                 if (newEventList.length > HOME_DASH_BUFFER_SIZE) {
                     newEventList.pop();
                 }
-                console.log(newEventList.length);
                 this.agentDash.next(newEventList);
             }
         });

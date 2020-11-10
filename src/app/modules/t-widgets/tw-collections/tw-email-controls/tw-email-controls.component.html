@@ -115,6 +115,10 @@
                 [ngClass]="{ 'border-left-sm-primary w-90-p mt-12 ml-16': replyInfo }"
                 class="email-content position-relative p-8"
             >
+                <div *ngIf="currentInteraction.RejectReason" class="mat-title">
+                    <span class="text-danger"> [ REJECTED ] </span>
+                    {{ currentInteraction.RejectReason }}
+                </div>
                 <div class="mat-title mb-0">
                     {{ currentInteraction.Subject }}
                 </div>
@@ -132,12 +136,12 @@
                         </span>
                     </div>
                     <span fxLayout="row" fxLayoutAlign=" center">
-                        <mat-icon  matToolTip='Mailbox'>list_alt</mat-icon>
+                        <mat-icon matToolTip="Mailbox">list_alt</mat-icon>
                         <span class="text-bold"> {{ currentInteraction.Email_Mailbox || 'NA' }} </span>
                     </span>
                     <div fxLayout fxLayoutAlign="space-between" class="font-weight-700 mt-8">
                         <div>
-                            <p class="my-4">{{ currentInteraction.AgentName }} ({{ currentInteraction.From }}) </p>
+                            <p class="my-4">{{ currentInteraction.AgentName }} ({{ currentInteraction.From }})</p>
                             <a *ngIf="currentInteraction.RouteReason === 'CheckerQueue'" (click)="switchEmailView()">
                                 {{ viewingEmail === 'original' ? 'View Checker Email' : 'View original' }}
                             </a>

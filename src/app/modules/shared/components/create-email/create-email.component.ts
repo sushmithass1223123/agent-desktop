@@ -5,7 +5,6 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatSelectChange } from '@angular/material/select';
 import { AppUiService } from '@services/app-ui.service';
 import { CreateEmailInfo } from 'app/models';
-import { groupBy } from 'lodash';
 import { SDKClient } from 'tmac-sdk';
 
 /**
