@@ -2,7 +2,6 @@ import {
     AfterViewInit,
     Component,
     EventEmitter,
-    HostBinding,
     Input,
     OnDestroy,
     OnInit,
@@ -51,6 +50,7 @@ import {
     TextChatSelfServiceDestinationEvent,
     TextChatTranscriptForTransferEvent,
     TextChatTransferFailedEvent,
+    TextChatTransferRejectEvent,
     TextChatTransferSuccessEvent,
     TextChatTypingStateChangedEvent,
     TextChatUserMessageWaitTimerEvent,
@@ -383,6 +383,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         SDKClient.events.on('CannedResposeEvent', this.CannedResposeEvent);
         SDKClient.events.on('TextChatTransferSuccessEvent', this.TextChatTransferSuccessEvent);
         SDKClient.events.on('TextChatTransferFailedEvent', this.TextChatTransferFailedEvent);
+        SDKClient.events.on('TextChatTransferRejectEvent', this.TextChatTransferRejectEvent);
     }
 
     /**
@@ -406,6 +407,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         SDKClient.events.off('CannedResposeEvent', this.CannedResposeEvent);
         SDKClient.events.off('TextChatTransferSuccessEvent', this.TextChatTransferSuccessEvent);
         SDKClient.events.off('TextChatTransferFailedEvent', this.TextChatTransferFailedEvent);
+        SDKClient.events.off('TextChatTransferRejectEvent', this.TextChatTransferRejectEvent);
     }
 
     /**
@@ -474,6 +476,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         this.chatTranscripts.push({
                             who,
                             isAgent: who === 'Chatbot',
+                            position: who === 'Chatbot' ? 'right' : 'left',
                             messageId: TUtils.Generic.uuid(),
                             message,
                             time: item.timestamp
@@ -609,6 +612,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     this.chatTranscripts.push({
                         who: user,
                         isAgent,
+                        position: isAgent ? 'right' : 'left',
                         messageId,
                         message,
                         type,
@@ -781,10 +785,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         //        time taken timer update
         //        check for hyperlinks
 
+        const isAgent = user !== this.customerName && this.conferenceType === 'silent';
         // add message to the transcripts
         this.chatTranscripts.push({
             who: user,
-            isAgent: user !== this.customerName && this.conferenceType === 'silent',
+            isAgent: isAgent,
+            position: isAgent ? 'right' : 'left',
             messageId: data.messageId,
             message: data.message,
             type: data.attachment?.type || 'text',
@@ -933,6 +939,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
     /**
      * To process custom CannedResposeEvent
+     * 
      * @param evt CannedResposeEvent data
      */
     private CannedResposeEvent = (evt: any) => {
@@ -947,24 +954,36 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
     /**
      * To process custom TextChatTransferSuccessEvent
+     * 
      * @param {TextChatTransferSuccessEvent} evt
      */
-    private TextChatTransferSuccessEvent = () => {
+    private TextChatTransferSuccessEvent = (evt: TextChatTransferSuccessEvent) => {
         this.transferConfDialogRef?.close();
-        this._appUIService.showSnackbar(`Chat transfer success`);
     }
 
     /**
      * To process custom TextChatTransferFailedEvent
+     * 
      * @param {TextChatTransferFailedEvent} evt
      */
     private TextChatTransferFailedEvent = (evt: TextChatTransferFailedEvent) => {
         this.transferConfDialogRef?.close();
-        this._appUIService.showSnackbar(`Chat transfer failed: ${evt.ResultMessage}`, 'failure');
+        this._appUIService.showSnackbar(`${evt.ResultMessage}`, 'failure');
+    }
+
+    /**
+     * To process custom TextChatTransferRejectEvent
+     * 
+     * @param {TextChatTransferRejectEvent} evt
+     */
+    private TextChatTransferRejectEvent = (evt: TextChatTransferRejectEvent) => {
+        const otherData = JSON.parse(evt.Data);
+        this._appUIService.showSnackbar(`${evt.FromAgentName} has rejected your ${(otherData.type === 'conf' ? 'conference' : 'transfer')} request ${(evt.Comment !== '' ? ' with comment: ' + evt.Comment : '')}`, 'failure');
     }
 
     /**
      * To process both TextChatMessageSentEvent and TextChatMessageTemplateSentEvent
+     * 
      * @param evt TextChatMessageSentEvent | TextChatMessageTemplateSentEvent data
      */
     private messageSentEvent(evt: TextChatMessageSentEvent | TextChatMessageTemplateSentEvent): void {
@@ -995,6 +1014,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 this.chatTranscripts.push({
                     who: this.user.agentName,
                     isAgent: true,
+                    position: 'right',
                     messageId,
                     message,
                     type,
@@ -1072,6 +1092,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         const message = {
             who: this.user.agentName,
             isAgent: true,
+            position: 'right',
             message: inputMessage,
             time: moment(new Date())
         };
@@ -1372,9 +1393,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         let message = '';
 
         if (previewData.attachment.type === 'image') {
-            message = `<img src=${previewData.attachment.src} width="100%" width="100%" />`;
+            message = `< img src = ${previewData.attachment.src} width = "100%" width = "100%" /> `;
         } else if (previewData.attachment.type === 'video') {
-            message = `<video controls autoplay src=${previewData.attachment.src} width="100%" width="100%"></video>`;
+            message = `< video controls autoplay src = ${previewData.attachment.src} width = "100%" width = "100%" > </>`;
         }
 
         this.confirmDialogRef = this._appUIService.showCustomDialog('alert', message, 'Preview');
