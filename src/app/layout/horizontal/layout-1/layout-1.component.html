@@ -33,9 +33,7 @@
         <div id="container-2" class="container">
             <div
                 id="container-3"
-                class="container"
-                fusePerfectScrollbar
-                [fusePerfectScrollbarOptions]="{ suppressScrollX: true, updateOnRouteChange: true }"
+                class="container custom-scroll"
             >
                 <!-- CONTENT -->
                 <content [ngClass]="fuseConfig.layout.content.customBackgroundColor === true ? fuseConfig.layout.content.background : ''"> </content>

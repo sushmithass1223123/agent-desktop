@@ -65,8 +65,7 @@
                         <mat-menu
                             backdropClass="badges-menu"
                             #badgesMenu
-                            fusePerfectScrollbar
-                            [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
+                            class="custom-scroll-adjust"
                         >
                             <div fxLayout="row wrap" flexLayoutAlign="space-evenly" class="p-4">
                                 <div fxFlex="20" *ngFor="let badge of element.TotalBadges | slice: 10">

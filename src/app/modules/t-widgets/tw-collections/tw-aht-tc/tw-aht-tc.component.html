@@ -4,10 +4,8 @@
 <tw-wrapper twChart [data]="data" (maximizeEvent)="maximized = $event">
     <div *ngIf="dataConfig.Source === 'dashboard'" class="w-100-p h-100-p">
         <div
-            class="w-100-p bg-inherit"
+            class="w-100-p bg-inherit custom-scroll-adjust"
             [ngClass]="maximized ? 'h-90-p' : 'h-100-p'"
-            fusePerfectScrollbar
-            [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
         >
             <mat-table [dataSource]="interactionDetailsTable.source" matSort matSortDisableClear>
                 <ng-container matColumnDef="Channel">

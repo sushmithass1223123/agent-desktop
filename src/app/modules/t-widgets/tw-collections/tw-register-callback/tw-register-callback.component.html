@@ -16,7 +16,7 @@
     </div>
 
     <div *ngIf="!getCampaignsReq.loading && !getCampaignsReq.error" class="w-100-p h-100-p">
-        <ul class="tw-list w-100-p" fusePerfectScrollbar [fusePerfectScrollbarOptions]="{ suppressScrollX: true }">
+        <ul class="tw-list w-100-p custom-scroll-adjust">
             <li
                 class="tw-list-item selectable"
                 *ngFor="let camp of getCampaignsReq.data"
@@ -53,7 +53,7 @@
             </mat-toolbar-row>
         </mat-toolbar>
 
-        <div mat-dialog-content class="p-24 pb-0 m-0" fusePerfectScrollbar>
+        <div mat-dialog-content class="p-24 pb-0 m-0 custom-scroll-adjust">
             <form [formGroup]="addContactFormGroup" (ngSubmit)="addNewContact()" fxLayout="row wrap" fxLayoutAlign="space-between center" novalidate>
                 <mat-form-field class="form-field mb-8" appearance="outline" fxFlex="100">
                     <input matInput placeholder="Name" formControlName="Name" #nameIp />

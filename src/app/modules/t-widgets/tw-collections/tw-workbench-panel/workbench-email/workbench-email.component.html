@@ -10,7 +10,7 @@
             : ''
     "
 >
-    <div fxFlex="33" (click)="advancedSearchMenu.classList.remove('show')" class="email-list border-radius-20" fusePerfectScrollbar>
+    <div fxFlex="33" (click)="advancedSearchMenu.classList.remove('show')" class="email-list border-radius-20 custom-scroll-adjust">
         <div fxLayout fxLayoutAlign="center center" (click)="$event.stopPropagation()" class="search-input my-8 border-radius-20 position-relative">
             <mat-form-field class="custom with-border form-field w-100-p" appearance="outline">
                 <input class="login-input" matInput placeholder="Search" [(ngModel)]="searchTerm" (input)="filterEmails()" />
@@ -174,7 +174,7 @@
         </div>
     </div>
 
-    <div fxFlex="66" class="email-open border-radius-20" fusePerfectScrollbar>
+    <div fxFlex="66" class="email-open border-radius-20 custom-scroll-adjust">
         <div *ngIf="emailSearchRes.data.selected" fxLayout fxLayoutAlign="end" fxLayoutGap="10px" class="my-20 w-95-p">
             <button mat-flat-button class="border-radius-20">Transfer</button>
             <button mat-flat-button class="border-radius-20">Advance</button>

@@ -8,9 +8,7 @@
         fxLayout="row wrap"
         fxLayoutAlign="center none"
         *ngIf="!loading && dynamicWidgets.length > 0; else noWidgets"
-        fusePerfectScrollbar
-        [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
-        class="widget-grid"
+        class="widget-grid custom-scroll-adjust"
     >
         <tw-template fxFlex.gt-md="33" class="static-widget-grid" *ngIf="staticWidgets.length > 0" [widgets]="staticWidgets"></tw-template>
         <tw-template fxFlex.gt-md="66" class="dynamic-widget-grid" *ngIf="dynamicWidgets.length > 0" [widgets]="dynamicWidgets"></tw-template>
