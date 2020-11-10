@@ -31,7 +31,7 @@
                 </ng-container>
             </div>
 
-            <div class="bottom mat-elevation-z1" fusePerfectScrollbar [fusePerfectScrollbarOptions]="{ suppressScrollX: true }">
+            <div class="bottom mat-elevation-z1 custom-scroll-adjust">
                 <mat-divider *ngIf="bottomWidgets.length > 0"></mat-divider>
                 <ng-container *ngFor="let item of bottomWidgets">
                     <mat-list-option

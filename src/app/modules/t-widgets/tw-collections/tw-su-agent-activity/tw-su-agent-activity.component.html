@@ -5,8 +5,7 @@
         fxLayoutAlign=" none"
         [@animateStagger]="{ value: '50' }"
         *fuseIfOnDom
-        fusePerfectScrollbar
-        [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
+        class="custom-scroll-adjust"
     >
         <ng-container *ngFor="let item of activityWidget">
             <tw-su-agent-activity-details [data]="item" [@animate]="{ value: '*', params: { y: '100%' } }"></tw-su-agent-activity-details>

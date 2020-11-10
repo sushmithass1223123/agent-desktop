@@ -132,11 +132,16 @@
                         </span>
                     </div>
                     <span fxLayout="row" fxLayoutAlign=" center">
-                        <mat-icon>list_alt</mat-icon>
+                        <mat-icon  matToolTip='Mailbox'>list_alt</mat-icon>
                         <span class="text-bold"> {{ currentInteraction.Email_Mailbox || 'NA' }} </span>
                     </span>
                     <div fxLayout fxLayoutAlign="space-between" class="font-weight-700 mt-8">
-                        <span>{{ currentInteraction.AgentName }} ({{ currentInteraction.From }}) </span>
+                        <div>
+                            <p class="my-4">{{ currentInteraction.AgentName }} ({{ currentInteraction.From }}) </p>
+                            <a *ngIf="currentInteraction.RouteReason === 'CheckerQueue'" (click)="switchEmailView()">
+                                {{ viewingEmail === 'original' ? 'View Checker Email' : 'View original' }}
+                            </a>
+                        </div>
                         <div>
                             <span>{{ currentInteraction.CreatedTime | date: 'mediumDate' }}</span>
                             <br />

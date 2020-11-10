@@ -8,7 +8,9 @@ import { FuseConfig } from '@fuse/types';
 import { AgentFeaturesService } from '@services/agent-features.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
+import { EventBufferService } from '@services/event-buffer.service';
 import { TMACEventService } from '@services/tmac-event.service';
+import { HOME_EVENTS } from 'app/constants';
 import { ThemeSelector } from 'app/layout/utils/theme-selector';
 import { environment } from 'environments/environment';
 import { Subject } from 'rxjs';
@@ -69,7 +71,8 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
         // this service must not be removed, this will listen to some TMAC events
         private _tmacEventsService: TMACEventService,
         private _activatedRouter: ActivatedRoute,
-        private _titleService: Title
+        private _titleService: Title,
+        private eventBufferService: EventBufferService
     ) {
         // Set the private defaults
         this._unsubscribeAll = new Subject();
@@ -94,6 +97,11 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
     ngOnInit(): void {
         // register to all the tmac events in service
         this._tmacEventsService.subscribe();
+
+        
+        // register events for home dashboard 
+        this.eventBufferService.registerAgentDashEvents(HOME_EVENTS);
+
 
         // subscribe to config changes
         this._fuseConfigService.config

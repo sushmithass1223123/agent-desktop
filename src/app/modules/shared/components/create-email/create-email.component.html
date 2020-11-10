@@ -85,7 +85,7 @@
             <mat-error *ngIf="subject.invalid && subject.errors?.required"> Subject required </mat-error>
         </mat-form-field>
     </form>
-    <div fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="20px" class="w-100-p mb-20">
+    <div fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="20px" class="w-100-p mb-12">
         <button mat-icon-button class="primary" (click)="attachFileRef.click()">
             <mat-icon>attach_file</mat-icon>
             <input #attachFileRef type="file" (change)="onFileInput($event)" style="display: none" />
@@ -167,6 +167,7 @@
         </div>
     </div>
     <quill-editor
+        (onEditorCreated)="setFocus($event)"
         class="email-editor"
         classes="editor-container border-radius-20"
         [(ngModel)]="email.Body"

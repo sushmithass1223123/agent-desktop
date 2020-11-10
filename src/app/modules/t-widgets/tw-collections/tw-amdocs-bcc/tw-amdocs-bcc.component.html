@@ -10,9 +10,7 @@
         *ngIf="!caseData.submitted"
         fxFill
         fxLayout="column"
-        class="px-16"
-        fusePerfectScrollbar
-        [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
+        class="px-16 custom-scroll-adjust"
     >
         <div fxLayout>
             <p fxFlex="20" fxLayoutAlign=" center" class="px-8">Case ID</p>
@@ -31,7 +29,7 @@
     </div>
 
     <div *ngIf="caseData.submitted" class="w-100-p h-100-p">
-        <ul class="tw-list w-100-p border-radius-20" fusePerfectScrollbar [fusePerfectScrollbarOptions]="{ suppressScrollX: true }">
+        <ul class="tw-list w-100-p border-radius-20 custom-scroll-adjust">
             <li class="tw-list-item" *ngFor="let case of caseData.cases; let i = index" fxLayout fxLayoutAlign="space-between center">
                 <div fxFlex="50" fxLayout fxLayoutAlign="start center">
                     <mat-icon class="mr-4"> insert_drive_file </mat-icon>
