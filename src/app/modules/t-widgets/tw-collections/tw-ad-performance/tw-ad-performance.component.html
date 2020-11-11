@@ -4,13 +4,11 @@
 <tw-wrapper [data]="data" (maximizeEvent)="maximized = $event">
     <div
         *ngIf="!gamificationReqStatus.loading && !gamificationReqStatus.error"
-        fusePerfectScrollbar
-        [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
         fxLayout="column"
         [fxLayoutAlign]="
             !(performanceChartProgress.goal | keyvalue).length && !(performanceChartProgress.badge | keyvalue).length ? 'center center' : ''
         "
-        class="h-100-p w-100-p px-16"
+        class="h-100-p w-100-p px-16 custom-scroll-adjust"
     >
         <p *ngIf="(performanceChartProgress.goal | keyvalue).length" class="my-16 text-bold">KPI Goals :</p>
 

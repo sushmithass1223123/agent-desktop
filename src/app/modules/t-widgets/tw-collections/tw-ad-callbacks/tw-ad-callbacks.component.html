@@ -11,25 +11,27 @@
         fxLayoutAlign="space-between"
         class="w-100-p h-100-p p-4"
     >
-        <div class="callbacks" fxFlex="55" fusePerfectScrollbar [fusePerfectScrollbarOptions]="{ suppressScrollX: true }">
-            <div *ngFor="let cb of getDashboardDataRes.data.callbacks" class="callback mb-20" fxLayout fxLayoutAlign="space-between center">
-                <div fxFlex="65" fxLayout fxLayoutAlign="start center" fxLayoutGap="20px">
-                    <div mat-card-avatar class="border-info">
-                        <mat-icon> phone_callback </mat-icon>
+        <div fxFlex="55">
+            <div class="h-100-p custom-scroll-adjust callbacks">
+                <div *ngFor="let cb of getDashboardDataRes.data.callbacks" class="callback mb-20" fxLayout fxLayoutAlign="space-between center">
+                    <div fxFlex="65" fxLayout fxLayoutAlign="start center" fxLayoutGap="20px">
+                        <div mat-card-avatar class="border-info">
+                            <mat-icon> phone_callback </mat-icon>
+                        </div>
+                        <span class="font-weight-600"> Callback with {{ cb.contact.name }} </span>
                     </div>
-                    <span class="font-weight-600"> Callback with {{ cb.contact.name }} </span>
+                    <small fxFlex="30" class="font-weight-600">
+                        {{ cb.contact.directAgentScheduleTime }}
+                    </small>
                 </div>
-                <small fxFlex="30" class="font-weight-600">
-                    {{ cb.contact.directAgentScheduleTime }}
-                </small>
-            </div>
-            <div *ngIf="!getDashboardDataRes.data.callbacks.length" class="w-100-p h-100-p">
-                <img
-                    src="assets/images/vectors/no-data-1.svg"
-                    class="w-100-p box-shadow-3d"
-                    [ngClass]="{ 'h-95-p': maximized, ' h-85-p': !maximized }"
-                />
-                <p class="text-center mat-title m-0">No Callbacks Yet!</p>
+                <div *ngIf="!getDashboardDataRes.data.callbacks.length" class="w-100-p h-100-p">
+                    <img
+                        src="assets/images/vectors/no-data-1.svg"
+                        class="w-100-p box-shadow-3d"
+                        [ngClass]="{ 'h-95-p': maximized, ' h-85-p': !maximized }"
+                    />
+                    <p class="text-center mat-title m-0">No Callbacks Yet!</p>
+                </div>
             </div>
         </div>
         <div

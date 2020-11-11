@@ -37,9 +37,7 @@
         </mat-form-field>
         <div
             *ngIf="DataConf.Source === 'supervisor'"
-            class="w-100-p h-100-p p-12"
-            fusePerfectScrollbar
-            [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
+            class="w-100-p h-100-p p-12 custom-scroll-adjust"
         >
             <mat-chip-list aria-label="WorkCodes">
                 <mat-chip

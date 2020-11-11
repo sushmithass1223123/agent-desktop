@@ -37,6 +37,9 @@ create-email {
         padding-top: 5px !important;
         padding-bottom: 5px !important;
     }
+    .mat-form-field-appearance-outline .mat-form-field-infix {
+        padding: 5px;
+    }
 }
 // .editor-container {
 //     padding: 10px;
@@ -51,3 +54,4 @@ create-email {
 //     padding-bottom: 10px;
 // }
 // }
+

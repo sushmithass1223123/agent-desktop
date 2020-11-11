@@ -38,10 +38,8 @@
             fxFlex
             fxLayout="column"
             fxLayoutAlign=" none"
-            class="agent-list px-4"
+            class="agent-list px-4 custom-scroll-adjust"
             [@animateStagger]="{ value: '50' }"
-            fusePerfectScrollbar
-            [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
         >
             <div
                 *ngFor="let item of filteredAgents; trackBy: trackByID"

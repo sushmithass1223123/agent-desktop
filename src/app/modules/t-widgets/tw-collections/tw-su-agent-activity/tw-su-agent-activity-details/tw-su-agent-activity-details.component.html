@@ -17,9 +17,7 @@
                     fxLayout="column"
                     fxLayoutAlign=" none"
                     *ngIf="activityWidgets['profileWidget'].Data.Details && activityWidgets['profileWidget'].Data.Details.length > 0; else noData"
-                    class="p-8"
-                    fusePerfectScrollbar
-                    [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"
+                    class="p-8 custom-scroll-adjust"
                 >
                     <div *ngFor="let item of activityWidgets['profileWidget'].Data.Details" class="mb-8">
                         <span class="font-weight-700"> {{ item.Title }}: </span>

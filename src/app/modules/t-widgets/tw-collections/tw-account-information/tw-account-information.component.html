@@ -5,7 +5,7 @@
 <!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
 
 <tw-wrapper twChart [data]="data" (maximizeEvent)="maximized = !maximized">
-    <div fxLayout fxLayoutAlign="start center" class="p-4 w-100-p h-100-p" fusePerfectScrollbar *ngIf="isAuthenticated">
+    <div fxLayout fxLayoutAlign="start center" class="p-4 w-100-p h-100-p custom-scroll-adjust" *ngIf="isAuthenticated">
         <div fxLayout="column" fxLayoutAlign="space-around center" class="h-100-p">
             <button mat-button matTooltip="Wireless" color="primary">
                 <mat-icon>phonelink_ring</mat-icon>
@@ -79,7 +79,7 @@
         </div>
     </div>
 
-    <div fxLayout="column" fxLayoutAlign="space-between none" class="p-12 w-100-p h-100-p voice-bio" fusePerfectScrollbar *ngIf="!isAuthenticated">
+    <div fxLayout="column" fxLayoutAlign="space-between none" class="p-12 w-100-p h-100-p voice-bio custom-scroll-adjust" *ngIf="!isAuthenticated">
         <div fxLayout>
             <div fxLayout="column" fxFlex="33.33">
                 <div>
