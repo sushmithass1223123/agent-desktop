@@ -27,11 +27,7 @@
                     </svg>
                 </button> -->
 
-                <div
-                    fxLayout="column"
-                    fxLayoutAlign=" start"
-                    class="w-60 h-100-p mt-4 pt-8 interactions custom-scroll-adjust"
-                >
+                <div fxLayout="column" fxLayoutAlign=" start" class="w-60 h-100-p mt-4 pt-8 interactions custom-scroll-adjust">
                     <avatar
                         *ngFor="let item of interactionList"
                         name="{{ item.user }}"
@@ -260,7 +256,15 @@
                                     </svg>
                                 </div> -->
 
-                                <div *ngIf="isFirstMessageOfGroup(message, i)" class="user-label font-size-16 text-bold mb-4">{{ message.who }}</div>
+                                <div
+                                    *ngIf="isFirstMessageOfGroup(message, i)"
+                                    class="user-label font-size-16 text-bold mb-4"
+                                    [ngClass]="{
+                                        agent: !message.isAgent && message.who !== customerName
+                                    }"
+                                >
+                                    {{ message.who }}
+                                </div>
                                 <div class="message">
                                     <ng-container *ngIf="!message.attachment?.src">
                                         <span [innerHTML]="message.message"></span>

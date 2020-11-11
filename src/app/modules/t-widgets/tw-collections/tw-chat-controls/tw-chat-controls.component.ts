@@ -453,8 +453,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.chatMode = evt.ChatMode;
         // check for bot history
         try {
+            // get all the bot history
             const botHistory = JSON.parse(evt.ChatHistoryData);
-
             // check the length of history data
             if (botHistory.length > 0) {
                 botHistory.forEach((item: any, index: number, array: any[]) => {
@@ -790,7 +790,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.chatTranscripts.push({
             who: user,
             isAgent: isAgent,
-            position: isAgent ? 'right' : 'left',
+            position: user === this.customerName ? 'left' : 'right',
             messageId: data.messageId,
             message: data.message,
             type: data.attachment?.type || 'text',
