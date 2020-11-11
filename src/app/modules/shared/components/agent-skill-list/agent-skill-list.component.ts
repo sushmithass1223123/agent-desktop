@@ -399,11 +399,11 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * To transfer a chat to agent/skill
+     * To transfer/conference a chat to agent/skill
      * 
      * @param {boolean} consult 
      */
-    private transferChat(consult: boolean): void {
+    private transferConferenceChat(consult: boolean): void {
         this.loading = true;
         const type = this.data.otherData.type === 'conf' ? 'conference' : this.data.otherData.type;
         // agent transfer/conf
@@ -776,7 +776,8 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 this.transferCall(consult);
                 break;
             case 'transferChat':
-                this.transferChat(consult);
+            case 'conferenceChat':
+                this.transferConferenceChat(consult);
                 break;
             default:
                 this._appUIService.showSnackbar('Error: No action selected to execute', 'failure');

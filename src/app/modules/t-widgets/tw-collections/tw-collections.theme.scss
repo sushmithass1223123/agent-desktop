@@ -95,43 +95,63 @@
 
         .chat-transcripts {
             .message-row {
-                &.contact {
-                    .bubble {
+                .bubble {
+                    &.left {
                         @if ($is-dark == true) {
                             background-color: map-get($background, hover);
                         } @else {
                             background-color: map-get($accent, default);
                             color: map-get($accent, default-contrast);
                         }
-
-                        .left-svg {
-                            @if ($is-dark == true) {
-                                color: rgb(80 80 80) !important;
-                            } @else {
-                                color: #e0e0e0;
-                            }
-                        }
                     }
-                }
 
-                &.me {
-                    .bubble {
+                    &.right {
                         @if ($is-dark == true) {
                             background-color: map-get($background, hover);
                         } @else {
                             color: rgba(0, 0, 0, 0.87);
                             background-color: #e0e0e0;
                         }
-
-                        .right-svg {
-                            @if ($is-dark == true) {
-                                color: rgb(80 80 80) !important;
-                            } @else {
-                                color: #e0e0e0;
-                            }
-                        }
                     }
                 }
+
+                // &.contact {
+                //     .bubble {
+                //         @if ($is-dark == true) {
+                //             background-color: map-get($background, hover);
+                //         } @else {
+                //             background-color: map-get($accent, default);
+                //             color: map-get($accent, default-contrast);
+                //         }
+
+                //         // .left-svg {
+                //         //     @if ($is-dark == true) {
+                //         //         color: rgb(80 80 80) !important;
+                //         //     } @else {
+                //         //         color: #e0e0e0;
+                //         //     }
+                //         // }
+                //     }
+                // }
+
+                // &.me {
+                //     .bubble {
+                //         @if ($is-dark == true) {
+                //             background-color: map-get($background, hover);
+                //         } @else {
+                //             color: rgba(0, 0, 0, 0.87);
+                //             background-color: #e0e0e0;
+                //         }
+
+                //         // .right-svg {
+                //         //     @if ($is-dark == true) {
+                //         //         color: rgb(80 80 80) !important;
+                //         //     } @else {
+                //         //         color: #e0e0e0;
+                //         //     }
+                //         // }
+                //     }
+                // }
             }
         }
 

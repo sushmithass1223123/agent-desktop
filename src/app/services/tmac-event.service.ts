@@ -5,7 +5,7 @@ import { ReminderTaskDialogComponent } from '@modules/shared/components';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { IAction, IWidget, QuizEvent } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
-import { map } from 'lodash';
+import { camelCase, map, upperFirst } from 'lodash';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
@@ -777,8 +777,8 @@ export class TMACEventService {
         // get the type
         const type = otherData.type === 'conf' ? 'conference' : 'transfer';
         // get the mode
-        const mode = otherData.mode + ' chat';
-        let message = `Agent ${evt.FromAgentName} is trying to ${type} a ${mode}`;
+        const mode = upperFirst(otherData.mode) + ' Chat';
+        let message = `Agent <b>${evt.FromAgentName}</b> is trying to ${type} a ${mode}`;
         // check if the comment is there
         if (evt.Comment) {
             message += `<br /> with comment: ${evt.Comment}`;
@@ -786,7 +786,7 @@ export class TMACEventService {
         // get cofirmation
         this._appUIService.showAppConfirmDialog(
             'generic',
-            `Confirm ${mode} ${type}`,
+            `Confirm ${mode} ${upperFirst(type)}`,
             message
         ).afterClosed().subscribe((resp1) => {
             evt.Response(resp1);

@@ -4,10 +4,10 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseConfigService } from '@fuse/services/config.service';
+import { FuseSplashScreenService } from '@fuse/services/splash-screen.service';
 import { AppUiService } from '@services/app-ui.service';
 import { AppDataService } from 'app/services/app-data.service';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { CommandResultEvent, IResponse, SDKClient, TUtils } from 'tmac-sdk';
 import { environment } from '../../../../environments/environment';
 
@@ -200,15 +200,11 @@ export class LoginComponent implements OnInit, OnDestroy {
     /**
      * Version property
      */
-    version = '';
+    version = 'NA';
     /**
      * Self video stream
      */
     selfVideo: MediaStream;
-    /**
-     * App loaded flag
-     */
-    loaded: boolean;
 
     constructor(
         private _fuseConfigService: FuseConfigService,
@@ -240,8 +236,8 @@ export class LoginComponent implements OnInit, OnDestroy {
         // Set the private defaults
         this._unsubscribeAll = new Subject();
 
-        // set loaded flag
-        this.loaded = false;
+        // set loading flag
+        this.loading = true;
 
         // subscribe to _activatedRoute for loging agent id
         this._activatedRoute.paramMap.subscribe(paramMap => {
@@ -351,11 +347,19 @@ export class LoginComponent implements OnInit, OnDestroy {
                 this.startCamera();
             }
 
-            // set loaded flag
-            this.loaded = true;
+            // set loading flag
+            this.loading = false;
         } else {
             // we will route to error page
-            this._router.navigate(['not-found']);
+            this._router.navigate(['not-found'],
+                {
+                    state: {
+                        subtitle: 'Oops',
+                        title: '404',
+                        description: 'Unable to load the config, please contact the administrator.',
+                        login: false
+                    }
+                });
         }
     }
 

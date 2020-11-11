@@ -23,15 +23,16 @@ html {
 .custom-scroll {
     overflow: auto;
     &-adjust {
-        overflow: hidden;
-        max-width: calc(100% - 8px);
+        overflow: auto;
+        // overflow: hidden;
+        // max-width: calc(100% - 8px);
         // margin-right: 8px;
-        &:hover {
-            overflow-x: auto;
-            overflow-y: scroll;
-            // margin-right: 0px;
-            max-width: 100%;
-        }
+        // &:hover {
+        //     overflow-x: auto;
+        //     overflow-y: scroll;
+        //     // margin-right: 0px;
+        //     max-width: 100%;
+        // }
     }
 }
 

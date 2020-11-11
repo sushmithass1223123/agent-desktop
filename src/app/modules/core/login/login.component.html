@@ -1,9 +1,9 @@
-<div id="login" class="inner-scroll" fxLayout="row" fxLayoutAlign="start" *ngIf="loaded">
+<div id="login" class="inner-scroll" fxLayout="row" fxLayoutAlign="start">
     <div id="login-intro" fxFlex fxHide fxShow.gt-xs class="animate__animated animate__fadeIn">
         <div class="title" [@animate]="{ value: '*', params: { delay: '50ms', y: '25px' } }">Welcome to Agent Desktop!</div>
     </div>
 
-    <div id="login-form-wrapper" class="custom-scroll-adjust" [@animate]="{ value: '*', params: { delay: '300ms', x: '100%' } }">
+    <div id="login-form-wrapper" class="custom-scroll-adjust position-relative" [@animate]="{ value: '*', params: { delay: '300ms', x: '100%' } }">
         <div class="spinner" *ngIf="loading">
             <mat-spinner></mat-spinner>
         </div>

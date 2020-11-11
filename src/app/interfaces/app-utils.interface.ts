@@ -146,6 +146,10 @@ export interface ChatTranscripts {
      */
     who?: string;
     /**
+     * Position of chat bubble
+     */
+    position?: string;
+    /**
      * Is agent flag
      */
     isAgent?: boolean;

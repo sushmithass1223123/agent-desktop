@@ -2,7 +2,6 @@ import { Platform } from '@angular/cdk/platform';
 import { DOCUMENT } from '@angular/common';
 import { Component, HostListener, Inject, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
 import { FuseNavigationService } from '@fuse/components/navigation/navigation.service';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseSplashScreenService } from '@fuse/services/splash-screen.service';
@@ -12,10 +11,9 @@ import { AppUiService } from '@services/app-ui.service';
 import { locale as navigationEnglish } from 'app/navigation/i18n/en';
 import { locale as navigationTurkish } from 'app/navigation/i18n/tr';
 import { navigation } from 'app/navigation/navigation';
-import { promises } from 'dns';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { IResponse, SDKClient, TEnums, TUtils } from 'tmac-sdk';
+import { SDKClient } from 'tmac-sdk';
 import { environment } from '../environments/environment';
 import { AppDataService } from './services/app-data.service';
 
@@ -112,10 +110,7 @@ export class AppComponent implements OnInit, OnDestroy {
      * @param {FuseSplashScreenService} _fuseSplashScreenService
      * @param {FuseTranslationLoaderService} _fuseTranslationLoaderService
      * @param {Platform} _platform
-     * @param {TranslateService} _translateService
-     * @param {Title} _titleService
-     * @param {AppDataService} _appDataService
-     * @param {TitRouterle} _router
+     * @param {TranslateService} _translateService  
      * @param {AppUiService} _appUIService
      */
     constructor(
@@ -126,9 +121,6 @@ export class AppComponent implements OnInit, OnDestroy {
         private _fuseTranslationLoaderService: FuseTranslationLoaderService,
         private _platform: Platform,
         private _translateService: TranslateService,
-        private _titleService: Title,
-        private _appDataService: AppDataService,
-        private _router: Router,
         private _appUIService: AppUiService
     ) {
         // Get default navigation
