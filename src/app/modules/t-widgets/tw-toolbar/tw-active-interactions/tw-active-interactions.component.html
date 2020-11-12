@@ -20,7 +20,7 @@
                     class="w-36 h-36 custom-btn bg-warning"
                     #holdBtn
                     matTooltip="Hold"
-                    (click)="holdCall(item, holdBtn)"
+                    (click)="holdUnHoldCall('hold', item, holdBtn)"
                 >
                     <mat-icon>phone_paused</mat-icon>
                 </button>
@@ -30,7 +30,7 @@
                     class="w-36 h-36 custom-btn bg-success"
                     #unHoldBtn
                     matTooltip="Unhold"
-                    (click)="unHoldCall(item, unHoldBtn)"
+                    (click)="holdUnHoldCall('unhold', item, unHoldBtn)"
                 >
                     <mat-icon>phone_in_talk</mat-icon>
                 </button>

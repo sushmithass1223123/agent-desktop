@@ -159,7 +159,7 @@
                         },
                         "Data": {
                             "Path": "/home",
-                            "Active": false
+                            "Active": true
                         }
                     },
                     {
@@ -224,7 +224,7 @@
                         },
                         "Data": {
                             "Path": "/workbench",
-                            "Active": true
+                            "Active": false
                         }
                     }
                 ],

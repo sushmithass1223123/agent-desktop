@@ -723,7 +723,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             // update the interaction status and user
             this._interactionManagerService.updateInteraction(this.interactionId, {
                 otherData: {
-                    avConn: this.avConns
+                    avConns: this.avConns,
+                    callLines: this.callLines
                 }
             });
 

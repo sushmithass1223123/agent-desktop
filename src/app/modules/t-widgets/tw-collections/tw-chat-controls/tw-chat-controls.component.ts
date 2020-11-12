@@ -1027,7 +1027,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     messageId,
                     message,
                     type,
-                    time: new Date(Date.parse(evt.DateTime.toString())) || new Date(),
+                    time: new Date(Date.parse(evt.CreatedTime.toString())) || new Date(),
                     attachment
                 });
 
@@ -1062,7 +1062,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             // this.directiveScrolls.last.update();
 
             setTimeout(() => {
-                this.messagesRef.nativeElement.scrollTo(0, speed);
+                this.messagesRef.nativeElement.scrollTop = this.messagesRef.nativeElement.scrollHeight;
             });
         }
     }
@@ -1149,7 +1149,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.readyToReply();
 
         // show auto freeze
-        this.showAutoFreeze = true;
+        if (!this.callWidget) {
+            this.showAutoFreeze = true;
+        }
     }
 
     /**
@@ -1163,6 +1165,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         if (this.callWidget) {
             return;
         }
+
+        // freeze auto response if needed
+        this.freezeAutoResponse(false);
 
         // get the widget type
         const widgetMode = {
@@ -1386,9 +1391,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * @param {'audio' | 'video'} type Type of escalation
      */
     public escalateToAV(type: 'audio' | 'video'): void {
-        // freeze auto response if needed
-        this.freezeAutoResponse(false);
-
         // open call widget
         this.openCallWidget(type, 'out');
     }

@@ -244,7 +244,7 @@
                                 *ngIf="!message.divider"
                                 fxLayout="column"
                                 fxLayoutAlign="start start"
-                                class="bubble mat-elevation-z1 {{ message.position }}"
+                                class="bubble mat-elevation-z1 {{ message.position }} animate__animated animate__slideInUp animate__faster"
                                 [ngClass]="{ maximized: maximized }"
                             >
                                 <!-- <div *ngIf="isFirstMessageOfGroup(message, i)" [ngClass]="!message.isAgent ? 'left-svg' : 'right-svg'">
