@@ -138,70 +138,70 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
     }
 
     /**
-     * Hold call
+     * Hold/Un hold call
      * @param {InteractionRef} item 
      * @param {MatButton} btn 
      */
-    public holdCall(item: InteractionRef, btn: MatButton): void {
+    public holdUnHoldCall(type: string, item: InteractionRef, btn: MatButton): void {
         // toggle the button
         this.toggleButton(true, btn);
         // check if ms call then do not call api, invoke webclient api hold
         if (item.otherData.isMSCall) {
-            // get the connection variable
-            const connections: AVChannel[] = item.otherData.avConn;
-            connections.forEach((connection) => {
+            const connections: AVChannel[] = item.otherData.avConns;
+            const callLines: string[] = item.otherData.callLines;
+            callLines.forEach((sessionId) => {
+                // get the connection variable
+                const connection: AVChannel = connections[sessionId];
                 // check if the connection is there and interaction is not on hold
-                if (connection && item.status !== 'hold') {
-                    connection.hold();
+                if (connection) {
+                    if (type === 'hold' && item.status !== 'hold') {
+                        connection.hold();
+                    }
+                    else if (type === 'unhold' && item.status === 'hold') {
+                        connection.unHold();
+                    }
+                    else {
+                        // toggle the button
+                        this.toggleButton(false, btn);
+                    }
+                }
+                else {
+                    // toggle the button
+                    this.toggleButton(false, btn);
                 }
             });
             return;
         }
-        SDKClient.holdCall(item.interactionId.toString(), null)
-            .then((dt: IResponse) => {
-                // toggle the button
-                this.toggleButton(false, btn);
-                // check for the response
-                if (dt.response && dt.response.ResultCode === 0) {
-                    // disconnect call success
-                }
-                else {
-                    this._appUIService.showSnackbar('Hold call failed', 'failure');
-                }
-            });
-    }
 
-    /**
-     * UnHold call
-     * @param {InteractionRef} item 
-     * @param {MatButton} btn 
-     */
-    public unHoldCall(item: InteractionRef, btn: MatButton): void {
-        // toggle the button
-        this.toggleButton(true, btn);
-        // check if ms call then do not call api, invoke webclient api hold
-        if (item.otherData.isMSCall) {
-            const connections: AVChannel[] = item.otherData.avConn;
-            connections.forEach((connection) => {
-                // check if the connection is there and interaction is not on hold
-                if (connection && item.status === 'hold') {
-                    connection.unHold();
-                }
-            });
-            return;
+        // for PBX calls
+        if (type === 'hold') {
+            SDKClient.holdCall(item.interactionId.toString(), null)
+                .then((dt: IResponse) => {
+                    // toggle the button
+                    this.toggleButton(false, btn);
+                    // check for the response
+                    if (dt.response && dt.response.ResultCode === 0) {
+                        // disconnect call success
+                    }
+                    else {
+                        this._appUIService.showSnackbar('Hold call failed', 'failure');
+                    }
+                });
         }
-        SDKClient.unHoldCall(item.interactionId.toString(), null)
-            .then((dt: IResponse) => {
-                // toggle the button
-                this.toggleButton(false, btn);
-                // check for the response
-                if (dt.response && dt.response.ResultCode === 0) {
-                    // disconnect call success
-                }
-                else {
-                    this._appUIService.showSnackbar('Unhold call failed', 'failure');
-                }
-            });
+        else {
+            SDKClient.unHoldCall(item.interactionId.toString(), null)
+                .then((dt: IResponse) => {
+                    // toggle the button
+                    this.toggleButton(false, btn);
+                    // check for the response
+                    if (dt.response && dt.response.ResultCode === 0) {
+                        // disconnect call success
+                    }
+                    else {
+                        this._appUIService.showSnackbar('Unhold call failed', 'failure');
+                    }
+                });
+        }
     }
 
     /**
