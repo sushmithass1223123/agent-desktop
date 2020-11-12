@@ -6,15 +6,15 @@
 >
     <div fxLayout="column" class="w-100-p h-100-p voice-controls">
         <div fxFlex fxLayout="row" fxLayoutAlign=" none" class="h-75-p">
-            <div
-                fxLayout="column"
-                fxLayoutAlign=" center"
-                class="w-60 h-100-p mr-4 pr-4 py-8 interactions custom-scroll-adjust"
-            >
+            <div fxLayout="column" fxLayoutAlign=" center" class="w-60 h-100-p py-8 mt-8 interactions custom-scroll-adjust">
                 <avatar
                     *ngFor="let item of interactionList"
                     name="{{ item.user }}"
-                    [ngClass]="item.status + ' ' + (item.interactionId === interactionId ? 'active' : '')"
+                    [ngClass]="
+                        item.status +
+                        (item.interactionId === interactionId ? ' active' : '') +
+                        (item.status === 'incoming' ? ' animate__animated animate__flash animate__infinite animate__slow' : '')
+                    "
                     matTooltip="{{ item.user }}"
                     matTooltipPosition="after"
                     (click)="selectInteraction(item)"

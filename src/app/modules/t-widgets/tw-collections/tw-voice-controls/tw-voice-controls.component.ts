@@ -12,7 +12,6 @@ import { InteractionManagerService } from '@services/interaction-manager.service
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AgentSkillListData, InteractionRef, IWidget } from 'app/interfaces';
-import { log } from 'console';
 import { Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
@@ -922,7 +921,12 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         // check if ms call then do not call api, just process the media server messages
         if (this.isMSCall) {
             // get the connection variable
-            const connection: AVChannel = this.avConns[this.sessionID];
+            let connection: AVChannel = this.avConns[this.sessionID];
+            // check if the connection found for session id
+            if (!connection) {
+                // get connection by first callLines
+                connection = this.avConns[this.callLines[0]];
+            }
             // check if the connection is there and media server messages are there
             if (connection && this.mediaServerMessages.length > 0) {
                 // process the media server messages
@@ -931,6 +935,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 });
                 // clear the array after processing
                 this.mediaServerMessages = [];
+            }
+            else {
+                TUtils.Logger.log('Error in answerCall', `AV connection is not found - ${this.sessionID}`);
             }
             // set the process media message to true for further messages
             this.processMediaMessages = true;

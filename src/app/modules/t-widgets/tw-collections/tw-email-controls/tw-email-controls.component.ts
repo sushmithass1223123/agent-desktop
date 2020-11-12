@@ -249,7 +249,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             this.currentInteraction = {
                 ...this.currentInteraction,
                 ...this.emailBodies[requestedSession]
-            }
+            };
         } else {
             this.getFullEmail();
         }
@@ -503,33 +503,38 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Sends email as Checker
      */
     sendEmailAsChecker(): void {
-        // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
-        const currentInteraction = this.currentInteraction;
-        const { AttachmetList, Body, From, CC, Subject, } = currentInteraction;
-        SDKClient.sendEmail({
-            attachmentFileList: AttachmetList && AttachmetList.length ? JSON.stringify(AttachmetList) : '',
-            bccList: '',
-            body: Body['changingThisBreaksApplicationSecurity'],
-            ccList: CC || '',
-            inboxSessionId: currentInteraction.SessionId,
-            outboxSessionId: currentInteraction.OutSessionID,
-            routeId: '',
-            subject: Subject,
-            toList: From,
-            typeOfResponse: 'approve'
-        })
-            .then((res) => {
-                const message = {
-                    SentToCustomer: 'to customer',
-                    SentToCheckerSession: 'to checker'
-                };
-                this._appUIService.showSnackbar(`Message sent ${message[res.response.CurrentStatus]}`, 'success');
-                this.draftPolling?.unsubscribe();
-            })
-            .catch((err) => {
-                console.error({ err });
-                this._appUIService.showSnackbar('Something went wrong', 'failure');
-            });
+        const confirmDialogRef = this._appUIService.showAppConfirmDialog('generic', 'Confirm Approve', 'Are you sure to approve this email?');
+        confirmDialogRef.afterClosed().subscribe((dialogResult: boolean) => {
+            if (dialogResult) {
+                // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
+                const currentInteraction = this.currentInteraction;
+                const { AttachmetList, Body, From, CC, Subject, } = currentInteraction;
+                SDKClient.sendEmail({
+                    attachmentFileList: AttachmetList && AttachmetList.length ? JSON.stringify(AttachmetList) : '',
+                    bccList: '',
+                    body: Body['changingThisBreaksApplicationSecurity'],
+                    ccList: CC || '',
+                    inboxSessionId: currentInteraction.SessionId,
+                    outboxSessionId: currentInteraction.OutSessionID,
+                    routeId: '',
+                    subject: Subject,
+                    toList: From,
+                    typeOfResponse: 'approve'
+                })
+                    .then((res) => {
+                        const message = {
+                            SentToCustomer: 'to customer',
+                            SentToCheckerSession: 'to checker'
+                        };
+                        this._appUIService.showSnackbar(`Message sent ${message[res.response.CurrentStatus]}`, 'success');
+                        this.draftPolling?.unsubscribe();
+                    })
+                    .catch((err) => {
+                        console.error({ err });
+                        this._appUIService.showSnackbar('Something went wrong', 'failure');
+                    });
+            }
+        });
     }
 
     /**
@@ -611,19 +616,24 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Marks currently selected email as spam
      */
     markAsSpam(): void {
-        // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
-        const currentInteraction = this.currentInteraction;
-        const loader = this._appUIService.showSnackbar('Spamming email', 'loading');
-        SDKClient.markEmailAsSpam({
-            fromAddress: currentInteraction.From,
-            routeId: currentInteraction.RouteId,
-            sessionId: currentInteraction.SessionId,
-        }).then(res => {
-            loader.dismiss();
-            this._appUIService.showSnackbar('Email marked as spam');
-        }).catch(err => {
-            console.error(err);
-            this._appUIService.showSnackbar('Unable to spam the email', 'failure');
+        const confirmDialogRef = this._appUIService.showAppConfirmDialog('generic', 'Confirm Spam', 'Are you sure to mark this email as spam?');
+        confirmDialogRef.afterClosed().subscribe((dialogResult: boolean) => {
+            if (dialogResult) {
+                // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
+                const currentInteraction = this.currentInteraction;
+                const loader = this._appUIService.showSnackbar('Spamming email', 'loading');
+                SDKClient.markEmailAsSpam({
+                    fromAddress: currentInteraction.From,
+                    routeId: currentInteraction.RouteId,
+                    sessionId: currentInteraction.SessionId,
+                }).then(res => {
+                    loader.dismiss();
+                    this._appUIService.showSnackbar('Email marked as spam');
+                }).catch(err => {
+                    console.error(err);
+                    this._appUIService.showSnackbar('Unable to spam the email', 'failure');
+                });
+            }
         });
     }
 }

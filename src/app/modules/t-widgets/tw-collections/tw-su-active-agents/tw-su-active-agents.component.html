@@ -34,13 +34,7 @@
                 </ng-template>
             </mat-form-field>
         </div>
-        <div
-            fxFlex
-            fxLayout="column"
-            fxLayoutAlign=" none"
-            class="agent-list px-4 custom-scroll-adjust"
-            [@animateStagger]="{ value: '50' }"
-        >
+        <div fxFlex fxLayout="column" fxLayoutAlign=" none" class="agent-list px-4 custom-scroll-adjust" [@animateStagger]="{ value: '50' }">
             <div
                 *ngFor="let item of filteredAgents; trackBy: trackByID"
                 class="w-100-p p-12 border-radius-20 agent-item mat-elevation-z1"
@@ -186,6 +180,27 @@
                                     <span>{{ auxCode.Name }}</span>
                                 </button>
                             </mat-menu>
+
+                            <button
+                                mat-icon-button
+                                matTooltip="Send Quiz"
+                                [matMenuTriggerFor]="quizIntentMenu"
+                                *ngIf="feature.Feature === 'AllowSupervisorToSendQuiz' && feature.IsEnabled"
+                            >
+                                <mat-icon>rule</mat-icon>
+                            </button>
+
+                            <mat-menu #quizIntentMenu="matMenu" class="custom">
+                                <button
+                                    mat-menu-item
+                                    class="custom"
+                                    *ngFor="let intent of availableQuizIntents"
+                                    (click)="sendQuizIntent(intent.intent, item)"
+                                >
+                                    <mat-icon>grading</mat-icon>
+                                    <span>{{ intent.name }}</span>
+                                </button>
+                            </mat-menu>
                         </ng-container>
                         <button
                             mat-icon-button
@@ -196,25 +211,6 @@
                         >
                             <mat-icon>preview</mat-icon>
                         </button>
-
-                        <!-- quiz intent start  -->
-
-                        <button mat-icon-button matTooltip="Send Quiz" [matMenuTriggerFor]="quizIntentMenu">
-                            <mat-icon>rule</mat-icon>
-                        </button>
-                        <mat-menu #quizIntentMenu="matMenu" class="custom">
-                            <button
-                                mat-menu-item
-                                class="custom"
-                                *ngFor="let intent of availableQuizIntents"
-                                (click)="sendQuizIntent(intent.intent, item)"
-                            >
-                                <mat-icon>grading</mat-icon>
-                                <span>{{ intent.name }}</span>
-                            </button>
-                        </mat-menu>
-
-                        <!-- quiz intent end  -->
                     </div>
                     <div fxFlex="50" fxLayout="row wrap" fxLayoutAlign=" start" class="channel-list px-8">
                         <div

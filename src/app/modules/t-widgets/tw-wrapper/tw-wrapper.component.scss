@@ -197,6 +197,10 @@ tw-wrapper {
                 margin-top: 6px;
                 margin-bottom: 0;
                 overflow: hidden;
+                min-width: 100%;
+                
+                // TODO:: check this
+                width: 1px;
 
                 &.no-header {
                     height: 100%;
