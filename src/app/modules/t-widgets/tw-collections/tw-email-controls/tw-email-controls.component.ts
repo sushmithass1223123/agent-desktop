@@ -380,6 +380,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         if (this.interactionId === item.interactionId) {
             return;
         }
+        this.viewingEmail = 'replied';
         // update is active
         this._interactionManagerService.updateInteraction(item.interactionId, {
             isActive: true
@@ -603,8 +604,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Rejects email, only available for checkers
      */
-    rejectEmail(): void {
+    rejectEmail(evt: MatButton): void {
         // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
+        evt.disabled = true;
         const currentInteraction = this.currentInteraction;
         const dialogRef = this._appUIService.showCustomDialog('prompt', 'Enter the comments', 'Reject Email');
         dialogRef.afterClosed().subscribe((comment) => {
@@ -619,10 +621,12 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                     } else {
                         this._appUIService.showSnackbar('Email rejected successfully');
                     }
+                    evt.disabled = true;
                     this._fuseProgressBarService.hide();
                 }).catch(() => {
                     this._fuseProgressBarService.hide();
                     this._appUIService.showSnackbar('Error in saving interaction comment', 'failure');
+                    evt.disabled = true;
                 });
             }
         });

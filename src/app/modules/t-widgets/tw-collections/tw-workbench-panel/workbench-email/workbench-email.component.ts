@@ -365,6 +365,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
         try {
             const sessionIds = emails.map(x => x.SessionId) || [];
             await SDKClient.deleteBulkEmailsInDraft(sessionIds.join(','));
+            this.selectedMails = [];
             this.advancedSearch();
             loader.dismiss();
         } catch (e) {
@@ -383,6 +384,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
         try {
             const routeIds = emails.map(x => x.RouteId) || [];
             await SDKClient.closeBulkEmailsInQueue(routeIds.join(','));
+            this.selectedMails = [];
             this.advancedSearch();
             loader.dismiss();
         } catch (e) {
@@ -417,6 +419,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                             this.appUiService.showSnackbar('Unable to pull email', 'failure');
                             return;
                         }
+                        this.selectedMails = [];
+                        loader.dismiss();
+                        this.appUiService.showSnackbar('Emails pulled successfully', 'success');
                     },
                     (err) => {
                         console.error(err);
@@ -653,7 +658,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
      */
     switchTab(tab: AvailableTabs): void {
         this.currentTab = tab;
-        this.advancedSearch();
         this.selectedMails = [];
 
 
@@ -661,6 +665,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
         const yesterday = new Date();
         yesterday.setDate(today.getDate() - 1);
 
+        // this.advancedSearchForm.reset();
         this.advancedSearchForm.setValue({
             fromDate: yesterday,
             fromTime: `00:00`,
@@ -688,6 +693,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
             global: '',
             listOfMailboxes: 'singteldemo@tetherfi.com'
         });
+        this.advancedSearch();
     }
 
 }
