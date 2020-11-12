@@ -314,7 +314,13 @@ export class CreateEmailComponent implements OnInit {
         return keyVal;
     }
 
+    /**
+     * Focuses the editor
+     * @param {any} editor
+     */
     setFocus(editor: any): void {
-        editor && editor.focus();
+        if (editor) {
+            editor.focus();
+        }
     }
 }
