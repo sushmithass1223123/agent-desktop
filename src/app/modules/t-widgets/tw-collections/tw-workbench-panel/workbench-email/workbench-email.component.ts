@@ -292,9 +292,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                 (res: any) => {
                     if (res.status === 'SUCCESS') {
                         const mails = res.result.map((x: any) => {
-                            console.log('********', x);
                             const mailRes = typeof x.data === 'string' ? JSON.parse(x.data) : x;
-                            console.log('##########', mailRes);
                             if (x.addedTime) {
                                 mailRes.addedTime = x.addedTime;
                             }

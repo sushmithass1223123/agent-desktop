@@ -192,7 +192,6 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                     try {
                         if (!this.emailBodies[requestedSession]) {
                             this.getInboxMessageReq = { error: false, loading: true };
-                            console.log('##################', interaction);
                             const res = (
                                 await (fetchFromOutbox
                                     ? SDKClient.getOutboxEmail(interaction.OutSessionID)
