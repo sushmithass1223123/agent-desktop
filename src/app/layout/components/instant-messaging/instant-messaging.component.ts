@@ -1,7 +1,6 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
-import { FusePerfectScrollbarDirective } from '@fuse/directives/fuse-perfect-scrollbar/fuse-perfect-scrollbar.directive';
 import { groupBy, sortBy } from 'lodash';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -68,7 +67,7 @@ interface Chat {
     styleUrls: ['./instant-messaging.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class InstantMessagingComponent implements OnInit, AfterViewInit, OnDestroy {
+export class InstantMessagingComponent implements OnInit, OnDestroy {
     /**
      * contact List
      */
@@ -116,17 +115,12 @@ export class InstantMessagingComponent implements OnInit, AfterViewInit, OnDestr
     @ViewChild('replyInput')
     private _replyInput: ElementRef;
 
-    /**
-     * Perfect scrollbar ref
-     */
-    @ViewChildren(FusePerfectScrollbarDirective)
-    private _fusePerfectScrollbarDirectives: QueryList<FusePerfectScrollbarDirective>;
-
     // Private
     /**
      * Chat scrollbar ref
      */
-    private _chatViewScrollbar: FusePerfectScrollbarDirective;
+    @ViewChild('messages')
+    private _chatViewScrollbar: ElementRef<HTMLDivElement>;
     /**
      * Unsubscribe all subject
      */
@@ -173,15 +167,6 @@ export class InstantMessagingComponent implements OnInit, AfterViewInit, OnDestr
     }
 
     /**
-     * After view init
-     */
-    ngAfterViewInit(): void {
-        this._chatViewScrollbar = this._fusePerfectScrollbarDirectives.find((directive) => {
-            return directive.elementRef.nativeElement.id === 'messages';
-        });
-    }
-
-    /**
      * On destroy
      */
     ngOnDestroy(): void {
@@ -207,10 +192,10 @@ export class InstantMessagingComponent implements OnInit, AfterViewInit, OnDestr
 
             // Scroll to the bottom of the messages list
             if (this._chatViewScrollbar) {
-                this._chatViewScrollbar.update();
+                // this._chatViewScrollbar.update();
 
                 setTimeout(() => {
-                    this._chatViewScrollbar.scrollToBottom(0);
+                    this._chatViewScrollbar.nativeElement.scrollTo(0, 200);
                 });
             }
         });
