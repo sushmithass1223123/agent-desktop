@@ -96,7 +96,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     /**
      * Fuse Perfect scrollbar ref
      */
-    @ViewChild(FusePerfectScrollbarDirective) fuseDirective: FusePerfectScrollbarDirective;
+    // @ViewChild(FusePerfectScrollbarDirective) fuseDirective: FusePerfectScrollbarDirective;
 
     /**
      * Current interaction Id

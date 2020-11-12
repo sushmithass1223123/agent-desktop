@@ -157,7 +157,7 @@ instant-messaging {
         .messages {
             position: relative;
             padding: 16px 0 40px;
-            overflow: auto;
+            // overflow: auto;
             -webkit-overflow-scrolling: touch;
 
             .message-row {

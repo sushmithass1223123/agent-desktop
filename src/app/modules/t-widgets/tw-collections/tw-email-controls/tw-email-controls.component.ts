@@ -107,7 +107,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Perfect scrollbar ref
      */
-    @ViewChildren(FusePerfectScrollbarDirective) directiveScrolls: QueryList<FusePerfectScrollbarDirective>;
+    // @ViewChildren(FusePerfectScrollbarDirective) directiveScrolls: QueryList<FusePerfectScrollbarDirective>;
 
     /**
      * Create email compopnnet ref
@@ -396,11 +396,13 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             Body: `
             <p> </p>
             <br />
-            <div> <strong> From: </strong> <span> ${From} </span> </div>
-            <div> <strong> Sent: </strong> <span> ${CreatedTime} </span> </div>
-            <div> <strong> To: </strong> <span> ${To} </span> </div>
-            <div> <strong> Subject: </strong> <span> ${Subject} </span> </div>
-            <br /> 
+            <p style='border-left: 3px solid gray;'>
+                <div> <strong> From: </strong> <span> ${From} </span> </div>
+                <div> <strong> Sent: </strong> <span> ${CreatedTime} </span> </div>
+                <div> <strong> To: </strong> <span> ${To} </span> </div>
+                <div> <strong> Subject: </strong> <span> ${Subject} </span> </div>
+            </p>
+            <br />
             ${this.domSanitizer.bypassSecurityTrustHtml(Body || '')['changingThisBreaksApplicationSecurity']['changingThisBreaksApplicationSecurity']}`,
             Subject: `RE: ${Subject}`,
             Files: []
@@ -414,7 +416,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     showReplyAllEmailEditor(): void {
         // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
         const currentInteraction = this.currentInteraction;
-        const { Body, Subject, From, CCList, CreatedTime, To } = currentInteraction;
+        const { Body, Subject, From, CCList, CreatedTime, To , Files } = currentInteraction;
         this.replyInfo = {
             BCC: [],
             CC: CCList ? CCList.split(',') : [],
@@ -423,14 +425,17 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             <p> </p>
             <br />
             <p style="border-bottom : 3px solid gray;"> </p>
-            <div> <strong> From: </strong> <span> ${From} </span> </div>
-            <div> <strong> Sent: </strong> <span> ${CreatedTime} </span> </div>
-            <div> <strong> To: </strong> <span> ${To} </span> </div>
-            <div> <strong> Subject: </strong> <span> ${Subject} </span> </div>
+            <p style='border-left: 3px solid gray;'>
+                <div> <strong> From: </strong> <span> ${From} </span> </div>
+                <div> <strong> Sent: </strong> <span> ${CreatedTime} </span> </div>
+                <div> <strong> To: </strong> <span> ${To} </span> </div>
+                <div> <strong> Subject: </strong> <span> ${Subject} </span> </div>
+                <div style='border-left: 3px solid gray;'>
+            </p>
             <br /> 
              ${this.domSanitizer.bypassSecurityTrustHtml(Body)['changingThisBreaksApplicationSecurity']['changingThisBreaksApplicationSecurity']}`,
             Subject: `RE: ${Subject}`,
-            Files: []
+            Files
         };
         this.saveEmailAsDraft();
     }
@@ -450,10 +455,12 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             <p> </p>
             <br />
             <p style="border-bottom : 3px solid gray;"> </p>
-            <div> <strong> From: </strong> <span> ${From} </span> </div>
-            <div> <strong> Sent: </strong> <span> ${CreatedTime} </span> </div>
-            <div> <strong> To: </strong> <span> ${To} </span> </div>
-            <div> <strong> Subject: </strong> <span> ${Subject} </span> </div>
+            <p style='border-left: 3px solid gray;'>
+                <div> <strong> From: </strong> <span> ${From} </span> </div>
+                <div> <strong> Sent: </strong> <span> ${CreatedTime} </span> </div>
+                <div> <strong> To: </strong> <span> ${To} </span> </div>
+                <div> <strong> Subject: </strong> <span> ${Subject} </span> </div>
+            </p>
             <br /> 
              ${this.domSanitizer.bypassSecurityTrustHtml(Body)['changingThisBreaksApplicationSecurity']['changingThisBreaksApplicationSecurity']}`,
             Subject: `FW: ${Subject}`,

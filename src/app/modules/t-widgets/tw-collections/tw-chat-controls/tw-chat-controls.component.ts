@@ -1,6 +1,7 @@
 import {
     AfterViewInit,
     Component,
+    ElementRef,
     EventEmitter,
     Input,
     OnDestroy,
@@ -235,7 +236,15 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * Fuse scrollbar children directive ref
      */
-    @ViewChildren(FusePerfectScrollbarDirective) directiveScrolls: QueryList<FusePerfectScrollbarDirective>;
+    // @ViewChildren(FusePerfectScrollbarDirective) directiveScrolls: QueryList<FusePerfectScrollbarDirective>;
+
+    /**
+     * Messages div ref
+     */
+    @ViewChild('messages')
+    messagesRef: ElementRef<HTMLDivElement>;
+
+
     /**
      * Reply input children ref
      */
@@ -1049,11 +1058,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     private scrollToBottom(speed?: number): void {
         speed = speed || 200;
-        if (this.directiveScrolls.last) {
-            this.directiveScrolls.last.update();
+        if (this.messagesRef) {
+            // this.directiveScrolls.last.update();
 
             setTimeout(() => {
-                this.directiveScrolls.last.scrollToBottom(0, speed);
+                this.messagesRef.nativeElement.scrollTo(0, speed);
             });
         }
     }

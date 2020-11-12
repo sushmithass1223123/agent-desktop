@@ -76,6 +76,10 @@
                 class="email-content position-relative"
             >
                 <div fxLayout="column" class="px-12 py-8 mat-elevation-z1">
+                    <div *ngIf="currentInteraction.RejectReason" class="mat-title">
+                        <span class="text-danger"> [ REJECTED ] </span>
+                        {{ currentInteraction.RejectReason }}
+                    </div>
                     <div class="mat-title mb-8">
                         {{ currentInteraction.Subject }}
                     </div>
