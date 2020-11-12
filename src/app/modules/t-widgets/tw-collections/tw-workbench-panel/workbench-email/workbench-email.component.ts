@@ -10,7 +10,8 @@ import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
 import { TWidgetWrapper } from '@modules/t-widgets/utils';
 import { AppDataService } from '@services/app-data.service';
-import { COMMON_ERR_MESSAGE } from 'app/constants';
+import { AppUiService } from '@services/app-ui.service';
+import { COMMON_ERR_MESSAGE, DRAFT_REASONS, INBOX_REASONS, OUTBOX_REASONS } from 'app/constants';
 import { IWidget, ResData } from 'app/interfaces';
 import { groupBy } from 'lodash';
 import * as moment from 'moment';
@@ -35,6 +36,13 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
      * holds all the data related to this widget from the config
      */
     @Input() data: IWidget;
+
+
+    OutboxReasons = OUTBOX_REASONS;
+    DraftReasons = DRAFT_REASONS;
+    InboxReasons = INBOX_REASONS;
+
+    emailBodies: Record<string, any> = {};
 
     /**
      * To store the fuse config for theme
@@ -201,7 +209,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
      * @param {FuseConfigService} _fuseConfigService
      * @param {AppDataService} _appDataService
      */
-    constructor(private _fuseConfigService: FuseConfigService, private http: HttpClient, private domSanitizer: DomSanitizer) {
+    constructor(private _fuseConfigService: FuseConfigService, private http: HttpClient, private domSanitizer: DomSanitizer, private appUiService: AppUiService) {
         super();
         this.searchReqObs$ = {
             draft: this.advanceSearchDraftEmail,
@@ -347,34 +355,80 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
         }
     }
 
+
+    /**
+     * Deletes emails via workbench
+     * @param emails email items list
+     */
+    async deleteEmails(emails: any[]): Promise<void> {
+        const loader = this.appUiService.showSnackbar('Deleting emails', 'loading');
+        try {
+            const sessionIds = emails.map(x => x.SessionId) || [];
+            await SDKClient.deleteBulkEmailsInDraft(sessionIds.join(','));
+            this.advancedSearch();
+            loader.dismiss();
+        } catch (e) {
+            console.error(e);
+            loader.dismiss();
+            this.appUiService.showSnackbar('Unable to delete emails', 'failure');
+        }
+    }
+
+    /**
+     * Closes emails in bulk
+     * @param {any} emails email list
+     */
+    async closeEmails(emails: any[]): Promise<void> {
+        const loader = this.appUiService.showSnackbar('Closing emails', 'loading');
+        try {
+            const routeIds = emails.map(x => x.RouteId) || [];
+            await SDKClient.closeBulkEmailsInQueue(routeIds.join(','));
+            this.advancedSearch();
+            loader.dismiss();
+        } catch (e) {
+            console.error(e);
+            loader.dismiss();
+            this.appUiService.showSnackbar('Unable to close emails', 'failure');
+        }
+    }
+
     /**
      * Pull email
      * @method pullEmail
      */
     pullEmails(emails: any[]): void {
-        const { agentId, tmacServer } = SDKClient.getAgentData();
-        console.log(emails);
-        const items: EmailPullItem[] = emails.map(x => {
-            return { routeId: x.RouteId || '', sessionId: x.SessionId, conversationId: x.conversationID || '', inSessionId: x.inSessionID, mailbox: x.mailbox };
-        });
-        console.log(items);
-        this.http
-            .post(this.data.Data.WorkbenchUrl + `/${this.currentTab}/pull`, {
-                tmacServer,
-                agentId,
-                items
-            })
-            .subscribe(
-                (res: any) => {
-                    if (res.status === 'FAILED') {
-                        console.error(res);
-                        return;
+        const loader = this.appUiService.showSnackbar('Pulling email', 'loading');
+        try {
+            const { agentId, tmacServer } = SDKClient.getAgentData();
+            const items: EmailPullItem[] = emails.map(x => {
+                return { routeId: x.RouteId || '', sessionId: x.SessionId, conversationId: x.conversationID || '', inSessionId: x.inSessionID, mailbox: x.mailbox };
+            });
+            this.http
+                .post(this.data.Data.WorkbenchUrl + `/${this.currentTab}/pull`, {
+                    tmacServer,
+                    agentId,
+                    items
+                })
+                .subscribe(
+                    (res: any) => {
+                        if (res.status === 'FAILED') {
+                            console.error(res);
+                            loader.dismiss();
+                            this.appUiService.showSnackbar('Unable to pull email', 'failure');
+                            return;
+                        }
+                    },
+                    (err) => {
+                        console.error(err);
+                        loader.dismiss();
+                        this.appUiService.showSnackbar('Unable to pull email', 'failure');
                     }
-                },
-                (err) => {
-                    console.error(err);
-                }
-            );
+                );
+        } catch (e) {
+            console.error(e);
+            loader.dismiss();
+            this.appUiService.showSnackbar('Unable to pull email', 'failure');
+        }
     }
 
     advanceSearchQueuedEmail = (): Observable<any> => {
@@ -566,11 +620,74 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
     }
 
     /**
-     * Deletes emails via workbench
-     * @param emails email items list
+     * opens email for preview
      */
-    deleteEmails(emails: EmailPullItem): void {
-        console.log(emails);
+    async openEmail(email: any): Promise<void> {
+        try {
+            const fetchFromOutbox = [...this.OutboxReasons, ...this.DraftReasons].includes(email.RouteReason);
+            const requestedSession = fetchFromOutbox ? (email.sessionID || email.OutSessionId) : (email.inSessionID || email.sessionID || email.SessionId);
+            if (!this.emailBodies[requestedSession]) {
+                const res = (
+                    await (fetchFromOutbox
+                        ? SDKClient.getOutboxEmail(requestedSession)
+                        : SDKClient.getInboxEmail(requestedSession))).response;
+                this.emailBodies[requestedSession] = {
+                    body: this.domSanitizer.bypassSecurityTrustHtml(res.Body),
+                    attachmentList: res?.Attachments || [],
+                    agentName: res?.AgentName,
+                    repliedStatus: (res as any)?.RepliedStatus,
+                    conversationID: res.ConversationID,
+                    currentStatus: res.CurrentStatus,
+                    closedBy: (res as any).ClosedBy
+                };
+            }
+            this.emailSearchRes.data.selected = { ...email, ...this.emailBodies[requestedSession] };
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    /**
+     * Switches tabs
+     * @param {AvailableTabs} tab tab key passed as argument
+     */
+    switchTab(tab: AvailableTabs): void {
+        this.currentTab = tab;
+        this.advancedSearch();
+        this.selectedMails = [];
+
+
+        const today = new Date();
+        const yesterday = new Date();
+        yesterday.setDate(today.getDate() - 1);
+
+        this.advancedSearchForm.setValue({
+            fromDate: yesterday,
+            fromTime: `00:00`,
+            toDate: today,
+            toTime: `${'23'}:${'59'}`,
+            email: '',
+            subject: '',
+            content: '',
+            skills: '',
+
+            agent: '',
+
+            inSessionid: '',
+
+            deviceid: '',
+            hasAttachments: false,
+            assignedTo: '',
+            replied: false,
+            closed: false,
+            assigned: false,
+            repliedValue: false,
+            closedValue: false,
+            assignedValue: false,
+            sesisonid: '',
+            global: '',
+            listOfMailboxes: 'singteldemo@tetherfi.com'
+        });
     }
 
 }

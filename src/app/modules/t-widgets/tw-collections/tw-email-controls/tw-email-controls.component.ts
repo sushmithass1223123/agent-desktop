@@ -9,7 +9,7 @@ import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { COMMON_ERR_MESSAGE, EMAIL_DRAFT_SAVE_INTERVAL } from 'app/constants';
+import { COMMON_ERR_MESSAGE, DRAFT_REASONS, EMAIL_DRAFT_SAVE_INTERVAL, INBOX_REASONS, OUTBOX_REASONS } from 'app/constants';
 import { InteractionRef, IWidget, ResData } from 'app/interfaces';
 import { CreateEmailInfo } from 'app/models';
 import { interval, Observable, Subscription } from 'rxjs';
@@ -47,9 +47,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     };
 
 
-    OutboxReasons = ['CheckerQueue', 'CheckerPull'];
-    DraftReasons = ['AgentDraftPull'];
-    InboxReasons = ['MakerQueue', 'AgentPull'];
+    OutboxReasons = OUTBOX_REASONS;
+    DraftReasons = DRAFT_REASONS;
+    InboxReasons = INBOX_REASONS;
 
     /**
      * Fuse config
