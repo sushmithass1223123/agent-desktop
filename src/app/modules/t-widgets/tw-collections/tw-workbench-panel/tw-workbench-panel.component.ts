@@ -1,7 +1,6 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
-import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
@@ -36,7 +35,6 @@ export class TwWorkbenchPanelComponent extends TWidgetWrapper implements OnInit,
     /**
      * Constructor
      * @param {FuseConfigService} _fuseConfigService
-     * @param {AppDataService} _appDataService
      */
     constructor(
         // @ [OPTIONAL]

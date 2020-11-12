@@ -34,34 +34,73 @@
                     : ''
             "
         >
-            <div
-                fxLayout
-                fxLayoutGap="10px"
-                fxLayoutAlign="end center"
-                class="my-8 px-12"
-                *ngIf="currentInteraction.RouteReason === 'CheckerQueue' || (currentInteraction.RouteReason === 'MakerQueue' && replyInfo)"
-            >
-                <ng-container *ngIf="currentInteraction.RouteReason === 'CheckerQueue'">
-                    <button mat-raised-button class="border-radius-20" (click)="sendEmailAsChecker()" color="primary">Approve</button>
-                    <button mat-raised-button class="border-radius-20" (click)="rejectEmail()">Reject</button>
-                </ng-container>
+            <div class="header-controls my-8 px-12">
+                <div fxLayout fxLayoutGap="10px" fxLayoutAlign="end center">
+                    <ng-container *ngIf="OutboxReasons.includes(currentInteraction.RouteReason)">
+                        <button mat-raised-button class="border-radius-20" (click)="sendEmailAsChecker()" color="primary">Approve</button>
+                        <button mat-raised-button class="border-radius-20" (click)="rejectEmail()">Reject</button>
+                    </ng-container>
+                    <ng-container *ngIf="InboxReasons.includes(currentInteraction.RouteReason) || DraftReasons.includes(currentInteraction.RouteReason)">
+                        <button
+                            *ngIf="!replyInfo && currentInteraction.IsEmailProbableSpam"
+                            mat-raised-button
+                            class="border-radius-20"
+                            (click)="markAsSpam()"
+                        >
+                            Mark As Spam
+                        </button>
 
-                <ng-container *ngIf="currentInteraction.RouteReason === 'MakerQueue'">
-                    <button mat-raised-button class="border-radius-20" (click)="saveEmailAsDraft(); closeEditor()">Save As Draft</button>
-                    <button mat-raised-button class="border-radius-20" color="accent" (click)="closeEditor()" matTooltip="Close Editor">
-                        Cancel
+                        <button
+                            *ngIf="!replyInfo"
+                            mat-raised-button
+                            class="border-radius-20"
+                            color="warn"
+                            #closeBtn
+                            (click)="closeEmail($event)"
+                            matTooltip="Close Interaction"
+                        >
+                            Close
+                        </button>
+
+                        <button *ngIf="replyInfo" mat-raised-button class="border-radius-20" (click)="saveEmailAsDraft(); closeInteraction($event)">
+                            Save As Draft
+                        </button>
+
+                        <button
+                            *ngIf="replyInfo"
+                            mat-raised-button
+                            class="border-radius-20"
+                            color="accent"
+                            (click)="closeEditor()"
+                            matTooltip="Close Editor"
+                        >
+                            Cancel
+                        </button>
+
+                        <button
+                            *ngIf="replyInfo"
+                            mat-raised-button
+                            class="border-radius-20"
+                            color="primary"
+                            (click)="sendEmailAsMaker()"
+                            matTooltip="Send Email"
+                        >
+                            Send
+                        </button>
+                    </ng-container>
+
+                    <!-- <button mat-icon-button (click)="forwardEmail()">
+                        <mat-icon>forward</mat-icon>
                     </button>
-                    <button
-                        *ngIf="replyInfo"
-                        mat-raised-button
-                        class="border-radius-20"
-                        color="primary"
-                        (click)="sendEmailAsMaker()"
-                        matTooltip="Send Email"
-                    >
-                        Send
+
+                    <button mat-icon-button>
+                        <mat-icon>delete</mat-icon>
                     </button>
-                </ng-container>
+
+                    <button mat-icon-button>
+                        <mat-icon>add</mat-icon>
+                    </button> -->
+                </div>
             </div>
 
             <ng-container *ngIf="replyInfo">
@@ -73,16 +112,16 @@
                 fxFlex="100"
                 fxLayout="column"
                 [ngClass]="{ 'border-left-sm-primary w-90-p mt-12 ml-16': replyInfo }"
-                class="email-content position-relative"
+                class="email-content position-relative p-8"
             >
-                <div fxLayout="column" class="px-12 py-8 mat-elevation-z1">
-                    <div *ngIf="currentInteraction.RejectReason" class="mat-title">
-                        <span class="text-danger"> [ REJECTED ] </span>
-                        {{ currentInteraction.RejectReason }}
-                    </div>
-                    <div class="mat-title mb-8">
-                        {{ currentInteraction.Subject }}
-                    </div>
+                <div *ngIf="currentInteraction.RejectReason" class="mat-title">
+                    <span class="text-danger"> [ REJECTED ] </span>
+                    {{ currentInteraction.RejectReason }}
+                </div>
+                <div class="mat-title mb-0">
+                    {{ currentInteraction.Subject }}
+                </div>
+                <div class="p-8" fxLayout="column">
                     <div fxLayout fxLayoutAlign="space-between" class="font-weight-700">
                         <span fxLayout="row" fxLayoutAlign=" center" matTooltip="Intent">
                             <mat-icon>grading</mat-icon> <span class="text-bold">{{ intent || 'NA' }}</span>
@@ -102,7 +141,7 @@
                     <div fxLayout fxLayoutAlign="space-between" class="font-weight-700 mt-8">
                         <div>
                             <p class="my-4">{{ currentInteraction.AgentName }} ({{ currentInteraction.From }})</p>
-                            <a *ngIf="currentInteraction.RouteReason === 'CheckerQueue'" (click)="switchEmailView()">
+                            <a *ngIf="OutboxReasons.includes(currentInteraction.RouteReason)" (click)="switchEmailView()">
                                 {{ viewingEmail === 'original' ? 'View Checker Email' : 'View original' }}
                             </a>
                         </div>
@@ -114,57 +153,22 @@
                     </div>
 
                     <div fxLayout fxLayoutAlign="end" fxLayoutGap="5px" class="mt-12">
-                        <ng-container *ngIf="currentInteraction.RouteReason === 'MakerQueue'">
-                            <button mat-raised-button class="border-radius-20" [disabled]="getInboxMessageReq.error" matTooltip="Transfer">
-                                <mat-icon>forward_to_inbox</mat-icon>
-                            </button>
+                        <ng-container *ngIf="InboxReasons.includes(currentInteraction.RouteReason) || DraftReasons.includes(currentInteraction.RouteReason)">
+                            <button mat-flat-button class="border-radius-20" [disabled]="getInboxMessageReq.error">Transfer</button>
 
-                            <button
-                                mat-raised-button
-                                class="border-radius-20"
-                                (click)="showReplyEditor()"
-                                [disabled]="getInboxMessageReq.error"
-                                matTooltip="Reply"
-                            >
-                                <mat-icon>reply</mat-icon>
+                            <button mat-flat-button class="border-radius-20" (click)="showReplyEditor()" [disabled]="getInboxMessageReq.error">
+                                Reply
                             </button>
                             <button
-                                mat-raised-button
+                                mat-flat-button
                                 class="border-radius-20"
                                 (click)="showReplyAllEmailEditor()"
                                 [disabled]="getInboxMessageReq.error"
-                                matTooltip="Reply All"
                             >
-                                <mat-icon>reply_all</mat-icon>
+                                Reply All
                             </button>
-                            <button
-                                mat-raised-button
-                                class="border-radius-20"
-                                (click)="showForwardEmailEditor()"
-                                [disabled]="getInboxMessageReq.error"
-                                matTooltip="Forward"
-                            >
-                                <mat-icon>forward</mat-icon>
-                            </button>
-                            <button
-                                *ngIf="!replyInfo && currentInteraction.IsEmailProbableSpam"
-                                mat-raised-button
-                                class="border-radius-20"
-                                (click)="markAsSpam()"
-                                matTooltip="Mark As Spam"
-                            >
-                                <mat-icon>report</mat-icon>
-                            </button>
-                            <button
-                                *ngIf="!replyInfo"
-                                mat-raised-button
-                                class="border-radius-20"
-                                color="warn"
-                                #closeBtn
-                                (click)="closeEmail($event)"
-                                matTooltip="Close Interaction"
-                            >
-                                Close
+                            <button mat-flat-button class="border-radius-20" (click)="showForwardEmailEditor()" [disabled]="getInboxMessageReq.error">
+                                Forward
                             </button>
                         </ng-container>
                     </div>
@@ -190,8 +194,8 @@
                         </mat-chip-list>
                     </div>
                 </div>
-                <div class="email-content position-relative p-12">
-                    <div class="email-content-body">
+                <div class="email-content position-relative py-12">
+                    <div class="email-content-body position-absolute">
                         <div *ngIf="!getInboxMessageReq.loading && !getInboxMessageReq.error" [innerHtml]="currentInteraction.Body"></div>
 
                         <div *ngIf="getInboxMessageReq.loading" fxLayout fxLayoutAlign="center center" class="w-100-p h-30-p">
@@ -204,6 +208,28 @@
                         </div>
                     </div>
                 </div>
+                <!-- <div fxLayout fxLayoutAlign="space-between center" class="email-bottom-controls">
+                <div class="left-controls">
+                    <button mat-icon-button matTooltip="Attach file">
+                        <mat-icon> attachment </mat-icon>
+                    </button>
+                    <button mat-icon-button matTooltip="Underline">
+                        <mat-icon> format_underline </mat-icon>
+                    </button>
+                    <button mat-icon-button matTooltip="Highlight">
+                        <mat-icon> font_download </mat-icon>
+                    </button>
+                    <button mat-icon-button matTooltip="Emoji">
+                        <mat-icon> emoji_emotions </mat-icon>
+                    </button>
+                </div>
+
+                <div class="right-controls">
+                    <button mat-icon-button matTooltip="Send">
+                        <mat-icon>send</mat-icon>
+                    </button>
+                </div>
+            </div> -->
             </div>
         </div>
     </div>

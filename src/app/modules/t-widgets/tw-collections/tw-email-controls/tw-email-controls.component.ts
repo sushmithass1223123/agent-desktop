@@ -47,6 +47,11 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         msg: '',
     };
 
+
+    OutboxReasons = ['CheckerQueue', 'CheckerPull'];
+    DraftReasons = ['AgentDraftPull'];
+    InboxReasons = ['MakerQueue', 'AgentPull'];
+
     /**
      * Fuse config
      */
@@ -178,14 +183,18 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             distinctUntilChanged((prev, curr) => (prev.interactionId === curr.interactionId) && !this.getInboxMessageReq.loading),
             map(async (interactionVal) => {
                 let interaction: any = interactionVal.otherData;
-                if (interaction) {
+                if (interaction && !this.getInboxMessageReq.loading) {
                     this.interactionId = interaction.InteractionID;
-                    const requestedSession = interaction.RouteReason === 'CheckerQueue' ? interaction.OutSessionID : interaction.SessionId;
+                    // const fetchFromOutbox = interaction.RouteReason === 'CheckerQueue' || (interaction.RouteReason === 'AgentPull' && interaction.OutSessionID);
+                    const fetchFromOutbox = [...this.OutboxReasons, ...this.DraftReasons].includes(interaction.RouteReason);
+                    const requestedSession = fetchFromOutbox ? interaction.OutSessionID : interaction.SessionId;
+                    interaction.Email_Mailbox = interaction.RecoveryData.Email_Mailbox;
                     try {
                         if (!this.emailBodies[requestedSession]) {
                             this.getInboxMessageReq = { error: false, loading: true };
+                            console.log('##################', interaction);
                             const res = (
-                                await (interaction.RouteReason === 'CheckerQueue'
+                                await (fetchFromOutbox
                                     ? SDKClient.getOutboxEmail(interaction.OutSessionID)
                                     : SDKClient.getInboxEmail(interaction.SessionId))).response;
                             this.emailBodies[requestedSession] = {
@@ -262,16 +271,18 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         try {
             const { SessionId, OutSessionID } = this.currentInteraction;
 
-            const requestedSession = this.currentInteraction.RouteReason === 'CheckerQueue' && this.viewingEmail === 'replied' ? OutSessionID : SessionId;
-
+            // const fetchFromOutbox = (this.currentInteraction.RouteReason === 'CheckerQueue' ||
+            //     (this.currentInteraction.RouteReason === 'AgentPull' && this.currentInteraction.OutSessionID)) &&
+            //     this.viewingEmail === 'replied';
+            const fetchFromOutbox = [...this.OutboxReasons, ...this.DraftReasons].includes(this.currentInteraction.RouteReason) && this.viewingEmail === 'replied';
+            const requestedSession = fetchFromOutbox ? OutSessionID : SessionId;
             this.getInboxMessageReq = { error: false, loading: true };
 
             const res = await (
-                (this.currentInteraction.RouteReason === 'CheckerQueue' && this.viewingEmail === 'replied') ?
+                (fetchFromOutbox ?
                     SDKClient.getOutboxEmail(requestedSession) :
                     SDKClient.getInboxEmail(requestedSession)
-            );
-
+                ));
             if (!res) {
                 throw Error('Unexpected response from server');
             }
@@ -388,21 +399,23 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     showReplyEditor(): void {
         // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
         const currentInteraction = this.currentInteraction;
-        const { Body, Subject, From, To, CreatedTime } = currentInteraction;
+        const { Body, Subject, From, To, CreatedTime, RejectReason, RouteReason } = currentInteraction;
+        const preBody = RejectReason || this.DraftReasons.includes(RouteReason) ? '' : `
+        <p> </p>
+        <br />
+        <p style='border-left: 3px solid gray;'>
+            <div> <strong> From: </strong> <span> ${From} </span> </div>
+            <div> <strong> Sent: </strong> <span> ${CreatedTime} </span> </div>
+            <div> <strong> To: </strong> <span> ${To} </span> </div>
+            <div> <strong> Subject: </strong> <span> ${Subject} </span> </div>
+        </p>
+        <br />`;
         this.replyInfo = {
             BCC: [],
             CC: [],
             To: From ? [From] : [],
             Body: `
-            <p> </p>
-            <br />
-            <p style='border-left: 3px solid gray;'>
-                <div> <strong> From: </strong> <span> ${From} </span> </div>
-                <div> <strong> Sent: </strong> <span> ${CreatedTime} </span> </div>
-                <div> <strong> To: </strong> <span> ${To} </span> </div>
-                <div> <strong> Subject: </strong> <span> ${Subject} </span> </div>
-            </p>
-            <br />
+            ${preBody} 
             ${this.domSanitizer.bypassSecurityTrustHtml(Body || '')['changingThisBreaksApplicationSecurity']['changingThisBreaksApplicationSecurity']}`,
             Subject: `RE: ${Subject}`,
             Files: []
@@ -416,24 +429,24 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     showReplyAllEmailEditor(): void {
         // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
         const currentInteraction = this.currentInteraction;
-        const { Body, Subject, From, CCList, CreatedTime, To , Files } = currentInteraction;
+        const { Body, Subject, From, RejectReason, CCList, CreatedTime, RouteReason, To, Files } = currentInteraction;
+        const preBody = RejectReason || this.DraftReasons.includes(RouteReason) ? '' : `
+        <p> </p>
+        <br />
+        <p style='border-left: 3px solid gray;'>
+            <div> <strong> From: </strong> <span> ${From} </span> </div>
+            <div> <strong> Sent: </strong> <span> ${CreatedTime} </span> </div>
+            <div> <strong> To: </strong> <span> ${To} </span> </div>
+            <div> <strong> Subject: </strong> <span> ${Subject} </span> </div>
+        </p>
+        <br />`;
         this.replyInfo = {
             BCC: [],
             CC: CCList ? CCList.split(',') : [],
             To: From ? [From] : [],
             Body: `
-            <p> </p>
-            <br />
-            <p style="border-bottom : 3px solid gray;"> </p>
-            <p style='border-left: 3px solid gray;'>
-                <div> <strong> From: </strong> <span> ${From} </span> </div>
-                <div> <strong> Sent: </strong> <span> ${CreatedTime} </span> </div>
-                <div> <strong> To: </strong> <span> ${To} </span> </div>
-                <div> <strong> Subject: </strong> <span> ${Subject} </span> </div>
-                <div style='border-left: 3px solid gray;'>
-            </p>
-            <br /> 
-             ${this.domSanitizer.bypassSecurityTrustHtml(Body)['changingThisBreaksApplicationSecurity']['changingThisBreaksApplicationSecurity']}`,
+                ${preBody}
+                ${this.domSanitizer.bypassSecurityTrustHtml(Body)['changingThisBreaksApplicationSecurity']['changingThisBreaksApplicationSecurity']}`,
             Subject: `RE: ${Subject}`,
             Files
         };
@@ -446,23 +459,24 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     showForwardEmailEditor(): void {
         // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
         const currentInteraction = this.currentInteraction;
-        const { Subject, Body, From, CreatedTime, To } = currentInteraction;
+        const { Subject, Body, From, RejectReason, CreatedTime, To, RouteReason } = currentInteraction;
+        const preBody = RejectReason || this.DraftReasons.includes(RouteReason) ? '' : `
+        <p> </p>
+        <br />
+        <p style='border-left: 3px solid gray;'>
+            <div> <strong> From: </strong> <span> ${From} </span> </div>
+            <div> <strong> Sent: </strong> <span> ${CreatedTime} </span> </div>
+            <div> <strong> To: </strong> <span> ${To} </span> </div>
+            <div> <strong> Subject: </strong> <span> ${Subject} </span> </div>
+        </p>
+        <br />`;
         this.replyInfo = {
             BCC: [],
             CC: [],
             To: [],
             Body: `
-            <p> </p>
-            <br />
-            <p style="border-bottom : 3px solid gray;"> </p>
-            <p style='border-left: 3px solid gray;'>
-                <div> <strong> From: </strong> <span> ${From} </span> </div>
-                <div> <strong> Sent: </strong> <span> ${CreatedTime} </span> </div>
-                <div> <strong> To: </strong> <span> ${To} </span> </div>
-                <div> <strong> Subject: </strong> <span> ${Subject} </span> </div>
-            </p>
-            <br /> 
-             ${this.domSanitizer.bypassSecurityTrustHtml(Body)['changingThisBreaksApplicationSecurity']['changingThisBreaksApplicationSecurity']}`,
+                ${preBody}
+                ${this.domSanitizer.bypassSecurityTrustHtml(Body)['changingThisBreaksApplicationSecurity']['changingThisBreaksApplicationSecurity']}`,
             Subject: `FW: ${Subject}`,
             Files: []
         };
@@ -509,13 +523,15 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Sends email as Checker
      */
-    sendEmailAsChecker(): void {
+    sendEmailAsChecker(btn: MatButton): void {
+        btn.disabled = true;
         const confirmDialogRef = this._appUIService.showAppConfirmDialog('generic', 'Confirm Approve', 'Are you sure to approve this email?');
         confirmDialogRef.afterClosed().subscribe((dialogResult: boolean) => {
             if (dialogResult) {
                 // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
                 const currentInteraction = this.currentInteraction;
                 const { AttachmetList, Body, From, CC, Subject, } = currentInteraction;
+                const sendLoader = this._appUIService.showSnackbar('Approving email', 'loading');
                 SDKClient.sendEmail({
                     attachmentFileList: AttachmetList && AttachmetList.length ? JSON.stringify(AttachmetList) : '',
                     bccList: '',
@@ -535,10 +551,14 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                         };
                         this._appUIService.showSnackbar(`Message sent ${message[res.response.CurrentStatus]}`, 'success');
                         this.draftPolling?.unsubscribe();
+                        sendLoader.dismiss();
+                        btn.disabled = false;
                     })
                     .catch((err) => {
-                        console.error({ err });
+                        console.error(err);
+                        sendLoader.dismiss();
                         this._appUIService.showSnackbar('Something went wrong', 'failure');
+                        btn.disabled = false;
                     });
             }
         });

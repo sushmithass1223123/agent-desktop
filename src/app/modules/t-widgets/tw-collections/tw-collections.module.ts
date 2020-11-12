@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { SharedModule } from '@modules/shared/shared.module';
 import { TwWrapperModule } from '../tw-wrapper/tw-wrapper.module';
 import { TwAccountInformationComponent } from './tw-account-information/tw-account-information.component';
@@ -100,4 +101,4 @@ const collectionComponents = [
     imports: [SharedModule, TwWrapperModule],
     exports: collectionComponents
 })
-export class TwCollectionsModule {}
+export class TwCollectionsModule { }

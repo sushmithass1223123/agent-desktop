@@ -1,7 +1,8 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { DomSanitizer } from '@angular/platform-browser';
 import { fuseAnimations } from '@fuse/animations';
@@ -13,9 +14,12 @@ import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { IWidget, ResData } from 'app/interfaces';
 import { groupBy } from 'lodash';
 import * as moment from 'moment';
-import { takeUntil } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 import { SDKClient } from 'tmac-sdk';
 
+type AvailableTabs = 'inbox' | 'sentitem' | 'queue' | 'draft';
+type EmailPullItem = { sessionId: string, routeId: string, conversationId: string }
 /**
  * Workbench Email
  */
@@ -44,7 +48,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
     /**
      * Selected Mail
      */
-    selectedMail: number;
+    selectedMails: any[] = [];
     /**
      * Email Search Stateful request
      */
@@ -52,7 +56,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
         /**
          * Selected email
          */
-        selected: any
+        selected: any;
     }> = {
             error: false,
             loading: false,
@@ -65,14 +69,107 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
      * Advanced search form group
      */
     advancedSearchForm = new FormGroup({
+        fromDate: new FormControl(''),
+        fromTime: new FormControl(''),
+        toDate: new FormControl(''),
+        toTime: new FormControl(''),
         email: new FormControl(''),
-        queue: new FormControl(''),
+        subject: new FormControl(''),
+        content: new FormControl(''),
+        skills: new FormControl(''),
+
+        agent: new FormControl(''),
+
+        inSessionid: new FormControl(''),
+
+        deviceid: new FormControl(''),
+        hasAttachments: new FormControl(false),
+        assignedTo: new FormControl(''),
+        replied: new FormControl(false),
+        closed: new FormControl(false),
+        assigned: new FormControl(false),
+        repliedValue: new FormControl(false),
+        closedValue: new FormControl(false),
+        assignedValue: new FormControl(false),
+        sesisonid: new FormControl(''),
+        global: new FormControl(''),
+        listOfMailboxes: new FormControl('singteldemo@tetherfi.com', [Validators.required])
+    });
+
+    /**
+     * Queue search
+     */
+    queueSearchFormGroup = new FormGroup({
+        email: new FormControl(''),
+        // queue: new FormControl(''),
         fromDate: new FormControl(''),
         fromTime: new FormControl(''),
         toDate: new FormControl(''),
         toTime: new FormControl(''),
         subject: new FormControl(''),
         content: new FormControl('')
+    });
+
+    /**
+     * Draft search
+     */
+    draftSearchFormGroup = new FormGroup({
+        skills: new FormControl(''),
+        email: new FormControl(''),
+        fromDate: new FormControl(''),
+        fromTime: new FormControl(''),
+        toDate: new FormControl(''),
+        toTime: new FormControl(''),
+        subject: new FormControl(''),
+        content: new FormControl(''),
+        agent: new FormControl(''),
+
+        inSessionid: new FormControl(''),
+        listOfMailboxes: new FormControl('')
+    });
+
+    /**
+     * Inbox search
+     */
+    inboxSearchFormGroup = new FormGroup({
+        // common for all
+        fromDate: new FormControl(''),
+        fromTime: new FormControl(''),
+        toDate: new FormControl(''),
+        toTime: new FormControl(''),
+        deviceid: new FormControl(''),
+        email: new FormControl(''),
+        agent: new FormControl(''),
+        subject: new FormControl(''),
+        content: new FormControl(''),
+        hasAttachments: new FormControl(false),
+        assignedTo: new FormControl(''),
+        replied: new FormControl(false),
+        closed: new FormControl(false),
+        assigned: new FormControl(false),
+        repliedValue: new FormControl(false),
+        closedValue: new FormControl(false),
+        assignedValue: new FormControl(false),
+        sesisonid: new FormControl(''),
+        global: new FormControl(''),
+        listOfMailboxes: new FormControl('')
+    });
+
+    /**
+     * Sent search
+     */
+    sentSearchFormGroup = new FormGroup({
+        skills: new FormControl(''),
+        email: new FormControl(''),
+        fromDate: new FormControl(''),
+        fromTime: new FormControl(''),
+        toDate: new FormControl(''),
+        toTime: new FormControl(''),
+        subject: new FormControl(''),
+        content: new FormControl(''),
+        agent: new FormControl(''),
+        inSessionid: new FormControl(''),
+        listOfMailboxes: new FormControl('')
     });
 
     /**
@@ -85,16 +182,33 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
     dataSource = new MatTreeNestedDataSource<any>();
 
     /**
+     * Advanced search visibility
+     */
+    showAdvancedSearchForm = false;
+
+    /**
+     * Currently selected tab
+     */
+    currentTab: AvailableTabs = 'queue';
+
+    /**
+     * Search methods hash map
+     */
+    searchReqObs$: Record<AvailableTabs, () => Observable<any>>;
+
+    /**
      * Constructor
      * @param {FuseConfigService} _fuseConfigService
      * @param {AppDataService} _appDataService
      */
-    constructor(
-        private _fuseConfigService: FuseConfigService,
-        private http: HttpClient,
-        private domSanitizer: DomSanitizer
-    ) {
+    constructor(private _fuseConfigService: FuseConfigService, private http: HttpClient, private domSanitizer: DomSanitizer) {
         super();
+        this.searchReqObs$ = {
+            draft: this.advanceSearchDraftEmail,
+            inbox: this.advanceSearchInboxEmail,
+            queue: this.advanceSearchQueuedEmail,
+            sentitem: this.advanceSearchSentEmail
+        };
         const today = new Date();
         const yesterday = new Date();
         yesterday.setDate(today.getDate() - 1);
@@ -150,8 +264,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
 
     /**
      * Check if tree node has child
-     * @param {number} _ 
-     * @param {any} node 
+     * @param {number} _
+     * @param {any} node
      */
     hasChild = (_: number, node: any) => !!node.children && node.children.length > 0;
 
@@ -160,65 +274,45 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
      * @method advancedSearch
      */
     advancedSearch(): void {
-        if (!this.data.Data.WorkbenchUrl) {
-            this.emailSearchRes = {
-                loading: false,
-                error: true,
-                msg: 'WorkbenchUrl not provided',
-                data: { selected: this.emailSearchRes.data.selected || false }
-            };
-            return;
-        }
+        try {
+            if (!this.data.Data.WorkbenchUrl) {
+                this.emailSearchRes = {
+                    loading: false,
+                    error: true,
+                    msg: 'WorkbenchUrl not provided',
+                    data: { selected: this.emailSearchRes.data.selected || false }
+                };
+                return;
+            }
 
-        const { agentId } = SDKClient.getAgentData();
+            this.emailSearchRes.loading = true;
+            this.emailSearchRes.error = false;
 
-        const searchFields = this.advancedSearchForm.value;
-
-        let startDate: any = '';
-        let endDate: any = '';
-
-        if (searchFields.fromDate) {
-            startDate = new Date(searchFields.fromDate);
-            startDate.setHours(searchFields.fromTime?.split(':')[0] || '00');
-            startDate.setMinutes(searchFields.fromTime?.split(':')[1] || '00');
-            startDate.setSeconds(0);
-            startDate = moment(startDate).format('YYYYMMDDHHmmss');
-        }
-
-        if (searchFields.toDate) {
-            endDate = new Date(searchFields.toDate);
-            endDate.setHours(searchFields.toTime?.split(':')[0] || '00');
-            endDate.setMinutes(searchFields.toTime?.split(':')[1] || '00');
-            endDate.setSeconds(0);
-            endDate = moment(endDate).format('YYYYMMDDHHmmss');
-        }
-
-        this.emailSearchRes.loading = true;
-
-        this.http
-            .post(this.data.Data.WorkbenchUrl + '/email/search', {
-                skills: searchFields.skills ? [searchFields.skills] : [],
-                email: searchFields.email,
-                agent: '',
-                startDate,
-                endDate,
-                subject: searchFields.subject,
-                content: searchFields.content
-            })
-            .subscribe(
+            this.searchReqObs$[this.currentTab]().subscribe(
                 (res: any) => {
                     if (res.status === 'SUCCESS') {
                         const mails = res.result.map((x: any) => {
-                            const mailRes = JSON.parse(x.data);
-                            mailRes.addedTime = x.addedTime;
+                            console.log('********', x);
+                            const mailRes = typeof x.data === 'string' ? JSON.parse(x.data) : x;
+                            console.log('##########', mailRes);
+                            if (x.addedTime) {
+                                mailRes.addedTime = x.addedTime;
+                            }
                             mailRes.body = this.domSanitizer.bypassSecurityTrustHtml(mailRes.body);
                             return mailRes;
                         });
                         const byMailList = groupBy(mails, 'To');
-                        const nodes = Object.keys(byMailList).map((name) => {
-                            const test = groupBy(byMailList[name], 'Skill');
-                            return { name, children: Object.keys(test).map((n) => ({ name: n, children: test[n] })) };
-                        });
+                        let nodes: any;
+                        if (['sentitem', 'draft'].includes(this.currentTab)) {
+                            nodes = Object.keys(byMailList).map((name) => {
+                                return { name, children: byMailList[name] }
+                            });
+                        } else {
+                            nodes = Object.keys(byMailList).map((name) => {
+                                const test = groupBy(byMailList[name], 'Skill');
+                                return { name, children: Object.keys(test).map((n) => ({ name: n, children: test[n] })) };
+                            });
+                        }
                         this.emailSearchRes = {
                             loading: false,
                             error: false,
@@ -244,39 +338,243 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                     };
                 }
             );
+        } catch (e) {
+            console.error(e);
+            this.emailSearchRes = {
+                loading: false,
+                error: true,
+                msg: COMMON_ERR_MESSAGE,
+                data: { selected: this.emailSearchRes.data.selected || false }
+            };
+        }
     }
 
     /**
      * Pull email
      * @method pullEmail
      */
-    pullEmail(): void {
+    pullEmails(emails: any[]): void {
         const { agentId, tmacServer } = SDKClient.getAgentData();
-        const { SessionId, RouteId } = this.emailSearchRes.data.selected;
+        console.log(emails);
+        const items: EmailPullItem[] = emails.map(x => {
+            return { routeId: x.RouteId || '', sessionId: x.SessionId, conversationId: x.conversationID || '', inSessionId: x.inSessionID, mailbox: x.mailbox };
+        });
+        console.log(items);
         this.http
-            .post(this.data.Data.WorkbenchUrl + '/email/pull', {
+            .post(this.data.Data.WorkbenchUrl + `/${this.currentTab}/pull`, {
                 tmacServer,
                 agentId,
-                items: [
-                    {
-                        sessionId: SessionId,
-                        routeId: RouteId,
-                        conversationId: ''
-                    }
-                ]
+                items
             })
             .subscribe(
                 (res: any) => {
                     if (res.status === 'FAILED') {
-                        console.log({ err: res });
+                        console.error(res);
                         return;
                     }
                 },
                 (err) => {
-                    console.log(err);
+                    console.error(err);
                 }
             );
     }
+
+    advanceSearchQueuedEmail = (): Observable<any> => {
+        const { agentId } = SDKClient.getAgentData();
+
+        const searchFields = this.advancedSearchForm.value;
+
+        let startDate: any = '';
+        let endDate: any = '';
+
+        if (searchFields.fromDate) {
+            startDate = new Date(searchFields.fromDate);
+            startDate.setHours(searchFields.fromTime?.split(':')[0] || '00');
+            startDate.setMinutes(searchFields.fromTime?.split(':')[1] || '00');
+            startDate.setSeconds(0);
+            startDate = moment(startDate).format('YYYYMMDDHHmmss');
+        }
+
+        if (searchFields.toDate) {
+            endDate = new Date(searchFields.toDate);
+            endDate.setHours(searchFields.toTime?.split(':')[0] || '00');
+            endDate.setMinutes(searchFields.toTime?.split(':')[1] || '00');
+            endDate.setSeconds(0);
+            endDate = moment(endDate).format('YYYYMMDDHHmmss');
+        }
+
+        return this.http.post(this.data.Data.WorkbenchUrl + '/queue/search', {
+            skills: searchFields.skills ? [searchFields.skills] : [],
+            email: searchFields.email,
+            agent: '',
+            startDate,
+            endDate,
+            subject: searchFields.subject,
+            content: searchFields.content
+        });
+    }
+
+    advanceSearchInboxEmail = (): Observable<any> => {
+        const { agentId } = SDKClient.getAgentData();
+
+        const searchFields = this.advancedSearchForm.value;
+
+        let startDate: any = '';
+        let endDate: any = '';
+
+        if (searchFields.fromDate) {
+            startDate = new Date(searchFields.fromDate);
+            startDate.setHours(searchFields.fromTime?.split(':')[0] || '00');
+            startDate.setMinutes(searchFields.fromTime?.split(':')[1] || '00');
+            startDate.setSeconds(0);
+            startDate = moment(startDate).format('YYYYMMDDHHmmss');
+        }
+
+        if (searchFields.toDate) {
+            endDate = new Date(searchFields.toDate);
+            endDate.setHours(searchFields.toTime?.split(':')[0] || '00');
+            endDate.setMinutes(searchFields.toTime?.split(':')[1] || '00');
+            endDate.setSeconds(0);
+            endDate = moment(endDate).format('YYYYMMDDHHmmss');
+        }
+
+        return this.http
+            .post(this.data.Data.WorkbenchUrl + '/inbox/search', {
+                skills: searchFields.skills ? [searchFields.skills] : [],
+                email: searchFields.email,
+                agent: '',
+                startDate,
+                endDate,
+                subject: searchFields.subject,
+                content: searchFields.content,
+                deviceid: searchFields.deviceId,
+                assignedTo: searchFields.assignedTo,
+                sesisonid: searchFields.sesisonid,
+                global: searchFields.global,
+                listOfMailboxes: searchFields.listOfMailboxes,
+                hasAttachments: searchFields.hasAttachments,
+                replied: searchFields.replied,
+                closed: searchFields.closed,
+                assigned: searchFields.assigned,
+                repliedValue: searchFields.repliedValue,
+                closedValue: searchFields.closedValue,
+                assignedValue: searchFields.assignedValue
+            })
+            .pipe(map((res: any) => ({
+                ...res, result: res.result.map((x: any, uiId) => {
+                    return { ...x, To: x.mailbox, Skill: x.cmSkill, Subject: x.subject, From: x.from, addedTime: x.receivedDate, uiId, SessionId: x.sessionID, RouteId: x.routeId };
+                })
+            })));
+    }
+
+    advanceSearchDraftEmail = (): Observable<any> => {
+        const { agentId } = SDKClient.getAgentData();
+
+        const searchFields = this.advancedSearchForm.value;
+
+        let startDate: any = '';
+        let endDate: any = '';
+
+        if (searchFields.fromDate) {
+            startDate = new Date(searchFields.fromDate);
+            startDate.setHours(searchFields.fromTime?.split(':')[0] || '00');
+            startDate.setMinutes(searchFields.fromTime?.split(':')[1] || '00');
+            startDate.setSeconds(0);
+            startDate = moment(startDate).format('YYYYMMDDHHmmss');
+        }
+
+        if (searchFields.toDate) {
+            endDate = new Date(searchFields.toDate);
+            endDate.setHours(searchFields.toTime?.split(':')[0] || '00');
+            endDate.setMinutes(searchFields.toTime?.split(':')[1] || '00');
+            endDate.setSeconds(0);
+            endDate = moment(endDate).format('YYYYMMDDHHmmss');
+        }
+
+        return this.http.post(this.data.Data.WorkbenchUrl + '/draft/search', {
+            skills: searchFields.skills ? [searchFields.skills] : [],
+            email: searchFields.email,
+            agent: '',
+            startDate,
+            endDate,
+            subject: searchFields.subject,
+            content: searchFields.content,
+            inSessionid: searchFields.inSessionid,
+            listOfMailboxes: searchFields.listOfMailboxes
+        })
+            .pipe(map((res: any) => ({
+                ...res, result: res.result.map((x: any, uiId) => {
+                    return { ...x, To: x.mailbox, Skill: x.cmSkill, Subject: x.subject, From: x.from, addedTime: x.receivedDate, uiId, SessionId: x.sessionID, RouteId: x.routeId };
+                })
+            })));
+    }
+
+    advanceSearchSentEmail = (): Observable<any> => {
+        const { agentId } = SDKClient.getAgentData();
+
+        const searchFields = this.advancedSearchForm.value;
+
+        let startDate: any = '';
+        let endDate: any = '';
+
+        if (searchFields.fromDate) {
+            startDate = new Date(searchFields.fromDate);
+            startDate.setHours(searchFields.fromTime?.split(':')[0] || '00');
+            startDate.setMinutes(searchFields.fromTime?.split(':')[1] || '00');
+            startDate.setSeconds(0);
+            startDate = moment(startDate).format('YYYYMMDDHHmmss');
+        }
+
+        if (searchFields.toDate) {
+            endDate = new Date(searchFields.toDate);
+            endDate.setHours(searchFields.toTime?.split(':')[0] || '00');
+            endDate.setMinutes(searchFields.toTime?.split(':')[1] || '00');
+            endDate.setSeconds(0);
+            endDate = moment(endDate).format('YYYYMMDDHHmmss');
+        }
+
+        return this.http.post(this.data.Data.WorkbenchUrl + '/sentitem/search', {
+            skills: searchFields.skills ? [searchFields.skills] : [],
+            email: searchFields.email,
+            agent: '',
+            startDate,
+            endDate,
+            subject: searchFields.subject,
+            content: searchFields.content,
+            listOfMailboxes: searchFields.listOfMailboxes,
+            InSessionid: searchFields.inSessionid,
+            global: searchFields.global
+        })
+            .pipe(map((res: any) => ({
+                ...res, result: res.result.map((x: any, uiId) => {
+                    return {
+                        ...x,
+                        To: x.mailbox,
+                        Skill: x.cmSkill, Subject: x.subject, From: x.from, addedTime: x.receivedDate, uiId, SessionId: x.inSessionID, RouteId: x.routeId
+                    };
+                })
+            })));
+    }
+
+    /**
+     * Select emails
+     */
+    selectEmail(evt: MatCheckboxChange): void {
+        if (evt.checked) {
+            this.selectedMails.push(evt.source.value);
+        } else {
+            this.selectedMails = this.selectedMails.filter(x => x.uiId !== (evt.source.value as any).uiId);
+        }
+    }
+
+    /**
+     * Deletes emails via workbench
+     * @param emails email items list
+     */
+    deleteEmails(emails: EmailPullItem): void {
+        console.log(emails);
+    }
+
 }
 
 // for more info visit - https://angular.io/api/core

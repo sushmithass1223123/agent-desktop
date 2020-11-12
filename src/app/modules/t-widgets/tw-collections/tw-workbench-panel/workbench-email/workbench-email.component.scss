@@ -1,7 +1,16 @@
 workbench-email {
     .email-list {
         height: 98%;
+        max-height: 98%;
         box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+    }
+
+    .tw-list-item {
+        // overflow: auto;
+    }
+
+    .email-list-groups {
+        // max-height: 70%;
     }
 
     .mat-form-field.custom .mat-form-field-wrapper {
@@ -38,13 +47,6 @@ workbench-email {
         }
     }
 
-    .advanced-search-form {
-        display: none;
-        &.show {
-            display: block;
-        }
-    }
-
     .email-tree-invisible {
         display: none;
         // &.ul {
@@ -75,7 +77,12 @@ workbench-email {
         margin-bottom: 0;
         list-style-type: none;
     }
-
+    .mat-nested-tree-node {
+        & > li > ul:not(.no-scroll) {
+            max-height: 500px;
+            overflow: auto;
+        }
+    }
     mat-tree-node {
         cursor: pointer;
         padding-left: 0 !important;
@@ -96,5 +103,20 @@ workbench-email {
     .hint-mail-text {
         font-size: 28px;
         font-weight: 500;
+    }
+}
+
+.advanced-search-form {
+    border-radius: 10px;
+    padding-bottom: 8px;
+    width: 50%;
+    height: 50vh;
+    overflow: auto;
+    background-color: inherit;
+    form {
+        padding: 10px;
+    }
+    .form-field {
+        margin-bottom: 8px;
     }
 }
