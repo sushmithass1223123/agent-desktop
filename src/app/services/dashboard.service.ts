@@ -219,7 +219,9 @@ export class DashboardService {
      */
     public triggerAgentData(agentId: string, start: boolean, duration: number): void {
         TUtils.Logger.console('info', `DashboardService.triggerAgentData: start=${start}`);
-        this._signalRInstance.hub.invoke('GetAgentData', this._signalRInstance.hub.connection.id, agentId, start, duration);
+        if (this._signalRInstance.isConnected()) {
+            this._signalRInstance.hub.invoke('GetAgentData', this._signalRInstance.hub.connection.id, agentId, start, duration);
+        }
     }
 
     /**
@@ -231,7 +233,9 @@ export class DashboardService {
      */
     public triggerActiveAgents(agentId: string, teamId: string, start: boolean, duration: number): void {
         TUtils.Logger.console('info', `DashboardService.triggerActiveAgents: start=${start}`);
-        this._signalRInstance.hub.invoke('GetActiveAgentList', this._signalRInstance.hub.connection.id, agentId, teamId, start, duration);
+        if (this._signalRInstance.isConnected()) {
+            this._signalRInstance.hub.invoke('GetActiveAgentList', this._signalRInstance.hub.connection.id, agentId, teamId, start, duration);
+        }
     }
 
     /**
@@ -241,6 +245,8 @@ export class DashboardService {
      */
     public triggerAgentInteractions(agentId: string, start: boolean): void {
         TUtils.Logger.console('info', `DashboardService.triggerAgentInteractions: agentId=${agentId}, start=${start}`);
-        this._signalRInstance.hub.invoke('GetActiveInteractionList', this._signalRInstance.hub.connection.id, agentId, start);
+        if (this._signalRInstance.isConnected()) {
+            this._signalRInstance.hub.invoke('GetActiveInteractionList', this._signalRInstance.hub.connection.id, agentId, start);
+        }
     }
 }
