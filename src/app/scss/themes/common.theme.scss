@@ -1,9 +1,12 @@
+@import 'src/app/scss/shared';
+
 @mixin common-theme($theme) {
     $background: map-get($theme, background);
     $foreground: map-get($theme, foreground);
     $primary: map-get($theme, primary);
     $accent: map-get($theme, accent);
     $is-dark: map-get($theme, is-dark);
+    $mat-warn: map-get($theme, warn);
 
     .box-shadow-3d {
         @if ($is-dark) {
@@ -35,6 +38,39 @@
             } @else {
                 color: #fafafa;
                 background-color: map-get($primary, default);
+            }
+        }
+    }
+
+    .interactions {
+        avatar {
+            .avatar-content {
+                border: 2px solid map-get($primary, default);
+                @if ($is-dark == true) {
+                    color: #fafafa !important;
+                    background-color: #303030 !important;
+                } @else {
+                    color: rgba(0, 0, 0, 0.87) !important;
+                    background-color: #fafafa !important;
+                }
+            }
+
+            &.connected {
+                .avatar-content {
+                    border: 2px solid mat-color($mat-green, 700);
+                }
+            }
+
+            &.disconnected {
+                .avatar-content {
+                    border: 2px solid map-get($mat-warn, default);
+                }
+            }
+
+            &.hold {
+                .avatar-content {
+                    background-color: $tw-warning !important;
+                }
             }
         }
     }

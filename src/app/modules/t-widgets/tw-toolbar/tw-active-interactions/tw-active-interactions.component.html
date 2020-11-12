@@ -1,6 +1,13 @@
 <div fxFlex fxFill fxLayout="row" fxLayoutAlign=" center" *ngIf="interactionList.length > 0">
     <ng-container *ngFor="let item of interactionList">
-        <div fxLayout="row" class="voice grey-300 border-radius-30 p-8" *ngIf="item.type === 'voice'">
+        <div
+            fxLayout="row"
+            class="voice grey-300 border-radius-30 p-4 mx-4"
+            *ngIf="item.type === 'voice'"
+            [ngClass]="{
+                'bg-warning': item.status === 'hold'
+            }"
+        >
             <div mat-card-avatar class="w-36 h-36" (click)="openInteraction(item)">
                 <mat-icon>phone</mat-icon>
             </div>

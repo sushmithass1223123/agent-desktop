@@ -45,39 +45,6 @@ tw-chat-controls {
                 }
             }
 
-            .interaction-selector {
-                .interactions {
-                    button {
-                        border-radius: 1.5rem;
-                        width: 5.3rem;
-                    }
-                }
-            }
-
-            avatar {
-                width: 53px;
-                height: 38px;
-                margin-bottom: 6px;
-
-                .avatar-content {
-                    width: inherit;
-                    height: inherit;
-                    border-radius: 16px;
-                    cursor: pointer;
-                }
-
-                &.active {
-                    .avatar-content {
-                        box-shadow: 0px 3px 3px -2px rgba(0, 0, 0, 0.2), 0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12);
-                        border-top-right-radius: 0;
-                        border-bottom-right-radius: 0;
-                        border-right: none;
-                        position: absolute;
-                        left: 7px;
-                    }
-                }
-            }
-
             .chat-content {
                 flex: 1;
 

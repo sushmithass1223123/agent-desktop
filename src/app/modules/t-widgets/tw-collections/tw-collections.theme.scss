@@ -7,34 +7,9 @@
     $mat-warn: map-get($theme, warn);
 
     tw-voice-controls {
-        avatar {
-            .avatar-content {
-                @if ($is-dark == true) {
-                    color: #fafafa !important;
-                    background-color: rgba(0, 0, 0, 0.87) !important;
-                } @else {
-                    color: rgba(0, 0, 0, 0.87) !important;
-                    background-color: #fafafa !important;
-                }
-            }
-
-            &.connected {
-                .avatar-content {
-                    border: 2px solid map-get($primary, default);
-                }
-            }
-
-            &.disconnected {
-                .avatar-content {
-                    border: 1px solid map-get($mat-warn, default);
-                }
-            }
-
-            &.active {
-                .avatar-content {
-                    color: map-get($primary, default-contrast) !important;
-                    background-color: map-get($primary, default) !important;
-                }
+        .interaction-details {
+            @if ($is-dark == true) {
+                background-color: map-get($background, hover);
             }
         }
     }
@@ -59,30 +34,6 @@
 
                 .status-icon {
                     border-color: map-get($background, app-bar);
-                }
-            }
-        }
-
-        avatar {
-            .avatar-content {
-                @if ($is-dark == true) {
-                    color: #fafafa !important;
-                    background-color: rgba(0, 0, 0, 0.87) !important;
-                } @else {
-                    color: rgba(0, 0, 0, 0.87) !important;
-                    background-color: #fafafa !important;
-                }
-            }
-
-            &.connected {
-                .avatar-content {
-                    border: 2px solid mat-color($mat-green, 700);
-                }
-            }
-
-            &.disconnected {
-                .avatar-content {
-                    border: 2px solid map-get($mat-warn, default);
                 }
             }
         }
@@ -114,44 +65,6 @@
                         }
                     }
                 }
-
-                // &.contact {
-                //     .bubble {
-                //         @if ($is-dark == true) {
-                //             background-color: map-get($background, hover);
-                //         } @else {
-                //             background-color: map-get($accent, default);
-                //             color: map-get($accent, default-contrast);
-                //         }
-
-                //         // .left-svg {
-                //         //     @if ($is-dark == true) {
-                //         //         color: rgb(80 80 80) !important;
-                //         //     } @else {
-                //         //         color: #e0e0e0;
-                //         //     }
-                //         // }
-                //     }
-                // }
-
-                // &.me {
-                //     .bubble {
-                //         @if ($is-dark == true) {
-                //             background-color: map-get($background, hover);
-                //         } @else {
-                //             color: rgba(0, 0, 0, 0.87);
-                //             background-color: #e0e0e0;
-                //         }
-
-                //         // .right-svg {
-                //         //     @if ($is-dark == true) {
-                //         //         color: rgb(80 80 80) !important;
-                //         //     } @else {
-                //         //         color: #e0e0e0;
-                //         //     }
-                //         // }
-                //     }
-                // }
             }
         }
 
@@ -323,6 +236,14 @@
                         background-color: #303030;
                     }
                 }
+            }
+        }
+    }
+
+    tw-email-controls {
+        .email-controls {
+            @if ($is-dark == true) {
+                background-color: map-get($background, hover);
             }
         }
     }
