@@ -66,7 +66,7 @@
         </div>
     </div>
 
-    <div fxFlex="30" class="email-list mr-12 border-radius-20" fusePerfectScrollbar>
+    <div fxFlex="30" class="email-list mr-12 border-radius-20">
         <div fxLayout fxLayoutAlign="center center" class="search-input mt-8 border-radius-20 position-relative">
             <mat-form-field class="custom with-border form-field w-100-p" appearance="outline">
                 <input class="login-input" matInput placeholder="Search" [(ngModel)]="searchTerm" (input)="filterEmails()" />
@@ -307,7 +307,7 @@
             <button mat-raised-button class="border-radius-20" (click)="deleteEmails(selectedMails)" fxFlex="40">Delete Emails</button>
         </div>
 
-        <div class="email-list-groups" fusePerfectScrollbar>
+        <div class="email-list-groups" >
             <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="tw-list-item border-radius-10 email-tree">
                 <mat-tree-node *matTreeNodeDef="let node" class="tw-list pb-8" matTreeNodeToggle>
                     <li
