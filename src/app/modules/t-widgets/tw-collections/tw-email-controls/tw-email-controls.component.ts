@@ -9,7 +9,7 @@ import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { COMMON_ERR_MESSAGE, EMAIL_DRAFT_SAVE_INTERVAL } from 'app/constants';
+import { COMMON_ERR_MESSAGE, DRAFT_REASONS, EMAIL_DRAFT_SAVE_INTERVAL, INBOX_REASONS, OUTBOX_REASONS } from 'app/constants';
 import { InteractionRef, IWidget, ResData } from 'app/interfaces';
 import { CreateEmailInfo } from 'app/models';
 import { interval, Observable, Subscription } from 'rxjs';
@@ -47,9 +47,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     };
 
 
-    OutboxReasons = ['CheckerQueue', 'CheckerPull'];
-    DraftReasons = ['AgentDraftPull'];
-    InboxReasons = ['MakerQueue', 'AgentPull'];
+    OutboxReasons = OUTBOX_REASONS;
+    DraftReasons = DRAFT_REASONS;
+    InboxReasons = INBOX_REASONS;
 
     /**
      * Fuse config
@@ -380,6 +380,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         if (this.interactionId === item.interactionId) {
             return;
         }
+        this.viewingEmail = 'replied';
         // update is active
         this._interactionManagerService.updateInteraction(item.interactionId, {
             isActive: true
@@ -603,8 +604,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Rejects email, only available for checkers
      */
-    rejectEmail(): void {
+    rejectEmail(evt: MatButton): void {
         // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
+        evt.disabled = true;
         const currentInteraction = this.currentInteraction;
         const dialogRef = this._appUIService.showCustomDialog('prompt', 'Enter the comments', 'Reject Email');
         dialogRef.afterClosed().subscribe((comment) => {
@@ -619,10 +621,12 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                     } else {
                         this._appUIService.showSnackbar('Email rejected successfully');
                     }
+                    evt.disabled = true;
                     this._fuseProgressBarService.hide();
                 }).catch(() => {
                     this._fuseProgressBarService.hide();
                     this._appUIService.showSnackbar('Error in saving interaction comment', 'failure');
+                    evt.disabled = true;
                 });
             }
         });

@@ -27,8 +27,7 @@
                     </svg>
                 </button> -->
 
-                <div fxLayout="column" fxLayoutAlign=" start" class="w-60 h-100-p mt-4 pt-8 interactions">
-                    <div class="custom-scroll-adjust">
+                <div fxLayout="column" fxLayoutAlign=" start" class="w-60 h-100-p mt-4 pt-8 interactions custom-scroll-adjust">
                         <avatar
                             *ngFor="let item of interactionList"
                             name="{{ item.user }}"
@@ -40,7 +39,6 @@
                             matBadgePosition="after"
                             matBadgeColor="accent"
                         ></avatar>
-                    </div>
                 </div>
             </div>
 

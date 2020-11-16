@@ -39,7 +39,7 @@
                     <button mat-raised-button class="border-radius-20" (click)="sendEmailAsChecker(approveBtn)" color="primary" #approveBtn>
                         Approve
                     </button>
-                    <button mat-raised-button class="border-radius-20" (click)="rejectEmail()">Reject</button>
+                    <button mat-raised-button class="border-radius-20" (click)="rejectEmail(rejectEmailBtn)" #rejectEmailBtn>Reject</button>
                 </ng-container>
                 <ng-container *ngIf="InboxReasons.includes(currentInteraction.RouteReason) || DraftReasons.includes(currentInteraction.RouteReason)">
                     <button *ngIf="replyInfo" mat-raised-button class="border-radius-20" (click)="saveEmailAsDraft(); closeInteraction($event)">
@@ -138,7 +138,7 @@
                                 <mat-icon>forward_to_inbox</mat-icon>
                             </button>
                             <button
-                                mat-flat-button
+                                mat-raised-button
                                 class="border-radius-20"
                                 (click)="showReplyEditor()"
                                 [disabled]="getInboxMessageReq.error"
