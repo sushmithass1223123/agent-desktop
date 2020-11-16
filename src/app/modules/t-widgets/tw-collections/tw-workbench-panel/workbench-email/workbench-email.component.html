@@ -17,7 +17,7 @@
                     class="mb-12"
                     mat-button
                     matTooltip="Queue"
-                    (click)="currentTab = 'queue'; advancedSearch(); selectedMails = []"
+                    (click)="switchTab('queue')"
                     matTooltipPosition="right"
                     [color]="currentTab === 'queue' && 'primary'"
                 >
@@ -27,7 +27,7 @@
                 <button
                     class="mb-12"
                     mat-button
-                    (click)="currentTab = 'inbox'; advancedSearch(); selectedMails = []"
+                    (click)="switchTab('inbox')"
                     matTooltip="Inbox"
                     matTooltipPosition="right"
                     [color]="currentTab === 'inbox' && 'primary'"
@@ -38,7 +38,7 @@
                 <button
                     class="mb-12"
                     mat-button
-                    (click)="currentTab = 'sentitem'; advancedSearch(); selectedMails = []"
+                    (click)="switchTab('sentitem')"
                     matTooltip="Sent"
                     matTooltipPosition="right"
                     [color]="currentTab === 'sentitem' && 'primary'"
@@ -50,7 +50,7 @@
                     class="mb-12"
                     mat-button
                     matTooltip="Drafts"
-                    (click)="currentTab = 'draft'; advancedSearch(); selectedMails = []"
+                    (click)="switchTab('draft')"
                     matTooltipPosition="right"
                     [color]="currentTab === 'draft' && 'primary'"
                 >
@@ -120,7 +120,7 @@
                         fxLayout="row wrap"
                         fxLayoutGap="2%"
                     >
-                        <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
+                        <mat-form-field class="form-field custom with-border" fxFlex="100" appearance="outline">
                             <input matInput formControlName="email" type="text" placeholder="Email" />
                         </mat-form-field>
                         <!-- <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
@@ -166,7 +166,7 @@
                         fxLayout="row wrap"
                         fxLayoutGap="2%"
                     >
-                        <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
+                        <mat-form-field class="form-field custom with-border" fxFlex="100" appearance="outline">
                             <input matInput formControlName="email" type="text" placeholder="Email" />
                         </mat-form-field>
 
@@ -218,7 +218,7 @@
                         fxLayoutGap="2%"
                     >
                         <!-- fxLayoutAlign="space-evenly" -->
-                        <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
+                        <mat-form-field class="form-field custom with-border" fxFlex="100" appearance="outline">
                             <input matInput formControlName="email" type="text" placeholder="Email" />
                         </mat-form-field>
 
@@ -303,8 +303,21 @@
         </div>
 
         <div *ngIf="selectedMails.length" class="bulk-operations mt-16" fxLayout fxLayoutAlign="space-around center">
-            <button mat-raised-button color="primary" class="border-radius-20" (click)="pullEmails(selectedMails)" fxFlex="40">Pull Emails</button>
-            <button mat-raised-button class="border-radius-20" (click)="deleteEmails(selectedMails)" fxFlex="40">Delete Emails</button>
+            <button mat-raised-button fxFlex="100" class="border-radius-20 mx-8">Reply All</button>
+            <button mat-raised-button fxFlex="100" class="border-radius-20 mx-8">Transfer All</button>
+            <button
+                mat-raised-button
+                color="primary"
+                class="border-radius-20 mx-8"
+                *ngIf="currentTab === 'queue'"
+                (click)="closeEmails(selectedMails)"
+                fxFlex="100"
+            >
+                Close Emails
+            </button>
+            <button mat-raised-button color='accent' class="border-radius-20 mx-8" *ngIf="currentTab === 'draft'" (click)="deleteEmails(selectedMails)" fxFlex="100">
+                Delete Emails
+            </button>
         </div>
 
         <div class="email-list-groups">
@@ -320,10 +333,10 @@
                                 : ''
                         "
                     >
-                        <div class="w-10-p px-4">
+                        <div class="w-10-p px-4" *ngIf="currentTab === 'queue' || currentTab === 'draft'">
                             <mat-checkbox (change)="selectEmail($event)" [value]="node"></mat-checkbox>
                         </div>
-                        <div fxLayout fxLayoutAlign="space-between" (click)="emailSearchRes.data.selected = node" mat-ripple class="w-90-p px-4">
+                        <div fxLayout fxLayoutAlign="space-between" (click)="openEmail(node)" mat-ripple class="w-90-p px-4">
                             <div fxFlex="70">
                                 <p class="font-weight-600 my-4">{{ node.From || 'NA' }}</p>
                                 <p class="my-4">Subject: {{ node.Subject || 'NA' }}</p>
@@ -399,17 +412,7 @@
         <div *ngIf="emailSearchRes.data.selected" fxLayout fxLayoutAlign="end" fxLayoutGap="10px" class="my-20 w-95-p">
             <button mat-raised-button class="border-radius-20">Transfer</button>
             <button mat-raised-button class="border-radius-20">Advance</button>
-            <button
-                mat-raised-button
-                class="border-radius-20"
-                (click)="
-                    pullEmails([
-                        { sessionId: emailSearchRes.data.selected.SessionId, routeId: emailSearchRes.data.selected.RouteId, conversationId: '' }
-                    ])
-                "
-            >
-                Pull
-            </button>
+            <button mat-raised-button class="border-radius-20" (click)="pullEmails([emailSearchRes.data.selected])">Pull</button>
             <button mat-raised-button class="border-radius-20">Push</button>
         </div>
 
@@ -424,19 +427,44 @@
                     : ''
             "
         >
+            <div class="mat-title">{{ emailSearchRes.data.selected.Subject || 'NA' }}</div>
             <div fxLayout fxLayoutAlign="space-between">
-                <div class="mat-title">{{ emailSearchRes.data.selected.Subject || 'NA' }}</div>
                 <div fxFlex="80">
                     <p class="font-weight-600 my-4">To : {{ emailSearchRes.data.selected.To }}</p>
-                    <p class="my-4">From : {{ emailSearchRes.data.selected.From }}</p>
+                    <p class="font-weight-600 my-4" *ngIf="emailSearchRes.data.selected.ccList">CC : {{ emailSearchRes.data.selected.ccList }}</p>
+                    <p class="my-4 text-bold">From : {{ emailSearchRes.data.selected.From || 'NA' }}</p>
+                    <p class="my-4 text-bold">Status : {{ emailSearchRes.data.selected.currentStatus || 'NA' }}</p>
+                    <p class="my-4 text-bold">Prirority : {{ emailSearchRes.data.selected.priority || 'NA' }}</p>
+                    <p class="my-4 text-bold">Agent : {{ emailSearchRes.data.selected.agentName || 'NA' }}</p>
+                    <p class="my-4 text-bold">
+                        Replied Status : {{ emailSearchRes.data.selected.repliedStatus === '1' ? 'Replied' : 'Not Replied' }}
+                    </p>
+                    <p class="my-4 text-bold">
+                        Closed Status : {{ emailSearchRes.data.selected.closedBy ? 'Closed by' + emailSearchRes.data.selected.closedBy : 'Open' }}
+                    </p>
+                    <p>
+                        <mat-icon>grading</mat-icon> <span class="text-bold">{{ emailSearchRes.data.selected.intent || 'NA' }}</span>
+                    </p>
                 </div>
                 <div fxFlex="15">
                     <p class="my-4">{{ emailSearchRes.data.selected.addedTime | date: 'longDate' }}</p>
                     <p class="my-4">{{ emailSearchRes.data.selected.addedTime | date: 'shortTime' }}</p>
                 </div>
             </div>
+            <mat-chip-list #chipList aria-label="file selection">
+                <mat-chip class="p-16" *ngFor="let file of emailSearchRes.data.selected.attachmentList">
+                    <mat-icon>attach_file</mat-icon>
+                    <div class="ml-8 my-0">
+                        <p class="m-0">{{ file.Name }}</p>
+                        <a target="_blank" [href]="file.URL">
+                            <small>View file</small>
+                        </a>
+                    </div>
+                </mat-chip>
+            </mat-chip-list>
+
             <!-- <span>Subject : {{ emailSearchRes.data.selected.Subject }}</span> -->
-            <div [innerHtml]="emailSearchRes.data.selected.body"></div>
+            <div class="mt-20" [innerHtml]="emailSearchRes.data.selected.body"></div>
         </div>
 
         <div *ngIf="!emailSearchRes.data.selected" fxLayout="column" fxLayoutAlign="center center" class="w-100-p h-100-p">
