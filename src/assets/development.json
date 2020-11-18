@@ -65,18 +65,11 @@
                                 "Data": {
                                     "ProfilePicture": true,
                                     "Status": true,
-                                    "LogoutAux": "logout"
-                                }
-                            },
-                            {
-                                "Name": "Aux Codes Dropdown",
-                                "Description": "",
-                                "Type": "tw-aux-codes",
-                                "Config": {
-                                    "Enabled": true
-                                },
-                                "Data": {
-                                    "ByTeam": true
+                                    "LogoutAux": "logout",
+                                    "AuxCodes": {
+                                        "Enabled": true,
+                                        "ByTeam": true
+                                    }
                                 }
                             },
                             {

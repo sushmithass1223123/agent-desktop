@@ -7,7 +7,6 @@ import {
     OnDestroy,
     OnInit,
     Output,
-    QueryList,
     ViewChild,
     ViewChildren,
     ViewEncapsulation
@@ -16,9 +15,9 @@ import { NgForm } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
-import { FusePerfectScrollbarDirective } from '@fuse/directives/fuse-perfect-scrollbar/fuse-perfect-scrollbar.directive';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
+import { widgetFabAnimations } from '@modules/shared/animations/widget-fab.animation';
 import { AgentSkillListComponent } from '@modules/shared/components';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
@@ -36,9 +35,11 @@ import { takeUntil } from 'rxjs/internal/operators/takeUntil';
 import {
     AVChannel,
     AVControlMessageReceivedEvent,
+    FileSaveData,
     IAgentData,
     IResponse,
     IUIEvent,
+
     SDKClient,
     TextChatAgentConnectedEvent,
     TextChatAgentDisconnectedEvent,
@@ -65,6 +66,7 @@ import {
     selector: 'tw-chat-controls',
     templateUrl: './tw-chat-controls.component.html',
     styleUrls: ['./tw-chat-controls.component.scss'],
+    animations: widgetFabAnimations,
     encapsulation: ViewEncapsulation.None
 })
 export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, OnDestroy, AfterViewInit {
@@ -229,6 +231,76 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * Flag to show emoji overlay
      */
     showEmojiOverlay = false;
+    /**
+     * Flag to show attach overlay
+     */
+    showAttachOverlay = false;
+    /**
+     * Attachment actions
+     */
+    attachActions: {
+        /**
+         * Action
+         */
+        action: string;
+        /**
+         * Label
+         */
+        label: string;
+        /**
+         * Icon
+         */
+        icon: string;
+    }[] = [
+            {
+                action: 'documents',
+                icon: 'insert_drive_file',
+                label: 'Documents'
+            },
+            {
+                action: 'camera',
+                icon: 'camera_alt',
+                label: 'Camera'
+            },
+            {
+                action: 'media',
+                icon: 'photo',
+                label: 'Photos & Videos'
+            }
+        ];
+    /**
+     * Files currently uploadeng
+     */
+    uploadingFiles: {
+        /**
+         * Name of file
+         */
+        fileName: string;
+        /**
+         * Base64 string of file
+         */
+        base64: string;
+        /**
+         * Size of file
+         */
+        size: number;
+        /**
+         * File type extension
+         */
+        type: string;
+    }[] = [];
+    /**
+     * Video formats
+     */
+    videoFormats: string[] = ['mp4', 'mov', 'flv', 'webm'];
+    /**
+     * Image formats
+     */
+    imageFormats: string[] = ['gif', 'jpg', 'jpeg', 'png'];
+    /**
+     * Audio formats
+     */
+    audioFormats: string[] = ['mp3', 'wav'];
     /**
      * Transfer/conference dialog ref
      */
@@ -920,6 +992,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
         // close the conf/transfer if opened
         this.transferConfDialogRef?.close();
+
+        // clear the uploading files
+        this.uploadingFiles = [];
     }
 
     /**
@@ -1038,21 +1113,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     }
 
     /**
-     * Ready to reply function to focus reply textbox and to scroll to bottom
-     */
-    private readyToReply(): void {
-        if (this.conferenceType === 'silent') {
-            // ignore for silent monitoring
-            return;
-        }
-
-        setTimeout(() => {
-            this.focusReplyInput();
-            this.scrollToBottom();
-        });
-    }
-
-    /**
      * To scroll to bottom of transcript
      * @param speed Speed of scroll
      */
@@ -1093,9 +1153,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     private sendMessage(template: any): void {
         // get the typed message
-        const inputMessage = template ? template.Text : this.replyForm.form.value.message;
+        const inputMessage = template?.Text || this.replyForm.form.value.message;
         const messageId = `a_${TUtils.Generic.uuid()}`;
         let messageData = inputMessage;
+        const attachment = template?.Attachment || null;
+        const type = template?.Type ? 'attachment' : 'text';
 
         // Message
         const message = {
@@ -1103,24 +1165,35 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             isAgent: true,
             position: 'right',
             message: inputMessage,
-            time: moment(new Date())
+            time: moment(new Date()),
+            attachment
         };
 
-        // check if reply feature is enabled or not social media
-        if (this.data.Data.ReplyOnChatAllowed && !this.isSMM) {
+        // check if reply feature/attachment is enabled or not social media
+        if ((attachment || this.data.Data.ReplyOnChatAllowed) && !this.isSMM) {
             const jsonMessage = {
                 messageId: messageId,
-                type: 'text',
+                type: type,
                 message: inputMessage,
                 replyId: '',
                 templateId: template?.ID || '',
-                attachment: null
+                attachment
             };
 
             // TODO:: check for reply messages
 
             // stringy the json
             messageData = JSON.stringify(jsonMessage);
+        }
+        else if (attachment && this.isSMM) {
+            // stringy the json
+            messageData = JSON.stringify({
+                '_type': 'attachment',
+                '_attachmentType': attachment.type,
+                '_attachmentId': this.interactionId,
+                '_attachmentPreviewId': '',
+                '_attachmentSize': attachment.size
+            });
         }
 
         // Add the message to the chat
@@ -1133,7 +1206,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 message: messageData,
                 messageId,
                 templateId: template?.ID || '',
-                type: 'text'
+                type: ''
             },
             null
         )
@@ -1228,6 +1301,21 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 this._fuseProgressBarService.hide();
                 this._appUIService.showSnackbar('End chat failed!', 'failure');
             });
+    }
+
+    /**
+     * Ready to reply function to focus reply textbox and to scroll to bottom
+     */
+    private readyToReply(): void {
+        if (this.conferenceType === 'silent') {
+            // ignore for silent monitoring
+            return;
+        }
+
+        setTimeout(() => {
+            this.focusReplyInput();
+            this.scrollToBottom();
+        });
     }
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
@@ -1591,6 +1679,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
     /**
      * Adds emoji to reply
+     * 
      * @param {any} evt
      */
     addEmoji(evt: any): void {
@@ -1600,4 +1689,141 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.replyInput.focus();
     }
 
+    /**
+     * To add an attachment
+     * 
+     * @param {string} type 
+     */
+    addAttachment(type: string): void {
+        this.showAttachOverlay = false;
+    }
+
+    /**
+     * Attach files to email
+     * @param {Event} evt
+     */
+    async onFileInput(evt: Event): Promise<void> {
+        try {
+            const input = evt.target as HTMLInputElement;
+            if (input.files && input.files.length) {
+                const Base64 = await this.convertToBase64(input.files[0]);
+                const FileName = input.files[0].name;
+                this.uploadingFiles.push({
+                    fileName: FileName,
+                    base64: Base64,
+                    size: input.files[0].size,
+                    type: FileName.split('.').pop()
+                });
+
+                // const { response } = await SDKClient.uploadFiles({
+                //     files: [
+                //         {
+                //             Base64,
+                //             FileName,
+                //             RelativePath: '',
+                //             Status: 0,
+                //             Type: '',
+                //             Url: ''
+                //         }
+                //     ]
+                // });
+
+                // this.email.Files.push({ Id: response[0].RelativePath, Direction: 'OUT', Name: response[0].FileName, URL: response[0].Url });
+
+
+                // this.uploadingFiles.pop();
+            }
+
+        } catch (e) {
+            console.error(e);
+            this._appUIService.showSnackbar('Failed to upload file', 'failure');
+        }
+    }
+
+    /**
+     * Convert file to base64
+     * @param {File} file 
+     */
+    async convertToBase64(file: File): Promise<any> {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = (error) => reject(error);
+        });
+    }
+
+    /**
+     * To send attachments
+     *  
+     */
+    async sendAttachments(): Promise<void> {
+        try {
+            // check if SMM
+            if (this.isSMM) {
+
+            }
+            else {
+                const filesToUpload: FileSaveData[] = [];
+                this.uploadingFiles.forEach(async (file) => {
+                    let type = 'file';
+                    // get the type by extension
+                    if (this.imageFormats.includes(file.type)) {
+                        type = 'image';
+                    }
+                    else if (this.imageFormats.includes(file.type)) {
+                        type = 'video';
+                    }
+                    else if (this.imageFormats.includes(file.type)) {
+                        type = 'audio';
+                    }
+
+                    // add to the list
+                    filesToUpload.push({
+                        FileName: file.fileName,
+                        Base64: file.base64,
+                        RelativePath: '',
+                        Status: 0,
+                        Type: type,
+                        Url: ''
+                    });
+                });
+
+                // get the files for ref
+                const obj = [...this.uploadingFiles];
+
+                // clear the upload files
+                this.uploadingFiles = [];
+
+                this._fuseProgressBarService.show();
+                this._appUIService.showSnackbar('Failed is being uploaded, please wait', 'loading');
+
+                // upload to server
+                const { response, userObject } = await SDKClient.uploadFiles({
+                    files: filesToUpload
+                }, obj);
+
+                this._fuseProgressBarService.hide();
+
+                // check the response
+                response.forEach((item) => {
+                    const file = userObject.pop();
+                    this.sendMessage({
+                        Text: '',
+                        Type: item.Type ? item.Type : 'file',
+                        Attachment: {
+                            name: item.FileName,
+                            src: item.Url,
+                            type: item.Type ? item.Type : 'file',
+                            size: file.size
+                        }
+                    });
+                });
+
+                this._appUIService.showSnackbar('File uploaded successfully', 'success');
+            }
+        } catch (error) {
+            this._appUIService.showSnackbar('Failed to upload file', 'failure');
+        }
+    }
 }

@@ -33,6 +33,13 @@ import { TwVoicePanelComponent } from '@modules/t-widgets/tw-collections/tw-voic
 import { TwWallboardComponent } from '@modules/t-widgets/tw-collections/tw-wallboard/tw-wallboard.component';
 import { TwWorkCodesComponent } from '@modules/t-widgets/tw-collections/tw-work-codes/tw-work-codes.component';
 import { TwWorkbenchPanelComponent } from '@modules/t-widgets/tw-collections/tw-workbench-panel/tw-workbench-panel.component';
+import { TwcCustomComponent } from '@modules/t-widgets/tw-content/twc-custom/twc-custom.component';
+import { TwcEmailComponent } from '@modules/t-widgets/tw-content/twc-email/twc-email.component';
+import { TwcHomeComponent } from '@modules/t-widgets/tw-content/twc-home/twc-home.component';
+import { TwcSupervisorComponent } from '@modules/t-widgets/tw-content/twc-supervisor/twc-supervisor.component';
+import { TwcTextchatComponent } from '@modules/t-widgets/tw-content/twc-textchat/twc-textchat.component';
+import { TwcVoiceComponent } from '@modules/t-widgets/tw-content/twc-voice/twc-voice.component';
+import { TwcWorkbenchComponent } from '@modules/t-widgets/tw-content/twc-workbench/twc-workbench.component';
 import { TWidget } from '@modules/t-widgets/utils/t-widget';
 
 /**
@@ -43,6 +50,13 @@ export class TWLibrary {
      * coded components for library
      */
     static widgetLibrary: Record<string, Type<any>> = {
+        'twc-home': TwcHomeComponent,
+        'twc-voice': TwcVoiceComponent,
+        'twc-supervisor': TwcSupervisorComponent,
+        'twc-textchat': TwcTextchatComponent,
+        'twc-custom': TwcCustomComponent,
+        'twc-workbench': TwcWorkbenchComponent,
+        'twc-email': TwcEmailComponent,
         'tw-sample': TwSampleComponent,
         'tw-custom': TwCustomComponent,
         'tw-wallboard': TwWallboardComponent,

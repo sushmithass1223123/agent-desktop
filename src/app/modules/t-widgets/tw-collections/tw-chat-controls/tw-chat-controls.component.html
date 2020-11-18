@@ -45,7 +45,8 @@
             <div
                 fxLayout="column"
                 fxLayoutAlign=" none"
-                class="border-radius-20 chat-content"
+                fxFlex
+                class="border-radius-20 chat-content position-relative"
                 [ngClass]="
                     fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
                         ? fuseConfig.layout.anchorWidget.contentBackground
@@ -224,7 +225,7 @@
                 </div>
 
                 <!-- CHAT CONTENT -->
-                <div class="chat-transcripts custom-scroll-adjust" #messages fxFlex="1 1 auto">
+                <div class="chat-transcripts custom-scroll-adjust" #messages fxFlex>
                     <!-- CHAT MESSAGES -->
                     <div class="chat-messages">
                         <!-- MESSAGE -->
@@ -311,6 +312,7 @@
                                                         mat-icon-button
                                                         mat-raised-button
                                                         class="download"
+                                                        target="_blank"
                                                         [download]="message.attachment.name"
                                                         [href]="message.attachment.src"
                                                     >
@@ -391,6 +393,61 @@
                                     ></emoji-mart>
                                 </ng-template>
                             </button>
+                            <!-- 
+                            <button
+                                *ngIf="data.Data.AttachmentAllowed"
+                                cdkOverlayOrigin
+                                #attachOverlay="cdkOverlayOrigin"
+                                [disabled]="status !== 'connected'"
+                                (click)="showAttachOverlay = !showAttachOverlay"
+                                type="button"
+                                mat-icon-button
+                                class="rotate-45"
+                                aria-label="Select Attachment"
+                                matTooltip="Attach"
+                            > -->
+
+                            <button
+                                *ngIf="data.Data.AttachmentAllowed"
+                                [disabled]="status !== 'connected'"
+                                (click)="attachFileRef.click()"
+                                type="button"
+                                mat-icon-button
+                                class="rotate-45"
+                                aria-label="Select Attachment"
+                                matTooltip="Attach"
+                            >
+                                <mat-icon>attach_file</mat-icon>
+                                <!-- <ng-template
+                                    cdkConnectedOverlay
+                                    [cdkConnectedOverlayOrigin]="attachOverlay"
+                                    [cdkConnectedOverlayOpen]="showAttachOverlay"
+                                    cdkConnectedOverlayHasBackdrop
+                                    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+                                    (overlayOutsideClick)="showAttachOverlay = false"
+                                    [cdkConnectedOverlayPositions]="[{ originX: 'center', originY: 'top', overlayX: 'center', overlayY: 'bottom' }]"
+                                >
+                                    <div fxLayout="column" fxLayoutGap="10px" [@widgetStagger]="attachActions.length">
+                                        <button
+                                            *ngFor="let item of attachActions"
+                                            mat-mini-fab
+                                            color="secondary"
+                                            class="fab-secondary"
+                                            [matTooltip]="item.label"
+                                            (click)="addAttachment(item.action)"
+                                        >
+                                            <mat-icon>{{ item.icon }}</mat-icon>
+                                        </button>
+                                    </div>
+                                </ng-template> -->
+                                <input
+                                    #attachFileRef
+                                    type="file"
+                                    (click)="$event.target.value = null"
+                                    (change)="onFileInput($event)"
+                                    style="display: none"
+                                />
+                            </button>
 
                             <mat-form-field
                                 class="custom message-text"
@@ -426,6 +483,56 @@
                     <!-- / REPLY FORM -->
                 </div>
                 <!-- / CHAT FOOTER-->
+
+                <div
+                    *ngIf="uploadingFiles.length > 0"
+                    fxLayout="column"
+                    fxLayoutAlign=" none"
+                    fxFlex
+                    class="border-radius-20 attach-content animate__animated animate__slideInUp animate__faster"
+                >
+                    <div fxLayout="row" fxLayoutAlign="space-between none" class="preview-header mat-elevation-z1 pl-16 pr-8 py-4">
+                        <div fxLayout fxLayoutAlign="center center">
+                            <button mat-icon-button (click)="uploadingFiles = []">
+                                <mat-icon> close </mat-icon>
+                            </button>
+                            <div fxLayout fxLayoutAlign="center center" class="mat-title m-0 ml-4">Preview</div>
+                        </div>
+                        <button mat-icon-button (click)="sendAttachments()">
+                            <mat-icon> send </mat-icon>
+                        </button>
+                    </div>
+                    <div class="preview-content" fxFlex>
+                        <div class="preview-item" *ngFor="let item of uploadingFiles">
+                            <ng-container *ngIf="imageFormats.includes(item.type); else audio">
+                                <img [src]="item.base64" />
+                            </ng-container>
+
+                            <ng-template #audio>
+                                <ng-container *ngIf="audioFormats.includes(item.type); else videos">
+                                    <audio [src]="item.base64" controls></audio>
+                                </ng-container>
+                            </ng-template>
+
+                            <ng-template #videos>
+                                <ng-container *ngIf="videoFormats.includes(item.type); else files">
+                                    <video [src]="item.base64" controls></video>
+                                </ng-container>
+                            </ng-template>
+
+                            <ng-template #files>
+                                <div fxLayout="column" fxLayoutAlign="center center" class="position-relative">
+                                    <mat-icon class="s-48 mb-4 hint-text"> insert_drive_file </mat-icon>
+                                    <span class="preview-file-name position-absolute text-bold font-size-12">{{ item.type | uppercase }}</span>
+                                    <span> {{ item.fileName }} </span>
+                                </div>
+                            </ng-template>
+                        </div>
+                        <!-- <button mat-fab color="primary" class="send-attach-btn" matTooltip="Send" (click)="sendAttachments()">
+                            <mat-icon>send</mat-icon>
+                        </button> -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>
