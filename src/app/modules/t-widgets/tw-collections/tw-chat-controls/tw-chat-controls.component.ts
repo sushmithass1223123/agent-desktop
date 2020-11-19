@@ -39,7 +39,6 @@ import {
     IAgentData,
     IResponse,
     IUIEvent,
-
     SDKClient,
     TextChatAgentConnectedEvent,
     TextChatAgentDisconnectedEvent,
@@ -255,12 +254,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             {
                 action: 'documents',
                 icon: 'insert_drive_file',
-                label: 'Documents'
+                label: 'Documents',
             },
             {
                 action: 'camera',
                 icon: 'camera_alt',
-                label: 'Camera'
+                label: 'Camera',
             },
             {
                 action: 'media',
@@ -269,9 +268,17 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             }
         ];
     /**
+     * Accepted types
+     */
+    attachAcceptTypes = '';
+    /**
      * Files currently uploadeng
      */
     uploadingFiles: {
+        /**
+         * Uploading file
+         */
+        file: File;
         /**
          * Name of file
          */
@@ -288,19 +295,23 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
          * File type extension
          */
         type: string;
+        /**
+         * File extension
+         */
+        ext: string;
     }[] = [];
     /**
-     * Video formats
+     * Type of attachment previw
      */
-    videoFormats: string[] = ['mp4', 'mov', 'flv', 'webm'];
+    attachPreviewMode = '';
     /**
-     * Image formats
+     * Self media stream
      */
-    imageFormats: string[] = ['gif', 'jpg', 'jpeg', 'png'];
+    selfVideo: MediaStream;
     /**
-     * Audio formats
+     * Face login video element
      */
-    audioFormats: string[] = ['mp3', 'wav'];
+    @ViewChild('camera', { static: false }) selfVideoElm: ElementRef;
     /**
      * Transfer/conference dialog ref
      */
@@ -995,6 +1006,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // clear the uploading files
         this.uploadingFiles = [];
+
+        // change the mode to upload to preview the taken image
+        this.attachPreviewMode = '';
+
+        // stop camera
+        this.stopCamera();
     }
 
     /**
@@ -1166,11 +1183,19 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             position: 'right',
             message: inputMessage,
             time: moment(new Date()),
-            attachment
+            attachment: { ...attachment }
         };
+
+        // Add the message to the chat
+        this.chatTranscripts.push(message);
 
         // check if reply feature/attachment is enabled or not social media
         if ((attachment || this.data.Data.ReplyOnChatAllowed) && !this.isSMM) {
+            // if media proxy then remove the source
+            if (this.fileUploadUrl.MediaProxy && attachment) {
+                attachment.src = '';
+            }
+            // create the json to send
             const jsonMessage = {
                 messageId: messageId,
                 type: type,
@@ -1195,9 +1220,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 '_attachmentSize': attachment.size
             });
         }
-
-        // Add the message to the chat
-        this.chatTranscripts.push(message);
 
         // Update the server
         SDKClient.sendTextChat(
@@ -1317,6 +1339,28 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             this.scrollToBottom();
         });
     }
+
+    /**
+     * To get type by file type
+     * 
+     * @param {string} fileType
+     */
+    getAttachTypeByFileType(fileType: string): string {
+        // append default type file
+        let type = 'file';
+        // get the type and check
+        if (fileType.includes('image')) {
+            type = 'image';
+        }
+        else if (fileType.includes('video')) {
+            type = 'video';
+        }
+        else if (fileType.includes('audio')) {
+            type = 'audio';
+        }
+        return type;
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
@@ -1492,11 +1536,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         let message = '';
 
         if (previewData.attachment.type === 'image') {
-            message = `< img src = ${previewData.attachment.src} width = "100%" width = "100%" /> `;
+            message = `<img src = ${previewData.attachment.src} width = "100%" width = "100%" /> `;
         } else if (previewData.attachment.type === 'video') {
-            message = `< video controls autoplay src = ${previewData.attachment.src} width = "100%" width = "100%" > </>`;
+            message = `<video controls autoplay src = ${previewData.attachment.src} width = "100%" width = "100%"> </video>`;
         }
-
+        // show the custom dialog box
         this.confirmDialogRef = this._appUIService.showCustomDialog('alert', message, 'Preview');
     }
 
@@ -1692,10 +1736,46 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * To add an attachment
      * 
-     * @param {string} type 
+     * @param { 'documents' | 'camera' | 'media' } type 
+     * @param {any} attachFileRef
      */
-    addAttachment(type: string): void {
-        this.showAttachOverlay = false;
+    addAttachment(type: 'documents' | 'camera' | 'media', attachFileRef: any): void {
+        try {
+            // add accept type for file input
+            this.attachAcceptTypes = type === 'media' ? 'image/*,video/mp4,video/3gpp,video/quicktime' : '*';
+            if (type === 'documents' || type === 'media') {
+                // trigger in timeout so that accept file input is changed
+                setTimeout(() => {
+                    attachFileRef.click();
+                });
+            }
+            else {
+                // open camera to take a picture
+                this.attachPreviewMode = 'camera';
+                // capture selfview
+                navigator.getUserMedia(
+                    {
+                        audio: false,
+                        video: true
+                    },
+                    (stream: MediaStream) => {
+                        this.selfVideo = stream;
+                    },
+                    (error: MediaStreamError) => {
+                        this._appUIService.showSnackbar(error.message, 'failure');
+                    }
+                );
+            }
+
+            // close the attach menu
+            setTimeout(() => {
+                this.showAttachOverlay = false;
+            });
+
+        } catch (error) {
+            this.attachPreviewMode = '';
+            this._appUIService.showSnackbar('Error in adding attachment', 'failure');
+        }
     }
 
     /**
@@ -1706,32 +1786,18 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         try {
             const input = evt.target as HTMLInputElement;
             if (input.files && input.files.length) {
-                const Base64 = await this.convertToBase64(input.files[0]);
-                const FileName = input.files[0].name;
+                const base64 = await this.convertToBase64(input.files[0]);
+                const fileName = input.files[0].name;
                 this.uploadingFiles.push({
-                    fileName: FileName,
-                    base64: Base64,
+                    file: input.files[0],
+                    fileName,
+                    base64,
                     size: input.files[0].size,
-                    type: FileName.split('.').pop()
+                    type: input.files[0].type,
+                    ext: fileName.split('.').pop()
                 });
 
-                // const { response } = await SDKClient.uploadFiles({
-                //     files: [
-                //         {
-                //             Base64,
-                //             FileName,
-                //             RelativePath: '',
-                //             Status: 0,
-                //             Type: '',
-                //             Url: ''
-                //         }
-                //     ]
-                // });
-
-                // this.email.Files.push({ Id: response[0].RelativePath, Direction: 'OUT', Name: response[0].FileName, URL: response[0].Url });
-
-
-                // this.uploadingFiles.pop();
+                this.attachPreviewMode = 'upload';
             }
 
         } catch (e) {
@@ -1759,24 +1825,106 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     async sendAttachments(): Promise<void> {
         try {
+            this.attachPreviewMode = '';
+            this._fuseProgressBarService.show();
+
             // check if SMM
             if (this.isSMM) {
+                // check if the URL is configured
+                if (!this.fileUploadUrl.SMM) {
+                    this._appUIService.showSnackbar('SMM file upload failed, URL not found!', 'failure');
+                    this.attachPreviewMode = '';
+                    this.uploadingFiles = [];
+                    return;
+                }
+
+                // get the files and upload
+                this.uploadingFiles.forEach(async (file) => {
+                    const formData = new FormData();
+                    formData.append('file', file.file);
+                    formData.append('interaction_id', TUtils.Generic.uuid());
+                    formData.append('organization_id', 'prod');
+                    formData.append('conv_id', this.sessionID);
+                    formData.append('uploaded_by', 'system');
+                    formData.append('other', '');
+
+                    // upload the file
+                    const { response } = await TUtils.HttpClient.sendRequest({
+                        url: this.fileUploadUrl.SMM,
+                        method: 'POST',
+                        responseType: 'json',
+                        formData
+                    });
+
+                    // check if success
+                    if (response?.isSuccess) {
+                        const type = this.getAttachTypeByFileType(file.type);
+                        this.sendMessage({
+                            Text: '',
+                            Type: type,
+                            Attachment: {
+                                name: file.fileName,
+                                src: response.result.streamURL,
+                                type: type,
+                                size: response.result.size
+                            }
+                        });
+                    }
+                    else {
+                        this._appUIService.showSnackbar('Failed to upload file', 'failure');
+                    }
+
+                    // remove the item from list
+                    this.uploadingFiles.pop();
+                });
+
+                this._fuseProgressBarService.hide();
 
             }
+            // check if to upload to media proxy
+            else if (this.fileUploadUrl.MediaProxy) {
+                this.uploadingFiles.forEach(async (file) => {
+                    const formData = new FormData();
+                    formData.append('file', file.file);
+                    formData.append('SessionId', this.sessionID);
+                    formData.append('other', '');
+
+                    // upload the file
+                    const { response } = await TUtils.HttpClient.sendRequest({
+                        url: this.fileUploadUrl.MediaProxy + '/api/FileUpload/Post/',
+                        method: 'POST',
+                        responseType: 'json',
+                        formData
+                    });
+
+                    // check the response from file server
+                    if (response?.statusCode === 'Created') {
+                        const type = this.getAttachTypeByFileType(file.type);
+                        this.sendMessage({
+                            Text: '',
+                            Type: type,
+                            Attachment: {
+                                name: file.fileName,
+                                src: response.url,
+                                type: type,
+                                size: file.size
+                            }
+                        });
+                    }
+                    else {
+                        this._appUIService.showSnackbar('Failed to upload file', 'failure');
+                    }
+
+                    // remove the item from list
+                    this.uploadingFiles.pop();
+                });
+
+                this._fuseProgressBarService.hide();
+            }
             else {
+                // upload to TMAC proxy
                 const filesToUpload: FileSaveData[] = [];
                 this.uploadingFiles.forEach(async (file) => {
-                    let type = 'file';
-                    // get the type by extension
-                    if (this.imageFormats.includes(file.type)) {
-                        type = 'image';
-                    }
-                    else if (this.imageFormats.includes(file.type)) {
-                        type = 'video';
-                    }
-                    else if (this.imageFormats.includes(file.type)) {
-                        type = 'audio';
-                    }
 
                     // add to the list
                     filesToUpload.push({
@@ -1784,30 +1932,19 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         Base64: file.base64,
                         RelativePath: '',
                         Status: 0,
-                        Type: type,
+                        Type: this.getAttachTypeByFileType(file.type),
                         Url: ''
                     });
                 });
 
-                // get the files for ref
-                const obj = [...this.uploadingFiles];
-
-                // clear the upload files
-                this.uploadingFiles = [];
-
-                this._fuseProgressBarService.show();
-                this._appUIService.showSnackbar('Failed is being uploaded, please wait', 'loading');
-
                 // upload to server
-                const { response, userObject } = await SDKClient.uploadFiles({
+                const { response } = await SDKClient.uploadFiles({
                     files: filesToUpload
-                }, obj);
-
-                this._fuseProgressBarService.hide();
+                });
 
                 // check the response
                 response.forEach((item) => {
-                    const file = userObject.pop();
+                    const file = this.uploadingFiles.pop();
                     this.sendMessage({
                         Text: '',
                         Type: item.Type ? item.Type : 'file',
@@ -1820,10 +1957,59 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     });
                 });
 
-                this._appUIService.showSnackbar('File uploaded successfully', 'success');
+                this._fuseProgressBarService.hide();
             }
+
         } catch (error) {
             this._appUIService.showSnackbar('Failed to upload file', 'failure');
+            // hide the progress bar
+            this._fuseProgressBarService.hide();
+        }
+    }
+
+    /**
+     * To take the photo
+     */
+    takePhoto(): void {
+        // create a canvas
+        const canvas = document.createElement('canvas');
+        // scale the canvas accordingly
+        canvas.width = this.selfVideoElm?.nativeElement.videoWidth;
+        canvas.height = this.selfVideoElm?.nativeElement.videoHeight;
+        // get the context
+        const ctx = canvas.getContext('2d');
+        // translate the image
+        ctx.translate(canvas.width, 0);
+        // scale the image
+        ctx.scale(-1, 1);
+        // draw the canvas
+        ctx.drawImage(this.selfVideoElm?.nativeElement, 0, 0, canvas.width, canvas.height);
+        // get base64 url
+        const base64 = canvas.toDataURL();
+        // create new file name
+        const fileName = `image_${new Date().getTime()}.png`;
+        const size = Math.round(4 * Math.ceil((base64.length - 'data:image/png;base64,'.length / 3)) * 0.5624896334383812);
+        this.uploadingFiles.push({
+            file: null,
+            fileName,
+            base64,
+            size: size,
+            type: 'image',
+            ext: 'png'
+        });
+        // change the mode to upload to preview the taken image
+        this.attachPreviewMode = 'upload';
+        // stop camera
+        this.stopCamera();
+    }
+
+    /**
+     * To stop selfie camera
+     */
+    stopCamera(): void {
+        if (this.selfVideo) {
+            this.selfVideo.getTracks().forEach((track: MediaStreamTrack) => { track.stop(); });
+            this.selfVideo = null;
         }
     }
 }

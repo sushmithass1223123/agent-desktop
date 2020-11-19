@@ -390,13 +390,19 @@ tw-chat-controls {
                         height: 100%;
                         max-height: 100%;
                         object-fit: contain;
-                    }
-                }
 
-                .send-attach-btn {
-                    position: absolute;
-                    bottom: 2%;
-                    right: 2%;
+                        &.selfie {
+                            object-fit: cover;
+                            -webkit-transform: scaleX(-1);
+                            transform: scaleX(-1);
+                        }
+                    }
+
+                    .take-photo-btn {
+                        position: absolute;
+                        bottom: 2%;
+                        right: 2%;
+                    }
                 }
             }
         }

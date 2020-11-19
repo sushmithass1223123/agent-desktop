@@ -4,7 +4,6 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseConfigService } from '@fuse/services/config.service';
-import { FuseSplashScreenService } from '@fuse/services/splash-screen.service';
 import { AppUiService } from '@services/app-ui.service';
 import { AppDataService } from 'app/services/app-data.service';
 import { Subject } from 'rxjs';

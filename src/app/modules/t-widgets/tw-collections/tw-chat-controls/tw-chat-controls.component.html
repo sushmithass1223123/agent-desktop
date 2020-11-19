@@ -393,7 +393,7 @@
                                     ></emoji-mart>
                                 </ng-template>
                             </button>
-                            <!-- 
+
                             <button
                                 *ngIf="data.Data.AttachmentAllowed"
                                 cdkOverlayOrigin
@@ -405,9 +405,8 @@
                                 class="rotate-45"
                                 aria-label="Select Attachment"
                                 matTooltip="Attach"
-                            > -->
-
-                            <button
+                            >
+                                <!-- <button
                                 *ngIf="data.Data.AttachmentAllowed"
                                 [disabled]="status !== 'connected'"
                                 (click)="attachFileRef.click()"
@@ -416,9 +415,10 @@
                                 class="rotate-45"
                                 aria-label="Select Attachment"
                                 matTooltip="Attach"
-                            >
+                            > -->
+
                                 <mat-icon>attach_file</mat-icon>
-                                <!-- <ng-template
+                                <ng-template
                                     cdkConnectedOverlay
                                     [cdkConnectedOverlayOrigin]="attachOverlay"
                                     [cdkConnectedOverlayOpen]="showAttachOverlay"
@@ -434,15 +434,16 @@
                                             color="secondary"
                                             class="fab-secondary"
                                             [matTooltip]="item.label"
-                                            (click)="addAttachment(item.action)"
+                                            (click)="addAttachment(item.action, attachFileRef)"
                                         >
                                             <mat-icon>{{ item.icon }}</mat-icon>
                                         </button>
                                     </div>
-                                </ng-template> -->
+                                </ng-template>
                                 <input
                                     #attachFileRef
                                     type="file"
+                                    [accept]="attachAcceptTypes"
                                     (click)="$event.target.value = null"
                                     (change)="onFileInput($event)"
                                     style="display: none"
@@ -485,7 +486,7 @@
                 <!-- / CHAT FOOTER-->
 
                 <div
-                    *ngIf="uploadingFiles.length > 0"
+                    *ngIf="attachPreviewMode"
                     fxLayout="column"
                     fxLayoutAlign=" none"
                     fxFlex
@@ -493,44 +494,56 @@
                 >
                     <div fxLayout="row" fxLayoutAlign="space-between none" class="preview-header mat-elevation-z1 pl-16 pr-8 py-4">
                         <div fxLayout fxLayoutAlign="center center">
-                            <button mat-icon-button (click)="uploadingFiles = []">
+                            <button mat-icon-button (click)="uploadingFiles = []; attachPreviewMode = ''; stopCamera()">
                                 <mat-icon> close </mat-icon>
                             </button>
-                            <div fxLayout fxLayoutAlign="center center" class="mat-title m-0 ml-4">Preview</div>
+                            <div fxLayout fxLayoutAlign="center center" class="mat-title m-0 ml-4">
+                                {{ attachPreviewMode === 'camera' ? 'Take Photo' : 'Preview' }}
+                            </div>
                         </div>
-                        <button mat-icon-button (click)="sendAttachments()">
+
+                        <button *ngIf="attachPreviewMode === 'upload'" mat-icon-button (click)="sendAttachments()">
                             <mat-icon> send </mat-icon>
+                        </button>
+
+                        <button *ngIf="attachPreviewMode === 'camera'" mat-icon-button (click)="takePhoto()">
+                            <mat-icon> camera_alt </mat-icon>
                         </button>
                     </div>
                     <div class="preview-content" fxFlex>
-                        <div class="preview-item" *ngFor="let item of uploadingFiles">
-                            <ng-container *ngIf="imageFormats.includes(item.type); else audio">
-                                <img [src]="item.base64" />
+                        <div class="preview-item">
+                            <ng-container *ngIf="attachPreviewMode === 'camera'">
+                                <video class="selfie" #camera autoplay playsinline="true" [muted]="true" [srcObject]="selfVideo"></video>
                             </ng-container>
 
-                            <ng-template #audio>
-                                <ng-container *ngIf="audioFormats.includes(item.type); else videos">
-                                    <audio [src]="item.base64" controls></audio>
-                                </ng-container>
-                            </ng-template>
+                            <ng-container *ngIf="attachPreviewMode === 'upload'">
+                                <ng-container *ngFor="let item of uploadingFiles">
+                                    <ng-container *ngIf="item.type.includes('image'); else audio">
+                                        <img [src]="item.base64" />
+                                    </ng-container>
 
-                            <ng-template #videos>
-                                <ng-container *ngIf="videoFormats.includes(item.type); else files">
-                                    <video [src]="item.base64" controls></video>
-                                </ng-container>
-                            </ng-template>
+                                    <ng-template #audio>
+                                        <ng-container *ngIf="item.type.includes('audio'); else videos">
+                                            <audio [src]="item.base64" controls></audio>
+                                        </ng-container>
+                                    </ng-template>
 
-                            <ng-template #files>
-                                <div fxLayout="column" fxLayoutAlign="center center" class="position-relative">
-                                    <mat-icon class="s-48 mb-4 hint-text"> insert_drive_file </mat-icon>
-                                    <span class="preview-file-name position-absolute text-bold font-size-12">{{ item.type | uppercase }}</span>
-                                    <span> {{ item.fileName }} </span>
-                                </div>
-                            </ng-template>
+                                    <ng-template #videos>
+                                        <ng-container *ngIf="item.type.includes('video'); else files">
+                                            <video [src]="item.base64" controls></video>
+                                        </ng-container>
+                                    </ng-template>
+
+                                    <ng-template #files>
+                                        <div fxLayout="column" fxLayoutAlign="center center" class="position-relative">
+                                            <mat-icon class="s-48 mb-4 hint-text"> insert_drive_file </mat-icon>
+                                            <span class="preview-file-name position-absolute text-bold font-size-12">{{ item.ext | uppercase }}</span>
+                                            <span> {{ item.fileName }} </span>
+                                        </div>
+                                    </ng-template>
+                                </ng-container>
+                            </ng-container>
                         </div>
-                        <!-- <button mat-fab color="primary" class="send-attach-btn" matTooltip="Send" (click)="sendAttachments()">
-                            <mat-icon>send</mat-icon>
-                        </button> -->
                     </div>
                 </div>
             </div>
