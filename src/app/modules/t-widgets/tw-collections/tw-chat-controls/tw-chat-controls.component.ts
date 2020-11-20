@@ -268,39 +268,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             }
         ];
     /**
-     * Accepted types
-     */
-    attachAcceptTypes = '';
-    /**
-     * Files currently uploadeng
-     */
-    uploadingFiles: {
-        /**
-         * Uploading file
-         */
-        file: File;
-        /**
-         * Name of file
-         */
-        fileName: string;
-        /**
-         * Base64 string of file
-         */
-        base64: string;
-        /**
-         * Size of file
-         */
-        size: number;
-        /**
-         * File type extension
-         */
-        type: string;
-        /**
-         * File extension
-         */
-        ext: string;
-    }[] = [];
-    /**
      * Type of attachment previw
      */
     attachPreviewMode = '';
@@ -308,10 +275,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * Self media stream
      */
     selfVideo: MediaStream;
-    /**
-     * Face login video element
-     */
-    @ViewChild('camera', { static: false }) selfVideoElm: ElementRef;
+
     /**
      * Transfer/conference dialog ref
      */
@@ -1004,14 +968,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // close the conf/transfer if opened
         this.transferConfDialogRef?.close();
 
-        // clear the uploading files
-        this.uploadingFiles = [];
-
         // change the mode to upload to preview the taken image
         this.attachPreviewMode = '';
-
-        // stop camera
-        this.stopCamera();
     }
 
     /**
@@ -1215,7 +1173,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             messageData = JSON.stringify({
                 '_type': 'attachment',
                 '_attachmentType': attachment.type,
-                '_attachmentId': this.interactionId,
+                '_attachmentId': attachment.interactionId,
                 '_attachmentPreviewId': '',
                 '_attachmentSize': attachment.size
             });
@@ -1340,26 +1298,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         });
     }
 
-    /**
-     * To get type by file type
-     * 
-     * @param {string} fileType
-     */
-    getAttachTypeByFileType(fileType: string): string {
-        // append default type file
-        let type = 'file';
-        // get the type and check
-        if (fileType.includes('image')) {
-            type = 'image';
-        }
-        else if (fileType.includes('video')) {
-            type = 'video';
-        }
-        else if (fileType.includes('audio')) {
-            type = 'audio';
-        }
-        return type;
-    }
+
 
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
@@ -1737,279 +1676,67 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * To add an attachment
      * 
      * @param { 'documents' | 'camera' | 'media' } type 
-     * @param {any} attachFileRef
      */
-    addAttachment(type: 'documents' | 'camera' | 'media', attachFileRef: any): void {
-        try {
-            // add accept type for file input
-            this.attachAcceptTypes = type === 'media' ? 'image/*,video/mp4,video/3gpp,video/quicktime' : '*';
-            if (type === 'documents' || type === 'media') {
-                // trigger in timeout so that accept file input is changed
-                setTimeout(() => {
-                    attachFileRef.click();
-                });
+    addAttachment(type: 'documents' | 'camera' | 'media'): void {
+        // clear the mode
+        this.attachPreviewMode = '';
+        // close the attach menu
+        setTimeout(() => {
+            if (type === 'documents') {
+                // open camera to take a picture
+                this.attachPreviewMode = 'uploadDocuments';
+            }
+            else if (type === 'media') {
+                // open camera to take a picture
+                this.attachPreviewMode = 'uploadMedia';
             }
             else {
                 // open camera to take a picture
                 this.attachPreviewMode = 'camera';
-                // capture selfview
-                navigator.getUserMedia(
-                    {
-                        audio: false,
-                        video: true
-                    },
-                    (stream: MediaStream) => {
-                        this.selfVideo = stream;
-                    },
-                    (error: MediaStreamError) => {
-                        this._appUIService.showSnackbar(error.message, 'failure');
-                    }
-                );
             }
-
-            // close the attach menu
-            setTimeout(() => {
-                this.showAttachOverlay = false;
-            });
-
-        } catch (error) {
-            this.attachPreviewMode = '';
-            this._appUIService.showSnackbar('Error in adding attachment', 'failure');
-        }
-    }
-
-    /**
-     * Attach files to email
-     * @param {Event} evt
-     */
-    async onFileInput(evt: Event): Promise<void> {
-        try {
-            const input = evt.target as HTMLInputElement;
-            if (input.files && input.files.length) {
-                const base64 = await this.convertToBase64(input.files[0]);
-                const fileName = input.files[0].name;
-                this.uploadingFiles.push({
-                    file: input.files[0],
-                    fileName,
-                    base64,
-                    size: input.files[0].size,
-                    type: input.files[0].type,
-                    ext: fileName.split('.').pop()
-                });
-
-                this.attachPreviewMode = 'upload';
-            }
-
-        } catch (e) {
-            console.error(e);
-            this._appUIService.showSnackbar('Failed to upload file', 'failure');
-        }
-    }
-
-    /**
-     * Convert file to base64
-     * @param {File} file 
-     */
-    async convertToBase64(file: File): Promise<any> {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = (error) => reject(error);
+            // close attachment list
+            this.showAttachOverlay = false;
         });
+    }
+
+    /**
+     * To close attachment panel
+     */
+    closeAttachments(): void {
+        this.attachPreviewMode = '';
     }
 
     /**
      * To send attachments
-     *  
      */
-    async sendAttachments(): Promise<void> {
-        try {
-            this.attachPreviewMode = '';
-            this._fuseProgressBarService.show();
+    sendAttachments(item: any): void {
+        // clear the mode
+        this.attachPreviewMode = '';
 
-            // check if SMM
-            if (this.isSMM) {
-                // check if the URL is configured
-                if (!this.fileUploadUrl.SMM) {
-                    this._appUIService.showSnackbar('SMM file upload failed, URL not found!', 'failure');
-                    this.attachPreviewMode = '';
-                    this.uploadingFiles = [];
-                    return;
-                }
-
-                // get the files and upload
-                this.uploadingFiles.forEach(async (file) => {
-                    const formData = new FormData();
-                    formData.append('file', file.file);
-                    formData.append('interaction_id', TUtils.Generic.uuid());
-                    formData.append('organization_id', 'prod');
-                    formData.append('conv_id', this.sessionID);
-                    formData.append('uploaded_by', 'system');
-                    formData.append('other', '');
-
-                    // upload the file
-                    const { response } = await TUtils.HttpClient.sendRequest({
-                        url: this.fileUploadUrl.SMM,
-                        method: 'POST',
-                        responseType: 'json',
-                        formData
-                    });
-
-                    // check if success
-                    if (response?.isSuccess) {
-                        const type = this.getAttachTypeByFileType(file.type);
-                        this.sendMessage({
-                            Text: '',
-                            Type: type,
-                            Attachment: {
-                                name: file.fileName,
-                                src: response.result.streamURL,
-                                type: type,
-                                size: response.result.size
-                            }
-                        });
-                    }
-                    else {
-                        this._appUIService.showSnackbar('Failed to upload file', 'failure');
-                    }
-
-                    // remove the item from list
-                    this.uploadingFiles.pop();
-                });
-
-                this._fuseProgressBarService.hide();
-
-            }
-            // check if to upload to media proxy
-            else if (this.fileUploadUrl.MediaProxy) {
-                this.uploadingFiles.forEach(async (file) => {
-                    const formData = new FormData();
-                    formData.append('file', file.file);
-                    formData.append('SessionId', this.sessionID);
-                    formData.append('other', '');
-
-                    // upload the file
-                    const { response } = await TUtils.HttpClient.sendRequest({
-                        url: this.fileUploadUrl.MediaProxy + '/api/FileUpload/Post/',
-                        method: 'POST',
-                        responseType: 'json',
-                        formData
-                    });
-
-                    // check the response from file server
-                    if (response?.statusCode === 'Created') {
-                        const type = this.getAttachTypeByFileType(file.type);
-                        this.sendMessage({
-                            Text: '',
-                            Type: type,
-                            Attachment: {
-                                name: file.fileName,
-                                src: response.url,
-                                type: type,
-                                size: file.size
-                            }
-                        });
-                    }
-                    else {
-                        this._appUIService.showSnackbar('Failed to upload file', 'failure');
-                    }
-
-                    // remove the item from list
-                    this.uploadingFiles.pop();
-                });
-
-                this._fuseProgressBarService.hide();
-            }
-            else {
-                // upload to TMAC proxy
-                const filesToUpload: FileSaveData[] = [];
-                this.uploadingFiles.forEach(async (file) => {
-
-                    // add to the list
-                    filesToUpload.push({
-                        FileName: file.fileName,
-                        Base64: file.base64,
-                        RelativePath: '',
-                        Status: 0,
-                        Type: this.getAttachTypeByFileType(file.type),
-                        Url: ''
-                    });
-                });
-
-                // upload to server
-                const { response } = await SDKClient.uploadFiles({
-                    files: filesToUpload
-                });
-
-                // check the response
-                response.forEach((item) => {
-                    const file = this.uploadingFiles.pop();
-                    this.sendMessage({
-                        Text: '',
-                        Type: item.Type ? item.Type : 'file',
-                        Attachment: {
-                            name: item.FileName,
-                            src: item.Url,
-                            type: item.Type ? item.Type : 'file',
-                            size: file.size
-                        }
-                    });
-                });
-
-                this._fuseProgressBarService.hide();
-            }
-
-        } catch (error) {
-            this._appUIService.showSnackbar('Failed to upload file', 'failure');
-            // hide the progress bar
-            this._fuseProgressBarService.hide();
+        // prepare the attachment json
+        let attachment: any = {
+            name: item.fileName,
+            src: item.src,
+            type: item.type,
+            size: item.size
+        };
+        // check if interaction id is provided, this will for SMM upload
+        if (item.interactionId) {
+            attachment = {
+                ...attachment,
+                interactionId: item.interactionId
+            };
         }
-    }
-
-    /**
-     * To take the photo
-     */
-    takePhoto(): void {
-        // create a canvas
-        const canvas = document.createElement('canvas');
-        // scale the canvas accordingly
-        canvas.width = this.selfVideoElm?.nativeElement.videoWidth;
-        canvas.height = this.selfVideoElm?.nativeElement.videoHeight;
-        // get the context
-        const ctx = canvas.getContext('2d');
-        // translate the image
-        ctx.translate(canvas.width, 0);
-        // scale the image
-        ctx.scale(-1, 1);
-        // draw the canvas
-        ctx.drawImage(this.selfVideoElm?.nativeElement, 0, 0, canvas.width, canvas.height);
-        // get base64 url
-        const base64 = canvas.toDataURL();
-        // create new file name
-        const fileName = `image_${new Date().getTime()}.png`;
-        const size = Math.round(4 * Math.ceil((base64.length - 'data:image/png;base64,'.length / 3)) * 0.5624896334383812);
-        this.uploadingFiles.push({
-            file: null,
-            fileName,
-            base64,
-            size: size,
-            type: 'image',
-            ext: 'png'
+        // send message
+        this.sendMessage({
+            Text: '',
+            Type: item.type,
+            Attachment: attachment
         });
-        // change the mode to upload to preview the taken image
-        this.attachPreviewMode = 'upload';
-        // stop camera
-        this.stopCamera();
-    }
-
-    /**
-     * To stop selfie camera
-     */
-    stopCamera(): void {
-        if (this.selfVideo) {
-            this.selfVideo.getTracks().forEach((track: MediaStreamTrack) => { track.stop(); });
-            this.selfVideo = null;
-        }
     }
 }
+
+
+
+
+

@@ -344,7 +344,7 @@
                                 <div class="time" [ngClass]="message?.type">{{ message.time | date: 'shortTime' }}</div>
                             </div>
 
-                            <div *ngIf="message.divider" class="divider bg-secondary"></div>
+                            <div *ngIf="message.divider" class="divider bg-secondary animate__animated animate__slideInUp animate__faster"></div>
                         </div>
                         <!-- / MESSAGE -->
                     </div>
@@ -434,20 +434,12 @@
                                             color="secondary"
                                             class="fab-secondary"
                                             [matTooltip]="item.label"
-                                            (click)="addAttachment(item.action, attachFileRef)"
+                                            (click)="addAttachment(item.action)"
                                         >
                                             <mat-icon>{{ item.icon }}</mat-icon>
                                         </button>
                                     </div>
                                 </ng-template>
-                                <input
-                                    #attachFileRef
-                                    type="file"
-                                    [accept]="attachAcceptTypes"
-                                    (click)="$event.target.value = null"
-                                    (change)="onFileInput($event)"
-                                    style="display: none"
-                                />
                             </button>
 
                             <mat-form-field
@@ -485,67 +477,17 @@
                 </div>
                 <!-- / CHAT FOOTER-->
 
-                <div
+                <!-- CHAT ATTACHMENTS -->
+                <chat-attachments
                     *ngIf="attachPreviewMode"
-                    fxLayout="column"
-                    fxLayoutAlign=" none"
-                    fxFlex
-                    class="border-radius-20 attach-content animate__animated animate__slideInUp animate__faster"
-                >
-                    <div fxLayout="row" fxLayoutAlign="space-between none" class="preview-header mat-elevation-z1 pl-16 pr-8 py-4">
-                        <div fxLayout fxLayoutAlign="center center">
-                            <button mat-icon-button (click)="uploadingFiles = []; attachPreviewMode = ''; stopCamera()">
-                                <mat-icon> close </mat-icon>
-                            </button>
-                            <div fxLayout fxLayoutAlign="center center" class="mat-title m-0 ml-4">
-                                {{ attachPreviewMode === 'camera' ? 'Take Photo' : 'Preview' }}
-                            </div>
-                        </div>
-
-                        <button *ngIf="attachPreviewMode === 'upload'" mat-icon-button (click)="sendAttachments()">
-                            <mat-icon> send </mat-icon>
-                        </button>
-
-                        <button *ngIf="attachPreviewMode === 'camera'" mat-icon-button (click)="takePhoto()">
-                            <mat-icon> camera_alt </mat-icon>
-                        </button>
-                    </div>
-                    <div class="preview-content" fxFlex>
-                        <div class="preview-item">
-                            <ng-container *ngIf="attachPreviewMode === 'camera'">
-                                <video class="selfie" #camera autoplay playsinline="true" [muted]="true" [srcObject]="selfVideo"></video>
-                            </ng-container>
-
-                            <ng-container *ngIf="attachPreviewMode === 'upload'">
-                                <ng-container *ngFor="let item of uploadingFiles">
-                                    <ng-container *ngIf="item.type.includes('image'); else audio">
-                                        <img [src]="item.base64" />
-                                    </ng-container>
-
-                                    <ng-template #audio>
-                                        <ng-container *ngIf="item.type.includes('audio'); else videos">
-                                            <audio [src]="item.base64" controls></audio>
-                                        </ng-container>
-                                    </ng-template>
-
-                                    <ng-template #videos>
-                                        <ng-container *ngIf="item.type.includes('video'); else files">
-                                            <video [src]="item.base64" controls></video>
-                                        </ng-container>
-                                    </ng-template>
-
-                                    <ng-template #files>
-                                        <div fxLayout="column" fxLayoutAlign="center center" class="position-relative">
-                                            <mat-icon class="s-48 mb-4 hint-text"> insert_drive_file </mat-icon>
-                                            <span class="preview-file-name position-absolute text-bold font-size-12">{{ item.ext | uppercase }}</span>
-                                            <span> {{ item.fileName }} </span>
-                                        </div>
-                                    </ng-template>
-                                </ng-container>
-                            </ng-container>
-                        </div>
-                    </div>
-                </div>
+                    [isSMM]="isSMM"
+                    [fileUploadUrl]="fileUploadUrl"
+                    [sessionID]="sessionID"
+                    [attachPreviewMode]="attachPreviewMode"
+                    (closeAttachments)="closeAttachments()"
+                    (sendAttachments)="sendAttachments($event)"
+                ></chat-attachments>
+                <!-- CHAT ATTACHMENTS -->
             </div>
         </div>
     </div>

@@ -3288,7 +3288,7 @@
                 ],
                 "FileServerUrl": {
                     "SMM": "https://dice.tetherfi.cloud:13019/upload",
-                    "MediaProxy": "https://dice.tetherfi.cloud/ApiFileUploadDownLoad/"
+                    "MediaProxy": "https://dice.tetherfi.cloud/ApiFileUploadDownLoad"
                 },
                 "TCMClient": "https://dice.tetherfi.cloud/TCM_Client/CampaignManager.asmx"
             }
