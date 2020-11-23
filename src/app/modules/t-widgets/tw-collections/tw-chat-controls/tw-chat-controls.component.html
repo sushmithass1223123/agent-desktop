@@ -106,6 +106,30 @@
                     </button>
 
                     <button
+                        [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper' || this.botConnected"
+                        *ngIf="selfServiceDestinations.length"
+                        mat-mini-fab
+                        color="default"
+                        [ngClass]="
+                            (fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                                ? fuseConfig.layout.anchorWidget.bodyBackground
+                                : '') +
+                            ' ' +
+                            (status === 'connected' ? 'mat-elevation-z2' : '')
+                        "
+                        matTooltip="Conference Bot"
+                        [matMenuTriggerFor]="botMenu"
+                    >
+                        <mat-icon>android</mat-icon>
+                    </button>
+
+                    <mat-menu class="custom" #botMenu="matMenu" xPosition="after">
+                        <button mat-menu-item *ngFor="let item of selfServiceDestinations" (click)="conferenceWithBot(item.Value)">
+                            <span>{{ item.Name }}</span>
+                        </button>
+                    </mat-menu>
+
+                    <button
                         *ngIf="data.Data?.Transfer.Allowed"
                         [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper' || this.botConnected"
                         mat-mini-fab
@@ -139,24 +163,6 @@
                         (click)="openTransferConferenceDialog('conference')"
                     >
                         <mat-icon>group</mat-icon>
-                    </button>
-
-                    <button
-                        *ngIf="data.Data.ConferenceAllowed"
-                        [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper' || this.botConnected"
-                        mat-mini-fab
-                        color="default"
-                        [ngClass]="
-                            (fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
-                                ? fuseConfig.layout.anchorWidget.bodyBackground
-                                : '') +
-                            ' ' +
-                            (status === 'connected' ? 'mat-elevation-z2' : '')
-                        "
-                        matTooltip="Conference Bot"
-                        (click)="conferenceWithBot()"
-                    >
-                        <mat-icon>android</mat-icon>
                     </button>
 
                     <button

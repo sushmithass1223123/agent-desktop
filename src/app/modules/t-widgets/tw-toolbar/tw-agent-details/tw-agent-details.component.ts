@@ -1,7 +1,8 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
+import { AppUiService } from '@services/app-ui.service';
 import { TWidgetWrapper } from '@twidgets/utils';
-import { AgentStatusChangeEvent, IAgentData, IAUXCodes, IResponse, SDKClient } from 'tmac-sdk';
+import { AgentStatusChangeEvent, AUXCodeUpdateEvent, IAgentData, IAUXCodes, IResponse, SDKClient } from 'tmac-sdk';
 /**
  * Agent Details component
  */
@@ -63,7 +64,8 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
     currentAux: string;
 
     constructor(
-        private _fuseProgressBarService: FuseProgressBarService
+        private _fuseProgressBarService: FuseProgressBarService,
+        private _appUIService: AppUiService
     ) {
         super();
     }
@@ -81,9 +83,9 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
         // get agent details
         this.agentData = SDKClient.getAgentData();
 
-        // register to events
-        SDKClient.events.on('AgentStatusChangingEvent', this.AgentStatusChangingEvent);
+        // register to events 
         SDKClient.events.on('AgentStatusChangeEvent', this.AgentStatusChangeEvent);
+        SDKClient.events.on('AUXCodeUpdateEvent', this.AUXCodeUpdateEvent);
 
         // get agent aux codes
         SDKClient.loadAUXCodes(this.auxCodeConfig.ByTeam, null)
@@ -104,15 +106,8 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
         this.destroyWrapper();
 
         // unregister from events
-        SDKClient.events.off('AgentStatusChangingEvent', this.AgentStatusChangingEvent);
         SDKClient.events.off('AgentStatusChangeEvent', this.AgentStatusChangeEvent);
-    }
-
-    /**
-     * AgentStatusChangingEvent Handler
-     */
-    private AgentStatusChangingEvent = () => {
-        this.agentData.agentStatus = 'Please wait...';
+        SDKClient.events.off('AUXCodeUpdateEvent', this.AUXCodeUpdateEvent);
     }
 
     /**
@@ -122,6 +117,21 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
      */
     private AgentStatusChangeEvent = (evt: AgentStatusChangeEvent) => {
         this.agentData.agentStatus = evt.Status;
+    }
+
+    /**
+     * To process AUXCodeUpdateEvent
+     * 
+     * @param {AUXCodeUpdateEvent} evt 
+     */
+    AUXCodeUpdateEvent = (evt: AUXCodeUpdateEvent) => {
+        // update the aux codes
+        this.auxCodesList = evt.AUXCodes;
+        // show an alert
+        this._appUIService.showAppSnackbar({
+            message: 'Aux Codes reloaded successfully',
+            state: 'success'
+        });
     }
 
     /**

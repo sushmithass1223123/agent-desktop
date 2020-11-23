@@ -5,7 +5,7 @@ import { ReminderTaskDialogComponent } from '@modules/shared/components';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { IAction, IWidget, QuizEvent } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
-import { camelCase, map, upperFirst } from 'lodash';
+import { map, upperFirst } from 'lodash';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
@@ -15,6 +15,7 @@ import {
     AgentReminder,
     AgentReminderEvent,
     AgentStatusChangeEvent,
+
     CommandResultEvent,
     GenericInteractionEvent,
     HoldTimerEvent,
@@ -23,7 +24,7 @@ import {
     IUIEvent,
     SDKClient,
     TCMDirectAgentNotifyTimeoutEvent,
-    TextChatTransferFailedEvent,
+
     TextChatTransferNotificationEvent,
     TUtils
 } from 'tmac-sdk';
@@ -769,6 +770,7 @@ export class TMACEventService {
 
     /**
      * To process TextChatTransferNotificationEvent
+     * 
      * @param {TextChatTransferNotificationEvent} evt
      */
     TextChatTransferNotificationEvent = (evt: TextChatTransferNotificationEvent) => {
@@ -859,7 +861,7 @@ export class TMACEventService {
         SDKClient.events.off('QuizEvent', this.QuizEvent);
         SDKClient.events.off('AgentReminderEvent', this.AgentReminderEvent);
         SDKClient.events.off('AgentForcedLogoffEvent', this.AgentForcedLogoffEvent);
-        SDKClient.events.off('TextChatTransferNotificationEvent', this.TextChatTransferNotificationEvent);
+        SDKClient.events.off('TextChatTransferNotificationEvent', this.TextChatTransferNotificationEvent); 
 
         // unsubscribe from all subscriptions
         this._unsubscribeAll.next();

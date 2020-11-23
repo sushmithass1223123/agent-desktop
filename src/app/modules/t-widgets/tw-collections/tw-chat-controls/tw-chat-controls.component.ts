@@ -35,11 +35,11 @@ import { takeUntil } from 'rxjs/internal/operators/takeUntil';
 import {
     AVChannel,
     AVControlMessageReceivedEvent,
-    FileSaveData,
     IAgentData,
     IResponse,
     IUIEvent,
     SDKClient,
+    SSDestination,
     TextChatAgentConnectedEvent,
     TextChatAgentDisconnectedEvent,
     TextChatAgentMessageReceivedEvent,
@@ -281,10 +281,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     transferConfDialogRef: MatDialogRef<any, any>;
     /**
-     * Fuse scrollbar children directive ref
+     * Self service destinations
      */
-    // @ViewChildren(FusePerfectScrollbarDirective) directiveScrolls: QueryList<FusePerfectScrollbarDirective>;
-
+    selfServiceDestinations: SSDestination[] = [];
     /**
      * Messages div ref
      */
@@ -559,6 +558,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         if (evt.InteractionID !== this.interactionId) {
             return;
         }
+
+        this.selfServiceDestinations = evt.Destinations;
     }
 
     /**
@@ -1543,14 +1544,16 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
     /**
      * To conference Bot with the session
+     * 
+     * @param {string} value
      */
-    public conferenceWithBot(): void {
+    public conferenceWithBot(value: string): void {
         this._fuseProgressBarService.show();
         // freeze auto response
         this.freezeAutoResponse(true);
         // send the request to server
         SDKClient.textChatConferenceToBot({
-            destination: '',
+            destination: value,
             interactionId: this.interactionId.toString()
         })
             .then((resp) => {

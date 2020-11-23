@@ -15,11 +15,38 @@
         <button mat-raised-button color="primary" (click)="fetchCampaigns()">Retry</button>
     </div>
 
-    <div *ngIf="!getCampaignsReq.loading && !getCampaignsReq.error" class="w-100-p h-100-p">
-        <ul class="tw-list w-100-p custom-scroll-adjust">
+    <div *ngIf="!getCampaignsReq.loading && !getCampaignsReq.error" class="w-100-p campaign-list">
+        <div class="w-100-p px-4">
+            <mat-form-field class="custom form-field w-100-p" appearance="outline">
+                <input class="login-input" matInput placeholder="Search" [(ngModel)]="searchTerm" (input)="filterCampaigns()" />
+                <button
+                    *ngIf="!searchTerm; else clearBtn"
+                    mat-icon-button
+                    matSuffix
+                    [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
+                    disabled
+                >
+                    <mat-icon matSuffix>search</mat-icon>
+                </button>
+                <ng-template #clearBtn>
+                    <button
+                        mat-button
+                        color="primary"
+                        matSuffix
+                        mat-icon-button
+                        aria-label="Clear"
+                        [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
+                        (click)="searchTerm = ''; filterCampaigns()"
+                    >
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </ng-template>
+            </mat-form-field>
+        </div>
+        <ul class="tw-list w-100-p h-100-p m-0 custom-scroll-adjust">
             <li
                 class="tw-list-item selectable"
-                *ngFor="let camp of getCampaignsReq.data"
+                *ngFor="let camp of getCampaignsReq.filteredData"
                 (click)="toggleForm(camp)"
                 fxLayout
                 fxLayoutAlign="space-between center"
@@ -33,6 +60,11 @@
                 <!-- </button> -->
             </li>
         </ul>
+
+        <div fxLayout fxLayoutAlign="center center" *ngIf="!getCampaignsReq.filteredData.length">
+            <mat-icon class="mr-4"> campaign </mat-icon>
+            <span> No Campaigns Found! </span>
+        </div>
     </div>
 
     <!-- your code goes here -->

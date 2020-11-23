@@ -204,6 +204,27 @@ export class LoginComponent implements OnInit, OnDestroy {
      * Self video stream
      */
     selfVideo: MediaStream;
+    /**
+     * Multiple window mode
+     */
+    multiWindowMode: {
+        /**
+         * Enabled flag
+         */
+        Enabled: boolean;
+        /**
+         * Width of new window
+         */
+        Width: number;
+        /**
+         * Height of new window
+         */
+        Height: number;
+        /**
+         * New window dimension type
+         */
+        PixelDimension: boolean;
+    };
 
     constructor(
         private _fuseConfigService: FuseConfigService,
@@ -316,8 +337,13 @@ export class LoginComponent implements OnInit, OnDestroy {
             this.stationEnabled = config.Login.StationEnabled;
             this.loginModeEnabled = config.Login.Modes.Enabled;
             this.promptAgentIdOnInvalidLanId = config.Login.PromptAgentIdOnInvalidLanId;
-
             this.brandLogo = config.AppConfigs.Logos.Default || null;
+            this.multiWindowMode = config.Login.MultiWindowMode || {
+                Enabled: false,
+                Width: 0,
+                Height: 0,
+                PixelDimension: false
+            };
 
             // check if the login mode is enabled
             if (this.loginModeEnabled) {
@@ -480,6 +506,25 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
 
     /**
+     * To calculate dimension for main window
+     * 
+     * @param {string} type
+     */
+    private calculateDimension(type: string): number {
+        try {
+            // check the dimension type
+            if (this.multiWindowMode.PixelDimension) {
+                return type === 'width' ? this.multiWindowMode.Width : this.multiWindowMode.Height;
+            }
+            else {
+                return (type === 'width' ? (screen.width * this.multiWindowMode.Width) : (screen.height * this.multiWindowMode.Height)) / 100;
+            }
+        } catch (error) {
+            return (type === 'width' ? screen.width : screen.height) / 100;
+        }
+    }
+
+    /**
      * To show/hide station input
      */
     public toggleStation(): void {
@@ -566,15 +611,27 @@ export class LoginComponent implements OnInit, OnDestroy {
                         const agentId = response.Data.AgentID;
 
                         // login success
-                        // we will route to main page
-                        this._router.navigate([`main/${agentId}`], {
-                            queryParamsHandling: 'preserve',
-                            preserveFragment: true,
-                            state: {
-                                routeFrom: 'login',
-                                agentId
-                            }
-                        });
+                        if (this.multiWindowMode?.Enabled) {
+                            // open new window
+                            const wdw = window.open(`/main/${agentId}`, response.Data.AgentSessionKey,
+                                `menubar=no,resizable=yes,location=no,scrollbars=no,width=${this.calculateDimension('width')},height=${this.calculateDimension('height')}`);
+                            // move the window
+                            wdw.moveTo(0, 0);
+                            // reload login page
+                            location.reload();
+                        }
+                        else {
+                            // we will route to main page
+                            this._router.navigate([`main/${agentId}`], {
+                                queryParamsHandling: 'preserve',
+                                preserveFragment: true,
+                                state: {
+                                    routeFrom: 'login',
+                                    agentId
+                                }
+                            });
+                        }
+
                         // check if face auth enabled, then stop camera
                         if (this.faceAuthEnabled) {
                             this.selfVideo.getTracks().forEach((track: MediaStreamTrack) => { track.stop(); });

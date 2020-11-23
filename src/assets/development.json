@@ -12,8 +12,13 @@
         "PasswordEnabled": false,
         "StationEnabled": false,
         "LanIdDisabled": false,
-        "SinglePageEnabled": false,
-        "PromptAgentIdOnInvalidLanId": false
+        "PromptAgentIdOnInvalidLanId": false,
+        "MultiWindowMode": {
+            "Enabled": true,
+            "Width": 100,
+            "Height": 100,
+            "PixelDimension": false
+        }
     },
     "Main": {
         "Toolbar": {
