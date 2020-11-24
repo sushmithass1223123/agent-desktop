@@ -861,7 +861,7 @@ export class TMACEventService {
         SDKClient.events.off('QuizEvent', this.QuizEvent);
         SDKClient.events.off('AgentReminderEvent', this.AgentReminderEvent);
         SDKClient.events.off('AgentForcedLogoffEvent', this.AgentForcedLogoffEvent);
-        SDKClient.events.off('TextChatTransferNotificationEvent', this.TextChatTransferNotificationEvent); 
+        SDKClient.events.off('TextChatTransferNotificationEvent', this.TextChatTransferNotificationEvent);
 
         // unsubscribe from all subscriptions
         this._unsubscribeAll.next();

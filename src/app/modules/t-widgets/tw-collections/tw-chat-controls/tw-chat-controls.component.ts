@@ -498,7 +498,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // update the interaction status and user
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
             status: 'connected',
-            user: this.customerName
+            user: this.customerName,
+            otherData: {
+                icon: this.isSMM ? 'custom-' + this.channel : 'chat'
+            }
         });
         // update the session ID
         this.sessionID = evt.TextChatSessionID;

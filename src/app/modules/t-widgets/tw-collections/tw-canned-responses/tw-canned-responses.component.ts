@@ -82,10 +82,10 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
         // assign the interaction id
         this.interactionId = this.data.InteractionDetails?.InteractionID;
 
-        SDKClient.getTextTemplateDepartments({}).then((result: IResponse) => {
-            this.departments = result.response;
-        });
-
+        SDKClient.getTextTemplateDepartments()
+            .then((result) => {
+                this.departments = result.response.filter(d => d.Channel.includes('chat'));
+            });
 
         // get the event from event bag to make sure no events are missed
         const eventBag = this._tmacEventService.interactionEvents(this.interactionId);

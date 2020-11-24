@@ -14,7 +14,7 @@
         "LanIdDisabled": false,
         "PromptAgentIdOnInvalidLanId": false,
         "MultiWindowMode": {
-            "Enabled": true,
+            "Enabled": false,
             "Width": 100,
             "Height": 100,
             "PixelDimension": false
@@ -119,7 +119,8 @@
                                             "Name": "Send SMS",
                                             "Enable": true,
                                             "EnableState": "",
-                                            "Type": "sms",
+                                            "Type": "text",
+                                            "SubType": "sms",
                                             "Icon": "sms",
                                             "Data": {}
                                         },
@@ -128,6 +129,7 @@
                                             "Enable": true,
                                             "EnableState": "",
                                             "Type": "voice",
+                                            "SubType": "",
                                             "Icon": "call",
                                             "Data": {
                                                 "Source": "agentId",
@@ -135,6 +137,15 @@
                                                     "Available"
                                                 ]
                                             }
+                                        },
+                                        {
+                                            "Name": "Send WhatsApp",
+                                            "Enable": true,
+                                            "EnableState": "",
+                                            "Type": "text",
+                                            "SubType": "whatsapp",
+                                            "Icon": "custom-whatsapp",
+                                            "Data": {}
                                         }
                                     ]
                                 }

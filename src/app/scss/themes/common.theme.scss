@@ -74,4 +74,10 @@
             }
         }
     }
+
+    .custom-icon {
+        @if ($is-dark == true) {
+            filter: invert(1);
+        }
+    }
 }

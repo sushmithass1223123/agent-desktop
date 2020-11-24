@@ -1,0 +1,117 @@
+<shared-wrapper [icon]="data.Icon" [title]="data.Name" [loading]="loading">
+    <!-- <h1 mat-dialog-title>Compose SMS</h1> -->
+    <div mat-dialog-content>
+        <div fxFill fxFlex fxLayout="column" fxLayoutAlign=" none" class="px-16 py-4">
+            <div fxFlex="100">
+                <mat-form-field fxFill class="custom to-txt" appearance="outline">
+                    <input
+                        matInput
+                        placeholder="To Number"
+                        (keypress)="numberOnly($event)"
+                        [(ngModel)]="toNumber"
+                        [disabled]="loading"
+                        autocomplete="off"
+                    />
+                    <button
+                        *ngIf="!toNumber; else clearBtn"
+                        mat-icon-button
+                        matSuffix
+                        [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
+                        disabled
+                    >
+                        <mat-icon matSuffix>smartphone</mat-icon>
+                    </button>
+                    <ng-template #clearBtn>
+                        <button
+                            mat-button
+                            color="primary"
+                            matSuffix
+                            mat-icon-button
+                            aria-label="Clear"
+                            [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
+                            (click)="toNumber = ''"
+                        >
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    </ng-template>
+                </mat-form-field>
+            </div>
+            <div fxLayout="row" fxLayoutAlign="space-between center" class="w-100-p template-selector">
+                <div fxFill fxFlex="50" class="mr-4">
+                    <mat-form-field fxFill class="custom select-box" appearance="outline">
+                        <mat-select placeholder="Department" [(ngModel)]="selectedDepartment" (selectionChange)="onSelectDepartment($event)">
+                            <mat-option>None</mat-option>
+                            <mat-option *ngFor="let item of departments" [value]="item.ID">{{ item.Name }}</mat-option>
+                        </mat-select>
+                        <mat-error> Department is required </mat-error>
+                    </mat-form-field>
+                </div>
+                <div fxFill fxFlex="50" class="mr-4">
+                    <mat-form-field fxFill class="custom select-box" appearance="outline">
+                        <mat-select
+                            placeholder="Groups"
+                            [disabled]="!selectedDepartment || loading"
+                            [(ngModel)]="selectedGroup"
+                            (selectionChange)="onSelectGroups($event)"
+                        >
+                            <mat-option>None</mat-option>
+                            <mat-option *ngFor="let item of groups" [value]="item.Name">{{ item.Name }}</mat-option>
+                        </mat-select>
+                        <mat-error> Groups is required </mat-error>
+                    </mat-form-field>
+                </div>
+                <div fxLayout fxLayoutAlign="center center" *ngIf="selectedDepartment">
+                    <button mat-icon-button color="warn" (click)="clearAllData()" [disabled]="loading" matTooltip="Clear All">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </div>
+            </div>
+            <div fxLayout="row" class="mt-4 w-100-p template-items">
+                <div
+                    *ngIf="templates.length > 0"
+                    fxFlex="40"
+                    fxLayout="column"
+                    class="animate__animated animate__faster animate__slideInLeft custom-scroll-adjust"
+                >
+                    <button
+                        mat-flat-button
+                        class="w-90-p mb-8 border-radius-10 template"
+                        [color]="template === selectedTemplate ? 'primary' : ''"
+                        *ngFor="let template of templates"
+                        (click)="onTemplateSelect(template)"
+                        [matTooltip]="template.Name"
+                    >
+                        {{ template.Name }}
+                    </button>
+                </div>
+                <mat-form-field
+                    [fxFlex]="templates.length > 0 ? 60 : 100"
+                    floatLabel="never"
+                    appearance="standard"
+                    class="custom with-bg selected-template"
+                >
+                    <textarea
+                        fxFlex
+                        matInput
+                        matAutosizeMinRows="1"
+                        [matTextareaAutosize]="true"
+                        placeholder="Please select a template or enter message..."
+                        [(ngModel)]="templateText"
+                        [disabled]="loading"
+                    ></textarea>
+                    <button
+                        mat-button
+                        class="select-btn bg-success border-radius-20 custom-btn"
+                        [disabled]="!templateText || loading || !toNumber"
+                        (click)="sendTemplate()"
+                    >
+                        Send
+                    </button>
+                </mat-form-field>
+            </div>
+        </div>
+    </div>
+    <!-- <div mat-dialog-actions>
+    <button mat-raised-button mat-dialog-close color="primary" class="mx-auto">Send</button>
+</div> -->
+</shared-wrapper>

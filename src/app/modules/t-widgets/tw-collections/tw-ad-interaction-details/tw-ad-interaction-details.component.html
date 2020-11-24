@@ -67,13 +67,13 @@
 
             <ng-container matColumnDef="CreatedTime">
                 <mat-header-cell *matHeaderCellDef mat-sort-header class="px-8">Created Time</mat-header-cell>
-                <mat-cell *matCellDef="let element" class="px-8">{{ element.CreatedDateTime | date: 'short' }} </mat-cell>
+                <mat-cell *matCellDef="let element" class="px-8">{{ element.CreatedDateTime | date: 'd/M/yy, h:mm a' }} </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="ClosedTime">
                 <mat-header-cell *matHeaderCellDef mat-sort-header class="px-8">Closed Time</mat-header-cell>
                 <mat-cell *matCellDef="let element" class="px-8">
-                    {{ element.ClosedDateTime | date: 'short' }}
+                    {{ element.ClosedDateTime | date: 'd/M/yy, h:mm a' }}
                 </mat-cell>
             </ng-container>
 

@@ -2,7 +2,7 @@ import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { AppUiService } from '@services/app-ui.service';
 import { TWidgetWrapper } from '@twidgets/utils';
-import { AgentStatusChangeEvent, AUXCodeUpdateEvent, IAgentData, IAUXCodes, IResponse, SDKClient } from 'tmac-sdk';
+import { AgentSettingsUpdatedEvent, AgentStatusChangeEvent, AUXCodeUpdateEvent, IAgentData, IAUXCodes, IResponse, SDKClient } from 'tmac-sdk';
 /**
  * Agent Details component
  */
@@ -86,6 +86,7 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
         // register to events 
         SDKClient.events.on('AgentStatusChangeEvent', this.AgentStatusChangeEvent);
         SDKClient.events.on('AUXCodeUpdateEvent', this.AUXCodeUpdateEvent);
+        SDKClient.events.on('AgentSettingsUpdatedEvent', this.AgentSettingsUpdatedEvent);
 
         // get agent aux codes
         SDKClient.loadAUXCodes(this.auxCodeConfig.ByTeam, null)
@@ -108,6 +109,7 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
         // unregister from events
         SDKClient.events.off('AgentStatusChangeEvent', this.AgentStatusChangeEvent);
         SDKClient.events.off('AUXCodeUpdateEvent', this.AUXCodeUpdateEvent);
+        SDKClient.events.off('AgentSettingsUpdatedEvent', this.AgentSettingsUpdatedEvent);
     }
 
     /**
@@ -117,6 +119,22 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
      */
     private AgentStatusChangeEvent = (evt: AgentStatusChangeEvent) => {
         this.agentData.agentStatus = evt.Status;
+    }
+
+    /**
+     * To process AgentSettingsUpdatedEvent
+     * 
+     * @param {AgentSettingsUpdatedEvent} evt
+     */
+    private AgentSettingsUpdatedEvent = (evt: AgentSettingsUpdatedEvent) => {
+        this._appUIService.showAppSnackbar({
+            message: 'Agent setting has been updated!',
+            state: 'success',
+            duration: 10000
+        });
+
+        // update the agent data
+        this.agentData = SDKClient.getAgentData();
     }
 
     /**

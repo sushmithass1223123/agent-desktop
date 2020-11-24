@@ -49,11 +49,11 @@
 
         <avatar
             class="mx-4"
-            matIcon="chat"
+            [matIcon]="item.otherData.icon || 'chat'"
             classes="w-44 h-44 border-radius-100"
-            matTooltip="{{ item.user }}"
+            [matTooltip]="item.user"
             circleColor="#5A4980"
-            matBadge="{{ item.otherData.unreadCount || '' }}"
+            [matBadge]="item.otherData.unreadCount || ''"
             matBadgePosition="after"
             (click)="openInteraction(item)"
             *ngIf="item.type === 'textchat'"

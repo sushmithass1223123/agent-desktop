@@ -2,7 +2,8 @@
     <img *ngIf="!showInitials && photoUrl" src="{{ photoUrl }}" />
 
     <div *ngIf="!showInitials && matIcon" class="initials">
-        <mat-icon>{{ matIcon }}</mat-icon>
+        <mat-icon *ngIf="matIcon.indexOf('custom') < 0">{{ matIcon || 'widgets' }}</mat-icon>
+        <mat-icon [svgIcon]="matIcon" *ngIf="matIcon.indexOf('custom') >= 0"></mat-icon>
     </div>
 
     <div *ngIf="showInitials" class="initials">

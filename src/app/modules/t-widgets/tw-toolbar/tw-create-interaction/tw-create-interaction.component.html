@@ -23,11 +23,12 @@
                 mat-mini-fab
                 color="secondary"
                 *ngFor="let channel of data.Data.Channels"
-                (click)="addInteraction(channel.Type, channel.Data)"
+                (click)="addInteraction(channel.Type, channel)"
                 class="fab-secondary"
                 [matTooltip]="channel.Name"
             >
-                <mat-icon>{{ channel.Icon }}</mat-icon>
+                <mat-icon *ngIf="channel.Icon.indexOf('custom') < 0">{{ channel.Icon }}</mat-icon>
+                <mat-icon [svgIcon]="channel.Icon" *ngIf="channel.Icon.indexOf('custom') >= 0"></mat-icon>
             </button>
         </div>
     </ng-template>

@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CreateSMSComponent } from './create-sms.component';
+import { SharedWrapperComponent } from './shared-wrapper.component';
 
-describe('CreateSMSComponent', () => {
-  let component: CreateSMSComponent;
-  let fixture: ComponentFixture<CreateSMSComponent>;
+describe('SharedWrapperComponent', () => {
+  let component: SharedWrapperComponent;
+  let fixture: ComponentFixture<SharedWrapperComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CreateSMSComponent ]
+      declarations: [ SharedWrapperComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CreateSMSComponent);
+    fixture = TestBed.createComponent(SharedWrapperComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -8,10 +8,11 @@
             <div fxLayout="row" fxLayoutAlign="space-between none">
                 <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>timer</mat-icon> {{ (duration | date: 'H:mm:ss':'UTC') || '00:00:00' }}</div>
                 <div fxLayout="row" fxLayoutAlign=" center" *ngIf="isSMM">
-                    <img src="assets/images/vectors/{{ channel }}.svg" width="18" class="mr-4" /> {{ channel }}
+                    <mat-icon [svgIcon]="'custom-' + channel"></mat-icon>
+                    <span class="text-bold ml-4">{{ channel }}</span>
                 </div>
                 <div fxLayout="row" fxLayoutAlign=" center">
-                    <mat-icon>grading</mat-icon> <span class="text-bold">{{ intent }}</span>
+                    <mat-icon>grading</mat-icon> <span class="text-bold">{{ intent }}</span> 
                 </div>
             </div>
         </div>
@@ -120,7 +121,7 @@
                         matTooltip="Conference Bot"
                         [matMenuTriggerFor]="botMenu"
                     >
-                        <mat-icon>android</mat-icon>
+                        <mat-icon>adb</mat-icon>
                     </button>
 
                     <mat-menu class="custom" #botMenu="matMenu" xPosition="after">

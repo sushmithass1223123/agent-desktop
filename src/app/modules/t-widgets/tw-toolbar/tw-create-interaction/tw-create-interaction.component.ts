@@ -1,7 +1,7 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { widgetFabAnimations } from '@modules/shared/animations/widget-fab.animation';
-import { AgentSkillListComponent, CreateSMSComponent } from '@modules/shared/components';
+import { AgentSkillListComponent, CreateMessagingComponent } from '@modules/shared/components';
 import { IWidget } from 'app/interfaces';
 
 /**
@@ -52,9 +52,10 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
     addInteraction(channel: string, data: any): void {
         this.channels = [];
         switch (channel.toLowerCase()) {
-            case 'sms':
-                this._matDialog.open(CreateSMSComponent, {
-                    panelClass: 'create-sms-dialog'
+            case 'text':
+                this._matDialog.open(CreateMessagingComponent, {
+                    panelClass: 'create-messaging-dialog',
+                    data: data
                 });
                 break;
             case 'voice':
@@ -65,8 +66,8 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
                         agent: {
                             allowed: true,
                             blind: false,
-                            source: data.Source,
-                            allowedStates: data.AllowedState
+                            source: data.Data.Source,
+                            allowedStates: data.Data.AllowedState
                         },
                         skill: {
                             allowed: false,
