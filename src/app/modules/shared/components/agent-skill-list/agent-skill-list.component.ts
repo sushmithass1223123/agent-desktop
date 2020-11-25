@@ -336,18 +336,16 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
             source: '',
             sourceId: ''
         })
-            .then((dt: IResponse) => {
+            .then((dt) => {
                 this.loading = false;
-                // get the response
-                const result: CommandResultEvent = dt.response;
                 // check the response
-                if (result.ResultCode === 0) {
+                if (dt.response.ResultCode === 0) {
                     // make call success
                     this._appUIService.showSnackbar(`Make call to ${this.selectedItem} successful`);
                     this.close();
                 } else {
                     // make call failed
-                    this._appUIService.showSnackbar('Make call failed, please try again', 'failure');
+                    this._appUIService.showSnackbar(`Make call failed, ${dt.response.ResultMessage}`, 'failure');
                 }
             })
             .catch(() => {

@@ -2,7 +2,7 @@
     <ng-container *ngFor="let item of interactionList">
         <div
             fxLayout="row"
-            class="voice grey-300 border-radius-30 p-4 mx-4"
+            class="voice grey-300 border-radius-30 p-4 mx-4 mat-elevation-z1"
             *ngIf="item.type === 'voice'"
             [ngClass]="{
                 'bg-warning': item.status === 'hold'
@@ -48,7 +48,7 @@
         </div>
 
         <avatar
-            class="mx-4"
+            class="mx-4 mat-elevation-z1"
             [matIcon]="item.otherData.icon || 'chat'"
             classes="w-44 h-44 border-radius-100"
             [matTooltip]="item.user"

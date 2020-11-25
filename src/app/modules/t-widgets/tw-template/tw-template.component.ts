@@ -20,6 +20,13 @@ export class TwTemplateComponent implements AfterContentInit {
     @Input() widgets: IWidget[];
 
     /**
+     * single widget loader
+     */
+    @Input() set widget(widget: IWidget) {
+        this.loadComponent(widget);
+    }
+
+    /**
      * Template directive
      */
     @ViewChild(TwTemplateDirective, { static: true }) widgetTemplate: TwTemplateDirective;

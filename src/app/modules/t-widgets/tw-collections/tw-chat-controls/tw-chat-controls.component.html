@@ -12,7 +12,7 @@
                     <span class="text-bold ml-4">{{ channel }}</span>
                 </div>
                 <div fxLayout="row" fxLayoutAlign=" center">
-                    <mat-icon>grading</mat-icon> <span class="text-bold">{{ intent }}</span> 
+                    <mat-icon>grading</mat-icon> <span class="text-bold">{{ intent }}</span>
                 </div>
             </div>
         </div>
@@ -219,7 +219,18 @@
                     </button>
 
                     <button
-                        *ngIf="status !== 'connected'"
+                        *ngIf="status === 'incoming'"
+                        class="mat-elevation-z2 custom-btn bg-success"
+                        mat-mini-fab
+                        #answerBtn
+                        (click)="answerChat(answerBtn)"
+                        matTooltip="Answer Chat"
+                    >
+                        <mat-icon>done</mat-icon>
+                    </button>
+
+                    <button
+                        *ngIf="status !== 'connected' && status !== 'incoming'"
                         mat-raised-button
                         class="border-radius-20"
                         color="warn"

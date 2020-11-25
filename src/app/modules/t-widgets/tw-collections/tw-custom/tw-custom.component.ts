@@ -99,11 +99,15 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                     height=${this.data.Config.Position.H || screen.height}`
                 );
 
-                // listen to widget close event
-                this.oinWidget.onunload = () => {
-                    // destroy the widget
-                    this._aotWidgetService.destroyWidget(this.data.ID);
-                };
+                try {
+                    // listen to widget close event
+                    this.oinWidget.onunload = () => {
+                        // destroy the widget
+                        this._aotWidgetService.destroyWidget(this.data.ID);
+                    };
+                } catch (error) {
+                    console.error(error);
+                }
 
                 return;
             }

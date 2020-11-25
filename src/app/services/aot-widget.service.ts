@@ -53,18 +53,27 @@ export class AOTWidgetService {
                 (config: any) => {
                     // get the AOT widgets
                     const widgets = config.Main.AOT.Widgets;
-                    // check if widgets are there, if so load it
-                    widgets.forEach((widget: IWidget) => {
-                        if (widget.Data?.AutoOpen) {
-                            setTimeout(() => {
-                                this.addWidget(widget);
-                                // set auto open to false so that when config is updated it wont open again
-                                widget.Data.AutoOpen = false;
-                            }, 3000);
-                        }
-                    });
+                    this.processAOTWidgets(widgets);
                 }
             );
+    }
+
+    /**
+     * To process AOT widgets
+     * 
+     * @param {IWidget[]} widgets
+     */
+    public processAOTWidgets(widgets: IWidget[]): void {
+        // check if widgets are there, if so load it
+        widgets.forEach((widget: IWidget) => {
+            if (widget.Data?.AutoOpen) {
+                setTimeout(() => {
+                    this.addWidget(widget);
+                    // set auto open to false so that when config is updated it wont open again
+                    widget.Data.AutoOpen = false;
+                }, 3000);
+            }
+        });
     }
 
     /**

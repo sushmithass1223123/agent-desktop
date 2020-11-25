@@ -225,6 +225,31 @@ export class LoginComponent implements OnInit, OnDestroy {
          */
         PixelDimension: boolean;
     };
+    /**
+     * Login error message
+     */
+    errorMessage: string;
+    /**
+     * To show connection error overlay 
+     */
+    connectionError: {
+        /**
+         * Set timeout ref
+         */
+        timeout: any;
+        /**
+         * Retry in count
+         */
+        tryCount: 0;
+        /**
+         * Retry now flag
+         */
+        retryNow: boolean;
+    } = {
+            timeout: null,
+            tryCount: 0,
+            retryNow: false
+        };
 
     constructor(
         private _fuseConfigService: FuseConfigService,
@@ -315,7 +340,7 @@ export class LoginComponent implements OnInit, OnDestroy {
             .then(config => {
                 this.appConfig = config;
                 this.configLoaded(config);
-                this.getData();
+                this.getData(true);
             });
     }
 
@@ -489,23 +514,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * To get data from server
-     */
-    private getData(): void {
-        // get the TMAC server version
-        SDKClient.getTMACVersion('', null)
-            .then((dt) => {
-                this.version = dt.response;
-            });
-
-        if (this.domainListEnabled) {
-            SDKClient.getUserDomainList(null).then((result: IResponse) => {
-                this.domainList = result.response || [];
-            });
-        }
-    }
-
-    /**
      * To calculate dimension for main window
      * 
      * @param {string} type
@@ -525,6 +533,52 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
 
     /**
+     * To get data from server
+     */
+    public getData(tryNow: boolean): void {
+        // check try now flag
+        if (tryNow) {
+            this.connectionError.retryNow = true;
+        }
+        // clear the timeout
+        if (this.connectionError?.timeout) {
+            clearTimeout(this.connectionError.timeout);
+        }
+        // set new timeout
+        this.connectionError.timeout = setTimeout(() => {
+            // get the TMAC server version
+            SDKClient.getTMACVersion('')
+                .then((dt) => {
+                    if (dt.response !== 'NA') {
+                        this.version = dt.response;
+                        if (this.domainListEnabled) {
+                            SDKClient.getUserDomainList(null)
+                                .then((result: IResponse) => {
+                                    this.domainList = result.response || [];
+                                });
+                        }
+                        this.connectionError = {
+                            timeout: null,
+                            tryCount: 0,
+                            retryNow: false
+                        };
+                    }
+                    else {
+                        this.connectionError.tryCount += 10;
+                        this.getData(false);
+                    }
+                })
+                .catch(() => {
+                    this.connectionError.tryCount += 10;
+                    this.getData(false);
+                })
+                .finally(() => {
+                    this.connectionError.retryNow = false;
+                });
+        }, tryNow ? 0 : this.connectionError.tryCount * 1000);
+    }
+
+    /**
      * To show/hide station input
      */
     public toggleStation(): void {
@@ -539,6 +593,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     public async login(force: boolean): Promise<void> {
         // set loading to true
         this.loading = true;
+        // clear error message if any
+        this.errorMessage = '';
 
         // check if face auth is needed 
         if (!force && this.faceAuthEnabled && !await this.doFaceAuthentication()) {
@@ -641,19 +697,25 @@ export class LoginComponent implements OnInit, OnDestroy {
                 } else if (response.ResultCode === -3) {
                     // invalid Lan id check whether to prompt agent Id
                     if (this.promptAgentIdOnInvalidLanId) {
-                        this._appUIService.showSnackbar('Invalid LAN ID detected. Please provide agent id', 'failure', 'top', 'right');
+                        this.errorMessage = 'Login failed, Invalid LAN ID detected. Please provide agent ID';
                         this.agentIdEnabled = true;
                     } else {
                         // login failed, invalid lan Id
-                        this._appUIService.showSnackbar('Invalid LAN ID detected. Please contact administrator for TMAC access', 'failure', 'top', 'right');
+                        this.errorMessage = 'Login failed, Invalid LAN ID detected. Please contact administrator for TMAC access';
                     }
                 } else {
                     // login failed
-                    this._appUIService.showSnackbar(response.ResultMessage ? response.ResultMessage : 'Login failed, Unknown response from server', 'failure', 'top', 'right');
+                    this.errorMessage =
+                        response.ErrorDetails ? response.ErrorDetails :
+                            response.ResultMessage ? response.ResultMessage : 'Login failed, Unknown response from server';
                 }
             } else {
+                this.errorMessage = 'Login failed, Please contact the administrator';
+            }
+            // check if any error message then alert
+            if (this.errorMessage) {
                 // login error
-                this._appUIService.showSnackbar('Login failed, Please contact the administrator', 'failure', 'top', 'right');
+                this._appUIService.showSnackbar(this.errorMessage, 'failure', 'top', 'right');
             }
         } catch (error) {
             TUtils.Logger.log('Exception in login', error);

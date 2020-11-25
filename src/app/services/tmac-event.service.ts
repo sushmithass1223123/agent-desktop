@@ -345,16 +345,14 @@ export class TMACEventService {
                                     source: '',
                                     sourceId: ''
                                 })
-                                    .then((dt: IResponse) => {
-                                        // get the response
-                                        const result: CommandResultEvent = dt.response;
+                                    .then((dt) => {
                                         // check the response
-                                        if (result.ResultCode === 0) {
+                                        if (dt.response.ResultCode === 0) {
                                             // make call success
                                             this._appUIService.showSnackbar(`Make call to ${remiderMessage.Data} successful`);
                                         } else {
                                             // make call failed
-                                            this._appUIService.showSnackbar('Make call failed, please try manually', 'failure');
+                                            this._appUIService.showSnackbar(`Make call failed, ${dt.response.ResultMessage}`, 'failure');
                                         }
                                     })
                                     .catch(() => {
@@ -630,16 +628,14 @@ export class TMACEventService {
                     source: 'tcamp',
                     sourceId: queryParams
                 })
-                    .then((dt: IResponse) => {
-                        // get the response
-                        const result: CommandResultEvent = dt.response;
+                    .then((dt) => {
                         // check the response
-                        if (result.ResultCode === 0) {
+                        if (dt.response.ResultCode === 0) {
                             // make call success
                             this._appUIService.showSnackbar(`Make call to ${PhoneNumber} successful`);
                         } else {
                             // make call failed
-                            this._appUIService.showSnackbar('Make call failed', 'failure');
+                            this._appUIService.showSnackbar(`Make call failed, ${dt.response.ResultMessage}`, 'failure');
                         }
                     })
                     .catch(() => {

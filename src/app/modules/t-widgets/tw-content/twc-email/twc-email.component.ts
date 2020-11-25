@@ -1,4 +1,5 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { AOTWidgetService } from '@services/aot-widget.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { InteractionRef, InteractionWidgets, IWidget } from 'app/interfaces';
@@ -8,6 +9,9 @@ import { cloneDeep } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 import { IncomingEmailEvent, InteractionClosedEvent } from 'tmac-sdk';
 
+/**
+ * TwcEmailComponent
+ */
 @Component({
     selector: 'twc-email',
     templateUrl: './twc-email.component.html',
@@ -28,7 +32,8 @@ export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDes
         public hostElement: ElementRef,
         public contentPageService: ContentPageService,
         private _interactionManagerService: InteractionManagerService,
-        private _tmacEventService: TMACEventService
+        private _tmacEventService: TMACEventService,
+        private _aotWidgetService: AOTWidgetService
     ) {
         super(hostElement, contentPageService);
     }
@@ -103,6 +108,9 @@ export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDes
             widget.InteractionDetails = evt;
             widget.Data.Path = this.data.Data.Path;
         });
+
+        // process aot widgets
+        this._aotWidgetService.processAOTWidgets(aotWidgets);
 
         // push the interaction details with widgets to the list
         this.interactions.push({

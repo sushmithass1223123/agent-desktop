@@ -3,7 +3,7 @@
 <!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
 <tw-wrapper [data]="data">
     <!-- your code goes here -->
-    <div *ngIf="!loadWorkCodesReq.loading && !loadWorkCodesReq.error" fxFlex fxFill fxLayout="row" fxLayoutAlign="center" class="p-4">
+    <div *ngIf="!loadWorkCodesReq.loading && !loadWorkCodesReq.error" fxFlex fxFill fxLayout="row" fxLayoutAlign="center">
         <mat-form-field *ngIf="DataConf.Source === 'interaction'" class="w-100-p" appearance="outline">
             <mat-autocomplete class="w-100-p" #allWorkCodesRef (optionSelected)="setWorkCode($event)">
                 <ng-container *ngIf="DataConf.ByGroup">
@@ -35,10 +35,7 @@
                 />
             </mat-chip-list>
         </mat-form-field>
-        <div
-            *ngIf="DataConf.Source === 'supervisor'"
-            class="w-100-p h-100-p p-12 custom-scroll-adjust"
-        >
+        <div *ngIf="DataConf.Source === 'supervisor'" class="w-100-p h-100-p p-12 custom-scroll-adjust">
             <mat-chip-list aria-label="WorkCodes">
                 <mat-chip
                     *ngFor="let workCode of selectedWorkCodes"

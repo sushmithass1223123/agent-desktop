@@ -1462,6 +1462,39 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     }
 
     /**
+     * To answer a manual textchat
+     * 
+     * @param {MatButton} btn
+     */
+    public answerChat(btn: MatButton): void {
+        // show the progress bar
+        this._fuseProgressBarService.show();
+        // disable the button
+        btn.disabled = true;
+        // answer chat
+        SDKClient.answerCall(this.interactionId.toString())
+            .then((dt) => {
+                if (dt.response.ResultCode >= 0) {
+                    this._appUIService.showSnackbar('Answer chat success');
+                }
+                else {
+                    // enable the button
+                    btn.disabled = false;
+                    this._appUIService.showSnackbar(`Answer chat failed: ${dt.response.ResultMessage}`, 'failure');
+                }
+            })
+            .catch(() => {
+                // enable the button
+                btn.disabled = false;
+                this._appUIService.showSnackbar('Error in answring the chat, please try again', 'failure');
+            })
+            .finally(() => {
+                // hide the progress bar
+                this._fuseProgressBarService.hide();
+            });
+    }
+
+    /**
      * To escalate the chat to audio/video
      * @param {'audio' | 'video'} type Type of escalation
      */

@@ -278,6 +278,10 @@
                                 <p *ngIf="!loading && agentListTable.tableData.source.data.length === 0" class="text-center m-0 mat-title">
                                     No Data Available
                                 </p>
+
+                                <p *ngIf="loading && agentListTable.tableData.source.data.length === 0" class="text-center m-0 mat-title">
+                                    Loading Data, Please Wait...
+                                </p>
                             </div>
                         </div>
                         <div [hidden]="activeSwitcher !== 'skillList'">
@@ -368,7 +372,12 @@
                                         [ngClass]="{ selected: !!skillListTable.tableData.selection.isSelected(row) }"
                                     ></mat-row>
                                 </mat-table>
-                                <p *ngIf="skillListTable.tableData.source.data.length === 0" class="text-center m-0 mat-title">No Data Available</p>
+                                <p *ngIf="!loading && skillListTable.tableData.source.data.length === 0" class="text-center m-0 mat-title">
+                                    No Data Available
+                                </p>
+                                <p *ngIf="loading && skillListTable.tableData.source.data.length === 0" class="text-center m-0 mat-title">
+                                    Loading Data, Please Wait...
+                                </p>
                             </div>
                         </div>
                     </div>

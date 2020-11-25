@@ -157,13 +157,22 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     tranfConfWidget: IWidget;
     /**
-     * To confirm transfer/conference call
+     * Temporary call reference for transfer/conference
      */
-    confirmCall: boolean;
-    /**
-     * Confirm call type
-     */
-    confirmCallType: '' | 'transfer' | 'conference';
+    tempCallRef: {
+        /**
+         * Call status
+         */
+        status: string;
+        /**
+         * Call sessionId
+         */
+        sessionID: string;
+        /**
+         * Type of call
+         */
+        type: '' | 'transfer' | 'conference';
+    } = null;
     /**
      * Call lines ref
      */
@@ -388,8 +397,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         this.stopTimer.next();
 
         // clear confirm
-        this.confirmCall = false;
-        this.confirmCallType = '';
+        this.tempCallRef = null;
 
         // destroy the transfer/conf widget
         if (this.tranfConfWidget) {
@@ -465,8 +473,11 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         }
 
         // show confirm/cancel buttons
-        this.confirmCall = true;
-        this.confirmCallType = 'transfer';
+        this.tempCallRef = {
+            ...this.tempCallRef,
+            status: 'connected',
+            type: 'transfer'
+        };
     }
 
     /**
@@ -479,9 +490,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             return;
         }
 
-        // show confirm/cancel buttons
-        this.confirmCall = false;
-        this.confirmCallType = 'conference';
+        this.tempCallRef = null;
     }
 
     /**
@@ -504,6 +513,13 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         if (evt.InteractionID !== this.interactionId) {
             return;
         }
+
+        // show confirm/cancel buttons
+        this.tempCallRef = {
+            ...this.tempCallRef,
+            status: 'connected',
+            type: 'conference'
+        };
     }
 
     /**
@@ -515,6 +531,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         if (evt.InteractionID !== this.interactionId) {
             return;
         }
+
+        this.tempCallRef = null;
     }
 
     /**
@@ -690,11 +708,6 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             // set MS call to true
             this.isMSCall = true;
 
-            // check if the direction is out and check if this is a consult transfer/conference call
-            if (direction === 'out' && this.callLines.length > 0) {
-                // its a conf/trasnfer call
-            }
-
             // create a AV channel connection
             const connection = new AVChannel(
                 SDKClient,
@@ -709,6 +722,16 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             if (!connection) {
                 TUtils.Logger.log(`Error in creating AVChannel for MS call: ${sessionId}`);
                 return;
+            }
+
+            // check if the direction is out and check if this is a consult transfer/conference call
+            if (direction === 'out' && this.callLines.length > 0) {
+                // its a conf/trasnfer call, store the sessionId ref
+                this.tempCallRef = {
+                    status: 'init',
+                    sessionID: sessionId,
+                    type: ''
+                };
             }
 
             // register to all AV events
@@ -753,9 +776,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             case 'onConnected':
                 break;
             case 'onHoldUnhold':
+                console.log('************', evt);
                 if (evt.data) {
                     // hold
-
                 }
                 else {
                     // unhold
@@ -813,6 +836,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 this._appUIService.playAudio('hung-up', 0.5, false);
                 // close the av connection
                 this.avConns[sessionId]?.close();
+                // check if the disconnect is for transfer/conference call
+                if (sessionId === this.tempCallRef?.sessionID) {
+                    this.tempCallRef = null;
+                }
                 break;
             default:
         }
@@ -1195,6 +1222,30 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     }
 
     /**
+     * To hold/unhold MS consult call
+     * 
+     * @param {MatButton} btn
+     */
+    holdUnholdMSConsultCall(btn: MatButton): void {
+        // toggle the button
+        this.toggleButton(true, btn);
+        // get the connection variable
+        const connection: AVChannel = this.avConns[this.tempCallRef.sessionID];
+        // check if the connection is there and interaction is not on hold
+        if (connection && this.tempCallRef.status !== 'connected') {
+            connection.hold();
+        }
+        else if (connection && this.tempCallRef.status !== 'hold') {
+            connection.unHold();
+        }
+        else {
+            this._appUIService.showSnackbar('Error in hold/unhold secondary call', 'failure');
+        }
+        // toggle the button
+        this.toggleButton(false, btn);
+    }
+
+    /**
      * To confirm or cancel transfer/conference call
      * 
      * @param {boolean} confirm
@@ -1204,7 +1255,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         // toggle the button
         this.toggleButton(true, btn);
         // confirm voice transfer
-        if (this.confirmCallType === 'transfer') {
+        if (this.tempCallRef.type === 'transfer') {
             if (confirm) {
                 // complete transfer in server
                 SDKClient.transferComplete(this.interactionId.toString())
