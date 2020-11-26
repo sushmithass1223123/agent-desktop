@@ -39,6 +39,13 @@
                         matBadge="{{ item.interactionId !== interactionId ? item.otherData.unreadCount || '' : '' }}"
                         matBadgePosition="after"
                         matBadgeColor="accent"
+                        [circleColor]="
+                            fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                                ? fuseConfig.layout.anchorWidget.contentBackground
+                                : fuseConfig.layout.widget.customBackgroundColor === true
+                                ? fuseConfig.layout.widget.contentBackground
+                                : ''
+                        "
                     ></avatar>
                 </div>
             </div>
@@ -56,7 +63,7 @@
                         : ''
                 "
             >
-                <div fxLayout="row" fxLayoutAlign="end none" class="chat-actions mat-elevation-z1">
+                <div fxLayout="row" fxLayoutAlign="end none" class="chat-actions border-bottom">
                     <button
                         *ngIf="showAutoFreeze"
                         [disabled]="status !== 'connected'"
@@ -359,7 +366,19 @@
                                         </div>
                                     </ng-container>
                                 </div>
-                                <div class="time" [ngClass]="message?.type">{{ message.time | date: 'shortTime' }}</div>
+                                <div class="time" [ngClass]="message?.type" fxLayout="row" fxLayoutAlign="end center">
+                                    {{ message.time | date: 'shortTime' }}
+                                    <mat-icon class="s-12 ml-4" *ngIf="message.position === 'right' && message.status === 'init'"
+                                        >access_time</mat-icon
+                                    >
+                                    <mat-icon class="s-12 ml-4" *ngIf="message.position === 'right' && message.status === 'sent'">done</mat-icon>
+                                    <mat-icon class="s-12 ml-4" *ngIf="message.position === 'right' && message.status === 'failed'" color="warn"
+                                        >error_outline</mat-icon
+                                    >
+                                    <mat-icon class="s-12 ml-4" *ngIf="message.position === 'right' && message.status === 'delivered'"
+                                        >done_all</mat-icon
+                                    >
+                                </div>
                             </div>
 
                             <div *ngIf="message.divider" class="divider bg-secondary animate__animated animate__slideInUp animate__faster"></div>

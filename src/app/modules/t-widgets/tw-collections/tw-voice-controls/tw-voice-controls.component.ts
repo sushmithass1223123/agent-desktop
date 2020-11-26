@@ -11,7 +11,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AgentSkillListData, InteractionRef, IWidget } from 'app/interfaces';
+import { AgentSkillListData, InteractionComment, InteractionRef, IWidget } from 'app/interfaces';
 import { Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
@@ -181,6 +181,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      * Confirm dialog ref
      */
     confirmDialogRef: MatDialogRef<AppConfirmDialogComponent, any>;
+    /**
+     * Saved interaction comments
+     */
+    savedComments: InteractionComment[] = [];
 
     constructor(
         private _fuseConfigService: FuseConfigService,
@@ -1145,7 +1149,20 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      * To save interaction comments to server
      */
     public saveInteractionComments(): void {
-        const dialogRef = this._appUIService.showCustomDialog('prompt', 'Enter the comments', 'Interaction Comment');
+        let message = '';
+        // check the saved comments
+        this.savedComments.forEach((item) => {
+            message +=
+                `
+                 <div>${item.Message}</div>
+                 <span class="time secondary-text">${item.Time}</span>
+                 <br /><br />
+                 `;
+
+        });
+        message += 'Add new comment:';
+
+        const dialogRef = this._appUIService.showCustomDialog('prompt', message, 'Interaction Comments');
         dialogRef.afterClosed().subscribe((resp1) => {
             if (resp1) {
                 this._fuseProgressBarService.show();
@@ -1154,6 +1171,12 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     interactionId: this.interactionId.toString()
                 })
                     .then((resp2) => {
+                        // add comments to the reference
+                        this.savedComments.push({
+                            Message: resp1,
+                            Time: new Date().toLocaleTimeString(),
+                            User: SDKClient.getAgentData().agentName
+                        });
                         if (resp2.response > 0) {
                             this._appUIService.showSnackbar('Interaction comment saved successfully');
                         }

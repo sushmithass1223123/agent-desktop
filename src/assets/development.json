@@ -77,6 +77,17 @@
                                 }
                             },
                             {
+                                "Name": "Aux Codes",
+                                "Description": "",
+                                "Type": "tw-aux-codes",
+                                "Config": {
+                                    "Enabled": false
+                                },
+                                "Data": {
+                                    "ByTeam": false
+                                }
+                            },
+                            {
                                 "Name": "Logout Button",
                                 "Description": "",
                                 "Type": "tw-logout",
@@ -2344,7 +2355,7 @@
                                     "Data": {
                                         "Source": "interaction",
                                         "ByTeam": false,
-                                        "ByGroup": false
+                                        "ByGroup": true
                                     }
                                 },
                                 {
@@ -2860,7 +2871,7 @@
                                     "Data": {
                                         "Source": "interaction",
                                         "ByTeam": false,
-                                        "ByGroup": false
+                                        "ByGroup": true
                                     }
                                 },
                                 {
@@ -3374,6 +3385,39 @@
                         "AutoOpen": false,
                         "GetCampaignsUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Campaign/GetCampaigns",
                         "CreateContactCampaignUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Contact/CreateCampaignContact"
+                    }
+                },
+                {
+                    "Name": "Link Tester",
+                    "Description": "",
+                    "Key": "Link1",
+                    "Type": "tw-custom",
+                    "Config": {
+                        "Enabled": true,
+                        "Static": false,
+                        "Anchor": true,
+                        "AOT": true,
+                        "Icon": "link",
+                        "Class": "",
+                        "Position": {
+                            "X": 0,
+                            "Y": 0,
+                            "W": 0,
+                            "H": 0
+                        },
+                        "Actions": [
+                            "collapse",
+                            "destroy",
+                            "pin"
+                        ],
+                        "ViewState": "restore",
+                        "Header": true,
+                        "Pinned": true
+                    },
+                    "Data": {
+                        "AutoOpen": false,
+                        "OpenInNew": true,
+                        "Url": "https://www.tetherfi.com/"
                     }
                 }
             ]

@@ -118,6 +118,10 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
      * Remote Screenshare flag
      */
     remoteScreenSharing: boolean;
+    /**
+     * Remote screenshare stream ref
+     */
+    remoateScreenshareRef: any;
 
     /**
      * Constructor 
@@ -170,8 +174,8 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         this.startTime = new Date();
 
         // add the widget data
-        this.interactionId = this.data.InteractionDetails.InteractionID;
-        this.sessionID = this.data.InteractionDetails.TextChatSessionID;
+        this.interactionId = this.data.InteractionDetails?.InteractionID;
+        this.sessionID = this.data.InteractionDetails?.TextChatSessionID;
         this.widgetData = {
             customerName: this.data.Data.CustomerName,
             chatConfig: this.data.Data.Config || new Object(),
@@ -194,6 +198,8 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
             .catch((error) => {
                 this._appUIService.showSnackbar('Error in starting the call: ' + error, 'failure');
             });
+
+        this.showUI = true;
     }
 
     /**
@@ -220,6 +226,10 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
      * @param {AVControlMessageReceivedEvent} avEvent 
      */
     private createAVConnection(avEvent: AVControlMessageReceivedEvent): void {
+        if (!this.interactionId) {
+            TUtils.Logger.log('Error in AVChannel', 'Could not create AV channel instance!');
+            return;
+        }
         // create a AV channel connection
         const connection = new AVChannel(
             SDKClient,
@@ -334,6 +344,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
                 // check if the user connected is customer
                 if (evt.data.streamInfo?.user === 'customer') {
                     evt.data.streamInfo.user = this.widgetData.customerName + '-Presenting';
+                    this.remoateScreenshareRef = evt.data;
                 } else {
                     // other agent connected
                 }
@@ -347,6 +358,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
             case 'onScreenshareDisconnected':
                 this.status = 'ss-disconnected';
                 this.remoteScreenSharing = false;
+                this.remoateScreenshareRef = null;
                 // remove the screenshare user
                 this.userList = this.userList.filter(u => u.streamInfo.type !== 'screenshare');
                 break;

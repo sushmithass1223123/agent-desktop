@@ -1,4 +1,8 @@
-<div class="avatar-content" [ngStyle]="{ 'background-color': circleColor }" [ngClass]="classes">
+<div
+    class="avatar-content"
+    [ngStyle]="{ 'background-color': circleColor }"
+    [ngClass]="(classes ? classes : '') + ' ' + (circleColor ? circleColor : '')"
+>
     <img *ngIf="!showInitials && photoUrl" src="{{ photoUrl }}" />
 
     <div *ngIf="!showInitials && matIcon" class="initials">

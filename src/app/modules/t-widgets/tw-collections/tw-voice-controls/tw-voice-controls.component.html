@@ -18,6 +18,13 @@
                     matTooltip="{{ item.user }}"
                     matTooltipPosition="after"
                     (click)="selectInteraction(item)"
+                    [circleColor]="
+                        fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                            ? fuseConfig.layout.anchorWidget.contentBackground
+                            : fuseConfig.layout.widget.customBackgroundColor === true
+                            ? fuseConfig.layout.widget.contentBackground
+                            : ''
+                    "
                 ></avatar>
             </div>
             <div

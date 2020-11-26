@@ -6,14 +6,16 @@
 <tw-wrapper [data]="data" *ngIf="showUI">
     <div fxFill fxLayout="column" fxLayoutAlign="space-between none" class="px-12">
         <div fxLayout="row wrap" fxLayoutAlign=" none" class="mb-8">
-            <avatar
-                *ngFor="let item of userList"
-                name="{{ item.streamInfo.user || 'User' }}"
-                classes="w-48 h-48 border-radius-16 fuse-white mat-elevation-z2"
-                matTooltip="{{ item.streamInfo.user || 'User' }}"
-                class="mr-8"
-                [ngClass]="{ talking: item.level > 0 }"
-            ></avatar>
+            <ng-container *ngFor="let item of userList">
+                <avatar
+                    *ngIf="item.streamInfo.type === 'audio'"
+                    name="{{ item.streamInfo.user || 'User' }}"
+                    classes="w-48 h-48 border-radius-16 fuse-white mat-elevation-z2"
+                    matTooltip="{{ item.streamInfo.user || 'User' }}"
+                    class="mr-8"
+                    [ngClass]="{ talking: item.level > 0 }"
+                ></avatar>
+            </ng-container>
         </div>
 
         <div
@@ -29,10 +31,24 @@
                     : ''
             "
         >
+            <div class="w-100-p border-radius-20 remote-video-container" *ngIf="remoateScreenshareRef">
+                <div class="border-radius-20 bg-dark remote-video">
+                    <video
+                        autoplay
+                        playsinline="true"
+                        [srcObject]="remoateScreenshareRef.stream"
+                        [id]="remoateScreenshareRef.stream.id"
+                        #remoteVideo
+                    ></video>
+                    <span class="text-boxed user">{{ remoateScreenshareRef.streamInfo.user }}</span>
+                </div>
+            </div>
+
             <div fxLayout="row" fxLayoutAlign="space-between none">
                 <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>alarm_on</mat-icon> {{ startTime | date: 'mediumTime' }}</div>
                 <span fxLayout="row" fxLayoutAlign=" center"> <mat-icon>wifi</mat-icon> {{ mos }} </span>
             </div>
+
             <div fxLayout="row" fxLayoutAlign="space-between none">
                 <span fxLayout="row" fxLayoutAlign=" center">
                     <mat-icon>timer</mat-icon> {{ (duration | date: 'H:mm:ss':'UTC') || '00:00:00' }}
@@ -74,7 +90,7 @@
                     <mat-icon>phone_in_talk</mat-icon>
                 </button>
 
-                <button [disabled]="!connected" mat-flat-button class="danger" matTooltip="End Call" (click)="endCall()">
+                <button mat-flat-button class="danger" matTooltip="End Call" (click)="endCall()">
                     <mat-icon>call_end</mat-icon>
                 </button>
             </div>

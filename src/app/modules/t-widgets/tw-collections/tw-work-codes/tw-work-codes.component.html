@@ -3,7 +3,7 @@
 <!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
 <tw-wrapper [data]="data">
     <!-- your code goes here -->
-    <div *ngIf="!loadWorkCodesReq.loading && !loadWorkCodesReq.error" fxFlex fxFill fxLayout="row" fxLayoutAlign="center">
+    <div *ngIf="!loadWorkCodesReq.loading && !loadWorkCodesReq.error" fxFlex fxFill fxLayout="row" fxLayoutAlign="center" class="p-4">
         <mat-form-field *ngIf="DataConf.Source === 'interaction'" class="w-100-p" appearance="outline">
             <mat-autocomplete class="w-100-p" #allWorkCodesRef (optionSelected)="setWorkCode($event)">
                 <ng-container *ngIf="DataConf.ByGroup">
@@ -35,7 +35,10 @@
                 />
             </mat-chip-list>
         </mat-form-field>
-        <div *ngIf="DataConf.Source === 'supervisor'" class="w-100-p h-100-p p-12 custom-scroll-adjust">
+        <div
+            *ngIf="DataConf.Source === 'supervisor'"
+            class="w-100-p h-100-p p-12 custom-scroll-adjust"
+        >
             <mat-chip-list aria-label="WorkCodes">
                 <mat-chip
                     *ngFor="let workCode of selectedWorkCodes"
@@ -52,7 +55,7 @@
                 </mat-chip>
             </mat-chip-list>
 
-            <div *ngIf="selectedWorkCodes.length === 0" class="w-100-p h-95-p">
+            <div *ngIf="selectedWorkCodes.length === 0" class="w-100-p h-90-p">
                 <img src="assets/images/vectors/no-data-2.svg" class="w-100-p h-100-p box-shadow-3d" />
                 <p class="text-center mat-title m-0">No Data Available</p>
             </div>
