@@ -208,6 +208,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         let filterFunction = (data: any, filter: string): boolean => {
             let searchTerms = JSON.parse(filter);
             let isFilterSet = false;
+            let filtersApplied = 0;
+            let filtersMatched = 0;
             for (const col in searchTerms) {
                 if (searchTerms[col].toString() !== '') {
                     isFilterSet = true;
@@ -216,8 +218,10 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 }
             }
 
+            filtersApplied = Object.keys(searchTerms).length;
+
             let nameSearch = () => {
-                let found = false;
+                // let found = false;
                 if (isFilterSet) {
                     Object.keys(searchTerms).map((col) => {
                         // for (const col in searchTerms) {
@@ -229,31 +233,37 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                             const actualDate = moment(data['InteractionDate'], 'DD/MM/yyyy HH:mm:ss').valueOf();
                             if (start && !end) {
                                 if (actualDate >= start) {
-                                    found = true;
+                                    // found = true;
+                                    filtersMatched += 1;
                                 }
                             } else if (!start && end) {
                                 if (actualDate <= end) {
-                                    found = true;
+                                    // found = true;
+                                    filtersMatched += 1;
                                 }
                             } else if (start && end) {
                                 if (actualDate >= start && actualDate <= end) {
-                                    found = true;
+                                    // found = true;
+                                    filtersMatched += 1;
                                 }
                             }
                         } else {
-                            searchTerms[col]
-                                .trim()
-                                .toLowerCase()
-                                .split(' ')
-                                .forEach((word: any) => {
-                                    if (data[col].toString().toLowerCase().indexOf(word) !== -1 && isFilterSet) {
-                                        found = true;
-                                    }
-                                });
-                            // }
+                            if (data[col] && data[col].toLowerCase().indexOf(searchTerms[col]) !== -1 && isFilterSet) {
+                                // found = true;
+                                filtersMatched += 1;
+                            }
+                            // searchTerms[col]
+                            //     .trim()
+                            //     .toLowerCase()
+                            //     .split(' ')
+                            //     .forEach((word: any) => {
+                            //         if (data[col].toString().toLowerCase().indexOf(word) !== -1 && isFilterSet) {
+                            //             found = true;
+                            //         }
+                            //     });
                         }
                     });
-                    return found;
+                    return filtersMatched === filtersApplied;
                 } else {
                     return true;
                 }
