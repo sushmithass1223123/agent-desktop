@@ -240,7 +240,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         /**
          * Retry in count
          */
-        tryCount: 0;
+        tryCount: number;
         /**
          * Retry now flag
          */

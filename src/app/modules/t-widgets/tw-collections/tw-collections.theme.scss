@@ -140,6 +140,14 @@
                     }
                 }
             }
+
+            .sort-label {
+                @if ($is-dark) {
+                    color: rgba(255, 255, 255, 0.7);
+                } @else {
+                    color: rgb(0 0 0 / 70%);
+                }
+            }
         }
 
         .agent-list {
