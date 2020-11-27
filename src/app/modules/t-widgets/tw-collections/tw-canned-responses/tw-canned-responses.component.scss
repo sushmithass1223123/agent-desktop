@@ -1,10 +1,20 @@
 tw-canned-responses {
+    .mat-card-content {
+        position: relative;
+    }
+
     .template-selector {
         height: 44px;
     }
 
     .template-items {
-        height: calc(100% - 44px);
+        height: calc(100% - 48px);
+    }
+
+    .mat-progress-bar {
+        position: absolute;
+        top: 0;
+        left: 0;
     }
 
     .select-box {

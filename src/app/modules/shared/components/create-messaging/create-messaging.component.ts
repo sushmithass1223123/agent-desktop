@@ -218,20 +218,18 @@ export class CreateMessagingComponent implements OnInit, OnDestroy {
                 });
             }
 
-            // set loading to false
-            this.loading = false;
-
             // check the response
             if (resp?.response > 0) {
                 this._appUIService.showSnackbar(`Message sent to ${this.toNumber} successfully`, 'success');
+                this.wrapperComponent.close();
             }
             else {
                 this._appUIService.showSnackbar(`Message send failed to ${this.toNumber}`, 'failure');
             }
         } catch (error) {
-            this.loading = false;
             this._appUIService.showSnackbar(`Message send error to ${this.toNumber}`, 'failure');
         }
+        this.loading = false;
     }
 
     /**

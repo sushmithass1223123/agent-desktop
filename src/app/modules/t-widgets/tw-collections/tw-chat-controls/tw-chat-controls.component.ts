@@ -1078,12 +1078,15 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
                 // TODO:: implement reply and get the replied message
 
-                // show freeze auto response button
-                if (this.callWidget) {
-                    this.freezeAutoResponse(true);
-                }
-                else {
-                    this.showAutoFreeze = true;
+                // for template sent turn on freeze button
+                if (evt.EventName === 'TextChatMessageTemplateSentEvent') {
+                    // show freeze auto response button
+                    if (this.callWidget) {
+                        this.freezeAutoResponse(true);
+                    }
+                    else {
+                        this.showAutoFreeze = true;
+                    }
                 }
 
                 // add message to the transcripts
@@ -1228,6 +1231,13 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             .then((res => {
                 if (res.response > 0) {
                     // message send success
+                    // show freeze auto response button
+                    if (this.callWidget) {
+                        this.freezeAutoResponse(true);
+                    }
+                    else {
+                        this.showAutoFreeze = true;
+                    }
                 }
                 else {
                     this._appUIService.showSnackbar('Message send failed!', 'failure');
@@ -1242,14 +1252,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // set ready to reply
         this.readyToReply();
-
-        // show freeze auto response button
-        if (this.callWidget) {
-            this.freezeAutoResponse(true);
-        }
-        else {
-            this.showAutoFreeze = true;
-        }
     }
 
     /**
@@ -1833,6 +1835,51 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             Type: item.type,
             Attachment: attachment
         });
+    }
+
+    /**
+     * To send signature request
+     * 
+     * @param {MatButton} btn
+     */
+    sendSignatureRequest(btn: MatButton): void {
+        // show the progress bar
+        this._fuseProgressBarService.show();
+        // disable the button
+        btn.disabled = true;
+        SDKClient.sendActionMessage({
+            interactionId: this.interactionId.toString(),
+            message: JSON.stringify(
+                {
+                    source: 'agent',
+                    options: {},
+                    data: {
+                        interactionId: this.interactionId.toString()
+                    },
+                    status: 'request',
+                    type: 'sign',
+                    eventName: 'ActionMessage',
+                    id: TUtils.Generic.uuid()
+                }
+            )
+        })
+            .then((res) => {
+                if (res.response.ResultCode === 1) {
+                    this._appUIService.showSnackbar('Signature request sent successfully');
+                }
+                else {
+                    this._appUIService.showSnackbar('Signature request failed!', 'failure');
+                }
+            })
+            .catch(() => {
+                this._appUIService.showSnackbar('Signature request error!', 'failure');
+            })
+            .finally(() => {
+                // show the progress bar
+                this._fuseProgressBarService.hide();
+                // disable the button
+                btn.disabled = false;
+            });
     }
 }
 

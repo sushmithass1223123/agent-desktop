@@ -93,6 +93,25 @@
                     </button>
 
                     <button
+                        *ngIf="data.Data?.SignatureAllowed"
+                        [disabled]="status !== 'connected'"
+                        mat-mini-fab
+                        color="default"
+                        [ngClass]="
+                            (fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                                ? fuseConfig.layout.anchorWidget.bodyBackground
+                                : '') +
+                            ' ' +
+                            (status === 'connected' ? 'mat-elevation-z2' : '')
+                        "
+                        matTooltip="Signature Request"
+                        #signBtn
+                        (click)="sendSignatureRequest(signBtn)"
+                    >
+                        <mat-icon>gesture</mat-icon>
+                    </button>
+
+                    <button
                         *ngIf="supervisorInit && (conferenceType === 'silent' || conferenceType === 'whisper' || conferenceType === 'conf')"
                         [disabled]="status !== 'connected' || this.botConnected"
                         mat-mini-fab

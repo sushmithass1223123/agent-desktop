@@ -6,7 +6,7 @@
 <!-- Widget card -->
 <tw-card
     cdkDrag
-    cdkDragBoundary="{{ aot ? '#container-2' : '.widget-grid' }}"
+    [cdkDragBoundary]="aot ? '#container-2' : '.widget-grid'"
     [cdkDragDisabled]="maximized || (!floating && !aot)"
     [cdkDragFreeDragPosition]="dragPosition"
     class="tw-card animate__animated animate__faster {{
