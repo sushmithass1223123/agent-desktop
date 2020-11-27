@@ -137,64 +137,80 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
                     delete searchTerms[col];
                 }
             }
+
+
+            let filtersApplied = Object.keys(searchTerms).length;
+            let filtersMatched = 0;
+
             const createdDateCols = ['CreatedTimeStart', 'CreatedTimeEnd'];
             const closedDateCols = ['ClosedTimeStart', 'ClosedTimeEnd'];
             const nameSearch = () => {
                 let found = false;
                 if (isFilterSet) {
                     Object.keys(searchTerms).map((col) => {
-                        // for (const col in searchTerms) {
-                        searchTerms[col]
-                            .trim()
-                            .toLowerCase()
-                            .split(' ')
-                            .forEach((word: any) => {
-                                if (createdDateCols.includes(col)) {
-                                    const start = new Date(searchTerms['CreatedTimeStart']).getTime();
-                                    const endDate = new Date(searchTerms['CreatedTimeEnd']);
-                                    endDate.setHours(24);
-                                    const end = endDate.getTime();
-                                    const actualDate = new Date(data['CreatedDateTime']).getTime();
+                        if (createdDateCols.includes(col)) {
+                            const start = new Date(searchTerms['CreatedTimeStart']).getTime();
+                            const endDate = new Date(searchTerms['CreatedTimeEnd']);
+                            endDate.setHours(24);
+                            const end = endDate.getTime();
+                            const actualDate = new Date(data['CreatedDateTime']).getTime();
 
-                                    if (start && !end) {
-                                        if (actualDate >= start) {
-                                            found = true;
-                                        }
-                                    } else if (!start && end) {
-                                        if (actualDate <= end) {
-                                            found = true;
-                                        }
-                                    } else if (start && end) {
-                                        if (actualDate >= start && actualDate <= end) {
-                                            found = true;
-                                        }
-                                    }
-                                } else if (closedDateCols.includes(col)) {
-                                    const start = new Date(searchTerms['ClosedTimeStart']).getTime();
-                                    const endDate = new Date(searchTerms['ClosedTimeEnd']);
-                                    endDate.setHours(24);
-                                    const end = endDate.getTime();
-                                    const actualDate = new Date(data['ClosedDateTime']).getTime();
-                                    if (start && !end) {
-                                        if (actualDate >= start) {
-                                            found = true;
-                                        }
-                                    } else if (!start && end) {
-                                        if (actualDate <= end) {
-                                            found = true;
-                                        }
-                                    } else if (start && end) {
-                                        if (actualDate >= start && actualDate <= end) {
-                                            found = true;
-                                        }
-                                    }
-                                } else if (data[col]?.toString().toLowerCase().indexOf(word) !== -1) {
+                            if (start && !end) {
+                                if (actualDate >= start) {
                                     found = true;
+                                    filtersMatched += 1;
                                 }
-                            });
+                            } else if (!start && end) {
+                                if (actualDate <= end) {
+                                    found = true;
+                                    filtersMatched += 1;
+                                }
+                            } else if (start && end) {
+                                if (actualDate >= start && actualDate <= end) {
+                                    found = true;
+                                    filtersMatched += 1;
+                                }
+                            }
+                        } else if (closedDateCols.includes(col)) {
+                            const start = new Date(searchTerms['ClosedTimeStart']).getTime();
+                            const endDate = new Date(searchTerms['ClosedTimeEnd']);
+                            endDate.setHours(24);
+                            const end = endDate.getTime();
+                            const actualDate = new Date(data['ClosedDateTime']).getTime();
+                            if (start && !end) {
+                                if (actualDate >= start) {
+                                    found = true;
+                                    filtersMatched += 1;
+                                }
+                            } else if (!start && end) {
+                                if (actualDate <= end) {
+                                    found = true;
+                                    filtersMatched += 1;
+                                }
+                            } else if (start && end) {
+                                if (actualDate >= start && actualDate <= end) {
+                                    found = true;
+                                    filtersMatched += 1;
+                                }
+                            }
+                        } else {
+                            if (data[col] && data[col].toLowerCase().indexOf(searchTerms[col]) !== -1 && isFilterSet) {
+                                found = true;
+                                filtersMatched += 1;
+                            }
+                            // searchTerms[col]
+                            //     .trim()
+                            //     .toLowerCase()
+                            //     .split(' ')
+                            //     .forEach((word: any) => {
+                            //         if (data[col]?.toString().toLowerCase().indexOf(word) !== -1) {
+                            //             found = true;
+                            //         }
+                            //     });
+                        }
                         // }
                     });
-                    return found;
+                    return filtersMatched === filtersApplied;
                 } else {
                     return true;
                 }
@@ -215,7 +231,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         this.interactionDetailsTable.source.sort = this.sort;
         this.interactionDetailsTable.source.paginator = this.paginator;
         this.interactionDetailsTable.source.filterPredicate = this.createFilter();
-    }
+    };
 
     /**
      * Maximize event
