@@ -99,20 +99,12 @@
                 <!-- NA Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
 
-                <ng-container matColumnDef="SessionID">
+                <!-- <ng-container matColumnDef="SessionID">
                     <mat-header-cell fxFlex="20" *matHeaderCellDef>
                         <span mat-sort-header> Session Id </span>
-                        <!-- <mat-icon [matMenuTriggerFor]="sessionSearch">search</mat-icon>
-                        <mat-menu #sessionSearch="matMenu" class="search-input p-4">
-                            <div fxLayout="column">
-                                <mat-form-field (click)="$event.stopPropagation()" appearance="outline" class="custom with-border form-field">
-                                    <input type="text" matInput class="p-0 login-input" formControlName="SessionID" />
-                                </mat-form-field>
-                            </div>
-                        </mat-menu> -->
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxFlex="20">{{ element.SessionID || 'NA' }}</mat-cell>
-                </ng-container>
+                </ng-container> -->
 
                 <ng-container matColumnDef="InteractionDate">
                     <mat-header-cell fxFlex="15" *matHeaderCellDef class="d-flex w-100-p">
@@ -132,14 +124,6 @@
                 <ng-container matColumnDef="Channel">
                     <mat-header-cell *matHeaderCellDef>
                         <span mat-sort-header> Channel </span>
-                        <!-- <mat-icon [matMenuTriggerFor]="channelSearch" mat-ripple>search</mat-icon>
-                        <mat-menu #channelSearch="matMenu" class="search-input p-4">
-                            <div fxLayout="column">
-                                <mat-form-field (click)="$event.stopPropagation()" appearance="outline" class="custom with-border form-field">
-                                    <input type="text" matInput class="p-0 login-input" formControlName="Channel" />
-                                </mat-form-field>
-                            </div>
-                        </mat-menu> -->
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" [ngSwitch]="element.Channel | lowercase">
                         <ng-container *ngSwitchCase="'textchat'">
@@ -169,7 +153,6 @@
                     <mat-cell *matCellDef="let element">{{ element.CIF || 'NA' }}</mat-cell>
                 </ng-container>
 
-                
                 <ng-container matColumnDef="AgentName">
                     <mat-header-cell *matHeaderCellDef>
                         <span mat-sort-header> Agent </span>
@@ -274,24 +257,82 @@
                     <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
                     <mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">
                         <div fxLayout fxLayoutAlign="center center" class="h-100-p w-100-p">
-                            <button mat-icon-button [matMenuTriggerFor]="sessionActionsRef" (click)="getSessionActions(element.SessionID)">
+                            <!-- [matMenuTriggerFor]="sessionActionsRef" -->
+                            <button mat-icon-button matTooltip="Load Session" (click)="switchMaximizedView('frame'); setIframe(element)">
+                                <mat-icon> frame </mat-icon>
+                            </button>
+                            <button
+                                mat-icon-button
+                                matTooltip="History"
+                                (click)="switchMaximizedView('history'); getSessionActions(element.SessionID)"
+                            >
                                 <mat-icon> history </mat-icon>
                             </button>
+                            <!-- [matMenuTriggerFor]="sessionNotesRef" -->
+                            <button
+                                mat-icon-button
+                                matTooltip="Notes"
+                                (click)="switchMaximizedView('notes'); showInteractionData(element)"
+                            >
+                                <mat-icon> notes </mat-icon>
+                            </button>
+                            <!-- <button mat-icon-button matTooltip="Data" [matMenuTriggerFor]="sessionNotesRef" (click)="switchMaximizedView('data');showInteractionData(element)">
+                                <mat-icon> data </mat-icon>
+                            </button> -->
+                            <mat-menu #sessionDataRef="matMenu" backdropClass="ih-actions-menu" xPosition="before">
+                                <ng-container *ngIf="interactionNotesReq.data | async as iNotes">
+                                    <div class="timeline custom-scroll-adjust" *ngIf="!interactionNotesReq.error && !interactionNotesReq.loading">
+                                        <div
+                                            class="step m-8 px-8 py-8 mat-elevation-z1 border-radius-20"
+                                            *ngFor="let action of iNotes"
+                                            [ngClass]="fuseBg"
+                                        >
+                                            <div fxFlex="30" class="step-time px-8">
+                                                {{ action.CallConnectedTime }}
+                                            </div>
+
+                                            <!-- <div fxLayout fxLayoutAlign="center center" class="vertical-divide mx-12">
+                                                <div class="bg-light"></div>
+                                            </div> -->
+
+                                            <div fxLayout fxLayoutAlign="space-between center" class="step-details">
+                                                {{ action.Channel }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                                <div *ngIf="interactionNotesReq.loading" class="w-100-p h-100-p" fxLayout fxLayoutAlign="center center">
+                                    <mat-spinner></mat-spinner>
+                                </div>
+                                <div *ngIf="interactionNotesReq.error" fxLayout="column" fxLayoutAlign="center center" class="text-center">
+                                    <p>
+                                        {{ sessionActions.msg }}
+                                    </p>
+                                    <button mat-button color="primary" (click)="getSessionActions(element.SessionID)">Retry</button>
+                                </div>
+                            </mat-menu>
+                            <mat-menu #sessionNotesRef="matMenu" backdropClass="ih-actions-menu" xPosition="before">
+                                <ng-container *ngIf="interactionNotesReq.data | async as iNotes">
+                                    <div class="timeline custom-scroll-adjust" *ngIf="!interactionNotesReq.error && !interactionNotesReq.loading">
+                                        <p *ngIf="!iNotes.length" class="text-center">No notes available</p>
+                                        <div
+                                            class="step m-8 px-8 py-8 mat-elevation-z1 border-radius-20"
+                                            *ngFor="let iData of iNotes"
+                                            [ngClass]="fuseBg"
+                                        >
+                                            {{ iData.AgentComment }}
+                                        </div>
+                                    </div>
+                                </ng-container>
+                                <p class="text-center" *ngIf="interactionNotesReq.loading">Loading ...</p>
+                                <p class="text-center" *ngIf="interactionNotesReq.error">Some error occured</p>
+                            </mat-menu>
                             <mat-menu #sessionActionsRef="matMenu" backdropClass="ih-actions-menu" xPosition="before">
-                                <div
-                                    class="timeline custom-scroll-adjust"
-                                    *ngIf="!sessionActions.error && !sessionActions.loading"
-                                >
+                                <div class="timeline custom-scroll-adjust" *ngIf="!sessionActions.error && !sessionActions.loading">
                                     <div
                                         class="step m-8 px-8 py-8 mat-elevation-z1 border-radius-20"
                                         *ngFor="let action of sessionActions.data"
-                                        [ngClass]="
-                                            fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
-                                                ? fuseConfig.layout.anchorWidget.contentBackground
-                                                : fuseConfig.layout.widget.customBackgroundColor === true
-                                                ? fuseConfig.layout.widget.contentBackground
-                                                : ''
-                                        "
+                                        [ngClass]="fuseBg"
                                     >
                                         <div fxFlex="30" class="step-time px-8">
                                             {{ action.ActionTime | date: 'short' }}
@@ -322,7 +363,6 @@
 
                 <mat-header-row *matHeaderRowDef="customerJourneyTable.tableData.columns; sticky: true"></mat-header-row>
                 <mat-row
-                    (click)="setIframe(row)"
                     class="selectable"
                     [ngClass]="{ selected: !!customerJourneyTable.tableData.selection.isSelected(row) }"
                     *matRowDef="let row; columns: customerJourneyTable.tableData.columns"
@@ -369,7 +409,6 @@
                                 <input matInput type="text" formControlName="Channel" />
                             </mat-form-field>
 
-                            
                             <mat-form-field fxFlex="25">
                                 <mat-label>Agent</mat-label>
                                 <input matInput type="text" formControlName="Agent" />
@@ -438,13 +477,57 @@
             <p *ngIf="!customerJourneyTable.iframeUrl && customerJourneyTable.tableData.source.data.length > 0" class="mat-display-1">
                 Select a session
             </p>
-            <iframe
-                *ngIf="!!customerJourneyTable.iframeUrl"
-                [src]="customerJourneyTable.iframeUrl"
-                class="w-100-p h-100-p"
-                frameborder="0"
-                seamless="seamless"
-            ></iframe>
+
+            <ng-container *ngIf="mode === 'notes'">
+                <ng-container *ngIf="interactionNotesReq.data | async as iNotes">
+                    <div class="timeline custom-scroll-adjust" *ngIf="!interactionNotesReq.error && !interactionNotesReq.loading">
+                        <p *ngIf="!iNotes.length" class="text-center">No notes available</p>
+                        <div class="step m-8 px-8 py-8 mat-elevation-z1 border-radius-20" *ngFor="let iData of iNotes" [ngClass]="fuseBg">
+                            {{ iData.AgentComment }}
+                        </div>
+                    </div>
+                </ng-container>
+                <p class="text-center" *ngIf="interactionNotesReq.loading">Loading ...</p>
+                <p class="text-center" *ngIf="interactionNotesReq.error">Some error occured</p>
+            </ng-container>
+
+            <ng-container *ngIf="mode === 'history'">
+                <div class="timeline custom-scroll-adjust" *ngIf="!sessionActions.error && !sessionActions.loading">
+                    <div class="step m-8 px-8 py-8 mat-elevation-z1 border-radius-20" *ngFor="let action of sessionActions.data" [ngClass]="fuseBg">
+                        <div fxFlex="30" class="step-time px-8">
+                            {{ action.ActionTime | date: 'short' }}
+                        </div>
+
+                        <div fxLayout fxLayoutAlign="center center" class="vertical-divide mx-12">
+                            <div class="bg-light"></div>
+                        </div>
+
+                        <div fxLayout fxLayoutAlign="space-between center" class="step-details">
+                            {{ action.Action }}
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="sessionActions.data.length === 0"> No data available</div>
+                <div *ngIf="sessionActions.loading" class="w-100-p h-100-p" fxLayout fxLayoutAlign="center center">
+                    <mat-spinner></mat-spinner>
+                </div>
+                <div *ngIf="sessionActions.error" fxLayout="column" fxLayoutAlign="center center" class="text-center">
+                    <p>
+                        {{ sessionActions.msg }}
+                    </p>
+                    <!-- <button mat-button color="primary" (click)="getSessionActions(element.SessionID)">Retry</button> -->
+                </div>
+            </ng-container>
+
+            <ng-container *ngIf="mode === 'iframe'">
+                <iframe
+                    *ngIf="!!customerJourneyTable.iframeUrl"
+                    [src]="customerJourneyTable.iframeUrl"
+                    class="w-100-p h-100-p"
+                    frameborder="0"
+                    seamless="seamless"
+                ></iframe>
+            </ng-container>
         </div>
     </div>
     <div *ngIf="customerJourneyTable.loading" class="w-100-p h-100-p" fxLayout="row" fxLayoutAlign="center center">

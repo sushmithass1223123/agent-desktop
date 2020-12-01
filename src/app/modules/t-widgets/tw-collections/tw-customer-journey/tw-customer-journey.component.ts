@@ -1,11 +1,10 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { FusePerfectScrollbarDirective } from '@fuse/directives/fuse-perfect-scrollbar/fuse-perfect-scrollbar.directive';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
 import { TwWrapperComponent } from '@modules/t-widgets/tw-wrapper/tw-wrapper.component';
@@ -16,8 +15,19 @@ import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { IWidget, ResData } from 'app/interfaces';
 import { sortBy, uniqBy } from 'lodash';
 import * as moment from 'moment';
-import { takeUntil } from 'rxjs/operators';
-import { IGetInteractionHistory, InteractionAction, InteractionHistory, InteractionHistoryReadyEvent, IUIEvent, SDKClient } from 'tmac-sdk';
+import { from, Observable, of } from 'rxjs';
+import { catchError, map, share, takeUntil, tap } from 'rxjs/operators';
+import {
+    IGetInteractionHistory,
+    InteractionAction,
+    InteractionData,
+    InteractionHistory,
+    InteractionHistoryReadyEvent,
+    IUIEvent,
+    SDKClient
+} from 'tmac-sdk';
+
+type Mode = 'iframe' | 'notes' | 'history';
 
 /**
  * Customer journey component
@@ -28,7 +38,8 @@ import { IGetInteractionHistory, InteractionAction, InteractionHistory, Interact
     selector: 'tw-customer-journey',
     templateUrl: './tw-customer-journey.component.html',
     styleUrls: ['./tw-customer-journey.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     /**
@@ -40,6 +51,16 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      * Fuse confi
      */
     fuseConfig: FuseConfig;
+
+    /**
+     * common fuse background
+     */
+    fuseBg: string;
+
+    /**
+     * available modes for maximised views
+     */
+    mode: Mode = 'iframe';
 
     /**
      * Search for record in table
@@ -54,6 +75,17 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         PhoneNumber: new FormControl(''),
         OverallSentiment: new FormControl('')
     });
+
+    interactionNotesForm = new FormGroup({
+        fromDate: new FormControl(''),
+        toDate: new FormControl('')
+    });
+
+    interactionNotesReq: ResData<Observable<InteractionData[]>> = {
+        error: false,
+        loading: false,
+        data: from([])
+    };
 
     /**
      * Show advanced search form
@@ -131,13 +163,12 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         private _appUIService: AppUiService
     ) {
         super();
-
         this.customerJourneyTable = {
             loading: true,
             iframeUrl: '',
             lastId: '',
             tableData: {
-                columns: ['SessionID', 'InteractionDate', 'Channel', 'Intent', 'AgentName', 'CIF', 'NRIC', 'PhoneNumber', 'OverallSentiment', 'Actions'],
+                columns: ['InteractionDate', 'Channel', 'Intent', 'AgentName', 'CIF', 'NRIC', 'PhoneNumber', 'OverallSentiment', 'Actions'],
                 selection: new SelectionModel<InteractionHistory>(false, []),
                 source: new MatTableDataSource([])
             }
@@ -161,6 +192,12 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         // subscribe to fuse
         this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
             this.fuseConfig = config;
+            this.fuseBg =
+                this.fuseConfig.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor
+                    ? this.fuseConfig.layout.anchorWidget.contentBackground
+                    : this.fuseConfig.layout.widget.customBackgroundColor === true
+                    ? this.fuseConfig.layout.widget.contentBackground
+                    : '';
         });
 
         this.historyParams = {
@@ -273,6 +310,9 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         return filterFunction;
     }
 
+    /**
+     * Lifecycle hook
+     */
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
@@ -280,6 +320,9 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         SDKClient.events.off('InteractionHistoryReadyEvent', this.InteractionHistoryReadyEvent);
     }
 
+    /**
+     * Handler for InteractionHistoryReadyEvent
+     */
     InteractionHistoryReadyEvent = (evt: InteractionHistoryReadyEvent): void => {
         // check for the interaction
         if (this.interactionId !== evt.InteractionID) {
@@ -300,8 +343,15 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         this.getInteractionHistory();
     };
 
+    /**
+     * Gets interaction history and sets to table
+     */
     private getInteractionHistory(lastId?: string): void {
-        SDKClient.getInteractionHistory(lastId ? { ...this.historyParams, lastId } : this.historyParams, null)
+        // SDKClient.getInteractionHistory(lastId ? { ...this.historyParams, lastId } : this.historyParams, null)
+        SDKClient.getInteractionHistory(
+            lastId ? { ...this.historyParams, lastId, phone: '6596975347' } : { ...this.historyParams, phone: '6596975347' },
+            null
+        )
             .then((res: any) => {
                 let tableData = [];
                 if (lastId) {
@@ -316,12 +366,15 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 this.customerJourneyTable.lastId = res.response[0]?.LastIndex;
                 this.customerJourneyTable.loading = false;
             })
-            .catch((err: string) => {
-                console.log({ err });
+            .catch((err) => {
+                console.error(err);
                 this.customerJourneyTable.loading = false;
             });
     }
 
+    /**
+     * Sets iframe for selected session
+     */
     public setIframe(row: InteractionHistory): void {
         if (!this.maximized) {
             this.maximized = true;
@@ -331,6 +384,9 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         this.customerJourneyTable.iframeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(`${this.data.Data.IframeBaseUrl}${row.SessionID}`);
     }
 
+    /**
+     * Material table pagination event
+     */
     public pageEvent(): void {
         if (!this.customerJourneyTable.tableData.source.paginator?.hasNextPage()) {
             this.getInteractionHistory(this.customerJourneyTable.tableData.source.data[0].LastID.toString());
@@ -387,5 +443,41 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     public onMaximized(max: boolean): void {
         this.maximized = max;
         this.maximizeEvent.emit(max);
+    }
+
+    /**
+     * fetches interaction data and assings to this.interactionNotesReq.data
+     * @param {InteractionHistory} record
+     */
+    public async showInteractionData(record: InteractionHistory): Promise<void> {
+        this.interactionNotesReq.loading = true;
+        this.interactionNotesReq.data = from(
+            SDKClient.getInteractionData({
+                count: 10,
+                fromDate: '',
+                interactionId: record.ID,
+                sessionId: record.SessionID,
+                toDate: '',
+                agentId: record.AgentID
+            })
+        ).pipe(
+            map((res) => res.response.filter((ih) => ih.AgentComment)),
+            tap(() => (this.interactionNotesReq.loading = false)),
+            catchError((err) => {
+                console.error(err);
+                this.interactionNotesReq.error = true;
+                return of([]);
+            }),
+            share()
+        );
+        // });
+    }
+
+    /**
+     * Swithes Maximized View
+     * @param {Mode} mode
+     */
+    public switchMaximizedView(mode: Mode): void {
+        this.mode = mode;
     }
 }
