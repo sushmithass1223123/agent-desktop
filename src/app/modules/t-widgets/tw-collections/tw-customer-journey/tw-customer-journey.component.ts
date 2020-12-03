@@ -12,22 +12,14 @@ import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
-import { IWidget, ResData } from 'app/interfaces';
-import { sortBy, uniqBy } from 'lodash';
+import { ChatTranscripts, IWidget, ResData } from 'app/interfaces';
+import { sortBy } from 'lodash';
 import * as moment from 'moment';
 import { from, Observable, of } from 'rxjs';
 import { catchError, map, share, takeUntil, tap } from 'rxjs/operators';
-import {
-    IGetInteractionHistory,
-    InteractionAction,
-    InteractionData,
-    InteractionHistory,
-    InteractionHistoryReadyEvent,
-    IUIEvent,
-    SDKClient
-} from 'tmac-sdk';
+import { IGetInteractionHistory, InteractionAction, InteractionHistory, InteractionHistoryReadyEvent, IUIEvent, SDKClient } from 'tmac-sdk';
 
-type Mode = 'iframe' | 'notes' | 'history';
+type Mode = 'Customer Journey' | 'Notes' | 'Actions' | 'Transcript' | null;
 
 /**
  * Customer journey component
@@ -60,7 +52,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     /**
      * available modes for maximised views
      */
-    mode: Mode = 'iframe';
+    mode: Mode = null;
 
     /**
      * Search for record in table
@@ -81,11 +73,14 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         toDate: new FormControl('')
     });
 
-    interactionNotesReq: ResData<Observable<InteractionData[]>> = {
+    interactionNotesReq: ResData<Observable<string[]>> = {
         error: false,
         loading: false,
         data: from([])
     };
+
+    interactionTranscripts: Record<string, ChatTranscripts[]> = {};
+    defaultCustomerName = 'Customer';
 
     /**
      * Show advanced search form
@@ -222,6 +217,9 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         this.customerJourneyTable.tableData.source.filterPredicate = this.createFilter();
     }
 
+    /**
+     * Adds filter to material table
+     */
     doAdvancedSearch(): void {
         const res = this.searchForm.value;
         const searchKey = {};
@@ -352,18 +350,50 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             lastId ? { ...this.historyParams, lastId, phone: '6596975347' } : { ...this.historyParams, phone: '6596975347' },
             null
         )
-            .then((res: any) => {
-                let tableData = [];
+            .then((res) => {
+                const tableData = {};
+                const transcripts: Record<string, ChatTranscripts[]> = {};
                 if (lastId) {
-                    tableData = uniqBy(
-                        sortBy([...this.customerJourneyTable.tableData.source.data, ...res.response], 'InteractionDate').reverse(),
-                        'SessionID'
-                    );
+                    const sortedTabledata = sortBy(
+                        [...this.customerJourneyTable.tableData.source.data, ...res.response],
+                        'InteractionDate'
+                    ).reverse();
+                    sortedTabledata.forEach((data) => {
+                        if (!tableData[data.SessionID]) {
+                            tableData[data.SessionID] = data;
+                            transcripts[data.SessionID] = [];
+                        }
+                        transcripts[data.SessionID].push({
+                            who: data.Direction === 'Out' ? data.AgentName : this.defaultCustomerName,
+                            isAgent: data.Direction === 'Out',
+                            message: data.InteractionText,
+                            time: new Date(data.InteractionDate),
+                            type: data.SubType,
+                            messageId: data.ID
+                        });
+                    });
+                    // tableData = uniqBy(sortedTabledata, 'SessionID');
                 } else {
-                    tableData = uniqBy([...sortBy(res.response, 'InteractionDate').reverse()], 'SessionID');
+                    const sortedTabledata = [...sortBy(res.response, 'InteractionDate').reverse()];
+                    sortedTabledata.forEach((data) => {
+                        if (!tableData[data.SessionID]) {
+                            tableData[data.SessionID] = data;
+                            transcripts[data.SessionID] = [];
+                        }
+                        transcripts[data.SessionID].push({
+                            who: data.Direction === 'Out' ? data.AgentName : this.defaultCustomerName,
+                            isAgent: data.Direction === 'Out',
+                            message: data.InteractionText,
+                            time: new Date(data.InteractionDate),
+                            type: data.SubType,
+                            messageId: data.ID
+                        });
+                    });
+                    // tableData = uniqBy(sortedTabledata, 'SessionID');
                 }
-                this.customerJourneyTable.tableData.source.data = tableData;
-                this.customerJourneyTable.lastId = res.response[0]?.LastIndex;
+                this.interactionTranscripts = transcripts;
+                this.customerJourneyTable.tableData.source.data = Object.values(tableData);
+                this.customerJourneyTable.lastId = res.response[0]?.LastID?.toString();
                 this.customerJourneyTable.loading = false;
             })
             .catch((err) => {
@@ -455,13 +485,13 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             SDKClient.getInteractionData({
                 count: 10,
                 fromDate: '',
-                interactionId: record.ID,
-                sessionId: record.SessionID,
+                interactionId: null,
+                sessionId: null,
                 toDate: '',
                 agentId: record.AgentID
             })
         ).pipe(
-            map((res) => res.response.filter((ih) => ih.AgentComment)),
+            map((res) => res.response.filter((ih) => ih.AgentComment).map((ihF) => ihF.AgentComment)),
             tap(() => (this.interactionNotesReq.loading = false)),
             catchError((err) => {
                 console.error(err);
@@ -474,10 +504,44 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     }
 
     /**
-     * Swithes Maximized View
+     * Switches Maximized View
      * @param {Mode} mode
      */
-    public switchMaximizedView(mode: Mode): void {
+    public switchMaximizedView(mode: Mode, row: InteractionHistory): void {
         this.mode = mode;
+        if (!this.maximized) {
+            this.maximized = true;
+            this.wrapperComponent.maximize();
+        }
+        if (this.customerJourneyTable.tableData.selection?.selected[0]?.ID !== row.ID) {
+            this.customerJourneyTable.tableData.selection.toggle(row);
+        }
+        switch (mode) {
+            case 'Customer Journey': {
+                this.customerJourneyTable.iframeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
+                    `${this.data.Data.IframeBaseUrl}${row.SessionID}`
+                );
+                break;
+            }
+            case 'Actions': {
+                this.getSessionActions(row.SessionID);
+                break;
+            }
+            case 'Transcript': {
+                break;
+            }
+            case 'Notes': {
+                this.showInteractionData(row);
+                break;
+            }
+        }
+    }
+
+    /**
+     * Closes the bottom action window
+     */
+    public closeActionWindow(): void {
+        this.mode = null;
+        this.customerJourneyTable.tableData.selection.clear();
     }
 }
