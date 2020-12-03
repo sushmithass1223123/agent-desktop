@@ -29,9 +29,9 @@ type Mode = 'Customer Journey' | 'Notes' | 'Actions' | 'Transcript' | null;
 @Component({
     selector: 'tw-customer-journey',
     templateUrl: './tw-customer-journey.component.html',
-    styleUrls: ['./tw-customer-journey.component.scss'],
-    encapsulation: ViewEncapsulation.None,
-    changeDetection: ChangeDetectionStrategy.OnPush
+    styleUrls: ['./tw-customer-journey.component.scss']
+    // encapsulation: ViewEncapsulation.None,
+    // changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     /**
@@ -42,12 +42,12 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     /**
      * Fuse confi
      */
-    fuseConfig: FuseConfig;
+    // fuseConfig: FuseConfig;
 
     /**
      * common fuse background
      */
-    fuseBg: string;
+    fuseBg: { content: string; body: string };
 
     /**
      * available modes for maximised views
@@ -59,19 +59,21 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      */
     searchForm = new FormGroup({
         SessionID: new FormControl(''),
+        PhoneNumber: new FormControl(''),
+        Channel: new FormControl(''),
         InteractionDateStart: new FormControl(),
         InteractionDateEnd: new FormControl(),
-        Channel: new FormControl(''),
         CIF: new FormControl(''),
         NRIC: new FormControl(''),
-        PhoneNumber: new FormControl(''),
-        OverallSentiment: new FormControl('')
+        OverallSentiment: new FormControl(''),
+        Agent: new FormControl(''),
+        Intent: new FormControl('')
     });
 
-    interactionNotesForm = new FormGroup({
-        fromDate: new FormControl(''),
-        toDate: new FormControl('')
-    });
+    // interactionNotesForm = new FormGroup({
+    //     fromDate: new FormControl(''),
+    //     toDate: new FormControl('')
+    // });
 
     interactionNotesReq: ResData<Observable<string[]>> = {
         error: false,
@@ -186,13 +188,21 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
 
         // subscribe to fuse
         this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.fuseConfig = config;
-            this.fuseBg =
-                this.fuseConfig.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor
-                    ? this.fuseConfig.layout.anchorWidget.contentBackground
-                    : this.fuseConfig.layout.widget.customBackgroundColor === true
-                    ? this.fuseConfig.layout.widget.contentBackground
-                    : '';
+            // config = config;
+            this.fuseBg = {
+                content:
+                    config.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor
+                        ? config.layout.anchorWidget.contentBackground
+                        : config.layout.widget.customBackgroundColor === true
+                        ? config.layout.widget.contentBackground
+                        : '',
+                body:
+                    config.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor
+                        ? config.layout.anchorWidget.bodyBackground
+                        : config.layout.widget.customBackgroundColor === true
+                        ? config.layout.widget.bodyBackground
+                        : ''
+            };
         });
 
         this.historyParams = {

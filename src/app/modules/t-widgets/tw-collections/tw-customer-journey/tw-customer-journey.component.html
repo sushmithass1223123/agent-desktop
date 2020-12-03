@@ -22,7 +22,7 @@
                 fxLayout="row-wrap"
                 class="step mb-4 p-4 mat-elevation-z1"
                 (click)="setIframe(s)"
-                [ngClass]="fuseBg"
+                [ngClass]="fuseBg.content"
             >
                 <div fxFlex="15" fxLayout fxLayoutAlign="center center" class="step-time pr-8">
                     <small fxFlex="80" class="text-right">
@@ -73,12 +73,13 @@
         <!-- minimised view end  -->
 
         <!-- maximised view  start -->
-        <div *ngIf="maximized" class="table custom-scroll-adjust" [ngClass]="fuseBg + (mode ? ' h-35-p' : '')">
+        <div *ngIf="maximized" class="table custom-scroll-adjust" [ngClass]="fuseBg.content + (mode ? ' h-35-p' : '')">
             <mat-table
                 [dataSource]="customerJourneyTable.tableData.source"
                 matSort
                 matSortActive="InteractionDate"
                 matSortDirection="desc"
+                class="pb-0"
                 matSortDisableClear
                 [formGroup]="searchForm"
             >
@@ -219,67 +220,73 @@
                 ></mat-row>
             </mat-table>
 
-            <div *ngIf="customerJourneyTable.tableData.source.data.length > 5" fxLayout fxLayoutAlign="space-between">
+            <!-- *ngIf="customerJourneyTable.tableData.source.data.length > 5" -->
+            <!-- (backdropClick)="showAdvancedSearchOverlay = false" -->
+            <div fxLayout fxLayoutAlign="space-between">
+                <button
+                    cdkOverlayOrigin
+                    #advancedSearchOverlay="cdkOverlayOrigin"
+                    (click)="showAdvancedSearchOverlay = !showAdvancedSearchOverlay"
+                    mat-button
+                    color="primary"
+                >
+                    <mat-icon>search</mat-icon>
+                    Search
+                </button>
                 <ng-template
                     cdkConnectedOverlay
                     [cdkConnectedOverlayOrigin]="advancedSearchOverlay"
                     [cdkConnectedOverlayOpen]="showAdvancedSearchOverlay"
                     cdkConnectedOverlayHasBackdrop
                     cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-                    (backdropClick)="showAdvancedSearchOverlay = false"
+                    (overlayOutsideClick)="showAdvancedSearchOverlay = false"
                 >
-                    <div
-                        class="mat-elevation-z1 p-12"
-                        [ngClass]="
-                            fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
-                                ? fuseConfig.layout.anchorWidget.bodyBackground
-                                : fuseConfig.layout.widget.customBackgroundColor === true
-                                ? fuseConfig.layout.widget.bodyBackground
-                                : ''
-                        "
-                    >
+                    <div class="mat-elevation-z1 w-50-p border-radius-20 p-12" [ngClass]="fuseBg.body">
                         <form
-                            fxLayout="column"
+                            fxLayout="row wrap"
+                            fxLayoutAlign="space-between"
+                            fxLayoutGap="20px"
+                            [class]="fuseBg.content + ' p-12 border-radius-20'"
                             [formGroup]="searchForm"
                             (ngSubmit)="doAdvancedSearch(); showAdvancedSearchOverlay = false"
                             novalidate
                         >
-                            <mat-form-field fxFlex="25">
+                            <mat-form-field fxFlex="45">
                                 <mat-label>SessionID</mat-label>
                                 <input matInput type="text" formControlName="SessionID" />
                             </mat-form-field>
 
-                            <mat-form-field fxFlex="25">
+                            <mat-form-field fxFlex="45">
                                 <mat-label>PhoneNumber</mat-label>
                                 <input matInput type="text" formControlName="PhoneNumber" />
                             </mat-form-field>
 
-                            <mat-form-field fxFlex="25">
+                            <mat-form-field fxFlex="45">
                                 <mat-label>Channel</mat-label>
                                 <input matInput type="text" formControlName="Channel" />
                             </mat-form-field>
 
-                            <mat-form-field fxFlex="25">
+                            <mat-form-field fxFlex="45">
                                 <mat-label>Agent</mat-label>
                                 <input matInput type="text" formControlName="Agent" />
                             </mat-form-field>
 
-                            <mat-form-field fxFlex="25">
+                            <mat-form-field fxFlex="45">
                                 <mat-label>Intent</mat-label>
                                 <input matInput type="text" formControlName="Intent" />
                             </mat-form-field>
 
-                            <mat-form-field fxFlex="25">
+                            <mat-form-field fxFlex="45">
                                 <mat-label>CIF</mat-label>
                                 <input matInput type="text" formControlName="CIF" />
                             </mat-form-field>
 
-                            <mat-form-field fxFlex="25">
+                            <mat-form-field fxFlex="45">
                                 <mat-label>NRIC</mat-label>
                                 <input matInput type="text" formControlName="NRIC" />
                             </mat-form-field>
 
-                            <mat-form-field fxFlex="25">
+                            <mat-form-field fxFlex="45">
                                 <mat-label>Interaction Date</mat-label>
                                 <mat-date-range-input [rangePicker]="interactionDatePicker">
                                     <input matStartDate placeholder="Start date" formControlName="InteractionDateStart" />
@@ -289,31 +296,25 @@
                                 <mat-date-range-picker #interactionDatePicker></mat-date-range-picker>
                             </mat-form-field>
 
-                            <mat-form-field fxFlex="25">
+                            <mat-form-field fxFlex="45">
                                 <mat-label>Overall Sentiment</mat-label>
                                 <input matInput type="text" formControlName="OverallSentiment" />
                             </mat-form-field>
-                            <button mat-button color="primary">Search</button>
+
+                            <div fxFlex="100" class="mt-12">
+                                <div class="mx-auto w-40-p">
+                                    <button mat-raised-button class="w-100-p" color="primary">Search</button>
+                                </div>
+                            </div>
                         </form>
                     </div>
                 </ng-template>
 
-                <button
-                    cdkOverlayOrigin
-                    #advancedSearchOverlay="cdkOverlayOrigin"
-                    (click)="showAdvancedSearchOverlay = !showAdvancedSearchOverlay"
-                    mat-button
-                    (backdropClick)="showAdvancedSearchOverlay = false"
-                    color="primary"
-                >
-                    <mat-icon>search</mat-icon>
-                    Advanced Search
-                </button>
-                <mat-paginator (page)="pageEvent()" [pageSizeOptions]="[10, 20, 50, 100]" showFirstLastButtons> </mat-paginator>
+                <mat-paginator (page)="pageEvent()" [pageSizeOptions]="[15, 20, 50, 100]" showFirstLastButtons> </mat-paginator>
             </div>
             <p *ngIf="!customerJourneyTable.tableData.source.data.length" class="text-center m-0 mat-title">No Data Available</p>
         </div>
-        <div *ngIf="maximized && mode" class="spread" [ngClass]="fuseBg + (mode ? ' h-65-p' : '')">
+        <div *ngIf="maximized && mode" class="spread" [ngClass]="fuseBg.content + (mode ? ' h-65-p' : '')">
             <div class="mat-title px-20 py-12" fxLayout fxLayoutAlign="space-between">
                 <span>
                     {{ mode }}
@@ -326,7 +327,7 @@
                 <ng-container *ngIf="interactionNotesReq.data | async as iNotes">
                     <div class="custom-scroll-adjust px-12 pb-12" *ngIf="!interactionNotesReq.error && !interactionNotesReq.loading">
                         <p *ngIf="!iNotes.length" class="text-center mat-headline mt-20">No notes available</p>
-                        <div class="step m-8 px-8 py-8 mat-elevation-z1 border-radius-20" *ngFor="let note of iNotes" [ngClass]="fuseBg">
+                        <div class="step m-8 px-8 py-8 mat-elevation-z1 border-radius-20" *ngFor="let note of iNotes" [ngClass]="fuseBg.content">
                             {{ note }}
                         </div>
                     </div>
@@ -339,7 +340,12 @@
                 <div class="custom-scroll-adjust px-12 pb-12" *ngIf="!sessionActions.error && !sessionActions.loading">
                     <div *ngIf="!sessionActions.data?.length" class="text-center mt-40 mat-headline">No data available</div>
 
-                    <div *ngFor="let action of sessionActions.data" fxLayout="row-wrap" class="step mb-4 p-4 mat-elevation-z1" [ngClass]="fuseBg">
+                    <div
+                        *ngFor="let action of sessionActions.data"
+                        fxLayout="row-wrap"
+                        class="step mb-4 p-4 mat-elevation-z1"
+                        [ngClass]="fuseBg.content"
+                    >
                         <div fxFlex="20" fxLayout fxLayoutAlign="center center" class="step-time p-8">
                             {{ action.ActionTime | date: 'short' }}
                         </div>
@@ -404,12 +410,7 @@
                                                 fxLayout="column"
                                                 fxLayoutAlign="start start"
                                                 class="bubble"
-                                                [ngClass]="
-                                                    (message.who === defaultCustomerName &&
-                                                    fuseConfig.layout.anchorWidget.customBackgroundColor === true
-                                                        ? fuseConfig.layout.anchorWidget.bodyBackground
-                                                        : '') + ' '
-                                                "
+                                                [ngClass]="message.who === defaultCustomerName && fuseBg.body"
                                             >
                                                 <div
                                                     *ngIf="chatTranscripts[i - 1]?.who !== message.who"
