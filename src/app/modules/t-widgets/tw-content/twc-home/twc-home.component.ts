@@ -44,8 +44,14 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
      */
     init: boolean;
 
+    /**
+     * dashboard data span display flag
+     */
     showDashboardDataSpanOverlay = false;
 
+    /**
+     * dashboard data from date
+     */
     dashboardDataFromDate: {
         /**
          * Form control for date
@@ -57,7 +63,19 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
         calculatedSpan: number;
     };
 
-    fuseBg: Observable<{ content: string; body: string }>;
+    /**
+     * fuse background
+     */
+    fuseBg: Observable<{
+        /**
+         * fuse background for content
+         */
+        content: string;
+        /**
+         * fuse background for body
+         */
+        body: string;
+    }>;
 
     constructor(
         public hostElement: ElementRef,
@@ -162,7 +180,7 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
             }
             this.loaded = true;
         }
-    };
+    }
 
     /**
      * On page inactive callback
@@ -172,5 +190,5 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
             this.loaded = false;
             this.registerToService(false);
         }
-    };
+    }
 }
