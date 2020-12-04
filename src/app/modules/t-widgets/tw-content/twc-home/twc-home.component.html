@@ -5,6 +5,37 @@
         <div class="tw-aot-fab" cdkDrag cdkDragBoundary=".tw-widget-container" *ngIf="aotWidgets.length > 0">
             <widget-fab [fabWidgets]="aotWidgets"></widget-fab>
         </div>
+        <button
+            mat-raised-button
+            color="primary"
+            cdkOverlayOrigin
+            class="time-filter"
+            #dashboardDataOverlay="cdkOverlayOrigin"
+            (click)="showDashboardDataSpanOverlay = !showDashboardDataSpanOverlay"
+        >
+            <mat-icon> access_time </mat-icon>
+        </button>
+
+        <ng-template
+            cdkConnectedOverlay
+            [cdkConnectedOverlayOrigin]="dashboardDataOverlay"
+            [cdkConnectedOverlayOpen]="showDashboardDataSpanOverlay"
+            cdkConnectedOverlayHasBackdrop
+            cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+            (backdropClick)="showDashboardDataSpanOverlay = false"
+            [cdkConnectedOverlayPositions]="[{ originX: 'start', originY: 'center', overlayX: 'end', overlayY: 'center', offsetX: -10 }]"
+        >
+            <ng-container *ngIf="fuseBg | async as fuseBackground">
+                <div [class]="fuseBackground.body + ' border-radius-20 p-8 mat-elevation-z1'">
+                    <mat-form-field appearance="fill" [class]="fuseBackground.content + ' border-radius-20 p-12'">
+                        <mat-label>Choose from date</mat-label>
+                        <input matInput [matDatepicker]="picker" [formControl]="dashboardDataFromDate.formControl" />
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                </div>
+            </ng-container>
+        </ng-template>
     </div>
     <twc-no-widgets class="twc-card" *ngIf="!dynamicWidgets || dynamicWidgets.length === 0" type="home"></twc-no-widgets>
 </div>
