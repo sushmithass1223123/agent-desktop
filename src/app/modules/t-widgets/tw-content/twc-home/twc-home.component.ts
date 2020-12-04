@@ -136,6 +136,7 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
             this.registerToService(false);
             const deltaTime = (Date.now() - date.getTime()) / (1000 * 60 * 60);
             this.registerToService(true, deltaTime);
+            this.showDashboardDataSpanOverlay = false;
         });
     }
 
@@ -180,7 +181,7 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
             }
             this.loaded = true;
         }
-    }
+    };
 
     /**
      * On page inactive callback
@@ -190,5 +191,5 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
             this.loaded = false;
             this.registerToService(false);
         }
-    }
+    };
 }
