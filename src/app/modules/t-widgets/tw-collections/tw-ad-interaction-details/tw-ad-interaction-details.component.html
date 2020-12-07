@@ -29,8 +29,8 @@
             </ng-container>
 
             <ng-container matColumnDef="Direction">
-                <mat-header-cell *matHeaderCellDef mat-sort-header [fxFlex]="maximized ? 10 : 20">Direction</mat-header-cell>
-                <mat-cell *matCellDef="let element" [fxFlex]="maximized ? 10 : 20">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Direction</mat-header-cell>
+                <mat-cell *matCellDef="let element">
                     <mat-icon class="channel-icon" color="accent">
                         {{ element.Direction === 'In' ? 'south' : 'north' }}
                     </mat-icon>
@@ -81,15 +81,15 @@
             </ng-container>
 
             <ng-container matColumnDef="User">
-                <mat-header-cell *matHeaderCellDef mat-sort-header [fxFlex]="maximized ? 15 : ''">User</mat-header-cell>
-                <mat-cell *matCellDef="let element" class="text-left px-8" [fxFlex]="maximized ? 15 : ''">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>User</mat-header-cell>
+                <mat-cell *matCellDef="let element" class="text-left px-8">
                     {{ element.User || 'NA' }}
                 </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="Dnis">
-                <mat-header-cell *matHeaderCellDef mat-sort-header [fxFlex]="maximized ? 15 : ''">DNIS</mat-header-cell>
-                <mat-cell *matCellDef="let element" class="text-left px-8" [fxFlex]="maximized ? 15 : ''">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>DNIS</mat-header-cell>
+                <mat-cell *matCellDef="let element" class="text-left px-8">
                     {{ element.Dnis || 'NA' }}
                 </mat-cell>
             </ng-container>
@@ -117,6 +117,17 @@
                 <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="10">ActiveTime</mat-header-cell>
                 <mat-cell *matCellDef="let element" fxFlex="10">
                     {{ element.ActiveTime * 1000 | date: 'H:mm:ss':'UTC' }}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="AgentComment">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Comments</mat-header-cell>
+                <mat-cell
+                    *matCellDef="let element"
+                    class="px-8 text-truncate"
+                    [matTooltip]="element.AgentComment || 'sdcsdjkjds dskjdsdj cksjckjcnsd csknkdsjdks '"
+                >
+                    {{ element.AgentComment || 'sdcsdjkjds dskjdsdj cksjckjcnsd csknkdsjdks ' }}
                 </mat-cell>
             </ng-container>
 

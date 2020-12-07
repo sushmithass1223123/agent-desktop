@@ -55,7 +55,18 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
     /**
      * Maximized displayed columns
      */
-    maxdisplayedColumns: string[] = ['Channel', 'SubChannel', 'Direction', 'User', 'Dnis', 'Intent', 'CreatedTime', 'ClosedTime', 'ActiveTime'];
+    maxdisplayedColumns: string[] = [
+        'Channel',
+        'SubChannel',
+        'Direction',
+        'User',
+        'Dnis',
+        'Intent',
+        'CreatedTime',
+        'ClosedTime',
+        'ActiveTime',
+        'AgentComment'
+    ];
 
     /**
      * Interaction Details table data
@@ -137,7 +148,6 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
                     delete searchTerms[col];
                 }
             }
-
 
             let filtersApplied = Object.keys(searchTerms).length;
             let filtersMatched = 0;

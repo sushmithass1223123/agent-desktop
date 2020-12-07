@@ -1,8 +1,12 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { FuseConfigService } from '@fuse/services/config.service';
+import { FuseConfig } from '@fuse/types';
 import { DashboardService } from '@services/dashboard.service';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { ContentPageService } from 'app/services/content-page.service';
-import { takeUntil } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { filter, map, takeUntil } from 'rxjs/operators';
 import { IAgentData, SDKClient } from 'tmac-sdk';
 
 /**
@@ -40,10 +44,44 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
      */
     init: boolean;
 
+    /**
+     * dashboard data span display flag
+     */
+    showDashboardDataSpanOverlay = false;
+
+    /**
+     * dashboard data from date
+     */
+    dashboardDataFromDate: {
+        /**
+         * Form control for date
+         */
+        formControl: FormControl;
+        /**
+         * Dashboard data duration span
+         */
+        calculatedSpan: number;
+    };
+
+    /**
+     * fuse background
+     */
+    fuseBg: Observable<{
+        /**
+         * fuse background for content
+         */
+        content: string;
+        /**
+         * fuse background for body
+         */
+        body: string;
+    }>;
+
     constructor(
         public hostElement: ElementRef,
         public contentPageService: ContentPageService,
-        private _dashboardService: DashboardService
+        private _dashboardService: DashboardService,
+        private fuseConfService: FuseConfigService
     ) {
         super(hostElement, contentPageService);
     }
@@ -54,6 +92,12 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
+
+        this.fuseBg = this.fuseConfService.config.pipe(
+            takeUntil(this.unsubscribeAll),
+            filter((config: FuseConfig) => config.layout.anchorWidget.customBackgroundColor),
+            map((config: FuseConfig) => ({ content: config.layout.widget.contentBackground, body: config.layout.widget.bodyBackground }))
+        );
 
         // subscribe to dashboard service
         this._dashboardService.subscribe();
@@ -69,18 +113,31 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
         this.aotWidgets = homeWidgets.AOT || [];
 
         // subscribe to dashboard service
-        this._dashboardService.connectionState
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((state: string) => {
-                // check the state
-                if (state === 'connected') {
-                    // register to service
-                    this.registerToService(true);
-                }
-            });
+        this._dashboardService.connectionState.pipe(takeUntil(this.unsubscribeAll)).subscribe((state: string) => {
+            // check the state
+            if (state === 'connected') {
+                // register to service
+                this.registerToService(true);
+            }
+        });
 
         // set init flag to true
         this.init = true;
+
+        const initialDate = new Date();
+        initialDate.setDate(initialDate.getDate() - 100);
+
+        this.dashboardDataFromDate = {
+            calculatedSpan: 100,
+            formControl: new FormControl(initialDate)
+        };
+
+        this.dashboardDataFromDate.formControl.valueChanges.subscribe((date: Date) => {
+            this.registerToService(false);
+            const deltaTime = (Date.now() - date.getTime()) / (1000 * 60 * 60);
+            this.registerToService(true, deltaTime);
+            this.showDashboardDataSpanOverlay = false;
+        });
     }
 
     /**
@@ -99,17 +156,16 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
 
     /**
      * To register and de-regsiter from service
-     * 
-     * @param register 
+     *
+     * @param register
      */
-    registerToService(register: boolean): void {
+    registerToService(register: boolean, duration = 100): void {
         if (register) {
             // start getting data
-            this._dashboardService.triggerAgentData(this.agentData.agentId, true, 100);
-        }
-        else {
+            this._dashboardService.triggerAgentData(this.agentData.agentId, true, duration);
+        } else {
             // stop getting data
-            this._dashboardService.triggerAgentData(this.agentData.agentId, false, 100);
+            this._dashboardService.triggerAgentData(this.agentData.agentId, false, duration);
         }
     }
 
@@ -125,7 +181,7 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
             }
             this.loaded = true;
         }
-    }
+    };
 
     /**
      * On page inactive callback
@@ -135,5 +191,5 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
             this.loaded = false;
             this.registerToService(false);
         }
-    }
+    };
 }

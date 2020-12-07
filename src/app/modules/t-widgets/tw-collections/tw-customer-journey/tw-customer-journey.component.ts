@@ -1,23 +1,24 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { FusePerfectScrollbarDirective } from '@fuse/directives/fuse-perfect-scrollbar/fuse-perfect-scrollbar.directive';
 import { FuseConfigService } from '@fuse/services/config.service';
-import { FuseConfig } from '@fuse/types';
 import { TwWrapperComponent } from '@modules/t-widgets/tw-wrapper/tw-wrapper.component';
 import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
-import { IWidget, ResData } from 'app/interfaces';
-import { sortBy, uniqBy } from 'lodash';
+import { ChatTranscripts, IWidget, ResData } from 'app/interfaces';
+import { sortBy } from 'lodash';
 import * as moment from 'moment';
-import { takeUntil } from 'rxjs/operators';
+import { from, Observable, of } from 'rxjs';
+import { catchError, map, share, takeUntil, tap } from 'rxjs/operators';
 import { IGetInteractionHistory, InteractionAction, InteractionHistory, InteractionHistoryReadyEvent, IUIEvent, SDKClient } from 'tmac-sdk';
+
+type Mode = 'Customer Journey' | 'Notes' | 'Actions' | 'Transcript' | null;
 
 /**
  * Customer journey component
@@ -27,8 +28,9 @@ import { IGetInteractionHistory, InteractionAction, InteractionHistory, Interact
 @Component({
     selector: 'tw-customer-journey',
     templateUrl: './tw-customer-journey.component.html',
-    styleUrls: ['./tw-customer-journey.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    styleUrls: ['./tw-customer-journey.component.scss']
+    // encapsulation: ViewEncapsulation.None,
+    // changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     /**
@@ -39,21 +41,47 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     /**
      * Fuse confi
      */
-    fuseConfig: FuseConfig;
+    // fuseConfig: FuseConfig;
+
+    /**
+     * common fuse background
+     */
+    fuseBg: { content: string; body: string };
+
+    /**
+     * available modes for maximised views
+     */
+    mode: Mode = null;
 
     /**
      * Search for record in table
      */
     searchForm = new FormGroup({
         SessionID: new FormControl(''),
+        PhoneNumber: new FormControl(''),
+        Channel: new FormControl(''),
         InteractionDateStart: new FormControl(),
         InteractionDateEnd: new FormControl(),
-        Channel: new FormControl(''),
         CIF: new FormControl(''),
         NRIC: new FormControl(''),
-        PhoneNumber: new FormControl(''),
-        OverallSentiment: new FormControl('')
+        OverallSentiment: new FormControl(''),
+        Agent: new FormControl(''),
+        Intent: new FormControl('')
     });
+
+    // interactionNotesForm = new FormGroup({
+    //     fromDate: new FormControl(''),
+    //     toDate: new FormControl('')
+    // });
+
+    interactionNotesReq: ResData<Observable<string[]>> = {
+        error: false,
+        loading: false,
+        data: from([])
+    };
+
+    interactionTranscripts: Record<string, ChatTranscripts[]> = {};
+    defaultCustomerName = 'Customer';
 
     /**
      * Show advanced search form
@@ -131,13 +159,12 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         private _appUIService: AppUiService
     ) {
         super();
-
         this.customerJourneyTable = {
             loading: true,
             iframeUrl: '',
             lastId: '',
             tableData: {
-                columns: ['SessionID', 'InteractionDate', 'Channel', 'Intent', 'AgentName', 'CIF', 'NRIC', 'PhoneNumber', 'OverallSentiment', 'Actions'],
+                columns: ['InteractionDate', 'Channel', 'Intent', 'AgentName', 'CIF', 'NRIC', 'PhoneNumber', 'OverallSentiment', 'Actions'],
                 selection: new SelectionModel<InteractionHistory>(false, []),
                 source: new MatTableDataSource([])
             }
@@ -160,7 +187,21 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
 
         // subscribe to fuse
         this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.fuseConfig = config;
+            // config = config;
+            this.fuseBg = {
+                content:
+                    config.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor
+                        ? config.layout.anchorWidget.contentBackground
+                        : config.layout.widget.customBackgroundColor === true
+                            ? config.layout.widget.contentBackground
+                            : '',
+                body:
+                    config.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor
+                        ? config.layout.anchorWidget.bodyBackground
+                        : config.layout.widget.customBackgroundColor === true
+                            ? config.layout.widget.bodyBackground
+                            : ''
+            };
         });
 
         this.historyParams = {
@@ -185,6 +226,9 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         this.customerJourneyTable.tableData.source.filterPredicate = this.createFilter();
     }
 
+    /**
+     * Adds filter to material table
+     */
     doAdvancedSearch(): void {
         const res = this.searchForm.value;
         const searchKey = {};
@@ -273,6 +317,9 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         return filterFunction;
     }
 
+    /**
+     * Lifecycle hook
+     */
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
@@ -280,6 +327,9 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         SDKClient.events.off('InteractionHistoryReadyEvent', this.InteractionHistoryReadyEvent);
     }
 
+    /**
+     * Handler for InteractionHistoryReadyEvent
+     */
     InteractionHistoryReadyEvent = (evt: InteractionHistoryReadyEvent): void => {
         // check for the interaction
         if (this.interactionId !== evt.InteractionID) {
@@ -298,30 +348,68 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         };
         // get history
         this.getInteractionHistory();
-    };
+    }
 
+    /**
+     * Gets interaction history and sets to table
+     */
     private getInteractionHistory(lastId?: string): void {
-        SDKClient.getInteractionHistory(lastId ? { ...this.historyParams, lastId } : this.historyParams, null)
-            .then((res: any) => {
-                let tableData = [];
+        SDKClient.getInteractionHistory(lastId ? { ...this.historyParams, lastId } : this.historyParams)
+            .then((res) => {
+                const tableData = {};
+                const transcripts: Record<string, ChatTranscripts[]> = {};
                 if (lastId) {
-                    tableData = uniqBy(
-                        sortBy([...this.customerJourneyTable.tableData.source.data, ...res.response], 'InteractionDate').reverse(),
-                        'SessionID'
-                    );
+                    const sortedTabledata = sortBy(
+                        [...this.customerJourneyTable.tableData.source.data, ...res.response],
+                        'InteractionDate'
+                    ).reverse();
+                    sortedTabledata.forEach((data) => {
+                        if (!tableData[data.SessionID]) {
+                            tableData[data.SessionID] = data;
+                            transcripts[data.SessionID] = [];
+                        }
+                        transcripts[data.SessionID].push({
+                            who: data.Direction === 'Out' ? data.AgentName : this.defaultCustomerName,
+                            isAgent: data.Direction === 'Out',
+                            message: data.InteractionText,
+                            time: new Date(data.InteractionDate),
+                            type: data.SubType,
+                            messageId: data.ID
+                        });
+                    });
+                    // tableData = uniqBy(sortedTabledata, 'SessionID');
                 } else {
-                    tableData = uniqBy([...sortBy(res.response, 'InteractionDate').reverse()], 'SessionID');
+                    const sortedTabledata = [...sortBy(res.response, 'InteractionDate').reverse()];
+                    sortedTabledata.forEach((data) => {
+                        if (!tableData[data.SessionID]) {
+                            tableData[data.SessionID] = data;
+                            transcripts[data.SessionID] = [];
+                        }
+                        transcripts[data.SessionID].push({
+                            who: data.Direction === 'Out' ? data.AgentName : this.defaultCustomerName,
+                            isAgent: data.Direction === 'Out',
+                            message: data.InteractionText,
+                            time: new Date(data.InteractionDate),
+                            type: data.SubType,
+                            messageId: data.ID
+                        });
+                    });
+                    // tableData = uniqBy(sortedTabledata, 'SessionID');
                 }
-                this.customerJourneyTable.tableData.source.data = tableData;
-                this.customerJourneyTable.lastId = res.response[0]?.LastIndex;
+                this.interactionTranscripts = transcripts;
+                this.customerJourneyTable.tableData.source.data = Object.values(tableData);
+                this.customerJourneyTable.lastId = res.response[0]?.LastID?.toString();
                 this.customerJourneyTable.loading = false;
             })
-            .catch((err: string) => {
-                console.log({ err });
+            .catch((err) => {
+                console.error(err);
                 this.customerJourneyTable.loading = false;
             });
     }
 
+    /**
+     * Sets iframe for selected session
+     */
     public setIframe(row: InteractionHistory): void {
         if (!this.maximized) {
             this.maximized = true;
@@ -331,6 +419,9 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         this.customerJourneyTable.iframeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(`${this.data.Data.IframeBaseUrl}${row.SessionID}`);
     }
 
+    /**
+     * Material table pagination event
+     */
     public pageEvent(): void {
         if (!this.customerJourneyTable.tableData.source.paginator?.hasNextPage()) {
             this.getInteractionHistory(this.customerJourneyTable.tableData.source.data[0].LastID.toString());
@@ -387,5 +478,75 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     public onMaximized(max: boolean): void {
         this.maximized = max;
         this.maximizeEvent.emit(max);
+    }
+
+    /**
+     * fetches interaction data and assings to this.interactionNotesReq.data
+     * @param {InteractionHistory} record
+     */
+    public async showInteractionData(record: InteractionHistory): Promise<void> {
+        this.interactionNotesReq.loading = true;
+        this.interactionNotesReq.data = from(
+            SDKClient.getInteractionData({
+                count: 10,
+                fromDate: '',
+                interactionId: record.ID,
+                sessionId: record.SessionID,
+                toDate: '',
+                agentId: record.AgentID
+            })
+        ).pipe(
+            map((res) => res.response.filter((ih) => ih.AgentComment).map((ihF) => ihF.AgentComment)),
+            tap(() => (this.interactionNotesReq.loading = false)),
+            catchError((err) => {
+                console.error(err);
+                this.interactionNotesReq.error = true;
+                return of([]);
+            }),
+            share()
+        );
+        // });
+    }
+
+    /**
+     * Switches Maximized View
+     * @param {Mode} mode
+     */
+    public switchMaximizedView(mode: Mode, row: InteractionHistory): void {
+        this.mode = mode;
+        if (!this.maximized) {
+            this.maximized = true;
+            this.wrapperComponent.maximize();
+        }
+        if (this.customerJourneyTable.tableData.selection?.selected[0]?.ID !== row.ID) {
+            this.customerJourneyTable.tableData.selection.toggle(row);
+        }
+        switch (mode) {
+            case 'Customer Journey': {
+                this.customerJourneyTable.iframeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
+                    `${this.data.Data.IframeBaseUrl}${row.SessionID}`
+                );
+                break;
+            }
+            case 'Actions': {
+                this.getSessionActions(row.SessionID);
+                break;
+            }
+            case 'Transcript': {
+                break;
+            }
+            case 'Notes': {
+                this.showInteractionData(row);
+                break;
+            }
+        }
+    }
+
+    /**
+     * Closes the bottom action window
+     */
+    public closeActionWindow(): void {
+        this.mode = null;
+        this.customerJourneyTable.tableData.selection.clear();
     }
 }
