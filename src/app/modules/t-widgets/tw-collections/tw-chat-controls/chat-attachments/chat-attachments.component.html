@@ -1,0 +1,76 @@
+<input
+    #attachFileRef
+    type="file"
+    [accept]="attachAcceptTypes"
+    (click)="$event.target.value = null"
+    (change)="onFileInput($event)"
+    style="display: none"
+/>
+
+<div
+    *ngIf="attachPreviewMode.includes('preview') || attachPreviewMode === 'camera'"
+    fxLayout="column"
+    fxLayoutAlign=" none"
+    fxFlex
+    class="border-radius-20 attach-content animate__animated animate__slideInUp animate__faster"
+>
+    <div fxLayout="row" fxLayoutAlign="space-between none" class="preview-header mat-elevation-z1 pl-16 pr-8 py-4">
+        <div fxLayout fxLayoutAlign="center center">
+            <button mat-icon-button (click)="closeAttachments.emit()">
+                <mat-icon> close </mat-icon>
+            </button>
+            <div fxLayout fxLayoutAlign="center center" class="mat-title m-0 ml-4">
+                {{ attachPreviewMode === 'camera' ? 'Take Photo' : 'Preview' }}
+            </div>
+        </div>
+
+        <div>
+            <button *ngIf="attachPreviewMode === 'previewCapture'" mat-icon-button (click)="retakePhoto()" matTooltip="Retake">
+                <mat-icon> refresh </mat-icon>
+            </button>
+
+            <button *ngIf="attachPreviewMode === 'camera'" mat-icon-button (click)="takePhoto()" matTooltip="Take Photo">
+                <mat-icon> camera_alt </mat-icon>
+            </button>
+
+            <button *ngIf="attachPreviewMode === 'preview' || attachPreviewMode === 'previewCapture'" mat-icon-button (click)="send()">
+                <mat-icon> send </mat-icon>
+            </button>
+        </div>
+    </div>
+    <div class="preview-content" fxFlex>
+        <div class="preview-item">
+            <ng-container *ngIf="attachPreviewMode === 'camera'">
+                <video class="selfie" #camera autoplay playsinline="true" [muted]="true" [srcObject]="selfVideo"></video>
+            </ng-container>
+
+            <ng-container *ngIf="attachPreviewMode === 'preview' || attachPreviewMode === 'previewCapture'">
+                <ng-container *ngFor="let item of uploadingFiles">
+                    <ng-container *ngIf="item.type.includes('image'); else audio">
+                        <img [src]="item.base64" />
+                    </ng-container>
+
+                    <ng-template #audio>
+                        <ng-container *ngIf="item.type.includes('audio'); else videos">
+                            <audio [src]="item.base64" controls></audio>
+                        </ng-container>
+                    </ng-template>
+
+                    <ng-template #videos>
+                        <ng-container *ngIf="item.type.includes('video'); else files">
+                            <video [src]="item.base64" controls></video>
+                        </ng-container>
+                    </ng-template>
+
+                    <ng-template #files>
+                        <div fxLayout="column" fxLayoutAlign="center center" class="position-relative">
+                            <mat-icon class="s-48 mb-4 hint-text"> insert_drive_file </mat-icon>
+                            <span class="preview-file-name position-absolute text-bold font-size-10">{{ item.ext | uppercase }}</span>
+                            <span> {{ item.fileName }} </span>
+                        </div>
+                    </ng-template>
+                </ng-container>
+            </ng-container>
+        </div>
+    </div>
+</div>

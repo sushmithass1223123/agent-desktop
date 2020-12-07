@@ -48,10 +48,10 @@
                 border: 2px solid map-get($primary, default);
                 @if ($is-dark == true) {
                     color: #fafafa !important;
-                    background-color: #303030 !important;
+                    // background-color: #303030 !important;
                 } @else {
                     color: rgba(0, 0, 0, 0.87) !important;
-                    background-color: #fafafa !important;
+                    // background-color: #fafafa !important;
                 }
             }
 
@@ -72,6 +72,12 @@
                     background-color: $tw-warning !important;
                 }
             }
+        }
+    }
+
+    .custom-icon {
+        @if ($is-dark == true) {
+            filter: invert(1);
         }
     }
 }

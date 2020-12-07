@@ -40,7 +40,43 @@
             <ng-container matColumnDef="SubChannel">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Sub Channel</mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    {{ element.SubChannel || 'NA' }}
+                    <ng-container [ngSwitch]="element.Channel | lowercase">
+                        <ng-container *ngSwitchCase="'textchat'">
+                            <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'audiochat'">
+                            <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'videochat'">
+                            <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'services'">
+                            <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>
+                        </ng-container>
+
+                        <ng-template #interactionBrandType let-subChannel="SubChannel">
+                            <mat-icon color="primary" *ngIf="subChannel.toLowerCase() === 'chat'">chat</mat-icon>
+                            <mat-icon color="primary" *ngIf="subChannel.toLowerCase() === 'text'">chat</mat-icon>
+                            <mat-icon color="primary" *ngIf="subChannel.toLowerCase() === 'audio'">phone</mat-icon>
+                            <mat-icon color="primary" *ngIf="subChannel.toLowerCase() === 'video'">duo</mat-icon>
+                            <mat-icon color="primary" *ngIf="subChannel.toLowerCase() === 'whatsapp'" svgIcon="custom-whatsapp"></mat-icon>
+                            <mat-icon color="primary" *ngIf="subChannel.toLowerCase() === 'we'" svgIcon="custom-we"></mat-icon>
+                            <mat-icon color="primary" *ngIf="subChannel.toLowerCase() === 'line'" svgIcon="custom-line"></mat-icon>
+                            <mat-icon color="primary" *ngIf="subChannel.toLowerCase() === 'viber'" svgIcon="custom-viber"></mat-icon>
+                            <mat-icon color="primary" *ngIf="subChannel.toLowerCase() === 'twitter'" svgIcon="custom-twitter"></mat-icon>
+                            <mat-icon color="primary" *ngIf="subChannel.toLowerCase() === 'fb'" svgIcon="custom-fb"></mat-icon>
+                            <mat-icon color="primary" *ngIf="subChannel.toLowerCase() === 'telegram'" svgIcon="custom-telegram"></mat-icon>
+                            <mat-icon color="primary" *ngIf="subChannel.toLowerCase() === 'textchat'">chat</mat-icon>
+                            <mat-icon color="primary" *ngIf="subChannel.toLowerCase() === 'store'">store</mat-icon>
+                            <mat-icon color="primary" *ngIf="subChannel.toLowerCase() === 'field'">roofing</mat-icon>
+                        </ng-template>
+
+                        <mat-icon color="primary" *ngSwitchCase="'voice'"> call </mat-icon>
+                        <mat-icon color="primary" *ngSwitchCase="'sms'"> textsms </mat-icon>
+                        <mat-icon color="primary" *ngSwitchCase="'email'"> email </mat-icon>
+                        <mat-icon color="primary" *ngSwitchCase="'fax'"> print </mat-icon>
+                        <mat-icon color="primary" *ngSwitchDefault> link_off </mat-icon>
+                    </ng-container>
                 </mat-cell>
             </ng-container>
 
@@ -67,13 +103,13 @@
 
             <ng-container matColumnDef="CreatedTime">
                 <mat-header-cell *matHeaderCellDef mat-sort-header class="px-8">Created Time</mat-header-cell>
-                <mat-cell *matCellDef="let element" class="px-8">{{ element.CreatedDateTime | date: 'short' }} </mat-cell>
+                <mat-cell *matCellDef="let element" class="px-8">{{ element.CreatedDateTime | date: 'd/M/yy, h:mm a' }} </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="ClosedTime">
                 <mat-header-cell *matHeaderCellDef mat-sort-header class="px-8">Closed Time</mat-header-cell>
                 <mat-cell *matCellDef="let element" class="px-8">
-                    {{ element.ClosedDateTime | date: 'short' }}
+                    {{ element.ClosedDateTime | date: 'd/M/yy, h:mm a' }}
                 </mat-cell>
             </ng-container>
 
@@ -120,7 +156,7 @@
                 [cdkConnectedOverlayOpen]="showAdvancedSearchOverlay"
                 cdkConnectedOverlayHasBackdrop
                 cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-                (overlayOutsideClick)="showAdvancedSearchOverlay = false"
+                (backdropClick)="showAdvancedSearchOverlay = false"
             >
                 <div class="mat-elevation-z1 p-12 advanced-search-form">
                     <form fxLayout="column" [formGroup]="advancedSearchForm" novalidate>

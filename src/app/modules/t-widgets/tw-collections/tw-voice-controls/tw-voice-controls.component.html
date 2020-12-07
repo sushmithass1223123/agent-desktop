@@ -18,6 +18,13 @@
                     matTooltip="{{ item.user }}"
                     matTooltipPosition="after"
                     (click)="selectInteraction(item)"
+                    [circleColor]="
+                        fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                            ? fuseConfig.layout.anchorWidget.contentBackground
+                            : fuseConfig.layout.widget.customBackgroundColor === true
+                            ? fuseConfig.layout.widget.contentBackground
+                            : ''
+                    "
                 ></avatar>
             </div>
             <div
@@ -113,6 +120,7 @@
             >
                 <mat-icon>call</mat-icon>
             </button>
+
             <button
                 *ngIf="status !== 'disconnected'"
                 mat-flat-button
@@ -124,6 +132,7 @@
             >
                 <mat-icon>call_end</mat-icon>
             </button>
+
             <button
                 *ngIf="status !== 'hold' && status !== 'disconnected'"
                 mat-flat-button
@@ -135,9 +144,11 @@
             >
                 <mat-icon>phone_paused</mat-icon>
             </button>
+
             <button *ngIf="status === 'hold'" mat-flat-button class="success" #unHoldBtn matTooltip="Unhold" (click)="unHoldCall(unHoldBtn)">
                 <mat-icon>phone_in_talk</mat-icon>
             </button>
+
             <button
                 mat-flat-button
                 *ngIf="isMSCall && status !== 'disconnected'"
@@ -148,6 +159,7 @@
             >
                 <mat-icon> mic_off </mat-icon>
             </button>
+
             <button
                 *ngIf="data.Data?.Transfer.Allowed && status !== 'disconnected'"
                 mat-flat-button
@@ -157,6 +169,7 @@
             >
                 <mat-icon>phone_forwarded</mat-icon>
             </button>
+
             <button
                 *ngIf="data.Data?.Conference.Allowed && status !== 'disconnected'"
                 mat-flat-button
@@ -166,6 +179,7 @@
             >
                 <mat-icon>group</mat-icon>
             </button>
+
             <button
                 *ngIf="data.Data.IVR?.Transfer?.Allowed && status !== 'disconnected'"
                 mat-flat-button
@@ -174,9 +188,11 @@
             >
                 <mat-icon>phonelink_ring</mat-icon>
             </button>
+
             <button mat-flat-button matTooltip="Interaction Comment" (click)="saveInteractionComments()">
                 <mat-icon>comment</mat-icon>
             </button>
+
             <button
                 *ngIf="status === 'disconnected'"
                 mat-flat-button
@@ -189,8 +205,22 @@
                 Close
             </button>
 
+            <br />
+
+            <!-- 
             <button
-                *ngIf="confirmCall"
+                *ngIf="(isMSCall && tempCallRef?.status === 'connected') || tempCallRef?.status === 'hold'"
+                mat-flat-button
+                [class]="tempCallRef?.status === 'connected' ? 'warning' : 'success'"
+                #confirmHoldBtn
+                [matTooltip]="tempCallRef?.status === 'connected' ? 'Hold Call' : 'Unhold Call'"
+                (click)="holdUnholdMSConsultCall(confirmHoldBtn)"
+            >
+                <mat-icon>phone_paused</mat-icon>
+            </button> -->
+
+            <button
+                *ngIf="isMSCall && tempCallRef?.status === 'connected'"
                 mat-flat-button
                 class="border-radius-20"
                 color="primary"
@@ -202,7 +232,7 @@
             </button>
 
             <button
-                *ngIf="confirmCall"
+                *ngIf="isMSCall && tempCallRef?.status === 'connected'"
                 mat-flat-button
                 class="border-radius-20"
                 color="warn"

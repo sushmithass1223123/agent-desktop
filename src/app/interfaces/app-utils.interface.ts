@@ -162,6 +162,10 @@ export interface ChatTranscripts {
      */
     message?: string;
     /**
+     * Message init/sent/delivered flag
+     */
+    status?: string;
+    /**
      * Type
      */
     type?: string;
@@ -401,4 +405,19 @@ export interface AgentSkillListData {
      * Any extra info to pass
      */
     otherData?: any;
+}
+
+export interface InteractionComment {
+    /**
+     * User name
+     */
+    User: string;
+    /**
+     * Comment message
+     */
+    Message: string;
+    /**
+     * Comment added time
+     */
+    Time: string | Date;
 }

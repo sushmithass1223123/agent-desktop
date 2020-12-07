@@ -1,10 +1,14 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
+import { AppUiService } from '@services/app-ui.service';
 import { IWidget } from 'app/interfaces';
+import { TwWidgetModel } from 'app/models';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { SDKClient } from 'tmac-sdk';
 
 /**
  * QuickPanelComponent
@@ -40,6 +44,10 @@ export class QuickPanelComponent implements OnInit, OnDestroy {
      * Pinned AOT list
      */
     pinnedAOTs: IWidget[];
+    /**
+     * App config ref
+     */
+    appConfig: any;
 
     /**
      * Constructor
@@ -47,7 +55,9 @@ export class QuickPanelComponent implements OnInit, OnDestroy {
     constructor(
         private _appDataService: AppDataService,
         private _aotWidgetService: AOTWidgetService,
-        private _fuseSidebarService: FuseSidebarService
+        private _fuseSidebarService: FuseSidebarService,
+        private _fuseProgressBarService: FuseProgressBarService,
+        private _appUIService: AppUiService
     ) {
         // init the subject
         this.unsubscribeAll = new Subject();
@@ -68,6 +78,7 @@ export class QuickPanelComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((config: any) => {
                 if (config) {
+                    this.appConfig = config;
                     this.pinnedAOTs = config.Main.AOT.Widgets?.filter((w: IWidget) => w.Config.Pinned === true);
                 }
             });
@@ -91,5 +102,46 @@ export class QuickPanelComponent implements OnInit, OnDestroy {
             this._aotWidgetService.addWidget(widget);
             this._fuseSidebarService.getSidebar('quickPanel').close();
         }
+    }
+
+    /**
+     * To add new link
+     */
+    addNewLink(): void {
+        const dialogRef = this._appUIService.showCustomDialog('prompt', 'Enter new link to pin in following format <br /> [Link Name,Link Address]: ', 'Add Link');
+        dialogRef.afterClosed().subscribe((resp1) => {
+            if (resp1) {
+                // show progress bar
+                this._fuseProgressBarService.show();
+
+                // process the data
+                const split = resp1.split(',');
+                const name = split.length > 1 ? split[0] : 'Link';
+                const link = split.length > 1 ? split[1] : split[0];
+
+                // create a widget
+                const widget = new TwWidgetModel(name, 'tw-custom', 'link');
+                widget.Config.Pinned = true;
+                widget.Config.AOT = true;
+                widget.Data.AutoOpen = false;
+                widget.Data.OpenInNew = true;
+                widget.Data.Url = link;
+
+                // add to the config
+                this._appDataService.config = {
+                    ...this.appConfig,
+                    'Main': {
+                        'AOT': {
+                            'Widgets': [
+                                ...this.appConfig.Main.AOT.Widgets,
+                                widget
+                            ]
+                        }
+                    }
+                };
+                // hide progress bar
+                this._fuseProgressBarService.hide();
+            }
+        });
     }
 }

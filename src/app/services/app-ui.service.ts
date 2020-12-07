@@ -1,14 +1,12 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarRef, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
-import {
-    AlertDialogComponent,
-    AppConfirmDialogComponent,
-    AppSnackbarComponent,
-    CustomDialogComponent,
-    ReminderTaskDialogComponent,
-    SnackbarComponent
-} from '@modules/shared/components';
+import { AlertDialogComponent } from '@modules/shared/components/alert-dialog/alert-dialog.component';
+import { AppConfirmDialogComponent } from '@modules/shared/components/app-confirm-dialog/app-confirm-dialog.component';
+import { AppSnackbarComponent } from '@modules/shared/components/app-snackbar/app-snackbar.component';
+import { CustomDialogComponent } from '@modules/shared/components/custom-dialog/custom-dialog.component';
+import { ReminderTaskDialogComponent } from '@modules/shared/components/reminder-task-dialog/reminder-task-dialog.component';
+import { SnackbarComponent } from '@modules/shared/components/snackbar/snackbar.component';
 import { AppAlertDialogTypes, AppConfirmDialogTypes, AppNotification, AppSnackBarArgs, ReminderTaskDialogTypes, SnackbarStateTypes } from 'app/interfaces';
 import { map } from 'lodash';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';

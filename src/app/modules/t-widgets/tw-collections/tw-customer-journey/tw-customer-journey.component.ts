@@ -193,14 +193,14 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                     config.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor
                         ? config.layout.anchorWidget.contentBackground
                         : config.layout.widget.customBackgroundColor === true
-                        ? config.layout.widget.contentBackground
-                        : '',
+                            ? config.layout.widget.contentBackground
+                            : '',
                 body:
                     config.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor
                         ? config.layout.anchorWidget.bodyBackground
                         : config.layout.widget.customBackgroundColor === true
-                        ? config.layout.widget.bodyBackground
-                        : ''
+                            ? config.layout.widget.bodyBackground
+                            : ''
             };
         });
 
@@ -348,17 +348,13 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         };
         // get history
         this.getInteractionHistory();
-    };
+    }
 
     /**
      * Gets interaction history and sets to table
      */
     private getInteractionHistory(lastId?: string): void {
-        // SDKClient.getInteractionHistory(lastId ? { ...this.historyParams, lastId } : this.historyParams, null)
-        SDKClient.getInteractionHistory(
-            lastId ? { ...this.historyParams, lastId, phone: '6596975347' } : { ...this.historyParams, phone: '6596975347' },
-            null
-        )
+        SDKClient.getInteractionHistory(lastId ? { ...this.historyParams, lastId } : this.historyParams)
             .then((res) => {
                 const tableData = {};
                 const transcripts: Record<string, ChatTranscripts[]> = {};

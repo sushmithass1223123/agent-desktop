@@ -12,6 +12,7 @@ import * as moment from 'moment';
 import { SDKClient, IUIEvent, CCLDataEvent, TextChatRemoteUserConnectedEvent } from 'tmac-sdk';
 import { join } from 'lodash';
 import { get } from 'lodash';
+import { fuseAnimations } from '@fuse/animations';
 
 /**
  * Register Callback Widget component
@@ -20,7 +21,8 @@ import { get } from 'lodash';
     selector: 'tw-register-callback',
     templateUrl: './tw-register-callback.component.html',
     styleUrls: ['./tw-register-callback.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    animations: fuseAnimations
 })
 export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     /**
@@ -57,6 +59,7 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
      */
     getCampaignsReq: ResData<ResCampaign[]> = {
         data: [],
+        filteredData: [],
         error: false,
         loading: true,
         msg: ''
@@ -133,6 +136,11 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
      * Need more description
      */
     dataMapValues = new Object();
+
+    /**
+     * To seach campaing
+     */
+    searchTerm: string;
 
     /**
      * Constructor
@@ -256,6 +264,7 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
                 (res) => {
                     this.getCampaignsReq = {
                         data: res,
+                        filteredData: res,
                         error: false,
                         loading: false,
                         msg: ''
@@ -373,6 +382,21 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
                     panelClass: 'new-campaign-contact',
                     disableClose: true
                 });
+        }
+    }
+
+    /**
+     * To filter campaigns
+     */
+    filterCampaigns(): void {
+        const searchTerm = this.searchTerm.toLowerCase();
+        // Search
+        if (searchTerm === '') {
+            this.getCampaignsReq.filteredData = this.getCampaignsReq.data;
+        } else {
+            this.getCampaignsReq.filteredData = this.getCampaignsReq.data.filter((item) => {
+                return item.campaignName.toLowerCase().includes(searchTerm);
+            });
         }
     }
 }

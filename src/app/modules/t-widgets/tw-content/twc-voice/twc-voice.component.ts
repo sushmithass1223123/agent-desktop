@@ -1,4 +1,5 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { AOTWidgetService } from '@services/aot-widget.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
@@ -39,7 +40,8 @@ export class TwcVoiceComponent extends TWContentWrapper implements OnInit, OnDes
         hostElement: ElementRef,
         contentPageService: ContentPageService,
         private _tmacEventService: TMACEventService,
-        private _interactionManagerService: InteractionManagerService
+        private _interactionManagerService: InteractionManagerService,
+        private _aotWidgetService: AOTWidgetService
     ) {
         super(hostElement, contentPageService);
     }
@@ -114,6 +116,9 @@ export class TwcVoiceComponent extends TWContentWrapper implements OnInit, OnDes
             widget.InteractionDetails = evt;
             widget.Data.Path = this.data.Data.Path;
         });
+
+        // process aot widgets
+        this._aotWidgetService.processAOTWidgets(aotWidgets);
 
         // push the interaction details with widgets to the list
         this.interactions.push({

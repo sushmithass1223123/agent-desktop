@@ -12,8 +12,13 @@
         "PasswordEnabled": false,
         "StationEnabled": false,
         "LanIdDisabled": false,
-        "SinglePageEnabled": false,
-        "PromptAgentIdOnInvalidLanId": false
+        "PromptAgentIdOnInvalidLanId": false,
+        "MultiWindowMode": {
+            "Enabled": false,
+            "Width": 100,
+            "Height": 100,
+            "PixelDimension": false
+        }
     },
     "Main": {
         "Toolbar": {
@@ -65,18 +70,21 @@
                                 "Data": {
                                     "ProfilePicture": true,
                                     "Status": true,
-                                    "LogoutAux": "logout"
+                                    "AuxCodes": {
+                                        "Enabled": true,
+                                        "ByTeam": true
+                                    }
                                 }
                             },
                             {
-                                "Name": "Aux Codes Dropdown",
+                                "Name": "Aux Codes",
                                 "Description": "",
                                 "Type": "tw-aux-codes",
                                 "Config": {
-                                    "Enabled": true
+                                    "Enabled": false
                                 },
                                 "Data": {
-                                    "ByTeam": true
+                                    "ByTeam": false
                                 }
                             },
                             {
@@ -121,7 +129,8 @@
                                             "Name": "Send SMS",
                                             "Enable": true,
                                             "EnableState": "",
-                                            "Type": "sms",
+                                            "Type": "text",
+                                            "SubType": "sms",
                                             "Icon": "sms",
                                             "Data": {}
                                         },
@@ -130,13 +139,23 @@
                                             "Enable": true,
                                             "EnableState": "",
                                             "Type": "voice",
+                                            "SubType": "",
                                             "Icon": "call",
                                             "Data": {
-                                                "Source": "agentId",
+                                                "Source": "station",
                                                 "AllowedState": [
                                                     "Available"
                                                 ]
                                             }
+                                        },
+                                        {
+                                            "Name": "Send WhatsApp",
+                                            "Enable": true,
+                                            "EnableState": "",
+                                            "Type": "text",
+                                            "SubType": "whatsapp",
+                                            "Icon": "custom-whatsapp",
+                                            "Data": {}
                                         }
                                     ]
                                 }
@@ -2042,10 +2061,9 @@
                                                     "ScheduledCallbackAllowed": false,
                                                     "AudioEscalateEnabled": true,
                                                     "VideoEscalateEnabled": true,
-                                                    "SignatureAllowed": false,
+                                                    "SignatureAllowed": true,
                                                     "EmojiAllowed": true,
                                                     "ReplyOnChatAllowed": false,
-                                                    "CameraCaptureAllowed": false,
                                                     "VoiceNoteAllowed": false,
                                                     "AttachmentAllowed": true,
                                                     "ScreenShareAllowed": true,
@@ -2336,7 +2354,7 @@
                                     "Data": {
                                         "Source": "interaction",
                                         "ByTeam": false,
-                                        "ByGroup": false
+                                        "ByGroup": true
                                     }
                                 },
                                 {
@@ -2852,7 +2870,7 @@
                                     "Data": {
                                         "Source": "interaction",
                                         "ByTeam": false,
-                                        "ByGroup": false
+                                        "ByGroup": true
                                     }
                                 },
                                 {
@@ -3294,8 +3312,8 @@
                     "https://dice.tetherfi.cloud:443/SignalRDashboardSup"
                 ],
                 "FileServerUrl": {
-                    "SMM": "",
-                    "MediaProxy": "https://dice.tetherfi.cloud/ApiFileUploadDownLoad/"
+                    "SMM": "https://dice.tetherfi.cloud:13019/upload",
+                    "MediaProxy": "https://dice.tetherfi.cloud/ApiFileUploadDownLoad"
                 },
                 "TCMClient": "https://dice.tetherfi.cloud/TCM_Client/CampaignManager.asmx"
             }
@@ -3366,6 +3384,39 @@
                         "AutoOpen": false,
                         "GetCampaignsUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Campaign/GetCampaigns",
                         "CreateContactCampaignUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Contact/CreateCampaignContact"
+                    }
+                },
+                {
+                    "Name": "Link Tester",
+                    "Description": "",
+                    "Key": "Link1",
+                    "Type": "tw-custom",
+                    "Config": {
+                        "Enabled": true,
+                        "Static": false,
+                        "Anchor": true,
+                        "AOT": true,
+                        "Icon": "link",
+                        "Class": "",
+                        "Position": {
+                            "X": 0,
+                            "Y": 0,
+                            "W": 0,
+                            "H": 0
+                        },
+                        "Actions": [
+                            "collapse",
+                            "destroy",
+                            "pin"
+                        ],
+                        "ViewState": "restore",
+                        "Header": true,
+                        "Pinned": true
+                    },
+                    "Data": {
+                        "AutoOpen": false,
+                        "OpenInNew": true,
+                        "Url": "https://www.tetherfi.com/"
                     }
                 }
             ]
@@ -3438,7 +3489,7 @@
             },
             "offerOptions": {
                 "offerToReceiveAudio": true,
-                "offerToReceiveVideo": false,
+                "offerToReceiveVideo": true,
                 "iceRestart": true
             },
             "answerOptions": {

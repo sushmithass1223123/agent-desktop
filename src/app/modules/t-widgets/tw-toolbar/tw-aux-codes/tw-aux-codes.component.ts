@@ -92,10 +92,20 @@ export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDes
         SDKClient.events.off('AgentStatusChangeEvent', this.AgentStatusChangeEvent);
     }
 
+    /**
+     * To process AgentStatusChangeEvent
+     * 
+     * @param {AgentStatusChangeEvent} evt 
+     */
     private AgentStatusChangeEvent = (evt: AgentStatusChangeEvent) => {
         this.currentAux = evt.Status;
     }
 
+    /**
+     * To change agent status
+     * 
+     * @param {IAUXCodes} item 
+     */
     changeStatus(item: IAUXCodes): void {
         // show the progress bar
         this._fuseProgressBarService.show();

@@ -69,6 +69,8 @@
         }
 
         .chat-footer {
+            background-color: map-get($background, hover);
+
             .reply-form {
                 .message-text {
                     background-color: map-get($background, app-bar);
@@ -78,7 +80,7 @@
                         .mat-form-field-flex {
                             .mat-form-field-infix {
                                 @if ($is-dark == true) {
-                                    background-color: map-get($background, hover);
+                                    background-color: map-get($background, divider);
                                 } @else {
                                     background-color: white;
                                 }
@@ -97,6 +99,34 @@
                 }
             }
         }
+
+        .attach-content {
+            .preview-header {
+                @if ($is-dark == true) {
+                    background-color: rgb(158 158 158);
+                    color: white;
+                } @else {
+                    background-color: map-get($primary, 800);
+                    color: map-get($primary, default-contrast);
+                }
+            }
+
+            .preview-content {
+                @if ($is-dark == true) {
+                    background-color: #303030;
+                } @else {
+                    background-color: white;
+                }
+
+                .preview-file-name {
+                    @if ($is-dark == true) {
+                        color: rgba(0, 0, 0, 0.87);
+                    } @else {
+                        color: white;
+                    }
+                }
+            }
+        }
     }
 
     tw-su-active-agents {
@@ -108,6 +138,14 @@
                     } @else {
                         background-color: #ffffff;
                     }
+                }
+            }
+
+            .sort-label {
+                @if ($is-dark) {
+                    color: rgba(255, 255, 255, 0.7);
+                } @else {
+                    color: rgb(0 0 0 / 70%);
                 }
             }
         }

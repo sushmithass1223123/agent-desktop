@@ -138,8 +138,8 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
      * Custom filter method fot Angular Material Datatable
      */
     createFilter(): (data: any, filter: string) => boolean {
-        let filterFunction = (data: any, filter: string): boolean => {
-            let searchTerms = JSON.parse(filter);
+        const filterFunction = (data: any, filter: string): boolean => {
+            const searchTerms = JSON.parse(filter);
             let isFilterSet = false;
             for (const col in searchTerms) {
                 if (searchTerms[col].toString() !== '') {
@@ -154,7 +154,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
 
             const createdDateCols = ['CreatedTimeStart', 'CreatedTimeEnd'];
             const closedDateCols = ['ClosedTimeStart', 'ClosedTimeEnd'];
-            let nameSearch = () => {
+            const nameSearch = () => {
                 let found = false;
                 if (isFilterSet) {
                     Object.keys(searchTerms).map((col) => {

@@ -5,6 +5,7 @@ export interface ResData<T = any> {
     error: boolean;
     msg?: string;
     data?: T;
+    filteredData?: T;
 }
 
 export interface ResGamification {

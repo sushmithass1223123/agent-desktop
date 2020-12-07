@@ -4,8 +4,36 @@
     </div>
 
     <div id="login-form-wrapper" class="custom-scroll-adjust position-relative" [@animate]="{ value: '*', params: { delay: '300ms', x: '100%' } }">
-        <div class="spinner" *ngIf="loading">
-            <mat-spinner></mat-spinner>
+        <div class="overlay" *ngIf="loading || connectionError?.tryCount">
+            <mat-spinner *ngIf="loading"></mat-spinner>
+            <div *ngIf="connectionError?.tryCount">
+                <mat-card class="p-28 border-radius-30">
+                    <mat-card-header>
+                        <mat-card-title fxLayout="row" fxLayoutAlign=" center">
+                            <mat-icon color="warn" class="mr-4">error</mat-icon> Trying to reach server</mat-card-title
+                        >
+                        <mat-card-subtitle class="mt-8">Retrying in {{ connectionError.tryCount }} seconds...</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-divider></mat-divider>
+                    <mat-card-content class="my-12 h-48">
+                        <p>
+                            Make sure you have an active internet connection.<br />
+                            Please contact the administrator for more info.
+                        </p>
+                    </mat-card-content>
+                    <mat-card-actions fxLayout fxLayoutAlign="end ">
+                        <button
+                            mat-raised-button
+                            class="border-radius-30"
+                            color="primary"
+                            (click)="getData(true)"
+                            [disabled]="connectionError.retryNow"
+                        >
+                            RETRY NOW
+                        </button>
+                    </mat-card-actions>
+                </mat-card>
+            </div>
         </div>
 
         <div id="login-form" class="{{ loading ? 'blur' : null }}">
@@ -145,7 +173,7 @@
                         </mat-slide-toggle>
                     </mat-list-item>
                 </mat-list>
-
+                <p class="text-center text-danger text-bold">{{ errorMessage || ' ' }}</p>
                 <button mat-raised-button color="primary" class="submit-button" aria-label="LOGIN" (click)="login(false)">LOGIN</button>
             </form>
             <div fxLayout="row" fxLayoutAlign="center center" class="font-size-12 secondary-text copyright-version">

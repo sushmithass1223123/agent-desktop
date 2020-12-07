@@ -1,7 +1,8 @@
 import { Platform } from '@angular/cdk/platform';
 import { DOCUMENT } from '@angular/common';
 import { Component, HostListener, Inject, OnDestroy, OnInit } from '@angular/core';
-import { Title } from '@angular/platform-browser';
+import { MatIconRegistry } from '@angular/material/icon';
+import { DomSanitizer, Title } from '@angular/platform-browser';
 import { FuseNavigationService } from '@fuse/components/navigation/navigation.service';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseSplashScreenService } from '@fuse/services/splash-screen.service';
@@ -67,6 +68,40 @@ export class AppComponent implements OnInit, OnDestroy {
     loaded = false;
 
     /**
+     * Custom icon list 
+     */
+    customIconList = [
+        {
+            label: 'custom-whatsapp',
+            name: 'whatsapp'
+        },
+        {
+            label: 'custom-line',
+            name: 'line'
+        },
+        {
+            label: 'custom-fb',
+            name: 'fb'
+        },
+        {
+            label: 'custom-viber',
+            name: 'viber'
+        },
+        {
+            label: 'custom-we',
+            name: 'we'
+        },
+        {
+            label: 'custom-telegram',
+            name: 'telegram'
+        },
+        {
+            label: 'custom-twitter',
+            name: 'twitter'
+        }
+    ];
+
+    /**
      * Unsubscribe all subject
      */
     private _unsubscribeAll: Subject<any>;
@@ -112,6 +147,8 @@ export class AppComponent implements OnInit, OnDestroy {
      * @param {Platform} _platform
      * @param {TranslateService} _translateService  
      * @param {AppUiService} _appUIService
+     * @param {MatIconRegistry} _matIconRegistry
+     * @param {DomSanitizer} _domSanitizer
      */
     constructor(
         @Inject(DOCUMENT) private document: any,
@@ -121,7 +158,9 @@ export class AppComponent implements OnInit, OnDestroy {
         private _fuseTranslationLoaderService: FuseTranslationLoaderService,
         private _platform: Platform,
         private _translateService: TranslateService,
-        private _appUIService: AppUiService
+        private _appUIService: AppUiService,
+        private _matIconRegistry: MatIconRegistry,
+        private _domSanitizer: DomSanitizer
     ) {
         // Get default navigation
         this.navigation = navigation;
@@ -184,6 +223,13 @@ export class AppComponent implements OnInit, OnDestroy {
 
         // Set the private defaults
         this._unsubscribeAll = new Subject();
+
+        // add the custom icons to iconRegistry
+        this.customIconList.forEach((icon) => {
+            this._matIconRegistry.addSvgIcon(
+                icon.label,
+                this._domSanitizer.bypassSecurityTrustResourceUrl(`assets/icons/custom/${icon.name}.svg`));
+        });
     }
 
     // -----------------------------------------------------------------------------------------------------

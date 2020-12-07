@@ -636,6 +636,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                     await (fetchFromOutbox
                         ? SDKClient.getOutboxEmail(requestedSession)
                         : SDKClient.getInboxEmail(requestedSession))).response;
+                // check the response
+                if (!res) {
+                    this.appUiService.showSnackbar('Something went wrong, Error in email preview', 'failure');
+                    return;
+                }
                 this.emailBodies[requestedSession] = {
                     body: this.domSanitizer.bypassSecurityTrustHtml(res.Body),
                     attachmentList: res?.Attachments || [],

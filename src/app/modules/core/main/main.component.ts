@@ -98,7 +98,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
         // register to all the tmac events in service
         this._tmacEventsService.subscribe();
 
-        
+
         // register events for home dashboard 
         this.eventBufferService.registerAgentDashEvents(HOME_EVENTS);
 
@@ -170,7 +170,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
         // get the route history
         const route = history.state?.routeFrom;
         // for production build if the main url is opened directly route to login page
-        if (environment.production && (!route || route !== 'login')) {
+        if (environment.production && (!route || route !== 'login') && (opener && opener === window)) {
             // we will route to login page
             this.routeToLogin();
             return;

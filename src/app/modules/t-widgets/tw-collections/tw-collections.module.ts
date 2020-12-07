@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
 import { SharedModule } from '@modules/shared/shared.module';
 import { TwWrapperModule } from '../tw-wrapper/tw-wrapper.module';
 import { TwAccountInformationComponent } from './tw-account-information/tw-account-information.component';
@@ -14,7 +13,7 @@ import { TwAhtTcComponent } from './tw-aht-tc/tw-aht-tc.component';
 import { TwAmdocsBccComponent } from './tw-amdocs-bcc/tw-amdocs-bcc.component';
 import { TwAudioControlsComponent } from './tw-audio-controls/tw-audio-controls.component';
 import { TwCannedResponsesComponent } from './tw-canned-responses/tw-canned-responses.component';
-import { TwChatControlsComponent } from './tw-chat-controls/tw-chat-controls.component';
+import { TwChatControlsModule } from './tw-chat-controls/tw-chat-controls.module';
 import { TwChatPanelComponent } from './tw-chat-panel/tw-chat-panel.component';
 import { TwCustomComponent } from './tw-custom/tw-custom.component';
 import { TwCustomerDetailsComponent } from './tw-customer-details/tw-customer-details.component';
@@ -58,7 +57,6 @@ const collectionComponents = [
     TwCustomerJourneyComponent,
     TwVoiceControlsComponent,
     TwChatPanelComponent,
-    TwChatControlsComponent,
     TwAdInteractionDetailsComponent,
     TwAdCallbacksComponent,
     TwAdFeedbackComponent,
@@ -98,7 +96,7 @@ const collectionComponents = [
  */
 @NgModule({
     declarations: collectionComponents,
-    imports: [SharedModule, TwWrapperModule],
+    imports: [SharedModule, TwWrapperModule, TwChatControlsModule],
     exports: collectionComponents
 })
 export class TwCollectionsModule { }

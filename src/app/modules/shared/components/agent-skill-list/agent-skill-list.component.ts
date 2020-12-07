@@ -1,9 +1,8 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { Component, Inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
-import { MatRow, MatTableDataSource } from '@angular/material/table';
+import { MatTableDataSource } from '@angular/material/table';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
@@ -13,6 +12,7 @@ import { orderBy } from 'lodash';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AgentModel, CommandResultEvent, FavouriteSkill, IResponse, QueueStatusEvent, SDKClient } from 'tmac-sdk';
+import { SharedWrapperComponent } from '../shared-wrapper/shared-wrapper.component';
 
 /**
  * Agent Skill List Component
@@ -45,11 +45,6 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
      * Mat table sort
      */
     @ViewChild(MatSort, { static: true }) sort: MatSort;
-    /**
-     * Close button ref
-     */
-    @ViewChild('closeBtn')
-    private _closeBtn: MatButton;
     /**
      * Label for text field
      */
@@ -182,6 +177,10 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
      * Disable input flag
      */
     disableInput: boolean;
+    /**
+     * Wrapper component Ref
+     */
+    @ViewChild(SharedWrapperComponent) wrapperComponent: SharedWrapperComponent;
 
     /**
      * Constructor 
@@ -337,18 +336,16 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
             source: '',
             sourceId: ''
         })
-            .then((dt: IResponse) => {
+            .then((dt) => {
                 this.loading = false;
-                // get the response
-                const result: CommandResultEvent = dt.response;
                 // check the response
-                if (result.ResultCode === 0) {
+                if (dt.response.ResultCode === 0) {
                     // make call success
                     this._appUIService.showSnackbar(`Make call to ${this.selectedItem} successful`);
                     this.close();
                 } else {
                     // make call failed
-                    this._appUIService.showSnackbar('Make call failed, please try again', 'failure');
+                    this._appUIService.showSnackbar(`Make call failed, ${dt.response.ResultMessage}`, 'failure');
                 }
             })
             .catch(() => {
@@ -787,9 +784,9 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * To close the dialog
+     * To close the parent wrapper component
      */
     close(): void {
-        this._closeBtn._elementRef.nativeElement.click();
+        this.wrapperComponent.close();
     }
 }

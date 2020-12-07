@@ -7,7 +7,28 @@
 <tw-wrapper [data]="data" class="active-agent-wrapper">
     <!-- your code goes here -->
     <div fxFill fxLayout="column" fxLayoutAlign=" none">
-        <div class="w-100-p px-4">
+        <div class="w-100-p px-4 mb-8" fxLayout="row" fxLayoutAlign="center center">
+            <button mat-icon-button [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }" [matMenuTriggerFor]="sortMenu">
+                <mat-icon>sort</mat-icon>
+                <mat-menu class="custom" #sortMenu="matMenu" xPosition="after">
+                    <button mat-menu-item (click)="sortAgentList('AgentLoginID')">
+                        <span>Agent ID</span>
+                        <mat-icon *ngIf="sortBy === 'AgentLoginID'">{{ sortType === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+                    </button>
+                    <button mat-menu-item (click)="sortAgentList('AgentName')">
+                        <span>Agent Name</span>
+                        <mat-icon *ngIf="sortBy === 'AgentName'">{{ sortType === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+                    </button>
+                    <button mat-menu-item (click)="sortAgentList('CurrentAgentStatus')">
+                        <span>Agent Status</span>
+                        <mat-icon *ngIf="sortBy === 'CurrentAgentStatus'">{{ sortType === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+                    </button>
+                    <button mat-menu-item (click)="sortAgentList('CurrentStatusDuration')">
+                        <span>Status Duration</span>
+                        <mat-icon *ngIf="sortBy === 'CurrentStatusDuration'">{{ sortType === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+                    </button>
+                </mat-menu>
+            </button>
             <mat-form-field class="custom form-field w-100-p" appearance="outline">
                 <input class="login-input" matInput placeholder="Search" [(ngModel)]="searchTerm" (input)="filterAgents()" />
                 <button
@@ -17,7 +38,7 @@
                     [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
                     disabled
                 >
-                    <mat-icon matSuffix>search</mat-icon>
+                    <mat-icon>search</mat-icon>
                 </button>
                 <ng-template #clearBtn>
                     <button
@@ -34,7 +55,10 @@
                 </ng-template>
             </mat-form-field>
         </div>
-        <div fxFlex fxLayout="column" fxLayoutAlign=" none" class="agent-list px-4 custom-scroll-adjust" [@animateStagger]="{ value: '50' }">
+        <p *ngIf="filteredAgents.length" class="sort-label">
+            Agent list is sorted by <b> {{ sortBy }} </b> in <b>{{ sortType }}</b> order
+        </p>
+        <div fxFlex fxLayout="column" fxLayoutAlign=" none" class="agent-list px-4 mb-20 pb-8 custom-scroll-adjust" [@animateStagger]="{ value: '50' }">
             <div
                 *ngFor="let item of filteredAgents; trackBy: trackByID"
                 class="w-100-p p-12 border-radius-20 agent-item mat-elevation-z1"

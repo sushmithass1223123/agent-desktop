@@ -57,6 +57,10 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
      * Type of response 'auto' or 'manual'
      */
     responseMode = 'auto';
+    /**
+     * Loading flag
+     */
+    loading: boolean;
 
     /**
      * Constructor 
@@ -82,10 +86,14 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
         // assign the interaction id
         this.interactionId = this.data.InteractionDetails?.InteractionID;
 
-        SDKClient.getTextTemplateDepartments({}).then((result: IResponse) => {
-            this.departments = result.response;
-        });
-
+        this.loading = true;
+        SDKClient.getTextTemplateDepartments()
+            .then((result) => {
+                this.departments = result.response.filter(d => d.Channel.toLowerCase().includes('chat'));
+            })
+            .finally(() => {
+                this.loading = false;
+            });
 
         // get the event from event bag to make sure no events are missed
         const eventBag = this._tmacEventService.interactionEvents(this.interactionId);
@@ -172,6 +180,13 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
         this.selectedDepartment = null;
         this.groups = [];
         this.selectedGroup = null;
+        this.clearTemplates();
+    }
+
+    /**
+     * To clear templates
+     */
+    private clearTemplates(): void {
         this.templates = [];
         this.selectedTemplate = null;
         this.templateText = '';
@@ -194,10 +209,15 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
             return;
         }
 
+        this.loading = true;
         // get the groups for the department
-        SDKClient.getTextTemplateGroups(value, null).then((result: IResponse) => {
-            this.groups = sortBy(result.response, 'Name');
-        });
+        SDKClient.getTextTemplateGroups(value, null)
+            .then((result: IResponse) => {
+                this.groups = sortBy(result.response, 'Name');
+            })
+            .finally(() => {
+                this.loading = false;
+            });
     }
 
     /**
@@ -209,22 +229,28 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
         const value = event.value;
         // check if value is there
         if (!value) {
-            // if none selected then clear templates and selected template
-            this.templates = [];
-            this.selectedTemplate = null;
-            this.templateText = '';
+            // clear all data
+            this.clearAllData();
             return;
         }
+        else {
+            this.clearTemplates();
+        }
 
+        this.loading = true;
         // get the templates for the group
-        SDKClient.getTextTemplates(value, null).then((result: IResponse) => {
-            if (this.responseMode === 'auto') {
-                this.templates = [...result.response, ...this.templates];
-            }
-            else {
-                this.templates = result.response;
-            }
-        });
+        SDKClient.getTextTemplates(value, null)
+            .then((result: IResponse) => {
+                if (this.responseMode === 'auto') {
+                    this.templates = [...result.response, ...this.templates];
+                }
+                else {
+                    this.templates = result.response;
+                }
+            })
+            .finally(() => {
+                this.loading = false;
+            });
     }
 
     /**

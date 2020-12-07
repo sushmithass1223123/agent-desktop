@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { FuseSharedModule } from '@fuse/shared.module';
 import * as Chart from 'chart.js';
-import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { ChartsModule } from 'ng2-charts';
 import { QuillModule } from 'ngx-quill';
 import Quill from 'quill';
@@ -14,13 +14,15 @@ import {
     AppSnackbarComponent,
     AvatarComponent,
     CreateEmailComponent,
-    CreateSMSComponent,
+    CreateMessagingComponent,
     CustomDialogComponent,
     MatQuillModule,
     NoDataAvailableComponent,
     ReminderTaskDialogComponent,
     ResourceNotFoundComponent,
-    SnackbarComponent,
+
+
+    SharedWrapperComponent, SnackbarComponent,
     WidgetFabComponent
 } from './components';
 import { TWChartDirective } from './directives';
@@ -61,11 +63,12 @@ const sharedComponents = [
     ReminderTaskDialogComponent,
     AppConfirmDialogComponent,
     AppSnackbarComponent,
-    CreateSMSComponent,
+    CreateMessagingComponent,
     NoDataAvailableComponent,
     TWChartDirective,
     CreateEmailComponent,
-    AgentSkillListComponent
+    AgentSkillListComponent,
+    SharedWrapperComponent
 ];
 
 /**

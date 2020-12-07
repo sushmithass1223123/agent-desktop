@@ -7,7 +7,6 @@ import {
     OnDestroy,
     OnInit,
     Output,
-    QueryList,
     ViewChild,
     ViewChildren,
     ViewEncapsulation
@@ -16,9 +15,9 @@ import { NgForm } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
-import { FusePerfectScrollbarDirective } from '@fuse/directives/fuse-perfect-scrollbar/fuse-perfect-scrollbar.directive';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
+import { widgetFabAnimations } from '@modules/shared/animations/widget-fab.animation';
 import { AgentSkillListComponent } from '@modules/shared/components';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
@@ -27,7 +26,7 @@ import { ContentPageService } from '@services/content-page.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AgentSkillListData, ChatTranscripts, InteractionRef, IWidget } from 'app/interfaces';
+import { AgentSkillListData, ChatTranscripts, InteractionComment, InteractionRef, IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { map } from 'lodash';
 import * as moment from 'moment';
@@ -40,6 +39,7 @@ import {
     IResponse,
     IUIEvent,
     SDKClient,
+    SSDestination,
     TextChatAgentConnectedEvent,
     TextChatAgentDisconnectedEvent,
     TextChatAgentMessageReceivedEvent,
@@ -65,6 +65,7 @@ import {
     selector: 'tw-chat-controls',
     templateUrl: './tw-chat-controls.component.html',
     styleUrls: ['./tw-chat-controls.component.scss'],
+    animations: widgetFabAnimations,
     encapsulation: ViewEncapsulation.None
 })
 export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, OnDestroy, AfterViewInit {
@@ -230,21 +231,64 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     showEmojiOverlay = false;
     /**
+     * Flag to show attach overlay
+     */
+    showAttachOverlay = false;
+    /**
+     * Attachment actions
+     */
+    attachActions: {
+        /**
+         * Action
+         */
+        action: string;
+        /**
+         * Label
+         */
+        label: string;
+        /**
+         * Icon
+         */
+        icon: string;
+    }[] = [
+            {
+                action: 'documents',
+                icon: 'insert_drive_file',
+                label: 'Documents',
+            },
+            {
+                action: 'camera',
+                icon: 'camera_alt',
+                label: 'Camera',
+            },
+            {
+                action: 'media',
+                icon: 'photo',
+                label: 'Photos & Videos'
+            }
+        ];
+    /**
+     * Type of attachment previw
+     */
+    attachPreviewMode = '';
+    /**
+     * Self media stream
+     */
+    selfVideo: MediaStream;
+
+    /**
      * Transfer/conference dialog ref
      */
     transferConfDialogRef: MatDialogRef<any, any>;
     /**
-     * Fuse scrollbar children directive ref
+     * Self service destinations
      */
-    // @ViewChildren(FusePerfectScrollbarDirective) directiveScrolls: QueryList<FusePerfectScrollbarDirective>;
-
+    selfServiceDestinations: SSDestination[] = [];
     /**
      * Messages div ref
      */
     @ViewChild('messages')
     messagesRef: ElementRef<HTMLDivElement>;
-
-
     /**
      * Reply input children ref
      */
@@ -253,7 +297,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * Reply form ref
      */
     @ViewChild('replyForm') replyForm: NgForm;
-
+    /**
+     * Saved interaction comments
+     */
+    savedComments: InteractionComment[] = [];
     /**
      * Constructor
      * @param {FuseConfigService} _fuseConfigService
@@ -452,7 +499,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // update the interaction status and user
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
             status: 'connected',
-            user: this.customerName
+            user: this.customerName,
+            otherData: {
+                icon: this.isSMM ? 'custom-' + this.channel : 'chat'
+            }
         });
         // update the session ID
         this.sessionID = evt.TextChatSessionID;
@@ -512,6 +562,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         if (evt.InteractionID !== this.interactionId) {
             return;
         }
+
+        this.selfServiceDestinations = evt.Destinations;
     }
 
     /**
@@ -647,6 +699,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
     /**
      * To process TextChatMessageTemplateSentEvent
+     * 
      * @param evt TextChatMessageTemplateSentEvent data
      */
     private TextChatMessageTemplateSentEvent = (evt: TextChatMessageTemplateSentEvent) => {
@@ -655,6 +708,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
     /**
      * To process TextChatUserMessageWaitTimerEvent
+     * 
      * @param evt TextChatUserMessageWaitTimerEvent data
      */
     private TextChatUserMessageWaitTimerEvent = (evt: TextChatUserMessageWaitTimerEvent) => {
@@ -682,6 +736,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
     /**
      * To process TextChatTypingStateChangedEvent
+     * 
      * @param evt TextChatTypingStateChangedEvent data
      */
     private TextChatTypingStateChangedEvent = (evt: TextChatTypingStateChangedEvent) => {
@@ -920,6 +975,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
         // close the conf/transfer if opened
         this.transferConfDialogRef?.close();
+
+        // change the mode to upload to preview the taken image
+        this.attachPreviewMode = '';
     }
 
     /**
@@ -1001,23 +1059,35 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             if (evt.InteractionID !== this.interactionId || this.status === 'disconnected') {
                 return;
             }
-
+            const isJson = this.isValidJson(evt.Message);
+            // get the formatted message
+            const formattedMessage = isJson ? JSON.parse(evt.Message) : null;
             // check if recovery or template sent then show it
             if ((evt.RecoveryEvent && !evt.IsAppMessage) || evt.EventName === 'TextChatMessageTemplateSentEvent') {
-                const formattedMessage = this.isValidJson(evt.Message) ? JSON.parse(evt.Message) : null;
                 const messageId = formattedMessage ? formattedMessage.messageId : evt.EventId;
-                const type = formattedMessage
-                    ? formattedMessage.type === 'attachment'
-                        ? formattedMessage.attachment.type
-                        : formattedMessage.type
-                    : '';
                 const message = formattedMessage ? formattedMessage.message : evt.Message;
                 const attachment = formattedMessage && formattedMessage.attachment ? formattedMessage.attachment : null;
+                const type = attachment ? attachment.type : 'text';
+
+                // if media proxy then remove the source
+                if (attachment && this.fileUploadUrl.MediaProxy) {
+                    // get the file upload url
+                    const fileServerUrl: string = this.fileUploadUrl?.MediaProxy;
+                    attachment.src = `${fileServerUrl}/${this.sessionID}/${attachment.name}`;
+                }
 
                 // TODO:: implement reply and get the replied message
 
-                // show auto freeze
-                this.showAutoFreeze = true;
+                // for template sent turn on freeze button
+                if (evt.EventName === 'TextChatMessageTemplateSentEvent') {
+                    // show freeze auto response button
+                    if (this.callWidget) {
+                        this.freezeAutoResponse(true);
+                    }
+                    else {
+                        this.showAutoFreeze = true;
+                    }
+                }
 
                 // add message to the transcripts
                 this.chatTranscripts.push({
@@ -1025,6 +1095,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     isAgent: true,
                     position: 'right',
                     messageId,
+                    status: evt.Result ? 'sent' : 'failed',
                     message,
                     type,
                     time: new Date(Date.parse(evt.CreatedTime.toString())) || new Date(),
@@ -1033,23 +1104,24 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
                 // set ready to reply
                 this.readyToReply();
+            } else {
+                if (evt.MessageId) {
+                    this.chatTranscripts.map(item => {
+                        if (item.messageId === evt.MessageId) {
+                            if (evt.Result) {
+                                item.status = 'sent';
+                            }
+                            else {
+                                item.status = 'failed';
+                            }
+                        }
+                        return item;
+                    });
+                }
             }
-        } catch (error) { }
-    }
-
-    /**
-     * Ready to reply function to focus reply textbox and to scroll to bottom
-     */
-    private readyToReply(): void {
-        if (this.conferenceType === 'silent') {
-            // ignore for silent monitoring
-            return;
+        } catch (error) {
+            console.error(error);
         }
-
-        setTimeout(() => {
-            this.focusReplyInput();
-            this.scrollToBottom();
-        });
     }
 
     /**
@@ -1093,28 +1165,42 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     private sendMessage(template: any): void {
         // get the typed message
-        const inputMessage = template ? template.Text : this.replyForm.form.value.message;
+        const inputMessage = template?.Text || this.replyForm.form.value.message;
         const messageId = `a_${TUtils.Generic.uuid()}`;
         let messageData = inputMessage;
+        const attachment = template?.Attachment || null;
+        const type = template?.Type ? 'attachment' : 'text';
 
         // Message
         const message = {
             who: this.user.agentName,
+            messageId,
             isAgent: true,
             position: 'right',
+            status: 'init',
             message: inputMessage,
-            time: moment(new Date())
+            time: moment(new Date()),
+            type: attachment ? attachment.type : 'text',
+            attachment: { ...attachment }
         };
 
-        // check if reply feature is enabled or not social media
-        if (this.data.Data.ReplyOnChatAllowed && !this.isSMM) {
+        // Add the message to the chat
+        this.chatTranscripts.push(message);
+
+        // check if reply feature/attachment is enabled or not social media
+        if ((attachment || this.data.Data.ReplyOnChatAllowed) && !this.isSMM) {
+            // if media proxy then remove the source
+            if (this.fileUploadUrl.MediaProxy && attachment) {
+                attachment.src = '';
+            }
+            // create the json to send
             const jsonMessage = {
                 messageId: messageId,
-                type: 'text',
+                type: type,
                 message: inputMessage,
                 replyId: '',
                 templateId: template?.ID || '',
-                attachment: null
+                attachment
             };
 
             // TODO:: check for reply messages
@@ -1122,9 +1208,16 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             // stringy the json
             messageData = JSON.stringify(jsonMessage);
         }
-
-        // Add the message to the chat
-        this.chatTranscripts.push(message);
+        else if (attachment && this.isSMM) {
+            // stringy the json
+            messageData = JSON.stringify({
+                '_type': 'attachment',
+                '_attachmentType': attachment.type,
+                '_attachmentId': attachment.interactionId,
+                '_attachmentPreviewId': '',
+                '_attachmentSize': attachment.size
+            });
+        }
 
         // Update the server
         SDKClient.sendTextChat(
@@ -1133,13 +1226,25 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 message: messageData,
                 messageId,
                 templateId: template?.ID || '',
-                type: 'text'
-            },
-            null
-        )
-            .then(() => { })
+                type: ''
+            })
+            .then((res => {
+                if (res.response > 0) {
+                    // message send success
+                    // show freeze auto response button
+                    if (this.callWidget) {
+                        this.freezeAutoResponse(true);
+                    }
+                    else {
+                        this.showAutoFreeze = true;
+                    }
+                }
+                else {
+                    this._appUIService.showSnackbar('Message send failed!', 'failure');
+                }
+            }))
             .catch(() => {
-                this._appUIService.showSnackbar('Message send failed!', 'failure');
+                this._appUIService.showSnackbar('Message send error!', 'failure');
             });
 
         // Reset the reply form
@@ -1147,11 +1252,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // set ready to reply
         this.readyToReply();
-
-        // show auto freeze
-        if (!this.callWidget) {
-            this.showAutoFreeze = true;
-        }
     }
 
     /**
@@ -1229,6 +1329,24 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 this._appUIService.showSnackbar('End chat failed!', 'failure');
             });
     }
+
+    /**
+     * Ready to reply function to focus reply textbox and to scroll to bottom
+     */
+    private readyToReply(): void {
+        if (this.conferenceType === 'silent') {
+            // ignore for silent monitoring
+            return;
+        }
+
+        setTimeout(() => {
+            this.focusReplyInput();
+            this.scrollToBottom();
+        });
+    }
+
+
+
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
@@ -1387,6 +1505,39 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     }
 
     /**
+     * To answer a manual textchat
+     * 
+     * @param {MatButton} btn
+     */
+    public answerChat(btn: MatButton): void {
+        // show the progress bar
+        this._fuseProgressBarService.show();
+        // disable the button
+        btn.disabled = true;
+        // answer chat
+        SDKClient.answerCall(this.interactionId.toString())
+            .then((dt) => {
+                if (dt.response.ResultCode >= 0) {
+                    this._appUIService.showSnackbar('Answer chat success');
+                }
+                else {
+                    // enable the button
+                    btn.disabled = false;
+                    this._appUIService.showSnackbar(`Answer chat failed: ${dt.response.ResultMessage}`, 'failure');
+                }
+            })
+            .catch(() => {
+                // enable the button
+                btn.disabled = false;
+                this._appUIService.showSnackbar('Error in answring the chat, please try again', 'failure');
+            })
+            .finally(() => {
+                // hide the progress bar
+                this._fuseProgressBarService.hide();
+            });
+    }
+
+    /**
      * To escalate the chat to audio/video
      * @param {'audio' | 'video'} type Type of escalation
      */
@@ -1404,11 +1555,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         let message = '';
 
         if (previewData.attachment.type === 'image') {
-            message = `< img src = ${previewData.attachment.src} width = "100%" width = "100%" /> `;
+            message = `<img src = ${previewData.attachment.src} width = "100%" width = "100%" /> `;
         } else if (previewData.attachment.type === 'video') {
-            message = `< video controls autoplay src = ${previewData.attachment.src} width = "100%" width = "100%" > </>`;
+            message = `<video controls autoplay src = ${previewData.attachment.src} width = "100%" width = "100%"> </video>`;
         }
-
+        // show the custom dialog box
         this.confirmDialogRef = this._appUIService.showCustomDialog('alert', message, 'Preview');
     }
 
@@ -1472,14 +1623,16 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
     /**
      * To conference Bot with the session
+     * 
+     * @param {string} value
      */
-    public conferenceWithBot(): void {
+    public conferenceWithBot(value: string): void {
         this._fuseProgressBarService.show();
         // freeze auto response
         this.freezeAutoResponse(true);
         // send the request to server
         SDKClient.textChatConferenceToBot({
-            destination: '',
+            destination: value,
             interactionId: this.interactionId.toString()
         })
             .then((resp) => {
@@ -1502,7 +1655,20 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * To save interaction comments to server
      */
     public saveInteractionComments(): void {
-        const dialogRef = this._appUIService.showCustomDialog('prompt', 'Enter the comments', 'Interaction Comment');
+        let message = '';
+        // check the saved comments
+        this.savedComments.forEach((item) => {
+            message +=
+                `
+                 <div>${item.Message}</div>
+                 <span class="time secondary-text">${item.Time}</span>
+                 <br /><br />
+                 `;
+
+        });
+        message += 'Add new comment:';
+
+        const dialogRef = this._appUIService.showCustomDialog('prompt', message, 'Interaction Comments');
         dialogRef.afterClosed().subscribe((resp1) => {
             if (resp1) {
                 this._fuseProgressBarService.show();
@@ -1512,6 +1678,13 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 })
                     .then((resp2) => {
                         if (resp2.response > 0) {
+                            // add comments to the reference
+                            this.savedComments.push({
+                                Message: resp1,
+                                Time: new Date().toLocaleTimeString(),
+                                User: SDKClient.getAgentData().agentName
+                            });
+                            // alert user
                             this._appUIService.showSnackbar('Interaction comment saved successfully');
                         } else {
                             this._appUIService.showSnackbar('Interaction comment save failed', 'failure');
@@ -1591,6 +1764,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
     /**
      * Adds emoji to reply
+     * 
      * @param {any} evt
      */
     addEmoji(evt: any): void {
@@ -1600,4 +1774,116 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.replyInput.focus();
     }
 
+    /**
+     * To add an attachment
+     * 
+     * @param { 'documents' | 'camera' | 'media' } type 
+     */
+    addAttachment(type: 'documents' | 'camera' | 'media'): void {
+        // clear the mode
+        this.attachPreviewMode = '';
+        // close the attach menu
+        setTimeout(() => {
+            if (type === 'documents') {
+                // open camera to take a picture
+                this.attachPreviewMode = 'uploadDocuments';
+            }
+            else if (type === 'media') {
+                // open camera to take a picture
+                this.attachPreviewMode = 'uploadMedia';
+            }
+            else {
+                // open camera to take a picture
+                this.attachPreviewMode = 'camera';
+            }
+            // close attachment list
+            this.showAttachOverlay = false;
+        });
+    }
+
+    /**
+     * To close attachment panel
+     */
+    closeAttachments(): void {
+        this.attachPreviewMode = '';
+    }
+
+    /**
+     * To send attachments
+     */
+    sendAttachments(item: any): void {
+        // clear the mode
+        this.attachPreviewMode = '';
+
+        // prepare the attachment json
+        let attachment: any = {
+            name: item.fileName,
+            src: item.src,
+            type: item.type,
+            size: item.size
+        };
+        // check if interaction id is provided, this will for SMM upload
+        if (item.interactionId) {
+            attachment = {
+                ...attachment,
+                interactionId: item.interactionId
+            };
+        }
+        // send message
+        this.sendMessage({
+            Text: '',
+            Type: item.type,
+            Attachment: attachment
+        });
+    }
+
+    /**
+     * To send signature request
+     * 
+     * @param {MatButton} btn
+     */
+    sendSignatureRequest(btn: MatButton): void {
+        // show the progress bar
+        this._fuseProgressBarService.show();
+        // disable the button
+        btn.disabled = true;
+        SDKClient.sendActionMessage({
+            interactionId: this.interactionId.toString(),
+            message: JSON.stringify(
+                {
+                    source: 'agent',
+                    options: {},
+                    data: {
+                        interactionId: this.interactionId.toString()
+                    },
+                    status: 'request',
+                    type: 'sign',
+                    eventName: 'ActionMessage',
+                    id: TUtils.Generic.uuid()
+                }
+            )
+        })
+            .then((res) => {
+                if (res.response.ResultCode === 1) {
+                    this._appUIService.showSnackbar('Signature request sent successfully');
+                }
+                else {
+                    this._appUIService.showSnackbar('Signature request failed!', 'failure');
+                }
+            })
+            .catch(() => {
+                this._appUIService.showSnackbar('Signature request error!', 'failure');
+            })
+            .finally(() => {
+                // show the progress bar
+                this._fuseProgressBarService.hide();
+                // disable the button
+                btn.disabled = false;
+            });
+    }
 }
+
+
+
+
+

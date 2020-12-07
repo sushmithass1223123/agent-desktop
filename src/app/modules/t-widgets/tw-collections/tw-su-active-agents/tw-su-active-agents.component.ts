@@ -71,6 +71,14 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
      * Need more description
      */
     auxCodesList: IAUXCodes[];
+    /**
+     * To sort agent list
+     */
+    sortBy: string;
+    /**
+     * Sort type
+     */
+    sortType: 'desc' | 'asc';
 
     /**
      * Available quiz intents
@@ -95,6 +103,8 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         this.agentList = [];
         this.filteredAgents = [];
         this.user = SDKClient.getAgentData();
+        this.sortBy = '';
+        this.sortType = 'desc';
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -117,7 +127,8 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             this.appConfig = config;
         });
 
-        this.filteredAgents = [];
+        this.sortBy = this.data.Data.SortBy ?? 'AgentName';
+        this.sortType = this.data.Data.SortType ?? 'desc';
 
         // listen to agent list event
         SDKClient.events.on('SupervisorAgentListEvent', this.SupervisorAgentListEvent);
@@ -182,12 +193,14 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             });
         });
 
-        this.agentList = orderBy(this.agentList, ['AgentName'], ['desc']);
         this.filteredAgents = this.agentList;
 
         if (this.searchTerm) {
             this.filterAgents();
         }
+
+        // sort agent list
+        this.sortAgentList();
     }
 
     /**
@@ -229,6 +242,25 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                 return agentItem.AgentName.toLowerCase().includes(searchTerm);
             });
         }
+    }
+
+    /**
+     * To sort agent list
+     * 
+     * @param {string} by
+     */
+    public sortAgentList(by?: string): void {
+        // check the sort type
+        if (this.sortBy === by) {
+            this.sortType = this.sortType === 'desc' ? 'asc' : 'desc';
+        }
+        // check if type is provided
+        else if (by) {
+            this.sortBy = by;
+        }
+
+        // sort the agent list by type
+        this.filteredAgents = orderBy(this.filteredAgents, this.sortBy, this.sortType);
     }
 
     /**

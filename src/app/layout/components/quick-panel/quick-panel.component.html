@@ -76,10 +76,20 @@
         </h3>
         <div class="p-16 pt-0">
             <ng-container *ngFor="let widget of pinnedAOTs">
-                <button mat-mini-fab color="secondary" *ngIf="widget.Config.Enabled" class="fab-secondary mr-8 mb-8" (click)="openAOTWidget(widget)">
-                    <mat-icon [matTooltip]="widget.Name || 'Widget'">{{ widget.Config.Icon || 'widget' }}</mat-icon>
+                <button
+                    mat-mini-fab
+                    color="secondary"
+                    *ngIf="widget.Config.Enabled"
+                    class="fab-secondary mr-8 mb-8"
+                    [matTooltip]="widget.Name || 'Widget'"
+                    (click)="openAOTWidget(widget)"
+                >
+                    <mat-icon>{{ widget.Config.Icon || 'widget' }}</mat-icon>
                 </button>
             </ng-container>
+            <button mat-mini-fab color="primary" class="fab-secondary mr-8 mb-8" matTooltip="Add New Link" (click)="addNewLink()">
+                <mat-icon>add</mat-icon>
+            </button>
         </div>
     </mat-list>
 

@@ -1,5 +1,5 @@
 import { AfterContentInit, Component, ComponentFactoryResolver, Input, ViewChild } from '@angular/core';
-import { TWContentLibrary, TWidget, TWLibrary } from '@twidgets/utils';
+import { TWidget, TWLibrary } from '@twidgets/utils';
 import { IWidget } from 'app/interfaces';
 import { TwTemplateDirective } from './tw-template.directive';
 
@@ -62,11 +62,7 @@ export class TwTemplateComponent implements AfterContentInit {
         }
 
         // get the widget component by type 
-        if (widgetModel.Type.startsWith('twc-')) {
-            // content type
-            widget = TWContentLibrary.getWidget(widgetModel.Type, widgetModel);
-        }
-        else if (widgetModel.Type.startsWith('tw-')) {
+        if (widgetModel.Type.startsWith('twc-') || widgetModel.Type.startsWith('tw-')) {
             // basic widget
             widget = TWLibrary.getWidget(widgetModel.Type, widgetModel);
         }

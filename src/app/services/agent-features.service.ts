@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AgentFeatures, SDKClient, TUtils } from 'tmac-sdk';
+import { AgentFeatures, AgentSettingsUpdatedEvent, SDKClient, TUtils } from 'tmac-sdk';
 import { AppUiService } from './app-ui.service';
 
 /**
@@ -117,6 +117,20 @@ export class AgentFeaturesService {
             screenvideo,
             snapshot
         });
+    }
+
+    /**
+     * To process AgentSettingsUpdatedEvent
+     * 
+     * @param {AgentSettingsUpdatedEvent} evt
+     */
+    private AgentSettingsUpdatedEvent = (evt: AgentSettingsUpdatedEvent) => {
+        // process agent featues
+        if (evt.AgentProfile.AgentFeatures.length > 0) {
+            this.processAgentFeatures(evt.AgentProfile.AgentFeatures);
+            // set processed
+            this._processed = true;
+        }
     }
 
     /**
@@ -257,6 +271,11 @@ export class AgentFeaturesService {
      * Capture current location
      */
     private captureLocation(): void {
+        // check if the permission got
+        if (!SDKClient.getAgentData().isLoggedIn || this._agentFeatureInfo.permissions.location) {
+            return;
+        }
+
         // get geolocation
         navigator.geolocation.getCurrentPosition(
             // success
@@ -273,6 +292,68 @@ export class AgentFeaturesService {
                 // log the error to server for troubleshooting purpose
                 TUtils.Logger.log('Exception in getCurrentPosition', error);
             });
+    }
+
+    /**
+     * To process agent features
+     * 
+     * @param {AgentFeatures} agentFeatures
+     */
+    private processAgentFeatures(agentFeatures: AgentFeatures[]): void {
+        // loop through the features and process
+        agentFeatures.forEach((feature: AgentFeatures) => {
+            switch (feature.Feature) {
+                case 'IsCameraCaptureEnabled':
+                    // check if enabled, then capture camera
+                    if (feature.IsEnabled) {
+                        this.captureCameraStream();
+                    }
+                    else {
+                        this.stopCamera();
+                    }
+                    break;
+                case 'IsScreenCaptureEnabled':
+                    // check if enabled, then capture camera
+                    if (feature.IsEnabled) {
+                        this.captureDisplayStream();
+                    }
+                    else {
+                        this.stopScreenShare();
+                    }
+                    break;
+                case 'IsLocationEnabled':
+                    // check if enabled, then capture camera
+                    if (feature.IsEnabled) {
+                        this.captureLocation();
+                    }
+                    break;
+                default:
+            }
+        });
+    }
+
+    /**
+     * To stop camera
+     */
+    private stopCamera(): void {
+        // clear camera stream
+        if (this._agentFeatureInfo.permissions.camera) {
+            this._agentFeatureInfo.data.cameraStream.getTracks().forEach((track: MediaStreamTrack) => {
+                track.stop();
+            });
+        }
+    }
+
+    /**
+     * To stop screenshare
+     */
+    private stopScreenShare(): void {
+        // clear display stream
+        if (this._agentFeatureInfo.permissions.display) {
+            this._agentFeatureInfo.data.displayStream.getTracks().forEach((track: MediaStreamTrack) => {
+                track.stop();
+            });
+        }
     }
 
     /**
@@ -296,41 +377,22 @@ export class AgentFeaturesService {
 
         // listen to AgentSnapShotEvent
         SDKClient.events.on('AgentSnapShotEvent', this.AgentSnapShotEvent);
+        SDKClient.events.on('AgentSettingsUpdatedEvent', this.AgentSettingsUpdatedEvent);
 
         // get the agent features from SDK
         const agentFeatures = SDKClient.getAgentData().featuresList;
+
         // check the list
         if (agentFeatures.length === 0) {
             TUtils.Logger.log('AgentFeaturesService.subscribe: agent features are empty!');
             return;
         }
-        // loop through the features and process
-        agentFeatures.forEach((feature: AgentFeatures) => {
-            switch (feature.Feature) {
-                case 'IsCameraCaptureEnabled':
-                    // check if enabled, then capture camera
-                    if (feature.IsEnabled) {
-                        this.captureCameraStream();
-                    }
-                    break;
-                case 'IsScreenCaptureEnabled':
-                    // check if enabled, then capture camera
-                    if (feature.IsEnabled) {
-                        this.captureDisplayStream();
-                    }
-                    break;
-                case 'IsLocationEnabled':
-                    // check if enabled, then capture camera
-                    if (feature.IsEnabled) {
-                        this.captureLocation();
-                    }
-                    break;
-                default:
-            }
 
-            // set processed
-            this._processed = true;
-        });
+        // process the agent featues
+        this.processAgentFeatures(agentFeatures);
+
+        // set processed
+        this._processed = true;
     }
 
     /**
@@ -341,22 +403,12 @@ export class AgentFeaturesService {
 
         // unregister from AgentSnapShotEvent
         SDKClient.events.off('AgentSnapShotEvent', this.AgentSnapShotEvent);
+        SDKClient.events.off('AgentSettingsUpdatedEvent', this.AgentSettingsUpdatedEvent);
 
         // check if processed
         if (this._processed) {
-            // clear camera stream
-            if (this._agentFeatureInfo.permissions.camera) {
-                this._agentFeatureInfo.data.cameraStream.getTracks().forEach((track: MediaStreamTrack) => {
-                    track.stop();
-                });
-            }
-
-            // clear display stream
-            if (this._agentFeatureInfo.permissions.display) {
-                this._agentFeatureInfo.data.displayStream.getTracks().forEach((track: MediaStreamTrack) => {
-                    track.stop();
-                });
-            }
+            this.stopCamera();
+            this.stopScreenShare();
         }
 
         this._agentFeatureInfo = {

@@ -171,6 +171,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
 
             this.loadWorkCodesReq.loading = false;
             this.loadWorkCodesReq.error = false;
+            
         } catch (e) {
             this.loadWorkCodesReq.error = true;
             this.loadWorkCodesReq.loading = false;
@@ -214,6 +215,17 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
+
+
+    /**
+     * Track by for avoiding rerender
+     * @method trackByID
+     * @param {number} index 
+     * @param {any} item 
+     */
+    public trackByID(index: number, item: any): string {
+        return item.Code;
+    }
 
     /**
      * Initial Setup

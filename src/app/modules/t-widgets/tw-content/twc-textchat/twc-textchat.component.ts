@@ -1,4 +1,5 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { AOTWidgetService } from '@services/aot-widget.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { InteractionRef, InteractionWidgets, IWidget } from 'app/interfaces';
@@ -31,7 +32,8 @@ export class TwcTextchatComponent extends TWContentWrapper implements OnInit, On
         public hostElement: ElementRef,
         public contentPageService: ContentPageService,
         private _interactionManagerService: InteractionManagerService,
-        private _tmacEventService: TMACEventService
+        private _tmacEventService: TMACEventService,
+        private _aotWidgetService: AOTWidgetService
     ) {
         super(hostElement, contentPageService);
     }
@@ -106,6 +108,9 @@ export class TwcTextchatComponent extends TWContentWrapper implements OnInit, On
             widget.InteractionDetails = evt;
             widget.Data.Path = this.data.Data.Path;
         });
+
+        // process aot widgets
+        this._aotWidgetService.processAOTWidgets(aotWidgets);
 
         // push the interaction details with widgets to the list
         this.interactions.push({

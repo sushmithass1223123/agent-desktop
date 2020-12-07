@@ -46,9 +46,10 @@ tw-chat-controls {
             }
 
             .chat-content {
-                flex: 1;
-
                 .chat-actions {
+                    border-top-left-radius: 20px;
+                    border-top-right-radius: 20px;
+                    z-index: 1;
                     button {
                         margin: 6px 6px 6px 0;
 
@@ -115,7 +116,7 @@ tw-chat-controls {
                                     font-weight: 600;
 
                                     .spacer {
-                                        width: 60px;
+                                        width: 68px;
                                         display: inline-block;
                                         vertical-align: middle;
                                     }
@@ -212,7 +213,7 @@ tw-chat-controls {
                                     font-size: 10px;
                                     white-space: nowrap;
                                     text-align: right;
-                                    margin: -20px 0px -6px -2px;
+                                    margin: -24px 0px -6px -2px;
 
                                     &.image,
                                     &.video {
@@ -288,6 +289,8 @@ tw-chat-controls {
 
                 .chat-footer {
                     padding: 8px;
+                    border-bottom-left-radius: 20px;
+                    border-bottom-right-radius: 20px;
 
                     .reply-form {
                         position: relative;
@@ -319,26 +322,26 @@ tw-chat-controls {
                                 }
                             }
 
-                            &.emoji {
-                                .mat-form-field-wrapper {
-                                    .mat-form-field-flex {
-                                        .mat-form-field-infix {
-                                            padding: 0px 0px 0px 46px !important;
-                                        }
-                                    }
-                                }
-                            }
+                            // &.emoji {
+                            //     .mat-form-field-wrapper {
+                            //         .mat-form-field-flex {
+                            //             .mat-form-field-infix {
+                            //                 padding: 0px 0px 0px 46px !important;
+                            //             }
+                            //         }
+                            //     }
+                            // }
                         }
 
-                        .emoji-button {
-                            position: absolute;
-                            z-index: 1;
-                            left: 8px;
+                        // .emoji-button {
+                        //     position: absolute;
+                        //     z-index: 1;
+                        //     left: 8px;
 
-                            .mat-icon {
-                                line-height: 22px;
-                            }
-                        }
+                        //     .mat-icon {
+                        //         line-height: 22px;
+                        //     }
+                        // }
 
                         .send-message-button {
                             position: absolute;

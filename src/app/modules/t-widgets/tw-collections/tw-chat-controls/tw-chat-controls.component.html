@@ -8,7 +8,8 @@
             <div fxLayout="row" fxLayoutAlign="space-between none">
                 <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>timer</mat-icon> {{ (duration | date: 'H:mm:ss':'UTC') || '00:00:00' }}</div>
                 <div fxLayout="row" fxLayoutAlign=" center" *ngIf="isSMM">
-                    <img src="assets/images/vectors/{{ channel }}.svg" width="18" class="mr-4" /> {{ channel }}
+                    <mat-icon [svgIcon]="'custom-' + channel"></mat-icon>
+                    <span class="text-bold ml-4">{{ channel }}</span>
                 </div>
                 <div fxLayout="row" fxLayoutAlign=" center">
                     <mat-icon>grading</mat-icon> <span class="text-bold">{{ intent }}</span>
@@ -28,24 +29,32 @@
                 </button> -->
 
                 <div fxLayout="column" fxLayoutAlign=" start" class="w-60 h-100-p mt-4 pt-8 interactions custom-scroll-adjust">
-                        <avatar
-                            *ngFor="let item of interactionList"
-                            name="{{ item.user }}"
-                            [ngClass]="item.status + ' ' + (item.interactionId === interactionId ? 'active' : '')"
-                            matTooltip="{{ item.user }}"
-                            matTooltipPosition="after"
-                            (click)="selectInteraction(item)"
-                            matBadge="{{ item.interactionId !== interactionId ? item.otherData.unreadCount || '' : '' }}"
-                            matBadgePosition="after"
-                            matBadgeColor="accent"
-                        ></avatar>
+                    <avatar
+                        *ngFor="let item of interactionList"
+                        name="{{ item.user }}"
+                        [ngClass]="item.status + ' ' + (item.interactionId === interactionId ? 'active' : '')"
+                        matTooltip="{{ item.user }}"
+                        matTooltipPosition="after"
+                        (click)="selectInteraction(item)"
+                        matBadge="{{ item.interactionId !== interactionId ? item.otherData.unreadCount || '' : '' }}"
+                        matBadgePosition="after"
+                        matBadgeColor="accent"
+                        [circleColor]="
+                            fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                                ? fuseConfig.layout.anchorWidget.contentBackground
+                                : fuseConfig.layout.widget.customBackgroundColor === true
+                                ? fuseConfig.layout.widget.contentBackground
+                                : ''
+                        "
+                    ></avatar>
                 </div>
             </div>
 
             <div
                 fxLayout="column"
                 fxLayoutAlign=" none"
-                class="border-radius-20 chat-content"
+                fxFlex
+                class="border-radius-20 chat-content position-relative"
                 [ngClass]="
                     fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
                         ? fuseConfig.layout.anchorWidget.contentBackground
@@ -54,7 +63,7 @@
                         : ''
                 "
             >
-                <div fxLayout="row" fxLayoutAlign="end none" class="chat-actions mat-elevation-z1">
+                <div fxLayout="row" fxLayoutAlign="end none" class="chat-actions border-bottom">
                     <button
                         *ngIf="showAutoFreeze"
                         [disabled]="status !== 'connected'"
@@ -84,6 +93,25 @@
                     </button>
 
                     <button
+                        *ngIf="data.Data?.SignatureAllowed"
+                        [disabled]="status !== 'connected'"
+                        mat-mini-fab
+                        color="default"
+                        [ngClass]="
+                            (fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                                ? fuseConfig.layout.anchorWidget.bodyBackground
+                                : '') +
+                            ' ' +
+                            (status === 'connected' ? 'mat-elevation-z2' : '')
+                        "
+                        matTooltip="Signature Request"
+                        #signBtn
+                        (click)="sendSignatureRequest(signBtn)"
+                    >
+                        <mat-icon>gesture</mat-icon>
+                    </button>
+
+                    <button
                         *ngIf="supervisorInit && (conferenceType === 'silent' || conferenceType === 'whisper' || conferenceType === 'conf')"
                         [disabled]="status !== 'connected' || this.botConnected"
                         mat-mini-fab
@@ -103,6 +131,30 @@
                     >
                         <mat-icon>play_for_work</mat-icon>
                     </button>
+
+                    <button
+                        [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper' || this.botConnected"
+                        *ngIf="selfServiceDestinations.length"
+                        mat-mini-fab
+                        color="default"
+                        [ngClass]="
+                            (fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                                ? fuseConfig.layout.anchorWidget.bodyBackground
+                                : '') +
+                            ' ' +
+                            (status === 'connected' ? 'mat-elevation-z2' : '')
+                        "
+                        matTooltip="Conference Bot"
+                        [matMenuTriggerFor]="botMenu"
+                    >
+                        <mat-icon>adb</mat-icon>
+                    </button>
+
+                    <mat-menu class="custom" #botMenu="matMenu" xPosition="after">
+                        <button mat-menu-item *ngFor="let item of selfServiceDestinations" (click)="conferenceWithBot(item.Value)">
+                            <span>{{ item.Name }}</span>
+                        </button>
+                    </mat-menu>
 
                     <button
                         *ngIf="data.Data?.Transfer.Allowed"
@@ -138,24 +190,6 @@
                         (click)="openTransferConferenceDialog('conference')"
                     >
                         <mat-icon>group</mat-icon>
-                    </button>
-
-                    <button
-                        *ngIf="data.Data.ConferenceAllowed"
-                        [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper' || this.botConnected"
-                        mat-mini-fab
-                        color="default"
-                        [ngClass]="
-                            (fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
-                                ? fuseConfig.layout.anchorWidget.bodyBackground
-                                : '') +
-                            ' ' +
-                            (status === 'connected' ? 'mat-elevation-z2' : '')
-                        "
-                        matTooltip="Conference Bot"
-                        (click)="conferenceWithBot()"
-                    >
-                        <mat-icon>android</mat-icon>
                     </button>
 
                     <button
@@ -211,7 +245,18 @@
                     </button>
 
                     <button
-                        *ngIf="status !== 'connected'"
+                        *ngIf="status === 'incoming'"
+                        class="mat-elevation-z2 custom-btn bg-success"
+                        mat-mini-fab
+                        #answerBtn
+                        (click)="answerChat(answerBtn)"
+                        matTooltip="Answer Chat"
+                    >
+                        <mat-icon>done</mat-icon>
+                    </button>
+
+                    <button
+                        *ngIf="status !== 'connected' && status !== 'incoming'"
                         mat-raised-button
                         class="border-radius-20"
                         color="warn"
@@ -224,7 +269,7 @@
                 </div>
 
                 <!-- CHAT CONTENT -->
-                <div class="chat-transcripts custom-scroll-adjust" #messages fxFlex="1 1 auto">
+                <div class="chat-transcripts custom-scroll-adjust" #messages fxFlex>
                     <!-- CHAT MESSAGES -->
                     <div class="chat-messages">
                         <!-- MESSAGE -->
@@ -311,6 +356,7 @@
                                                         mat-icon-button
                                                         mat-raised-button
                                                         class="download"
+                                                        target="_blank"
                                                         [download]="message.attachment.name"
                                                         [href]="message.attachment.src"
                                                     >
@@ -339,10 +385,22 @@
                                         </div>
                                     </ng-container>
                                 </div>
-                                <div class="time" [ngClass]="message?.type">{{ message.time | date: 'shortTime' }}</div>
+                                <div class="time" [ngClass]="message?.type" fxLayout="row" fxLayoutAlign="end center">
+                                    {{ message.time | date: 'shortTime' }}
+                                    <mat-icon class="s-12 ml-4" *ngIf="message.position === 'right' && message.status === 'init'"
+                                        >access_time</mat-icon
+                                    >
+                                    <mat-icon class="s-12 ml-4" *ngIf="message.position === 'right' && message.status === 'sent'">done</mat-icon>
+                                    <mat-icon class="s-12 ml-4" *ngIf="message.position === 'right' && message.status === 'failed'" color="warn"
+                                        >error_outline</mat-icon
+                                    >
+                                    <mat-icon class="s-12 ml-4" *ngIf="message.position === 'right' && message.status === 'delivered'"
+                                        >done_all</mat-icon
+                                    >
+                                </div>
                             </div>
 
-                            <div *ngIf="message.divider" class="divider bg-secondary"></div>
+                            <div *ngIf="message.divider" class="divider bg-secondary animate__animated animate__slideInUp animate__faster"></div>
                         </div>
                         <!-- / MESSAGE -->
                     </div>
@@ -392,6 +450,54 @@
                                 </ng-template>
                             </button>
 
+                            <button
+                                *ngIf="data.Data.AttachmentAllowed"
+                                cdkOverlayOrigin
+                                #attachOverlay="cdkOverlayOrigin"
+                                [disabled]="status !== 'connected'"
+                                (click)="showAttachOverlay = !showAttachOverlay"
+                                type="button"
+                                mat-icon-button
+                                class="rotate-45"
+                                aria-label="Select Attachment"
+                                matTooltip="Attach"
+                            >
+                                <!-- <button
+                                *ngIf="data.Data.AttachmentAllowed"
+                                [disabled]="status !== 'connected'"
+                                (click)="attachFileRef.click()"
+                                type="button"
+                                mat-icon-button
+                                class="rotate-45"
+                                aria-label="Select Attachment"
+                                matTooltip="Attach"
+                            > -->
+
+                                <mat-icon>attach_file</mat-icon>
+                                <ng-template
+                                    cdkConnectedOverlay
+                                    [cdkConnectedOverlayOrigin]="attachOverlay"
+                                    [cdkConnectedOverlayOpen]="showAttachOverlay"
+                                    cdkConnectedOverlayHasBackdrop
+                                    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+                                    (overlayOutsideClick)="showAttachOverlay = false"
+                                    [cdkConnectedOverlayPositions]="[{ originX: 'center', originY: 'top', overlayX: 'center', overlayY: 'bottom' }]"
+                                >
+                                    <div fxLayout="column" fxLayoutGap="10px" [@widgetStagger]="attachActions.length">
+                                        <button
+                                            *ngFor="let item of attachActions"
+                                            mat-mini-fab
+                                            color="secondary"
+                                            class="fab-secondary"
+                                            [matTooltip]="item.label"
+                                            (click)="addAttachment(item.action)"
+                                        >
+                                            <mat-icon>{{ item.icon }}</mat-icon>
+                                        </button>
+                                    </div>
+                                </ng-template>
+                            </button>
+
                             <mat-form-field
                                 class="custom message-text"
                                 [ngClass]="{ emoji: data.Data.EmojiAllowed }"
@@ -426,6 +532,18 @@
                     <!-- / REPLY FORM -->
                 </div>
                 <!-- / CHAT FOOTER-->
+
+                <!-- CHAT ATTACHMENTS -->
+                <chat-attachments
+                    *ngIf="attachPreviewMode"
+                    [isSMM]="isSMM"
+                    [fileUploadUrl]="fileUploadUrl"
+                    [sessionID]="sessionID"
+                    [attachPreviewMode]="attachPreviewMode"
+                    (closeAttachments)="closeAttachments()"
+                    (sendAttachments)="sendAttachments($event)"
+                ></chat-attachments>
+                <!-- CHAT ATTACHMENTS -->
             </div>
         </div>
     </div>

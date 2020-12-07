@@ -8,11 +8,6 @@ tw-create-interaction {
             display: flex;
             flex-direction: column;
             align-items: center;
-            // margin-bottom: 5px;
-
-            // button {
-            //     margin-bottom: 17px;
-            // }
         }
     }
 
@@ -22,14 +17,7 @@ tw-create-interaction {
     }
 }
 
-.create-sms-dialog {
-    .mat-dialog-container {
-        padding: 0;
-        border-radius: 20px !important;
-        overflow-x: hidden;
-    }
-}
-
+.create-messaging-dialog,
 .agent-skill-dialog {
     .mat-dialog-container {
         padding: 0;

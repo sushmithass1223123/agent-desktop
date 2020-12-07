@@ -35,11 +35,6 @@
         </div>
     </button>
 
-    <div fxLayout="column" fxLayoutAlign="center start" class="ml-4 agent-details">
-        <span class="mat-body-2 m-0 username mr-12 line-height-24">{{ agentData.agentName }}</span>
-        <span class="mat-caption agent-status" *ngIf="data.Data.Status">{{ agentData.agentStatus }}</span>
-    </div>
-
     <mat-menu #userMenu="matMenu" [overlapTrigger]="false" class="agent-info-menu custom">
         <button mat-menu-item fxLayout fxLayoutAlign=" center">
             <mat-icon>perm_identity</mat-icon>
@@ -64,6 +59,39 @@
         <button mat-menu-item *ngIf="agentData.isMSAgent" fxLayout fxLayoutAlign=" center">
             <mat-icon>phonelink</mat-icon>
             <span>MS Agent</span>
+        </button>
+    </mat-menu>
+
+    <div
+        fxLayout="column"
+        fxLayoutAlign="center start"
+        class="p-4 agent-details"
+        matRipple
+        [matRippleDisabled]="!auxCodeConfig.Enabled"
+        [matMenuTriggerFor]="auxCodeConfig.Enabled && auxMenu"
+        [ngClass]="{
+            opened: auxOpened,
+            auxCode: auxCodeConfig.Enabled
+        }"
+        (menuOpened)="auxOpened = true"
+        (menuClosed)="auxOpened = false"
+    >
+        <span class="mat-body-2 m-0 username mr-12 line-height-24">{{ agentData.agentName }}</span>
+        <span class="mat-caption agent-status" *ngIf="data.Data.Status">{{ agentData.agentStatus }}</span>
+        <mat-icon *ngIf="auxCodeConfig.Enabled" class="arrow-icon s-24" fxHide.xs>keyboard_arrow_down</mat-icon>
+    </div>
+
+    <mat-menu class="custom" #auxMenu="matMenu" xPosition="before">
+        <button
+            mat-menu-item
+            *ngFor="let item of auxCodesList"
+            (click)="changeStatus(item)"
+            disabled="{{ item.Name === currentAux || item.Code === 'nodata' }}"
+        >
+            <mat-icon class="{{ item.Code.toLowerCase() }}">
+                {{ item.Code.toLowerCase() === 'available' ? 'check_circle' : item.Code === 'logout' ? 'settings_power' : 'remove_circle' }}
+            </mat-icon>
+            <span>{{ item.Name }}</span>
         </button>
     </mat-menu>
 </div>

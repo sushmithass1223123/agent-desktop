@@ -1,25 +1,25 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TwSuWorkCodesComponent } from './tw-su-work-codes.component';
+import { TwWorkCodesComponent } from './tw-work-codes.component';
 
 describe('TwSuWorkCodesComponent', () => {
-  let component: TwSuWorkCodesComponent;
-  let fixture: ComponentFixture<TwSuWorkCodesComponent>;
+    let component: TwWorkCodesComponent;
+    let fixture: ComponentFixture<TwWorkCodesComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ TwSuWorkCodesComponent ]
-    })
-    .compileComponents();
-  }));
+    beforeEach(async(() => {
+        TestBed.configureTestingModule({
+            declarations: [TwWorkCodesComponent]
+        })
+            .compileComponents();
+    }));
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(TwSuWorkCodesComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    beforeEach(() => {
+        fixture = TestBed.createComponent(TwWorkCodesComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 });
