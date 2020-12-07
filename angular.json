@@ -37,7 +37,7 @@
               "./node_modules/@ctrl/ngx-emoji-mart/picker.css"
             ],
             "scripts": [],
-            "showCircularDependencies": false,
+            "showCircularDependencies": true,
             "allowedCommonJsDependencies": [
               "lodash",
               "@swimlane/dragula",
@@ -63,7 +63,7 @@
               ],
               "optimization": true,
               "outputHashing": "all",
-              "sourceMap": false,
+              "sourceMap": true,
               "extractCss": true,
               "namedChunks": false,
               "aot": true,

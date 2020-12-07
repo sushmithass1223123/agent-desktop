@@ -3489,7 +3489,7 @@
             },
             "offerOptions": {
                 "offerToReceiveAudio": true,
-                "offerToReceiveVideo": false,
+                "offerToReceiveVideo": true,
                 "iceRestart": true
             },
             "answerOptions": {

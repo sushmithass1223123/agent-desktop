@@ -12,7 +12,7 @@ import { orderBy } from 'lodash';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AgentModel, CommandResultEvent, FavouriteSkill, IResponse, QueueStatusEvent, SDKClient } from 'tmac-sdk';
-import { SharedWrapperComponent } from '..';
+import { SharedWrapperComponent } from '../shared-wrapper/shared-wrapper.component';
 
 /**
  * Agent Skill List Component

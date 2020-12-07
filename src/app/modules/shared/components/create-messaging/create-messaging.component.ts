@@ -8,7 +8,7 @@ import { sortBy } from 'lodash';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
 import { IResponse, SDKClient } from 'tmac-sdk';
-import { SharedWrapperComponent } from '..';
+import { SharedWrapperComponent } from '../shared-wrapper/shared-wrapper.component';
 
 /**
  *  Create  SMS Component
