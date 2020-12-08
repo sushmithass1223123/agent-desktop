@@ -138,7 +138,7 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
         };
 
         this.dashboardDataFromDate.formControl.valueChanges.subscribe((date: Date) => {
-            this.registerToService(false);
+            // this.registerToService(false);
             const deltaTime = Math.ceil((Date.now() - date.getTime()) / (1000 * 60 * 60));
             this.registerToService(true, deltaTime);
             this.showDashboardDataSpanOverlay = false;
