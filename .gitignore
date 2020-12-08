@@ -40,5 +40,5 @@ Thumbs.db
 
 
 # my stuff
-./src/assets/app-config-dev.json
+/src/assets/development.json
 .gitignore

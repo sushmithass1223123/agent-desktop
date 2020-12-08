@@ -77,6 +77,8 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
         body: string;
     }>;
 
+    maxDate: Date;
+
     constructor(
         public hostElement: ElementRef,
         public contentPageService: ContentPageService,
@@ -92,6 +94,9 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
+
+        this.maxDate = new Date();
+        this.maxDate.setDate(this.maxDate.getDate() - 1);
 
         this.fuseBg = this.fuseConfService.config.pipe(
             takeUntil(this.unsubscribeAll),
@@ -134,7 +139,7 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
 
         this.dashboardDataFromDate.formControl.valueChanges.subscribe((date: Date) => {
             this.registerToService(false);
-            const deltaTime = (Date.now() - date.getTime()) / (1000 * 60 * 60);
+            const deltaTime = Math.ceil((Date.now() - date.getTime()) / (1000 * 60 * 60));
             this.registerToService(true, deltaTime);
             this.showDashboardDataSpanOverlay = false;
         });

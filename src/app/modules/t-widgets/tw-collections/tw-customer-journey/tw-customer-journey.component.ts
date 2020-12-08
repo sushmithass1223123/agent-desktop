@@ -1,5 +1,5 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -18,7 +18,7 @@ import { from, Observable, of } from 'rxjs';
 import { catchError, map, share, takeUntil, tap } from 'rxjs/operators';
 import { IGetInteractionHistory, InteractionAction, InteractionHistory, InteractionHistoryReadyEvent, IUIEvent, SDKClient } from 'tmac-sdk';
 
-type Mode = 'Customer Journey' | 'Notes' | 'Actions' | 'Transcript' | null;
+type Mode = 'Session History' | 'Notes' | 'Actions' | 'Transcript' | null;
 
 /**
  * Customer journey component
@@ -28,9 +28,8 @@ type Mode = 'Customer Journey' | 'Notes' | 'Actions' | 'Transcript' | null;
 @Component({
     selector: 'tw-customer-journey',
     templateUrl: './tw-customer-journey.component.html',
-    styleUrls: ['./tw-customer-journey.component.scss']
-    // encapsulation: ViewEncapsulation.None,
-    // changeDetection: ChangeDetectionStrategy.OnPush
+    styleUrls: ['./tw-customer-journey.component.scss'],
+    encapsulation: ViewEncapsulation.None
 })
 export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     /**
@@ -193,14 +192,14 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                     config.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor
                         ? config.layout.anchorWidget.contentBackground
                         : config.layout.widget.customBackgroundColor === true
-                            ? config.layout.widget.contentBackground
-                            : '',
+                        ? config.layout.widget.contentBackground
+                        : '',
                 body:
                     config.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor
                         ? config.layout.anchorWidget.bodyBackground
                         : config.layout.widget.customBackgroundColor === true
-                            ? config.layout.widget.bodyBackground
-                            : ''
+                        ? config.layout.widget.bodyBackground
+                        : ''
             };
         });
 
@@ -249,8 +248,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      * Custom filter method fot Angular Material Datatable
      */
     createFilter(): (data: any, filter: string) => boolean {
-        let filterFunction = (data: any, filter: string): boolean => {
-            let searchTerms = JSON.parse(filter);
+        const filterFunction = (data: any, filter: string): boolean => {
+            const searchTerms = JSON.parse(filter);
             let isFilterSet = false;
             let filtersApplied = 0;
             let filtersMatched = 0;
@@ -264,7 +263,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
 
             filtersApplied = Object.keys(searchTerms).length;
 
-            let nameSearch = () => {
+            const nameSearch = () => {
                 // let found = false;
                 if (isFilterSet) {
                     Object.keys(searchTerms).map((col) => {
@@ -296,15 +295,6 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                                 // found = true;
                                 filtersMatched += 1;
                             }
-                            // searchTerms[col]
-                            //     .trim()
-                            //     .toLowerCase()
-                            //     .split(' ')
-                            //     .forEach((word: any) => {
-                            //         if (data[col].toString().toLowerCase().indexOf(word) !== -1 && isFilterSet) {
-                            //             found = true;
-                            //         }
-                            //     });
                         }
                     });
                     return filtersMatched === filtersApplied;
@@ -348,7 +338,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         };
         // get history
         this.getInteractionHistory();
-    }
+    };
 
     /**
      * Gets interaction history and sets to table
@@ -363,10 +353,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 const tableData = {};
                 const transcripts: Record<string, ChatTranscripts[]> = {};
                 if (lastId) {
-                    const sortedTabledata = sortBy(
-                        [...this.customerJourneyTable.tableData.source.data, ...res.response],
-                        'InteractionDate'
-                    ).reverse();
+                    let sortedTabledata = sortBy([...this.customerJourneyTable.tableData.source.data, ...res.response], 'InteractionDate');
                     sortedTabledata.forEach((data) => {
                         if (!tableData[data.SessionID]) {
                             tableData[data.SessionID] = data;
@@ -381,9 +368,10 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                             messageId: data.ID
                         });
                     });
+                    sortedTabledata = sortedTabledata.reverse();
                     // tableData = uniqBy(sortedTabledata, 'SessionID');
                 } else {
-                    const sortedTabledata = [...sortBy(res.response, 'InteractionDate').reverse()];
+                    let sortedTabledata = [...sortBy(res.response, 'InteractionDate').reverse()];
                     sortedTabledata.forEach((data) => {
                         if (!tableData[data.SessionID]) {
                             tableData[data.SessionID] = data;
@@ -398,6 +386,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                             messageId: data.ID
                         });
                     });
+                    sortedTabledata = sortedTabledata.reverse();
                     // tableData = uniqBy(sortedTabledata, 'SessionID');
                 }
                 this.interactionTranscripts = transcripts;
@@ -526,7 +515,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             this.customerJourneyTable.tableData.selection.toggle(row);
         }
         switch (mode) {
-            case 'Customer Journey': {
+            case 'Session History': {
                 this.customerJourneyTable.iframeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
                     `${this.data.Data.IframeBaseUrl}${row.SessionID}`
                 );
