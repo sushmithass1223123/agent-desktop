@@ -389,7 +389,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
 
         // play new chat sound
-        this._appUIService.playAudio('new-chat', 0.5);
+        this._appUIService.playAudio('new-chat', 0.5, false);
 
         this.replyInput = this.replyInputField.first.nativeElement;
         this.readyToReply();
@@ -873,7 +873,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             const currentInteraction = this.interactionList.filter((i) => i.interactionId === this.interactionId)[0];
             const unreadCount = ++currentInteraction.otherData.unreadCount;
             // play new chat sound
-            this._appUIService.playAudio('message', 0.5);
+            this._appUIService.playAudio('message', 0.5, false);
             // update the interaction other data
             this._interactionManagerService.updateInteraction(evt.InteractionID, {
                 otherData: {

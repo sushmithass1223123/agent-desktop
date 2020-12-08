@@ -4,9 +4,10 @@ import { FuseConfigService } from '@fuse/services/config.service';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
+import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AGENT_FEATURES_MAP, COMMON_ERR_MESSAGE } from 'app/constants';
-import { IWidget, QuizEventJsonData } from 'app/interfaces';
+import { CustomSDKEvent, IWidget, QuizEventJsonData } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { orderBy, random } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
@@ -96,7 +97,8 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         private _fuseConfigService: FuseConfigService,
         private _appDataService: AppDataService,
         private _appUIService: AppUiService,
-        private _aotWidgetService: AOTWidgetService
+        private _aotWidgetService: AOTWidgetService,
+        private _tmacEventService: TMACEventService
     ) {
         super();
 
@@ -131,8 +133,14 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         this.sortType = this.data.Data.SortType ?? 'desc';
 
         // listen to agent list event
-        SDKClient.events.on('SupervisorAgentListEvent', this.SupervisorAgentListEvent);
-        SDKClient.events.on('TeamAgentListDataEvent', this.TeamAgentListDataEvent);
+        // SDKClient.events.on('SupervisorAgentListEvent', this.SupervisorAgentListEvent);
+        // SDKClient.events.on('TeamAgentListDataEvent', this.TeamAgentListDataEvent);
+
+        this._tmacEventService.getEvents(['SupervisorAgentListEvent', 'TeamAgentListDataEvent'])
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((evt: CustomSDKEvent) => {
+                this[evt.EventName](evt);
+            });
 
         // get agent aux codes
         SDKClient.loadAUXCodes(false, null).then((result: IResponse) => {
@@ -152,8 +160,8 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         this.destroyWrapper();
 
         // listen off agent list event
-        SDKClient.events.off('SupervisorAgentListEvent', this.SupervisorAgentListEvent);
-        SDKClient.events.off('TeamAgentListDataEvent', this.TeamAgentListDataEvent);
+        // SDKClient.events.off('SupervisorAgentListEvent', this.SupervisorAgentListEvent);
+        // SDKClient.events.off('TeamAgentListDataEvent', this.TeamAgentListDataEvent);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -163,11 +171,11 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     /**
      * SupervisorAgentListEvent handler
      * @method SupervisorAgentListEvent
-     * @param {SuAgentModel[]} agentList 
+     * @param {CustomSDKEvent} evt 
      */
-    private SupervisorAgentListEvent = (agentList: SuAgentModel[]) => {
+    private SupervisorAgentListEvent = (evt: CustomSDKEvent) => {
         // filter for excpet me
-        this.agentList = this.filteredAgents = agentList || [];
+        this.agentList = this.filteredAgents = evt.Data || [];
         // check any search term is there, then filter
         if (this.searchTerm) {
             this.filterAgents();
@@ -177,15 +185,15 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     /**
      * TeamAgentListDataEvent Handler
      * @method TeamAgentListDataEvent
-     * @param {SuAgentDataModel[]} agentListData 
+     * @param {CustomSDKEvent} evt 
      */
-    private TeamAgentListDataEvent = (agentListData: SuAgentDataModel[]) => {
+    private TeamAgentListDataEvent = (evt: CustomSDKEvent) => {
         if (this.agentList.length === 0) {
             return;
         }
 
         this.agentList.forEach((item1: SuAgentModel, index1) => {
-            agentListData.forEach((item2: SuAgentDataModel) => {
+            evt.Data.forEach((item2: SuAgentDataModel) => {
                 if (item2.AgentLoginID === item1.AgentLoginID) {
                     this.agentList[index1] = { ...item1, ...item2 };
                     this.agentList[index1].ChannelCount = orderBy(this.agentList[index1].ChannelCount, ['CurrentCount'], ['desc']);

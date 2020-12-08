@@ -6,8 +6,8 @@ import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { IAction, IWidget, QuizEvent } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { map, upperFirst } from 'lodash';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, from, Observable, Subject } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
 import {
     ACWTimerEvent,
     AgentForcedLogoffEvent,
@@ -58,14 +58,21 @@ export class TMACEventService {
      */
     private _tmacEventArray: any[];
     /**
+     * Non interaction event subject
+     */
+    private _nonInteractionEventSub: Subject<any>;
+    /**
+     * Interaction event subject
+     */
+    private _interactionEventSub: Subject<any>;
+    /**
      * Construct and Dispose TMAC event subject
      */
-    private _constructDisposeEventSubject: BehaviorSubject<any>;
+    private _constructDisposeEventSubject: Subject<any>;
     /**
      * Array to store the list AOT widgets for AgentNotificaitonEvent's ExecuteAction and ExecuteTask
      */
     private _aotWidgets: IWidget[];
-
     /**
      * Remider task dialog reference
      */
@@ -141,36 +148,60 @@ export class TMACEventService {
      */
     private onTMACEvent = (evt: IUIEvent) => {
         if (evt.InteractionID > 0) {
-            // add all the interaction events to the array
-            this._interactionEventArray.push(evt);
-            // check for construct/dispose events
-            if (evt.IsInteractionConstructEvent || evt.IsInteractionDisposeEvent) {
-                // for dispose event remove the reference from array
-                if (evt.IsInteractionDisposeEvent) {
-                    // remove the events for the ID
-                    this.remove(evt.InteractionID);
-                    // remove the interaction reference
-                    this._interactionManagerService.removeInteraction(evt.InteractionID);
-                }
-                // notify the observers
-                this._constructDisposeEventSubject.next(evt);
-            }
+            this.processInteractionEvents(evt);
         }
         else {
-            let updated = false;
-            // check event is already there, then update
-            this._tmacEventArray = map(this._tmacEventArray, (tEvent: IUIEvent) => {
-                if (tEvent.EventName === evt.EventName) {
-                    tEvent = evt;
-                    updated = true;
-                }
-                return tEvent;
-            });
-            // if not updated then add
-            if (!updated) {
-                this._tmacEventArray.push(evt);
-            }
+            this.processNonInteractionEvents(evt);
         }
+    }
+
+    /**
+     * To process interaction events
+     * 
+     * @param {IUIEvent} evt 
+     */
+    private processInteractionEvents(evt: IUIEvent): void {
+        // add all the interaction events to the array
+        this._interactionEventArray.push(evt);
+        // check for construct/dispose events
+        if (evt.IsInteractionConstructEvent || evt.IsInteractionDisposeEvent) {
+            // for dispose event remove the reference from array
+            if (evt.IsInteractionDisposeEvent) {
+                // remove the events for the ID
+                this.remove(evt.InteractionID);
+                // remove the interaction reference
+                this._interactionManagerService.removeInteraction(evt.InteractionID);
+            }
+            // notify the observers
+            this._constructDisposeEventSubject.next(evt);
+        }
+        // notify the subscribers
+        this._interactionEventSub.next(evt);
+    }
+
+    /**
+     * To process non interaction events
+     * 
+     * @param {IUIEvent} evt 
+     */
+    private processNonInteractionEvents(evt: IUIEvent): void {
+        let updated = false;
+        // check event is already there, then update
+        this._tmacEventArray = map(this._tmacEventArray, (tEvent: IUIEvent) => {
+            if (tEvent.EventName === evt.EventName) {
+                tEvent = evt;
+                updated = true;
+            }
+            return tEvent;
+        });
+
+        // if not updated then add
+        if (!updated) {
+            this._tmacEventArray.push(evt);
+        }
+
+        // notify the subscribers
+        this._nonInteractionEventSub.next(evt);
     }
 
     /**
@@ -806,6 +837,8 @@ export class TMACEventService {
         this._constructDisposeEventSubject = new BehaviorSubject({});
         this._interactionEventArray = new Array();
         this._tmacEventArray = new Array();
+        this._nonInteractionEventSub = new Subject();
+        this._interactionEventSub = new Subject();
         this._remiderTaskDialog = {
             makeCall: null,
             meeting: null,
@@ -863,11 +896,18 @@ export class TMACEventService {
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
 
-        this._constructDisposeEventSubject.next(null);
+        this._constructDisposeEventSubject.next();
         this._constructDisposeEventSubject.complete();
+
+        this._nonInteractionEventSub.next();
+        this._nonInteractionEventSub.complete();
+
+        this._nonInteractionEventSub.next();
+        this._nonInteractionEventSub.complete();
 
         this._interactionEventArray = new Array();
         this._tmacEventArray = new Array();
+
         this._remiderTaskDialog = {
             makeCall: null,
             meeting: null,
@@ -902,12 +942,75 @@ export class TMACEventService {
      * 
      * @param eventName Name of the event
      */
-    public tmacEvents(eventName: string): any {
+    public getEvent<T = any>(eventName: string): Observable<T> {
         // get the event based on interaction Id
-        const event = this._tmacEventArray.filter((i: IUIEvent) => i.EventName === eventName);
-        if (event.length > 0) {
-            return event[0];
+        const event = this._tmacEventArray.filter((i: IUIEvent) => i.EventName === eventName)?.[0];
+        // check if anything exist, then send
+        if (event) {
+            setTimeout(() => {
+                this._nonInteractionEventSub.next(event);
+            });
         }
-        return null;
+        // return all tmac events
+        return this._nonInteractionEventSub.pipe(filter(evt => evt.EventName === eventName));
+    }
+
+    /**
+     * To get non-interaction TMAC event with event name
+     * 
+     * @param eventName Name of the event
+     */
+    public getEvents<T = any>(eventNames: string[]): Observable<T> {
+        // get the event based on interaction Id
+        const events = this._tmacEventArray.filter((i: IUIEvent) => eventNames.includes(i.EventName));
+        // check if anything exist, then send
+        if (events.length) {
+            setTimeout(() => {
+                events.forEach(e => {
+                    this._nonInteractionEventSub.next(e);
+                });
+            });
+        }
+        // return all tmac events
+        return this._nonInteractionEventSub.pipe(filter(evt => evt && eventNames.includes(evt.EventName)));
+    }
+
+    /**
+     * To get interaction TMAC event with event name
+     * 
+     * @param {String[]} eventNames Names of the event
+     * @param {Number} interactionId InteractionId to filter
+     */
+    public getInteractionEvents<T = any>(eventNames: string[], interactionId: number): Observable<T> {
+        // get the event based on interaction Id
+        const events = this._interactionEventArray
+            .filter((i: IUIEvent) => i.InteractionID === interactionId && eventNames.includes(i.EventName));
+
+        // check if anything exist, then send
+        if (events.length) {
+            setTimeout(() => {
+                events.forEach(e => {
+                    this._interactionEventSub.next(e);
+                });
+            });
+        }
+
+        // return all tmac events
+        return this._interactionEventSub
+            .pipe(
+                filter(evt => evt && evt.InteractionID === interactionId && eventNames.includes(evt.EventName))
+            );
+    }
+
+    /**
+     * To emit custom event through subscriber
+     */
+    public emitEvent(evt: any, interactionEvent: boolean = false): void {
+        if (interactionEvent) {
+            this.processInteractionEvents(evt);
+        }
+        else {
+            this.processNonInteractionEvents(evt);
+        }
     }
 }

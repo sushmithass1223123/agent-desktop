@@ -177,11 +177,11 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
             // if inited only register, else register in init
             if (this.init) {
                 // register to service
-                this.registerToService(true);
+                // this.registerToService(true);
             }
             this.loaded = true;
         }
-    };
+    }
 
     /**
      * On page inactive callback
@@ -189,7 +189,7 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
     onInactive = () => {
         if (this.loaded && this.pageActive) {
             this.loaded = false;
-            this.registerToService(false);
+            // this.registerToService(false);
         }
-    };
+    }
 }

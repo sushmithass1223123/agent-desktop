@@ -3,6 +3,7 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { TUtils, IAgentData, SDKClient, AgentStateDurationList, SignalRWrapper } from 'tmac-sdk';
 import { AppDataService } from './app-data.service';
+import { TMACEventService } from './tmac-event.service';
 
 /**
  * Dashboard Service
@@ -38,7 +39,10 @@ export class DashboardService {
      */
     private _serviceStarted: boolean;
 
-    constructor(private _appDataService: AppDataService) { }
+    constructor(
+        private _appDataService: AppDataService,
+        private _tmacEventService: TMACEventService
+    ) { }
 
     /**
      * Start signalr
@@ -72,23 +76,62 @@ export class DashboardService {
             signalR.hub.on('onRegistered', () => { });
 
             signalR.hub.on('onTeamAgentList', (agentList: any) => {
-                SDKClient.events.emit('TeamAgentListEvent', agentList);
+                const eventData = {
+                    EventName: 'TeamAgentListEvent',
+                    Data: agentList
+                };
+
+                // SDKClient.events.emit('TeamAgentListEvent', eventData);
+
+                this._tmacEventService.emitEvent(eventData);
             });
 
             signalR.hub.on('onAgentInteractionList', (interactionList: any) => {
-                SDKClient.events.emit('AgentInteractionDetailsEvent', interactionList);
+
+                const eventData = {
+                    EventName: 'AgentInteractionDetailsEvent',
+                    Data: interactionList
+                };
+
+                // SDKClient.events.emit('AgentInteractionDetailsEvent', eventData);
+
+                this._tmacEventService.emitEvent(eventData);
             });
 
             signalR.hub.on('onChannelList', (channelList: any) => {
-                SDKClient.events.emit('AgentChannelDetailsEvent', channelList);
+
+                const eventData = {
+                    EventName: 'AgentChannelDetailsEvent',
+                    Data: channelList
+                };
+
+                // SDKClient.events.emit('AgentChannelDetailsEvent', eventData);
+
+                this._tmacEventService.emitEvent(eventData);
             });
 
             signalR.hub.on('onStatusList', (statusDetails: AgentStateDurationList) => {
-                SDKClient.events.emit('AgentStatusDetailsEvent', statusDetails);
+
+                const eventData = {
+                    EventName: 'AgentStatusDetailsEvent',
+                    Data: statusDetails
+                };
+
+                // SDKClient.events.emit('AgentStatusDetailsEvent', eventData);
+
+                this._tmacEventService.emitEvent(eventData);
             });
 
-            signalR.hub.on('onDataReceivedForAgent', (data: any) => {
-                SDKClient.events.emit('CallbackDataReceivedForAgent', data);
+            signalR.hub.on('onDataReceivedForAgent', (dataForAgent: any) => {
+
+                const eventData = {
+                    EventName: 'CallbackDataReceivedForAgent',
+                    Data: dataForAgent
+                };
+
+                // SDKClient.events.emit('CallbackDataReceivedForAgent', eventData);
+
+                this._tmacEventService.emitEvent(eventData);
             });
 
             // ----- Supervisor -----
@@ -97,35 +140,98 @@ export class DashboardService {
             if (agentData.agentProfile === 'S') {
 
                 signalR.hub.on('onAgentList', (agentList: any) => {
-                    SDKClient.events.emit('SupervisorAgentListEvent', agentList);
+
+                    const eventData = {
+                        EventName: 'SupervisorAgentListEvent',
+                        Data: agentList
+                    };
+
+                    // SDKClient.events.emit('SupervisorAgentListEvent', eventData);
+
+                    this._tmacEventService.emitEvent(eventData);
                 });
 
                 signalR.hub.on('onAgentListData', (agentListData: any) => {
-                    SDKClient.events.emit('TeamAgentListDataEvent', agentListData);
+
+                    const eventData = {
+                        EventName: 'TeamAgentListDataEvent',
+                        Data: agentListData
+                    };
+
+                    // SDKClient.events.emit('TeamAgentListDataEvent', eventData);
+
+                    this._tmacEventService.emitEvent(eventData);
                 });
 
                 signalR.hub.on('onTeamChannelList', (channelList: any) => {
-                    SDKClient.events.emit('TeamChannelListEvent', channelList);
+
+                    const eventData = {
+                        EventName: 'TeamChannelListEvent',
+                        Data: channelList
+                    };
+
+                    // SDKClient.events.emit('TeamChannelListEvent', eventData);
+
+                    this._tmacEventService.emitEvent(eventData);
                 });
 
                 signalR.hub.on('onIntentList', (intentList: any) => {
-                    SDKClient.events.emit('TeamIntentListEvent', intentList);
+                    const eventData = {
+                        EventName: 'TeamIntentListEvent',
+                        Data: intentList
+                    };
+
+                    // SDKClient.events.emit('TeamIntentListEvent', eventData);
+
+                    this._tmacEventService.emitEvent(eventData);
                 });
 
                 signalR.hub.on('onTeamActiveStatusList', (activeStatusList: any) => {
-                    SDKClient.events.emit('TeamActiveStatusDetailsEvent', activeStatusList);
+
+                    const eventData = {
+                        EventName: 'TeamActiveStatusDetailsEvent',
+                        Data: activeStatusList
+                    };
+
+                    // SDKClient.events.emit('TeamActiveStatusDetailsEvent', eventData);
+
+                    this._tmacEventService.emitEvent(eventData);
                 });
 
                 signalR.hub.on('onTeamActiveChannelList', (activeChannelList: any) => {
-                    SDKClient.events.emit('TeamActiveChannelListEvent', activeChannelList);
+
+                    const eventData = {
+                        EventName: 'TeamActiveChannelListEvent',
+                        Data: activeChannelList
+                    };
+
+                    // SDKClient.events.emit('TeamActiveChannelListEvent', eventData);
+
+                    this._tmacEventService.emitEvent(eventData);
                 });
 
                 signalR.hub.on('onInteractionList', (interactionList: any) => {
-                    SDKClient.events.emit('TeamAgentInteractionDetailsEvent', interactionList);
+
+                    const eventData = {
+                        EventName: 'TeamAgentInteractionDetailsEvent',
+                        Data: interactionList
+                    };
+
+                    // SDKClient.events.emit('TeamAgentInteractionDetailsEvent', eventData);
+
+                    this._tmacEventService.emitEvent(eventData);
                 });
 
                 signalR.hub.on('onWorkCodeList', (workCodeList: any) => {
-                    SDKClient.events.emit('TeamrWorkCodeDetailsEvent', workCodeList);
+
+                    const eventData = {
+                        EventName: 'TeamrWorkCodeDetailsEvent',
+                        Data: workCodeList
+                    };
+
+                    // SDKClient.events.emit('TeamrWorkCodeDetailsEvent', workCodeList);
+
+                    this._tmacEventService.emitEvent(eventData);
                 });
             }
 

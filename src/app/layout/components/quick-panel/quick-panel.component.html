@@ -42,31 +42,25 @@
         </mat-list-item>
     </mat-list>
 
-    <!-- <mat-divider></mat-divider> -->
+    <mat-divider></mat-divider>
 
-    <!-- <mat-list>
+    <mat-list>
         <h3 matSubheader>
             <span>Quick Settings</span>
         </h3>
 
         <mat-list-item>
-            <mat-slide-toggle fxFlex class="mat-primary" [(ngModel)]="settings.notify" aria-label="Notifications" labelPosition="before">
-                <h3>Notifications</h3>
+            <mat-slide-toggle fxFlex class="mat-primary" [(ngModel)]="settings.browserNotify" aria-label="Notifications" labelPosition="before">
+                <h3>Browser Notifications</h3>
             </mat-slide-toggle>
         </mat-list-item>
 
         <mat-list-item>
-            <mat-slide-toggle fxFlex class="mat-accent" [(ngModel)]="settings.cloud" aria-label="Cloud" labelPosition="before">
-                <h3>Cloud Sync</h3>
+            <mat-slide-toggle fxFlex class="mat-primary" [(ngModel)]="settings.notifySound" aria-label="Notifications" labelPosition="before">
+                <h3>Notifications Sound</h3>
             </mat-slide-toggle>
         </mat-list-item>
-
-        <mat-list-item>
-            <mat-slide-toggle fxFlex class="mat-warn" [(ngModel)]="settings.retro" aria-label="Retro Thrusters" labelPosition="before">
-                <h3>Retro Thrusters</h3>
-            </mat-slide-toggle>
-        </mat-list-item>
-    </mat-list> -->
+    </mat-list>
 
     <mat-divider></mat-divider>
 
@@ -87,8 +81,59 @@
                     <mat-icon>{{ widget.Config.Icon || 'widget' }}</mat-icon>
                 </button>
             </ng-container>
-            <button mat-mini-fab color="primary" class="fab-secondary mr-8 mb-8" matTooltip="Add New Link" (click)="addNewLink()">
-                <mat-icon>add</mat-icon>
+            <button
+                mat-mini-fab
+                color="primary"
+                class="fab-secondary mr-8 mb-8"
+                (click)="openAddLink = !openAddLink"
+                matTooltip="Add New Link"
+                cdkOverlayOrigin
+                #addLink="cdkOverlayOrigin"
+            >
+                <mat-icon [@fabToggler]="{ value: openAddLink ? 'active' : 'inactive' }">add</mat-icon>
+
+                <ng-template
+                    cdkConnectedOverlay
+                    [cdkConnectedOverlayOrigin]="addLink"
+                    [cdkConnectedOverlayOpen]="openAddLink"
+                    cdkConnectedOverlayHasBackdrop
+                    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+                    (overlayOutsideClick)="openAddLink = false"
+                    [cdkConnectedOverlayPositions]="[{ originX: 'end', originY: 'bottom', overlayX: 'end', overlayY: 'top' }]"
+                >
+                    <mat-card class="add-link-card">
+                        <mat-card-header>
+                            <mat-card-title>Add New Link</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content fxLayout="column" fxLayoutAlign="start none">
+                            <div fxLayout="row" fxLayoutAlign="start center">
+                                <div class="text-bold w-80">Name:</div>
+                                <mat-form-field fxFlex appearance="outline" class="custom with-bg with-border">
+                                    <input matInput required placeholder="Link Name" [(ngModel)]="linkName" />
+                                    <mat-error> Link name is required </mat-error>
+                                </mat-form-field>
+                            </div>
+
+                            <div fxLayout="row" fxLayoutAlign="start center" class="mt-4">
+                                <div class="text-bold w-80">Link:</div>
+                                <mat-form-field fxFlex floatLabel="never" appearance="standard" class="link-txt mb-8 border-radius-20 border-xs-info">
+                                    <textarea
+                                        [(ngModel)]="newLink"
+                                        matInput
+                                        matTextareaAutosize
+                                        matAutosizeMinRows="3"
+                                        matAutosizeMaxRows="5"
+                                        placeholder="Enter Link Here..."
+                                    ></textarea>
+                                </mat-form-field>
+                            </div>
+                        </mat-card-content>
+                        <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
+                            <button mat-raised-button color="primary" (click)="addNewLink()" [disabled]="!linkName && !newLink">ADD</button>
+                            <button mat-button color="warn" (click)="openAddLink = false">CANCEL</button>
+                        </mat-card-actions>
+                    </mat-card>
+                </ng-template>
             </button>
         </div>
     </mat-list>

@@ -1,6 +1,8 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
+import { TMACEventService } from '@services/tmac-event.service';
+import { CustomSDKEvent } from 'app/interfaces';
 import { groupBy, sortBy } from 'lodash';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -129,12 +131,11 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
     /**
      * Constructor
      *
-     * @param {InstantMessagingService} _InstantMessagingService
-     * @param {HttpClient} _httpClient
      * @param {FuseSidebarService} _fuseSidebarService
      */
     constructor(
-        private _fuseSidebarService: FuseSidebarService
+        private _fuseSidebarService: FuseSidebarService,
+        private _tmacEventService: TMACEventService
     ) {
         // Set the defaults
         this.selectedContact = null;
@@ -162,8 +163,14 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
                 this.sidebarFolded = folded;
             });
 
-        SDKClient.events.on('TeamAgentListEvent', this.TeamAgentListEvent);
-        SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
+        // SDKClient.events.on('TeamAgentListEvent', this.TeamAgentListEvent);
+        // SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
+
+        this._tmacEventService.getEvents(['TeamAgentListEvent', 'AgentNotificaitonEvent'])
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((evt) => {
+                this[evt.EventName](evt);
+            });
     }
 
     /**
@@ -174,8 +181,8 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
 
-        SDKClient.events.off('TeamAgentListEvent', this.TeamAgentListEvent);
-        SDKClient.events.off('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
+        // SDKClient.events.off('TeamAgentListEvent', this.TeamAgentListEvent);
+        // SDKClient.events.off('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -364,11 +371,11 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
 
     /**
      * TeamAgentListEvent Handler
-     * @param {any[]} evt 
+     * @param {CustomSDKEvent} evt 
      */
-    TeamAgentListEvent = (evt: any[]): void => {
+    TeamAgentListEvent = (evt: CustomSDKEvent): void => {
         const agents = groupBy(this.contacts, 'id');
-        this.contacts = sortBy(evt, 'AgentName').map((x) => ({
+        this.contacts = sortBy(evt.Data, 'AgentName').map((x) => ({
             avatar: x.ProfilePicture,
             id: x.AgentLoginID,
             mood: '',

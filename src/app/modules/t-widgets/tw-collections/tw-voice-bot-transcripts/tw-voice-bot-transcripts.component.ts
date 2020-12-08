@@ -156,7 +156,7 @@ export class TwVoiceBotTranscriptsComponent extends TWidgetWrapper implements On
 
                 }
             );
-            this._appUIService.playAudio('message', 0.5);
+            this._appUIService.playAudio('message', 0.5, false);
         }
 
         // scroll to the bottom of chat view

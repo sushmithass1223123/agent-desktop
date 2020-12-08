@@ -5,9 +5,11 @@ import { MatTableDataSource } from '@angular/material/table';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
 import { DashboardService } from '@services/dashboard.service';
+import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AGENT_FEATURES_MAP, COMMON_ERR_MESSAGE } from 'app/constants';
-import { IWidget } from 'app/interfaces';
+import { CustomSDKEvent, IWidget } from 'app/interfaces';
+import { takeUntil } from 'rxjs/operators';
 import { AgentFeatures, IAgentData, InteractionDataModel, IResponse, SDKClient, SuAgentInteractionModel, SuAgentModel } from 'tmac-sdk';
 
 @Component({
@@ -46,7 +48,8 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
     constructor(
         private _dashboardService: DashboardService,
         private _appUIService: AppUiService,
-        private _aotWidgetService: AOTWidgetService
+        private _aotWidgetService: AOTWidgetService,
+        private _tmacEventService: TMACEventService
     ) {
         super();
 
@@ -69,7 +72,11 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
         this.configData = this.data.Data;
 
         // register to event
-        SDKClient.events.on('TeamAgentInteractionDetailsEvent', this.TeamAgentInteractionDetailsEvent);
+        // SDKClient.events.on('TeamAgentInteractionDetailsEvent', this.TeamAgentInteractionDetailsEvent);
+
+        this._tmacEventService.getEvents(['TeamAgentInteractionDetailsEvent'])
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe(this.TeamAgentInteractionDetailsEvent);
 
         // start receiving data
         this._dashboardService.triggerAgentInteractions(this.configData?.AgentLoginID, true);
@@ -83,7 +90,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
         this.destroyWrapper();
 
         // unregister from event
-        SDKClient.events.off('TeamAgentInteractionDetailsEvent', this.TeamAgentInteractionDetailsEvent);
+        // SDKClient.events.off('TeamAgentInteractionDetailsEvent', this.TeamAgentInteractionDetailsEvent);
 
         // stop receiving data
         this._dashboardService.triggerAgentInteractions(this.configData?.AgentLoginID, false);
@@ -93,19 +100,24 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
 
-    private TeamAgentInteractionDetailsEvent = (data: SuAgentInteractionModel[]) => {
+    /**
+     * To process TeamAgentInteractionDetailsEvent
+     * 
+     * @param {CustomSDKEvent} evt
+     */
+    private TeamAgentInteractionDetailsEvent = (evt: CustomSDKEvent) => {
         // if the list is empty the return
-        if (data.length === 0) {
+        if (evt.Data.length === 0) {
             return;
         }
 
         // filter for the agent
-        if (data[0].AgentLoginID !== this.configData?.AgentLoginID) {
+        if (evt.Data[0].AgentLoginID !== this.configData?.AgentLoginID) {
             return;
         }
 
         // assign the interaction details 
-        this.interactionList = data[0].Interactions;
+        this.interactionList = evt.Data[0].Interactions;
 
         this.interactionDetailsTable.loaded = true;
         this.interactionDetailsTable.source = new MatTableDataSource(this.interactionList);

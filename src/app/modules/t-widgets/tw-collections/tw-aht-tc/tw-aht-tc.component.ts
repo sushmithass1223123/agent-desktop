@@ -3,9 +3,11 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { fuseAnimations } from '@fuse/animations';
+import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CHART_COLORS } from 'app/constants';
-import { TwChartConfig } from 'app/interfaces';
+import { CustomSDKEvent, TwChartConfig } from 'app/interfaces';
+import { takeUntil } from 'rxjs/operators';
 import { AgentChannelDataList, SDKClient } from 'tmac-sdk';
 
 type Sources = 'dashboard' | 'supervisor';
@@ -91,7 +93,7 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
         columns: ['Channel', 'AverageHandleTime', 'Transfer', 'Conference']
     };
 
-    constructor() {
+    constructor(private _tmacEventService: TMACEventService) {
         super();
         this.ahtChart.options.plugins = { outlabels: { display: this.ahtChart.legend } };
     }
@@ -104,10 +106,20 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
         // call the wrapper init method
         this.initWrapper(this.data);
         this.dataConfig = this.data.Data;
+
         if (this.dataConfig.Source === 'dashboard') {
-            SDKClient.events.on('AgentChannelDetailsEvent', this.AgentChannelDetailsEvent);
+            // SDKClient.events.on('AgentChannelDetailsEvent', this.AgentChannelDetailsEvent);
+
+            this._tmacEventService.getEvents(['AgentChannelDetailsEvent'])
+                .pipe(takeUntil(this.unsubscribeAll))
+                .subscribe(this.AgentChannelDetailsEvent);
+
         } else if (this.dataConfig.Source === 'supervisor') {
-            SDKClient.events.on('TeamChannelListEvent', this.TeamChannelListEvent);
+            // SDKClient.events.on('TeamChannelListEvent', this.TeamChannelListEvent);
+
+            this._tmacEventService.getEvents(['TeamChannelListEvent'])
+                .pipe(takeUntil(this.unsubscribeAll))
+                .subscribe(this.TeamChannelListEvent);
         }
     }
 
@@ -119,21 +131,21 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
         // call the wrapper destroy method
         this.destroyWrapper();
 
-        if (this.dataConfig.Source === 'dashboard') {
-            SDKClient.events.off('AgentChannelDetailsEvent', this.AgentChannelDetailsEvent);
-        } else if (this.dataConfig.Source === 'supervisor') {
-            SDKClient.events.off('TeamChannelListEvent', this.TeamChannelListEvent);
-        }
+        // if (this.dataConfig.Source === 'dashboard') {
+        //     SDKClient.events.off('AgentChannelDetailsEvent', this.AgentChannelDetailsEvent);
+        // } else if (this.dataConfig.Source === 'supervisor') {
+        //     SDKClient.events.off('TeamChannelListEvent', this.TeamChannelListEvent);
+        // }
     }
 
     // Methods for Source === 'dashboard' ::: Start
 
     /**
      * AgentChannelDetailsEvent handler
-     * @param {AgentChannelDataList} data 
+     * @param {CustomSDKEvent} evt 
      */
-    private AgentChannelDetailsEvent = (data: AgentChannelDataList) => {
-        this.interactionList = data.Channels;
+    private AgentChannelDetailsEvent = (evt: CustomSDKEvent) => {
+        this.interactionList = evt.Data.Channels;
         this.interactionDetailsTable.source = new MatTableDataSource(this.interactionList);
         this.interactionDetailsTable.source.sort = this.sort;
         this.interactionDetailsTable.source.paginator = this.paginator;
@@ -145,12 +157,12 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
 
     /**
      * TeamChannelListEvent handler
-     * @param {AgentChannelDataList} data 
+     * @param {CustomSDKEvent} evt 
      */
-    private TeamChannelListEvent = (data: AgentChannelDataList) => {
+    private TeamChannelListEvent = (evt: CustomSDKEvent) => {
         const datasets = { AHT: [], 'Transfer / Conference': [] };
         const labels = [];
-        data.Channels.forEach((c) => {
+        evt.Data.Channels.forEach((c: any) => {
             datasets.AHT.push(c.AverageActiveTime + c.AverageHoldTime);
             datasets['Transfer / Conference'].push(c.Transfer + c.Conference);
             labels.push(c.Channel);

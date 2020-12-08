@@ -126,7 +126,7 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
             // if inited only register, else register in init
             if (this.init && this.agentData.agentProfile === 'S') {
                 // register to service
-                this.registerToService(true);
+                // this.registerToService(true);
             }
             this.loaded = true;
         }
@@ -138,7 +138,7 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
     onInactive = () => {
         if (this.loaded && this.pageActive) {
             this.loaded = false;
-            this.registerToService(false);
+            // this.registerToService(false);
         }
     }
 }
