@@ -23,7 +23,7 @@
                 *ngFor="let s of customerJourneyTable.tableData.source.data"
                 fxLayout="row-wrap"
                 class="step mb-4 p-4 mat-elevation-z1"
-                (click)="setIframe(s)"
+                (click)="switchMaximizedView(s,'Customer Journey')"
                 [ngClass]="fuseBg.content"
             >
                 <div fxFlex="15" fxLayout fxLayoutAlign="center center" class="step-time pr-8">

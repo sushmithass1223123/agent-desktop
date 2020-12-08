@@ -354,7 +354,11 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      * Gets interaction history and sets to table
      */
     private getInteractionHistory(lastId?: string): void {
-        SDKClient.getInteractionHistory(lastId ? { ...this.historyParams, lastId } : this.historyParams)
+        // SDKClient.getInteractionHistory(
+        //     lastId ? { ...this.historyParams, lastId, phone: '6596975347' } : { ...this.historyParams, phone: '6596975347' },
+        //     null
+        // )
+        SDKClient.getInteractionHistory(lastId ? { ...this.historyParams, lastId } : this.historyParams, null)
             .then((res) => {
                 const tableData = {};
                 const transcripts: Record<string, ChatTranscripts[]> = {};

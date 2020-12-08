@@ -217,6 +217,9 @@
                         fxLayout="row wrap"
                         fxLayoutGap="2%"
                     >
+                        <mat-form-field class="form-field custom with-border" fxFlex="100" appearance="outline">
+                            <input matInput formControlName="global" type="text" placeholder="Global" />
+                        </mat-form-field>
                         <!-- fxLayoutAlign="space-evenly" -->
                         <mat-form-field class="form-field custom with-border" fxFlex="100" appearance="outline">
                             <input matInput formControlName="email" type="text" placeholder="Email" />
@@ -260,9 +263,6 @@
                             <input matInput formControlName="sesisonid" type="text" placeholder="Session Id" />
                         </mat-form-field>
                         <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                            <input matInput formControlName="global" type="text" placeholder="Global" />
-                        </mat-form-field>
-                        <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
                             <input matInput formControlName="listOfMailboxes" type="text" placeholder="Mailbox" />
                         </mat-form-field>
 
@@ -271,10 +271,21 @@
                             <mat-checkbox formControlName="hasAttachments">Has attachments</mat-checkbox>
                         </mat-form-field>
 
-                        <mat-form-field class="form-field custom" fxFlex="30" appearance="outline">
-                            <input matInput placeholder="Input" style="display: none" />
-                            <mat-checkbox matInput formControlName="replied">Replied</mat-checkbox>
-                        </mat-form-field>
+                        <div fxFlex="100">
+                            <mat-label> Replied : </mat-label>
+                            <mat-form-field class="form-field custom" appearance="outline">
+                                <input matInput placeholder="Input" style="display: none" />
+                                <mat-checkbox matInput formControlName="replied">Any</mat-checkbox>
+                            </mat-form-field>
+                            <mat-form-field class="form-field custom" fxFlex="30" appearance="outline">
+                                <input matInput placeholder="Input" style="display: none" />
+                                <mat-checkbox matInput formControlName="repliedValue"> Replied only </mat-checkbox>
+                            </mat-form-field>
+                            <mat-form-field class="form-field custom" fxFlex="30" appearance="outline">
+                                <input matInput placeholder="Input" style="display: none" />
+                                <mat-checkbox matInput formControlName="repliedValue"> Unreplied only </mat-checkbox>
+                            </mat-form-field>
+                        </div>
                         <mat-form-field class="form-field custom" fxFlex="30" appearance="outline">
                             <input matInput placeholder="Input" style="display: none" />
                             <mat-checkbox matInput formControlName="closed">Closed</mat-checkbox>
@@ -282,10 +293,6 @@
                         <mat-form-field class="form-field custom" fxFlex="30" appearance="outline">
                             <input matInput placeholder="Input" style="display: none" />
                             <mat-checkbox matInput formControlName="assigned">Assigned</mat-checkbox>
-                        </mat-form-field>
-                        <mat-form-field class="form-field custom" fxFlex="30" appearance="outline">
-                            <input matInput placeholder="Input" style="display: none" />
-                            <mat-checkbox matInput formControlName="repliedValue">Replied Value</mat-checkbox>
                         </mat-form-field>
                         <mat-form-field for="closedValue" class="form-field custom" fxFlex="30" appearance="outline">
                             <input matInput placeholder="Input" style="display: none" />
@@ -315,7 +322,14 @@
             >
                 Close Emails
             </button>
-            <button mat-raised-button color='accent' class="border-radius-20 mx-8" *ngIf="currentTab === 'draft'" (click)="deleteEmails(selectedMails)" fxFlex="100">
+            <button
+                mat-raised-button
+                color="accent"
+                class="border-radius-20 mx-8"
+                *ngIf="currentTab === 'draft'"
+                (click)="deleteEmails(selectedMails)"
+                fxFlex="100"
+            >
                 Delete Emails
             </button>
         </div>
