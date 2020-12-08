@@ -97,7 +97,7 @@
             >
                 <mat-icon>more_vert</mat-icon>
             </button>
-            <button mat-icon-button (click)="advancedSearch()" matTooltip="Refresh">
+            <button mat-icon-button (click)="doAdvancedSearch()" matTooltip="Refresh">
                 <mat-icon>refresh</mat-icon>
             </button>
 
@@ -115,7 +115,7 @@
                         *ngIf="currentTab === 'queue'"
                         [formGroup]="advancedSearchForm"
                         class="px-12"
-                        (ngSubmit)="advancedSearch()"
+                        (ngSubmit)="doAdvancedSearch()"
                         novalidate
                         fxLayout="row wrap"
                         fxLayoutGap="2%"
@@ -161,7 +161,7 @@
                         *ngIf="currentTab === 'draft' || currentTab === 'sentitem'"
                         [formGroup]="advancedSearchForm"
                         class="px-12"
-                        (ngSubmit)="advancedSearch()"
+                        (ngSubmit)="doAdvancedSearch()"
                         novalidate
                         fxLayout="row wrap"
                         fxLayoutGap="2%"
@@ -212,7 +212,7 @@
                         *ngIf="currentTab === 'inbox'"
                         [formGroup]="advancedSearchForm"
                         class="px-12"
-                        (ngSubmit)="advancedSearch()"
+                        (ngSubmit)="doAdvancedSearch()"
                         novalidate
                         fxLayout="row wrap"
                         fxLayoutGap="2%"
@@ -271,37 +271,36 @@
                             <mat-checkbox formControlName="hasAttachments">Has attachments</mat-checkbox>
                         </mat-form-field>
 
-                        <div fxFlex="100">
-                            <mat-label> Replied : </mat-label>
-                            <mat-form-field class="form-field custom" appearance="outline">
-                                <input matInput placeholder="Input" style="display: none" />
-                                <mat-checkbox matInput formControlName="replied">Any</mat-checkbox>
-                            </mat-form-field>
-                            <mat-form-field class="form-field custom" fxFlex="30" appearance="outline">
-                                <input matInput placeholder="Input" style="display: none" />
-                                <mat-checkbox matInput formControlName="repliedValue"> Replied only </mat-checkbox>
-                            </mat-form-field>
-                            <mat-form-field class="form-field custom" fxFlex="30" appearance="outline">
-                                <input matInput placeholder="Input" style="display: none" />
-                                <mat-checkbox matInput formControlName="repliedValue"> Unreplied only </mat-checkbox>
-                            </mat-form-field>
-                        </div>
-                        <mat-form-field class="form-field custom" fxFlex="30" appearance="outline">
+                        <mat-form-field class="form-field custom" fxFlex="100" appearance="outline">
+                            <span> Replied : </span>
                             <input matInput placeholder="Input" style="display: none" />
-                            <mat-checkbox matInput formControlName="closed">Closed</mat-checkbox>
+                            <mat-button-toggle-group formControlName="replied">
+                                <mat-button-toggle value="any">Any</mat-button-toggle>
+                                <mat-button-toggle value="yes">Replied only</mat-button-toggle>
+                                <mat-button-toggle value="no">Unreplied only</mat-button-toggle>
+                            </mat-button-toggle-group>
                         </mat-form-field>
-                        <mat-form-field class="form-field custom" fxFlex="30" appearance="outline">
+
+                        <mat-form-field class="form-field custom" fxFlex="100" appearance="outline">
+                            <span> Closed : </span>
                             <input matInput placeholder="Input" style="display: none" />
-                            <mat-checkbox matInput formControlName="assigned">Assigned</mat-checkbox>
+                            <mat-button-toggle-group formControlName="closed">
+                                <mat-button-toggle value="any">Any</mat-button-toggle>
+                                <mat-button-toggle value="yes">Closed only</mat-button-toggle>
+                                <mat-button-toggle value="no">Not Closed</mat-button-toggle>
+                            </mat-button-toggle-group>
                         </mat-form-field>
-                        <mat-form-field for="closedValue" class="form-field custom" fxFlex="30" appearance="outline">
+
+                        <mat-form-field class="form-field custom" fxFlex="100" appearance="outline">
+                            <span> Assigned : </span>
                             <input matInput placeholder="Input" style="display: none" />
-                            <mat-checkbox id="closedValue" matInput formControlName="closedValue">Closed Value</mat-checkbox>
+                            <mat-button-toggle-group formControlName="assigned">
+                                <mat-button-toggle value="any">Any</mat-button-toggle>
+                                <mat-button-toggle value="yes">Assigned only</mat-button-toggle>
+                                <mat-button-toggle value="no">Unassigned only</mat-button-toggle>
+                            </mat-button-toggle-group>
                         </mat-form-field>
-                        <mat-form-field class="form-field custom" fxFlex="30" appearance="outline">
-                            <input matInput placeholder="Input" style="display: none" />
-                            <mat-checkbox matInput formControlName="assignedValue">Assigned Value</mat-checkbox>
-                        </mat-form-field>
+
 
                         <button mat-raised-button class="adv-search-btn w-100-p h-40 mb-8 border-radius-20" matTooltip="Search">Search</button>
                     </form>
@@ -413,7 +412,7 @@
                 <p class="text-center">
                     {{ emailSearchRes.msg }}
                 </p>
-                <button class="mx-auto d-block" mat-raised-button color="primary" (click)="advancedSearch()">Retry</button>
+                <button class="mx-auto d-block" mat-raised-button color="primary" (click)="doAdvancedSearch()">Retry</button>
             </div>
         </div>
 

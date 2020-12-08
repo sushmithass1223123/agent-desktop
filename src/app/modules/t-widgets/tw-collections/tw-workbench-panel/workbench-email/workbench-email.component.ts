@@ -9,7 +9,6 @@ import { fuseAnimations } from '@fuse/animations';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
 import { TWidgetWrapper } from '@modules/t-widgets/utils';
-import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { COMMON_ERR_MESSAGE, DRAFT_REASONS, INBOX_REASONS, OUTBOX_REASONS } from 'app/constants';
 import { IWidget, ResData } from 'app/interfaces';
@@ -92,12 +91,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
         deviceid: new FormControl(''),
         hasAttachments: new FormControl(false),
         assignedTo: new FormControl(''),
-        replied: new FormControl(false),
-        closed: new FormControl(false),
-        assigned: new FormControl(false),
-        repliedValue: new FormControl(false),
-        closedValue: new FormControl(false),
-        assignedValue: new FormControl(false),
+
+        replied: new FormControl(''),
+        closed: new FormControl(''),
+        assigned: new FormControl(''),
+
         sesisonid: new FormControl(''),
         global: new FormControl(''),
         listOfMailboxes: new FormControl('singteldemo@tetherfi.com', [Validators.required])
@@ -130,7 +128,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
     /**
      * Constructor
      * @param {FuseConfigService} _fuseConfigService
-     * @param {AppDataService} _appDataService
      */
     constructor(
         private _fuseConfigService: FuseConfigService,
@@ -173,33 +170,42 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
         });
 
         this.advancedSearchForm.get('global').valueChanges.subscribe((global) => {
+            const toggledFields = [
+                'email',
+                'subject',
+                'content',
+                'skills',
+                'agent',
+                'inSessionid',
+                'deviceid',
+                'assignedTo',
+
+                'hasAttachments',
+
+                'replied',
+                'repliedValue',
+
+                'closed',
+                'closedValue',
+
+                'assigned',
+                'assignedValue',
+
+                'sesisonid',
+                'listOfMailboxes'
+            ];
             if (global) {
-                this.advancedSearchForm.controls.email.disable();
-                this.advancedSearchForm.controls.subject.disable();
-                this.advancedSearchForm.controls.content.disable();
-                this.advancedSearchForm.controls.skills.disable();
-                this.advancedSearchForm.controls.agent.disable();
-                this.advancedSearchForm.controls.inSessionid.disable();
-                this.advancedSearchForm.controls.deviceid.disable();
-                this.advancedSearchForm.controls.assignedTo.disable();
-
-                this.advancedSearchForm.controls.hasAttachments.disable();
-
-                this.advancedSearchForm.controls.replied.disable();
-                this.advancedSearchForm.controls.repliedValue.disable();
-
-                this.advancedSearchForm.controls.closed.disable();
-                this.advancedSearchForm.controls.closedValue.disable();
-
-                this.advancedSearchForm.controls.assigned.disable();
-                this.advancedSearchForm.controls.assignedValue.disable();
-
-                this.advancedSearchForm.controls.sesisonid.disable();
-                this.advancedSearchForm.controls.listOfMailboxes.disable();
+                toggledFields.forEach((field) => {
+                    this.advancedSearchForm.controls[field].disable();
+                });
+            } else {
+                toggledFields.forEach((field) => {
+                    this.advancedSearchForm.controls[field].enable();
+                });
             }
         });
 
-        this.advancedSearch();
+        this.doAdvancedSearch();
     }
 
     /**
@@ -236,7 +242,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
      * Advbanced Search
      * @method advancedSearch
      */
-    advancedSearch(): void {
+    doAdvancedSearch(): void {
         try {
             if (!this.data.Data.WorkbenchUrl) {
                 this.emailSearchRes = {
@@ -271,8 +277,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                             });
                         } else {
                             nodes = Object.keys(byMailList).map((name) => {
-                                const test = groupBy(byMailList[name], 'Skill');
-                                return { name, children: Object.keys(test).map((n) => ({ name: n, children: test[n] })) };
+                                const groupedNodes = groupBy(byMailList[name], 'Skill');
+                                return { name, children: Object.keys(groupedNodes).map((n) => ({ name: n, children: groupedNodes[n] })) };
                             });
                         }
                         this.emailSearchRes = {
@@ -321,7 +327,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
             const sessionIds = emails.map((x) => x.SessionId) || [];
             await SDKClient.deleteBulkEmailsInDraft(sessionIds.join(','));
             this.selectedMails = [];
-            this.advancedSearch();
+            this.doAdvancedSearch();
             loader.dismiss();
         } catch (e) {
             console.error(e);
@@ -340,7 +346,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
             const routeIds = emails.map((x) => x.RouteId) || [];
             await SDKClient.closeBulkEmailsInQueue(routeIds.join(','));
             this.selectedMails = [];
-            this.advancedSearch();
+            this.doAdvancedSearch();
             loader.dismiss();
         } catch (e) {
             console.error(e);
@@ -471,12 +477,12 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                 global: searchFields.global,
                 listOfMailboxes: searchFields.listOfMailboxes,
                 hasAttachments: searchFields.hasAttachments,
-                replied: searchFields.replied,
-                closed: searchFields.closed,
-                assigned: searchFields.assigned,
-                repliedValue: searchFields.repliedValue,
-                closedValue: searchFields.closedValue,
-                assignedValue: searchFields.assignedValue
+                replied: searchFields.replied === 'any',
+                repliedValue: searchFields.replied === 'yes',
+                closed: searchFields.closed === 'any',
+                closedValue: searchFields.closedValue === 'yes',
+                assigned: searchFields.assigned === 'any',
+                assignedValue: searchFields.assignedValue === 'yes'
             })
             .pipe(
                 map((res: any) => ({
@@ -688,17 +694,21 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
             deviceid: '',
             hasAttachments: false,
             assignedTo: '',
-            replied: false,
-            closed: false,
-            assigned: false,
+
+            replied: 'any',
             repliedValue: false,
+
+            closed: 'any',
             closedValue: false,
+
+            assigned: 'any',
             assignedValue: false,
+
             sesisonid: '',
             global: '',
             listOfMailboxes: 'singteldemo@tetherfi.com'
         });
-        this.advancedSearch();
+        this.doAdvancedSearch();
     }
 }
 

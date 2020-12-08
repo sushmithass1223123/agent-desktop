@@ -29,7 +29,7 @@
                 <div [class]="fuseBackground.body + ' border-radius-20 p-8 mat-elevation-z1'">
                     <mat-form-field appearance="fill" [class]="fuseBackground.content + ' border-radius-20 p-12'">
                         <mat-label>Choose from date</mat-label>
-                        <input matInput [matDatepicker]="picker" [formControl]="dashboardDataFromDate.formControl" />
+                        <input matInput [max]="maxDate"  [matDatepicker]="picker" [formControl]="dashboardDataFromDate.formControl" />
                         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                         <mat-datepicker #picker></mat-datepicker>
                     </mat-form-field>
