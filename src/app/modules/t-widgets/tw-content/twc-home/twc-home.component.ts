@@ -77,6 +77,9 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
         body: string;
     }>;
 
+    /**
+     * Max date for dashboard data
+     */
     maxDate: Date;
 
     constructor(

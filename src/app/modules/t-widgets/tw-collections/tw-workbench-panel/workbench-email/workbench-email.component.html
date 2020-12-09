@@ -266,41 +266,50 @@
                             <input matInput formControlName="listOfMailboxes" type="text" placeholder="Mailbox" />
                         </mat-form-field>
 
-                        <mat-form-field class="form-field custom" fxFlex="30" appearance="outline">
+                        <!-- <mat-form-field class="form-field custom" fxFlex="30" appearance="outline">
                             <input matInput placeholder="Input" style="display: none" />
                             <mat-checkbox formControlName="hasAttachments">Has attachments</mat-checkbox>
-                        </mat-form-field>
+                        </mat-form-field> -->
 
+                        
                         <mat-form-field class="form-field custom" fxFlex="100" appearance="outline">
-                            <span> Replied : </span>
+                            <span fxFlex="20"> Attachments : </span>
                             <input matInput placeholder="Input" style="display: none" />
-                            <mat-button-toggle-group formControlName="replied">
-                                <mat-button-toggle value="any">Any</mat-button-toggle>
-                                <mat-button-toggle value="yes">Replied only</mat-button-toggle>
-                                <mat-button-toggle value="no">Unreplied only</mat-button-toggle>
+                            <mat-button-toggle-group class="w-100-p" formControlName="hasAttachments" fxFlex="80">
+                                <mat-button-toggle value="yes" fxFlex="100">Has Attachments</mat-button-toggle>
+                                <mat-button-toggle value="no" fxFlex="100">No Attachments</mat-button-toggle>
                             </mat-button-toggle-group>
                         </mat-form-field>
 
                         <mat-form-field class="form-field custom" fxFlex="100" appearance="outline">
-                            <span> Closed : </span>
+                            <span fxFlex="20"> Replied : </span>
                             <input matInput placeholder="Input" style="display: none" />
-                            <mat-button-toggle-group formControlName="closed">
-                                <mat-button-toggle value="any">Any</mat-button-toggle>
-                                <mat-button-toggle value="yes">Closed only</mat-button-toggle>
-                                <mat-button-toggle value="no">Not Closed</mat-button-toggle>
+                            <mat-button-toggle-group class="w-100-p" formControlName="replied" fxFlex="80">
+                                <mat-button-toggle value="any" fxFlex="100">Any</mat-button-toggle>
+                                <mat-button-toggle value="yes" fxFlex="100">Replied only</mat-button-toggle>
+                                <mat-button-toggle value="no" fxFlex="100">Unreplied only</mat-button-toggle>
                             </mat-button-toggle-group>
                         </mat-form-field>
 
                         <mat-form-field class="form-field custom" fxFlex="100" appearance="outline">
-                            <span> Assigned : </span>
+                            <span fxFlex="20"> Closed : </span>
                             <input matInput placeholder="Input" style="display: none" />
-                            <mat-button-toggle-group formControlName="assigned">
-                                <mat-button-toggle value="any">Any</mat-button-toggle>
-                                <mat-button-toggle value="yes">Assigned only</mat-button-toggle>
-                                <mat-button-toggle value="no">Unassigned only</mat-button-toggle>
+                            <mat-button-toggle-group class="w-100-p" formControlName="closed" fxFlex="80">
+                                <mat-button-toggle value="any" fxFlex="100">Any</mat-button-toggle>
+                                <mat-button-toggle value="yes" fxFlex="100">Closed only</mat-button-toggle>
+                                <mat-button-toggle value="no" fxFlex="100">Not Closed</mat-button-toggle>
                             </mat-button-toggle-group>
                         </mat-form-field>
 
+                        <mat-form-field class="form-field custom" fxFlex="100" appearance="outline">
+                            <span fxFlex="20"> Assigned : </span>
+                            <input matInput placeholder="Input" style="display: none" />
+                            <mat-button-toggle-group class="w-100-p" formControlName="assigned" fxFlex="80">
+                                <mat-button-toggle value="any" fxFlex="100">Any</mat-button-toggle>
+                                <mat-button-toggle value="yes" fxFlex="100">Assigned only</mat-button-toggle>
+                                <mat-button-toggle value="no" fxFlex="100">Unassigned only</mat-button-toggle>
+                            </mat-button-toggle-group>
+                        </mat-form-field>
 
                         <button mat-raised-button class="adv-search-btn w-100-p h-40 mb-8 border-radius-20" matTooltip="Search">Search</button>
                     </form>

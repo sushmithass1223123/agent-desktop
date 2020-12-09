@@ -89,12 +89,12 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
         inSessionid: new FormControl(''),
 
         deviceid: new FormControl(''),
-        hasAttachments: new FormControl(false),
+        hasAttachments: new FormControl('yes'),
         assignedTo: new FormControl(''),
 
-        replied: new FormControl(''),
-        closed: new FormControl(''),
-        assigned: new FormControl(''),
+        replied: new FormControl('any'),
+        closed: new FormControl('any'),
+        assigned: new FormControl('any'),
 
         sesisonid: new FormControl(''),
         global: new FormControl(''),
@@ -183,13 +183,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                 'hasAttachments',
 
                 'replied',
-                'repliedValue',
 
                 'closed',
-                'closedValue',
 
                 'assigned',
-                'assignedValue',
 
                 'sesisonid',
                 'listOfMailboxes'
@@ -476,13 +473,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                 sesisonid: searchFields.sesisonid,
                 global: searchFields.global,
                 listOfMailboxes: searchFields.listOfMailboxes,
-                hasAttachments: searchFields.hasAttachments,
-                replied: searchFields.replied === 'any',
-                repliedValue: searchFields.replied === 'yes',
-                closed: searchFields.closed === 'any',
-                closedValue: searchFields.closedValue === 'yes',
-                assigned: searchFields.assigned === 'any',
-                assignedValue: searchFields.assignedValue === 'yes'
+                hasAttachments: searchFields.hasAttachments === 'yes',
+                replied: searchFields.replied !== 'any',
+                closed: searchFields.closed !== 'any',
+                assigned: searchFields.assigned !== 'any'
             })
             .pipe(
                 map((res: any) => ({
@@ -692,17 +686,14 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
             inSessionid: '',
 
             deviceid: '',
-            hasAttachments: false,
+            hasAttachments: 'no',
             assignedTo: '',
 
             replied: 'any',
-            repliedValue: false,
 
             closed: 'any',
-            closedValue: false,
 
             assigned: 'any',
-            assignedValue: false,
 
             sesisonid: '',
             global: '',
