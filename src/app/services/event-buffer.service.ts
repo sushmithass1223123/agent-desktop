@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { SDKClient } from 'tmac-sdk';
 import { HOME_DASH_BUFFER_SIZE } from 'app/constants';
-import { filter, map, mergeAll } from 'rxjs/operators';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { filter, mergeAll } from 'rxjs/operators';
+import { SDKClient } from 'tmac-sdk';
 
 /**
  * Common event service for different pages
@@ -11,13 +11,12 @@ import { filter, map, mergeAll } from 'rxjs/operators';
     providedIn: 'root'
 })
 export class EventBufferService {
-
     /**
      * Behavor subject for list of events for agent dashboard
      */
     agentDash = new BehaviorSubject<any[]>([]);
 
-    constructor() { }
+    constructor() {}
 
     /**
      * Registers events for Home Page dashboard
@@ -37,7 +36,7 @@ export class EventBufferService {
 
     /**
      * Gets events for the passed event name
-     * @param {String} evt Event name to get 
+     * @param {String} evt Event name to get
      */
     getEvents<T = any>(eventName: string): Observable<T> {
         return this.agentDash.pipe(
