@@ -129,7 +129,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
 
         this._tmacEventService.getEvents(['AgentInteractionDetailsEvent'])
             .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(this.AgentInteractionDetailsEvent);
+            .subscribe(evts => this.AgentInteractionDetailsEvent(evts[0]));
     }
 
     /**

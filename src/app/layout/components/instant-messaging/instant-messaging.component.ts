@@ -168,9 +168,7 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
 
         this._tmacEventService.getEvents(['TeamAgentListEvent', 'AgentNotificaitonEvent'])
             .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((evt) => {
-                this[evt.EventName](evt);
-            });
+            .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
     }
 
     /**

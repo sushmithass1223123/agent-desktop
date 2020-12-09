@@ -112,14 +112,14 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
 
             this._tmacEventService.getEvents(['AgentChannelDetailsEvent'])
                 .pipe(takeUntil(this.unsubscribeAll))
-                .subscribe(this.AgentChannelDetailsEvent);
+                .subscribe(evts => this.AgentChannelDetailsEvent(evts[0]));
 
         } else if (this.dataConfig.Source === 'supervisor') {
             // SDKClient.events.on('TeamChannelListEvent', this.TeamChannelListEvent);
 
             this._tmacEventService.getEvents(['TeamChannelListEvent'])
                 .pipe(takeUntil(this.unsubscribeAll))
-                .subscribe(this.TeamChannelListEvent);
+                .subscribe(evts => this.TeamChannelListEvent(evts[0]));
         }
     }
 

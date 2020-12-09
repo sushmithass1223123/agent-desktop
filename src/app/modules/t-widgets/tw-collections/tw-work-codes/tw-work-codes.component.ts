@@ -244,7 +244,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
 
             this._tmacEventService.getEvents(['WorkCodeAddedEvent'])
                 .pipe(takeUntil(this.unsubscribeAll))
-                .subscribe(this.WorkCodeAddedEvent);
+                .subscribe(evts => this.WorkCodeAddedEvent(evts[0]));
 
         } else if (this.DataConf.Source === 'supervisor') {
 
@@ -252,7 +252,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
 
             this._tmacEventService.getEvents(['TeamrWorkCodeDetailsEvent'])
                 .pipe(takeUntil(this.unsubscribeAll))
-                .subscribe(this.TeamrWorkCodeDetailsEvent);
+                .subscribe(evts => this.TeamrWorkCodeDetailsEvent(evts[0]));
 
         } else {
             this.loadWorkCodesReq.error = true;

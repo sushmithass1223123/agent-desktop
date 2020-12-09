@@ -106,7 +106,7 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
 
         this._tmacEventService.getEvents(['CallbackDataReceivedForAgent'])
             .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(this.CallbackDataReceivedForAgent);
+            .subscribe(evts => this.CallbackDataReceivedForAgent(evts[0]));
     }
 
     /**

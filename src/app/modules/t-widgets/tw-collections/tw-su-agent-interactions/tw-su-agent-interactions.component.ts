@@ -76,7 +76,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
 
         this._tmacEventService.getEvents(['TeamAgentInteractionDetailsEvent'])
             .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(this.TeamAgentInteractionDetailsEvent);
+            .subscribe(evts => this.TeamAgentInteractionDetailsEvent(evts[0]));
 
         // start receiving data
         this._dashboardService.triggerAgentInteractions(this.configData?.AgentLoginID, true);

@@ -138,9 +138,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
 
         this._tmacEventService.getEvents(['SupervisorAgentListEvent', 'TeamAgentListDataEvent'])
             .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((evt: CustomSDKEvent) => {
-                this[evt.EventName](evt);
-            });
+            .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
 
         // get agent aux codes
         SDKClient.loadAUXCodes(false, null).then((result: IResponse) => {

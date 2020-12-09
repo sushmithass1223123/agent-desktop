@@ -69,7 +69,7 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
 
         this._tmacEventService.getEvents([eventName])
             .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(this.wallboardRefreshEvent);
+            .subscribe(evts => this.wallboardRefreshEvent(evts[0]));
     }
 
 

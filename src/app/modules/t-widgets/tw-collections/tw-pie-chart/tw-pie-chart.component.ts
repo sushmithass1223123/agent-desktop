@@ -81,47 +81,39 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
 
         if (this.data.Data.Source === 'tw-su-status' || this.data.Data.Source === 'tw-aux-status-chart') {
             // SDKClient.events.on('TeamActiveStatusDetailsEvent', this.TeamActiveStatusDetailsEvent);
-
-            this._tmacEventService.getEvents(['TeamActiveStatusDetailsEvent'])
-                .pipe(takeUntil(this.unsubscribeAll))
-                .subscribe(this.TeamActiveStatusDetailsEvent);
+            this.registerToEvent('TeamActiveStatusDetailsEvent');
 
         } else if (this.data.Data.Source === 'tw-su-calls-in-queue') {
             // SDKClient.events.on('TeamWallboardRefreshEvent', this.TeamWallboardRefreshEvent);
-
-            this._tmacEventService.getEvents(['TeamWallboardRefreshEvent'])
-                .pipe(takeUntil(this.unsubscribeAll))
-                .subscribe(this.TeamWallboardRefreshEvent);
+            this.registerToEvent('TeamWallboardRefreshEvent');
 
         } else if (this.data.Data.Source === 'tw-su-intent-list') {
             // SDKClient.events.on('TeamIntentListEvent', this.TeamIntentListEvent);
-
-            this._tmacEventService.getEvents(['TeamIntentListEvent'])
-                .pipe(takeUntil(this.unsubscribeAll))
-                .subscribe(this.TeamIntentListEvent);
+            this.registerToEvent('TeamIntentListEvent');
 
         } else if (this.data.Data.Source === 'tw-ad-total-interactions') {
             if (this.data.Data.Role === 'supervisor' && SDKClient.getAgentData().agentProfile === 'S') {
                 // SDKClient.events.on('TeamChannelListEvent', this.TeamChannelListEvent);
-
-                this._tmacEventService.getEvents(['TeamChannelListEvent'])
-                    .pipe(takeUntil(this.unsubscribeAll))
-                    .subscribe(this.TeamChannelListEvent);
+                this.registerToEvent('TeamChannelListEvent');
             } else {
                 // SDKClient.events.on('AgentChannelDetailsEvent', this.AgentChannelDetailsEvent);
-
-                this._tmacEventService.getEvents(['AgentChannelDetailsEvent'])
-                    .pipe(takeUntil(this.unsubscribeAll))
-                    .subscribe(this.AgentChannelDetailsEvent);
-
+                this.registerToEvent('AgentChannelDetailsEvent');
             }
         } else if (this.data.Data.Source === 'tw-su-channels') {
             // SDKClient.events.on('TeamActiveChannelListEvent', this.TeamActiveChannelListEvent);
-
-            this._tmacEventService.getEvents(['TeamActiveChannelListEvent'])
-                .pipe(takeUntil(this.unsubscribeAll))
-                .subscribe(this.TeamActiveChannelListEvent);
+            this.registerToEvent('TeamActiveChannelListEvent');
         }
+    }
+
+    /**
+     * To register to event
+     * 
+     * @param {String} eventName
+     */
+    registerToEvent(eventName: string): void {
+        this._tmacEventService.getEvents([eventName])
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe(evts => this[eventName](evts[0]));
     }
 
     /**

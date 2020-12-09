@@ -100,11 +100,13 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                 );
 
                 try {
-                    // listen to widget close event
-                    this.oinWidget.onunload = () => {
-                        // destroy the widget
-                        this._aotWidgetService.destroyWidget(this.data.ID);
-                    };
+                    if (this.oinWidget) {
+                        // listen to widget close event
+                        this.oinWidget.onunload = () => {
+                            // destroy the widget
+                            this._aotWidgetService.destroyWidget(this.data.ID);
+                        };
+                    }
                 } catch (error) {
                     console.error(error);
                 }

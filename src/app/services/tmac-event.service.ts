@@ -5,9 +5,9 @@ import { ReminderTaskDialogComponent } from '@modules/shared/components';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { IAction, IWidget, QuizEvent } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
-import { map, upperFirst } from 'lodash';
-import { BehaviorSubject, from, Observable, Subject } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { map as lodashMap, upperFirst } from 'lodash';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { filter, map, takeUntil } from 'rxjs/operators';
 import {
     ACWTimerEvent,
     AgentForcedLogoffEvent,
@@ -60,11 +60,11 @@ export class TMACEventService {
     /**
      * Non interaction event subject
      */
-    private _nonInteractionEventSub: Subject<any>;
+    private _nonInteractionEventSub: Subject<any[]>;
     /**
      * Interaction event subject
      */
-    private _interactionEventSub: Subject<any>;
+    private _interactionEventSub: Subject<any[]>;
     /**
      * Construct and Dispose TMAC event subject
      */
@@ -176,7 +176,7 @@ export class TMACEventService {
             this._constructDisposeEventSubject.next(evt);
         }
         // notify the subscribers
-        this._interactionEventSub.next(evt);
+        this._interactionEventSub.next([evt]);
     }
 
     /**
@@ -187,7 +187,7 @@ export class TMACEventService {
     private processNonInteractionEvents(evt: IUIEvent): void {
         let updated = false;
         // check event is already there, then update
-        this._tmacEventArray = map(this._tmacEventArray, (tEvent: IUIEvent) => {
+        this._tmacEventArray = lodashMap(this._tmacEventArray, (tEvent: IUIEvent) => {
             if (tEvent.EventName === evt.EventName) {
                 tEvent = evt;
                 updated = true;
@@ -201,7 +201,7 @@ export class TMACEventService {
         }
 
         // notify the subscribers
-        this._nonInteractionEventSub.next(evt);
+        this._nonInteractionEventSub.next([evt]);
     }
 
     /**
@@ -942,37 +942,21 @@ export class TMACEventService {
      * 
      * @param eventName Name of the event
      */
-    public getEvent<T = any>(eventName: string): Observable<T> {
-        // get the event based on interaction Id
-        const event = this._tmacEventArray.filter((i: IUIEvent) => i.EventName === eventName)?.[0];
-        // check if anything exist, then send
-        if (event) {
-            setTimeout(() => {
-                this._nonInteractionEventSub.next(event);
-            });
-        }
-        // return all tmac events
-        return this._nonInteractionEventSub.pipe(filter(evt => evt.EventName === eventName));
-    }
-
-    /**
-     * To get non-interaction TMAC event with event name
-     * 
-     * @param eventName Name of the event
-     */
-    public getEvents<T = any>(eventNames: string[]): Observable<T> {
+    public getEvents<T = any>(eventNames: string[]): Observable<T[]> {
         // get the event based on interaction Id
         const events = this._tmacEventArray.filter((i: IUIEvent) => eventNames.includes(i.EventName));
         // check if anything exist, then send
         if (events.length) {
             setTimeout(() => {
-                events.forEach(e => {
-                    this._nonInteractionEventSub.next(e);
-                });
+                this._nonInteractionEventSub.next(events);
             });
         }
         // return all tmac events
-        return this._nonInteractionEventSub.pipe(filter(evt => evt && eventNames.includes(evt.EventName)));
+        return this._nonInteractionEventSub
+            .pipe(
+                map(evts => evts?.filter(evt => evt && eventNames.includes(evt.EventName))),
+                filter(evts => evts.length > 0)
+            );
     }
 
     /**
@@ -981,7 +965,7 @@ export class TMACEventService {
      * @param {String[]} eventNames Names of the event
      * @param {Number} interactionId InteractionId to filter
      */
-    public getInteractionEvents<T = any>(eventNames: string[], interactionId: number): Observable<T> {
+    public getInteractionEvents<T = any>(eventNames: string[], interactionId: number): Observable<T[]> {
         // get the event based on interaction Id
         const events = this._interactionEventArray
             .filter((i: IUIEvent) => i.InteractionID === interactionId && eventNames.includes(i.EventName));
@@ -989,16 +973,15 @@ export class TMACEventService {
         // check if anything exist, then send
         if (events.length) {
             setTimeout(() => {
-                events.forEach(e => {
-                    this._interactionEventSub.next(e);
-                });
+                this._interactionEventSub.next(events);
             });
         }
 
-        // return all tmac events
+        // return all interaction events for that interaction id
         return this._interactionEventSub
             .pipe(
-                filter(evt => evt && evt.InteractionID === interactionId && eventNames.includes(evt.EventName))
+                map(evts => evts?.filter(evt => evt && evt.InteractionID === interactionId && eventNames.includes(evt.EventName))),
+                filter(evts => evts.length > 0)
             );
     }
 
