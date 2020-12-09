@@ -18,12 +18,12 @@
 <tw-wrapper [data]="data" (maximizeEvent)="onMaximized($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)">
     <div *ngIf="!customerJourneyTable.loading" class="customer-journey" [fxLayout]="maximized ? 'column' : 'row wrap'" fxLayoutGap="6px">
         <!-- minimised view start  -->
-        <div *ngIf="!maximized" class="timeline custom-scroll-adjust">
+        <div *ngIf="!maximized" class="timeline custom-scroll-adjust w-100-p">
             <div
                 *ngFor="let s of customerJourneyTable.tableData.source.data"
                 fxLayout="row-wrap"
                 class="step mb-4 p-4 mat-elevation-z1"
-                (click)="switchMaximizedView(s, 'Session History')"
+                (click)="switchMaximizedView('Session History', s)"
                 [ngClass]="fuseBg.content"
             >
                 <div fxFlex="15" fxLayout fxLayoutAlign="center center" class="step-time pr-8">

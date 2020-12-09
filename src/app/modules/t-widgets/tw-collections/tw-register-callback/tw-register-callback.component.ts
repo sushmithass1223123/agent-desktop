@@ -13,6 +13,7 @@ import { SDKClient, IUIEvent, CCLDataEvent, TextChatRemoteUserConnectedEvent } f
 import { join } from 'lodash';
 import { get } from 'lodash';
 import { fuseAnimations } from '@fuse/animations';
+import { takeUntil } from 'rxjs/operators';
 
 /**
  * Register Callback Widget component
@@ -177,17 +178,24 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
 
         // listen to events only if opened in an interaction
         if (this.interactionId) {
-            // get the event from event bag to make sure no events are missed
-            const eventBag = this._tmacEventService.interactionEvents(this.interactionId);
+            // // get the event from event bag to make sure no events are missed
+            // const eventBag = this._tmacEventService.interactionEvents(this.interactionId);
 
-            // process the events if any
-            eventBag.forEach((evt: IUIEvent) => {
-                this[evt.EventName]?.(evt);
-            });
+            // // process the events if any
+            // eventBag.forEach((evt: IUIEvent) => {
+            //     this[evt.EventName]?.(evt);
+            // });
 
-            // register to the event 
-            SDKClient.events.on('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
-            SDKClient.events.on('CCLDataEvent', this.CCLDataEvent);
+            // // register to the event 
+            // SDKClient.events.on('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
+            // SDKClient.events.on('CCLDataEvent', this.CCLDataEvent);
+
+            this._tmacEventService.getInteractionEvents([
+                'TextChatRemoteUserConnectedEvent',
+                'CCLDataEvent'
+            ], this.interactionId)
+                .pipe(takeUntil(this.unsubscribeAll))
+                .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
         }
     }
 
@@ -198,8 +206,8 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
         // call the wrapper destroy method
         this.destroyWrapper();
 
-        SDKClient.events.off('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
-        SDKClient.events.off('CCLDataEvent', this.CCLDataEvent);
+        // SDKClient.events.off('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
+        // SDKClient.events.off('CCLDataEvent', this.CCLDataEvent);
     }
 
     /**
@@ -227,9 +235,9 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
      */
     private processCustomerDetails = (evt: IUIEvent) => {
         // check the interaction
-        if (evt.InteractionID !== this.interactionId) {
-            return;
-        }
+        // if (evt.InteractionID !== this.interactionId) {
+        //     return;
+        // }
 
         // return if no map found
         if (!this.dataMap || Object.keys(this.dataMap).length === 0) {

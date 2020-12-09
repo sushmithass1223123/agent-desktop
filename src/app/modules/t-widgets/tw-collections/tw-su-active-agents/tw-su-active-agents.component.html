@@ -58,7 +58,13 @@
         <p *ngIf="filteredAgents.length" class="sort-label">
             Agent list is sorted by <b> {{ sortBy }} </b> in <b>{{ sortType }}</b> order
         </p>
-        <div fxFlex fxLayout="column" fxLayoutAlign=" none" class="agent-list px-4 mb-20 pb-8 custom-scroll-adjust" [@animateStagger]="{ value: '50' }">
+        <div
+            fxFlex
+            fxLayout="column"
+            fxLayoutAlign=" none"
+            class="agent-list px-4 mb-20 pb-8 custom-scroll-adjust"
+            [@animateStagger]="{ value: '50' }"
+        >
             <div
                 *ngFor="let item of filteredAgents; trackBy: trackByID"
                 class="w-100-p p-12 border-radius-20 agent-item mat-elevation-z1"
@@ -112,7 +118,7 @@
                             <span
                                 matTooltip="Status Duration"
                                 [ngClass]="{
-                                    'text-alt-success': item.CurrentStatusDuration > 0 && item.CurrentStatusDuration <= 60,
+                                    'text-alt-success': item.CurrentStatusDuration >= 0 && item.CurrentStatusDuration <= 60,
                                     'text-alt-warning': item.CurrentStatusDuration > 60 && item.CurrentStatusDuration <= 120,
                                     'text-alt-danger': item.CurrentStatusDuration > 120
                                 }"

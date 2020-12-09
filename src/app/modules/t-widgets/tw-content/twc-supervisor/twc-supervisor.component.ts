@@ -3,6 +3,7 @@ import { FormControl } from '@angular/forms';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
 import { DashboardService } from '@services/dashboard.service';
+import { TMACEventService } from '@services/tmac-event.service';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { ContentPageService } from 'app/services/content-page.service';
 import { Observable } from 'rxjs';
@@ -50,6 +51,11 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
     showDashboardDataSpanOverlay = false;
 
     /**
+     * Dashboard data loading flag
+     */
+    dataLoading: boolean;
+
+    /**
      * dashboard data from date
      */
     dashboardDataFromDate: {
@@ -82,11 +88,17 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
      */
     maxDate: Date;
 
+    /**
+     * Data filter duration
+     */
+    duration: number;
+
     constructor(
         public hostElement: ElementRef,
         public contentPageService: ContentPageService,
         private _dashboardService: DashboardService,
-        private fuseConfService: FuseConfigService
+        private fuseConfService: FuseConfigService,
+        private _tmacEventService: TMACEventService
     ) {
         super(hostElement, contentPageService);
     }
@@ -98,6 +110,8 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
         // call the wrapper init method
         this.initWrapper(this.data);
 
+        this.duration = 100;
+
         this.maxDate = new Date();
         this.maxDate.setDate(this.maxDate.getDate() - 1);
 
@@ -108,7 +122,7 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
         );
 
         const initialDate = new Date();
-        initialDate.setDate(initialDate.getDate() - 100);
+        initialDate.setDate(initialDate.getDate() - Math.round(this.duration / 24));
 
         this.dashboardDataFromDate = {
             calculatedSpan: 100,
@@ -118,7 +132,8 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
         this.dashboardDataFromDate.formControl.valueChanges.subscribe((date: Date) => {
             // this.registerToService(false);
             const deltaTime = Math.ceil((Date.now() - date.getTime()) / (1000 * 60 * 60));
-            this.registerToService(true, deltaTime);
+            this.duration = deltaTime;
+            this.registerToService(true);
             this.showDashboardDataSpanOverlay = false;
         });
 
@@ -146,6 +161,12 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
             });
         }
 
+        this._tmacEventService.getEvents(['TeamAgentListDataEvent'])
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe(() => {
+                this.dataLoading = false;
+            });
+
         // set init flag to true
         this.init = true;
     }
@@ -169,15 +190,16 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
      *
      * @param register
      */
-    registerToService(register: boolean, duration = 100): void {
+    registerToService(register: boolean): void {
         if (register) {
+            this.dataLoading = true;
             // start getting data
-            this._dashboardService.triggerActiveAgents(this.agentData.agentId, this.agentData.teamId, true, duration);
+            this._dashboardService.triggerActiveAgents(this.agentData.agentId, this.agentData.teamId, true, this.duration);
         } else {
             // check for the profile
             if (this.agentData.agentProfile === 'S') {
                 // stop getting data
-                this._dashboardService.triggerActiveAgents(this.agentData.agentId, this.agentData.teamId, false, duration);
+                this._dashboardService.triggerActiveAgents(this.agentData.agentId, this.agentData.teamId, false, 0);
             }
         }
     }
@@ -190,11 +212,11 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
             // if inited only register, else register in init
             if (this.init && this.agentData.agentProfile === 'S') {
                 // register to service
-                // this.registerToService(true);
+                this.registerToService(true);
             }
             this.loaded = true;
         }
-    };
+    }
 
     /**
      * On page inactive callback
@@ -202,7 +224,7 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
     onInactive = () => {
         if (this.loaded && this.pageActive) {
             this.loaded = false;
-            // this.registerToService(false);
+            this.registerToService(false);
         }
-    };
+    }
 }

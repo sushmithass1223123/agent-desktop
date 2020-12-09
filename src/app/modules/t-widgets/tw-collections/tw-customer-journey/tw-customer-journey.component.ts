@@ -192,14 +192,14 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                     config.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor
                         ? config.layout.anchorWidget.contentBackground
                         : config.layout.widget.customBackgroundColor === true
-                        ? config.layout.widget.contentBackground
-                        : '',
+                            ? config.layout.widget.contentBackground
+                            : '',
                 body:
                     config.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor
                         ? config.layout.anchorWidget.bodyBackground
                         : config.layout.widget.customBackgroundColor === true
-                        ? config.layout.widget.bodyBackground
-                        : ''
+                            ? config.layout.widget.bodyBackground
+                            : ''
             };
         });
 
@@ -212,15 +212,21 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             lastId: '0'
         };
 
-        // get the event from event bag to make sure no events are missed
-        const eventBag = this._tmacEventService.interactionEvents(this.interactionId);
+        // // get the event from event bag to make sure no events are missed
+        // const eventBag = this._tmacEventService.interactionEvents(this.interactionId);
 
-        // process the events if any
-        eventBag.forEach((evt: IUIEvent) => {
-            this[evt.EventName]?.(evt);
-        });
+        // // process the events if any
+        // eventBag.forEach((evt: IUIEvent) => {
+        //     this[evt.EventName]?.(evt);
+        // });
 
-        SDKClient.events.on('InteractionHistoryReadyEvent', this.InteractionHistoryReadyEvent);
+        // SDKClient.events.on('InteractionHistoryReadyEvent', this.InteractionHistoryReadyEvent);
+
+        this._tmacEventService.getInteractionEvents([
+            'InteractionHistoryReadyEvent'
+        ], this.interactionId)
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe(evts => this.InteractionHistoryReadyEvent(evts[0]));
 
         this.customerJourneyTable.tableData.source.filterPredicate = this.createFilter();
     }
@@ -313,8 +319,9 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+
         // de-register from TMAC event
-        SDKClient.events.off('InteractionHistoryReadyEvent', this.InteractionHistoryReadyEvent);
+        // SDKClient.events.off('InteractionHistoryReadyEvent', this.InteractionHistoryReadyEvent);
     }
 
     /**

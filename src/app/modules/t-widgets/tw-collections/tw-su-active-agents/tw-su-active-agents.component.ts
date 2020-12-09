@@ -9,9 +9,9 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AGENT_FEATURES_MAP, COMMON_ERR_MESSAGE } from 'app/constants';
 import { CustomSDKEvent, IWidget, QuizEventJsonData } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
-import { orderBy, random } from 'lodash';
+import { map, orderBy, random } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { AgentFeatures, AgentTabCount, IAgentData, IAUXCodes, IResponse, SDKClient, SuAgentDataModel, SuAgentModel, TUtils } from 'tmac-sdk';
+import { AgentFeatures, AgentStatusChangeEvent, AgentTabCount, IAgentData, IAUXCodes, IResponse, SDKClient, SuAgentDataModel, SuAgentModel, TUtils } from 'tmac-sdk';
 
 /**
  * Active agents component widget
@@ -105,8 +105,6 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         this.agentList = [];
         this.filteredAgents = [];
         this.user = SDKClient.getAgentData();
-        this.sortBy = '';
-        this.sortType = 'desc';
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -130,7 +128,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         });
 
         this.sortBy = this.data.Data.SortBy ?? 'AgentName';
-        this.sortType = this.data.Data.SortType ?? 'desc';
+        this.sortType = this.data.Data.SortType ?? 'asc';
 
         // listen to agent list event
         // SDKClient.events.on('SupervisorAgentListEvent', this.SupervisorAgentListEvent);
@@ -178,6 +176,9 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         if (this.searchTerm) {
             this.filterAgents();
         }
+
+        // sort agent list
+        this.sortAgentList();
     }
 
     /**
@@ -406,6 +407,8 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                         ).then((dt: IResponse) => {
                             // check if the logout is success
                             if (dt.response && dt.response.ResultCode === 0) {
+                                // filter the logout agent
+                                this.filteredAgents = this.filteredAgents.filter(a => a.StationID !== agent.StationID);
                                 // route back to login page
                                 this._appUIService.showSnackbar('Logged out successfully', 'success');
                             } else {
@@ -415,8 +418,6 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                         });
                     }
                 });
-                break;
-            case 'AllowSupervisorToChangeStatus':
                 break;
             default:
         }
@@ -471,9 +472,22 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             },
             item
         )
-            .then(() => {
-                // route back to login page
-                this._appUIService.showSnackbar('Status changed successfully', 'success');
+            .then((dt) => {
+                if (dt.response.EventName === 'AgentStatusChangeEvent') {
+                    // parse the result to AgentStatusChangeEvent
+                    const response = dt.response as AgentStatusChangeEvent;
+                    this._appUIService.showSnackbar('Status changed successfully', 'success');
+                    this.filteredAgents = map(this.filteredAgents, (agt: SuAgentModel) => {
+                        if (agt.StationID === agent.StationID) {
+                            agt.CurrentAgentStatus = response.Status;
+                            agt.CurrentStatusDuration = 0;
+                        }
+                        return agt;
+                    });
+                }
+                else {
+                    this._appUIService.showSnackbar('Status change failed!', 'failure');
+                }
             })
             .catch(() => {
                 // logout error

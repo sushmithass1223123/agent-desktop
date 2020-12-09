@@ -263,7 +263,7 @@ export class AppUiService {
      */
     public playAudio(type: string = 'default', volume: number = 1, repeat = false): void {
         // check if sound is enabled for notification
-        if (type === 'notification' && !this._notificationSettings.sounds) {
+        if ((!type || type === 'notification') && !this._notificationSettings.sounds) {
             return;
         }
         // clear if any interval

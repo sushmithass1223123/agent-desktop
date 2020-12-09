@@ -4,6 +4,7 @@ import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { sortBy, uniqBy } from 'lodash';
+import { takeUntil } from 'rxjs/operators';
 import { CallerIntentEvent, IResponse, IUIEvent, SDKClient, WorkCodeAddedEvent } from 'tmac-sdk';
 
 /**
@@ -95,17 +96,25 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
                 this.loading = false;
             });
 
-        // get the event from event bag to make sure no events are missed
-        const eventBag = this._tmacEventService.interactionEvents(this.interactionId);
+        // // get the event from event bag to make sure no events are missed
+        // const eventBag = this._tmacEventService.interactionEvents(this.interactionId);
 
-        // process the events if any
-        eventBag.forEach((evt: IUIEvent) => {
-            this[evt.EventName]?.(evt);
-        });
+        // // process the events if any
+        // eventBag.forEach((evt: IUIEvent) => {
+        //     this[evt.EventName]?.(evt);
+        // });
 
-        SDKClient.events.on('OnNLPDataEvent', this.OnNLPDataEvent);
-        SDKClient.events.on('CallerIntentEvent', this.CallerIntentEvent);
-        SDKClient.events.on('WorkCodeAddedEvent', this.WorkCodeAddedEvent);
+        // SDKClient.events.on('OnNLPDataEvent', this.OnNLPDataEvent);
+        // SDKClient.events.on('CallerIntentEvent', this.CallerIntentEvent);
+        // SDKClient.events.on('WorkCodeAddedEvent', this.WorkCodeAddedEvent);
+
+        this._tmacEventService.getInteractionEvents([
+            'OnNLPDataEvent',
+            'CallerIntentEvent',
+            'WorkCodeAddedEvent'
+        ], this.interactionId)
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
     }
 
     /**
@@ -115,9 +124,9 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
         // call the wrapper destroy method
         this.destroyWrapper();
 
-        SDKClient.events.off('OnNLPDataEvent', this.OnNLPDataEvent);
-        SDKClient.events.on('CallerIntentEvent', this.CallerIntentEvent);
-        SDKClient.events.off('CallerIntentEvent', this.CallerIntentEvent);
+        // SDKClient.events.off('OnNLPDataEvent', this.OnNLPDataEvent);
+        // SDKClient.events.on('CallerIntentEvent', this.CallerIntentEvent);
+        // SDKClient.events.off('CallerIntentEvent', this.CallerIntentEvent);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -175,10 +184,14 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
     /**
      * Reset form
      * @method clearAllData
+     * 
+     * @param source
      */
-    private clearAllData(): void {
-        this.selectedDepartment = null;
-        this.groups = [];
+    private clearAllData(source?: string): void {
+        if (source !== 'group') {
+            this.selectedDepartment = null;
+            this.groups = [];
+        }
         this.selectedGroup = null;
         this.clearTemplates();
     }
@@ -205,8 +218,11 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
         // check if value is there
         if (!value) {
             // clear all data
-            this.clearAllData();
+            this.clearAllData('dept');
             return;
+        }
+        else {
+            this.clearTemplates();
         }
 
         this.loading = true;
@@ -230,7 +246,7 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
         // check if value is there
         if (!value) {
             // clear all data
-            this.clearAllData();
+            this.clearAllData('group');
             return;
         }
         else {
@@ -278,10 +294,13 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
         template.Text = this.templateText;
 
         // send an event out for the listner to send
-        SDKClient.events.emit('CannedResposeEvent', {
+        const customEvent = {
+            EventName: 'CannedResposeEvent',
             InteractionID: this.interactionId,
-            Template: template
-        });
+            Data: { Template: template }
+        };
+
+        this._tmacEventService.emitCustomEvent(customEvent, true);
 
         if (this.responseMode !== 'auto') {
             // clear all data

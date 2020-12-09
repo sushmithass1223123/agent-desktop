@@ -1,5 +1,6 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
+import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils';
 import { IWidget } from 'app/interfaces';
 import { AgentStatusChangeEvent, IAgentData, IAUXCodes, IResponse, SDKClient } from 'tmac-sdk';
@@ -46,7 +47,8 @@ export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDes
     agentStatus = '';
 
     constructor(
-        private _fuseProgressBarService: FuseProgressBarService
+        private _fuseProgressBarService: FuseProgressBarService,
+        private _tmacEventService: TMACEventService
     ) {
         super();
     }
@@ -109,8 +111,14 @@ export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDes
     changeStatus(item: IAUXCodes): void {
         // show the progress bar
         this._fuseProgressBarService.show();
+
+        const customEvent = {
+            EventName: 'AgentStatusChangingEvent'
+        };
+
         // emit a custom event
-        SDKClient.events.emit('AgentStatusChangingEvent');
+        this._tmacEventService.emitCustomEvent(customEvent);
+
         // change the status
         SDKClient.changeStatus({
             type: item.Code.toLocaleLowerCase() === 'available' ? 'available' : item.Code.toLocaleLowerCase() === 'acw' ? 'acw' : 'aux',

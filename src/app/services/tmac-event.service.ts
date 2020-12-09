@@ -6,8 +6,8 @@ import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { IAction, IWidget, QuizEvent } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { map as lodashMap, upperFirst } from 'lodash';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { filter, map, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, merge, Observable, Subject } from 'rxjs';
+import { catchError, filter, map, takeUntil } from 'rxjs/operators';
 import {
     ACWTimerEvent,
     AgentForcedLogoffEvent,
@@ -945,16 +945,46 @@ export class TMACEventService {
     public getEvents<T = any>(eventNames: string[]): Observable<T[]> {
         // get the event based on interaction Id
         const events = this._tmacEventArray.filter((i: IUIEvent) => eventNames.includes(i.EventName));
+
+        // create a new temp subject
+        const tempSub = new Subject<any[]>();
+
         // check if anything exist, then send
         if (events.length) {
             setTimeout(() => {
-                this._nonInteractionEventSub.next(events);
+                tempSub.next(events);
             });
         }
-        // return all tmac events
-        return this._nonInteractionEventSub
+
+        // return all interaction events for that interaction id and event names
+        return merge(tempSub, this._nonInteractionEventSub)
             .pipe(
                 map(evts => evts?.filter(evt => evt && eventNames.includes(evt.EventName))),
+                filter(evts => evts.length > 0)
+            );
+    }
+
+    /**
+     * To get non-interaction TMAC event with event name
+     * 
+     * @param eventName Name of the event
+     */
+    public getAllEvents<T = any>(): Observable<T[]> {
+        // get the event based on interaction Id
+        const events = this._tmacEventArray;
+        // create a new temp subject
+        const tempSub = new Subject<any[]>();
+
+        // check if anything exist, then send
+        if (events.length) {
+            setTimeout(() => {
+                tempSub.next(events);
+            });
+        }
+
+        // return all interaction events for that interaction id
+        return merge(tempSub, this._nonInteractionEventSub)
+            .pipe(
                 filter(evts => evts.length > 0)
             );
     }
@@ -970,15 +1000,18 @@ export class TMACEventService {
         const events = this._interactionEventArray
             .filter((i: IUIEvent) => i.InteractionID === interactionId && eventNames.includes(i.EventName));
 
+        // create a new temp subject
+        const tempSub = new Subject<any[]>();
+
         // check if anything exist, then send
         if (events.length) {
             setTimeout(() => {
-                this._interactionEventSub.next(events);
+                tempSub.next(events);
             });
         }
 
-        // return all interaction events for that interaction id
-        return this._interactionEventSub
+        // return all interaction events for that interaction id and event names
+        return merge(tempSub, this._interactionEventSub)
             .pipe(
                 map(evts => evts?.filter(evt => evt && evt.InteractionID === interactionId && eventNames.includes(evt.EventName))),
                 filter(evts => evts.length > 0)
@@ -986,9 +1019,40 @@ export class TMACEventService {
     }
 
     /**
+     * To get interaction TMAC event with event by ID
+     *  
+     * @param {Number} interactionId InteractionId to filter
+     */
+    public getInteractionEventsById<T = any>(interactionId: number): Observable<T[]> {
+        // get the event based on interaction Id
+        const events = this._interactionEventArray
+            .filter((i: IUIEvent) => i.InteractionID === interactionId);
+
+        // create a new temp subject
+        const tempSub = new Subject<any[]>();
+
+        // check if anything exist, then send
+        if (events.length) {
+            setTimeout(() => {
+                tempSub.next(events);
+            });
+        }
+
+        // return all interaction events for that interaction id
+        return merge(tempSub, this._interactionEventSub)
+            .pipe(
+                map(evts => evts?.filter(evt => evt && evt.InteractionID === interactionId)),
+                filter(evts => evts.length > 0)
+            );
+    }
+
+    /**
      * To emit custom event through subscriber
      */
-    public emitEvent(evt: any, interactionEvent: boolean = false): void {
+    public emitCustomEvent(evt: any, interactionEvent: boolean = false): void {
+        // emit via SDK
+        SDKClient.events.emit(evt.EventName, evt);
+        // emit via subject
         if (interactionEvent) {
             this.processInteractionEvents(evt);
         }

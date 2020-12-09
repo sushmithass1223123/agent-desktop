@@ -26,7 +26,7 @@ import { ContentPageService } from '@services/content-page.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AgentSkillListData, ChatTranscripts, InteractionComment, InteractionRef, IWidget } from 'app/interfaces';
+import { AgentSkillListData, ChatTranscripts, CustomSDKEvent, InteractionComment, InteractionRef, IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { map } from 'lodash';
 import * as moment from 'moment';
@@ -1034,16 +1034,16 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * To process custom CannedResposeEvent
      * 
-     * @param evt CannedResposeEvent data
+     * @param {CustomSDKEvent} evt CannedResposeEvent data
      */
-    private CannedResposeEvent = (evt: any) => {
+    private CannedResposeEvent = (evt: CustomSDKEvent) => {
         // check the interaction
         // if (evt.InteractionID !== this.interactionId) {
         //     return;
         // }
 
         // send the selected template
-        this.sendMessage(evt.Template);
+        this.sendMessage(evt.Data.Template);
     }
 
     /**
@@ -1696,7 +1696,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.savedComments.forEach((item) => {
             message +=
                 `
-                 <div>${item.Message}</div>
+                 <div>${item.Message.replace(/(?:\r\n|\r|\n)/g, '<br>')}</div>
                  <span class="time secondary-text">${item.Time}</span>
                  <br /><br />
                  `;

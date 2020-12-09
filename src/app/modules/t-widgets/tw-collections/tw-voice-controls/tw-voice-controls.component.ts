@@ -275,7 +275,27 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         }
 
         // listen to TMAC events
-        this.registerToEvents();
+        // this.registerToEvents();
+
+        this._tmacEventService.getInteractionEvents([
+            'CallConnectedEvent',
+            'CallDisconnectedEvent',
+            'CallHoldEvent',
+            'CallHoldReconnectEvent',
+            'CallTransferInitiatedEvent',
+            'CallTransferLineDisconnectEvent',
+            'CallTransferRemoteConnectedEvent',
+            'CallConferenceInitiatedEvent',
+            'CallConferenceCompletedEvent',
+            'CallConferenceLineDisconnectEvent',
+            'CallConferenceRemoteConnectedEvent',
+            'MediaServerEvent',
+            'VoiceCannedResponseEvent',
+            'CallerIntentEvent',
+            'IVRDataEvent'
+        ], this.interactionId)
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
     }
 
 
@@ -286,67 +306,68 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-        this.deRegisterFromEvents();
+
+        // this.deRegisterFromEvents();
     }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Private methods
     // -----------------------------------------------------------------------------------------------------
 
-    /**
-     * Register to SDK events
-     * @method registerToEvents
-     */
-    private registerToEvents(): void {
-        // get the event from event bag to make sure no events are missed
-        const eventBag = this._tmacEventService.interactionEvents(this.interactionId);
+    // /**
+    //  * Register to SDK events
+    //  * @method registerToEvents
+    //  */
+    // private registerToEvents(): void {
+    //     // get the event from event bag to make sure no events are missed
+    //     const eventBag = this._tmacEventService.interactionEvents(this.interactionId);
 
-        // process the events if any
-        eventBag.forEach((evt: IUIEvent) => {
-            this[evt.EventName]?.(evt);
-        });
+    //     // process the events if any
+    //     eventBag.forEach((evt: IUIEvent) => {
+    //         this[evt.EventName]?.(evt);
+    //     });
 
-        // register to tmac events
-        SDKClient.events.on('CallConnectedEvent', this.CallConnectedEvent);
-        SDKClient.events.on('CallDisconnectedEvent', this.CallDisconnectedEvent);
-        SDKClient.events.on('CallHoldEvent', this.CallHoldEvent);
-        SDKClient.events.on('CallHoldReconnectEvent', this.CallHoldReconnectEvent);
-        SDKClient.events.on('CallTransferInitiatedEvent', this.CallTransferInitiatedEvent);
-        SDKClient.events.on('CallTransferLineDisconnectEvent', this.CallTransferLineDisconnectEvent);
-        SDKClient.events.on('CallTransferRemoteConnectedEvent', this.CallTransferRemoteConnectedEvent);
-        SDKClient.events.on('CallConferenceInitiatedEvent', this.CallConferenceInitiatedEvent);
-        SDKClient.events.on('CallConferenceCompletedEvent', this.CallConferenceCompletedEvent);
-        SDKClient.events.on('CallConferenceLineDisconnectEvent', this.CallConferenceLineDisconnectEvent);
-        SDKClient.events.on('CallConferenceRemoteConnectedEvent', this.CallConferenceRemoteConnectedEvent);
-        SDKClient.events.on('MediaServerEvent', this.MediaServerEvent);
-        SDKClient.events.on('VoiceCannedResponseEvent', this.VoiceCannedResponseEvent);
-        SDKClient.events.on('CallerIntentEvent', this.CallerIntentEvent);
-        SDKClient.events.on('IVRDataEvent', this.IVRDataEvent);
-    }
+    //     // register to tmac events
+    //     SDKClient.events.on('CallConnectedEvent', this.CallConnectedEvent);
+    //     SDKClient.events.on('CallDisconnectedEvent', this.CallDisconnectedEvent);
+    //     SDKClient.events.on('CallHoldEvent', this.CallHoldEvent);
+    //     SDKClient.events.on('CallHoldReconnectEvent', this.CallHoldReconnectEvent);
+    //     SDKClient.events.on('CallTransferInitiatedEvent', this.CallTransferInitiatedEvent);
+    //     SDKClient.events.on('CallTransferLineDisconnectEvent', this.CallTransferLineDisconnectEvent);
+    //     SDKClient.events.on('CallTransferRemoteConnectedEvent', this.CallTransferRemoteConnectedEvent);
+    //     SDKClient.events.on('CallConferenceInitiatedEvent', this.CallConferenceInitiatedEvent);
+    //     SDKClient.events.on('CallConferenceCompletedEvent', this.CallConferenceCompletedEvent);
+    //     SDKClient.events.on('CallConferenceLineDisconnectEvent', this.CallConferenceLineDisconnectEvent);
+    //     SDKClient.events.on('CallConferenceRemoteConnectedEvent', this.CallConferenceRemoteConnectedEvent);
+    //     SDKClient.events.on('MediaServerEvent', this.MediaServerEvent);
+    //     SDKClient.events.on('VoiceCannedResponseEvent', this.VoiceCannedResponseEvent);
+    //     SDKClient.events.on('CallerIntentEvent', this.CallerIntentEvent);
+    //     SDKClient.events.on('IVRDataEvent', this.IVRDataEvent);
+    // }
 
 
-    /**
-     * Clear event listeners
-     * @method deRegisterFromEvents
-     */
-    private deRegisterFromEvents(): void {
-        // deregister from tmac events
-        SDKClient.events.off('CallConnectedEvent', this.CallConnectedEvent);
-        SDKClient.events.off('CallDisconnectedEvent', this.CallDisconnectedEvent);
-        SDKClient.events.off('CallHoldEvent', this.CallHoldEvent);
-        SDKClient.events.off('CallHoldReconnectEvent', this.CallHoldReconnectEvent);
-        SDKClient.events.off('CallTransferInitiatedEvent', this.CallTransferInitiatedEvent);
-        SDKClient.events.off('CallTransferLineDisconnectEvent', this.CallTransferLineDisconnectEvent);
-        SDKClient.events.off('CallTransferRemoteConnectedEvent', this.CallTransferRemoteConnectedEvent);
-        SDKClient.events.off('CallConferenceInitiatedEvent', this.CallConferenceInitiatedEvent);
-        SDKClient.events.off('CallConferenceCompletedEvent', this.CallConferenceCompletedEvent);
-        SDKClient.events.off('CallConferenceLineDisconnectEvent', this.CallConferenceLineDisconnectEvent);
-        SDKClient.events.off('CallConferenceRemoteConnectedEvent', this.CallConferenceRemoteConnectedEvent);
-        SDKClient.events.off('MediaServerEvent', this.MediaServerEvent);
-        SDKClient.events.off('VoiceCannedResponseEvent', this.VoiceCannedResponseEvent);
-        SDKClient.events.off('CallerIntentEvent', this.CallerIntentEvent);
-        SDKClient.events.off('IVRDataEvent', this.IVRDataEvent);
-    }
+    // /**
+    //  * Clear event listeners
+    //  * @method deRegisterFromEvents
+    //  */
+    // private deRegisterFromEvents(): void {
+    //     // deregister from tmac events
+    //     SDKClient.events.off('CallConnectedEvent', this.CallConnectedEvent);
+    //     SDKClient.events.off('CallDisconnectedEvent', this.CallDisconnectedEvent);
+    //     SDKClient.events.off('CallHoldEvent', this.CallHoldEvent);
+    //     SDKClient.events.off('CallHoldReconnectEvent', this.CallHoldReconnectEvent);
+    //     SDKClient.events.off('CallTransferInitiatedEvent', this.CallTransferInitiatedEvent);
+    //     SDKClient.events.off('CallTransferLineDisconnectEvent', this.CallTransferLineDisconnectEvent);
+    //     SDKClient.events.off('CallTransferRemoteConnectedEvent', this.CallTransferRemoteConnectedEvent);
+    //     SDKClient.events.off('CallConferenceInitiatedEvent', this.CallConferenceInitiatedEvent);
+    //     SDKClient.events.off('CallConferenceCompletedEvent', this.CallConferenceCompletedEvent);
+    //     SDKClient.events.off('CallConferenceLineDisconnectEvent', this.CallConferenceLineDisconnectEvent);
+    //     SDKClient.events.off('CallConferenceRemoteConnectedEvent', this.CallConferenceRemoteConnectedEvent);
+    //     SDKClient.events.off('MediaServerEvent', this.MediaServerEvent);
+    //     SDKClient.events.off('VoiceCannedResponseEvent', this.VoiceCannedResponseEvent);
+    //     SDKClient.events.off('CallerIntentEvent', this.CallerIntentEvent);
+    //     SDKClient.events.off('IVRDataEvent', this.IVRDataEvent);
+    // }
 
     /**
      * CallConnectedEvent handler
@@ -354,9 +375,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     private CallConnectedEvent = (evt: CallConnectedEvent) => {
         // check the interaction
-        if (evt.InteractionID !== this.interactionId) {
-            return;
-        }
+        // if (evt.InteractionID !== this.interactionId) {
+        //     return;
+        // }
 
         // subscribe to the timer
         timer(1000, 1000)
@@ -383,9 +404,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     private CallDisconnectedEvent = (evt: CallDisconnectedEvent) => {
         // check the interaction
-        if (evt.InteractionID !== this.interactionId) {
-            return;
-        }
+        // if (evt.InteractionID !== this.interactionId) {
+        //     return;
+        // }
 
         // clear audio if any
         this._appUIService.clearAudio();
@@ -419,9 +440,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     private CallHoldEvent = (evt: CallHoldEvent) => {
         // check the interaction
-        if (evt.InteractionID !== this.interactionId) {
-            return;
-        }
+        // if (evt.InteractionID !== this.interactionId) {
+        //     return;
+        // }
 
         // set the status
         this.status = 'hold';
@@ -440,9 +461,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     private CallHoldReconnectEvent = (evt: CallHoldReconnectEvent) => {
         // check the interaction
-        if (evt.InteractionID !== this.interactionId) {
-            return;
-        }
+        // if (evt.InteractionID !== this.interactionId) {
+        //     return;
+        // }
 
         // set the status
         this.status = 'connected';
@@ -461,9 +482,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     private CallTransferInitiatedEvent = (evt: CallTransferInitiatedEvent) => {
         // check the interaction
-        if (evt.InteractionID !== this.interactionId) {
-            return;
-        }
+        // if (evt.InteractionID !== this.interactionId) {
+        //     return;
+        // }
     }
 
     /**
@@ -472,9 +493,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     private CallTransferRemoteConnectedEvent = (evt: CallTransferRemoteConnectedEvent) => {
         // check the interaction
-        if (evt.InteractionID !== this.interactionId) {
-            return;
-        }
+        // if (evt.InteractionID !== this.interactionId) {
+        //     return;
+        // }
 
         // show confirm/cancel buttons
         this.tempCallRef = {
@@ -490,9 +511,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     private CallTransferLineDisconnectEvent = (evt: CallTransferLineDisconnectEvent) => {
         // check the interaction
-        if (evt.InteractionID !== this.interactionId) {
-            return;
-        }
+        // if (evt.InteractionID !== this.interactionId) {
+        //     return;
+        // }
 
         this.tempCallRef = null;
     }
@@ -503,9 +524,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     private CallConferenceInitiatedEvent = (evt: CallConferenceInitiatedEvent) => {
         // check the interaction
-        if (evt.InteractionID !== this.interactionId) {
-            return;
-        }
+        // if (evt.InteractionID !== this.interactionId) {
+        //     return;
+        // }
     }
 
     /**
@@ -514,9 +535,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     private CallConferenceRemoteConnectedEvent = (evt: CallConferenceRemoteConnectedEvent) => {
         // check the interaction
-        if (evt.InteractionID !== this.interactionId) {
-            return;
-        }
+        // if (evt.InteractionID !== this.interactionId) {
+        //     return;
+        // }
 
         // show confirm/cancel buttons
         this.tempCallRef = {
@@ -532,9 +553,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     private CallConferenceLineDisconnectEvent = (evt: CallConferenceLineDisconnectEvent) => {
         // check the interaction
-        if (evt.InteractionID !== this.interactionId) {
-            return;
-        }
+        // if (evt.InteractionID !== this.interactionId) {
+        //     return;
+        // }
 
         this.tempCallRef = null;
     }
@@ -545,9 +566,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     private CallConferenceCompletedEvent = (evt: CallConferenceCompletedEvent) => {
         // check the interaction
-        if (evt.InteractionID !== this.interactionId) {
-            return;
-        }
+        // if (evt.InteractionID !== this.interactionId) {
+        //     return;
+        // }
     }
 
     /**
@@ -630,9 +651,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             Item: AgentInteractionTemplate
         }) => {
         // check the interaction
-        if (evt.InteractionID !== this.interactionId) {
-            return;
-        }
+        // if (evt.InteractionID !== this.interactionId) {
+        //     return;
+        // }
 
         // check if audio is playing already
         this.audioPlayer?.stop();
@@ -667,10 +688,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         this._appUIService.showSnackbar(`Canned audio '${evt.Item.Name}' started playing`);
 
         // create custom event and send  
-        SDKClient.events.emit('VoiceCannedResponseAckEvent', {
-            SAudioPlayer: this.audioPlayer,
-            Item: evt.Item
-        });
+        // SDKClient.events.emit('VoiceCannedResponseAckEvent', {
+        //     SAudioPlayer: this.audioPlayer,
+        //     Item: evt.Item
+        // });
     }
 
     /**
@@ -679,9 +700,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     private CallerIntentEvent = (evt: CallerIntentEvent) => {
         // check the interaction
-        if (evt.InteractionID !== this.interactionId) {
-            return;
-        }
+        // if (evt.InteractionID !== this.interactionId) {
+        //     return;
+        // }
 
         // assign the intent name
         this.intent = evt.IntentName;
@@ -693,9 +714,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     private IVRDataEvent = (evt: IVRDataEvent) => {
         // check the interaction
-        if (evt.InteractionID !== this.interactionId) {
-            return;
-        }
+        // if (evt.InteractionID !== this.interactionId) {
+        //     return;
+        // }
 
         this.last4IVR = [evt.LastMenu_4, evt.LastMenu_3, evt.LastMenu_2, evt.LastMenu];
     }

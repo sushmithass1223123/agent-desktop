@@ -80,9 +80,7 @@ export class DashboardService {
                     Data: agentList
                 };
 
-                // SDKClient.events.emit('TeamAgentListEvent', eventData);
-
-                this._tmacEventService.emitEvent(eventData);
+                this._tmacEventService.emitCustomEvent(eventData);
             });
 
             signalR.hub.on('onAgentInteractionList', (interactionList: any) => {
@@ -92,9 +90,7 @@ export class DashboardService {
                     Data: interactionList
                 };
 
-                // SDKClient.events.emit('AgentInteractionDetailsEvent', eventData);
-
-                this._tmacEventService.emitEvent(eventData);
+                this._tmacEventService.emitCustomEvent(eventData);
             });
 
             signalR.hub.on('onChannelList', (channelList: any) => {
@@ -104,9 +100,7 @@ export class DashboardService {
                     Data: channelList
                 };
 
-                // SDKClient.events.emit('AgentChannelDetailsEvent', eventData);
-
-                this._tmacEventService.emitEvent(eventData);
+                this._tmacEventService.emitCustomEvent(eventData);
             });
 
             signalR.hub.on('onStatusList', (statusDetails: AgentStateDurationList) => {
@@ -116,9 +110,7 @@ export class DashboardService {
                     Data: statusDetails
                 };
 
-                // SDKClient.events.emit('AgentStatusDetailsEvent', eventData);
-
-                this._tmacEventService.emitEvent(eventData);
+                this._tmacEventService.emitCustomEvent(eventData);
             });
 
             signalR.hub.on('onDataReceivedForAgent', (dataForAgent: any) => {
@@ -128,9 +120,7 @@ export class DashboardService {
                     Data: dataForAgent
                 };
 
-                // SDKClient.events.emit('CallbackDataReceivedForAgent', eventData);
-
-                this._tmacEventService.emitEvent(eventData);
+                this._tmacEventService.emitCustomEvent(eventData);
             });
 
             // ----- Supervisor -----
@@ -144,9 +134,7 @@ export class DashboardService {
                         Data: agentList
                     };
 
-                    // SDKClient.events.emit('SupervisorAgentListEvent', eventData);
-
-                    this._tmacEventService.emitEvent(eventData);
+                    this._tmacEventService.emitCustomEvent(eventData);
                 });
 
                 signalR.hub.on('onAgentListData', (agentListData: any) => {
@@ -156,9 +144,7 @@ export class DashboardService {
                         Data: agentListData
                     };
 
-                    // SDKClient.events.emit('TeamAgentListDataEvent', eventData);
-
-                    this._tmacEventService.emitEvent(eventData);
+                    this._tmacEventService.emitCustomEvent(eventData);
                 });
 
                 signalR.hub.on('onTeamChannelList', (channelList: any) => {
@@ -168,9 +154,7 @@ export class DashboardService {
                         Data: channelList
                     };
 
-                    // SDKClient.events.emit('TeamChannelListEvent', eventData);
-
-                    this._tmacEventService.emitEvent(eventData);
+                    this._tmacEventService.emitCustomEvent(eventData);
                 });
 
                 signalR.hub.on('onIntentList', (intentList: any) => {
@@ -179,9 +163,7 @@ export class DashboardService {
                         Data: intentList
                     };
 
-                    // SDKClient.events.emit('TeamIntentListEvent', eventData);
-
-                    this._tmacEventService.emitEvent(eventData);
+                    this._tmacEventService.emitCustomEvent(eventData);
                 });
 
                 signalR.hub.on('onTeamActiveStatusList', (activeStatusList: any) => {
@@ -191,9 +173,7 @@ export class DashboardService {
                         Data: activeStatusList
                     };
 
-                    // SDKClient.events.emit('TeamActiveStatusDetailsEvent', eventData);
-
-                    this._tmacEventService.emitEvent(eventData);
+                    this._tmacEventService.emitCustomEvent(eventData);
                 });
 
                 signalR.hub.on('onTeamActiveChannelList', (activeChannelList: any) => {
@@ -203,9 +183,7 @@ export class DashboardService {
                         Data: activeChannelList
                     };
 
-                    // SDKClient.events.emit('TeamActiveChannelListEvent', eventData);
-
-                    this._tmacEventService.emitEvent(eventData);
+                    this._tmacEventService.emitCustomEvent(eventData);
                 });
 
                 signalR.hub.on('onInteractionList', (interactionList: any) => {
@@ -215,9 +193,7 @@ export class DashboardService {
                         Data: interactionList
                     };
 
-                    // SDKClient.events.emit('TeamAgentInteractionDetailsEvent', eventData);
-
-                    this._tmacEventService.emitEvent(eventData);
+                    this._tmacEventService.emitCustomEvent(eventData);
                 });
 
                 signalR.hub.on('onWorkCodeList', (workCodeList: any) => {
@@ -227,9 +203,7 @@ export class DashboardService {
                         Data: workCodeList
                     };
 
-                    // SDKClient.events.emit('TeamrWorkCodeDetailsEvent', workCodeList);
-
-                    this._tmacEventService.emitEvent(eventData);
+                    this._tmacEventService.emitCustomEvent(eventData);
                 });
             }
 
@@ -319,7 +293,7 @@ export class DashboardService {
      * @param {number} duration
      */
     public triggerAgentData(agentId: string, start: boolean, duration: number): void {
-        TUtils.Logger.console('info', `DashboardService.triggerAgentData: start=${start}`);
+        TUtils.Logger.console('info', `DashboardService.triggerAgentData: start=${start}, duration=${duration}`);
         if (this._signalRInstance.isConnected()) {
             this._signalRInstance.hub.invoke('GetAgentData', this._signalRInstance.hub.connection.id, agentId, start, duration);
         }
@@ -333,7 +307,7 @@ export class DashboardService {
      * @param {Number} duration
      */
     public triggerActiveAgents(agentId: string, teamId: string, start: boolean, duration: number): void {
-        TUtils.Logger.console('info', `DashboardService.triggerActiveAgents: start=${start}`);
+        TUtils.Logger.console('info', `DashboardService.triggerActiveAgents: start=${start}, duration=${duration}`);
         if (this._signalRInstance.isConnected()) {
             this._signalRInstance.hub.invoke('GetActiveAgentList', this._signalRInstance.hub.connection.id, agentId, teamId, start, duration);
         }
@@ -348,6 +322,18 @@ export class DashboardService {
         TUtils.Logger.console('info', `DashboardService.triggerAgentInteractions: agentId=${agentId}, start=${start}`);
         if (this._signalRInstance.isConnected()) {
             this._signalRInstance.hub.invoke('GetActiveInteractionList', this._signalRInstance.hub.connection.id, agentId, start);
+        }
+    }
+
+    /**
+     * Trigger agent team list for IM list
+     * @param {String} agentId
+     * @param {Boolean} start
+     */
+    public triggerTeamAgentList(agentId: string, start: boolean): void {
+        TUtils.Logger.console('info', `DashboardService.triggerTeamAgentList: agentId=${agentId}, start=${start}`);
+        if (this._signalRInstance.isConnected()) {
+            this._signalRInstance.hub.invoke('GetTeamAgentList', this._signalRInstance.hub.connection.id, agentId, start);
         }
     }
 }

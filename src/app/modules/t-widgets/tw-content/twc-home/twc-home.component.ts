@@ -3,6 +3,7 @@ import { FormControl } from '@angular/forms';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
 import { DashboardService } from '@services/dashboard.service';
+import { TMACEventService } from '@services/tmac-event.service';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { ContentPageService } from 'app/services/content-page.service';
 import { Observable } from 'rxjs';
@@ -50,6 +51,11 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
     showDashboardDataSpanOverlay = false;
 
     /**
+     * Dashboard data loading flag
+     */
+    dataLoading: boolean;
+
+    /**
      * dashboard data from date
      */
     dashboardDataFromDate: {
@@ -82,11 +88,17 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
      */
     maxDate: Date;
 
+    /**
+     * Data filter duration
+     */
+    duration: number;
+
     constructor(
         public hostElement: ElementRef,
         public contentPageService: ContentPageService,
         private _dashboardService: DashboardService,
-        private fuseConfService: FuseConfigService
+        private fuseConfService: FuseConfigService,
+        private _tmacEventService: TMACEventService
     ) {
         super(hostElement, contentPageService);
     }
@@ -97,6 +109,8 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
+
+        this.duration = 100;
 
         this.maxDate = new Date();
         this.maxDate.setDate(this.maxDate.getDate() - 1);
@@ -129,11 +143,8 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
             }
         });
 
-        // set init flag to true
-        this.init = true;
-
         const initialDate = new Date();
-        initialDate.setDate(initialDate.getDate() - 100);
+        initialDate.setDate(initialDate.getDate() - Math.round(this.duration / 24));
 
         this.dashboardDataFromDate = {
             calculatedSpan: 100,
@@ -141,11 +152,20 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
         };
 
         this.dashboardDataFromDate.formControl.valueChanges.subscribe((date: Date) => {
-            // this.registerToService(false);
             const deltaTime = Math.ceil((Date.now() - date.getTime()) / (1000 * 60 * 60));
-            this.registerToService(true, deltaTime);
+            this.duration = deltaTime;
+            this.registerToService(true);
             this.showDashboardDataSpanOverlay = false;
         });
+
+        this._tmacEventService.getEvents(['AgentInteractionDetailsEvent'])
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe(() => {
+                this.dataLoading = false;
+            });
+
+        // set init flag to true
+        this.init = true;
     }
 
     /**
@@ -167,13 +187,14 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
      *
      * @param register
      */
-    registerToService(register: boolean, duration = 100): void {
+    registerToService(register: boolean): void {
         if (register) {
+            this.dataLoading = true;
             // start getting data
-            this._dashboardService.triggerAgentData(this.agentData.agentId, true, duration);
+            this._dashboardService.triggerAgentData(this.agentData.agentId, true, this.duration);
         } else {
             // stop getting data
-            this._dashboardService.triggerAgentData(this.agentData.agentId, false, duration);
+            this._dashboardService.triggerAgentData(this.agentData.agentId, false, 0);
         }
     }
 
@@ -185,7 +206,7 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
             // if inited only register, else register in init
             if (this.init) {
                 // register to service
-                // this.registerToService(true);
+                this.registerToService(true);
             }
             this.loaded = true;
         }
@@ -197,7 +218,7 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
     onInactive = () => {
         if (this.loaded && this.pageActive) {
             this.loaded = false;
-            // this.registerToService(false);
+            this.registerToService(false);
         }
     }
 }

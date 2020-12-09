@@ -3462,11 +3462,12 @@
         "RegisterPostMessages": true,
         "RefreshDisabled": false,
         "DevToolsDisabled": false,
-        "AppNotificationTimeout": 5000,
-        "ShowNotificationDeniedAlert": false,
-        "ChromeNotificationEnabled": {
-            "Enabled": true,
-            "Timeout": 5000
+        "Notifications": {
+            "Sounds": true,
+            "SoundLevel": 1,
+            "DesktopAlerts": false,
+            "DesktopAlertTimeout": 5000,
+            "AppAlertTimeout": 5000
         },
         "AV": {
             "webRTCConfig": {

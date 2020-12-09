@@ -1,10 +1,14 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { AOTWidgetService } from '@services/aot-widget.service';
+import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { groupBy } from 'lodash';
 import { AgentInteractionTemplate, CallDisconnectedEvent, IResponse, SDKClient, TUtils } from 'tmac-sdk';
 
+/**
+ * TwVoiceCannedResponsesComponent
+ */
 @Component({
     selector: 'tw-voice-canned-responses',
     templateUrl: './tw-voice-canned-responses.component.html',
@@ -12,17 +16,30 @@ import { AgentInteractionTemplate, CallDisconnectedEvent, IResponse, SDKClient, 
     encapsulation: ViewEncapsulation.None
 })
 export class TwVoiceCannedResponsesComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-    // holds all the data related to this widget from the config
+    /**
+     * Holds all the data related to this widget from the config
+     */
     @Input() data: IWidget;
-
+    /**
+     * Interaction ID
+     */
     interactionId: number;
+    /**
+     * Voice templates
+     */
     voiceTemplates: any = [];
+    /**
+     * Selected template
+     */
     selectedItem: AgentInteractionTemplate;
 
     /**
      * Constructor
      */
-    constructor(private _aotWidgetService: AOTWidgetService) {
+    constructor(
+        private _aotWidgetService: AOTWidgetService,
+        private _tmacEventService: TMACEventService
+    ) {
         super();
     }
 
@@ -52,6 +69,7 @@ export class TwVoiceCannedResponsesComponent extends TWidgetWrapper implements O
                 }
             });
 
+        // TODO:: convert to rxjs
         // listen to call disconnected event
         SDKClient.events.on('CallDisconnectedEvent', this.CallDisconnectedEvent);
     }
@@ -71,6 +89,9 @@ export class TwVoiceCannedResponsesComponent extends TWidgetWrapper implements O
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * To process CallDisconnectedEvent
+     */
     private CallDisconnectedEvent = (evt: CallDisconnectedEvent) => {
         // check for the interaction id
         if (evt.InteractionID !== this.interactionId) {
@@ -85,6 +106,9 @@ export class TwVoiceCannedResponsesComponent extends TWidgetWrapper implements O
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * Send the selected canned response
+     */
     public async sendItem(item: AgentInteractionTemplate): Promise<void> {
         // get the audio buffer from wav file
         const result: IResponse = await TUtils.HttpClient.sendRequest({
@@ -95,11 +119,15 @@ export class TwVoiceCannedResponsesComponent extends TWidgetWrapper implements O
         // check the response
         if (result.response) {
             // create custom event and send to the interaction
-            SDKClient.events.emit('VoiceCannedResponseEvent', {
-                AudioBuffer: result.response,
+            const customEvent = {
+                EventName: 'VoiceCannedResponseEvent',
                 InteractionID: this.interactionId,
+                AudioBuffer: result.response,
                 Item: item
-            });
+            };
+
+            // emit a template message sent event to show in UI
+            this._tmacEventService.emitCustomEvent(customEvent, true);
         }
     }
 }

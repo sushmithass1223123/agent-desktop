@@ -244,8 +244,13 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
      * @param {CustomSDKEvent} data
      */
     private AgentInteractionDetailsEvent = (evt: CustomSDKEvent) => {
-        this.interactionList = [...this.interactionList, ...evt.Data];
-
+        // check if empty array then reset
+        if (!evt.Data.length) {
+            this.interactionList = [];
+        }
+        else {
+            this.interactionList = [...this.interactionList, ...evt.Data];
+        }
         this.interactionDetailsTable.source = new MatTableDataSource(this.interactionList);
         this.interactionDetailsTable.source.sort = this.sort;
         this.interactionDetailsTable.source.paginator = this.paginator;
