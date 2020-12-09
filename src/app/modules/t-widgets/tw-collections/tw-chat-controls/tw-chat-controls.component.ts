@@ -1102,7 +1102,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 const type = attachment ? attachment.type : 'text';
 
                 // if media proxy then remove the source
-                if (attachment && this.fileUploadUrl.MediaProxy) {
+                if (attachment && !attachment.src && this.fileUploadUrl.MediaProxy) {
                     // get the file upload url
                     const fileServerUrl: string = this.fileUploadUrl?.MediaProxy;
                     attachment.src = `${fileServerUrl}/${this.sessionID}/${attachment.name}`;
@@ -1317,7 +1317,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         widget.Config.Anchor = true;
         widget.Config.Position.W = param === 'audio' ? 600 : 800;
         widget.Config.Position.H = param === 'audio' ? 275 : 550;
-        widget.Config.Actions = param === 'audio' ? ['collapse'] : ['collapse', 'maximize'];
+        widget.Config.Actions = ['collapse', 'maximize'];
         // widget.Data.AVConn = this.avConn;
         widget.Data.CustomerName = this.customerName;
         widget.Data.Direction = direction;
@@ -1591,9 +1591,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         let message = '';
 
         if (previewData.attachment.type === 'image') {
-            message = `<img src = ${previewData.attachment.src} width = "100%" width = "100%" /> `;
+            message = `<img src ="${previewData.attachment.src}" width = "100%" width = "100%" /> `;
         } else if (previewData.attachment.type === 'video') {
-            message = `<video controls autoplay src = ${previewData.attachment.src} width = "100%" width = "100%"> </video>`;
+            message = `<video controls autoplay src ="${previewData.attachment.src}" width = "100%" width = "100%"> </video>`;
         }
         // show the custom dialog box
         this.confirmDialogRef = this._appUIService.showCustomDialog('alert', message, 'Preview');

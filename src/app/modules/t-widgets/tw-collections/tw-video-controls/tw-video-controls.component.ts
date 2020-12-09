@@ -552,7 +552,9 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                                     const customEvent = {
                                         Message: message,
                                         InteractionID: this.interactionId,
-                                        EventName: 'TextChatMessageTemplateSentEvent'
+                                        CreatedTime: new Date(),
+                                        EventName: 'TextChatMessageTemplateSentEvent',
+                                        Result: true
                                     };
 
                                     // emit a template message sent event to show in UI
