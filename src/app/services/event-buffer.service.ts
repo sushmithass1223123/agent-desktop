@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { eventNames } from 'cluster';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { distinctUntilChanged, filter, map, publish, publishReplay, shareReplay, tap } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map, tap } from 'rxjs/operators';
 import { IUIEvent, SDKClient, TUtils } from 'tmac-sdk';
 
 /**

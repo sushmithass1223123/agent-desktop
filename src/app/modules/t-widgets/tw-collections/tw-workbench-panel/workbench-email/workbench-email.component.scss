@@ -1,3 +1,9 @@
+.advanced-search-form {
+    .mat-form-field-infix {
+        align-items: center;
+    }
+}
+
 workbench-email {
     .email-list {
         height: 98%;
@@ -6,13 +12,13 @@ workbench-email {
         box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
     }
 
-    .tw-list-item {
-        // overflow: auto;
-    }
+    // .tw-list-item {
+    //     // overflow: auto;
+    // }
 
-    .email-list-groups {
-        // max-height: 70%;
-    }
+    // .email-list-groups {
+    //     // max-height: 70%;
+    // }
 
     .mat-form-field.custom .mat-form-field-wrapper {
         padding: 0 !important;
