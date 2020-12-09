@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { TUtils, IAgentData, SDKClient, AgentStateDurationList, SignalRWrapper } from 'tmac-sdk';
+import { AgentStateDurationList, IAgentData, SDKClient, SignalRWrapper, TUtils } from 'tmac-sdk';
 import { AppDataService } from './app-data.service';
 
 /**
@@ -11,7 +11,6 @@ import { AppDataService } from './app-data.service';
     providedIn: 'root'
 })
 export class DashboardService {
-
     /**
      * Unsubscribe all subject
      */
@@ -38,7 +37,7 @@ export class DashboardService {
      */
     private _serviceStarted: boolean;
 
-    constructor(private _appDataService: AppDataService) { }
+    constructor(private _appDataService: AppDataService) {}
 
     /**
      * Start signalr
@@ -69,7 +68,7 @@ export class DashboardService {
         // check if the connection is created successfully
         if (signalR) {
             // on registered event
-            signalR.hub.on('onRegistered', () => { });
+            signalR.hub.on('onRegistered', () => {});
 
             signalR.hub.on('onTeamAgentList', (agentList: any) => {
                 SDKClient.events.emit('TeamAgentListEvent', agentList);
@@ -95,7 +94,6 @@ export class DashboardService {
 
             // check for the profile
             if (agentData.agentProfile === 'S') {
-
                 signalR.hub.on('onAgentList', (agentList: any) => {
                     SDKClient.events.emit('SupervisorAgentListEvent', agentList);
                 });
@@ -172,16 +170,14 @@ export class DashboardService {
         this._unsubscribeAll = new Subject();
         this._dashboardServiceSubject = new BehaviorSubject('');
 
-        this._appDataService.config
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((config: any) => {
-                // check whether the Urls are provided in config
-                this._serviceUrls = config.Main.Content.Urls?.DashboardServerUrls || [];
-                // if urls are there then start service
-                if (this._serviceUrls.length > 0 && !this._serviceStarted) {
-                    this.startService();
-                }
-            });
+        this._appDataService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
+            // check whether the Urls are provided in config
+            this._serviceUrls = config.Main.Content.Urls?.DashboardServerUrls || [];
+            // if urls are there then start service
+            if (this._serviceUrls.length > 0 && !this._serviceStarted) {
+                this.startService();
+            }
+        });
 
         // set the flag
         this._subscribed = true;
@@ -199,7 +195,6 @@ export class DashboardService {
 
         TUtils.Logger.console('info', 'DashboardService.unsubscribe');
 
-
         // unsubscribe from all subscriptions
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
@@ -213,9 +208,9 @@ export class DashboardService {
 
     /**
      * Trigger Agent Data
-     * @param {String} agentId 
-     * @param {Boolean} start 
-     * @param {number} duration 
+     * @param {String} agentId
+     * @param {Boolean} start
+     * @param {number} duration
      */
     public triggerAgentData(agentId: string, start: boolean, duration: number): void {
         TUtils.Logger.console('info', `DashboardService.triggerAgentData: start=${start}`);
@@ -226,10 +221,10 @@ export class DashboardService {
 
     /**
      * Trigger Active agents
-     * @param {String} agentId 
-     * @param {String} teamId 
-     * @param {Boolean} start 
-     * @param {Number} duration 
+     * @param {String} agentId
+     * @param {String} teamId
+     * @param {Boolean} start
+     * @param {Number} duration
      */
     public triggerActiveAgents(agentId: string, teamId: string, start: boolean, duration: number): void {
         TUtils.Logger.console('info', `DashboardService.triggerActiveAgents: start=${start}`);
@@ -240,8 +235,8 @@ export class DashboardService {
 
     /**
      * Trigger agent Interactions
-     * @param {String} agentId 
-     * @param {Boolean} start 
+     * @param {String} agentId
+     * @param {Boolean} start
      */
     public triggerAgentInteractions(agentId: string, start: boolean): void {
         TUtils.Logger.console('info', `DashboardService.triggerAgentInteractions: agentId=${agentId}, start=${start}`);

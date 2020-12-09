@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1607429804360,
+  "timestamp": 1607507971433,
   "index": "/agent-desktop/index.html",
   "assetGroups": [
     {
@@ -13,8 +13,8 @@
       "urls": [
         "/agent-desktop/favicon.ico",
         "/agent-desktop/index.html",
-        "/agent-desktop/main-es2015.f616cdd8847f84147f6b.js",
-        "/agent-desktop/main-es5.f616cdd8847f84147f6b.js",
+        "/agent-desktop/main-es2015.129ccfb615f35319bd58.js",
+        "/agent-desktop/main-es5.129ccfb615f35319bd58.js",
         "/agent-desktop/manifest.webmanifest",
         "/agent-desktop/polyfills-es2015.f625969f439a3c849165.js",
         "/agent-desktop/polyfills-es5.6580f88923148047fcc1.js",
@@ -207,12 +207,12 @@
     "/agent-desktop/assets/sounds/notification.mp3": "2ac75e616f4ba48934f98d509a09763ed5d7946a",
     "/agent-desktop/assets/sounds/ringing.mp3": "931ee62831c2cee1a2e6f9d47d7c702cc9b27f20",
     "/agent-desktop/favicon.ico": "0b7fab65618d172ada716b31a305f6c364bcda0e",
-    "/agent-desktop/index.html": "d527af24de36cb0e98390b41d20636c98e9e5ddf",
+    "/agent-desktop/index.html": "f32a547020a4c8166939d91b59264f640280f8f6",
     "/agent-desktop/layers-2x.8f2c4d11474275fbc161.png": "152a162333e46d24f9d89f566312fc0c64011dee",
     "/agent-desktop/layers.416d91365b44e4b4f477.png": "c9e7528e491a39232ba24a2706c6c739d6fb0f06",
     "/agent-desktop/login.719b0522a85301719bb9.svg": "7dcbb2ea9bd68a52f410f4e7be8ec39d64500a9f",
-    "/agent-desktop/main-es2015.f616cdd8847f84147f6b.js": "bd5fbcbe9b768f81636c70b3ee04f0db84cf1ee5",
-    "/agent-desktop/main-es5.f616cdd8847f84147f6b.js": "0ffe38e4b331430d3f1f256a79cc6669537aa3a9",
+    "/agent-desktop/main-es2015.129ccfb615f35319bd58.js": "a0a16b9a55cb57c02ca805ac37f9d4ed2102d7c9",
+    "/agent-desktop/main-es5.129ccfb615f35319bd58.js": "e73de05623199d5f42dd3003911eaff4c85d82b3",
     "/agent-desktop/manifest.webmanifest": "98745673f3c9c45b6a0331184ddd80040ee784df",
     "/agent-desktop/marker-icon.2b3e1faf89f94a483539.png": "60a90bcbb2b42b7ddb4556db94eb7c1084b0e5da",
     "/agent-desktop/polyfills-es2015.f625969f439a3c849165.js": "18f8d8f64ab7613eeabd12df567d6f1b6735a301",
