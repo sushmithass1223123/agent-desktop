@@ -228,7 +228,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         this.user = SDKClient.getAgentData() || null;
 
         // play new email sound
-        this._appUIService.playAudio('new-email', 0.5);
+        this._appUIService.playAudio('new-email', 0.5, false);
     }
 
     /**

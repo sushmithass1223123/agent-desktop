@@ -70,3 +70,8 @@ export interface ResCampaign {
     totalContacts: string;
     waitTimeBeforeDial: number;
 }
+
+export interface CustomSDKEvent {
+    EventName: string;
+    Data: any;
+}

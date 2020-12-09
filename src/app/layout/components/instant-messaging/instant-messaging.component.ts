@@ -1,10 +1,13 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
+import { DashboardService } from '@services/dashboard.service';
+import { TMACEventService } from '@services/tmac-event.service';
+import { CustomSDKEvent } from 'app/interfaces';
 import { groupBy, sortBy } from 'lodash';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AgentNotificaitonEvent, SDKClient } from 'tmac-sdk';
+import { AgentNotificaitonEvent, IAgentData, SDKClient } from 'tmac-sdk';
 
 /**
  * Contact model
@@ -90,18 +93,16 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
      * Current Chat
      */
     chat: Chat;
+
     /**
      * Selected Contact
      */
     selectedContact: Contact;
-    /**
-     * sidebar folded flag
-     */
-    sidebarFolded: boolean;
+
     /**
      * user
      */
-    user: any;
+    user: IAgentData;
 
     /**
      * reply form ref
@@ -129,16 +130,15 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
     /**
      * Constructor
      *
-     * @param {InstantMessagingService} _InstantMessagingService
-     * @param {HttpClient} _httpClient
      * @param {FuseSidebarService} _fuseSidebarService
      */
     constructor(
-        private _fuseSidebarService: FuseSidebarService
+        private _fuseSidebarService: FuseSidebarService,
+        private _tmacEventService: TMACEventService,
+        private _dashboardService: DashboardService
     ) {
         // Set the defaults
         this.selectedContact = null;
-        this.sidebarFolded = true;
 
         // Set the private defaults
         this._unsubscribeAll = new Subject();
@@ -157,13 +157,23 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
         // Subscribe to the foldedChanged observable
         this._fuseSidebarService
             .getSidebar('chatPanel')
-            .foldedChanged.pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((folded) => {
-                this.sidebarFolded = folded;
+            .openedChanged.pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((opened) => {
+                // check to get team list
+                if (opened) {
+                    this._dashboardService.triggerTeamAgentList(this.user.agentId, true);
+                }
+                else {
+                    this._dashboardService.triggerTeamAgentList(this.user.agentId, false);
+                }
             });
 
-        SDKClient.events.on('TeamAgentListEvent', this.TeamAgentListEvent);
-        SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
+        // SDKClient.events.on('TeamAgentListEvent', this.TeamAgentListEvent);
+        // SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
+
+        this._tmacEventService.getEvents(['TeamAgentListEvent', 'AgentNotificaitonEvent'])
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
     }
 
     /**
@@ -174,8 +184,8 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
 
-        SDKClient.events.off('TeamAgentListEvent', this.TeamAgentListEvent);
-        SDKClient.events.off('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
+        // SDKClient.events.off('TeamAgentListEvent', this.TeamAgentListEvent);
+        // SDKClient.events.off('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -195,8 +205,9 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
                 // this._chatViewScrollbar.update();
 
                 setTimeout(() => {
-                    this._chatViewScrollbar.nativeElement.scrollTo(0, 200);
-                });
+                    this._chatViewScrollbar.nativeElement.scrollTop = this._chatViewScrollbar.nativeElement.scrollHeight;
+                    // this._chatViewScrollbar.nativeElement.scrollTo(0, 200);
+                }, 200);
             }
         });
     }
@@ -204,20 +215,6 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
-
-    /**
-     * Fold the temporarily unfolded sidebar back
-     */
-    foldSidebarTemporarily(): void {
-        this._fuseSidebarService.getSidebar('chatPanel').foldTemporarily();
-    }
-
-    /**
-     * Unfold the sidebar temporarily
-     */
-    unfoldSidebarTemporarily(): void {
-        this._fuseSidebarService.getSidebar('chatPanel').unfoldTemporarily();
-    }
 
     /**
      * Toggle sidebar opened status
@@ -280,8 +277,6 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
         // Otherwise, we will select the contact, open
         // the sidebar and start the chat
         else {
-            // Unfold the sidebar temporarily
-            this.unfoldSidebarTemporarily();
 
             // Set the selected contact
             this.selectedContact = contact;
@@ -360,15 +355,17 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
         } else {
             this.chat = this.allChats[evt.FromAgentId];
         }
+
+        this._prepareChatForReplies();
     }
 
     /**
      * TeamAgentListEvent Handler
-     * @param {any[]} evt 
+     * @param {CustomSDKEvent} evt 
      */
-    TeamAgentListEvent = (evt: any[]): void => {
+    TeamAgentListEvent = (evt: CustomSDKEvent): void => {
         const agents = groupBy(this.contacts, 'id');
-        this.contacts = sortBy(evt, 'AgentName').map((x) => ({
+        this.contacts = sortBy(evt.Data, 'AgentName').map((x) => ({
             avatar: x.ProfilePicture,
             id: x.AgentLoginID,
             mood: '',

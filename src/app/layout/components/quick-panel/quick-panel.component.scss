@@ -1,11 +1,11 @@
-@import "src/@fuse/scss/fuse";
+@import 'src/@fuse/scss/fuse';
 
 .quick-panel {
     width: 280px;
     min-width: 280px;
     max-width: 280px;
 
-    @include media-breakpoint("xs") {
+    @include media-breakpoint('xs') {
         min-width: 0 !important;
         max-width: 80vw !important;
         width: 80vw !important;
@@ -23,5 +23,39 @@ quick-panel {
 
     .mat-slide-toggle-content {
         flex: 1;
+    }
+}
+
+.add-link-card {
+    width: 350px;
+    border-radius: 20px !important;
+    margin-top: 8px;
+
+    mat-form-field {
+        &.link-txt {
+            .mat-form-field-wrapper {
+                padding-bottom: 0.5em;
+
+                .mat-form-field-flex {
+                    padding: 0 !important;
+
+                    .mat-form-field-infix {
+                        border-top: 0.3em solid transparent;
+                        padding: 0 !important;
+
+                        textarea {
+                            border-radius: 20px;
+                            overflow: hidden;
+                            width: 100%;
+                            padding: 12px 12px 10px 12px;
+                        }
+                    }
+                }
+
+                .mat-form-field-underline {
+                    display: none !important;
+                }
+            }
+        }
     }
 }

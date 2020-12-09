@@ -3,12 +3,13 @@ import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild, ViewEncapsu
 import { FormControl } from '@angular/forms';
 import { MatAutocomplete, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { AppUiService } from '@services/app-ui.service';
+import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
-import { IWidget, ResData } from 'app/interfaces';
+import { CustomSDKEvent, IWidget, ResData } from 'app/interfaces';
 import { groupBy, orderBy, uniqBy } from 'lodash';
 import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { map, startWith, takeUntil } from 'rxjs/operators';
 import { SDKClient, WorkCode, WorkCodeAddedEvent } from 'tmac-sdk';
 
 /**
@@ -93,7 +94,8 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
      * Constructor
      */
     constructor(
-        private _appUiService: AppUiService
+        private _appUiService: AppUiService,
+        private _tmacEventService: TMACEventService
     ) {
         super();
     }
@@ -129,8 +131,8 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         // call the wrapper destroy method
         this.destroyWrapper();
 
-        SDKClient.events.off('TeamrWorkCodeDetailsEvent', this.TeamrWorkCodeDetailsEvent);
-        SDKClient.events.off('WorkCodeAddedEvent', this.WorkCodeAddedEvent);
+        // SDKClient.events.off('TeamrWorkCodeDetailsEvent', this.TeamrWorkCodeDetailsEvent);
+        // SDKClient.events.off('WorkCodeAddedEvent', this.WorkCodeAddedEvent);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -171,7 +173,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
 
             this.loadWorkCodesReq.loading = false;
             this.loadWorkCodesReq.error = false;
-            
+
         } catch (e) {
             this.loadWorkCodesReq.error = true;
             this.loadWorkCodesReq.loading = false;
@@ -182,10 +184,10 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     /**
      * TeamrWorkCodeDetailsEvent handler
      * @method TeamrWorkCodeDetailsEvent
-     * @param {any} workCodeList 
+     * @param {CustomSDKEvent} evt 
      */
-    private TeamrWorkCodeDetailsEvent = (workCodeList: any) => {
-        this.selectedWorkCodes = orderBy(workCodeList, ['Count'], ['desc']);
+    private TeamrWorkCodeDetailsEvent = (evt: CustomSDKEvent) => {
+        this.selectedWorkCodes = orderBy(evt.Data, ['Count'], ['desc']);
     }
 
     /**
@@ -237,9 +239,21 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
             this.interactionId = this.data.InteractionDetails?.InteractionID;
             this.loadWorkCodesReq.loading = true;
             this.getAllWorkCodes();
-            SDKClient.events.on('WorkCodeAddedEvent', this.WorkCodeAddedEvent);
+
+            // SDKClient.events.on('WorkCodeAddedEvent', this.WorkCodeAddedEvent);
+
+            this._tmacEventService.getEvents(['WorkCodeAddedEvent'])
+                .pipe(takeUntil(this.unsubscribeAll))
+                .subscribe(evts => this.WorkCodeAddedEvent(evts[0]));
+
         } else if (this.DataConf.Source === 'supervisor') {
-            SDKClient.events.on('TeamrWorkCodeDetailsEvent', this.TeamrWorkCodeDetailsEvent);
+
+            // SDKClient.events.on('TeamrWorkCodeDetailsEvent', this.TeamrWorkCodeDetailsEvent);
+
+            this._tmacEventService.getEvents(['TeamrWorkCodeDetailsEvent'])
+                .pipe(takeUntil(this.unsubscribeAll))
+                .subscribe(evts => this.TeamrWorkCodeDetailsEvent(evts[0]));
+
         } else {
             this.loadWorkCodesReq.error = true;
             this.loadWorkCodesReq.loading = false;

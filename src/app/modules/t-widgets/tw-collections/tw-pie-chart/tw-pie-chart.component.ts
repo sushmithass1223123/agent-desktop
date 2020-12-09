@@ -1,8 +1,9 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { TwWrapperComponent } from '@modules/t-widgets/tw-wrapper/tw-wrapper.component';
+import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CHART_COLORS } from 'app/constants';
-import { IWidget, TwChartConfig } from 'app/interfaces';
+import { CustomSDKEvent, IWidget, TwChartConfig } from 'app/interfaces';
 import { orderBy, sortBy } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 import { AgentChannelDataList, AgentStateDurationList, SDKClient, TeamIntentDataList, WallboardRefreshEvent } from 'tmac-sdk';
@@ -61,7 +62,7 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
     /**
      * Constructor
      */
-    constructor() {
+    constructor(private _tmacEventService: TMACEventService) {
         super();
     }
 
@@ -79,32 +80,52 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
         this.chart.type = this.data.Data.ChartType || 'pie';
 
         if (this.data.Data.Source === 'tw-su-status' || this.data.Data.Source === 'tw-aux-status-chart') {
-            SDKClient.events.on('TeamActiveStatusDetailsEvent', this.TeamActiveStatusDetailsEvent);
+            // SDKClient.events.on('TeamActiveStatusDetailsEvent', this.TeamActiveStatusDetailsEvent);
+            this.registerToEvent('TeamActiveStatusDetailsEvent');
+
         } else if (this.data.Data.Source === 'tw-su-calls-in-queue') {
-            SDKClient.events.on('TeamWallboardRefreshEvent', this.TeamWallboardRefreshEvent);
+            // SDKClient.events.on('TeamWallboardRefreshEvent', this.TeamWallboardRefreshEvent);
+            this.registerToEvent('TeamWallboardRefreshEvent');
+
         } else if (this.data.Data.Source === 'tw-su-intent-list') {
-            SDKClient.events.on('TeamIntentListEvent', this.TeamIntentListEvent);
+            // SDKClient.events.on('TeamIntentListEvent', this.TeamIntentListEvent);
+            this.registerToEvent('TeamIntentListEvent');
+
         } else if (this.data.Data.Source === 'tw-ad-total-interactions') {
             if (this.data.Data.Role === 'supervisor' && SDKClient.getAgentData().agentProfile === 'S') {
-                SDKClient.events.on('TeamChannelListEvent', this.TeamChannelListEvent);
+                // SDKClient.events.on('TeamChannelListEvent', this.TeamChannelListEvent);
+                this.registerToEvent('TeamChannelListEvent');
             } else {
-                SDKClient.events.on('AgentChannelDetailsEvent', this.AgentChannelDetailsEvent);
+                // SDKClient.events.on('AgentChannelDetailsEvent', this.AgentChannelDetailsEvent);
+                this.registerToEvent('AgentChannelDetailsEvent');
             }
         } else if (this.data.Data.Source === 'tw-su-channels') {
-            SDKClient.events.on('TeamActiveChannelListEvent', this.TeamActiveChannelListEvent);
+            // SDKClient.events.on('TeamActiveChannelListEvent', this.TeamActiveChannelListEvent);
+            this.registerToEvent('TeamActiveChannelListEvent');
         }
+    }
+
+    /**
+     * To register to event
+     * 
+     * @param {String} eventName
+     */
+    registerToEvent(eventName: string): void {
+        this._tmacEventService.getEvents([eventName])
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe(evts => this[eventName](evts[0]));
     }
 
     /**
      * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
      */
     ngOnDestroy(): void {
-        SDKClient.events.off('TeamActiveStatusDetailsEvent', this.TeamActiveStatusDetailsEvent);
-        SDKClient.events.off('TeamWallboardRefreshEvent', this.TeamWallboardRefreshEvent);
-        SDKClient.events.off('TeamIntentListEvent', this.TeamIntentListEvent);
-        SDKClient.events.off('TeamChannelListEvent', this.TeamChannelListEvent);
-        SDKClient.events.off('AgentChannelDetailsEvent', this.AgentChannelDetailsEvent);
-        SDKClient.events.off('TeamActiveChannelListEvent', this.TeamActiveChannelListEvent);
+        // SDKClient.events.off('TeamActiveStatusDetailsEvent', this.TeamActiveStatusDetailsEvent);
+        // SDKClient.events.off('TeamWallboardRefreshEvent', this.TeamWallboardRefreshEvent);
+        // SDKClient.events.off('TeamIntentListEvent', this.TeamIntentListEvent);
+        // SDKClient.events.off('TeamChannelListEvent', this.TeamChannelListEvent);
+        // SDKClient.events.off('AgentChannelDetailsEvent', this.AgentChannelDetailsEvent);
+        // SDKClient.events.off('TeamActiveChannelListEvent', this.TeamActiveChannelListEvent);
         // call the wrapper destroy method
         this.destroyWrapper();
     }
@@ -115,13 +136,13 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
 
     /**
      * TeamActiveStatusDetailsEvent handler
-     * @param {AgentStateDurationList} evt 
+     * @param {CustomSDKEvent} evt 
      * @method
      */
-    private TeamActiveStatusDetailsEvent = (evt: AgentStateDurationList) => {
+    private TeamActiveStatusDetailsEvent = (evt: CustomSDKEvent) => {
         const datasets = { Duration: [] };
         const labels = [];
-        sortBy(evt.States, 'Duration')
+        sortBy(evt.Data.States, 'Duration')
             .reverse()
             .forEach((c) => {
                 const hours = Math.floor(c.Duration / 3600);
@@ -136,7 +157,7 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
             label: d
         }));
         this.chart.labels = labels;
-    };
+    }
 
     /**
      * WallboardRefreshEvent handler 
@@ -159,19 +180,19 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
             return { data: datasets[d], label: d };
         });
         this.chart.labels = labels;
-    };
+    }
 
     /**
      * TeamIntentListEvent handler 
-     * @param {TeamIntentDataList} intentList 
+     * @param {CustomSDKEvent} evt 
      * @method
      */
-    private TeamIntentListEvent = (intentList: TeamIntentDataList) => {
+    private TeamIntentListEvent = (evt: CustomSDKEvent) => {
         const datasets = { Count: [] };
         const labels = [];
-        let intents = intentList?.Intents || [];
+        let intents = evt.Data?.Intents || [];
         intents = orderBy(intents, ['Count'], ['desc']);
-        intents.forEach((c) => {
+        intents.forEach((c: any) => {
             datasets.Count.push(c.Count);
             labels.push(c.Intent || 'Unknown');
         });
@@ -195,22 +216,22 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
                     this.chart.labels = allDatasets.labels.slice(0, 5);
                 }
             });
-    };
+    }
 
 
     /**
      * AgentChannelDetailsEvent handler 
-     * @param {AgentChannelDataList} intentList 
+     * @param {CustomSDKEvent} evt 
      * @method
      */
-    private AgentChannelDetailsEvent = (channelData: AgentChannelDataList): void => {
-        if (this.data.Data.Role === 'supervisor' && this.data.Data.AgentId !== channelData.AgentId) {
+    private AgentChannelDetailsEvent = (evt: CustomSDKEvent): void => {
+        if (this.data.Data.Role === 'supervisor' && this.data.Data.AgentId !== evt.Data.AgentId) {
             return;
         }
 
         const datasets = { Count: [], Duration: [] };
         const labels = [];
-        sortBy(channelData.Channels, 'Total').forEach((c) => {
+        sortBy(evt.Data.Channels, 'Total').forEach((c) => {
             datasets.Count.push(c.Total);
             datasets.Duration.push(c.AverageActiveTime + c.AverageHoldTime);
             labels.push(c.Channel);
@@ -220,18 +241,18 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
             label: d
         }));
         this.chart.labels = labels;
-    };
+    }
 
 
     /**
      * TeamChannelListEvent handler 
-     * @param {AgentChannelDataList} intentList 
+     * @param {CustomSDKEvent} evt 
      * @method
      */
-    private TeamChannelListEvent = (evt: AgentChannelDataList) => {
+    private TeamChannelListEvent = (evt: CustomSDKEvent) => {
         const datasets = { Total: [] };
         const labels = [];
-        evt.Channels.forEach((c) => {
+        evt.Data.Channels.forEach((c: any) => {
             datasets.Total.push(c.Total);
             labels.push(c.Channel);
         });
@@ -245,17 +266,17 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
                 return !!sum;
             });
         this.chart.labels = labels;
-    };
+    }
 
     /**
      * TeamActiveChannelListEvent handler 
-     * @param {AgentChannelDataList} intentList 
+     * @param {CustomSDKEvent} evt 
      * @method
      */
-    private TeamActiveChannelListEvent = (evt: AgentChannelDataList) => {
+    private TeamActiveChannelListEvent = (evt: CustomSDKEvent) => {
         const datasets = { Count: [] };
         const labels = [];
-        sortBy(evt.Channels, 'Total')
+        sortBy(evt.Data.Channels, 'Total')
             .reverse()
             .forEach((c) => {
                 datasets.Count.push(c.Total);
@@ -267,7 +288,7 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
             label: d
         }));
         this.chart.labels = labels;
-    };
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods

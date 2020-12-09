@@ -3,6 +3,7 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AgentStateDurationList, IAgentData, SDKClient, SignalRWrapper, TUtils } from 'tmac-sdk';
 import { AppDataService } from './app-data.service';
+import { TMACEventService } from './tmac-event.service';
 
 /**
  * Dashboard Service
@@ -37,7 +38,10 @@ export class DashboardService {
      */
     private _serviceStarted: boolean;
 
-    constructor(private _appDataService: AppDataService) {}
+    constructor(
+        private _appDataService: AppDataService,
+        private _tmacEventService: TMACEventService
+    ) { }
 
     /**
      * Start signalr
@@ -68,26 +72,55 @@ export class DashboardService {
         // check if the connection is created successfully
         if (signalR) {
             // on registered event
-            signalR.hub.on('onRegistered', () => {});
+            signalR.hub.on('onRegistered', () => { });
 
             signalR.hub.on('onTeamAgentList', (agentList: any) => {
-                SDKClient.events.emit('TeamAgentListEvent', agentList);
+                const eventData = {
+                    EventName: 'TeamAgentListEvent',
+                    Data: agentList
+                };
+
+                this._tmacEventService.emitCustomEvent(eventData);
             });
 
             signalR.hub.on('onAgentInteractionList', (interactionList: any) => {
-                SDKClient.events.emit('AgentInteractionDetailsEvent', interactionList);
+
+                const eventData = {
+                    EventName: 'AgentInteractionDetailsEvent',
+                    Data: interactionList
+                };
+
+                this._tmacEventService.emitCustomEvent(eventData);
             });
 
             signalR.hub.on('onChannelList', (channelList: any) => {
-                SDKClient.events.emit('AgentChannelDetailsEvent', channelList);
+
+                const eventData = {
+                    EventName: 'AgentChannelDetailsEvent',
+                    Data: channelList
+                };
+
+                this._tmacEventService.emitCustomEvent(eventData);
             });
 
             signalR.hub.on('onStatusList', (statusDetails: AgentStateDurationList) => {
-                SDKClient.events.emit('AgentStatusDetailsEvent', statusDetails);
+
+                const eventData = {
+                    EventName: 'AgentStatusDetailsEvent',
+                    Data: statusDetails
+                };
+
+                this._tmacEventService.emitCustomEvent(eventData);
             });
 
-            signalR.hub.on('onDataReceivedForAgent', (data: any) => {
-                SDKClient.events.emit('CallbackDataReceivedForAgent', data);
+            signalR.hub.on('onDataReceivedForAgent', (dataForAgent: any) => {
+
+                const eventData = {
+                    EventName: 'CallbackDataReceivedForAgent',
+                    Data: dataForAgent
+                };
+
+                this._tmacEventService.emitCustomEvent(eventData);
             });
 
             // ----- Supervisor -----
@@ -95,35 +128,82 @@ export class DashboardService {
             // check for the profile
             if (agentData.agentProfile === 'S') {
                 signalR.hub.on('onAgentList', (agentList: any) => {
-                    SDKClient.events.emit('SupervisorAgentListEvent', agentList);
+
+                    const eventData = {
+                        EventName: 'SupervisorAgentListEvent',
+                        Data: agentList
+                    };
+
+                    this._tmacEventService.emitCustomEvent(eventData);
                 });
 
                 signalR.hub.on('onAgentListData', (agentListData: any) => {
-                    SDKClient.events.emit('TeamAgentListDataEvent', agentListData);
+
+                    const eventData = {
+                        EventName: 'TeamAgentListDataEvent',
+                        Data: agentListData
+                    };
+
+                    this._tmacEventService.emitCustomEvent(eventData);
                 });
 
                 signalR.hub.on('onTeamChannelList', (channelList: any) => {
-                    SDKClient.events.emit('TeamChannelListEvent', channelList);
+
+                    const eventData = {
+                        EventName: 'TeamChannelListEvent',
+                        Data: channelList
+                    };
+
+                    this._tmacEventService.emitCustomEvent(eventData);
                 });
 
                 signalR.hub.on('onIntentList', (intentList: any) => {
-                    SDKClient.events.emit('TeamIntentListEvent', intentList);
+                    const eventData = {
+                        EventName: 'TeamIntentListEvent',
+                        Data: intentList
+                    };
+
+                    this._tmacEventService.emitCustomEvent(eventData);
                 });
 
                 signalR.hub.on('onTeamActiveStatusList', (activeStatusList: any) => {
-                    SDKClient.events.emit('TeamActiveStatusDetailsEvent', activeStatusList);
+
+                    const eventData = {
+                        EventName: 'TeamActiveStatusDetailsEvent',
+                        Data: activeStatusList
+                    };
+
+                    this._tmacEventService.emitCustomEvent(eventData);
                 });
 
                 signalR.hub.on('onTeamActiveChannelList', (activeChannelList: any) => {
-                    SDKClient.events.emit('TeamActiveChannelListEvent', activeChannelList);
+
+                    const eventData = {
+                        EventName: 'TeamActiveChannelListEvent',
+                        Data: activeChannelList
+                    };
+
+                    this._tmacEventService.emitCustomEvent(eventData);
                 });
 
                 signalR.hub.on('onInteractionList', (interactionList: any) => {
-                    SDKClient.events.emit('TeamAgentInteractionDetailsEvent', interactionList);
+
+                    const eventData = {
+                        EventName: 'TeamAgentInteractionDetailsEvent',
+                        Data: interactionList
+                    };
+
+                    this._tmacEventService.emitCustomEvent(eventData);
                 });
 
                 signalR.hub.on('onWorkCodeList', (workCodeList: any) => {
-                    SDKClient.events.emit('TeamrWorkCodeDetailsEvent', workCodeList);
+
+                    const eventData = {
+                        EventName: 'TeamrWorkCodeDetailsEvent',
+                        Data: workCodeList
+                    };
+
+                    this._tmacEventService.emitCustomEvent(eventData);
                 });
             }
 
@@ -213,7 +293,7 @@ export class DashboardService {
      * @param {number} duration
      */
     public triggerAgentData(agentId: string, start: boolean, duration: number): void {
-        TUtils.Logger.console('info', `DashboardService.triggerAgentData: start=${start}`);
+        TUtils.Logger.console('info', `DashboardService.triggerAgentData: start=${start}, duration=${duration}`);
         if (this._signalRInstance.isConnected()) {
             this._signalRInstance.hub.invoke('GetAgentData', this._signalRInstance.hub.connection.id, agentId, start, duration);
         }
@@ -227,7 +307,7 @@ export class DashboardService {
      * @param {Number} duration
      */
     public triggerActiveAgents(agentId: string, teamId: string, start: boolean, duration: number): void {
-        TUtils.Logger.console('info', `DashboardService.triggerActiveAgents: start=${start}`);
+        TUtils.Logger.console('info', `DashboardService.triggerActiveAgents: start=${start}, duration=${duration}`);
         if (this._signalRInstance.isConnected()) {
             this._signalRInstance.hub.invoke('GetActiveAgentList', this._signalRInstance.hub.connection.id, agentId, teamId, start, duration);
         }
@@ -242,6 +322,18 @@ export class DashboardService {
         TUtils.Logger.console('info', `DashboardService.triggerAgentInteractions: agentId=${agentId}, start=${start}`);
         if (this._signalRInstance.isConnected()) {
             this._signalRInstance.hub.invoke('GetActiveInteractionList', this._signalRInstance.hub.connection.id, agentId, start);
+        }
+    }
+
+    /**
+     * Trigger agent team list for IM list
+     * @param {String} agentId
+     * @param {Boolean} start
+     */
+    public triggerTeamAgentList(agentId: string, start: boolean): void {
+        TUtils.Logger.console('info', `DashboardService.triggerTeamAgentList: agentId=${agentId}, start=${start}`);
+        if (this._signalRInstance.isConnected()) {
+            this._signalRInstance.hub.invoke('GetTeamAgentList', this._signalRInstance.hub.connection.id, agentId, start);
         }
     }
 }

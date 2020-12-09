@@ -1,11 +1,10 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { EventBufferService } from '@services/event-buffer.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient, WallboardRefreshEvent } from 'tmac-sdk';
+import { WallboardRefreshEvent } from 'tmac-sdk';
 
 /**
  * Wallboard componet
@@ -48,8 +47,7 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
      * @constructor
      */
     constructor(
-        private _tmacEventService: TMACEventService,
-        private eventBufferService: EventBufferService
+        private _tmacEventService: TMACEventService
     ) {
         super();
         this.source = '';
@@ -69,25 +67,9 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
             'TeamWallboardRefreshEvent' :
             'WallboardRefreshEvent';
 
-        // get the stock event
-        const event = this._tmacEventService.tmacEvents(eventName);
-        // if event
-        if (event) {
-            // process the event
-            this.wallboardRefreshEvent(event);
-        }
-
-        // this.eventBufferService.getEvents(eventName)
-        //     .pipe(
-        //         // distinctUntilChanged()
-        //         takeUntil(this.unsubscribeAll),
-        //     )
-        //     .subscribe(x => {
-        //         // console.log('Awesome !!!', x);
-        //     });
-
-        // register to events
-        SDKClient.events.on(eventName, this.wallboardRefreshEvent);
+        this._tmacEventService.getEvents([eventName])
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe(evts => this.wallboardRefreshEvent(evts[0]));
     }
 
 
@@ -97,12 +79,6 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-
-        // deregister from tmac events
-        SDKClient.events.off(this.source === 'supervisor' ?
-            'TeamWallboardRefreshEvent' :
-            'WallboardRefreshEvent',
-            this.wallboardRefreshEvent);
     }
 
 

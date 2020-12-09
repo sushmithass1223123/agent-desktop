@@ -10,12 +10,11 @@ import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { EventBufferService } from '@services/event-buffer.service';
 import { TMACEventService } from '@services/tmac-event.service';
-import { HOME_EVENTS } from 'app/constants';
 import { ThemeSelector } from 'app/layout/utils/theme-selector';
 import { environment } from 'environments/environment';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AgentForcedLogoffEvent, SDKClient } from 'tmac-sdk';
+import { SDKClient } from 'tmac-sdk';
 
 /**
  * MainComponent
@@ -98,10 +97,8 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
         // register to all the tmac events in service
         this._tmacEventsService.subscribe();
 
-
         // register events for home dashboard 
-        this.eventBufferService.registerAgentDashEvents(HOME_EVENTS);
-
+        // this.eventBufferService.subscribe();
 
         // subscribe to config changes
         this._fuseConfigService.config
@@ -142,6 +139,9 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
 
         // remove the processed features
         this._agentFeaturesService.unsubscribe();
+
+        // register events for home dashboard 
+        // this.eventBufferService.unsubscribe();
     }
 
     // -----------------------------------------------------------------------------------------------------

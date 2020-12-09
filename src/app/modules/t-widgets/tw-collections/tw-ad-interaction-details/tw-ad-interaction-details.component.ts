@@ -4,7 +4,10 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { fuseAnimations } from '@fuse/animations';
+import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
+import { CustomSDKEvent } from 'app/interfaces';
+import { takeUntil } from 'rxjs/operators';
 import { InteractionData, SDKClient } from 'tmac-sdk';
 
 /**
@@ -92,7 +95,9 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         ClosedTimeEnd: new FormControl()
     });
 
-    constructor() {
+    constructor(
+        private _tmacEventService: TMACEventService
+    ) {
         super();
     }
 
@@ -120,7 +125,11 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
             this.interactionDetailsTable.source.filter = stringifiedSearch === '{}' ? '' : stringifiedSearch;
         });
 
-        SDKClient.events.on('AgentInteractionDetailsEvent', this.AgentInteractionDetailsEvent);
+        // SDKClient.events.on('AgentInteractionDetailsEvent', this.AgentInteractionDetailsEvent);
+
+        this._tmacEventService.getEvents(['AgentInteractionDetailsEvent'])
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe(evts => this.AgentInteractionDetailsEvent(evts[0]));
     }
 
     /**
@@ -131,7 +140,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         // call the wrapper destroy method
         this.destroyWrapper();
 
-        SDKClient.events.off('AgentInteractionDetailsEvent', this.AgentInteractionDetailsEvent);
+        // SDKClient.events.off('AgentInteractionDetailsEvent', this.AgentInteractionDetailsEvent);
     }
 
     /**
@@ -149,7 +158,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
                 }
             }
 
-            let filtersApplied = Object.keys(searchTerms).length;
+            const filtersApplied = Object.keys(searchTerms).length;
             let filtersMatched = 0;
 
             const createdDateCols = ['CreatedTimeStart', 'CreatedTimeEnd'];
@@ -232,16 +241,21 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
 
     /**
      * AgentInteractionDetailsEvent hanlder
-     * @param {InteractionData} data
+     * @param {CustomSDKEvent} data
      */
-    private AgentInteractionDetailsEvent = (data: InteractionData[]) => {
-        this.interactionList = [...this.interactionList, ...data];
-
+    private AgentInteractionDetailsEvent = (evt: CustomSDKEvent) => {
+        // check if empty array then reset
+        if (!evt.Data.length) {
+            this.interactionList = [];
+        }
+        else {
+            this.interactionList = [...this.interactionList, ...evt.Data];
+        }
         this.interactionDetailsTable.source = new MatTableDataSource(this.interactionList);
         this.interactionDetailsTable.source.sort = this.sort;
         this.interactionDetailsTable.source.paginator = this.paginator;
         this.interactionDetailsTable.source.filterPredicate = this.createFilter();
-    };
+    }
 
     /**
      * Maximize event

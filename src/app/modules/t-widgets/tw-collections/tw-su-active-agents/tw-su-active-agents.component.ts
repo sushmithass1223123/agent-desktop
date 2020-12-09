@@ -4,13 +4,14 @@ import { FuseConfigService } from '@fuse/services/config.service';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
+import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AGENT_FEATURES_MAP, COMMON_ERR_MESSAGE } from 'app/constants';
-import { IWidget, QuizEventJsonData } from 'app/interfaces';
+import { CustomSDKEvent, IWidget, QuizEventJsonData } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
-import { orderBy, random } from 'lodash';
+import { map, orderBy, random } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { AgentFeatures, AgentTabCount, IAgentData, IAUXCodes, IResponse, SDKClient, SuAgentDataModel, SuAgentModel, TUtils } from 'tmac-sdk';
+import { AgentFeatures, AgentStatusChangeEvent, AgentTabCount, IAgentData, IAUXCodes, IResponse, SDKClient, SuAgentDataModel, SuAgentModel, TUtils } from 'tmac-sdk';
 
 /**
  * Active agents component widget
@@ -96,15 +97,14 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         private _fuseConfigService: FuseConfigService,
         private _appDataService: AppDataService,
         private _appUIService: AppUiService,
-        private _aotWidgetService: AOTWidgetService
+        private _aotWidgetService: AOTWidgetService,
+        private _tmacEventService: TMACEventService
     ) {
         super();
 
         this.agentList = [];
         this.filteredAgents = [];
         this.user = SDKClient.getAgentData();
-        this.sortBy = '';
-        this.sortType = 'desc';
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -128,11 +128,15 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         });
 
         this.sortBy = this.data.Data.SortBy ?? 'AgentName';
-        this.sortType = this.data.Data.SortType ?? 'desc';
+        this.sortType = this.data.Data.SortType ?? 'asc';
 
         // listen to agent list event
-        SDKClient.events.on('SupervisorAgentListEvent', this.SupervisorAgentListEvent);
-        SDKClient.events.on('TeamAgentListDataEvent', this.TeamAgentListDataEvent);
+        // SDKClient.events.on('SupervisorAgentListEvent', this.SupervisorAgentListEvent);
+        // SDKClient.events.on('TeamAgentListDataEvent', this.TeamAgentListDataEvent);
+
+        this._tmacEventService.getEvents(['SupervisorAgentListEvent', 'TeamAgentListDataEvent'])
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
 
         // get agent aux codes
         SDKClient.loadAUXCodes(false, null).then((result: IResponse) => {
@@ -152,8 +156,8 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         this.destroyWrapper();
 
         // listen off agent list event
-        SDKClient.events.off('SupervisorAgentListEvent', this.SupervisorAgentListEvent);
-        SDKClient.events.off('TeamAgentListDataEvent', this.TeamAgentListDataEvent);
+        // SDKClient.events.off('SupervisorAgentListEvent', this.SupervisorAgentListEvent);
+        // SDKClient.events.off('TeamAgentListDataEvent', this.TeamAgentListDataEvent);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -163,29 +167,32 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     /**
      * SupervisorAgentListEvent handler
      * @method SupervisorAgentListEvent
-     * @param {SuAgentModel[]} agentList 
+     * @param {CustomSDKEvent} evt 
      */
-    private SupervisorAgentListEvent = (agentList: SuAgentModel[]) => {
+    private SupervisorAgentListEvent = (evt: CustomSDKEvent) => {
         // filter for excpet me
-        this.agentList = this.filteredAgents = agentList || [];
+        this.agentList = this.filteredAgents = evt.Data || [];
         // check any search term is there, then filter
         if (this.searchTerm) {
             this.filterAgents();
         }
+
+        // sort agent list
+        this.sortAgentList();
     }
 
     /**
      * TeamAgentListDataEvent Handler
      * @method TeamAgentListDataEvent
-     * @param {SuAgentDataModel[]} agentListData 
+     * @param {CustomSDKEvent} evt 
      */
-    private TeamAgentListDataEvent = (agentListData: SuAgentDataModel[]) => {
+    private TeamAgentListDataEvent = (evt: CustomSDKEvent) => {
         if (this.agentList.length === 0) {
             return;
         }
 
         this.agentList.forEach((item1: SuAgentModel, index1) => {
-            agentListData.forEach((item2: SuAgentDataModel) => {
+            evt.Data.forEach((item2: SuAgentDataModel) => {
                 if (item2.AgentLoginID === item1.AgentLoginID) {
                     this.agentList[index1] = { ...item1, ...item2 };
                     this.agentList[index1].ChannelCount = orderBy(this.agentList[index1].ChannelCount, ['CurrentCount'], ['desc']);
@@ -400,6 +407,8 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                         ).then((dt: IResponse) => {
                             // check if the logout is success
                             if (dt.response && dt.response.ResultCode === 0) {
+                                // filter the logout agent
+                                this.filteredAgents = this.filteredAgents.filter(a => a.StationID !== agent.StationID);
                                 // route back to login page
                                 this._appUIService.showSnackbar('Logged out successfully', 'success');
                             } else {
@@ -409,8 +418,6 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                         });
                     }
                 });
-                break;
-            case 'AllowSupervisorToChangeStatus':
                 break;
             default:
         }
@@ -465,9 +472,22 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             },
             item
         )
-            .then(() => {
-                // route back to login page
-                this._appUIService.showSnackbar('Status changed successfully', 'success');
+            .then((dt) => {
+                if (dt.response.EventName === 'AgentStatusChangeEvent') {
+                    // parse the result to AgentStatusChangeEvent
+                    const response = dt.response as AgentStatusChangeEvent;
+                    this._appUIService.showSnackbar('Status changed successfully', 'success');
+                    this.filteredAgents = map(this.filteredAgents, (agt: SuAgentModel) => {
+                        if (agt.StationID === agent.StationID) {
+                            agt.CurrentAgentStatus = response.Status;
+                            agt.CurrentStatusDuration = 0;
+                        }
+                        return agt;
+                    });
+                }
+                else {
+                    this._appUIService.showSnackbar('Status change failed!', 'failure');
+                }
             })
             .catch(() => {
                 // logout error

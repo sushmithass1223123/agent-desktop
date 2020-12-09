@@ -13,7 +13,8 @@
             #dashboardDataOverlay="cdkOverlayOrigin"
             (click)="showDashboardDataSpanOverlay = !showDashboardDataSpanOverlay"
         >
-            <mat-icon> access_time </mat-icon>
+            <mat-icon *ngIf="!dataLoading"> access_time </mat-icon>
+            <mat-icon class="spin" *ngIf="dataLoading"> loop </mat-icon>
         </button>
 
         <ng-template

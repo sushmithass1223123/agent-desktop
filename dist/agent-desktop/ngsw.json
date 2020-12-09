@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1607507971433,
+  "timestamp": 1607536473592,
   "index": "/agent-desktop/index.html",
   "assetGroups": [
     {
@@ -13,16 +13,16 @@
       "urls": [
         "/agent-desktop/favicon.ico",
         "/agent-desktop/index.html",
-        "/agent-desktop/main-es2015.129ccfb615f35319bd58.js",
-        "/agent-desktop/main-es5.129ccfb615f35319bd58.js",
+        "/agent-desktop/main-es2015.f94cdfdfcc2514ee2e26.js",
+        "/agent-desktop/main-es5.f94cdfdfcc2514ee2e26.js",
         "/agent-desktop/manifest.webmanifest",
-        "/agent-desktop/polyfills-es2015.f625969f439a3c849165.js",
-        "/agent-desktop/polyfills-es5.6580f88923148047fcc1.js",
+        "/agent-desktop/polyfills-es2015.311b0e28d4a843c08708.js",
+        "/agent-desktop/polyfills-es5.2fb3983228a14be47dc1.js",
         "/agent-desktop/runtime-es2015.409e6590615fb48d139f.js",
         "/agent-desktop/runtime-es5.409e6590615fb48d139f.js",
-        "/agent-desktop/styles.a7d4c557702c8a980beb.css",
-        "/agent-desktop/vendor-es2015.11b149c4978e1afdb05c.js",
-        "/agent-desktop/vendor-es5.11b149c4978e1afdb05c.js"
+        "/agent-desktop/styles.bb9999569c6f89feb71b.css",
+        "/agent-desktop/vendor-es2015.a1ac5a075722711d36f9.js",
+        "/agent-desktop/vendor-es5.a1ac5a075722711d36f9.js"
       ],
       "patterns": []
     },
@@ -125,7 +125,7 @@
   ],
   "dataGroups": [],
   "hashTable": {
-    "/agent-desktop/assets/development.json": "bedbfd2e948eef652c7e704f7f7eaade25cdb129",
+    "/agent-desktop/assets/development.json": "92fe58ad76895eddef74c0a464c3c7a4ff1e5692",
     "/agent-desktop/assets/fonts/muli/fonts/7Auwp_0qiz-afT3GLRrX.woff2": "7c26cd0884389f13ce2752568ee3f5d0c0562a7f",
     "/agent-desktop/assets/fonts/muli/fonts/7Auwp_0qiz-afTLGLQ.woff2": "a97156687d524c96ef966be9e6e0793ba5d5d66a",
     "/agent-desktop/assets/fonts/muli/fonts/7Auwp_0qiz-afTzGLRrX.woff2": "3742c89e934792af95e7fe9277296550fa94a125",
@@ -166,7 +166,7 @@
     "/agent-desktop/assets/images/flags/es.png": "a88880bf0da5063d8082b66b066c4456e4d2e0d9",
     "/agent-desktop/assets/images/flags/tr.png": "e1821d04141354bfdeb2e25e488ac8a7face8900",
     "/agent-desktop/assets/images/flags/us.png": "dd9e149e2b5ad59dd8b4b262f5fdeb5cc10ecf43",
-    "/agent-desktop/assets/images/logos/fuse.svg": "8c8077779c85de7b8ceeb487faa9bf1eb6890604",
+    "/agent-desktop/assets/images/logos/fuse.svg": "d8f824a39085de06a8523938f0a8d10733bf7d2b",
     "/agent-desktop/assets/images/logos/tetherfi-logo-round.png": "bb2934023679c2f72326f3420e8b9ad65f1f21a9",
     "/agent-desktop/assets/images/logos/tetherfi-logo-white.png": "2af08dc2d8d140b4ddaa26220aa97d7557aa7635",
     "/agent-desktop/assets/images/logos/tetherfi-logo.png": "0b7fab65618d172ada716b31a305f6c364bcda0e",
@@ -207,21 +207,21 @@
     "/agent-desktop/assets/sounds/notification.mp3": "2ac75e616f4ba48934f98d509a09763ed5d7946a",
     "/agent-desktop/assets/sounds/ringing.mp3": "931ee62831c2cee1a2e6f9d47d7c702cc9b27f20",
     "/agent-desktop/favicon.ico": "0b7fab65618d172ada716b31a305f6c364bcda0e",
-    "/agent-desktop/index.html": "f32a547020a4c8166939d91b59264f640280f8f6",
+    "/agent-desktop/index.html": "706994aa0b4e5767efbd7b64ae40cdf3e07e6170",
     "/agent-desktop/layers-2x.8f2c4d11474275fbc161.png": "152a162333e46d24f9d89f566312fc0c64011dee",
     "/agent-desktop/layers.416d91365b44e4b4f477.png": "c9e7528e491a39232ba24a2706c6c739d6fb0f06",
     "/agent-desktop/login.719b0522a85301719bb9.svg": "7dcbb2ea9bd68a52f410f4e7be8ec39d64500a9f",
-    "/agent-desktop/main-es2015.129ccfb615f35319bd58.js": "a0a16b9a55cb57c02ca805ac37f9d4ed2102d7c9",
-    "/agent-desktop/main-es5.129ccfb615f35319bd58.js": "e73de05623199d5f42dd3003911eaff4c85d82b3",
+    "/agent-desktop/main-es2015.f94cdfdfcc2514ee2e26.js": "0824375ce126bb2bc3d149a0d253525bd6f7ccca",
+    "/agent-desktop/main-es5.f94cdfdfcc2514ee2e26.js": "8a66fd6ef3f98f6b6bbf7c403311df5d9ebcd1d1",
     "/agent-desktop/manifest.webmanifest": "98745673f3c9c45b6a0331184ddd80040ee784df",
     "/agent-desktop/marker-icon.2b3e1faf89f94a483539.png": "60a90bcbb2b42b7ddb4556db94eb7c1084b0e5da",
-    "/agent-desktop/polyfills-es2015.f625969f439a3c849165.js": "18f8d8f64ab7613eeabd12df567d6f1b6735a301",
-    "/agent-desktop/polyfills-es5.6580f88923148047fcc1.js": "36fa8dbd90888bcc55f3a6bae3f881a17b42997f",
-    "/agent-desktop/runtime-es2015.409e6590615fb48d139f.js": "a120b9e3b02be3308f08d7eb2fb1ecba54c5efbe",
-    "/agent-desktop/runtime-es5.409e6590615fb48d139f.js": "74ec501ea8fbaed3f6ebf1012e82fa5a8e2d74ce",
-    "/agent-desktop/styles.a7d4c557702c8a980beb.css": "7f89eab7e9864c5150f3bdbc0ed9ff64764433cc",
-    "/agent-desktop/vendor-es2015.11b149c4978e1afdb05c.js": "2ff61406bcaba2ea50d1db3c87a54984d8b67180",
-    "/agent-desktop/vendor-es5.11b149c4978e1afdb05c.js": "acd3163f6680dc521b938a60f848d5f32e648138"
+    "/agent-desktop/polyfills-es2015.311b0e28d4a843c08708.js": "e01ef9d0346ebcffebcbd543b318499d5281b12b",
+    "/agent-desktop/polyfills-es5.2fb3983228a14be47dc1.js": "5b3a0c4b83b801e4aae6b56d1fd54457b41362d2",
+    "/agent-desktop/runtime-es2015.409e6590615fb48d139f.js": "a9aafcf49f49145093fc831efd9b8e2f6c71bb9c",
+    "/agent-desktop/runtime-es5.409e6590615fb48d139f.js": "a9aafcf49f49145093fc831efd9b8e2f6c71bb9c",
+    "/agent-desktop/styles.bb9999569c6f89feb71b.css": "7c7a825f6478622aeb53289e11fb78cc9fd94bee",
+    "/agent-desktop/vendor-es2015.a1ac5a075722711d36f9.js": "d32578b9548ffc7841356c8ac61051255e7bf043",
+    "/agent-desktop/vendor-es5.a1ac5a075722711d36f9.js": "d3da73fd3843f3d1767696b44b091d40e543a2dc"
   },
   "navigationUrls": [
     {

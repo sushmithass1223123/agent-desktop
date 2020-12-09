@@ -42,6 +42,19 @@ export class AppUiService {
      * Subject to unsubscribe for all subscriptions
      */
     private _unsubscribeAll: Subject<any>;
+    /**
+     * Notification settings
+     */
+    private _notificationSettings: {
+        /**
+         * Browser notification enabled
+         */
+        desktopAlert: boolean;
+        /**
+         * Notification sound enabled
+         */
+        sounds: boolean;
+    };
 
     /**
      * Constructor
@@ -72,7 +85,7 @@ export class AppUiService {
         state: SnackbarStateTypes = 'success',
         vPos: MatSnackBarVerticalPosition = 'top',
         hPos: MatSnackBarHorizontalPosition = 'center',
-        duration: number = this._appConfig.AppConfigs.AppNotificationTimeout || 5000
+        duration: number = this._appConfig.AppConfigs.Notifications.AppAlertTimeout || 5000
     ): MatSnackBarRef<SnackbarComponent> {
         const icons = {
             info: 'info',
@@ -122,7 +135,7 @@ export class AppUiService {
             },
             verticalPosition: snackBarArgs.vPos || 'top',
             horizontalPosition: snackBarArgs.hPos || 'center',
-            duration: snackBarArgs.duration || this._appConfig.AppConfigs.AppNotificationTimeout || 5000,
+            duration: snackBarArgs.duration || this._appConfig.AppConfigs.Notifications.AppAlertTimeout || 5000,
             panelClass: ['app-snackbar', `${snackBarArgs.state || 'info'}-snackbar`]
         });
     }
@@ -143,7 +156,7 @@ export class AppUiService {
         heading?: string
     ): MatDialogRef<AlertDialogComponent> {
         // play new chat sound 
-        this.playAudio('alert', 0.5);
+        this.playAudio('alert', 0.5, false);
         const dialogRef = this._matDialog.open(AlertDialogComponent, {
             data: {
                 message,
@@ -169,7 +182,7 @@ export class AppUiService {
         title?: string
     ): MatDialogRef<ReminderTaskDialogComponent> {
         // play new chat sound 
-        this.playAudio('alert', 0.5);
+        this.playAudio('alert', 0.5, false);
         const dialogRef = this._matDialog.open(ReminderTaskDialogComponent, {
             data: {
                 type,
@@ -249,6 +262,10 @@ export class AppUiService {
      * @param repeat To repeat the tone or not
      */
     public playAudio(type: string = 'default', volume: number = 1, repeat = false): void {
+        // check if sound is enabled for notification
+        if ((!type || type === 'notification') && !this._notificationSettings.sounds) {
+            return;
+        }
         // clear if any interval
         clearInterval(this._audioInterval);
         // start dial tone
@@ -298,7 +315,7 @@ export class AppUiService {
      */
     public addNotification(notification: AppNotification): string {
         // play new chat sound 
-        this.playAudio('notification', 0.5);
+        this.playAudio('notification', 0.5, false);
 
         // Get the value from the behavior subject
         let notifications = this._appNotificationsSubject.getValue();
@@ -352,6 +369,16 @@ export class AppUiService {
     public clearAllNotifications(): void {
         // Notify the observers
         this._appNotificationsSubject.next([]);
+    }
+
+
+    /**
+     * To set notification settings
+     * 
+     * @param settings 
+     */
+    public setNotificationSettings(settings: any): void {
+        this._notificationSettings = settings;
     }
 
     // -----------------------------------------------------------------------------------------------------

@@ -76,7 +76,7 @@ export class TwInstantMessagingComponent extends TWidgetWrapper implements OnIni
                 'close',
                 'top',
                 'right');
-            this._appUIService.playAudio(undefined, 0.5);
+            this._appUIService.playAudio(undefined, 0.5, false);
             this.unreadMessages += 1;
         }
     }

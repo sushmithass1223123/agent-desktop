@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
+import { widgetFabAnimations } from '@modules/shared/animations/widget-fab.animation';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
@@ -8,7 +9,6 @@ import { IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient } from 'tmac-sdk';
 
 /**
  * QuickPanelComponent
@@ -17,7 +17,8 @@ import { SDKClient } from 'tmac-sdk';
     selector: 'quick-panel',
     templateUrl: './quick-panel.component.html',
     styleUrls: ['./quick-panel.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    animations: widgetFabAnimations
 })
 export class QuickPanelComponent implements OnInit, OnDestroy {
     /**
@@ -48,6 +49,18 @@ export class QuickPanelComponent implements OnInit, OnDestroy {
      * App config ref
      */
     appConfig: any;
+    /**
+     * To open/close add new link panel
+     */
+    openAddLink: boolean;
+    /**
+     * New link name
+     */
+    linkName: string;
+    /**
+     * New link to add
+     */
+    newLink: string;
 
     /**
      * Constructor
@@ -78,8 +91,16 @@ export class QuickPanelComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((config: any) => {
                 if (config) {
+                    // get app config
                     this.appConfig = config;
+                    // get pinned AOTs
                     this.pinnedAOTs = config.Main.AOT.Widgets?.filter((w: IWidget) => w.Config.Pinned === true);
+                    // set notification settings
+                    this.settings = {
+                        desktopAlert: config.AppConfigs.Notifications.DesktopAlerts,
+                        sounds: config.AppConfigs.Notifications.Sounds
+                    };
+                    this._appUIService.setNotificationSettings(this.settings);
                 }
             });
     }
@@ -108,40 +129,34 @@ export class QuickPanelComponent implements OnInit, OnDestroy {
      * To add new link
      */
     addNewLink(): void {
-        const dialogRef = this._appUIService.showCustomDialog('prompt', 'Enter new link to pin in following format <br /> [Link Name,Link Address]: ', 'Add Link');
-        dialogRef.afterClosed().subscribe((resp1) => {
-            if (resp1) {
-                // show progress bar
-                this._fuseProgressBarService.show();
+        // show progress bar
+        this._fuseProgressBarService.show();
 
-                // process the data
-                const split = resp1.split(',');
-                const name = split.length > 1 ? split[0] : 'Link';
-                const link = split.length > 1 ? split[1] : split[0];
+        // create a widget
+        const widget = new TwWidgetModel(this.linkName, 'tw-custom', 'link');
+        widget.Config.Pinned = true;
+        widget.Config.AOT = true;
+        widget.Data.AutoOpen = false;
+        widget.Data.OpenInNew = true;
+        widget.Data.Url = this.newLink;
 
-                // create a widget
-                const widget = new TwWidgetModel(name, 'tw-custom', 'link');
-                widget.Config.Pinned = true;
-                widget.Config.AOT = true;
-                widget.Data.AutoOpen = false;
-                widget.Data.OpenInNew = true;
-                widget.Data.Url = link;
-
-                // add to the config
-                this._appDataService.config = {
-                    ...this.appConfig,
-                    'Main': {
-                        'AOT': {
-                            'Widgets': [
-                                ...this.appConfig.Main.AOT.Widgets,
-                                widget
-                            ]
-                        }
-                    }
-                };
-                // hide progress bar
-                this._fuseProgressBarService.hide();
+        // add to the config
+        this._appDataService.config = {
+            ...this.appConfig,
+            'Main': {
+                'AOT': {
+                    'Widgets': [
+                        ...this.appConfig.Main.AOT.Widgets,
+                        widget
+                    ]
+                }
             }
-        });
+        };
+        // hide progress bar
+        this._fuseProgressBarService.hide();
+        this._appUIService.showSnackbar(`New link '${this.linkName}' added successfully`);
+        this.linkName = '';
+        this.newLink = '';
+        this.openAddLink = false;
     }
 }

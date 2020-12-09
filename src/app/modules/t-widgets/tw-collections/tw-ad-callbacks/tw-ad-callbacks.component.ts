@@ -1,10 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { ACTIVE_CALL_STATUSES, COMMON_ERR_MESSAGE, PENDING_CALL_STATUSES } from 'app/constants';
-import { ResData } from 'app/interfaces';
+import { CustomSDKEvent, ResData } from 'app/interfaces';
 import { sortBy } from 'lodash';
 import * as moment from 'moment';
+import { takeUntil } from 'rxjs/operators';
 import { SDKClient } from 'tmac-sdk';
 
 /**
@@ -72,7 +74,8 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
      * Constructor 
      */
     constructor(
-        private _http: HttpClient
+        private _http: HttpClient,
+        private _tmacEventService: TMACEventService
     ) {
         super();
     }
@@ -98,7 +101,12 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
                 msg: COMMON_ERR_MESSAGE
             };
         });
-        SDKClient.events.on('CallbackDataReceivedForAgent', this.CallbackDataReceivedForAgent);
+
+        // SDKClient.events.on('CallbackDataReceivedForAgent', this.CallbackDataReceivedForAgent);
+
+        this._tmacEventService.getEvents(['CallbackDataReceivedForAgent'])
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe(evts => this.CallbackDataReceivedForAgent(evts[0]));
     }
 
     /**
@@ -108,7 +116,7 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
         // call the wrapper destroy method
         this.destroyWrapper();
 
-        SDKClient.events.off('CallbackDataReceivedForAgent', this.CallbackDataReceivedForAgent);
+        // SDKClient.events.off('CallbackDataReceivedForAgent', this.CallbackDataReceivedForAgent);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -118,15 +126,15 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
     /**
      * CallbackDataReceivedForAgent Handler
      * @method CallbackDataReceivedForAgent
-     * @param {any} evt 
+     * @param {CustomSDKEvent} evt 
      */
-    CallbackDataReceivedForAgent = (evt: any) => {
-        const callback = JSON.parse(evt);
+    CallbackDataReceivedForAgent = (evt: CustomSDKEvent) => {
+        const callback = JSON.parse(evt.Data);
         callback.contact.status = callback.contact.Status;
         callback.contact.name = callback.contact.Name;
         callback.contact.directAgentScheduleTime = callback.contact.ScheduleTime;
         this.addNewCallbacks([callback]);
-    };
+    }
 
     /**
      * Add Callbacks

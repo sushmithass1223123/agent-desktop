@@ -122,12 +122,8 @@
 
             <ng-container matColumnDef="AgentComment">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Comments</mat-header-cell>
-                <mat-cell
-                    *matCellDef="let element"
-                    class="px-8 text-truncate"
-                    [matTooltip]="element.AgentComment || 'sdcsdjkjds dskjdsdj cksjckjcnsd csknkdsjdks '"
-                >
-                    {{ element.AgentComment || 'sdcsdjkjds dskjdsdj cksjckjcnsd csknkdsjdks ' }}
+                <mat-cell *matCellDef="let element" class="px-8 text-truncate" [matTooltip]="element.AgentComment">
+                    {{ element.AgentComment || 'NA' }}
                 </mat-cell>
             </ng-container>
 

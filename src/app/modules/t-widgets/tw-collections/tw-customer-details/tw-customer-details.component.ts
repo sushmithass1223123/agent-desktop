@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewEncapsul
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { get, join } from 'lodash';
+import { takeUntil } from 'rxjs/operators';
 import {
     CallerIntentEvent,
     CCLDataEvent,
@@ -72,22 +73,33 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
         // get the customer info config
         this.customerInfo = this.data.Data.CustomerInfo;
 
-        // get the event from event bag to make sure no events are missed
-        const eventBag = this._tmacEventService.interactionEvents(this.interactionId);
+        // // get the event from event bag to make sure no events are missed
+        // const eventBag = this._tmacEventService.interactionEvents(this.interactionId);
 
-        // process the events if any
-        eventBag.forEach((evt: IUIEvent) => {
-            this[evt.EventName]?.(evt);
-        });
+        // // process the events if any
+        // eventBag.forEach((evt: IUIEvent) => {
+        //     this[evt.EventName]?.(evt);
+        // });
 
         // register to tmac events
-        SDKClient.events.on('IncomingCallEvent', this.IncomingCallEvent);
-        SDKClient.events.on('OutgoingCallEvent', this.OutgoingCallEvent);
-        SDKClient.events.on('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
-        SDKClient.events.on('CallerIntentEvent', this.CallerIntentEvent);
-        SDKClient.events.on('IVRDataEvent', this.IVRDataEvent);
-        SDKClient.events.on('UUIDataEvent', this.UUIDataEvent);
-        SDKClient.events.on('CCLDataEvent', this.CCLDataEvent);
+        // SDKClient.events.on('IncomingCallEvent', this.IncomingCallEvent);
+        // SDKClient.events.on('OutgoingCallEvent', this.OutgoingCallEvent);
+        // SDKClient.events.on('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
+        // SDKClient.events.on('CallerIntentEvent', this.CallerIntentEvent);
+        // SDKClient.events.on('IVRDataEvent', this.IVRDataEvent);
+        // SDKClient.events.on('UUIDataEvent', this.UUIDataEvent);
+        // SDKClient.events.on('CCLDataEvent', this.CCLDataEvent);
+
+        this._tmacEventService.getInteractionEvents([
+            'IncomingCallEvent',
+            'OutgoingCallEvent',
+            'TextChatRemoteUserConnectedEvent',
+            'CallerIntentEvent',
+            'UUIDataEvent',
+            'CCLDataEvent'
+        ], this.interactionId)
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
     }
 
     /**
@@ -99,13 +111,13 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
         this.destroyWrapper();
 
         // deregister from tmac events
-        SDKClient.events.off('IncomingCallEvent', this.IncomingCallEvent);
-        SDKClient.events.off('OutgoingCallEvent', this.OutgoingCallEvent);
-        SDKClient.events.off('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
-        SDKClient.events.off('CallerIntentEvent', this.CallerIntentEvent);
-        SDKClient.events.off('IVRDataEvent', this.IVRDataEvent);
-        SDKClient.events.off('UUIDataEvent', this.UUIDataEvent);
-        SDKClient.events.off('CCLDataEvent', this.CCLDataEvent);
+        // SDKClient.events.off('IncomingCallEvent', this.IncomingCallEvent);
+        // SDKClient.events.off('OutgoingCallEvent', this.OutgoingCallEvent);
+        // SDKClient.events.off('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
+        // SDKClient.events.off('CallerIntentEvent', this.CallerIntentEvent);
+        // SDKClient.events.off('IVRDataEvent', this.IVRDataEvent);
+        // SDKClient.events.off('UUIDataEvent', this.UUIDataEvent);
+        // SDKClient.events.off('CCLDataEvent', this.CCLDataEvent);
     }
 
     /**
@@ -170,9 +182,9 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
      */
     private processCustomerDetails = (evt: IUIEvent) => {
         // check the interaction
-        if (evt.InteractionID !== this.interactionId) {
-            return;
-        }
+        // if (evt.InteractionID !== this.interactionId) {
+        //     return;
+        // }
 
         // check if customer info map is available in this event
         this.customerInfo.forEach((item: CustomerInfo) => {

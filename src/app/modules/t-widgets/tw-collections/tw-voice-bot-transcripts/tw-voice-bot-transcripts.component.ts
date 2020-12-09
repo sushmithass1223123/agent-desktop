@@ -77,15 +77,19 @@ export class TwVoiceBotTranscriptsComponent extends TWidgetWrapper implements On
         // set the interaction id from data
         this.interactionId = this.data.InteractionDetails.InteractionID;
 
-        // get the event from event bag to make sure no events are missed
-        const eventBag = this._tmacEventService.interactionEvents(this.interactionId);
+        // // get the event from event bag to make sure no events are missed
+        // const eventBag = this._tmacEventService.interactionEvents(this.interactionId);
 
-        // process the events if any
-        eventBag.forEach((evt: IUIEvent) => {
-            this[evt.EventName]?.(evt);
-        });
+        // // process the events if any
+        // eventBag.forEach((evt: IUIEvent) => {
+        //     this[evt.EventName]?.(evt);
+        // });
 
-        SDKClient.events.on('VoiceBotTranscriptEvent', this.VoiceBotTranscriptEvent);
+        // SDKClient.events.on('VoiceBotTranscriptEvent', this.VoiceBotTranscriptEvent);
+
+        this._tmacEventService.getInteractionEvents(['VoiceBotTranscriptEvent'], this.interactionId)
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe(evts => this.VoiceBotTranscriptEvent(evts[0]));
     }
 
     /**
@@ -95,7 +99,7 @@ export class TwVoiceBotTranscriptsComponent extends TWidgetWrapper implements On
         // call the wrapper destroy method
         this.destroyWrapper();
 
-        SDKClient.events.off('VoiceBotTranscriptEvent', this.VoiceBotTranscriptEvent);
+        // SDKClient.events.off('VoiceBotTranscriptEvent', this.VoiceBotTranscriptEvent);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -156,7 +160,7 @@ export class TwVoiceBotTranscriptsComponent extends TWidgetWrapper implements On
 
                 }
             );
-            this._appUIService.playAudio('message', 0.5);
+            this._appUIService.playAudio('message', 0.5, false);
         }
 
         // scroll to the bottom of chat view

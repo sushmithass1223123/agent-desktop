@@ -6,6 +6,7 @@ import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
 // import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { AppUiService } from '@services/app-ui.service';
+import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { IWidget } from 'app/interfaces';
@@ -142,7 +143,8 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         private _appDataService: AppDataService,
         private _aotWidgetService: AOTWidgetService,
         private _dialog: MatDialog,
-        private _appUIService: AppUiService
+        private _appUIService: AppUiService,
+        private _tmacEventService: TMACEventService
     ) {
         super();
     }
@@ -547,12 +549,16 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                                         }
                                     });
 
-                                    // emit a template message sent event to show in UI
-                                    SDKClient.events.emit('TextChatMessageTemplateSentEvent', {
+                                    const customEvent = {
                                         Message: message,
                                         InteractionID: this.interactionId,
-                                        EventName: 'TextChatMessageTemplateSentEvent'
-                                    });
+                                        CreatedTime: new Date(),
+                                        EventName: 'TextChatMessageTemplateSentEvent',
+                                        Result: true
+                                    };
+
+                                    // emit a template message sent event to show in UI
+                                    this._tmacEventService.emitCustomEvent(customEvent, true);
                                 }
                                 else {
                                     this._appUIService.showSnackbar('Snapshot save failed!', 'failure');

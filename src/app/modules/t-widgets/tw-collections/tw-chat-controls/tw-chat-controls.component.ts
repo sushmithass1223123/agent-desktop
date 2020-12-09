@@ -26,7 +26,7 @@ import { ContentPageService } from '@services/content-page.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AgentSkillListData, ChatTranscripts, InteractionComment, InteractionRef, IWidget } from 'app/interfaces';
+import { AgentSkillListData, ChatTranscripts, CustomSDKEvent, InteractionComment, InteractionRef, IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { map } from 'lodash';
 import * as moment from 'moment';
@@ -363,9 +363,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // set the start time
         this.startTime = new Date(Date.parse(this.data.InteractionDetails.CreatedTime)) || new Date();
 
-        // listen to TMAC events
-        this.registerToEvents();
-
         // get the file upload Url
         this.fileUploadUrl = this.appConfig.Main.Content.Urls?.FileServerUrl || null;
 
@@ -374,6 +371,31 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // check if this chat is init by supervisor
         this.supervisorInit = this.lineId === 'bargein';
+
+        // listen to TMAC events
+        // this.registerToEvents();
+
+        this._tmacEventService.getInteractionEvents([
+            'TextChatRemoteUserConnectedEvent',
+            'TextChatSelfServiceDestinationEvent',
+            'TextChatAgentConnectedEvent',
+            'TextChatTranscriptForTransferEvent',
+            'TextChatMessageSentEvent',
+            'TextChatMessageTemplateSentEvent',
+            'TextChatUserMessageWaitTimerEvent',
+            'TextChatTypingStateChangedEvent',
+            'TextChatMessageReceivedEvent',
+            'TextChatAgentMessageReceivedEvent',
+            'AVControlMessageReceivedEvent',
+            'TextChatDisconnectedEvent',
+            'TextChatAgentDisconnectedEvent',
+            'CannedResposeEvent',
+            'TextChatTransferSuccessEvent',
+            'TextChatTransferFailedEvent',
+            'TextChatTransferRejectEvent',
+        ], this.interactionId)
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
     }
 
     /**
@@ -389,7 +411,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
 
         // play new chat sound
-        this._appUIService.playAudio('new-chat', 0.5);
+        this._appUIService.playAudio('new-chat', 0.5, false);
 
         this.replyInput = this.replyInputField.first.nativeElement;
         this.readyToReply();
@@ -403,68 +425,68 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // call the wrapper destroy method
         this.destroyWrapper();
 
-        this.deRegisterFromEvents();
+        // this.deRegisterFromEvents();
     }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Private methods
     // -----------------------------------------------------------------------------------------------------
 
-    /**
-     * To register to all related TMAC events
-     */
-    private registerToEvents(): void {
-        // get the event from event bag to make sure no events are missed
-        const eventBag = this._tmacEventService.interactionEvents(this.interactionId);
+    // /**
+    //  * To register to all related TMAC events
+    //  */
+    // private registerToEvents(): void {
+    //     // get the event from event bag to make sure no events are missed
+    //     const eventBag = this._tmacEventService.interactionEvents(this.interactionId);
 
-        // process the events if any
-        eventBag.forEach((evt: IUIEvent) => {
-            this[evt.EventName]?.(evt);
-        });
+    //     // process the events if any
+    //     eventBag.forEach((evt: IUIEvent) => {
+    //         this[evt.EventName]?.(evt);
+    //     });
 
-        // register to tmac events
-        SDKClient.events.on('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
-        SDKClient.events.on('TextChatSelfServiceDestinationEvent', this.TextChatSelfServiceDestinationEvent);
-        SDKClient.events.on('TextChatAgentConnectedEvent', this.TextChatAgentConnectedEvent);
-        SDKClient.events.on('TextChatTranscriptForTransferEvent', this.TextChatTranscriptForTransferEvent);
-        SDKClient.events.on('TextChatMessageSentEvent', this.TextChatMessageSentEvent);
-        SDKClient.events.on('TextChatMessageTemplateSentEvent', this.TextChatMessageTemplateSentEvent);
-        SDKClient.events.on('TextChatUserMessageWaitTimerEvent', this.TextChatUserMessageWaitTimerEvent);
-        SDKClient.events.on('TextChatTypingStateChangedEvent', this.TextChatTypingStateChangedEvent);
-        SDKClient.events.on('TextChatMessageReceivedEvent', this.TextChatMessageReceivedEvent);
-        SDKClient.events.on('TextChatAgentMessageReceivedEvent', this.TextChatAgentMessageReceivedEvent);
-        SDKClient.events.on('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
-        SDKClient.events.on('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
-        SDKClient.events.on('TextChatAgentDisconnectedEvent', this.TextChatAgentDisconnectedEvent);
-        SDKClient.events.on('CannedResposeEvent', this.CannedResposeEvent);
-        SDKClient.events.on('TextChatTransferSuccessEvent', this.TextChatTransferSuccessEvent);
-        SDKClient.events.on('TextChatTransferFailedEvent', this.TextChatTransferFailedEvent);
-        SDKClient.events.on('TextChatTransferRejectEvent', this.TextChatTransferRejectEvent);
-    }
+    //     // register to tmac events
+    //     SDKClient.events.on('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
+    //     SDKClient.events.on('TextChatSelfServiceDestinationEvent', this.TextChatSelfServiceDestinationEvent);
+    //     SDKClient.events.on('TextChatAgentConnectedEvent', this.TextChatAgentConnectedEvent);
+    //     SDKClient.events.on('TextChatTranscriptForTransferEvent', this.TextChatTranscriptForTransferEvent);
+    //     SDKClient.events.on('TextChatMessageSentEvent', this.TextChatMessageSentEvent);
+    //     SDKClient.events.on('TextChatMessageTemplateSentEvent', this.TextChatMessageTemplateSentEvent);
+    //     SDKClient.events.on('TextChatUserMessageWaitTimerEvent', this.TextChatUserMessageWaitTimerEvent);
+    //     SDKClient.events.on('TextChatTypingStateChangedEvent', this.TextChatTypingStateChangedEvent);
+    //     SDKClient.events.on('TextChatMessageReceivedEvent', this.TextChatMessageReceivedEvent);
+    //     SDKClient.events.on('TextChatAgentMessageReceivedEvent', this.TextChatAgentMessageReceivedEvent);
+    //     SDKClient.events.on('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
+    //     SDKClient.events.on('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
+    //     SDKClient.events.on('TextChatAgentDisconnectedEvent', this.TextChatAgentDisconnectedEvent);
+    //     SDKClient.events.on('CannedResposeEvent', this.CannedResposeEvent);
+    //     SDKClient.events.on('TextChatTransferSuccessEvent', this.TextChatTransferSuccessEvent);
+    //     SDKClient.events.on('TextChatTransferFailedEvent', this.TextChatTransferFailedEvent);
+    //     SDKClient.events.on('TextChatTransferRejectEvent', this.TextChatTransferRejectEvent);
+    // }
 
-    /**
-     * To de register from all related TMAC events
-     */
-    private deRegisterFromEvents(): void {
-        // deregister from tmac events
-        SDKClient.events.off('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
-        SDKClient.events.off('TextChatSelfServiceDestinationEvent', this.TextChatSelfServiceDestinationEvent);
-        SDKClient.events.off('TextChatAgentConnectedEvent', this.TextChatAgentConnectedEvent);
-        SDKClient.events.off('TextChatTranscriptForTransferEvent', this.TextChatTranscriptForTransferEvent);
-        SDKClient.events.off('TextChatMessageSentEvent', this.TextChatMessageSentEvent);
-        SDKClient.events.off('TextChatMessageTemplateSentEvent', this.TextChatMessageTemplateSentEvent);
-        SDKClient.events.off('TextChatUserMessageWaitTimerEvent', this.TextChatUserMessageWaitTimerEvent);
-        SDKClient.events.off('TextChatTypingStateChangedEvent', this.TextChatTypingStateChangedEvent);
-        SDKClient.events.off('TextChatMessageReceivedEvent', this.TextChatMessageReceivedEvent);
-        SDKClient.events.off('TextChatAgentMessageReceivedEvent', this.TextChatAgentMessageReceivedEvent);
-        SDKClient.events.off('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
-        SDKClient.events.off('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
-        SDKClient.events.off('TextChatAgentDisconnectedEvent', this.TextChatAgentDisconnectedEvent);
-        SDKClient.events.off('CannedResposeEvent', this.CannedResposeEvent);
-        SDKClient.events.off('TextChatTransferSuccessEvent', this.TextChatTransferSuccessEvent);
-        SDKClient.events.off('TextChatTransferFailedEvent', this.TextChatTransferFailedEvent);
-        SDKClient.events.off('TextChatTransferRejectEvent', this.TextChatTransferRejectEvent);
-    }
+    // /**
+    //  * To de register from all related TMAC events
+    //  */
+    // private deRegisterFromEvents(): void {
+    //     // deregister from tmac events
+    //     SDKClient.events.off('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
+    //     SDKClient.events.off('TextChatSelfServiceDestinationEvent', this.TextChatSelfServiceDestinationEvent);
+    //     SDKClient.events.off('TextChatAgentConnectedEvent', this.TextChatAgentConnectedEvent);
+    //     SDKClient.events.off('TextChatTranscriptForTransferEvent', this.TextChatTranscriptForTransferEvent);
+    //     SDKClient.events.off('TextChatMessageSentEvent', this.TextChatMessageSentEvent);
+    //     SDKClient.events.off('TextChatMessageTemplateSentEvent', this.TextChatMessageTemplateSentEvent);
+    //     SDKClient.events.off('TextChatUserMessageWaitTimerEvent', this.TextChatUserMessageWaitTimerEvent);
+    //     SDKClient.events.off('TextChatTypingStateChangedEvent', this.TextChatTypingStateChangedEvent);
+    //     SDKClient.events.off('TextChatMessageReceivedEvent', this.TextChatMessageReceivedEvent);
+    //     SDKClient.events.off('TextChatAgentMessageReceivedEvent', this.TextChatAgentMessageReceivedEvent);
+    //     SDKClient.events.off('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
+    //     SDKClient.events.off('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
+    //     SDKClient.events.off('TextChatAgentDisconnectedEvent', this.TextChatAgentDisconnectedEvent);
+    //     SDKClient.events.off('CannedResposeEvent', this.CannedResposeEvent);
+    //     SDKClient.events.off('TextChatTransferSuccessEvent', this.TextChatTransferSuccessEvent);
+    //     SDKClient.events.off('TextChatTransferFailedEvent', this.TextChatTransferFailedEvent);
+    //     SDKClient.events.off('TextChatTransferRejectEvent', this.TextChatTransferRejectEvent);
+    // }
 
     /**
      * To process TextChatRemoteUserConnectedEvent
@@ -472,9 +494,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     private TextChatRemoteUserConnectedEvent = (evt: TextChatRemoteUserConnectedEvent) => {
         // check the interaction
-        if (evt.InteractionID !== this.interactionId) {
-            return;
-        }
+        // if (evt.InteractionID !== this.interactionId) {
+        //     return;
+        // }
 
         // replace InteractionDetails with this event
         // this event has the interaction details properties
@@ -559,9 +581,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     private TextChatSelfServiceDestinationEvent = (evt: TextChatSelfServiceDestinationEvent) => {
         // check the interaction
-        if (evt.InteractionID !== this.interactionId) {
-            return;
-        }
+        // if (evt.InteractionID !== this.interactionId) {
+        //     return;
+        // }
 
         this.selfServiceDestinations = evt.Destinations;
     }
@@ -572,9 +594,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     private TextChatAgentConnectedEvent = (evt: TextChatAgentConnectedEvent) => {
         // check the interaction
-        if (evt.InteractionID !== this.interactionId) {
-            return;
-        }
+        // if (evt.InteractionID !== this.interactionId) {
+        //     return;
+        // }
 
         // to store connected agent's TmacServer
         let tmacServer = '';
@@ -612,9 +634,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     private TextChatTranscriptForTransferEvent = (evt: TextChatTranscriptForTransferEvent) => {
         // check the interaction
-        if (evt.InteractionID !== this.interactionId) {
-            return;
-        }
+        // if (evt.InteractionID !== this.interactionId) {
+        //     return;
+        // }
 
         // loop through the data
         evt.Transcript.forEach(
@@ -713,7 +735,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     private TextChatUserMessageWaitTimerEvent = (evt: TextChatUserMessageWaitTimerEvent) => {
         // check the interaction and the interaction status
-        if (evt.InteractionID !== this.interactionId || this.status !== 'connected') {
+        // if (evt.InteractionID !== this.interactionId || this.status !== 'connected') {
+        //     return;
+        // }
+
+        if (this.status !== 'connected') {
             return;
         }
 
@@ -741,9 +767,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     private TextChatTypingStateChangedEvent = (evt: TextChatTypingStateChangedEvent) => {
         // check the interaction
-        if (evt.InteractionID !== this.interactionId) {
-            return;
-        }
+        // if (evt.InteractionID !== this.interactionId) {
+        //     return;
+        // }
     }
 
     /**
@@ -768,9 +794,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     private chatMessageReceived = (evt: TextChatMessageReceivedEvent | TextChatAgentMessageReceivedEvent) => {
         // check the interaction
-        if (evt.InteractionID !== this.interactionId) {
-            return;
-        }
+        // if (evt.InteractionID !== this.interactionId) {
+        //     return;
+        // }
 
         // check the user
         const user = (evt as TextChatAgentMessageReceivedEvent).AgentName || this.customerName;
@@ -873,7 +899,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             const currentInteraction = this.interactionList.filter((i) => i.interactionId === this.interactionId)[0];
             const unreadCount = ++currentInteraction.otherData.unreadCount;
             // play new chat sound
-            this._appUIService.playAudio('message', 0.5);
+            this._appUIService.playAudio('message', 0.5, false);
             // update the interaction other data
             this._interactionManagerService.updateInteraction(evt.InteractionID, {
                 otherData: {
@@ -898,9 +924,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     private AVControlMessageReceivedEvent = (evt: AVControlMessageReceivedEvent) => {
         // check the interaction
-        if (evt.InteractionID !== this.interactionId) {
-            return;
-        }
+        // if (evt.InteractionID !== this.interactionId) {
+        //     return;
+        // }
 
         // check if its a av request
         if (evt.Type === 'requestav') {
@@ -920,9 +946,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     private TextChatDisconnectedEvent = (evt: TextChatDisconnectedEvent) => {
         // check the interaction
-        if (evt.InteractionID !== this.interactionId) {
-            return;
-        }
+        // if (evt.InteractionID !== this.interactionId) {
+        //     return;
+        // }
+
         this.status = 'disconnected';
         // update the interaction status
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
@@ -986,9 +1013,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     private TextChatAgentDisconnectedEvent = (evt: TextChatAgentDisconnectedEvent) => {
         // check the interaction
-        if (evt.InteractionID !== this.interactionId) {
-            return;
-        }
+        // if (evt.InteractionID !== this.interactionId) {
+        //     return;
+        // }
 
         // remove the agent from list
         this.conferenceAgentList = this.conferenceAgentList.filter((c) => c.AgentId !== evt.AgentId);
@@ -1007,16 +1034,16 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * To process custom CannedResposeEvent
      * 
-     * @param evt CannedResposeEvent data
+     * @param {CustomSDKEvent} evt CannedResposeEvent data
      */
-    private CannedResposeEvent = (evt: any) => {
+    private CannedResposeEvent = (evt: CustomSDKEvent) => {
         // check the interaction
-        if (evt.InteractionID !== this.interactionId) {
-            return;
-        }
+        // if (evt.InteractionID !== this.interactionId) {
+        //     return;
+        // }
 
         // send the selected template
-        this.sendMessage(evt.Template);
+        this.sendMessage(evt.Data.Template);
     }
 
     /**
@@ -1056,9 +1083,14 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     private messageSentEvent(evt: TextChatMessageSentEvent | TextChatMessageTemplateSentEvent): void {
         try {
             // check the interaction
-            if (evt.InteractionID !== this.interactionId || this.status === 'disconnected') {
+            // if (evt.InteractionID !== this.interactionId || this.status === 'disconnected') {
+            //     return;
+            // }
+
+            if (this.status === 'disconnected') {
                 return;
             }
+
             const isJson = this.isValidJson(evt.Message);
             // get the formatted message
             const formattedMessage = isJson ? JSON.parse(evt.Message) : null;
@@ -1070,7 +1102,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 const type = attachment ? attachment.type : 'text';
 
                 // if media proxy then remove the source
-                if (attachment && this.fileUploadUrl.MediaProxy) {
+                if (attachment && !attachment.src && this.fileUploadUrl.MediaProxy) {
                     // get the file upload url
                     const fileServerUrl: string = this.fileUploadUrl?.MediaProxy;
                     attachment.src = `${fileServerUrl}/${this.sessionID}/${attachment.name}`;
@@ -1192,7 +1224,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             // if media proxy then remove the source
             if (this.fileUploadUrl.MediaProxy && attachment) {
                 attachment.src = '';
+                attachment.uploader = 'MediaProxy';
             }
+            else {
+                attachment.uploader = 'TmacProxy';
+            }
+
             // create the json to send
             const jsonMessage = {
                 messageId: messageId,
@@ -1230,7 +1267,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             })
             .then((res => {
                 if (res.response > 0) {
-                    // message send success
                     // show freeze auto response button
                     if (this.callWidget) {
                         this.freezeAutoResponse(true);
@@ -1281,7 +1317,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         widget.Config.Anchor = true;
         widget.Config.Position.W = param === 'audio' ? 600 : 800;
         widget.Config.Position.H = param === 'audio' ? 275 : 550;
-        widget.Config.Actions = param === 'audio' ? ['collapse'] : ['collapse', 'maximize'];
+        widget.Config.Actions = ['collapse', 'maximize'];
         // widget.Data.AVConn = this.avConn;
         widget.Data.CustomerName = this.customerName;
         widget.Data.Direction = direction;
@@ -1555,9 +1591,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         let message = '';
 
         if (previewData.attachment.type === 'image') {
-            message = `<img src = ${previewData.attachment.src} width = "100%" width = "100%" /> `;
+            message = `<img src ="${previewData.attachment.src}" width = "100%" width = "100%" /> `;
         } else if (previewData.attachment.type === 'video') {
-            message = `<video controls autoplay src = ${previewData.attachment.src} width = "100%" width = "100%"> </video>`;
+            message = `<video controls autoplay src ="${previewData.attachment.src}" width = "100%" width = "100%"> </video>`;
         }
         // show the custom dialog box
         this.confirmDialogRef = this._appUIService.showCustomDialog('alert', message, 'Preview');
@@ -1660,7 +1696,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.savedComments.forEach((item) => {
             message +=
                 `
-                 <div>${item.Message}</div>
+                 <div>${item.Message.replace(/(?:\r\n|\r|\n)/g, '<br>')}</div>
                  <span class="time secondary-text">${item.Time}</span>
                  <br /><br />
                  `;
