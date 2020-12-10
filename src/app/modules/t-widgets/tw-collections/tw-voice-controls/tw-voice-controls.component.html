@@ -124,7 +124,7 @@
             <button
                 *ngIf="status !== 'disconnected'"
                 mat-flat-button
-                class="danger"
+                color="warn"
                 [disabled]="status !== 'connected' && status !== 'outgoing'"
                 #disconnectBtn
                 matTooltip="Disconnect"

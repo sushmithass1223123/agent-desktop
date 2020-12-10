@@ -7,7 +7,7 @@ import { IAction, IWidget, QuizEvent } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { map as lodashMap, upperFirst } from 'lodash';
 import { BehaviorSubject, merge, Observable, Subject } from 'rxjs';
-import { catchError, filter, map, takeUntil } from 'rxjs/operators';
+import { filter, map, takeUntil } from 'rxjs/operators';
 import {
     ACWTimerEvent,
     AgentForcedLogoffEvent,
@@ -131,12 +131,12 @@ export class TMACEventService {
     // @ Accessors
     // -----------------------------------------------------------------------------------------------------
 
-    /**
-     * getter for interaction construct/dispose events
-     */
-    get constructDisposeEvents(): any | Observable<any> {
-        return this._constructDisposeEventSubject.asObservable();
-    }
+    // /**
+    //  * getter for interaction construct/dispose events
+    //  */
+    // get constructDisposeEvents(): any | Observable<any> {
+    //     return this._constructDisposeEventSubject.asObservable();
+    // }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Private Methods
@@ -168,7 +168,7 @@ export class TMACEventService {
             // for dispose event remove the reference from array
             if (evt.IsInteractionDisposeEvent) {
                 // remove the events for the ID
-                this.remove(evt.InteractionID);
+                this.removeEvents(evt.InteractionID);
                 // remove the interaction reference
                 this._interactionManagerService.removeInteraction(evt.InteractionID);
             }
@@ -207,7 +207,7 @@ export class TMACEventService {
     /**
      * To remove all the events from reference which related to an interaction
      */
-    private remove(interactionId: number): void {
+    private removeEvents(interactionId: number): void {
         this._interactionEventArray = this._interactionEventArray.filter((i) => i.InteractionID !== interactionId);
     }
 
@@ -759,7 +759,7 @@ export class TMACEventService {
      * To process AgentForcedLogoffEvent
      * @param {AgentForcedLogoffEvent} evt
      */
-    AgentForcedLogoffEvent = (evt: AgentForcedLogoffEvent) => {
+    private AgentForcedLogoffEvent = (evt: AgentForcedLogoffEvent) => {
         let description = '';
         switch (evt.Type) {
             case 'SupervisorInitiatedLogout':
@@ -800,7 +800,7 @@ export class TMACEventService {
      * 
      * @param {TextChatTransferNotificationEvent} evt
      */
-    TextChatTransferNotificationEvent = (evt: TextChatTransferNotificationEvent) => {
+    private TextChatTransferNotificationEvent = (evt: TextChatTransferNotificationEvent) => {
         // parse the otherData
         const otherData = JSON.parse(evt.Data);
         // get the type
@@ -1042,6 +1042,34 @@ export class TMACEventService {
         return merge(tempSub, this._interactionEventSub)
             .pipe(
                 map(evts => evts?.filter(evt => evt && evt.InteractionID === interactionId)),
+                filter(evts => evts.length > 0)
+            );
+    }
+
+    /**
+     * To get construct/dispose events
+     * 
+     * @param {String[]} eventNames Names of the event
+     */
+    public getConstructDisposeEvents<T = any>(eventNames: string[]): Observable<T[]> {
+        // get the event based on interaction Id
+        const events = this._interactionEventArray
+            .filter((i: IUIEvent) => (i.IsInteractionConstructEvent || i.IsInteractionDisposeEvent) && eventNames.includes(i.EventName));
+
+        // create a new temp subject
+        const tempSub = new Subject<any[]>();
+
+        // check if anything exist, then send
+        if (events.length) {
+            setTimeout(() => {
+                tempSub.next(events);
+            });
+        }
+
+        // return all interaction events for that interaction id and event names
+        return merge(tempSub, this._interactionEventSub)
+            .pipe(
+                map(evts => evts?.filter(evt => evt && (evt.IsInteractionConstructEvent || evt.IsInteractionDisposeEvent) && eventNames.includes(evt.EventName))),
                 filter(evts => evts.length > 0)
             );
     }

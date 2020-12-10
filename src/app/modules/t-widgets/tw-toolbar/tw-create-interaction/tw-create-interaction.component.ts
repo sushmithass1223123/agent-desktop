@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { widgetFabAnimations } from '@modules/shared/animations/widget-fab.animation';
 import { AgentSkillListComponent, CreateMessagingComponent } from '@modules/shared/components';
 import { IWidget } from 'app/interfaces';
+import { IAUXCodes, SDKClient } from 'tmac-sdk';
 
 /**
  * Create interaction
@@ -41,6 +42,31 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
      */
     ngOnDestroy(): void {
         this._matDialog.closeAll();
+    }
+
+
+    /**
+     * Check if the agent can do action based on EnableState
+     * 
+     * @param code
+     */
+    checkAux(code: string): boolean {
+
+        // check if EnableState is provided, if not return true
+        if (!code) {
+            return true;
+        }
+
+        // get the logout code from aux codes list
+        const auxItem: IAUXCodes = SDKClient.getAgentData().auxCodes.filter((a: IAUXCodes) => a.Name === SDKClient.getAgentData().agentStatus)?.[0];
+
+        // check if the logout aux matches
+        if (auxItem?.Code === code) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     /**

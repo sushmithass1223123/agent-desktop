@@ -36,29 +36,34 @@
     </button>
 
     <mat-menu #userMenu="matMenu" [overlapTrigger]="false" class="agent-info-menu custom">
-        <button mat-menu-item fxLayout fxLayoutAlign=" center">
+        <button mat-menu-item fxLayout fxLayoutAlign=" center" matTooltip="Lan ID">
+            <mat-icon>view_agenda</mat-icon>
+            <span>{{ agentData.lanId }}</span>
+        </button>
+
+        <button mat-menu-item fxLayout fxLayoutAlign=" center" matTooltip="Agent ID">
             <mat-icon>perm_identity</mat-icon>
             <span>{{ agentData.agentId }}</span>
         </button>
 
-        <button mat-menu-item *ngIf="agentData.agentProfile" fxLayout fxLayoutAlign=" center">
+        <button mat-menu-item *ngIf="agentData.agentProfile" fxLayout fxLayoutAlign=" center" matTooltip="Agent Profile">
             <mat-icon>admin_panel_settings</mat-icon>
             <span>{{ agentData.agentProfile === 'S' ? 'Supervisor' : 'Agent' }}</span>
         </button>
 
-        <button mat-menu-item *ngIf="agentData.lanId !== agentData.deviceId" fxLayout fxLayoutAlign=" center">
+        <button mat-menu-item *ngIf="agentData.lanId !== agentData.deviceId" fxLayout fxLayoutAlign=" center" matTooltip="Station ID">
             <mat-icon>phonelink_setup</mat-icon>
             <span>{{ agentData.deviceId }}</span>
         </button>
 
-        <button mat-menu-item *ngIf="agentData.teamName" fxLayout fxLayoutAlign=" center">
+        <button mat-menu-item *ngIf="agentData.teamName" fxLayout fxLayoutAlign=" center" matTooltip="Team Name">
             <mat-icon>people_alt</mat-icon>
             <span> {{ agentData.teamName }} </span>
         </button>
 
         <button mat-menu-item *ngIf="agentData.isMSAgent" fxLayout fxLayoutAlign=" center">
             <mat-icon>phonelink</mat-icon>
-            <span>MS Agent</span>
+            <span>Webphone</span>
         </button>
     </mat-menu>
 

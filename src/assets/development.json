@@ -137,7 +137,7 @@
                                         {
                                             "Name": "Make Call",
                                             "Enable": true,
-                                            "EnableState": "",
+                                            "EnableState": "fulfillment",
                                             "Type": "voice",
                                             "SubType": "",
                                             "Icon": "call",

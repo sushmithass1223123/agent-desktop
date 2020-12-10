@@ -33,6 +33,7 @@
 </div>
 
 <div class="content">
+    <mat-progress-bar *ngIf="loading" mode="query"></mat-progress-bar>
     <!-- Contacts -->
     <div id="contacts-list" class="custom-scroll-adjust">
         <div
@@ -79,7 +80,7 @@
                 >
                     <div class="bubble">
                         <div class="message">{{ message.Message }}</div>
-                        <div class="time secondary-text">{{ message.CreatedTime | date: 'd/M/yy, h:mm a' }}</div>
+                        <div class="time secondary-text">{{ message.CreatedTime | date: 'h:mm a' }}</div>
                     </div>
                 </div>
             </ng-container>

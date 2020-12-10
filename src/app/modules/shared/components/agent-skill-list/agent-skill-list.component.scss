@@ -13,6 +13,10 @@ agent-skill-list {
                     }
                     .mat-form-field-infix {
                         padding: 0.65em 0.5rem !important;
+
+                        .mat-input-element:disabled {
+                            color: currentColor;
+                        }
                     }
                 }
             }

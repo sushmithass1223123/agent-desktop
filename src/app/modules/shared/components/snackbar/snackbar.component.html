@@ -15,7 +15,7 @@
     >
         {{ data.icon }}
     </mat-icon>
-    <button mat-icon-button *ngIf="data.state === 'close'" color="warn">
-        <mat-icon (click)="close()">close</mat-icon>
+    <button mat-icon-button *ngIf="data.state === 'close'" color="warn" (click)="close()">
+        <mat-icon>close</mat-icon>
     </button>
 </div>

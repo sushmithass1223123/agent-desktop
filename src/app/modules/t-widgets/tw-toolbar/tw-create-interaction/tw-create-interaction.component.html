@@ -18,13 +18,14 @@
         cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
         (overlayOutsideClick)="channels = []"
     >
-        <div fxLayout="column" fxLayoutGap="10px" class="mt-12" [@widgetStagger]="channels.length">
+        <div fxLayout="column" fxLayoutGap="10px" class="mt-12 create-interaction-buttons" [@widgetStagger]="channels.length">
             <button
                 mat-mini-fab
                 color="secondary"
                 *ngFor="let channel of data.Data.Channels"
                 (click)="addInteraction(channel.Type, channel)"
                 class="fab-secondary"
+                [disabled]="!checkAux(channel.EnableState)"
                 [matTooltip]="channel.Name"
             >
                 <mat-icon *ngIf="channel.Icon.indexOf('custom') < 0">{{ channel.Icon }}</mat-icon>

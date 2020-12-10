@@ -37,6 +37,14 @@ export class DashboardService {
      * Service started flag
      */
     private _serviceStarted: boolean;
+    /**
+     * Agent dashboard duration
+     */
+    private _adDuration: number;
+    /**
+     * Supervisor dashboard duration
+     */
+    private _sdDuration: number;
 
     constructor(
         private _appDataService: AppDataService,
@@ -288,12 +296,18 @@ export class DashboardService {
 
     /**
      * Trigger Agent Data
+     * 
      * @param {String} agentId
      * @param {Boolean} start
      * @param {number} duration
      */
     public triggerAgentData(agentId: string, start: boolean, duration: number): void {
         TUtils.Logger.console('info', `DashboardService.triggerAgentData: start=${start}, duration=${duration}`);
+        // if start, store the duration
+        if (start) {
+            this._adDuration = duration;
+        }
+        // if connected, then trigger
         if (this._signalRInstance.isConnected()) {
             this._signalRInstance.hub.invoke('GetAgentData', this._signalRInstance.hub.connection.id, agentId, start, duration);
         }
@@ -301,6 +315,7 @@ export class DashboardService {
 
     /**
      * Trigger Active agents
+     * 
      * @param {String} agentId
      * @param {String} teamId
      * @param {Boolean} start
@@ -308,13 +323,38 @@ export class DashboardService {
      */
     public triggerActiveAgents(agentId: string, teamId: string, start: boolean, duration: number): void {
         TUtils.Logger.console('info', `DashboardService.triggerActiveAgents: start=${start}, duration=${duration}`);
+        // if start, store the duration
+        if (start) {
+            this._sdDuration = duration;
+        }
+        // if connected, then trigger
         if (this._signalRInstance.isConnected()) {
             this._signalRInstance.hub.invoke('GetActiveAgentList', this._signalRInstance.hub.connection.id, agentId, teamId, start, duration);
         }
     }
 
     /**
+     * Re-trigger Active agents
+     * 
+     * @param {String} agentId
+     * @param {String} teamId
+     */
+    public reTriggerActiveAgents(agentId: string, teamId: string): void {
+        TUtils.Logger.console('info', `DashboardService.reTriggerActiveAgents`);
+        // if connected, then trigger
+        if (this._signalRInstance.isConnected()) {
+            // stop first 
+            this._signalRInstance.hub.invoke('GetActiveAgentList', this._signalRInstance.hub.connection.id, agentId, teamId, false, 0);
+            // then start in next event loop
+            setTimeout(() => {
+                this._signalRInstance.hub.invoke('GetActiveAgentList', this._signalRInstance.hub.connection.id, agentId, teamId, true, this._sdDuration);
+            });
+        }
+    }
+
+    /**
      * Trigger agent Interactions
+     * 
      * @param {String} agentId
      * @param {Boolean} start
      */
@@ -327,6 +367,7 @@ export class DashboardService {
 
     /**
      * Trigger agent team list for IM list
+     * 
      * @param {String} agentId
      * @param {Boolean} start
      */

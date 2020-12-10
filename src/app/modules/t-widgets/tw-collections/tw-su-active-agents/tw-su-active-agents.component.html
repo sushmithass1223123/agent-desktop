@@ -54,6 +54,20 @@
                     </button>
                 </ng-template>
             </mat-form-field>
+            <button
+                mat-icon-button
+                [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
+                (click)="refreshList()"
+                matTooltip="Reload Agent Data"
+                [disabled]="!filteredAgents.length || reload"
+            >
+                <mat-icon
+                    [ngClass]="{
+                        'spin-o': reload
+                    }"
+                    >refresh</mat-icon
+                >
+            </button>
         </div>
         <p *ngIf="filteredAgents.length" class="sort-label">
             Agent list is sorted by <b> {{ sortBy }} </b> in <b>{{ sortType }}</b> order
@@ -122,7 +136,7 @@
                                     'text-alt-warning': item.CurrentStatusDuration > 60 && item.CurrentStatusDuration <= 120,
                                     'text-alt-danger': item.CurrentStatusDuration > 120
                                 }"
-                                >{{ (item.CurrentStatusDuration * 1000 | date: 'H:mm:ss':'UTC') || '00:00:00' }}</span
+                                >{{ (item.CurrentStatusDuration * 1000 | date: 'HH:mm:ss':'UTC') || '00:00:00' }}</span
                             >
                         </div>
                     </div>
@@ -161,7 +175,7 @@
 
                     <div fxLayout="row" fxLayoutAlign="end center" fxFlex="15" class="indicators">
                         <mat-icon *ngIf="item.UserProfileForAgent === 'S'" matTooltip="SUPERVISOR">supervised_user_circle</mat-icon>
-                        <mat-icon *ngIf="item.IsMSAgent" matTooltip="MS AGENT">support_agent</mat-icon>
+                        <mat-icon *ngIf="item.IsMSAgent" matTooltip="Webphone">phonelink</mat-icon>
                         <mat-icon [matTooltip]="item.ConnectionType.toUpperCase()">{{
                             item.ConnectionType.toLowerCase() === 'websockets' ? 'wifi_tethering' : 'wifi'
                         }}</mat-icon>
