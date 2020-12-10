@@ -15,7 +15,7 @@ import { IWidget, ResData } from 'app/interfaces';
 import { groupBy } from 'lodash';
 import * as moment from 'moment';
 import { Observable } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
+import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { SDKClient } from 'tmac-sdk';
 
 type AvailableTabs = 'inbox' | 'sentitem' | 'queue' | 'draft';
@@ -71,6 +71,12 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
             selected: false
         }
     };
+
+    /**
+     * Global search form control
+     */
+    globalSearchControl = new FormControl('');
+
     /**
      * Advanced search form group
      */
@@ -169,38 +175,77 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
             this.fuseConfig = config;
         });
 
-        this.advancedSearchForm.get('global').valueChanges.subscribe((global) => {
-            const toggledFields = [
-                'email',
-                'subject',
-                'content',
-                'skills',
-                'agent',
-                'inSessionid',
-                'deviceid',
-                'assignedTo',
+        // const advancedSearchToggledFields = ['replied', 'closed', 'assigned'];
 
-                'hasAttachments',
+        this.globalSearchControl.valueChanges.pipe(debounceTime(200)).subscribe((global) => {
+            const today = new Date();
+            const yesterday = new Date();
+            yesterday.setDate(today.getDate() - 1);
 
-                'replied',
+            this.advancedSearchForm.patchValue({
+                fromDate: yesterday,
+                fromTime: `00:00`,
+                toDate: today,
+                toTime: `${'23'}:${'59'}`,
+                email: global,
+                subject: global,
+                content: global,
+                skills: global,
+                agent: global,
+                inSessionid: global,
+                deviceid: global,
+                assignedTo: global,
+                sesisonid: global,
+                global: global ? 'GLOBAL' : '',
+                listOfMailboxes: 'singteldemo@tetherfi.com',
 
-                'closed',
+                hasAttachments: 'no',
+                replied: 'any',
+                closed: 'any',
+                assigned: 'any'
+            });
 
-                'assigned',
-
-                'sesisonid',
-                'listOfMailboxes'
-            ];
-            if (global) {
-                toggledFields.forEach((field) => {
-                    this.advancedSearchForm.controls[field].disable();
-                });
-            } else {
-                toggledFields.forEach((field) => {
-                    this.advancedSearchForm.controls[field].enable();
-                });
-            }
+            // if (global) {
+            //     advancedSearchToggledFields.forEach((field) => {
+            //         this.advancedSearchForm.controls[field].disable();
+            //     });
+            // } else {
+            //     advancedSearchToggledFields.forEach((field) => {
+            //         this.advancedSearchForm.controls[field].disable();
+            //     });
+            // }
         });
+
+        // this.advancedSearchForm.get('global').valueChanges.subscribe((global) => {
+        //     const toggledFields = [
+        //         // 'email',
+        //         // 'subject',
+        //         // 'content',
+        //         // 'skills',
+        //         // 'agent',
+        //         // 'inSessionid',
+        //         // 'deviceid',
+        //         // 'assignedTo',
+
+        //         // 'hasAttachments',
+
+        //         'replied',
+        //         'closed',
+        //         'assigned'
+
+        //         // 'sesisonid',
+        //         // 'listOfMailboxes'
+        //     ];
+        //     // if (global) {
+        //     //     toggledFields.forEach((field) => {
+        //     //         this.advancedSearchForm.controls[field].disable();
+        //     //     });
+        //     // } else {
+        //     //     toggledFields.forEach((field) => {
+        //     //         this.advancedSearchForm.controls[field].enable();
+        //     //     });
+        //     // }
+        // });
 
         this.doAdvancedSearch();
     }
@@ -220,13 +265,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
-
-    /**
-     * Filter emails
-     * TODO
-     * @method filterEmails
-     */
-    filterEmails(): void {}
 
     /**
      * Check if tree node has child
@@ -400,6 +438,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
         }
     }
 
+    /**
+     * Searched through queued emails
+     */
     advanceSearchQueuedEmail = (): Observable<any> => {
         const { agentId } = SDKClient.getAgentData();
 
@@ -427,7 +468,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
         return this.http.post(this.data.Data.WorkbenchUrl + '/queue/search', {
             skills: searchFields.skills ? [searchFields.skills] : [],
             email: searchFields.email,
-            agent: '',
+            agent: searchFields.agent || '',
             startDate,
             endDate,
             subject: searchFields.subject,
@@ -435,6 +476,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
         });
     };
 
+    /**
+     * Searched through inbox emails
+     */
     advanceSearchInboxEmail = (): Observable<any> => {
         const { agentId } = SDKClient.getAgentData();
 
@@ -463,7 +507,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
             .post(this.data.Data.WorkbenchUrl + '/inbox/search', {
                 skills: searchFields.skills ? [searchFields.skills] : [],
                 email: searchFields.email,
-                agent: '',
+                agent: searchFields.agent || '',
                 startDate,
                 endDate,
                 subject: searchFields.subject,
@@ -498,6 +542,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
             );
     };
 
+
+    /**
+     * Searches through draft emails
+     */
     advanceSearchDraftEmail = (): Observable<any> => {
         const { agentId } = SDKClient.getAgentData();
 
@@ -526,7 +574,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
             .post(this.data.Data.WorkbenchUrl + '/draft/search', {
                 skills: searchFields.skills ? [searchFields.skills] : [],
                 email: searchFields.email,
-                agent: '',
+                agent: searchFields.agent || '',
                 startDate,
                 endDate,
                 subject: searchFields.subject,

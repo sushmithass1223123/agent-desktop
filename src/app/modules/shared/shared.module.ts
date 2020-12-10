@@ -16,13 +16,11 @@ import {
     CreateEmailComponent,
     CreateMessagingComponent,
     CustomDialogComponent,
-    MatQuillModule,
     NoDataAvailableComponent,
     ReminderTaskDialogComponent,
     ResourceNotFoundComponent,
-
-
-    SharedWrapperComponent, SnackbarComponent,
+    SharedWrapperComponent,
+    SnackbarComponent,
     WidgetFabComponent
 } from './components';
 import { TWChartDirective } from './directives';
@@ -47,7 +45,7 @@ Chart.defaults.global.plugins = {
 /**
  * Shared Modules
  */
-const sharedModules = [MaterialModule, FuseSharedModule, LeafletModule, ChartsModule, MatQuillModule, PickerModule];
+const sharedModules = [MaterialModule, FuseSharedModule, LeafletModule, ChartsModule, PickerModule];
 
 /**
  * Shared components
@@ -79,4 +77,4 @@ const sharedComponents = [
     imports: [CommonModule, ...sharedModules, QuillModule.forRoot()],
     exports: [...sharedModules, ...sharedComponents]
 })
-export class SharedModule { }
+export class SharedModule {}

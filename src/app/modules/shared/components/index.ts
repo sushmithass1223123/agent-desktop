@@ -4,7 +4,6 @@ export * from './app-confirm-dialog/app-confirm-dialog.component';
 export * from './app-snackbar/app-snackbar.component';
 export * from './avatar/avatar.component';
 export * from './create-email/create-email.component';
-export * from './create-email/mat-quill.module';
 export * from './create-messaging/create-messaging.component';
 export * from './custom-dialog/custom-dialog.component';
 export * from './no-data-available/no-data-available.component';
