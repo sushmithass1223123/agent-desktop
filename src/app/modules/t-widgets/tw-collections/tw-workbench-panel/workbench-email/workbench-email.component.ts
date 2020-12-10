@@ -438,6 +438,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
         }
     }
 
+    /**
+     * Searched through queued emails
+     */
     advanceSearchQueuedEmail = (): Observable<any> => {
         const { agentId } = SDKClient.getAgentData();
 
@@ -473,6 +476,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
         });
     };
 
+    /**
+     * Searched through inbox emails
+     */
     advanceSearchInboxEmail = (): Observable<any> => {
         const { agentId } = SDKClient.getAgentData();
 
@@ -536,6 +542,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
             );
     };
 
+
+    /**
+     * Searches through draft emails
+     */
     advanceSearchDraftEmail = (): Observable<any> => {
         const { agentId } = SDKClient.getAgentData();
 
