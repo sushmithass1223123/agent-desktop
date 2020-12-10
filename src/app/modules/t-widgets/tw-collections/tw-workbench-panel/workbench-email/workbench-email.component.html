@@ -90,6 +90,10 @@
                     </ng-template>
                 </mat-form-field>
             </form>
+            
+            <button mat-icon-button (click)="doAdvancedSearch()" matTooltip="Refresh">
+                <mat-icon>refresh</mat-icon>
+            </button>
             <button
                 mat-icon-button
                 (click)="showAdvancedSearchForm = !showAdvancedSearchForm"
@@ -344,10 +348,6 @@
                         </form>
                     </div>
                 </ng-template>
-            </button>
-
-            <button mat-icon-button (click)="doAdvancedSearch()" matTooltip="Refresh">
-                <mat-icon>refresh</mat-icon>
             </button>
         </div>
 
