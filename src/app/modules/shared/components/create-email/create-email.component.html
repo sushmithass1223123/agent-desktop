@@ -88,7 +88,7 @@
     <div fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="20px" class="w-100-p mb-12">
         <button mat-icon-button class="primary" (click)="attachFileRef.click()">
             <mat-icon>attach_file</mat-icon>
-            <input #attachFileRef type="file" (click)="$event.target.value = null;" (change)="onFileInput($event)" style="display: none" />
+            <input #attachFileRef type="file" (click)="$event.target.value = null" (change)="onFileInput($event)" style="display: none" />
         </button>
 
         <mat-menu #departmentMenu="matMenu">
@@ -110,10 +110,10 @@
                                     <mat-menu #templateMenu="matMenu">
                                         <ng-template matMenuContent>
                                             <ng-container *ngIf="group.value.templates">
+                                                <!-- (menuOpened)="selectTemplate(template)" -->
                                                 <button
                                                     mat-menu-item
                                                     *ngFor="let template of group.value.templates | keyvalue"
-                                                    (menuOpened)="selectTemplate(template)"
                                                     (click)="selectTemplate(template.value.BodyHTML)"
                                                 >
                                                     {{ template.value.Name }}
@@ -130,6 +130,14 @@
                 </ng-container>
             </ng-template>
         </mat-menu>
+
+        <ng-template #templatePreviewDialog>
+            <div [innerHTML]="templatePreview.preview"></div>
+            <div class="w-100-p" fxLayout fxLayoutAlign="end center">
+                <button mat-raised-button color="primary"  (click)="useTemplate()" >Use</button>
+                <button mat-button color="accent"  (click)="closeTemplatePreview()" >Cancel</button>
+            </div>
+        </ng-template>
 
         <button mat-button [matMenuTriggerFor]="departmentMenu">
             <span class="mr-4"> Choose Template </span>
