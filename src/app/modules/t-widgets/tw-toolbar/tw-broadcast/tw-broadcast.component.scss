@@ -8,10 +8,7 @@ tw-broadcast {
         position: relative;
         border-radius: 20px;
 
-        .icon {
-            position: absolute;
-            z-index: 1;
-            right: -20px;
+        .b-icon {
             img {
                 transform: scaleX(-1);
             }

@@ -45,6 +45,23 @@ export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDes
         // call the wrapper init method
         this.initWrapper(this.data);
 
+        // // subscribe to interaction events observable
+        // this._tmacEventService.constructDisposeEvents
+        //     .pipe(takeUntil(this.unsubscribeAll))
+        //     .subscribe((evt: any) => {
+        //         // filter the event name
+        //         if (evt.EventName === 'IncomingEmailEvent') {
+        //             this.IncomingEmailEvent(evt);
+        //         } else if (evt.EventName === 'InteractionClosedEvent') {
+        //             this.InteractionClosedEvent(evt);
+        //         }
+        //     });
+
+        // subscribe to interaction events observable
+        this._tmacEventService.getConstructDisposeEvents(['IncomingEmailEvent', 'InteractionClosedEvent'])
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
+
         // subscribe to active interaction observable
         this._interactionManagerService.interactions
             .pipe(takeUntil(this.unsubscribeAll))
@@ -56,18 +73,6 @@ export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDes
                     emailInteractions.forEach((interaction: InteractionRef) => {
                         this.activeInteraction = interaction.isActive ? interaction.interactionId : this.activeInteraction;
                     });
-                }
-            });
-
-        // subscribe to interaction events observable
-        this._tmacEventService.constructDisposeEvents
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((evt: any) => {
-                // filter the event name
-                if (evt.EventName === 'IncomingEmailEvent') {
-                    this.incomingEmailEvent(evt);
-                } else if (evt.EventName === 'InteractionClosedEvent') {
-                    this.interactionClosed(evt);
                 }
             });
     }
@@ -85,7 +90,7 @@ export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDes
      * 
      * @param {IncomingEmailEvent} evt
      */
-    private incomingEmailEvent = (evt: IncomingEmailEvent) => {
+    private IncomingEmailEvent = (evt: IncomingEmailEvent) => {
         // get the content widgets
         const emailWidgets = cloneDeep(this.data.Data.Widgets) || [];
 
@@ -128,7 +133,7 @@ export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDes
             type: 'email',
             status: 'incoming',
             isActive: this.interactions.length === 1,
-            user: 'Customer',
+            user: evt.From || 'Customer',
             path: this.data.Data.Path,
             otherData: evt
         });
@@ -137,7 +142,7 @@ export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDes
     /**
      * To process interaction closed event for voice
      */
-    private interactionClosed = (evt: InteractionClosedEvent) => {
+    private InteractionClosedEvent = (evt: InteractionClosedEvent) => {
         this.interactions = this.interactions.filter((i: InteractionWidgets) => i.interactionId !== evt.InteractionID);
         // if there are other item in the list auto select fist chat after closing current
         if (this.interactions.length > 0) {

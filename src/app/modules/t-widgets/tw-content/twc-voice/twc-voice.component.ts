@@ -53,18 +53,26 @@ export class TwcVoiceComponent extends TWContentWrapper implements OnInit, OnDes
         // call the wrapper init method
         this.initWrapper(this.data);
 
+        // // subscribe to interaction events observable
+        // this._tmacEventService.constructDisposeEvents
+        //     .pipe(takeUntil(this.unsubscribeAll))
+        //     .subscribe((evt: any) => {
+        //         // filter the event name
+        //         if (evt.EventName === 'IncomingCallEvent') {
+        //             this.IncomingCallEvent(evt);
+        //         }
+        //         else if (evt.EventName === 'OutgoingCallEvent') {
+        //             this.OutgoingCallEvent(evt);
+        //         }
+        //         else if (evt.EventName === 'InteractionClosedEvent') {
+        //             this.InteractionClosedEvent(evt);
+        //         }
+        //     });
+
         // subscribe to interaction events observable
-        this._tmacEventService.constructDisposeEvents
+        this._tmacEventService.getConstructDisposeEvents(['IncomingCallEvent', 'OutgoingCallEvent', 'InteractionClosedEvent'])
             .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((evt: any) => {
-                // filter the event name
-                if (evt.EventName === 'IncomingCallEvent' || evt.EventName === 'OutgoingCallEvent') {
-                    this.incomingOutgoingCallEvent(evt);
-                }
-                else if (evt.EventName === 'InteractionClosedEvent') {
-                    this.interactionClosed(evt);
-                }
-            });
+            .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
 
         // subscribe to active interaction observable
         this._interactionManagerService.interactions
@@ -87,6 +95,24 @@ export class TwcVoiceComponent extends TWContentWrapper implements OnInit, OnDes
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+    }
+
+    /**
+     * To process IncomingCallEvent
+     * 
+     * @param {IncomingCallEvent} evt 
+     */
+    private IncomingCallEvent = (evt: IncomingCallEvent) => {
+        this.incomingOutgoingCallEvent(evt);
+    }
+
+    /**
+     * To process IncomingCallEvent
+     * 
+     * @param {OutgoingCallEvent} evt 
+     */
+    private OutgoingCallEvent = (evt: OutgoingCallEvent) => {
+        this.incomingOutgoingCallEvent(evt);
     }
 
     /**
@@ -135,7 +161,7 @@ export class TwcVoiceComponent extends TWContentWrapper implements OnInit, OnDes
             interactionId: evt.InteractionID,
             type: 'voice',
             status: evt.EventName === 'IncomingCallEvent' ? 'incoming' : 'outgoing',
-            isActive: this.interactions.length === 1,
+            isActive: evt.EventName === 'OutgoingCallEvent' ? true : this.interactions.length === 1,
             user: evt.PhoneNumber,
             path: this.data.Data.Path,
             otherData: {}
@@ -145,7 +171,7 @@ export class TwcVoiceComponent extends TWContentWrapper implements OnInit, OnDes
     /**
      * To process interaction closed event for voice
      */
-    private interactionClosed = (evt: InteractionClosedEvent) => {
+    private InteractionClosedEvent = (evt: InteractionClosedEvent) => {
         this.interactions = this.interactions.filter((i: InteractionWidgets) => i.interactionId !== evt.InteractionID);
         // if there are other item in the list auto select fist chat after closing current
         if (this.interactions.length > 0) {

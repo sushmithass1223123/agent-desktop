@@ -10,7 +10,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE, DRAFT_REASONS, EMAIL_DRAFT_SAVE_INTERVAL, INBOX_REASONS, OUTBOX_REASONS } from 'app/constants';
-import { InteractionRef, IWidget, ResData } from 'app/interfaces';
+import { InteractionComment, InteractionRef, IWidget, ResData } from 'app/interfaces';
 import { CreateEmailInfo } from 'app/models';
 import { interval, Observable, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
@@ -107,6 +107,10 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Reply info for create email component
      */
     replyInfo?: CreateEmailInfo;
+    /**
+     * Saved interaction comments
+     */
+    savedComments: InteractionComment[] = [];
 
     /**
      * Perfect scrollbar ref
@@ -662,6 +666,55 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                     console.error(err);
                     this._appUIService.showSnackbar('Unable to spam the email', 'failure');
                 });
+            }
+        });
+    }
+
+    /**
+     * To save interaction comments to server
+     */
+    public saveInteractionComments(): void {
+        let message = '';
+        // check the saved comments
+        this.savedComments.forEach((item) => {
+            message +=
+                `
+                 <div>${item.Message.replace(/(?:\r\n|\r|\n)/g, '<br>')}</div>
+                 <span class="time secondary-text">${item.Time}</span>
+                 <br /><br />
+                 `;
+
+        });
+        message += 'Add new comment:';
+
+        const dialogRef = this._appUIService.showCustomDialog('prompt', message, 'Interaction Comments');
+        dialogRef.afterClosed().subscribe((resp1) => {
+            if (resp1) {
+                this._fuseProgressBarService.show();
+                SDKClient.saveInteractionComment({
+                    comment: resp1,
+                    interactionId: this.interactionId.toString()
+                })
+                    .then((resp2) => {
+                        if (resp2.response > 0) {
+                            // add comments to the reference
+                            this.savedComments.push({
+                                Message: resp1,
+                                Time: new Date().toLocaleTimeString(),
+                                User: SDKClient.getAgentData().agentName
+                            });
+                            // alert user
+                            this._appUIService.showSnackbar('Interaction comment saved successfully');
+                        } else {
+                            this._appUIService.showSnackbar('Interaction comment save failed', 'failure');
+                        }
+
+                        this._fuseProgressBarService.hide();
+                    })
+                    .catch(() => {
+                        this._fuseProgressBarService.hide();
+                        this._appUIService.showSnackbar('Error in saving interaction comment', 'failure');
+                    });
             }
         });
     }

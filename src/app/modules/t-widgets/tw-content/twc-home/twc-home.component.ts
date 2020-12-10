@@ -164,6 +164,13 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
                 this.dataLoading = false;
             });
 
+        // if there is no data, stop data loading
+        setTimeout(() => {
+            if (this.dataLoading) {
+                this.dataLoading = false;
+            }
+        }, 10000);
+
         // set init flag to true
         this.init = true;
     }

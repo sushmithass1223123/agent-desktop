@@ -6,12 +6,7 @@
 
 <tw-wrapper [data]="data">
     <!-- your code goes here -->
-    <div
-        *ngIf="!caseData.submitted"
-        fxFill
-        fxLayout="column"
-        class="px-16 custom-scroll-adjust"
-    >
+    <div *ngIf="!caseData.submitted" fxFill fxLayout="column" class="px-16 custom-scroll-adjust">
         <div fxLayout>
             <p fxFlex="20" fxLayoutAlign=" center" class="px-8">Case ID</p>
             <mat-form-field fxFlex appearance="outline" class="custom with-bg case-id">
@@ -22,7 +17,14 @@
         <div fxFlex fxLayout>
             <p fxFlex="20" fxLayoutAlign=" flex-start" class="px-8 mt-16">Case Notes</p>
             <mat-form-field fxFlex floatLabel="never" appearance="standard" class="custom with-bg case-note">
-                <textarea fxFlex matInput placeholder="Enter case notes here..." [(ngModel)]="caseData.caseText"></textarea>
+                <textarea
+                    fxFlex
+                    matInput
+                    placeholder="Enter case notes here..."
+                    [(ngModel)]="caseData.caseText"
+                    matAutosizeMinRows="1"
+                    matTextareaAutosize
+                ></textarea>
                 <button class="submit-btn bg-success border-radius-20" (click)="addCase()" mat-button>Submit</button>
             </mat-form-field>
         </div>

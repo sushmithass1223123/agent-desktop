@@ -80,4 +80,14 @@
             filter: invert(1);
         }
     }
+
+    .create-interaction-buttons {
+        .mat-button-disabled {
+            @if ($is-dark == true) {
+                background-color: #424242 !important;
+            } @else {
+                background-color: white !important;
+            }
+        }
+    }
 }

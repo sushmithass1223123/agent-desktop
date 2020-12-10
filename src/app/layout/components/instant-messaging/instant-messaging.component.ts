@@ -7,7 +7,8 @@ import { CustomSDKEvent } from 'app/interfaces';
 import { groupBy, sortBy } from 'lodash';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AgentNotificaitonEvent, IAgentData, SDKClient } from 'tmac-sdk';
+import { AgentNotificaitonEvent, IAgentData, SDKClient, SuAgentModel } from 'tmac-sdk';
+import { InstantMessagingService } from './instant-messaging.service';
 
 /**
  * Contact model
@@ -54,7 +55,7 @@ interface Chat {
     /**
      * Chat dialog
      */
-    dialog: AgentNotificaitonEvent[];
+    dialog: any[];
     /**
      * Chat Id
      */
@@ -103,6 +104,10 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
      * user
      */
     user: IAgentData;
+    /**
+     * Data loading flag
+     */
+    loading: boolean;
 
     /**
      * reply form ref
@@ -135,7 +140,8 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
     constructor(
         private _fuseSidebarService: FuseSidebarService,
         private _tmacEventService: TMACEventService,
-        private _dashboardService: DashboardService
+        private _dashboardService: DashboardService,
+        private _instantMessagingService: InstantMessagingService
     ) {
         // Set the defaults
         this.selectedContact = null;
@@ -162,18 +168,41 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
                 // check to get team list
                 if (opened) {
                     this._dashboardService.triggerTeamAgentList(this.user.agentId, true);
+                    this.loading = true;
+                    setTimeout(() => {
+                        if (this.loading) {
+                            this.loading = false;
+                        }
+                    }, 10000);
                 }
                 else {
                     this._dashboardService.triggerTeamAgentList(this.user.agentId, false);
+                    this.selectedContact = null;
                 }
             });
 
         // SDKClient.events.on('TeamAgentListEvent', this.TeamAgentListEvent);
         // SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
 
-        this._tmacEventService.getEvents(['TeamAgentListEvent', 'AgentNotificaitonEvent'])
+        this._tmacEventService.getEvents(['TeamAgentListEvent', 'AgentNotificaitonEvent', 'SupervisorAgentListEvent'])
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
+
+        this._instantMessagingService.getUser
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((x: string) => {
+                // get user by id
+                if (x) {
+                    // select the user by id
+                    const user = this.contacts.filter(c => c.id === x)?.[0];
+                    // if user found the toggle chat
+                    if (user) {
+                        this.toggleChat(user);
+                    }
+                }
+            });
+
+
     }
 
     /**
@@ -309,10 +338,10 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
         }
 
         // Message
-        const message: AgentNotificaitonEvent = {
-            ...this.chat.dialog[0],
+        const message = {
             FromAgentId: this.user.agentId,
-            Message: this._replyForm.form.value.message
+            Message: this._replyForm.form.value.message,
+            CreatedTime: new Date()
         };
 
         // Add the message to the chat
@@ -349,7 +378,27 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
             this.allChats[evt.FromAgentId] = { dialog: [], id: evt.FromAgentId };
         }
 
-        this.allChats[evt.FromAgentId].dialog.push(evt);
+        this.allChats[evt.FromAgentId].dialog.push({
+            FromAgentId: evt.FromAgentId,
+            Message: evt.Message,
+            CreatedTime: evt.CreatedTime
+        });
+
+        // check if this contact in list
+        if (!this.contacts?.filter(c => c.id === evt.FromAgentId).length) {
+            // add to the list
+            this.contacts.push({
+                avatar: '',
+                id: evt.FromAgentId,
+                class: '',
+                mood: '',
+                name: evt.FromAgentName,
+                status: '',
+                tmacServer: evt.FromTmacServer,
+                unread: 0
+            });
+        }
+
         if (evt.FromAgentId !== this.selectedContact?.id) {
             this.contacts = this.contacts.map((x) => ({ ...x, unread: x.id === evt.FromAgentId ? x.unread + 1 : x.unread }));
         } else {
@@ -364,7 +413,33 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
      * @param {CustomSDKEvent} evt 
      */
     TeamAgentListEvent = (evt: CustomSDKEvent): void => {
+        if (this.loading) {
+            this.loading = false;
+        }
         const agents = groupBy(this.contacts, 'id');
+        this.contacts = sortBy(evt.Data, 'AgentName').map((x) => ({
+            avatar: x.ProfilePicture,
+            id: x.AgentLoginID,
+            mood: '',
+            name: x.AgentName,
+            status: x.CurrentAgentStatus,
+            class: this.agentStatusClasses[x.CurrentAgentStatus] || 'away',
+            unread: agents[x.AgentLoginID] ? agents[x.AgentLoginID][0].unread : 0,
+            tmacServer: x.TmacServer
+        }));
+    }
+
+    /**
+     * To process SupervisorAgentListEvent
+     */
+    SupervisorAgentListEvent = (evt: CustomSDKEvent): void => {
+        const agents = groupBy(this.contacts, 'id');
+
+        if (evt.Data.length) {
+            // filter out local agent
+            evt.Data = evt.Data.filter((d: SuAgentModel) => d.AgentLoginID !== SDKClient.getAgentData().agentId);
+        }
+        // add to the list
         this.contacts = sortBy(evt.Data, 'AgentName').map((x) => ({
             avatar: x.ProfilePicture,
             id: x.AgentLoginID,
@@ -383,7 +458,7 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
      * @param {number} index 
      * @param {any} contact 
      */
-    public trackByID(index: number, contact: any): string {
+    trackByID(index: number, contact: any): string {
         return contact.ID;
     }
 }

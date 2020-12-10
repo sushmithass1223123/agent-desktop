@@ -45,18 +45,23 @@ export class TwcTextchatComponent extends TWContentWrapper implements OnInit, On
         // call the wrapper init method
         this.initWrapper(this.data);
 
+        // // subscribe to interaction events observable
+        // this._tmacEventService.constructDisposeEvents
+        //     .pipe(takeUntil(this.unsubscribeAll))
+        //     .subscribe((evt: any) => {
+        //         // filter the event name
+        //         if (evt.EventName === 'TextChatIncomingEvent') {
+        //             this.TextChatIncomingEvent(evt);
+        //         }
+        //         else if (evt.EventName === 'InteractionClosedEvent') {
+        //             this.InteractionClosedEvent(evt);
+        //         }
+        //     });
+
         // subscribe to interaction events observable
-        this._tmacEventService.constructDisposeEvents
+        this._tmacEventService.getConstructDisposeEvents(['TextChatIncomingEvent', 'InteractionClosedEvent'])
             .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((evt: any) => {
-                // filter the event name
-                if (evt.EventName === 'TextChatIncomingEvent') {
-                    this.textChatIncomingEvent(evt);
-                }
-                else if (evt.EventName === 'InteractionClosedEvent') {
-                    this.interactionClosed(evt);
-                }
-            });
+            .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
 
         // subscribe to active interaction observable
         this._interactionManagerService.interactions
@@ -84,7 +89,7 @@ export class TwcTextchatComponent extends TWContentWrapper implements OnInit, On
     /**
      * To process TextChatIncomingEvent
      */
-    private textChatIncomingEvent = (evt: TextChatIncomingEvent) => {
+    private TextChatIncomingEvent = (evt: TextChatIncomingEvent) => {
 
         // get the content widgets
         const textchatWidgets = cloneDeep(this.data.Data.Widgets) || [];
@@ -139,7 +144,7 @@ export class TwcTextchatComponent extends TWContentWrapper implements OnInit, On
     /**
      * To process interaction closed event for voice
      */
-    private interactionClosed = (evt: InteractionClosedEvent) => {
+    private InteractionClosedEvent = (evt: InteractionClosedEvent) => {
         this.interactions = this.interactions.filter((i: InteractionWidgets) => i.interactionId !== evt.InteractionID);
         // if there are other item in the list auto select fist chat after closing current
         if (this.interactions.length > 0) {

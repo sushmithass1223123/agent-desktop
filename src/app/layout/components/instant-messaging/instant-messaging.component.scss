@@ -10,6 +10,13 @@ instant-messaging {
     z-index: 99;
     overflow: hidden;
 
+    .mat-progress-bar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 6;
+    }
+
     @include media-breakpoint('xs') {
         max-width: none !important;
         width: 100% !important;
@@ -39,6 +46,7 @@ instant-messaging {
     .content {
         flex: 1 1 100%;
         min-height: 0;
+        position: relative;
     }
 
     #contacts-list {

@@ -4,7 +4,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { takeUntil } from 'rxjs/operators';
-import { WallboardRefreshEvent } from 'tmac-sdk';
+import { WallboardRefreshEvent, DashboardColorCodeModel, SDKClient } from 'tmac-sdk';
 
 /**
  * Wallboard componet
@@ -34,6 +34,11 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
     source: string;
 
     /**
+     * Service level flag
+     */
+    slEnabled: boolean;
+
+    /**
      * Columns displayed in table
      */
     displayedColumns: string[] = ['SkillName', 'AgentsStaffed', 'AgentAvailable', 'CallsInQueue'];
@@ -42,6 +47,11 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
      * Table Data source
      */
     dataSource = new MatTableDataSource([]);
+
+    /**
+     * To store dashboard color codes
+     */
+    dashboardColors: DashboardColorCodeModel[];
 
     /**
      * @constructor
@@ -60,8 +70,19 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        // get source from config
+        // get source and slEnabled from config
         this.source = this.data.Data.Source;
+        this.slEnabled = this.data.Data.SLEnabled;
+
+        if (this.slEnabled) {
+            // add service level to column
+            this.displayedColumns.push('ServiceLevel');
+            // get the dashboard color codes for wallboard
+            SDKClient.getDashboardColorCodes()
+                .then(x => {
+                    this.dashboardColors = x.response.filter(n => n.DashboardName === 'TmacWallboard');
+                });
+        }
 
         const eventName = this.source === 'supervisor' ?
             'TeamWallboardRefreshEvent' :
@@ -89,5 +110,35 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
     private wallboardRefreshEvent = (evt: WallboardRefreshEvent) => {
         this.dataSource = new MatTableDataSource(evt.Skills);
         this.dataSource.sort = this.sort;
+    }
+
+    /**
+     * To get SL bg color
+     * 
+     * @param {Number} value
+     */
+    getSLBgColor(value: number): string {
+        // get the color code for the value
+        const filterData = this.dashboardColors.filter((data) => Number(data.EndRange) >= value && Number(data.StartRange) <= value)?.[0];
+        // if the data found
+        if (filterData) {
+            return filterData.BackgroundColor;
+        }
+        return '';
+    }
+
+    /**
+     * To get SL font color
+     * 
+     * @param {Number} value
+     */
+    getSLFontColor(value: number): string {
+        // get the color code for the value
+        const filterData = this.dashboardColors.filter((data) => Number(data.EndRange) >= value && Number(data.StartRange) <= value)?.[0];
+        // if the data found
+        if (filterData) {
+            return filterData.FontColor;
+        }
+        return '';
     }
 }

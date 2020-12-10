@@ -137,7 +137,7 @@
                                         {
                                             "Name": "Make Call",
                                             "Enable": true,
-                                            "EnableState": "",
+                                            "EnableState": "fulfillment",
                                             "Type": "voice",
                                             "SubType": "",
                                             "Icon": "call",
@@ -381,7 +381,8 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "Source": "dashboard"
+                                        "Source": "dashboard",
+                                        "SLEnabled": false
                                     }
                                 }
                             ],
@@ -1020,7 +1021,8 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "Source": "supervisor"
+                                        "Source": "supervisor",
+                                        "SLEnabled": false
                                     }
                                 },
                                 {
@@ -2059,8 +2061,8 @@
                                                     },
                                                     "ImmediateCallbackAllowed": false,
                                                     "ScheduledCallbackAllowed": false,
-                                                    "AudioEscalateEnabled": true,
-                                                    "VideoEscalateEnabled": true,
+                                                    "AudioEscalateAllowed": true,
+                                                    "VideoEscalateAllowed": true,
                                                     "SignatureAllowed": true,
                                                     "EmojiAllowed": true,
                                                     "ReplyOnChatAllowed": false,
@@ -2715,7 +2717,27 @@
                                                     "Header": true,
                                                     "Pinned": false
                                                 },
-                                                "Data": {}
+                                                "Data": {
+                                                    "Transfer": {
+                                                        "Allowed": false,
+                                                        "Agent": {
+                                                            "Allowed": true,
+                                                            "Blind": false,
+                                                            "Source": "agentId",
+                                                            "AllowedStates": []
+                                                        },
+                                                        "Skill": {
+                                                            "Allowed": true,
+                                                            "Blind": false,
+                                                            "Source": "skill",
+                                                            "ChannelPrefix": [
+                                                                "EM"
+                                                            ]
+                                                        }
+                                                    },
+                                                    "ForwardAllowed": true,
+                                                    "ReplyAllAllowed": true
+                                                }
                                             },
                                             {
                                                 "Name": "Customer Journey",

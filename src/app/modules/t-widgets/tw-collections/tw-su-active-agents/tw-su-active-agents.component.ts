@@ -1,13 +1,16 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { fuseAnimations } from '@fuse/animations';
+import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
+import { DashboardService } from '@services/dashboard.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AGENT_FEATURES_MAP, COMMON_ERR_MESSAGE } from 'app/constants';
 import { CustomSDKEvent, IWidget, QuizEventJsonData } from 'app/interfaces';
+import { InstantMessagingService } from 'app/layout/components/instant-messaging/instant-messaging.service';
 import { TwWidgetModel } from 'app/models';
 import { map, orderBy, random } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
@@ -80,6 +83,10 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
      * Sort type
      */
     sortType: 'desc' | 'asc';
+    /**
+     * Reload agent data flag
+     */
+    reload: boolean;
 
     /**
      * Available quiz intents
@@ -98,7 +105,10 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         private _appDataService: AppDataService,
         private _appUIService: AppUiService,
         private _aotWidgetService: AOTWidgetService,
-        private _tmacEventService: TMACEventService
+        private _tmacEventService: TMACEventService,
+        private _dashboardService: DashboardService,
+        private _fuseSidebarService: FuseSidebarService,
+        private _instantMessagingService: InstantMessagingService
     ) {
         super();
 
@@ -179,6 +189,11 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
 
         // sort agent list
         this.sortAgentList();
+
+        if (this.reload) {
+            this.reload = false;
+            this._appUIService.showSnackbar('Agent data is reloaded');
+        }
     }
 
     /**
@@ -419,6 +434,12 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                     }
                 });
                 break;
+            case 'AllowSupervisorToSendNotification':
+                this._fuseSidebarService.getSidebar('chatPanel').toggleOpen();
+                setTimeout(() => {
+                    this._instantMessagingService.selectUser(agent.AgentLoginID);
+                }, 300);
+                break;
             default:
         }
     }
@@ -538,6 +559,14 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             toTmacServer: item.TmacServer
         };
         SDKClient.addEventToAgentSession(reqPacket);
+    }
+
+    /**
+     * To reload the list
+     */
+    public refreshList(): void {
+        this.reload = true;
+        this._dashboardService.reTriggerActiveAgents(this.user.agentId, this.user.teamId);
     }
 }
 
