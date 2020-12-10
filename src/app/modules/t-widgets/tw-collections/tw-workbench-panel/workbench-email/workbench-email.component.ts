@@ -196,7 +196,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                 deviceid: global,
                 assignedTo: global,
                 sesisonid: global,
-                global: 'GLOBAL',
+                global: global ? 'GLOBAL' : '',
                 listOfMailboxes: 'singteldemo@tetherfi.com',
 
                 hasAttachments: 'no',
