@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { FuseConfigService } from '@fuse/services/config.service';
+import { AppUiService } from '@services/app-ui.service';
 import { IWidget } from 'app/interfaces';
 import { AppDataService } from 'app/services/app-data.service';
 import { Subject } from 'rxjs';
@@ -78,7 +79,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     constructor(
         private _fuseConfigService: FuseConfigService,
         private _fuseSidebarService: FuseSidebarService,
-        private _appDataService: AppDataService
+        private _appDataService: AppDataService,
+        private _appUIService: AppUiService
     ) {
 
         // Set the private defaults
@@ -155,5 +157,32 @@ export class ToolbarComponent implements OnInit, OnDestroy {
      */
     toggleSidebarOpen(key: string): void {
         this._fuseSidebarService.getSidebar(key).toggleOpen();
+    }
+
+    /**
+     * To get SDK connection info
+     */
+    getSDKConnectionData(): void {
+        const connectionData = SDKClient.getConnectionData();
+        const message = `
+        <div><b>TMAC Server:<b></div>
+        <span class="time secondary-text">${connectionData.tmacServer || 'NA'}</span>
+        <br /> <br />
+
+        <div><b>Event Mode:<b></div>
+        <span class="time secondary-text">${connectionData.eventMode || 'NA'}</span>
+        <br /> <br />
+
+        <div><b>Proxy URL:<b></div>
+        <span class="time secondary-text">${connectionData.connectedProxyUrl || 'NA'}</span>
+        <br /> <br />
+
+        <div><b>SignalR URL:<b></div>
+        <span class="time secondary-text">${connectionData.signalRUrl || 'NA'}</span>
+        <br /> <br />
+        `;
+
+        // show the dialog
+        this._appUIService.showCustomDialog('alert', message, 'SDK Connection Info');
     }
 }

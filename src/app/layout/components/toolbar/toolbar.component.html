@@ -36,6 +36,8 @@
             <mat-icon
                 *ngIf="this.connectivityStatus?.status > -1"
                 class="connectivityStatus"
+                matTooltip="SDK Connection Info"
+                (click)="getSDKConnectionData()"
                 [ngClass]="{
                     'text-warning': this.connectivityStatus?.status === 0,
                     'text-alt-success': this.connectivityStatus?.status === 1,

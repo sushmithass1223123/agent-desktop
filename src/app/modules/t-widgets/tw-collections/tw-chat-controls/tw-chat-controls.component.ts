@@ -37,7 +37,6 @@ import {
     AVControlMessageReceivedEvent,
     IAgentData,
     IResponse,
-    IUIEvent,
     SDKClient,
     SSDestination,
     TextChatAgentConnectedEvent,

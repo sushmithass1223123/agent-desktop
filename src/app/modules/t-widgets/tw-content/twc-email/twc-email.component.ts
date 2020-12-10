@@ -58,7 +58,7 @@ export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDes
         //     });
 
         // subscribe to interaction events observable
-        this._tmacEventService.getConstructDisposeEvents(['IncomingEmailEvent', 'IncomingEmailEvent'])
+        this._tmacEventService.getConstructDisposeEvents(['IncomingEmailEvent', 'InteractionClosedEvent'])
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
 
@@ -133,7 +133,7 @@ export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDes
             type: 'email',
             status: 'incoming',
             isActive: this.interactions.length === 1,
-            user: 'Customer',
+            user: evt.From || 'Customer',
             path: this.data.Data.Path,
             otherData: evt
         });

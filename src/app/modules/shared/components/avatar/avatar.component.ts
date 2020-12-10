@@ -73,6 +73,9 @@ export class AvatarComponent implements OnInit {
      */
     getInitial(name: string): string {
         let initials = '';
+        // replace all special chars with space
+        name = name.replace(/[^\w\s]/gi, ' ').toUpperCase();
+        // generate the initials
         for (let i = 0; i < name.length; i++) {
             if (name.charAt(i) === ' ') {
                 continue;

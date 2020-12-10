@@ -193,7 +193,7 @@
                     </button>
 
                     <button
-                        *ngIf="data.Data.AudioEscalateEnabled"
+                        *ngIf="data.Data.AudioEscalateAllowed"
                         [disabled]="
                             status !== 'connected' || disableAV || conferenceType === 'silent' || conferenceType === 'whisper' || this.botConnected
                         "
@@ -213,7 +213,7 @@
                     </button>
 
                     <button
-                        *ngIf="data.Data.VideoEscalateEnabled"
+                        *ngIf="data.Data.VideoEscalateAllowed"
                         [disabled]="
                             status !== 'connected' || disableAV || conferenceType === 'silent' || conferenceType === 'whisper' || this.botConnected
                         "
