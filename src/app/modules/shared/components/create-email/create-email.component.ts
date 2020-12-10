@@ -1,7 +1,8 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { Component, ElementRef, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
 import { AppUiService } from '@services/app-ui.service';
 import { CreateEmailInfo } from 'app/models';
@@ -17,6 +18,20 @@ import { SDKClient } from 'tmac-sdk';
     encapsulation: ViewEncapsulation.None
 })
 export class CreateEmailComponent implements OnInit {
+    /**
+     * Set template preview ref
+     */
+    @ViewChild('templatePreviewDialog')
+    TemplatePreviewDialog: TemplateRef<any>;
+    /**
+     * Template preview data
+     */
+    templatePreview = {
+        show: false,
+        preview: '',
+        ref: null
+    };
+
     /**
      * Config for quill editor
      */
@@ -61,9 +76,9 @@ export class CreateEmailComponent implements OnInit {
          */
         filtered: string[];
     } = {
-            all: ['rahil@email.com', 'rahil2@email.com', 'rahil3@email.com'],
-            filtered: []
-        };
+        all: ['rahil@email.com', 'rahil2@email.com', 'rahil3@email.com'],
+        filtered: []
+    };
 
     /**
      * Email form control
@@ -97,7 +112,7 @@ export class CreateEmailComponent implements OnInit {
      * Available templates
      */
     availableTemplates = {
-        departments: {},
+        departments: {}
     };
 
     /**
@@ -120,7 +135,7 @@ export class CreateEmailComponent implements OnInit {
      */
     @Input() emailInfo?: CreateEmailInfo;
 
-    constructor(private appUiService: AppUiService) {
+    constructor(private appUiService: AppUiService, private matDialog: MatDialog) {
         this.email = {
             To: [],
             CC: [],
@@ -144,12 +159,14 @@ export class CreateEmailComponent implements OnInit {
             Files: this.emailInfo?.Files || []
         };
 
-        SDKClient.getEmailTemplateDepartments().then(res => {
-            this.availableTemplates.departments = this.getDropdownKeyvaluePair(res.response, 'ID');
-        }).catch(err => {
-            console.error(err);
-            this.appUiService.showSnackbar('Something went wrong while fetching departments', 'failure');
-        });
+        SDKClient.getEmailTemplateDepartments()
+            .then((res) => {
+                this.availableTemplates.departments = this.getDropdownKeyvaluePair(res.response, 'ID');
+            })
+            .catch((err) => {
+                console.error(err);
+                this.appUiService.showSnackbar('Something went wrong while fetching departments', 'failure');
+            });
     }
 
     /**
@@ -201,8 +218,7 @@ export class CreateEmailComponent implements OnInit {
      * test functionn for quill editor
      * @param {any} evt
      */
-    onContentChanged(evt: any): void {
-    }
+    onContentChanged(evt: any): void {}
 
     /**
      * Attach files to email
@@ -246,7 +262,7 @@ export class CreateEmailComponent implements OnInit {
 
     /**
      * Convert file to base64
-     * @param {File} file 
+     * @param {File} file
      */
     convertToBase64(file: File): Promise<any> {
         return new Promise((resolve, reject) => {
@@ -258,13 +274,37 @@ export class CreateEmailComponent implements OnInit {
     }
 
     /**
-     * Select template for email
-     * @param {MatSelectChange} html 
+     * Adds template to editor
      */
-    selectTemplate(html: string): void {
-        this.email.Body = `${html} ${this.email.Body}`;
+    useTemplate(): void {
+        this.email.Body = `${this.templatePreview.preview} ${this.email.Body}`;
+        if (this.templatePreview.ref) {
+            this.templatePreview.ref.close();
+        }
     }
 
+    /**
+     * Closes tempate preview
+     */
+    closeTemplatePreview(): void {
+        if (this.templatePreview.ref) {
+            this.templatePreview.ref.close();
+        }
+    }
+
+    /**
+     * Select template for email
+     * @param {MatSelectChange} html
+     */
+    selectTemplate(preview: string): void {
+        this.templatePreview.preview = preview;
+        const ref: MatDialogRef<any> = this.matDialog.open(this.TemplatePreviewDialog);
+        ref.afterClosed().subscribe(() => {
+            this.templatePreview.preview = '';
+        });
+        this.templatePreview.ref = ref;
+        // this.email.Body = `${html} ${this.email.Body}`;
+    }
 
     /**
      * Set groups for selected department
@@ -272,17 +312,18 @@ export class CreateEmailComponent implements OnInit {
      */
     setGroups(departmentId: string): void {
         if (!this.availableTemplates.departments[departmentId]?.groups) {
-            SDKClient.getEmailTemplateGroups(departmentId).then(res => {
-                if (res.response && res.response.length) {
-                    this.availableTemplates.departments[departmentId].groups = this.getDropdownKeyvaluePair(res.response, 'ID');
-                }
-            }).catch(err => {
-                console.error(err);
-                this.appUiService.showSnackbar('Something went wrong while fetching groups', 'failure');
-            });
+            SDKClient.getEmailTemplateGroups(departmentId)
+                .then((res) => {
+                    if (res.response && res.response.length) {
+                        this.availableTemplates.departments[departmentId].groups = this.getDropdownKeyvaluePair(res.response, 'ID');
+                    }
+                })
+                .catch((err) => {
+                    console.error(err);
+                    this.appUiService.showSnackbar('Something went wrong while fetching groups', 'failure');
+                });
         }
     }
-
 
     /**
      * Set Templates for the group
@@ -292,14 +333,16 @@ export class CreateEmailComponent implements OnInit {
     setTemplates(departmentId: string, groupId: string): void {
         const groups = this.availableTemplates.departments[departmentId].groups;
         if (!groups[groupId].templates) {
-            SDKClient.getEmailTemplates({ groupId, type: '' }).then(templateRes => {
-                if (templateRes.response && templateRes.response.length) {
-                    groups[groupId].templates = this.getDropdownKeyvaluePair(templateRes.response, 'ID');
-                }
-            }).catch(err => {
-                console.error(err);
-                this.appUiService.showSnackbar('Something went wrong while fetching templates', 'failure');
-            });
+            SDKClient.getEmailTemplates({ groupId, type: '' })
+                .then((templateRes) => {
+                    if (templateRes.response && templateRes.response.length) {
+                        groups[groupId].templates = this.getDropdownKeyvaluePair(templateRes.response, 'ID');
+                    }
+                })
+                .catch((err) => {
+                    console.error(err);
+                    this.appUiService.showSnackbar('Something went wrong while fetching templates', 'failure');
+                });
         }
     }
 
@@ -308,7 +351,7 @@ export class CreateEmailComponent implements OnInit {
      */
     getDropdownKeyvaluePair(records: any[], idKey: string): any {
         const keyVal = {};
-        records.forEach(r => {
+        records.forEach((r) => {
             keyVal[r[idKey]] = r;
         });
         return keyVal;
