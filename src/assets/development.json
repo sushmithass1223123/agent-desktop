@@ -2774,10 +2774,10 @@
                             ],
                             "Dynamic": [
                                 {
-                                    "Name": "Agent Assist",
+                                    "Name": "Entities",
                                     "Description": "",
                                     "Key": "AgentAssist",
-                                    "Type": "tw-agent-assist",
+                                    "Type": "tw-entities",
                                     "Config": {
                                         "Enabled": true,
                                         "Static": false,
