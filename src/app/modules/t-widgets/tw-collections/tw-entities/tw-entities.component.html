@@ -6,11 +6,20 @@
 
 <tw-wrapper [data]="data">
     <!-- your code goes here -->
-    <div fxFlex fxFill fxLayout="row" fxLayoutAlign="center center">
-        <span class="mat-headline mb-0 text-center">
-            <!-- inorder to access the class variable use angular expression {{ data }} -->
-            {{ data.Name }} widget!
-        </span>
+    <div class="p-12 custom-scroll-adjust" fxLayout="row wrap">
+        <ng-container *ngIf="entities$ | async as entities">
+            <div fxFlex="50" class="mb-8" *ngFor="let entity of entities">
+                <span class="text-bold"> {{ entity.label }} : </span>
+                <div fxLayout="row wrap" fxLayoutGap="10px" fxLayoutAlign="start center">
+                    <div class="p-4" fxLayout fxLayoutAlign="start center" *ngFor="let data of entity.data">
+                        <span> {{ data }} </span>
+                        <button mat-icon-button [cdkCopyToClipboard]="entity.data">
+                            <mat-icon> content_copy </mat-icon>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
     </div>
     <!-- your code goes here -->
 </tw-wrapper>

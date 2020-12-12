@@ -87,7 +87,6 @@ export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDes
 
     /**
      * To process IncomingEmailEvent
-     * 
      * @param {IncomingEmailEvent} evt
      */
     private IncomingEmailEvent = (evt: IncomingEmailEvent) => {
@@ -95,7 +94,7 @@ export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDes
         const emailWidgets = cloneDeep(this.data.Data.Widgets) || [];
 
         const staticWidgets = emailWidgets.Static || [];
-        const dynamicWidgets = JSON.parse(evt.WidgetConfigData) || emailWidgets.Dynamic || [];
+        const dynamicWidgets = emailWidgets.Dynamic || [];
         const aotWidgets = emailWidgets.AOT || [];
 
         // loop the widgets and add append interaction details
