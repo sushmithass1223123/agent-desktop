@@ -529,13 +529,17 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                 map((res: any) => ({
                     ...res,
                     result: res.result.map((x: any, uiId) => {
+                        const addedTime = new Date(x.receivedDate);
+                        const time = x.receivedTime.split(':');
+                        addedTime.setHours(time[0]);
+                        addedTime.setMinutes(time[1]);
                         return {
                             ...x,
                             To: x.mailbox,
                             Skill: x.cmSkill,
                             Subject: x.subject,
                             From: x.from,
-                            addedTime: x.receivedDate,
+                            addedTime,
                             uiId,
                             SessionId: x.sessionID,
                             RouteId: x.routeId
@@ -588,13 +592,17 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                 map((res: any) => ({
                     ...res,
                     result: res.result.map((x: any, uiId) => {
+                        const addedTime = new Date(x.receivedDate);
+                        const time = x.receivedTime.split(':');
+                        addedTime.setHours(time[0]);
+                        addedTime.setMinutes(time[1]);
                         return {
                             ...x,
                             To: x.mailbox,
                             Skill: x.cmSkill,
                             Subject: x.subject,
                             From: x.from,
-                            addedTime: x.receivedDate,
+                            addedTime,
                             uiId,
                             SessionId: x.sessionID,
                             RouteId: x.routeId
@@ -648,13 +656,17 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                 map((res: any) => ({
                     ...res,
                     result: res.result.map((x: any, uiId) => {
+                        const addedTime = new Date(x.receivedDate);
+                        const time = x.receivedTime.split(':');
+                        addedTime.setHours(time[0]);
+                        addedTime.setMinutes(time[1]);
                         return {
                             ...x,
                             To: x.mailbox,
                             Skill: x.cmSkill,
                             Subject: x.subject,
                             From: x.from,
-                            addedTime: x.receivedDate,
+                            addedTime,
                             uiId,
                             SessionId: x.inSessionID,
                             RouteId: x.routeId
