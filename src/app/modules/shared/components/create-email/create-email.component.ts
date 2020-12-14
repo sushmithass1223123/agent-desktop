@@ -1,12 +1,14 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { Component, ElementRef, Input, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
+import { TwEmailTemplatePreviewComponent } from '@modules/t-widgets/tw-collections/tw-email-template-preview/tw-email-template-preview.component';
+import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
-import { CreateEmailInfo } from 'app/models';
-import { SDKClient } from 'tmac-sdk';
+import { CreateEmailInfo, TwWidgetModel } from 'app/models';
+import { EmailTemplate, SDKClient } from 'tmac-sdk';
 
 /**
  * Email creation component view only
@@ -17,19 +19,12 @@ import { SDKClient } from 'tmac-sdk';
     styleUrls: ['./create-email.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class CreateEmailComponent implements OnInit {
-    /**
-     * Set template preview ref
-     */
-    @ViewChild('templatePreviewDialog')
-    TemplatePreviewDialog: TemplateRef<any>;
+export class CreateEmailComponent implements OnInit, OnDestroy {
     /**
      * Template preview data
      */
     templatePreview = {
-        show: false,
-        preview: '',
-        ref: null
+        aots: []
     };
 
     /**
@@ -135,7 +130,7 @@ export class CreateEmailComponent implements OnInit {
      */
     @Input() emailInfo?: CreateEmailInfo;
 
-    constructor(private appUiService: AppUiService, private matDialog: MatDialog) {
+    constructor(private appUiService: AppUiService, private matDialog: MatDialog, private aotService: AOTWidgetService) {
         this.email = {
             To: [],
             CC: [],
@@ -167,6 +162,13 @@ export class CreateEmailComponent implements OnInit {
                 console.error(err);
                 this.appUiService.showSnackbar('Something went wrong while fetching departments', 'failure');
             });
+    }
+
+    /**
+     * Lifecycle hook
+     */
+    ngOnDestroy(): void {
+        this.closeTemplatePreview();
     }
 
     /**
@@ -276,34 +278,55 @@ export class CreateEmailComponent implements OnInit {
     /**
      * Adds template to editor
      */
-    useTemplate(): void {
-        this.email.Body = `${this.templatePreview.preview} ${this.email.Body}`;
-        if (this.templatePreview.ref) {
-            this.templatePreview.ref.close();
-        }
+    useTemplate(template: EmailTemplate): void {
+        this.email.Body = `${template.BodyHTML} ${this.email.Body}`;
+        this.closeTemplatePreview();
+        // if (this.templatePreview.ref) {
+        //     this.templatePreview.ref.close();
+        // }
     }
 
     /**
      * Closes tempate preview
      */
     closeTemplatePreview(): void {
-        if (this.templatePreview.ref) {
-            this.templatePreview.ref.close();
-        }
+        this.matDialog.closeAll();
+        this.templatePreview.aots.forEach((aotID) => {
+            this.aotService.destroyWidget(aotID);
+        });
+        // if (this.templatePreview.ref) {
+        //     this.templatePreview.ref.close();
+        // }
     }
 
     /**
      * Select template for email
      * @param {MatSelectChange} html
      */
-    selectTemplate(preview: string): void {
-        this.templatePreview.preview = preview;
-        const ref: MatDialogRef<any> = this.matDialog.open(this.TemplatePreviewDialog);
-        ref.afterClosed().subscribe(() => {
-            this.templatePreview.preview = '';
-        });
-        this.templatePreview.ref = ref;
-        // this.email.Body = `${html} ${this.email.Body}`;
+    selectTemplate(preview: EmailTemplate): void {
+        // this.templatePreview.preview = preview.BodyHTML;
+        const data = {
+            info: preview,
+            useTemplate: (info: EmailTemplate) => this.useTemplate(info),
+            closeTemplate: () => this.closeTemplatePreview()
+        };
+        if (preview.ID === 4) {
+            const widget = new TwWidgetModel('Template', 'tw-email-template-preview');
+            widget.Config.Anchor = true;
+            widget.Config.Position.W = 800;
+            widget.Config.Position.H = 300;
+            widget.Config.Actions = ['maximize', 'collapse', 'destroy'];
+            widget.Data = data;
+            this.aotService.addWidget(widget);
+            this.templatePreview.aots.push(widget.ID);
+        } else {
+            this.matDialog.open(TwEmailTemplatePreviewComponent, { data });
+            // ref.afterClosed().subscribe(() => {
+            // this.templatePreview.preview = '';
+            // });
+            // this.templatePreview.ref = ref;
+            // this.email.Body = `${html} ${this.email.Body}`;
+        }
     }
 
     /**

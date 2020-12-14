@@ -16,6 +16,8 @@ import { TwCustomComponent } from '@modules/t-widgets/tw-collections/tw-custom/t
 import { TwCustomerSentimentComponent } from '@modules/t-widgets/tw-collections/tw-customer-sentiment/tw-customer-sentiment.component';
 import { TwEmailControlsComponent } from '@modules/t-widgets/tw-collections/tw-email-controls/tw-email-controls.component';
 import { TwEmailPanelComponent } from '@modules/t-widgets/tw-collections/tw-email-panel/tw-email-panel.component';
+import { TwEmailTemplatePreviewComponent } from '@modules/t-widgets/tw-collections/tw-email-template-preview/tw-email-template-preview.component';
+import { TwEntitiesComponent } from '@modules/t-widgets/tw-collections/tw-entities/tw-entities.component';
 import { TwGamificationComponent } from '@modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component';
 import { TwPendingCallbacksComponent } from '@modules/t-widgets/tw-collections/tw-pending-callbacks/tw-pending-callbacks.component';
 import { TwPieChartComponent } from '@modules/t-widgets/tw-collections/tw-pie-chart/tw-pie-chart.component';
@@ -89,7 +91,9 @@ export class TWLibrary {
         'tw-email-panel': TwEmailPanelComponent,
         'tw-email-controls': TwEmailControlsComponent,
         'tw-pending-callbacks': TwPendingCallbacksComponent,
-        'tw-gamification': TwGamificationComponent
+        'tw-gamification': TwGamificationComponent,
+        'tw-entities': TwEntitiesComponent,
+        'tw-email-template-preview': TwEmailTemplatePreviewComponent
     };
 
     /**
