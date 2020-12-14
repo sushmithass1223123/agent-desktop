@@ -467,7 +467,7 @@
     <div fxFlex="100" class="email-open mr-12 border-radius-20 custom-scroll-adjust">
         <ng-container *ngIf="emailSearchRes.data.selected as selectedEmail">
             <div *ngIf="selectedEmail" fxLayout fxLayoutAlign="end" fxLayoutGap="10px" class="my-20 w-95-p">
-                <button mat-raised-button class="border-radius-20">Transfer</button>
+                <button mat-raised-button class="border-radius-20" (click)="transferEmail(selectedEmail)">Transfer</button>
                 <button mat-raised-button class="border-radius-20">Advance</button>
                 <button mat-raised-button class="border-radius-20" (click)="pullEmails([selectedEmail])">Pull</button>
                 <button mat-raised-button class="border-radius-20">Push</button>

@@ -3,15 +3,17 @@ import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
+import { MatDialog } from '@angular/material/dialog';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { DomSanitizer } from '@angular/platform-browser';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
+import { AgentSkillListComponent } from '@modules/shared/components';
 import { TWidgetWrapper } from '@modules/t-widgets/utils';
 import { AppUiService } from '@services/app-ui.service';
 import { COMMON_ERR_MESSAGE, DRAFT_REASONS, INBOX_REASONS, OUTBOX_REASONS } from 'app/constants';
-import { IWidget, ResData } from 'app/interfaces';
+import { AgentSkillListData, IWidget, ResData } from 'app/interfaces';
 import { groupBy } from 'lodash';
 import * as moment from 'moment';
 import { Observable } from 'rxjs';
@@ -139,7 +141,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
         private _fuseConfigService: FuseConfigService,
         private http: HttpClient,
         private domSanitizer: DomSanitizer,
-        private appUiService: AppUiService
+        private appUiService: AppUiService,
+        private matDialog: MatDialog
     ) {
         super();
         this.searchReqObs$ = {
@@ -772,6 +775,45 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                         this.appUiService.showSnackbar('Unable to spam the email', 'failure');
                     });
             }
+        });
+    }
+
+    /**
+     * Transfers email
+     * @param {any} email
+     */
+    transferEmail(email: any): void {
+        const data: AgentSkillListData = {
+            title: 'Email Transfer',
+            type: 'transferEmail',
+            agent: {
+                allowed: true,
+                allowedStates: [],
+                blind: false,
+                source: 'agentId'
+            },
+            skill: {
+                allowed: true,
+                blind: false,
+                channelPrfix: ['em_'],
+                source: 'skill'
+            }
+        };
+        this.matDialog.open(AgentSkillListComponent, {
+            data: {
+                ...data,
+                interactionId: email.InteractionId,
+                otherData: {
+                    type: 'transfer',
+                    sessionId: email.SessionId,
+                    routeId: email.RouteId
+                }
+            },
+            panelClass: 'agent-skill-dialog',
+            minWidth: '30%',
+            maxWidth: '100%',
+            height: '60%',
+            disableClose: true
         });
     }
 }
