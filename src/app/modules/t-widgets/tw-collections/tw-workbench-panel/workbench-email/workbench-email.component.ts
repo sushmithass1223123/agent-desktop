@@ -542,7 +542,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
             );
     };
 
-
     /**
      * Searches through draft emails
      */
@@ -748,6 +747,32 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
             listOfMailboxes: 'singteldemo@tetherfi.com'
         });
         this.doAdvancedSearch();
+    }
+
+    /**
+     * Marks currently selected email as spam
+     */
+    markAsSpam(email: any): void {
+        const confirmDialogRef = this.appUiService.showAppConfirmDialog('generic', 'Confirm Spam', 'Are you sure to mark this email as spam?');
+        confirmDialogRef.afterClosed().subscribe((dialogResult: boolean) => {
+            if (dialogResult) {
+                // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
+                const loader = this.appUiService.showSnackbar('Spamming email', 'loading');
+                SDKClient.markEmailAsSpam({
+                    fromAddress: email.From,
+                    routeId: email.RouteId,
+                    sessionId: email.SessionId
+                })
+                    .then(() => {
+                        loader.dismiss();
+                        this.appUiService.showSnackbar('Email marked as spam');
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                        this.appUiService.showSnackbar('Unable to spam the email', 'failure');
+                    });
+            }
+        });
     }
 }
 
