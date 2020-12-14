@@ -207,48 +207,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                 closed: 'any',
                 assigned: 'any'
             });
-
-            // if (global) {
-            //     advancedSearchToggledFields.forEach((field) => {
-            //         this.advancedSearchForm.controls[field].disable();
-            //     });
-            // } else {
-            //     advancedSearchToggledFields.forEach((field) => {
-            //         this.advancedSearchForm.controls[field].disable();
-            //     });
-            // }
         });
-
-        // this.advancedSearchForm.get('global').valueChanges.subscribe((global) => {
-        //     const toggledFields = [
-        //         // 'email',
-        //         // 'subject',
-        //         // 'content',
-        //         // 'skills',
-        //         // 'agent',
-        //         // 'inSessionid',
-        //         // 'deviceid',
-        //         // 'assignedTo',
-
-        //         // 'hasAttachments',
-
-        //         'replied',
-        //         'closed',
-        //         'assigned'
-
-        //         // 'sesisonid',
-        //         // 'listOfMailboxes'
-        //     ];
-        //     // if (global) {
-        //     //     toggledFields.forEach((field) => {
-        //     //         this.advancedSearchForm.controls[field].disable();
-        //     //     });
-        //     // } else {
-        //     //     toggledFields.forEach((field) => {
-        //     //         this.advancedSearchForm.controls[field].enable();
-        //     //     });
-        //     // }
-        // });
 
         this.doAdvancedSearch();
     }
@@ -795,20 +754,22 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
      * @param {any} email
      */
     transferEmail(email: any): void {
+        const agentConfig = this.data.Data.EmailConfig?.Agent || {};
+        const skillConfig = this.data.Data.EmailConfig?.Skill || {};
         const data: AgentSkillListData = {
             title: 'Email Transfer',
             type: 'transferEmail',
             agent: {
-                allowed: true,
-                allowedStates: [],
-                blind: false,
-                source: 'agentId'
+                allowed: agentConfig.Allowed,
+                allowedStates: agentConfig.AllowedStates,
+                blind: agentConfig.Blind,
+                source: agentConfig.Source
             },
             skill: {
-                allowed: true,
+                allowed: skillConfig.Allowed,
                 blind: false,
-                channelPrfix: ['em_'],
-                source: 'skill'
+                channelPrfix: skillConfig.ChannelPrefix,
+                source: skillConfig.Source
             }
         };
         this.matDialog.open(AgentSkillListComponent, {

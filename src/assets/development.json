@@ -2717,7 +2717,7 @@
                                                 },
                                                 "Data": {
                                                     "Transfer": {
-                                                        "Allowed": false,
+                                                        "Allowed": true,
                                                         "Agent": {
                                                             "Allowed": true,
                                                             "Blind": false,
@@ -3193,7 +3193,25 @@
                                         "ViewState": "restore"
                                     },
                                     "Data": {
-                                        "WorkbenchUrl": "https://dice.tetherfi.cloud:55005/api/workbench"
+                                        "WorkbenchUrl": "https://dice.tetherfi.cloud:55005/api/workbench",
+                                        "EmailConfig" : {
+                                            "Transfer": {
+                                                "Allowed": true,
+                                                "Agent": {
+                                                    "Allowed": true,
+                                                    "Blind": false,
+                                                    "Source": "agentId",
+                                                    "AllowedStates": []
+                                                },
+                                                "Skill": {
+                                                    "Allowed": true,
+                                                    "Source": "skill",
+                                                    "ChannelPrefix": [
+                                                        "EM"
+                                                    ]
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             ]

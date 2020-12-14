@@ -158,6 +158,7 @@
                                 mat-raised-button
                                 class="border-radius-20"
                                 [disabled]="getInboxMessageReq.error"
+                                (click)="transferEmail(currentInteraction)"
                                 matTooltip="Transfer"
                             >
                                 <mat-icon>forward_to_inbox</mat-icon>
