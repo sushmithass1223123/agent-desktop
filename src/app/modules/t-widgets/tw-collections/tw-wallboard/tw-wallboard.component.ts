@@ -1,6 +1,7 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { takeUntil } from 'rxjs/operators';
@@ -25,7 +26,7 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
     /**
      * Table sort Ref
      */
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
+    @ViewChild(MatSort) sort: MatSort;
 
     /**
      * Source used , since reusable component
@@ -57,7 +58,8 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
      * @constructor
      */
     constructor(
-        private _tmacEventService: TMACEventService
+        private _tmacEventService: TMACEventService,
+        private _appUIService: AppUiService
     ) {
         super();
         this.source = '';
@@ -108,7 +110,27 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
      * Updates table data on event
      */
     private wallboardRefreshEvent = (evt: WallboardRefreshEvent) => {
+        // check for skill update
+        if (this.dataSource.data.length && this.dataSource.data.length !== evt.Skills.length) {
+            this._appUIService.showAppSnackbar({
+                message: 'Agent skills has been updated!',
+                state: 'success',
+                duration: 10000
+            });
+        }
+        // assign the data
         this.dataSource = new MatTableDataSource(evt.Skills);
+        // sorting data accessor for nested object sorting
+        // check if the SL is enabled, since we need custom sort for Service Level only!
+        if (this.slEnabled) {
+            this.dataSource.sortingDataAccessor = (item, property) => {
+                switch (property) {
+                    case 'ServiceLevel': return item.BCMSData.SLPercentage;
+                    default: return item[property];
+                }
+            };
+        }
+        // add the sort
         this.dataSource.sort = this.sort;
     }
 

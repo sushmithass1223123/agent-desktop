@@ -50,13 +50,27 @@
         </h3>
 
         <mat-list-item>
-            <mat-slide-toggle fxFlex class="mat-primary" [(ngModel)]="settings.browserNotify" aria-label="Notifications" labelPosition="before">
+            <mat-slide-toggle
+                fxFlex
+                class="mat-primary"
+                [(ngModel)]="settings.desktopAlert"
+                (change)="updateSettings('desktopAlert', $event.checked)"
+                aria-label="Notifications"
+                labelPosition="before"
+            >
                 <h3>Browser Notifications</h3>
             </mat-slide-toggle>
         </mat-list-item>
 
         <mat-list-item>
-            <mat-slide-toggle fxFlex class="mat-primary" [(ngModel)]="settings.notifySound" aria-label="Notifications" labelPosition="before">
+            <mat-slide-toggle
+                fxFlex
+                class="mat-primary"
+                [(ngModel)]="settings.sounds"
+                (change)="updateSettings('sounds', $event.checked)"
+                aria-label="Notifications"
+                labelPosition="before"
+            >
                 <h3>Notifications Sound</h3>
             </mat-slide-toggle>
         </mat-list-item>
@@ -109,13 +123,13 @@
                             <div fxLayout="row" fxLayoutAlign="start center">
                                 <div class="text-bold w-80">Name:</div>
                                 <mat-form-field fxFlex appearance="outline" class="custom with-bg with-border">
-                                    <input matInput required placeholder="Link Name" [(ngModel)]="linkName" />
+                                    <input matInput required placeholder="Name" [(ngModel)]="linkName" />
                                     <mat-error> Link name is required </mat-error>
                                 </mat-form-field>
                             </div>
 
                             <div fxLayout="row" fxLayoutAlign="start center" class="mt-4">
-                                <div class="text-bold w-80">Link:</div>
+                                <div class="text-bold w-80">URL:</div>
                                 <mat-form-field fxFlex floatLabel="never" appearance="standard" class="link-txt mb-8 border-radius-20 border-xs-info">
                                     <textarea
                                         [(ngModel)]="newLink"
@@ -123,7 +137,7 @@
                                         matTextareaAutosize
                                         matAutosizeMinRows="3"
                                         matAutosizeMaxRows="5"
-                                        placeholder="Enter Link Here..."
+                                        placeholder="Enter URL Here..."
                                     ></textarea>
                                 </mat-form-field>
                             </div>

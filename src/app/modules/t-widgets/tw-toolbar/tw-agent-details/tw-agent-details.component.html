@@ -81,8 +81,8 @@
         (menuOpened)="auxOpened = true"
         (menuClosed)="auxOpened = false"
     >
-        <span class="mat-body-2 m-0 username mr-12 line-height-24">{{ agentData.agentName }}</span>
-        <span class="mat-caption agent-status" *ngIf="data.Data.Status">{{ agentData.agentStatus }}</span>
+        <span class="mat-body-2 m-0 w-90-p text-truncate mr-12 line-height-24">{{ agentData.agentName }}</span>
+        <span class="mat-caption w-90-p text-truncate" *ngIf="data.Data.Status">{{ agentData.agentStatus }}</span>
         <mat-icon *ngIf="auxCodeConfig.Enabled" class="arrow-icon s-24" fxHide.xs>keyboard_arrow_down</mat-icon>
     </div>
 
@@ -91,7 +91,7 @@
             mat-menu-item
             *ngFor="let item of auxCodesList"
             (click)="changeStatus(item)"
-            disabled="{{ item.Name === currentAux || item.Code === 'nodata' }}"
+            disabled="{{ item.Name === agentData.agentStatus || item.Code === 'nodata' }}"
         >
             <mat-icon class="{{ item.Code.toLowerCase() }}">
                 {{ item.Code.toLowerCase() === 'available' ? 'check_circle' : item.Code === 'logout' ? 'settings_power' : 'remove_circle' }}

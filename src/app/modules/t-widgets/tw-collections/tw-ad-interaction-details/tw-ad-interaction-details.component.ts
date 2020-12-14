@@ -53,7 +53,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
     /**
      * Minimized displayed columns
      */
-    mindisplayedColumns: string[] = ['Channel', 'Direction', 'User', 'CreatedTime'];
+    mindisplayedColumns: string[] = ['Channel', 'Direction', 'User', 'CreatedDateTime'];
 
     /**
      * Maximized displayed columns
@@ -65,8 +65,8 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         'User',
         'Dnis',
         'Intent',
-        'CreatedTime',
-        'ClosedTime',
+        'CreatedDateTime',
+        'ClosedDateTime',
         'ActiveTime',
         'AgentComment'
     ];

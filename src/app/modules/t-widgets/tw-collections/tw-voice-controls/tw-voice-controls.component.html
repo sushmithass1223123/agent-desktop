@@ -145,7 +145,15 @@
                 <mat-icon>phone_paused</mat-icon>
             </button>
 
-            <button *ngIf="status === 'hold'" mat-flat-button class="success" #unHoldBtn matTooltip="Unhold" (click)="unHoldCall(unHoldBtn)">
+            <button
+                *ngIf="status === 'hold'"
+                mat-flat-button
+                class="success"
+                #unHoldBtn
+                matTooltip="Unhold"
+                [disabled]="tempCallRef"
+                (click)="unHoldCall(unHoldBtn)"
+            >
                 <mat-icon>phone_in_talk</mat-icon>
             </button>
 
@@ -207,20 +215,19 @@
 
             <br />
 
-            <!-- 
-            <button
+            <!-- <button
                 *ngIf="(isMSCall && tempCallRef?.status === 'connected') || tempCallRef?.status === 'hold'"
                 mat-flat-button
                 [class]="tempCallRef?.status === 'connected' ? 'warning' : 'success'"
-                #confirmHoldBtn
+                #holdUnholdBtn
                 [matTooltip]="tempCallRef?.status === 'connected' ? 'Hold Call' : 'Unhold Call'"
-                (click)="holdUnholdMSConsultCall(confirmHoldBtn)"
+                (click)="holdUnholdMSConsultCall(holdUnholdBtn)"
             >
                 <mat-icon>phone_paused</mat-icon>
             </button> -->
 
             <button
-                *ngIf="isMSCall && tempCallRef?.status === 'connected'"
+                *ngIf="tempCallRef?.isConsult && tempCallRef?.status === 'connected'"
                 mat-flat-button
                 class="border-radius-20"
                 color="primary"
@@ -232,7 +239,7 @@
             </button>
 
             <button
-                *ngIf="isMSCall && tempCallRef?.status === 'connected'"
+                *ngIf="tempCallRef?.isConsult && tempCallRef?.status === 'connected'"
                 mat-flat-button
                 class="border-radius-20"
                 color="warn"
