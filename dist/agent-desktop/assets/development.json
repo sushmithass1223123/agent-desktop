@@ -137,15 +137,13 @@
                                         {
                                             "Name": "Make Call",
                                             "Enable": true,
-                                            "EnableState": "fulfillment",
+                                            "EnableState": "calloutbound",
                                             "Type": "voice",
                                             "SubType": "",
                                             "Icon": "call",
                                             "Data": {
                                                 "Source": "station",
-                                                "AllowedState": [
-                                                    "Available"
-                                                ]
+                                                "AllowedState": []
                                             }
                                         },
                                         {
@@ -382,7 +380,7 @@
                                     },
                                     "Data": {
                                         "Source": "dashboard",
-                                        "SLEnabled": false
+                                        "SLEnabled": true
                                     }
                                 }
                             ],
@@ -666,7 +664,7 @@
                                         "Header": true
                                     },
                                     "Data": {
-                                        "AutoOpen": true,
+                                        "AutoOpen": false,
                                         "OpenInNew": true,
                                         "Url": "https://projects.zoho.com/portal/ilink#todomilestones/736040000007428009/customview/"
                                     }
@@ -1863,7 +1861,7 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "AutoOpen": true,
+                                        "AutoOpen": false,
                                         "OpenInNew": true,
                                         "Url": "https://projects.zoho.com/portal/ilink#todomilestones/736040000007428009/customview/"
                                     }
@@ -2582,7 +2580,7 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "AutoOpen": true,
+                                        "AutoOpen": false,
                                         "OpenInNew": true,
                                         "Url": "https://projects.zoho.com/portal/ilink#todomilestones/736040000007428009/customview/"
                                     }
@@ -2774,10 +2772,10 @@
                             ],
                             "Dynamic": [
                                 {
-                                    "Name": "Agent Assist",
+                                    "Name": "Entities",
                                     "Description": "",
                                     "Key": "AgentAssist",
-                                    "Type": "tw-agent-assist",
+                                    "Type": "tw-entities",
                                     "Config": {
                                         "Enabled": true,
                                         "Static": false,
@@ -3087,7 +3085,7 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "AutoOpen": true,
+                                        "AutoOpen": false,
                                         "OpenInNew": true,
                                         "Url": "https://projects.zoho.com/portal/ilink#todomilestones/736040000007428009/customview/"
                                     }

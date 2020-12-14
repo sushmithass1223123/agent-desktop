@@ -65,7 +65,7 @@ export class TwEmailTemplatePreviewComponent extends TWidgetWrapper implements O
     ngOnInit(): void {
         const data = this.dialogData || this.data.Data;
         const templateInfo: EmailTemplate = data.info;
-        if (templateInfo.ID === 4) {
+        if (templateInfo.Type === 'Form') {
             this.safeHtml = this.domSanitizer.bypassSecurityTrustHtml(
                 templateInfo.BodyHTML.replaceAll(
                     '##Input##',

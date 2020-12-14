@@ -248,7 +248,7 @@
                     [cdkConnectedOverlayOpen]="showAdvancedSearchOverlay"
                     cdkConnectedOverlayHasBackdrop
                     cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-                    (overlayOutsideClick)="showAdvancedSearchOverlay = false"
+                    (overlayOutsideClick)="showAdvancedSearchOverlay = false; searchForm.reset()"
                 >
                     <div class="mat-elevation-z1 w-50-p border-radius-20 p-12" [ngClass]="fuseBg.body">
                         <form
@@ -437,6 +437,9 @@
                                                 <div class="message">
                                                     <span [innerHTML]="message.message"></span>
                                                     <!-- <span class="spacer"></span> -->
+                                                </div>
+                                                <div class="mat-caption">
+                                                    {{ message.time ? (message.time | date: 'short') : '' }}
                                                 </div>
                                             </div>
                                         </div>

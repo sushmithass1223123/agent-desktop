@@ -90,7 +90,7 @@
                     </ng-template>
                 </mat-form-field>
             </form>
-            
+
             <button mat-icon-button (click)="doAdvancedSearch()" matTooltip="Refresh">
                 <mat-icon>refresh</mat-icon>
             </button>
@@ -465,63 +465,62 @@
     </div>
 
     <div fxFlex="100" class="email-open mr-12 border-radius-20 custom-scroll-adjust">
-        <div *ngIf="emailSearchRes.data.selected" fxLayout fxLayoutAlign="end" fxLayoutGap="10px" class="my-20 w-95-p">
-            <button mat-raised-button class="border-radius-20">Transfer</button>
-            <button mat-raised-button class="border-radius-20">Advance</button>
-            <button mat-raised-button class="border-radius-20" (click)="pullEmails([emailSearchRes.data.selected])">Pull</button>
-            <button mat-raised-button class="border-radius-20">Push</button>
-        </div>
-
-        <div
-            *ngIf="emailSearchRes.data.selected"
-            class="email-open__body w-95-p mx-auto border-radius-20 pt-20 pb-40 px-28 mb-20"
-            [ngClass]="
-                fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
-                    ? fuseConfig.layout.anchorWidget.contentBackground
-                    : fuseConfig.layout.widget.customBackgroundColor === true
-                    ? fuseConfig.layout.widget.contentBackground
-                    : ''
-            "
-        >
-            <div class="mat-title">{{ emailSearchRes.data.selected.Subject || 'NA' }}</div>
-            <div fxLayout fxLayoutAlign="space-between">
-                <div fxFlex="80">
-                    <p class="font-weight-600 my-4">To : {{ emailSearchRes.data.selected.To }}</p>
-                    <p class="font-weight-600 my-4" *ngIf="emailSearchRes.data.selected.ccList">CC : {{ emailSearchRes.data.selected.ccList }}</p>
-                    <p class="my-4 text-bold">From : {{ emailSearchRes.data.selected.From || 'NA' }}</p>
-                    <p class="my-4 text-bold">Status : {{ emailSearchRes.data.selected.currentStatus || 'NA' }}</p>
-                    <p class="my-4 text-bold">Prirority : {{ emailSearchRes.data.selected.priority || 'NA' }}</p>
-                    <p class="my-4 text-bold">Agent : {{ emailSearchRes.data.selected.agentName || 'NA' }}</p>
-                    <p class="my-4 text-bold">
-                        Replied Status : {{ emailSearchRes.data.selected.repliedStatus === '1' ? 'Replied' : 'Not Replied' }}
-                    </p>
-                    <p class="my-4 text-bold">
-                        Closed Status : {{ emailSearchRes.data.selected.closedBy ? 'Closed by' + emailSearchRes.data.selected.closedBy : 'Open' }}
-                    </p>
-                    <p>
-                        <mat-icon>grading</mat-icon> <span class="text-bold">{{ emailSearchRes.data.selected.intent || 'NA' }}</span>
-                    </p>
-                </div>
-                <div fxFlex="15">
-                    <p class="my-4">{{ emailSearchRes.data.selected.addedTime | date: 'longDate' }}</p>
-                    <p class="my-4">{{ emailSearchRes.data.selected.addedTime | date: 'shortTime' }}</p>
-                </div>
+        <ng-container *ngIf="emailSearchRes.data.selected as selectedEmail">
+            <div *ngIf="selectedEmail" fxLayout fxLayoutAlign="end" fxLayoutGap="10px" class="my-20 w-95-p">
+                <button mat-raised-button class="border-radius-20" (click)="transferEmail(selectedEmail)">Transfer</button>
+                <button mat-raised-button class="border-radius-20">Advance</button>
+                <button mat-raised-button class="border-radius-20" (click)="pullEmails([selectedEmail])">Pull</button>
+                <button mat-raised-button class="border-radius-20">Push</button>
+                <button mat-raised-button class="border-radius-20" color="accent" (click)="markAsSpam(selectedEmail)">Mark As Spam</button>
             </div>
-            <mat-chip-list #chipList aria-label="file selection">
-                <mat-chip class="p-16" *ngFor="let file of emailSearchRes.data.selected.attachmentList">
-                    <mat-icon>attach_file</mat-icon>
-                    <div class="ml-8 my-0">
-                        <p class="m-0">{{ file.Name }}</p>
-                        <a target="_blank" [href]="file.URL">
-                            <small>View file</small>
-                        </a>
-                    </div>
-                </mat-chip>
-            </mat-chip-list>
 
-            <!-- <span>Subject : {{ emailSearchRes.data.selected.Subject }}</span> -->
-            <div class="mt-20" [innerHtml]="emailSearchRes.data.selected.body"></div>
-        </div>
+            <div
+                *ngIf="selectedEmail"
+                class="email-open__body w-95-p mx-auto border-radius-20 pt-20 pb-40 px-28 mb-20"
+                [ngClass]="
+                    fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                        ? fuseConfig.layout.anchorWidget.contentBackground
+                        : fuseConfig.layout.widget.customBackgroundColor === true
+                        ? fuseConfig.layout.widget.contentBackground
+                        : ''
+                "
+            >
+                <div class="mat-title">{{ selectedEmail.Subject || 'NA' }}</div>
+                <div fxLayout fxLayoutAlign="space-between">
+                    <div fxFlex="80">
+                        <p class="font-weight-600 my-4">To : {{ selectedEmail.To }}</p>
+                        <p class="font-weight-600 my-4" *ngIf="selectedEmail.ccList">CC : {{ selectedEmail.ccList }}</p>
+                        <p class="my-4 text-bold">From : {{ selectedEmail.From || 'NA' }}</p>
+                        <p class="my-4 text-bold">Status : {{ selectedEmail.currentStatus || 'NA' }}</p>
+                        <p class="my-4 text-bold">Prirority : {{ selectedEmail.priority || 'NA' }}</p>
+                        <p class="my-4 text-bold">Agent : {{ selectedEmail.agentName || 'NA' }}</p>
+                        <p class="my-4 text-bold">Replied Status : {{ selectedEmail.repliedStatus === '1' ? 'Replied' : 'Not Replied' }}</p>
+                        <p class="my-4 text-bold">Closed Status : {{ selectedEmail.closedBy ? 'Closed by' + selectedEmail.closedBy : 'Open' }}</p>
+                        <p>
+                            <mat-icon>grading</mat-icon> <span class="text-bold">{{ selectedEmail.intent || 'NA' }}</span>
+                        </p>
+                    </div>
+                    <div fxFlex="15">
+                        <p class="my-4">{{ selectedEmail.addedTime | date: 'longDate' }}</p>
+                        <p class="my-4">{{ selectedEmail.addedTime | date: 'shortTime' }}</p>
+                    </div>
+                </div>
+                <mat-chip-list #chipList aria-label="file selection">
+                    <mat-chip class="p-16" *ngFor="let file of selectedEmail.attachmentList">
+                        <mat-icon>attach_file</mat-icon>
+                        <div class="ml-8 my-0">
+                            <p class="m-0">{{ file.Name }}</p>
+                            <a target="_blank" [href]="file.URL">
+                                <small>View file</small>
+                            </a>
+                        </div>
+                    </mat-chip>
+                </mat-chip-list>
+
+                <!-- <span>Subject : {{ selectedEmail.Subject }}</span> -->
+                <div class="mt-20" [innerHtml]="selectedEmail.body"></div>
+            </div>
+        </ng-container>
 
         <div *ngIf="!emailSearchRes.data.selected" fxLayout="column" fxLayoutAlign="center center" class="w-100-p h-100-p">
             <mat-icon class="s-128 mb-16 select-message-icon hint-text"> email </mat-icon>

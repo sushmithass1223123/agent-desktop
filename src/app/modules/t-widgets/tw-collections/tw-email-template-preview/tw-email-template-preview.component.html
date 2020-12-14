@@ -1,13 +1,12 @@
-<tw-wrapper [data]="data">
-    <ng-container *ngIf="templateInfo.ID !== 4">
-        <div [innerHTML]="templateInfo.BodyHTML"></div>
-        <div class="w-100-p" fxLayout fxLayoutAlign="end center">
-            <button mat-raised-button color="primary" (click)="use(templateInfo)">Use</button>
-            <button mat-button color="accent" (click)="close()">Cancel</button>
-        </div>
-    </ng-container>
-
-    <ng-container *ngIf="templateInfo.ID === 4">
+<ng-container *ngIf="templateInfo.Type !== 'Form'">
+    <div [innerHTML]="templateInfo.BodyHTML"></div>
+    <div class="w-100-p" fxLayout fxLayoutAlign="end center">
+        <button mat-raised-button color="primary" (click)="use(templateInfo)">Use</button>
+        <button mat-button color="accent" (click)="close()">Cancel</button>
+    </div>
+</ng-container>
+<ng-container *ngIf="templateInfo.Type === 'Form'">
+    <tw-wrapper [data]="data">
         <div class="p-8">
             <div [innerHTML]="safeHtml"></div>
             <div class="w-100-p" fxLayout fxLayoutAlign="end center">
@@ -15,5 +14,5 @@
                 <button mat-button color="accent" (click)="close()">Cancel</button>
             </div>
         </div>
-    </ng-container>
-</tw-wrapper>
+    </tw-wrapper>
+</ng-container>

@@ -79,13 +79,13 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         /**
          * Current agent list ref
          */
-        agentList: any[],
+        agentList: any[];
         /**
-         * Mat table data 
+         * Mat table data
          */
         tableData: {
             /**
-             * Data source 
+             * Data source
              */
             source: MatTableDataSource<AgentModel>;
             /**
@@ -103,11 +103,11 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
      */
     skillListTable: {
         /**
-         *  Mat table data 
+         *  Mat table data
          */
         tableData: {
             /**
-             * Data source 
+             * Data source
              */
             source: MatTableDataSource<any>;
             /**
@@ -188,13 +188,12 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
     @ViewChild(SharedWrapperComponent) wrapperComponent: SharedWrapperComponent;
 
     /**
-     * Constructor 
+     * Constructor
      */
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: AgentSkillListData,
         private _fuseConfigService: FuseConfigService,
         private _appUIService: AppUiService
-
     ) {
         this.agentListTable = {
             agentList: [],
@@ -204,7 +203,6 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 source: new MatTableDataSource([])
             }
         };
-
 
         this.skillListTable = {
             tableData: {
@@ -275,22 +273,17 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 break;
         }
 
-        this._fuseConfigService.config
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(
-                (config: any) => {
-                    this.fuseConfig = config;
-                }
-            );
+        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+            this.fuseConfig = config;
+        });
 
         // get wallboard skills
-        SDKClient.getTmacWallboardSkills()
-            .then((dt) => {
-                if (dt.response.length > 0) {
-                    // assign all the skills
-                    this.allSkills = orderBy(dt.response, ['SkillName'], ['asc']);
-                }
-            });
+        SDKClient.getTmacWallboardSkills().then((dt) => {
+            if (dt.response.length > 0) {
+                // assign all the skills
+                this.allSkills = orderBy(dt.response, ['SkillName'], ['asc']);
+            }
+        });
 
         // check if agent allowed then load agent list
         if (this.data?.agent.allowed) {
@@ -301,8 +294,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
             this.loadSkillList();
         }
 
-
-        // check for blind 
+        // check for blind
         this.checkForBlind();
     }
 
@@ -323,8 +315,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
     private checkForBlind(): void {
         if (this.activeSwitcher === 'agentList') {
             this.blindAllowed = this.data?.agent.blind;
-        }
-        else {
+        } else {
             this.blindAllowed = this.data?.skill.blind;
         }
     }
@@ -366,7 +357,6 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
     private async transferCall(): Promise<void> {
         this.loading = true;
         try {
-
             // init response
             let result: IResponseData<CommandResultEvent>;
 
@@ -378,8 +368,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                     interactionId: this.interactionId.toString(),
                     number: this.selectedItem
                 });
-            }
-            else {
+            } else {
                 // for consult call and PBX blind use the same method
                 result = await SDKClient.transferCall({
                     comment: this.comments,
@@ -388,19 +377,26 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 });
             }
 
-            // check the response 
+            // check the response
             if (result.response?.ResultCode === 0) {
-                // transfer call success 
-                this._appUIService.showSnackbar(`${this.isConsult ? 'Consult transfer' : 'Blind transfer'} call initiated to ${this.selectedItem} successfully`);
+                // transfer call success
+                this._appUIService.showSnackbar(
+                    `${this.isConsult ? 'Consult transfer' : 'Blind transfer'} call initiated to ${this.selectedItem} successfully`
+                );
                 this.close();
-            }
-            else {
+            } else {
                 // transfer call failed
-                this._appUIService.showSnackbar(`${this.isConsult ? 'Consult transfer' : 'Blind transfer'} call initiation failed, please try again!`, 'failure');
+                this._appUIService.showSnackbar(
+                    `${this.isConsult ? 'Consult transfer' : 'Blind transfer'} call initiation failed, please try again!`,
+                    'failure'
+                );
             }
         } catch (error) {
             //     // transfer call error
-            this._appUIService.showSnackbar(`${this.isConsult ? 'Consult transfer' : 'Blind transfer'} call initiation error, please try again!`, 'failure');
+            this._appUIService.showSnackbar(
+                `${this.isConsult ? 'Consult transfer' : 'Blind transfer'} call initiation error, please try again!`,
+                'failure'
+            );
         }
 
         // set loading to false
@@ -434,19 +430,26 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 });
             }
 
-            // check the response 
+            // check the response
             if (result.response?.ResultCode === 0) {
-                // transfer call success 
-                this._appUIService.showSnackbar(`${this.isConsult ? 'Consult conference' : 'Blind conference'} call initiated to ${this.selectedItem} successfully`);
+                // transfer call success
+                this._appUIService.showSnackbar(
+                    `${this.isConsult ? 'Consult conference' : 'Blind conference'} call initiated to ${this.selectedItem} successfully`
+                );
                 this.close();
-            }
-            else {
+            } else {
                 // transfer call failed
-                this._appUIService.showSnackbar(`${this.isConsult ? 'Consult conference' : 'Blind conference'} call initiation failed, please try again!`, 'failure');
+                this._appUIService.showSnackbar(
+                    `${this.isConsult ? 'Consult conference' : 'Blind conference'} call initiation failed, please try again!`,
+                    'failure'
+                );
             }
         } catch (error) {
             //     // transfer call error
-            this._appUIService.showSnackbar(`${this.isConsult ? 'Consult conference' : 'Blind conference'} call initiation error, please try again!`, 'failure');
+            this._appUIService.showSnackbar(
+                `${this.isConsult ? 'Consult conference' : 'Blind conference'} call initiation error, please try again!`,
+                'failure'
+            );
         }
 
         // set loading to false
@@ -473,12 +476,11 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                     toAgentId: this.selectedItem,
                     toTmacServer: this.selectedRow.row.TmacServer
                 })
-                    .then(dt => {
+                    .then((dt) => {
                         this.loading = false;
                         if (dt.response.ResultCode >= 0) {
                             this._appUIService.showSnackbar(`Chat ${type} notification sent to remote agent, Please wait for response.`);
-                        }
-                        else {
+                        } else {
                             this._appUIService.showSnackbar(dt.response.ResultMessage, 'failure');
                         }
                     })
@@ -499,7 +501,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                     toAgentId: this.selectedItem,
                     toTmacServer: this.selectedRow.row.TmacServer
                 })
-                    .then(dt => {
+                    .then((dt) => {
                         this.loading = false;
                         // transfer success
                         if (dt.response.ResultCode >= 0) {
@@ -525,12 +527,11 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 isBlind: true,
                 skillId: this.selectedItem
             })
-                .then(dt => {
+                .then((dt) => {
                     this.loading = false;
                     if (dt.response.ResultCode >= 0) {
                         this.close();
-                    }
-                    else {
+                    } else {
                         this._appUIService.showSnackbar(`Chat ${type} to queue failed, please try again`, 'failure');
                     }
                 })
@@ -538,8 +539,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                     this.loading = false;
                     this._appUIService.showSnackbar(`Chat ${type} to queue error, please try again`, 'failure');
                 });
-        }
-        else {
+        } else {
             // no row selected
             this._appUIService.showSnackbar('Error: No row selected to transfer chat', 'failure');
             this.close();
@@ -552,29 +552,27 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
 
     /**
      * Switch tab
-     * 
+     *
      * @param item
-     * 
+     *
      */
-    switchTab(item:
-        {
-            /**
-             * Key
-             */
-            key: string
-        }): void {
+    switchTab(item: {
+        /**
+         * Key
+         */
+        key: string;
+    }): void {
         // assign active switcher
         this.activeSwitcher = item.key;
 
         // check the key
         if (item.key === 'agentList') {
             this.mainLabel = 'Agent ID';
-        }
-        else {
+        } else {
             this.mainLabel = 'Skill/VDN';
         }
 
-        // check for blind 
+        // check for blind
         this.checkForBlind();
         // clear the selection
         this.selectedItem = '';
@@ -584,7 +582,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
 
     /**
      * To filter agent list based on selected skill
-     * 
+     *
      */
     filterAgentList(): void {
         if (this.agentListTable.agentList.length > 0 && this.selectedSkill) {
@@ -623,15 +621,14 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         // clear grid selection if any
         if (this.activeSwitcher === 'agentList') {
             this.agentListTable.tableData.selection.clear();
-        }
-        else {
+        } else {
             this.skillListTable.tableData.selection.clear();
         }
     }
 
     /**
      * To load agent list
-     * 
+     *
      * @param {boolean} reload
      */
     loadAgentList(reload: boolean): void {
@@ -643,8 +640,9 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 // check if data found
                 if (dt.response.length > 0) {
                     // filter the same agent and bots from the list
-                    dt.response = dt.response.filter((r: AgentModel) => r.LoginID !== SDKClient.getAgentData().agentId &&
-                        r.AgentProfile.AccessRole.toLowerCase() !== 'chatbot');
+                    dt.response = dt.response.filter(
+                        (r: AgentModel) => r.LoginID !== SDKClient.getAgentData().agentId && r.AgentProfile.AccessRole.toLowerCase() !== 'chatbot'
+                    );
                     this.agentListTable.tableData.source.data = dt.response;
                     this.agentListTable.agentList = dt.response;
                     this.agentListTable.tableData.source.sort = this.sort;
@@ -662,7 +660,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * To load skill list 
+     * To load skill list
      */
     loadSkillList(): void {
         this.loading = true;
@@ -676,7 +674,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                     const channelPrefix = this.data?.skill.channelPrfix || [];
                     let list: FavouriteSkill[] = [];
                     if (channelPrefix.length > 0) {
-                        channelPrefix.forEach(prefix => {
+                        channelPrefix.forEach((prefix) => {
                             const filtered = dt.response.filter((item) => {
                                 if (item.Name.toLowerCase().startsWith(prefix.toLowerCase())) {
                                     return item;
@@ -735,8 +733,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                         type: 'agent',
                         row: row
                     };
-                }
-                else {
+                } else {
                     this._appUIService.showSnackbar(`Agent ${row.AgentName} is not in valid state`, 'failure');
                 }
             })
@@ -764,7 +761,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         row.CIQ = 'loading';
         // get queue status from server
         SDKClient.getQueueStatus(row.ID)
-            .then(dt => {
+            .then((dt) => {
                 this.loading = false;
                 // source to select
                 const source = this.data?.skill.source || 'skill';
@@ -785,8 +782,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                         type: 'skill',
                         row: row
                     };
-                }
-                else {
+                } else {
                     this._appUIService.showSnackbar(`Failed to get skill ${row.ID} status`, 'failure');
                     row.Staff = 'NA';
                     row.Avail = 'NA';
@@ -816,7 +812,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
 
     /**
      * To do action based on type
-     * 
+     *
      * @param consult
      */
     executeAction(consult: boolean): void {
@@ -836,6 +832,9 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
             case 'conferenceChat':
                 this.transferConferenceChat();
                 break;
+            case 'transferEmail':
+                this.transferEmail();
+                break;
             default:
                 this._appUIService.showSnackbar('Error: NotImplementedException', 'failure');
                 this.close();
@@ -845,7 +844,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
 
     /**
      * To close the parent wrapper component
-     * 
+     *
      * @param {any} data
      */
     close(): void {
@@ -857,5 +856,57 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
             });
         }
         this.wrapperComponent.close();
+    }
+
+    /**
+     * Transfers email
+     */
+    private transferEmail(): void {
+        this.loading = true;
+        const { routeId, sessionId } = this.data.otherData;
+        // agent transfer/conf
+        if (this.selectedRow?.type === 'agent') {
+            SDKClient.transferEmailToAgent({
+                routeId,
+                sessionId,
+                toAgentId: this.selectedItem
+            })
+                .then((res) => {
+                    this.loading = false;
+                    if (res.response >= -1) {
+                        this._appUIService.showSnackbar('Email transferred successfully', 'success');
+                        this.close();
+                    } else {
+                        console.error(res);
+                        this._appUIService.showSnackbar('Email transfer failed', 'failure');
+                    }
+                })
+                .catch((err) => {
+                    this.loading = false;
+                    console.error(err);
+                    this._appUIService.showSnackbar('Email transfer failed', 'failure');
+                });
+        } else {
+            SDKClient.transferEmailToSkill({
+                routeId,
+                sessionId,
+                skillId: this.selectedItem
+            })
+                .then((res) => {
+                    this.loading = false;
+                    if (res.response >= -1) {
+                        this._appUIService.showSnackbar('Email transferred successfully', 'success');
+                        this.close();
+                    } else {
+                        console.error(res);
+                        this._appUIService.showSnackbar('Email transfer failed', 'failure');
+                    }
+                })
+                .catch((err) => {
+                    this.loading = false;
+                    console.error(err);
+                    this._appUIService.showSnackbar('Email transfer failed', 'failure');
+                });
+        }
     }
 }
