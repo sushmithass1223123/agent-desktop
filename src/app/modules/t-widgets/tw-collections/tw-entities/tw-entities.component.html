@@ -13,7 +13,7 @@
                 <div fxLayout="row wrap" fxLayoutGap="10px" fxLayoutAlign="start center">
                     <div class="p-4" fxLayout fxLayoutAlign="start center" *ngFor="let data of entity.data">
                         <span> {{ data }} </span>
-                        <button mat-icon-button [cdkCopyToClipboard]="entity.data">
+                        <button mat-icon-button [cdkCopyToClipboard]="data">
                             <mat-icon> content_copy </mat-icon>
                         </button>
                     </div>

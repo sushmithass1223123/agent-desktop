@@ -21,6 +21,7 @@ import { TwCustomerJourneyComponent } from './tw-customer-journey/tw-customer-jo
 import { TwCustomerSentimentComponent } from './tw-customer-sentiment/tw-customer-sentiment.component';
 import { TwEmailControlsComponent } from './tw-email-controls/tw-email-controls.component';
 import { TwEmailPanelComponent } from './tw-email-panel/tw-email-panel.component';
+import { TwEmailTemplatePreviewComponent } from './tw-email-template-preview/tw-email-template-preview.component';
 import { TwEntitiesComponent } from './tw-entities/tw-entities.component';
 import { RaceCarTrackComponent } from './tw-gamification/race-car-track/race-car-track.component';
 import { TwGamificationComponent } from './tw-gamification/tw-gamification.component';
@@ -90,7 +91,8 @@ const collectionComponents = [
     TwPendingCallbacksComponent,
     TwGamificationComponent,
     RaceCarTrackComponent,
-    TwEntitiesComponent
+    TwEntitiesComponent,
+    TwEmailTemplatePreviewComponent
 ];
 
 /**
