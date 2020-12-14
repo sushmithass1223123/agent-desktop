@@ -4,7 +4,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
-import { AgentSkillListComponent, AppConfirmDialogComponent } from '@modules/shared/components';
+import { AgentSkillListComponent } from '@modules/shared/components';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
@@ -31,7 +31,7 @@ import {
     CallTransferRemoteConnectedEvent,
     IAgentData,
     IResponse,
-    IUIEvent,
+
     IVRDataEvent,
     MediaServerEvent,
     SDKClient,
@@ -172,6 +172,14 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
          * Type of call
          */
         type: '' | 'transfer' | 'conference';
+        /**
+         * Is consult transfer/conference
+         */
+        isConsult?: boolean;
+        /**
+         * Source of transfer/conference
+         */
+        source?: string;
     } = null;
     /**
      * Call lines ref
@@ -180,7 +188,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Confirm dialog ref
      */
-    confirmDialogRef: MatDialogRef<AppConfirmDialogComponent, any>;
+    dialogRef: MatDialogRef<any, any>;
     /**
      * Saved interaction comments
      */
@@ -307,6 +315,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         // call the wrapper destroy method
         this.destroyWrapper();
 
+        // stop duration timer
+        this.stopTimer.next();
+
         // this.deRegisterFromEvents();
     }
 
@@ -379,15 +390,21 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         //     return;
         // }
 
+        // stop duration timer
+        this.stopTimer.next();
+
         // subscribe to the timer
         timer(1000, 1000)
-            .pipe(takeUntil(this.unsubscribeAll), takeUntil(this.stopTimer))
+            .pipe(
+                takeUntil(this.stopTimer)
+            )
             .subscribe(val => {
                 this.duration = (val + 1) * 1000;
             });
 
         // set the status
         this.status = 'connected';
+
         // update the interaction status and user
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
             status: 'connected',
@@ -413,6 +430,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // set the status
         this.status = 'disconnected';
+
         // update the interaction status and user
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
             status: 'disconnected'
@@ -431,7 +449,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         }
 
         // close all confirm dialogs
-        this.confirmDialogRef?.close();
+        this.dialogRef?.close();
     }
 
     /**
@@ -467,6 +485,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // set the status
         this.status = 'connected';
+
         // update the interaction status
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
             status: 'connected'
@@ -485,6 +504,18 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         // if (evt.InteractionID !== this.interactionId) {
         //     return;
         // }
+
+        // show confirm/cancel buttons
+        this.tempCallRef = {
+            ...this.tempCallRef,
+            status: 'init',
+            type: 'transfer'
+        };
+
+        // for blind transfer to agent, we need to call transfer complete manually 
+        if (!this.tempCallRef?.isConsult && this.tempCallRef?.source === 'agent') {
+            this.confirmCallFn(true, null);
+        }
     }
 
     /**
@@ -503,6 +534,13 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             status: 'connected',
             type: 'transfer'
         };
+
+        // update the interaction status and user
+        this._interactionManagerService.updateInteraction(this.interactionId, {
+            otherData: {
+                tempCallRef: this.tempCallRef
+            }
+        });
     }
 
     /**
@@ -516,6 +554,13 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         // }
 
         this.tempCallRef = null;
+
+        // update the interaction status and user
+        this._interactionManagerService.updateInteraction(this.interactionId, {
+            otherData: {
+                tempCallRef: this.tempCallRef
+            }
+        });
     }
 
     /**
@@ -527,6 +572,13 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         // if (evt.InteractionID !== this.interactionId) {
         //     return;
         // }
+
+        // show confirm/cancel buttons
+        this.tempCallRef = {
+            ...this.tempCallRef,
+            status: 'init',
+            type: 'conference'
+        };
     }
 
     /**
@@ -558,6 +610,14 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         // }
 
         this.tempCallRef = null;
+
+        // set the status
+        this.status = 'connected';
+
+        // update the interaction status
+        this._interactionManagerService.updateInteraction(evt.InteractionID, {
+            status: 'connected'
+        });
     }
 
     /**
@@ -569,6 +629,22 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         // if (evt.InteractionID !== this.interactionId) {
         //     return;
         // }
+
+        this.tempCallRef = null;
+
+        // for ms call 
+        if (this.isMSCall) {
+            this.handleConferenceMixer();
+        }
+        else {
+            // set the status
+            this.status = 'connected';
+
+            // update the interaction status
+            this._interactionManagerService.updateInteraction(evt.InteractionID, {
+                status: 'connected'
+            });
+        }
     }
 
     /**
@@ -753,6 +829,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             if (direction === 'out' && this.callLines.length > 0) {
                 // its a conf/trasnfer call, store the sessionId ref
                 this.tempCallRef = {
+                    ... this.tempCallRef,
                     status: 'init',
                     sessionID: sessionId,
                     type: ''
@@ -772,7 +849,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             this._interactionManagerService.updateInteraction(this.interactionId, {
                 otherData: {
                     avConns: this.avConns,
-                    callLines: this.callLines
+                    callLines: this.callLines,
+                    tempCallRef: this.tempCallRef
                 }
             });
 
@@ -859,11 +937,32 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             case 'call-ended':
                 // play call ended tone
                 this._appUIService.playAudio('hung-up', 0.5, false);
+                // get the index of session id from call line list
+                const index = this.callLines.indexOf(sessionId);
+                // if found, then remove
+                if (index > -1) {
+                    this.callLines.splice(index, 1);
+                }
                 // close the av connection
                 this.avConns[sessionId]?.close();
                 // check if the disconnect is for transfer/conference call
                 if (sessionId === this.tempCallRef?.sessionID) {
                     this.tempCallRef = null;
+                    // update the interaction manger
+                    this._interactionManagerService.updateInteraction(this.interactionId, {
+                        otherData: {
+                            tempCallRef: null,
+                            callLines: this.callLines
+                        }
+                    });
+                }
+                else {
+                    // update the interaction manger
+                    this._interactionManagerService.updateInteraction(this.interactionId, {
+                        otherData: {
+                            callLines: this.callLines
+                        }
+                    });
                 }
                 break;
             default:
@@ -882,13 +981,17 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             // show the progress bar 
             this._fuseProgressBarService.show();
             // disable the button
-            btn.disabled = true;
+            if (btn) {
+                btn.disabled = true;
+            }
         }
         else {
-            // enable button after response
-            btn.disabled = true;
             // hide the progress bar
             this._fuseProgressBarService.hide();
+            // enable button after response
+            if (btn) {
+                btn.disabled = false;
+            }
         }
     }
 
@@ -945,6 +1048,24 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             });
     }
 
+    /**
+     * To handle conference mixer
+     */
+    private handleConferenceMixer(): void {
+        // get the main line and conference line
+        const mainLine = this.avConns[this.callLines[0]];
+        const conferenceLine = this.avConns[this.tempCallRef.sessionID];
+
+        // check if the referece is found, else return
+        if (!mainLine || !conferenceLine) {
+            this._appUIService.showSnackbar('Error in conference confirm, call lines are not available!');
+            return;
+        }
+
+        // add the conference peer connection to the conference
+        mainLine.addConference(conferenceLine.getPeerConnection());
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
@@ -954,7 +1075,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      * @method selectInteraction
      * @param {InteractionRef} item 
      */
-    public selectInteraction(item: InteractionRef): void {
+    selectInteraction(item: InteractionRef): void {
         // if same interaction is seleted then return
         if (this.interactionId === item.interactionId) {
             return;
@@ -970,7 +1091,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      * @method answerCall
      * @param {MatButton} btn 
      */
-    public answerCall(btn: MatButton): void {
+    answerCall(btn: MatButton): void {
         // check if ms call then do not call api, just process the media server messages
         if (this.isMSCall) {
             // get the connection variable
@@ -1017,10 +1138,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      * @method confirmDisconnectCall
      * @param {MatButton} btn 
      */
-    public confirmDisconnectCall(btn: MatButton): void {
+    confirmDisconnectCall(btn: MatButton): void {
         // config force login
-        this.confirmDialogRef = this._appUIService.showAppConfirmDialog('endInteraction');
-        this.confirmDialogRef.afterClosed().subscribe((dialogResult) => {
+        this.dialogRef = this._appUIService.showAppConfirmDialog('endInteraction');
+        this.dialogRef.afterClosed().subscribe((dialogResult) => {
             if (dialogResult) {
                 // send end chat to server 
                 this.disconnectCall(btn);
@@ -1032,7 +1153,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      * To mute/un mute MS call
      * @method muteUnMuteCall
      */
-    public muteUnMuteCall(): void {
+    muteUnMuteCall(): void {
         // check if ms call then only process
         if (!this.isMSCall) {
             return;
@@ -1062,7 +1183,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      * @method holdCall
      * @param {MatButton} btn 
      */
-    public holdCall(btn: MatButton): void {
+    holdCall(btn: MatButton): void {
         // toggle the button
         this.toggleButton(true, btn);
         // check if ms call then do not call api, invoke webclient api hold
@@ -1096,7 +1217,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      * Unhold Call
      * @param {MatButton} btn 
      */
-    public unHoldCall(btn: MatButton): void {
+    unHoldCall(btn: MatButton): void {
         // toggle the button
         this.toggleButton(true, btn);
         // check if ms call then do not call api, invoke webclient api hold
@@ -1132,7 +1253,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      * @method playerAction
      * @param {Number} action 
      */
-    public playerAction(action: number): void {
+    playerAction(action: number): void {
         if (action === 1) {
             // play
             this.audioPlayer.resume();
@@ -1155,10 +1276,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      * @method confirmCloseInteraction
      * @param {MatButton} btn 
      */
-    public confirmCloseInteraction(btn: MatButton): void {
+    confirmCloseInteraction(btn: MatButton): void {
         // config force login
-        this.confirmDialogRef = this._appUIService.showAppConfirmDialog('closeInteraction');
-        this.confirmDialogRef.afterClosed().subscribe((dialogResult) => {
+        this.dialogRef = this._appUIService.showAppConfirmDialog('closeInteraction');
+        this.dialogRef.afterClosed().subscribe((dialogResult) => {
             if (dialogResult) {
                 // send end chat to server 
                 this.closeInteraction(btn);
@@ -1169,7 +1290,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * To save interaction comments to server
      */
-    public saveInteractionComments(): void {
+    saveInteractionComments(): void {
         let message = '';
         // check the saved comments
         this.savedComments.forEach((item) => {
@@ -1220,12 +1341,11 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      * 
      * @param type 
      */
-    public openTransferConferenceDialog(type: string): void {
+    openTransferConferenceDialog(type: string): void {
         // get data based on type
-        const data: AgentSkillListData = type === 'transfer' ? {
+        let data: AgentSkillListData = type === 'transfer' ? {
             title: 'Transfer Call',
             type: 'transferCall',
-            interactionId: this.interactionId,
             agent: {
                 allowed: this.data.Data.Transfer.Agent.Allowed,
                 blind: this.data.Data.Transfer.Agent.Allowed,
@@ -1254,8 +1374,28 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     channelPrfix: this.data.Data.Conference.Skill.ChannelPrefix
                 }
             };
+
+        // add common properties
+        data = {
+            ...data,
+            interactionId: this.interactionId,
+            otherData: {
+                isMSCall: this.isMSCall
+                // avConns: this.avConns,
+                // callLines: this.callLines
+            }
+        };
+
+        data.callback = (callbackData) => {
+            // assign the data
+            this.tempCallRef = {
+                ...this.tempCallRef,
+                ...callbackData
+            };
+        };
+
         // open agent skill list component in dialog
-        this._matDialog.open(AgentSkillListComponent, {
+        this.dialogRef = this._matDialog.open(AgentSkillListComponent, {
             data,
             panelClass: 'agent-skill-dialog',
             minWidth: '30%',
@@ -1276,17 +1416,19 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         // get the connection variable
         const connection: AVChannel = this.avConns[this.tempCallRef.sessionID];
         // check if the connection is there and interaction is not on hold
-        if (connection && this.tempCallRef.status !== 'connected') {
+        if (connection && this.tempCallRef.status === 'connected') {
             connection.hold();
         }
-        else if (connection && this.tempCallRef.status !== 'hold') {
+        else if (connection && this.tempCallRef.status === 'hold') {
             connection.unHold();
         }
         else {
             this._appUIService.showSnackbar('Error in hold/unhold secondary call', 'failure');
         }
-        // toggle the button
-        this.toggleButton(false, btn);
+        setTimeout(() => {
+            // toggle the button
+            this.toggleButton(false, btn);
+        }, 500);
     }
 
     /**
@@ -1343,8 +1485,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             if (confirm) {
                 // handle conference mixer for MS calls
                 if (this.isMSCall) {
-
+                    this.handleConferenceMixer();
                 }
+
                 // complete conference in server
                 SDKClient.conferenceComplete(this.interactionId.toString())
                     .then((dt) => {

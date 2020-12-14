@@ -11,7 +11,7 @@ import { AgentSkillListData } from 'app/interfaces';
 import { orderBy } from 'lodash';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AgentModel, CommandResultEvent, FavouriteSkill, IResponse, QueueStatusEvent, SDKClient } from 'tmac-sdk';
+import { AgentModel, CommandResultEvent, FavouriteSkill, IResponse, IResponseData, QueueStatusEvent, SDKClient } from 'tmac-sdk';
 import { SharedWrapperComponent } from '../shared-wrapper/shared-wrapper.component';
 
 /**
@@ -177,6 +177,11 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
      * Disable input flag
      */
     disableInput: boolean;
+    /**
+     * Consult flag
+     */
+    isConsult: boolean;
+
     /**
      * Wrapper component Ref
      */
@@ -357,56 +362,107 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
 
     /**
      * To transfer a call
-     * 
-     * @param consult
      */
-    private transferCall(consult: boolean): void {
+    private async transferCall(): Promise<void> {
         this.loading = true;
-        // if consault transfer
-        if (consult) {
-            SDKClient.transferCall({
-                comment: this.comments,
-                interactionId: this.interactionId.toString(),
-                number: this.selectedItem
-            })
-                .then((dt: IResponse) => {
-                    this.loading = false;
-                    // get the response
-                    const result: CommandResultEvent = dt.response;
-                    // check the response
-                    if (result.ResultCode === 0) {
-                        // make call success
-                        this._appUIService.showSnackbar(`Transfer call to ${this.selectedItem} successful`);
-                        this.close();
-                    } else {
-                        // make call failed
-                        this._appUIService.showSnackbar('Transfer call failed, please try again', 'failure');
-                    }
-                })
-                .catch(() => {
-                    this.loading = false;
-                    // transfer call error
-                    this._appUIService.showSnackbar('Transfer call error, please try again', 'failure');
+        try {
+
+            // init response
+            let result: IResponseData<CommandResultEvent>;
+
+            // for MS call blind transfer use method 'transferBlind'
+            // if (!this.isConsult) {
+            if (!this.isConsult && this.data.otherData.isMSCall) {
+                result = await SDKClient.transferBlind({
+                    comment: this.comments,
+                    interactionId: this.interactionId.toString(),
+                    number: this.selectedItem
                 });
+            }
+            else {
+                // for consult call and PBX blind use the same method
+                result = await SDKClient.transferCall({
+                    comment: this.comments,
+                    interactionId: this.interactionId.toString(),
+                    number: this.selectedItem
+                });
+            }
+
+            // check the response 
+            if (result.response?.ResultCode === 0) {
+                // transfer call success 
+                this._appUIService.showSnackbar(`${this.isConsult ? 'Consult transfer' : 'Blind transfer'} call initiated to ${this.selectedItem} successfully`);
+                this.close();
+            }
+            else {
+                // transfer call failed
+                this._appUIService.showSnackbar(`${this.isConsult ? 'Consult transfer' : 'Blind transfer'} call initiation failed, please try again!`, 'failure');
+            }
+        } catch (error) {
+            //     // transfer call error
+            this._appUIService.showSnackbar(`${this.isConsult ? 'Consult transfer' : 'Blind transfer'} call initiation error, please try again!`, 'failure');
         }
-        // if blind transfer
-        else {
-            // TODO:: to implement blind transfer
+
+        // set loading to false
+        this.loading = false;
+    }
+
+    /**
+     * To transfer a call
+     */
+    private async conferenceCall(): Promise<void> {
+        this.loading = true;
+
+        try {
+            // init response
+            let result: IResponseData<CommandResultEvent>;
+
+            // check if consult
+            if (this.isConsult) {
+                result = await SDKClient.conferenceCall({
+                    comment: this.comments,
+                    interactionId: this.interactionId.toString(),
+                    number: this.selectedItem
+                });
+            }
+            // for blind
+            else {
+                result = await SDKClient.conferenceBlind({
+                    comment: this.comments,
+                    interactionId: this.interactionId.toString(),
+                    number: this.selectedItem
+                });
+            }
+
+            // check the response 
+            if (result.response?.ResultCode === 0) {
+                // transfer call success 
+                this._appUIService.showSnackbar(`${this.isConsult ? 'Consult conference' : 'Blind conference'} call initiated to ${this.selectedItem} successfully`);
+                this.close();
+            }
+            else {
+                // transfer call failed
+                this._appUIService.showSnackbar(`${this.isConsult ? 'Consult conference' : 'Blind conference'} call initiation failed, please try again!`, 'failure');
+            }
+        } catch (error) {
+            //     // transfer call error
+            this._appUIService.showSnackbar(`${this.isConsult ? 'Consult conference' : 'Blind conference'} call initiation error, please try again!`, 'failure');
         }
+
+        // set loading to false
+        this.loading = false;
     }
 
     /**
      * To transfer/conference a chat to agent/skill
-     * 
-     * @param {boolean} consult 
      */
-    private transferConferenceChat(consult: boolean): void {
+    private transferConferenceChat(): void {
         this.loading = true;
         const type = this.data.otherData.type === 'conf' ? 'conference' : this.data.otherData.type;
         // agent transfer/conf
         if (this.selectedRow?.type === 'agent') {
             // if consault transfer/conf
-            if (consult) {
+            if (this.isConsult) {
                 SDKClient.sendTextChatTransferNotification({
                     comment: this.comments,
                     interactionId: this.interactionId.toString(),
@@ -765,19 +821,23 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
      */
     executeAction(consult: boolean): void {
         const type = this.data?.type || '';
+        this.isConsult = consult;
         switch (type) {
             case 'makeCall':
                 this.makeCall();
                 break;
             case 'transferCall':
-                this.transferCall(consult);
+                this.transferCall();
+                break;
+            case 'conferenceCall':
+                this.conferenceCall();
                 break;
             case 'transferChat':
             case 'conferenceChat':
-                this.transferConferenceChat(consult);
+                this.transferConferenceChat();
                 break;
             default:
-                this._appUIService.showSnackbar('Error: No action selected to execute', 'failure');
+                this._appUIService.showSnackbar('Error: NotImplementedException', 'failure');
                 this.close();
                 break;
         }
@@ -785,8 +845,17 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
 
     /**
      * To close the parent wrapper component
+     * 
+     * @param {any} data
      */
     close(): void {
+        // call the callback
+        if (typeof this.data.callback === 'function') {
+            this.data.callback({
+                source: this.selectedRow?.type,
+                isConsult: this.isConsult
+            });
+        }
         this.wrapperComponent.close();
     }
 }

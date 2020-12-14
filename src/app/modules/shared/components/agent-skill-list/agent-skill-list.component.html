@@ -251,7 +251,13 @@
                                         <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
                                         <mat-cell *matCellDef="let row">
                                             <mat-spinner *ngIf="row.CurrentAgentStatus === 'loading'" diameter="20"></mat-spinner>
-                                            <span *ngIf="row.CurrentAgentStatus !== 'loading'"> {{ row.CurrentAgentStatus }}</span>
+                                            <span
+                                                class="text-truncate"
+                                                *ngIf="row.CurrentAgentStatus !== 'loading'"
+                                                [matTooltip]="row.CurrentAgentStatus"
+                                            >
+                                                {{ row.CurrentAgentStatus }}</span
+                                            >
                                         </mat-cell>
                                     </ng-container>
 

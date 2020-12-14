@@ -405,6 +405,10 @@ export interface AgentSkillListData {
      * Any extra info to pass
      */
     otherData?: any;
+    /**
+     *  Callback on close
+     */
+    callback?: (data?: any) => void;
 }
 
 export interface InteractionComment {

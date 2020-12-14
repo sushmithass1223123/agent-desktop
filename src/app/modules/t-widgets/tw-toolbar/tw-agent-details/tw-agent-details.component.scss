@@ -17,15 +17,6 @@ tw-agent-details {
             width: 100px;
         }
 
-        .agent-status,
-        .username {
-            width: 100%;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            text-align: left;
-        }
-
         &::after {
             position: absolute;
             bottom: -4px;

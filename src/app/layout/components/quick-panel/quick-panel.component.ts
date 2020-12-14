@@ -159,4 +159,16 @@ export class QuickPanelComponent implements OnInit, OnDestroy {
         this.newLink = '';
         this.openAddLink = false;
     }
+
+    /**
+     * To update settting
+     * 
+     * @param {String} type 
+     * @param {Boolean} checked 
+     */
+    updateSettings(type: string, checked: boolean): void {
+        // set notification settings
+        this.settings[type] = checked;
+        this._appUIService.setNotificationSettings(this.settings);
+    }
 }

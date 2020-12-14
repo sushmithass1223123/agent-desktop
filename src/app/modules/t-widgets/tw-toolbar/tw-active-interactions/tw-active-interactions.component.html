@@ -26,6 +26,7 @@
                 </button>
                 <button
                     *ngIf="item.status === 'hold'"
+                    [disabled]="item.otherData.tempCallRef"
                     mat-icon-button
                     class="w-36 h-36 custom-btn bg-success"
                     #unHoldBtn

@@ -58,10 +58,6 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
             Value: 0
         }
     ];
-    /**
-     * Current AUX reference
-     */
-    currentAux: string;
 
     constructor(
         private _fuseProgressBarService: FuseProgressBarService,
@@ -165,7 +161,7 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
         SDKClient.changeStatus({
             type: item.Code.toLocaleLowerCase() === 'available' ? 'available' : item.Code.toLocaleLowerCase() === 'acw' ? 'acw' : 'aux',
             code: item.Value.toString()
-        }, item)
+        })
             .then((dt) => {
                 if (dt.response.EventName === 'AgentStatusChangeEvent') {
                     // parse the result to AgentStatusChangeEvent
@@ -173,12 +169,13 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
                     // get the status
                     this.agentData.agentStatus = dt.response.Status;
                 }
-                // hide the progress bar
-                this._fuseProgressBarService.hide();
+                else {
+                    this._appUIService.showSnackbar('Change status failed, please try again!', 'failure');
+                }
             })
             .catch(() => {
-                // hide the progress bar
-                this._fuseProgressBarService.hide();
-            });
+                this._appUIService.showSnackbar('Change status error, please try again!', 'failure');
+            })
+            .finally(() => this._fuseProgressBarService.hide());
     }
 }
