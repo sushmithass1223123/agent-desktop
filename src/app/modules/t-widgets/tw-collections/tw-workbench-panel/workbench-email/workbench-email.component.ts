@@ -274,7 +274,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
     hasChild = (_: number, node: any) => !!node.children && node.children.length > 0;
 
     /**
-     * Advbanced Search
+     * Advanced Search
      * @method advancedSearch
      */
     doAdvancedSearch(): void {
