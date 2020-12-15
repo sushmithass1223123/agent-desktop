@@ -863,50 +863,56 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
      */
     private transferEmail(): void {
         this.loading = true;
-        const { routeId, sessionId } = this.data.otherData;
+        const emails: any[] = this.data.otherData.emails;
         // agent transfer/conf
         if (this.selectedRow?.type === 'agent') {
-            SDKClient.transferEmailToAgent({
-                routeId,
-                sessionId,
-                toAgentId: this.selectedItem
-            })
-                .then((res) => {
-                    this.loading = false;
-                    if (res.response >= -1) {
-                        this._appUIService.showSnackbar('Email transferred successfully', 'success');
-                        this.close();
-                    } else {
-                        console.error(res);
-                        this._appUIService.showSnackbar('Email transfer failed', 'failure');
-                    }
+            emails.forEach((email) => {
+                const { RouteId, SessionId } = email;
+                SDKClient.transferEmailToAgent({
+                    routeId: RouteId,
+                    sessionId: SessionId,
+                    toAgentId: this.selectedItem
                 })
-                .catch((err) => {
-                    this.loading = false;
-                    console.error(err);
-                    this._appUIService.showSnackbar('Email transfer failed', 'failure');
-                });
+                    .then((res) => {
+                        this.loading = false;
+                        if (res.response >= -1) {
+                            this._appUIService.showSnackbar('Email transferred successfully', 'success');
+                            this.close();
+                        } else {
+                            console.error(res);
+                            this._appUIService.showSnackbar('Email transfer failed', 'failure');
+                        }
+                    })
+                    .catch((err) => {
+                        this.loading = false;
+                        console.error(err);
+                        this._appUIService.showSnackbar('Email transfer failed', 'failure');
+                    });
+            });
         } else {
-            SDKClient.transferEmailToSkill({
-                routeId,
-                sessionId,
-                skillId: this.selectedItem
-            })
-                .then((res) => {
-                    this.loading = false;
-                    if (res.response >= -1) {
-                        this._appUIService.showSnackbar('Email transferred successfully', 'success');
-                        this.close();
-                    } else {
-                        console.error(res);
-                        this._appUIService.showSnackbar('Email transfer failed', 'failure');
-                    }
+            emails.forEach((email) => {
+                const { RouteId, SessionId } = email;
+                SDKClient.transferEmailToSkill({
+                    routeId: RouteId,
+                    sessionId: SessionId,
+                    skillId: this.selectedItem
                 })
-                .catch((err) => {
-                    this.loading = false;
-                    console.error(err);
-                    this._appUIService.showSnackbar('Email transfer failed', 'failure');
-                });
+                    .then((res) => {
+                        this.loading = false;
+                        if (res.response >= -1) {
+                            this._appUIService.showSnackbar('Email transferred successfully', 'success');
+                            this.close();
+                        } else {
+                            console.error(res);
+                            this._appUIService.showSnackbar('Email transfer failed', 'failure');
+                        }
+                    })
+                    .catch((err) => {
+                        this.loading = false;
+                        console.error(err);
+                        this._appUIService.showSnackbar('Email transfer failed', 'failure');
+                    });
+            });
         }
     }
 }

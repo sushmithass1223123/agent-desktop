@@ -5,6 +5,10 @@
 }
 
 workbench-email {
+    .editor-container {
+        border: none;
+        margin-top: 30px;
+    }
     .email-list {
         height: 98%;
         max-height: 98%;

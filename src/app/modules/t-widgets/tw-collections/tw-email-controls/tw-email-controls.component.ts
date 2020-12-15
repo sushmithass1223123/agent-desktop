@@ -1,16 +1,17 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatButton } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
-import { CreateEmailComponent } from '@modules/shared/components';
+import { AgentSkillListComponent, CreateEmailComponent } from '@modules/shared/components';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE, DRAFT_REASONS, EMAIL_DRAFT_SAVE_INTERVAL, INBOX_REASONS, OUTBOX_REASONS } from 'app/constants';
-import { InteractionComment, InteractionRef, IWidget, ResData } from 'app/interfaces';
+import { AgentSkillListData, InteractionComment, InteractionRef, IWidget, ResData } from 'app/interfaces';
 import { CreateEmailInfo } from 'app/models';
 import { interval, Observable, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
@@ -134,7 +135,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         private _appDataService: AppDataService,
         private domSanitizer: DomSanitizer,
         private _fuseProgressBarService: FuseProgressBarService,
-        private _appUIService: AppUiService
+        private _appUIService: AppUiService,
+        private matDialog: MatDialog
     ) {
         super();
     }
@@ -731,6 +733,46 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                         this._appUIService.showSnackbar('Error in saving interaction comment', 'failure');
                     });
             }
+        });
+    }
+
+    /**
+     * Transfers email
+     * @param {any} email
+     */
+    transferEmail(email: any): void {
+        const agentConfig = this.data.Data.Transfer?.Agent || {};
+        const skillConfig = this.data.Data.Transfer?.Skill || {};
+        const data: AgentSkillListData = {
+            title: 'Email Transfer',
+            type: 'transferEmail',
+            agent: {
+                allowed: agentConfig.Allowed,
+                allowedStates: agentConfig.AllowedStates,
+                blind: agentConfig.Blind,
+                source: agentConfig.Source
+            },
+            skill: {
+                allowed: skillConfig.Allowed,
+                blind: false,
+                channelPrfix: skillConfig.ChannelPrefix,
+                source: skillConfig.Source
+            }
+        };
+        this.matDialog.open(AgentSkillListComponent, {
+            data: {
+                ...data,
+                interactionId: email.InteractionId,
+                otherData: {
+                    type: 'transfer',
+                    emails: [email]
+                }
+            },
+            panelClass: 'agent-skill-dialog',
+            minWidth: '30%',
+            maxWidth: '100%',
+            height: '60%',
+            disableClose: true
         });
     }
 }

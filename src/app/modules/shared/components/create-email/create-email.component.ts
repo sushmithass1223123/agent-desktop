@@ -7,6 +7,7 @@ import { MatSelectChange } from '@angular/material/select';
 import { TwEmailTemplatePreviewComponent } from '@modules/t-widgets/tw-collections/tw-email-template-preview/tw-email-template-preview.component';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
+import { QUILL_EDITOR_CONFIG } from 'app/constants';
 import { CreateEmailInfo, TwWidgetModel } from 'app/models';
 import { EmailTemplate, SDKClient } from 'tmac-sdk';
 
@@ -30,33 +31,7 @@ export class CreateEmailComponent implements OnInit, OnDestroy {
     /**
      * Config for quill editor
      */
-    editorConfig = {
-        placeholder: 'Write your email ...',
-        theme: 'snow',
-        modules: {
-            toolbar: [
-                ['bold', 'italic', 'underline', 'strike'], // toggled buttons
-                ['blockquote', 'code-block'],
-
-                [{ header: 1 }, { header: 2 }], // custom button values
-                [{ list: 'ordered' }, { list: 'bullet' }],
-                [{ script: 'sub' }, { script: 'super' }], // superscript/subscript
-                [{ indent: '-1' }, { indent: '+1' }], // outdent/indent
-                [{ direction: 'rtl' }], // text direction
-
-                // [{ size: ['small', false, 'large', 'huge'] }], // custom dropdown
-                [{ header: [1, 2, 3, 4, 5, 6, false] }],
-
-                [{ color: [] }, { background: [] }], // dropdown with defaults from theme
-                // [{ 'font': [] }],
-                [{ align: [] }],
-
-                ['clean'], // remove formatting button
-
-                ['link'] // , 'image', 'video'
-            ]
-        }
-    };
+    editorConfig = QUILL_EDITOR_CONFIG;
 
     /**
      * Suggested users for autocomplete
@@ -71,9 +46,9 @@ export class CreateEmailComponent implements OnInit, OnDestroy {
          */
         filtered: string[];
     } = {
-        all: ['rahil@email.com', 'rahil2@email.com', 'rahil3@email.com'],
-        filtered: []
-    };
+            all: ['rahil@email.com', 'rahil2@email.com', 'rahil3@email.com'],
+            filtered: []
+        };
 
     /**
      * Email form control
@@ -220,7 +195,7 @@ export class CreateEmailComponent implements OnInit, OnDestroy {
      * test functionn for quill editor
      * @param {any} evt
      */
-    onContentChanged(evt: any): void {}
+    onContentChanged(evt: any): void { }
 
     /**
      * Attach files to email
