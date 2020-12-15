@@ -43,7 +43,17 @@
                 <div fxFlex fxLayout="column" fxLayoutAlign="start none">
                     <div fxLayout="row" fxLayoutAlign="space-between none">
                         <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>alarm_on</mat-icon> {{ startTime }}</div>
-                        <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>construction</mat-icon> {{ sessionID + '|' + interactionId }}</div>
+                        <div fxLayout="row" fxLayoutAlign=" center">
+                            <mat-icon *ngIf="!callLines.length">construction</mat-icon>
+                            <mat-icon *ngIf="callLines.length" [matMenuTriggerFor]="sessionsMenu" class="cursor-pointer">construction</mat-icon>
+                            {{ sessionID + '|' + interactionId }}
+                            <mat-menu #sessionsMenu="matMenu" [overlapTrigger]="false" class="agent-info-menu custom">
+                                <div *ngFor="let item of callLines" mat-menu-item fxLayout fxLayoutAlign=" center">
+                                    <mat-icon>construction</mat-icon>
+                                    <span>{{ item }}</span>
+                                </div>
+                            </mat-menu>
+                        </div>
                     </div>
                     <div fxLayout="row" fxLayoutAlign="space-between none" class="mt-4">
                         <div fxLayout="row" fxLayoutAlign=" center">
@@ -137,7 +147,7 @@
                 *ngIf="status !== 'hold' && status !== 'disconnected'"
                 mat-flat-button
                 class="warning"
-                [disabled]="status !== 'connected'"
+                [disabled]="status !== 'connected' || callLines.length > 1"
                 #holdBtn
                 matTooltip="Hold"
                 (click)="holdCall(holdBtn)"

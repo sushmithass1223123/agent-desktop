@@ -26,6 +26,7 @@ import {
     TCMDirectAgentNotifyTimeoutEvent,
 
     TextChatTransferNotificationEvent,
+    TmacServerConnectionSuccess,
     TUtils
 } from 'tmac-sdk';
 import { AOTWidgetService } from './aot-widget.service';
@@ -822,6 +823,17 @@ export class TMACEventService {
         });
     }
 
+    /**
+     * To process TmacServerConnectionSuccess
+     * 
+     * @param {TmacServerConnectionSuccess} evt 
+     */
+    private TmacServerConnectionSuccess = (evt: TmacServerConnectionSuccess) => {
+        this._appUIService.showAppSnackbar({
+            message: `New TMAC server [(${evt.ResultMessage})] connection established`
+        });
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @ Public Methods
     // -----------------------------------------------------------------------------------------------------
@@ -870,6 +882,7 @@ export class TMACEventService {
         SDKClient.events.on('AgentReminderEvent', this.AgentReminderEvent);
         SDKClient.events.on('AgentForcedLogoffEvent', this.AgentForcedLogoffEvent);
         SDKClient.events.on('TextChatTransferNotificationEvent', this.TextChatTransferNotificationEvent);
+        SDKClient.events.on('TmacServerConnectionSuccess', this.TmacServerConnectionSuccess);
 
         // subscribe to InteractionManagerService
         this._interactionManagerService.subscribe();
@@ -891,6 +904,7 @@ export class TMACEventService {
         SDKClient.events.off('AgentReminderEvent', this.AgentReminderEvent);
         SDKClient.events.off('AgentForcedLogoffEvent', this.AgentForcedLogoffEvent);
         SDKClient.events.off('TextChatTransferNotificationEvent', this.TextChatTransferNotificationEvent);
+        SDKClient.events.off('TmacServerConnectionSuccess', this.TmacServerConnectionSuccess);
 
         // unsubscribe from all subscriptions
         this._unsubscribeAll.next();
