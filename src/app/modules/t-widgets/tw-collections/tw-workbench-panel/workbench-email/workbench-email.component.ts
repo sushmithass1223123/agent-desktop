@@ -1,9 +1,9 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { HttpClient } from '@angular/common/http';
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { DomSanitizer } from '@angular/platform-browser';
 import { fuseAnimations } from '@fuse/animations';
@@ -12,7 +12,7 @@ import { FuseConfig } from '@fuse/types';
 import { AgentSkillListComponent } from '@modules/shared/components';
 import { TWidgetWrapper } from '@modules/t-widgets/utils';
 import { AppUiService } from '@services/app-ui.service';
-import { COMMON_ERR_MESSAGE, DRAFT_REASONS, INBOX_REASONS, OUTBOX_REASONS } from 'app/constants';
+import { COMMON_ERR_MESSAGE, DRAFT_REASONS, INBOX_REASONS, OUTBOX_REASONS, QUILL_EDITOR_CONFIG } from 'app/constants';
 import { AgentSkillListData, IWidget, ResData } from 'app/interfaces';
 import { groupBy } from 'lodash';
 import * as moment from 'moment';
@@ -44,6 +44,23 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
 
     emailBodies: Record<string, any> = {};
 
+    /**
+     * Reply body for reply email in bulk
+     */
+    replyBody: string;
+
+    /**
+     * Email reply dialog ref
+     */
+    @ViewChild('replyDialog')
+    ReplyEditor: TemplateRef<any>;
+
+    replyEditorModal: MatDialogRef<any>;
+
+    /**
+     * Config for quill editor
+     */
+    editorConfig = QUILL_EDITOR_CONFIG;
     /**
      * To store the fuse config for theme
      */
@@ -495,7 +512,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                         return {
                             ...x,
                             To: x.mailbox,
-                            Skill: x.cmSkill,
+                            Skill: x.makerSkillName,
                             Subject: x.subject,
                             From: x.from,
                             addedTime,
@@ -558,7 +575,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                         return {
                             ...x,
                             To: x.mailbox,
-                            Skill: x.cmSkill,
+                            Skill: x.makerSkillName,
                             Subject: x.subject,
                             From: x.from,
                             addedTime,
@@ -622,7 +639,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                         return {
                             ...x,
                             To: x.mailbox,
-                            Skill: x.cmSkill,
+                            Skill: x.makerSkillName,
                             Subject: x.subject,
                             From: x.from,
                             addedTime,
@@ -754,8 +771,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
      * @param {any} email
      */
     transferEmail(email: any): void {
-        const agentConfig = this.data.Data.EmailConfig?.Agent || {};
-        const skillConfig = this.data.Data.EmailConfig?.Skill || {};
+        const agentConfig = this.data.Data.EmailConfig?.Transfer?.Agent || {};
+        const skillConfig = this.data.Data.EmailConfig?.Transfer?.Skill || {};
         const data: AgentSkillListData = {
             title: 'Email Transfer',
             type: 'transferEmail',
@@ -788,6 +805,39 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
             height: '60%',
             disableClose: true
         });
+    }
+
+    /**
+     * Closes emails in bulk
+     * @param {any} emails email list
+     */
+    replyToSelectedEmails(emails: any[]): void {
+        let loader;
+        try {
+            this.replyEditorModal = this.matDialog.open(this.ReplyEditor, {
+                minHeight: '30%'
+            });
+            this.replyEditorModal.afterClosed().subscribe(async (reply = false) => {
+                if (reply) {
+                    loader = this.appUiService.showSnackbar('Replying to emails', 'loading');
+                    const routeIds = emails.map((x) => x.RouteId) || [];
+                    await SDKClient.replyBulkEmailsInQueue({
+                        body: this.replyBody || '',
+                        routeIdList: routeIds.join(',')
+                    });
+                    this.selectedMails = [];
+                    this.doAdvancedSearch();
+                    loader.dismiss();
+                }
+                this.replyBody = '';
+            });
+        } catch (e) {
+            console.error(e);
+            if (loader) {
+                loader.dismiss();
+            }
+            this.appUiService.showSnackbar('Unable to reply', 'failure');
+        }
     }
 }
 

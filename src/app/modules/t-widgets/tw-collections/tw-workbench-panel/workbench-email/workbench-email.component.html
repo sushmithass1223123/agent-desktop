@@ -352,7 +352,7 @@
         </div>
 
         <div *ngIf="selectedMails.length" class="bulk-operations mt-16" fxLayout fxLayoutAlign="space-around center">
-            <button mat-raised-button fxFlex="100" class="border-radius-20 mx-8">Reply All</button>
+            <button mat-raised-button fxFlex="100" class="border-radius-20 mx-8" (click)="replyToSelectedEmails(selectedMails)">Reply All</button>
             <button mat-raised-button fxFlex="100" class="border-radius-20 mx-8">Transfer All</button>
             <button
                 mat-raised-button
@@ -530,3 +530,19 @@
         </div>
     </div>
 </div>
+
+<ng-template #replyDialog>
+    <!-- (onEditorCreated)="setFocus($event)" -->
+    <!-- [(ngModel)]="replyBody" -->
+    <quill-editor
+        class="email-editor"
+        classes="editor-container"
+        [(ngModel)]="replyBody"
+        [placeholder]="editorConfig.placeholder"
+        [modules]="editorConfig.modules"
+        format="html"
+    >
+    </quill-editor>
+    <button mat-raised-button (click)="replyEditorModal.close(true)" color="primary">Send</button>
+    <button mat-raised-button (click)="replyEditorModal.close()" color="accent" >Cancel</button>
+</ng-template>

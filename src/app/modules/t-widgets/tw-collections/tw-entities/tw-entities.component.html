@@ -19,7 +19,9 @@
                     </div>
                 </div>
             </div>
+            <p *ngIf="!entities.length" class="text-center mat-title w-100-p mt-20">No entities available</p>
         </ng-container>
+        <p *ngIf="!(entities$ | async)" class="text-center mat-title w-100-p mt-20">No entities available</p>
     </div>
     <!-- your code goes here -->
 </tw-wrapper>

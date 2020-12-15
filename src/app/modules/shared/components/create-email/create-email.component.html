@@ -174,6 +174,7 @@
             </mat-chip-list>
         </div>
     </div>
+    <!-- (onContentChanged)="onContentChanged($event)" -->
     <quill-editor
         (onEditorCreated)="setFocus($event)"
         class="email-editor"
@@ -181,7 +182,6 @@
         [(ngModel)]="email.Body"
         [placeholder]="editorConfig.placeholder"
         [modules]="editorConfig.modules"
-        (onContentChanged)="onContentChanged($event)"
         format="html"
     >
         <!-- <div quill-editor-toolbar class="border-radius-20">
