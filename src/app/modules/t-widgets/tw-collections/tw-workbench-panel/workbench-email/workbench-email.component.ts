@@ -55,6 +55,14 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
     @ViewChild('replyDialog')
     ReplyEditor: TemplateRef<any>;
 
+    /**
+     * openeing email flag for loader display
+     */
+    openingEmail = false;
+
+    /**
+     * Reply editor Modal
+     */
     replyEditorModal: MatDialogRef<any>;
 
     /**
@@ -632,8 +640,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                 map((res: any) => ({
                     ...res,
                     result: res.result.map((x: any, uiId) => {
-                        const addedTime = new Date(x.receivedDate);
-                        const time = x.receivedTime.split(':');
+                        const addedTime = new Date(x.sendDate);
+                        const time = x.sendTime.split(':');
                         addedTime.setHours(time[0]);
                         addedTime.setMinutes(time[1]);
                         return {
@@ -641,7 +649,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                             To: x.mailbox,
                             Skill: x.makerSkillName,
                             Subject: x.subject,
-                            From: x.from,
+                            From: x.toList,
                             addedTime,
                             uiId,
                             SessionId: x.inSessionID,
@@ -668,6 +676,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
      */
     async openEmail(email: any): Promise<void> {
         try {
+            this.emailSearchRes.loading = true;
             const fetchFromOutbox = [...this.OutboxReasons, ...this.DraftReasons].includes(email.RouteReason);
             const requestedSession = fetchFromOutbox
                 ? email.sessionID || email.OutSessionId
@@ -690,9 +699,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                     closedBy: (res as any).ClosedBy
                 };
             }
-            this.emailSearchRes.data.selected = { ...email, ...this.emailBodies[requestedSession] };
+            this.emailSearchRes.data.selected = { ...email, ...this.emailBodies[requestedSession], currentTab: this.currentTab };
+            this.emailSearchRes.loading = false;
         } catch (e) {
             console.error(e);
+            this.emailSearchRes.loading = false;
         }
     }
 
@@ -770,7 +781,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
      * Transfers email
      * @param {any} email
      */
-    transferEmail(email: any): void {
+    transferEmail(emails: any[]): void {
         const agentConfig = this.data.Data.EmailConfig?.Transfer?.Agent || {};
         const skillConfig = this.data.Data.EmailConfig?.Transfer?.Skill || {};
         const data: AgentSkillListData = {
@@ -792,11 +803,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
         this.matDialog.open(AgentSkillListComponent, {
             data: {
                 ...data,
-                interactionId: email.InteractionId,
+                // interactionId: email.InteractionId,
                 otherData: {
                     type: 'transfer',
-                    sessionId: email.SessionId,
-                    routeId: email.RouteId
+                    emails
                 }
             },
             panelClass: 'agent-skill-dialog',

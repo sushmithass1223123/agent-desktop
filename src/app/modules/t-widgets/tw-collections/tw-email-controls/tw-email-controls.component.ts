@@ -765,8 +765,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 interactionId: email.InteractionId,
                 otherData: {
                     type: 'transfer',
-                    sessionId: email.SessionId,
-                    routeId: email.RouteId
+                    emails: [email]
                 }
             },
             panelClass: 'agent-skill-dialog',

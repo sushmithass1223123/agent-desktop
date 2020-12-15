@@ -306,7 +306,7 @@
                             </mat-form-field>
 
                             <mat-form-field class="form-field custom" fxFlex="100" appearance="outline">
-                                <span fxFlex="20"> Attachments : </span>
+                                <span fxFlex="20" class="mat-subheading-2"> Attachments : </span>
                                 <input matInput placeholder="Input" style="display: none" />
                                 <mat-button-toggle-group class="w-100-p" formControlName="hasAttachments" fxFlex="80">
                                     <mat-button-toggle value="yes" fxFlex="100">Has Attachments</mat-button-toggle>
@@ -315,7 +315,7 @@
                             </mat-form-field>
 
                             <mat-form-field class="form-field custom" fxFlex="100" appearance="outline">
-                                <span fxFlex="20"> Replied : </span>
+                                <span fxFlex="20" class="mat-subheading-2"> Replied : </span>
                                 <input matInput placeholder="Input" style="display: none" />
                                 <mat-button-toggle-group class="w-100-p" formControlName="replied" fxFlex="80">
                                     <mat-button-toggle value="any" fxFlex="100">Any</mat-button-toggle>
@@ -325,7 +325,7 @@
                             </mat-form-field>
 
                             <mat-form-field class="form-field custom" fxFlex="100" appearance="outline">
-                                <span fxFlex="20"> Closed : </span>
+                                <span fxFlex="20" class="mat-subheading-2"> Closed : </span>
                                 <input matInput placeholder="Input" style="display: none" />
                                 <mat-button-toggle-group class="w-100-p" formControlName="closed" fxFlex="80">
                                     <mat-button-toggle value="any" fxFlex="100">Any</mat-button-toggle>
@@ -335,7 +335,7 @@
                             </mat-form-field>
 
                             <mat-form-field class="form-field custom" fxFlex="100" appearance="outline">
-                                <span fxFlex="20"> Assigned : </span>
+                                <span fxFlex="20" class="mat-subheading-2"> Assigned : </span>
                                 <input matInput placeholder="Input" style="display: none" />
                                 <mat-button-toggle-group class="w-100-p" formControlName="assigned" fxFlex="80">
                                     <mat-button-toggle value="any" fxFlex="100">Any</mat-button-toggle>
@@ -352,8 +352,16 @@
         </div>
 
         <div *ngIf="selectedMails.length" class="bulk-operations mt-16" fxLayout fxLayoutAlign="space-around center">
-            <button mat-raised-button fxFlex="100" class="border-radius-20 mx-8" (click)="replyToSelectedEmails(selectedMails)">Reply All</button>
-            <button mat-raised-button fxFlex="100" class="border-radius-20 mx-8">Transfer All</button>
+            <button
+                mat-raised-button
+                fxFlex="100"
+                class="border-radius-20 mx-8"
+                *ngIf="currentTab === 'queue'"
+                (click)="replyToSelectedEmails(selectedMails)"
+            >
+                Reply All
+            </button>
+            <button mat-raised-button fxFlex="100" class="border-radius-20 mx-8" *ngIf="currentTab === 'queue'">Transfer All</button>
             <button
                 mat-raised-button
                 color="primary"
@@ -368,7 +376,7 @@
                 mat-raised-button
                 color="accent"
                 class="border-radius-20 mx-8"
-                *ngIf="currentTab === 'draft'"
+                *ngIf="currentTab === 'draft' || currentTab === 'inbox'"
                 (click)="deleteEmails(selectedMails)"
                 fxFlex="100"
             >
@@ -467,11 +475,34 @@
     <div fxFlex="100" class="email-open mr-12 border-radius-20 custom-scroll-adjust">
         <ng-container *ngIf="emailSearchRes.data.selected as selectedEmail">
             <div *ngIf="selectedEmail" fxLayout fxLayoutAlign="end" fxLayoutGap="10px" class="my-20 w-95-p">
-                <button mat-raised-button class="border-radius-20" (click)="transferEmail(selectedEmail)">Transfer</button>
-                <button mat-raised-button class="border-radius-20">Advance</button>
+                <button
+                    mat-raised-button
+                    class="border-radius-20"
+                    *ngIf="selectedEmail.currentTab === 'queue'"
+                    (click)="transferEmail([selectedEmail])"
+                >
+                    Transfer
+                </button>
+                <!-- <button mat-raised-button class="border-radius-20">Advance</button> -->
                 <button mat-raised-button class="border-radius-20" (click)="pullEmails([selectedEmail])">Pull</button>
-                <button mat-raised-button class="border-radius-20">Push</button>
-                <button mat-raised-button class="border-radius-20" color="accent" (click)="markAsSpam(selectedEmail)">Mark As Spam</button>
+                <button
+                    mat-raised-button
+                    class="border-radius-20"
+                    *ngIf="selectedEmail.currentTab === 'inbox'"
+                    (click)="deleteEmails([selectedEmail])"
+                >
+                    Delete
+                </button>
+                <!-- <button mat-raised-button class="border-radius-20" >Push</button> -->
+                <button
+                    mat-raised-button
+                    class="border-radius-20"
+                    color="accent"
+                    *ngIf="selectedEmail.currentTab === 'draft' || selectedEmail.currentTab === 'inbox'"
+                    (click)="markAsSpam(selectedEmail)"
+                >
+                    Mark As Spam
+                </button>
             </div>
 
             <div
@@ -544,5 +575,5 @@
     >
     </quill-editor>
     <button mat-raised-button (click)="replyEditorModal.close(true)" color="primary">Send</button>
-    <button mat-raised-button (click)="replyEditorModal.close()" color="accent" >Cancel</button>
+    <button mat-raised-button (click)="replyEditorModal.close()" color="accent">Cancel</button>
 </ng-template>
