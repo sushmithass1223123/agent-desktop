@@ -156,7 +156,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
     /**
      * Search methods hash map
      */
-    searchReqObs$: Record<AvailableTabs, () => Observable<any>>;
+    searchReqObs$: Record<AvailableTabs, (searchParams?: any) => Observable<any>>;
 
     /**
      * Constructor
@@ -205,35 +205,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
 
         // const advancedSearchToggledFields = ['replied', 'closed', 'assigned'];
 
-        this.globalSearchControl.valueChanges.pipe(debounceTime(200)).subscribe((global) => {
-            const today = new Date();
-            const yesterday = new Date();
-            yesterday.setDate(today.getDate() - 1);
-
-            this.advancedSearchForm.patchValue({
-                fromDate: yesterday,
-                fromTime: `00:00`,
-                toDate: today,
-                toTime: `${'23'}:${'59'}`,
-                email: global,
-                subject: global,
-                content: global,
-                skills: global,
-                agent: global,
-                inSessionid: global,
-                deviceid: global,
-                assignedTo: global,
-                sesisonid: global,
-                global: global ? 'GLOBAL' : '',
-                listOfMailboxes: 'singteldemo@tetherfi.com',
-
-                hasAttachments: 'no',
-                replied: 'any',
-                closed: 'any',
-                assigned: 'any'
-            });
-        });
-
         this.doAdvancedSearch();
     }
 
@@ -281,6 +252,109 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
             this.showAdvancedSearchForm = false;
 
             this.searchReqObs$[this.currentTab]().subscribe(
+                (res: any) => {
+                    if (res.status === 'SUCCESS') {
+                        const mails = res.result.map((x: any) => {
+                            const mailRes = typeof x.data === 'string' ? JSON.parse(x.data) : x;
+                            if (x.addedTime) {
+                                mailRes.addedTime = x.addedTime;
+                            }
+                            mailRes.body = this.domSanitizer.bypassSecurityTrustHtml(mailRes.body);
+                            return mailRes;
+                        });
+                        const byMailList = groupBy(mails, 'To');
+                        let nodes: any;
+                        if (['sentitem', 'draft'].includes(this.currentTab)) {
+                            nodes = Object.keys(byMailList).map((name) => {
+                                return { name, children: byMailList[name] };
+                            });
+                        } else {
+                            nodes = Object.keys(byMailList).map((name) => {
+                                const groupedNodes = groupBy(byMailList[name], 'Skill');
+                                return { name, children: Object.keys(groupedNodes).map((n) => ({ name: n, children: groupedNodes[n] })) };
+                            });
+                        }
+                        this.emailSearchRes = {
+                            loading: false,
+                            error: false,
+                            msg: '',
+                            data: { selected: this.emailSearchRes.data.selected || false }
+                        };
+                        this.dataSource.data = nodes;
+                    } else {
+                        this.emailSearchRes = {
+                            loading: false,
+                            error: true,
+                            msg: COMMON_ERR_MESSAGE,
+                            data: { selected: this.emailSearchRes.data.selected || false }
+                        };
+                    }
+                },
+                () => {
+                    this.emailSearchRes = {
+                        loading: false,
+                        error: true,
+                        msg: COMMON_ERR_MESSAGE,
+                        data: { selected: this.emailSearchRes.data.selected || false }
+                    };
+                }
+            );
+        } catch (e) {
+            console.error(e);
+            this.emailSearchRes = {
+                loading: false,
+                error: true,
+                msg: COMMON_ERR_MESSAGE,
+                data: { selected: this.emailSearchRes.data.selected || false }
+            };
+        }
+    }
+
+    doGlobalSearch(): void {
+        try {
+            if (!this.data.Data.WorkbenchUrl) {
+                this.emailSearchRes = {
+                    loading: false,
+                    error: true,
+                    msg: 'WorkbenchUrl not provided',
+                    data: { selected: this.emailSearchRes.data.selected || false }
+                };
+                return;
+            }
+
+            this.emailSearchRes.loading = true;
+            this.emailSearchRes.error = false;
+            this.showAdvancedSearchForm = false;
+
+            const today = new Date();
+            const yesterday = new Date();
+            yesterday.setDate(today.getDate() - 1);
+
+            const globalKey = this.globalSearchControl.value;
+
+            const searchParams = {
+                fromDate: yesterday,
+                fromTime: `00:00`,
+                toDate: today,
+                toTime: `${'23'}:${'59'}`,
+                email: globalKey,
+                subject: globalKey,
+                content: globalKey,
+                skills: globalKey,
+                agent: globalKey,
+                inSessionid: globalKey,
+                deviceid: globalKey,
+                assignedTo: globalKey,
+                sesisonid: globalKey,
+                global: 'GLOBAL',
+                listOfMailboxes: 'singteldemo@tetherfi.com',
+
+                hasAttachments: 'no',
+                replied: 'any',
+                closed: 'any',
+                assigned: 'any'
+            };
+            this.searchReqObs$[this.currentTab](searchParams).subscribe(
                 (res: any) => {
                     if (res.status === 'SUCCESS') {
                         const mails = res.result.map((x: any) => {
@@ -428,10 +502,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
     /**
      * Searched through queued emails
      */
-    advanceSearchQueuedEmail = (): Observable<any> => {
+    advanceSearchQueuedEmail = (searchParams?: any): Observable<any> => {
         const { agentId } = SDKClient.getAgentData();
 
-        const searchFields = this.advancedSearchForm.value;
+        const searchFields = searchParams || this.advancedSearchForm.value;
 
         let startDate: any = '';
         let endDate: any = '';
@@ -466,7 +540,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
     /**
      * Searched through inbox emails
      */
-    advanceSearchInboxEmail = (): Observable<any> => {
+    advanceSearchInboxEmail = (searchParams?: any): Observable<any> => {
         const { agentId } = SDKClient.getAgentData();
 
         const searchFields = this.advancedSearchForm.value;
@@ -502,7 +576,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                 deviceid: searchFields.deviceId,
                 assignedTo: searchFields.assignedTo,
                 sesisonid: searchFields.sesisonid,
-                global: searchFields.global,
+                global: '',
                 listOfMailboxes: searchFields.listOfMailboxes,
                 hasAttachments: searchFields.hasAttachments === 'yes',
                 replied: searchFields.replied !== 'any',
@@ -536,7 +610,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
     /**
      * Searches through draft emails
      */
-    advanceSearchDraftEmail = (): Observable<any> => {
+    advanceSearchDraftEmail = (searchParams?: any): Observable<any> => {
         const { agentId } = SDKClient.getAgentData();
 
         const searchFields = this.advancedSearchForm.value;
@@ -599,7 +673,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
     /**
      * Advanced searches emails
      */
-    advanceSearchSentEmail = (): Observable<any> => {
+    advanceSearchSentEmail = (searchParams?: any): Observable<any> => {
         const { agentId } = SDKClient.getAgentData();
 
         const searchFields = this.advancedSearchForm.value;
@@ -634,7 +708,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                 content: searchFields.content,
                 listOfMailboxes: searchFields.listOfMailboxes,
                 InSessionid: searchFields.inSessionid,
-                global: searchFields.global
+                global: ''
             })
             .pipe(
                 map((res: any) => ({
@@ -687,6 +761,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                 // check the response
                 if (!res) {
                     this.appUiService.showSnackbar('Something went wrong, Error in email preview', 'failure');
+                    this.emailSearchRes.loading = false;
                     return;
                 }
                 this.emailBodies[requestedSession] = {
@@ -715,39 +790,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
         this.currentTab = tab;
         this.selectedMails = [];
 
-        const today = new Date();
-        const yesterday = new Date();
-        yesterday.setDate(today.getDate() - 1);
-
         // this.advancedSearchForm.reset();
-        this.advancedSearchForm.setValue({
-            fromDate: yesterday,
-            fromTime: `00:00`,
-            toDate: today,
-            toTime: `${'23'}:${'59'}`,
-            email: '',
-            subject: '',
-            content: '',
-            skills: '',
-
-            agent: '',
-
-            inSessionid: '',
-
-            deviceid: '',
-            hasAttachments: 'no',
-            assignedTo: '',
-
-            replied: 'any',
-
-            closed: 'any',
-
-            assigned: 'any',
-
-            sesisonid: '',
-            global: '',
-            listOfMailboxes: 'singteldemo@tetherfi.com'
-        });
+        this.resetForm();
         this.doAdvancedSearch();
     }
 
@@ -848,6 +892,44 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
             }
             this.appUiService.showSnackbar('Unable to reply', 'failure');
         }
+    }
+
+    /**
+     * Resets form
+     */
+    resetForm(): void {
+        const today = new Date();
+        const yesterday = new Date();
+        yesterday.setDate(today.getDate() - 1);
+
+        this.advancedSearchForm.setValue({
+            fromDate: yesterday,
+            fromTime: `00:00`,
+            toDate: today,
+            toTime: `${'23'}:${'59'}`,
+            email: '',
+            subject: '',
+            content: '',
+            skills: '',
+
+            agent: '',
+
+            inSessionid: '',
+
+            deviceid: '',
+            hasAttachments: 'no',
+            assignedTo: '',
+
+            replied: 'any',
+
+            closed: 'any',
+
+            assigned: 'any',
+
+            sesisonid: '',
+            global: '',
+            listOfMailboxes: 'singteldemo@tetherfi.com'
+        });
     }
 }
 
