@@ -2717,7 +2717,7 @@
                                                 },
                                                 "Data": {
                                                     "Transfer": {
-                                                        "Allowed": false,
+                                                        "Allowed": true,
                                                         "Agent": {
                                                             "Allowed": true,
                                                             "Blind": false,
@@ -2772,10 +2772,10 @@
                             ],
                             "Dynamic": [
                                 {
-                                    "Name": "Entities",
+                                    "Name": "Agent Assist",
                                     "Description": "",
                                     "Key": "AgentAssist",
-                                    "Type": "tw-entities",
+                                    "Type": "tw-agent-assist",
                                     "Config": {
                                         "Enabled": true,
                                         "Static": false,
@@ -2808,6 +2808,31 @@
                                         ],
                                         "ViewState": "restore"
                                     }
+                                },
+                                {
+                                    "Name": "Entities",
+                                    "Description": "",
+                                    "Key": "Entities",
+                                    "Type": "tw-entities",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "verified_user",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {}
                                 },
                                 {
                                     "Name": "Account Information",
@@ -3193,7 +3218,26 @@
                                         "ViewState": "restore"
                                     },
                                     "Data": {
-                                        "WorkbenchUrl": "https://dice.tetherfi.cloud:55005/api/workbench"
+                                        "WorkbenchUrl": "https://dice.tetherfi.cloud:55005/api/workbench",
+                                        "EmailConfig" : {
+                                            "Transfer": {
+                                                "Allowed": true,
+                                                "Agent": {
+                                                    "Allowed": true,
+                                                    "Blind": false,
+                                                    "Source": "agentId",
+                                                    "AllowedStates": []
+                                                },
+                                                "Skill": {
+                                                    "Allowed": true,
+                                                    "Blind": false,
+                                                    "Source": "skill",
+                                                    "ChannelPrefix": [
+                                                        "EM"
+                                                    ]
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             ]
