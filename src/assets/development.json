@@ -1284,7 +1284,7 @@
                                                             "Agent"
                                                         ],
                                                         "Transfer": {
-                                                            "Allowed": true,
+                                                            "Allowed": false,
                                                             "Menu": [
                                                                 {
                                                                     "Text": "Accesscode+TPIN",
@@ -3219,7 +3219,7 @@
                                     },
                                     "Data": {
                                         "WorkbenchUrl": "https://dice.tetherfi.cloud:55005/api/workbench",
-                                        "EmailConfig" : {
+                                        "EmailConfig": {
                                             "Transfer": {
                                                 "Allowed": true,
                                                 "Agent": {
