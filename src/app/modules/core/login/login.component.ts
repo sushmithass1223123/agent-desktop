@@ -663,6 +663,9 @@ export class LoginComponent implements OnInit, OnDestroy {
                             this._appDataService.config = JSON.parse(response.OtherData.ItemTwo);
                             TUtils.Logger.console('info', 'App config updated!');
                         }
+                        else {
+                            TUtils.Logger.console('info', 'Using developement/login config only!');
+                        }
                         // get the agent ID
                         const agentId = response.Data.AgentID;
 

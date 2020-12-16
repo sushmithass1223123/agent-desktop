@@ -597,6 +597,11 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             status: 'connected',
             type: 'conference'
         };
+
+        // for MS call and blind conference, do complete when conference line connected
+        if (this.isMSCall && !this.tempCallRef?.isConsult) {
+            this.confirmCallFn(true, null);
+        }
     }
 
     /**
@@ -609,15 +614,31 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         //     return;
         // }
 
+        // remove the temp call reference
         this.tempCallRef = null;
 
-        // set the status
-        this.status = 'connected';
+        // for ms we need to change to connected state 
+        // and for mainline disconnect we need to change to connected sate
+        if (this.isMSCall || evt.IsMainLine) {
+            // since conference is handled in UI for MS calls, we cannot hold the call and unhold as it will cause state issue in UI
+            // so we use mute/unmute instead
 
-        // update the interaction status
-        this._interactionManagerService.updateInteraction(evt.InteractionID, {
-            status: 'connected'
-        });
+            // check if muted then unmute
+            if (this.muted) {
+                // get the connection
+                const connection: AVChannel = this.avConns[this.callLines[0]];
+                // un mute the call
+                connection.unMute(true, false);
+                // change the mute flag
+                this.muted = false;
+            }
+            // set the status
+            this.status = 'connected';
+            // update the interaction status
+            this._interactionManagerService.updateInteraction(evt.InteractionID, {
+                status: 'connected'
+            });
+        }
     }
 
     /**
@@ -630,21 +651,36 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         //     return;
         // }
 
-        this.tempCallRef = null;
-
         // for ms call 
         if (this.isMSCall) {
+            // get the connection variable for main line
+            // since conference is handled in UI for MS calls, we cannot hold the call and unhold as it will cause state issue in UI
+            // so we use mute/unmute instead
+
+            // check if muted then unmute
+            if (this.muted) {
+                // so we use mute/unmute instead
+                const connection: AVChannel = this.avConns[this.callLines[0]];
+                // un mute the call
+                connection.unMute(true, false);
+                // change the mute flag
+                this.muted = false;
+            }
+            // // do conference mixing
             this.handleConferenceMixer();
         }
-        else {
-            // set the status
-            this.status = 'connected';
+        // else {
+        // set the status
+        this.status = 'connected';
 
-            // update the interaction status
-            this._interactionManagerService.updateInteraction(evt.InteractionID, {
-                status: 'connected'
-            });
-        }
+        // update the interaction status
+        this._interactionManagerService.updateInteraction(evt.InteractionID, {
+            status: 'connected'
+        });
+        // }
+
+        // set the temp call reference to null
+        this.tempCallRef = null;
     }
 
     /**
@@ -1380,9 +1416,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             ...data,
             interactionId: this.interactionId,
             otherData: {
-                isMSCall: this.isMSCall
-                // avConns: this.avConns,
-                // callLines: this.callLines
+                isMSCall: this.isMSCall,
+                avConns: this.avConns,
+                callLines: this.callLines
             }
         };
 
@@ -1392,6 +1428,24 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 ...this.tempCallRef,
                 ...callbackData
             };
+
+            // hold call on conference call success for MS calls
+            if (data.type === 'conferenceCall' && this.isMSCall) {
+                // get the connection variable for main line
+                // s conference is handled in UI for MS calls, we cannot hold the call and unhold as it will cause state issue in UI
+                // so we use mute/unmute instead
+                const connection: AVChannel = this.avConns[this.callLines[0]];
+                // mute the call
+                connection.mute(true, false);
+                // mute flag
+                this.muted = true;
+                // change status for hold temp.
+                this.status = 'hold';
+                // update the interaction status
+                this._interactionManagerService.updateInteraction(this.interactionId, {
+                    status: 'hold'
+                });
+            }
         };
 
         // open agent skill list component in dialog
@@ -1483,10 +1537,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         // confirm voice conference
         else {
             if (confirm) {
-                // handle conference mixer for MS calls
-                if (this.isMSCall) {
-                    this.handleConferenceMixer();
-                }
+                // // handle conference mixer for MS calls
+                // if (this.isMSCall) {
+                //     this.handleConferenceMixer();
+                // }
 
                 // complete conference in server
                 SDKClient.conferenceComplete(this.interactionId.toString())

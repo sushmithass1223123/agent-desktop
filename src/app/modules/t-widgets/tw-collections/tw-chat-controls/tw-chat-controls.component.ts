@@ -1770,7 +1770,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 skill: {
                     allowed: this.data.Data.Conference.Skill.Allowed,
                     blind: this.data.Data.Conference.Skill.Allowed,
-                    source: 'skill',
+                    source: this.data.Data.Conference.Skill.Source,
                     channelPrfix: this.data.Data.Conference.Skill.ChannelPrefix
                 }
             };
