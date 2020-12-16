@@ -123,15 +123,15 @@
 
             <ng-container matColumnDef="CreatedDateTime">
                 <mat-header-cell *matHeaderCellDef mat-sort-header class="px-8">Created Time</mat-header-cell>
-                <mat-cell *matCellDef="let element" class="text-truncate px-8" [matTooltip]="element.CreatedDateTime | date: 'd/M/yy, h:mm a'">
-                    {{ element.CreatedDateTime | date: 'd/M/yy, h:mm a' }}
+                <mat-cell *matCellDef="let element" class="text-truncate px-8" [matTooltip]="element.CreatedDateTime | date: 'd/M/yy, hh:mm a'">
+                    {{ element.CreatedDateTime | date: 'd/M/yy, hh:mm a' }}
                 </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="ClosedDateTime">
                 <mat-header-cell *matHeaderCellDef mat-sort-header class="px-8">Closed Time</mat-header-cell>
-                <mat-cell *matCellDef="let element" class="text-truncate px-8" [matTooltip]="element.ClosedDateTime | date: 'd/M/yy, h:mm a'">
-                    {{ element.ClosedDateTime | date: 'd/M/yy, h:mm a' }}
+                <mat-cell *matCellDef="let element" class="text-truncate px-8" [matTooltip]="element.ClosedDateTime | date: 'd/M/yy, hh:mm a'">
+                    {{ element.ClosedDateTime | date: 'd/M/yy, hh:mm a' }}
                 </mat-cell>
             </ng-container>
 

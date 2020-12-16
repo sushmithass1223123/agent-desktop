@@ -56,13 +56,13 @@ export class TWidgetWrapper {
         if (data.Config.Position) {
             // check if X positon is defined
             if (data.Config.Position.X) {
-                // this.style = `${this.style} grid-row : 1/${data.Config.Position.X}`
-                this.style = `${this.style} grid-row: span ${data.Config.Position.X} / auto;`.trim();
+                // this.style = `${this.style} grid-column : 1/${data.Config.Position.X}`
+                this.style = `${this.style} grid-column: span ${data.Config.Position.X} / auto;`.trim();
             }
             // check if Y positon is defined
             if (data.Config.Position.Y) {
-                // this.style = `${this.style} grid-column : 1/${data.Config.Position.Y}`
-                this.style = `${this.style} grid-column: span ${data.Config.Position.Y} / auto;`.trim();
+                // this.style = `${this.style} grid-row : 1/${data.Config.Position.Y}`
+                this.style = `${this.style} grid-row: span ${data.Config.Position.Y} / auto;`.trim();
             }
 
             // check if W width is defined

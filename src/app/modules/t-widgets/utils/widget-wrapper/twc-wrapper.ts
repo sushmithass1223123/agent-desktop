@@ -103,11 +103,11 @@ export class TWContentWrapper {
         if (data.Config.Position) {
             // check if X positon is defined
             if (data.Config.Position.X) {
-                this.style = `${this.style} grid-row: span ${data.Config.Position.X} / auto;`;
+                this.style = `${this.style} grid-column: span ${data.Config.Position.X} / auto;`;
             }
             // check if Y positon is defined
             if (data.Config.Position.Y) {
-                this.style = `${this.style} grid-column: span ${data.Config.Position.Y} / auto;`;
+                this.style = `${this.style} grid-row: span ${data.Config.Position.Y} / auto;`;
             }
         }
 
