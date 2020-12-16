@@ -594,7 +594,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                         return {
                             ...x,
                             To: x.mailbox,
-                            Skill: x.makerSkillName,
+                            Skill: x.makerSkillName || x.cmSkill,
                             Subject: x.subject,
                             From: x.from,
                             addedTime,
@@ -657,7 +657,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                         return {
                             ...x,
                             To: x.mailbox,
-                            Skill: x.makerSkillName,
+                            Skill: x.makerSkillName || x.cmSkill,
                             Subject: x.subject,
                             From: x.from,
                             addedTime,
@@ -721,7 +721,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                         return {
                             ...x,
                             To: x.mailbox,
-                            Skill: x.makerSkillName,
+                            Skill: x.makerSkillName || x.cmSkill,
                             Subject: x.subject,
                             From: x.toList,
                             addedTime,

@@ -92,7 +92,8 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         CreatedTimeStart: new FormControl(),
         CreatedTimeEnd: new FormControl(),
         ClosedTimeStart: new FormControl(),
-        ClosedTimeEnd: new FormControl()
+        ClosedTimeEnd: new FormControl(),
+        AgentComment:  new FormControl()
     });
 
     constructor(
