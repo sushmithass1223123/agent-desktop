@@ -1,37 +1,57 @@
-<mat-toolbar class="p-0">
-
+<mat-toolbar class="pl-20 pr-32">
     <div fxFlex fxFill fxLayout="row" fxLayoutAlign="start center">
-
         <div fxFlex="1 0 auto" fxLayout="row" fxLayoutAlign="start center">
-
-            <button mat-icon-button class="navbar-toggle-button" *ngIf="!hiddenNavbar && !rightNavbar"
-                (click)="toggleSidebarOpen('navbar')" fxHide.gt-xs>
+            <button
+                mat-icon-button
+                class="navbar-toggle-button"
+                *ngIf="!hiddenNavbar && !rightNavbar"
+                (click)="toggleSidebarOpen('navbar')"
+                fxHide.gt-xs
+            >
                 <mat-icon class="primary-text">menu</mat-icon>
             </button>
 
-            <tw-active-interactions [data]="activeInteractionWidget" *ngIf="activeInteractionWidget">
-            </tw-active-interactions>
-
+            <tw-active-interactions fxHide fxShow.gt-md [data]="activeInteractionWidget" *ngIf="activeInteractionWidget"> </tw-active-interactions>
         </div>
 
         <div class="" fxFlex="0 1 auto" fxLayout="row" fxLayoutAlign="start center">
-
             <tw-toolbar-menu [data]="toolbarMenuWidget" *ngIf="toolbarMenuWidget"></tw-toolbar-menu>
 
-            <button mat-icon-button class="quick-panel-toggle-button" (click)="toggleSidebarOpen('quickPanel')"
-                aria-label="Toggle quick panel">
+            <button mat-icon-button class="mr-8" (click)="toggleSidebarOpen('quickPanel')" aria-label="Toggle quick panel">
                 <mat-icon class="primary-text">format_list_bulleted</mat-icon>
             </button>
 
             <div class="toolbar-separator" *ngIf="!hiddenNavbar && rightNavbar" fxHide fxShow.gt-xs></div>
 
-            <button mat-icon-button class="navbar-toggle-button" *ngIf="!hiddenNavbar && rightNavbar"
-                (click)="toggleSidebarOpen('navbar')" fxHide.gt-md>
+            <button
+                mat-icon-button
+                class="navbar-toggle-button"
+                *ngIf="!hiddenNavbar && rightNavbar"
+                (click)="toggleSidebarOpen('navbar')"
+                fxHide.gt-md
+            >
                 <mat-icon class="primary-text">menu</mat-icon>
             </button>
 
+            <mat-icon
+                *ngIf="this.connectivityStatus?.status > -1"
+                class="connectivityStatus"
+                matTooltip="SDK Connection Info"
+                (click)="getSDKConnectionData()"
+                [ngClass]="{
+                    'text-warning': this.connectivityStatus?.status === 0,
+                    'text-alt-success': this.connectivityStatus?.status === 1,
+                    'text-danger': this.connectivityStatus?.status === 2
+                }"
+            >
+                {{
+                    this.connectivityStatus?.eventMode === 'webSockets'
+                        ? 'wifi_tethering'
+                        : this.connectivityStatus?.eventMode === 'eventPolling'
+                        ? 'wifi'
+                        : ''
+                }}
+            </mat-icon>
         </div>
-
     </div>
-
 </mat-toolbar>

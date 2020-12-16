@@ -1,0 +1,38 @@
+@import 'src/@fuse/scss/fuse';
+@import 'src/app/scss/shared';
+
+tw-su-agent-activity-details {
+    > tw-wrapper {
+        position: absolute;
+        top: 0;
+        right: 0;
+
+        @include media-breakpoint('gt-md') {
+            width: 66.66%;
+        }
+    }
+
+    margin-bottom: 8px;
+    tw-panel {
+        min-height: 250px;
+        max-height: 50%;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 2rem;
+            background-color: $tw-dark;
+        }
+
+        video {
+            min-width: 100%;
+            width: 100%;
+            min-height: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 2rem;
+            background-color: $tw-dark
+        }
+    }
+}

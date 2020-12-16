@@ -1,74 +1,47 @@
 // Import Fuse core library
-@import "@fuse/scss/core";
+@import '@fuse/scss/core';
 
-// Import app.theme.scss
-@import "app/app.theme";
+// import app core library
+@import 'app/scss/core';
 
-.tooltip {
-    font-size: 1.5rem;
+// Import app theme styles
+@import 'app/app.theme';
+
+html {
+    font-family: 'Montserrat', 'Muli', 'Helvetica Neue', 'Arial', sans-serif;
 }
 
-.spacer {
-    flex: 1 1 auto;
+::-webkit-scrollbar {
+    width: 8px !important;
+    height: 8px !important;
 }
 
-///***************************************************************************************************************///
-///                                         WIDGET STYLES - DO NOT MODIFY
-///***************************************************************************************************************///
-
-.widget-grid {
-    width: 100%;
-    display: grid;
-    gap: 1rem;
-    grid-template-columns: none;
-    grid-auto-rows: calc(29.5vh);
-    // overflow: auto;
-    // height: calc(100% - 34px);
+::-webkit-scrollbar-thumb {
+    box-shadow: inset 0 0 0 8px rgba(0, 0, 0, 0.37) !important;
 }
 
-@media screen and (max-width: 768px) {
-    .tw-card {
-        grid-column: auto !important;
+.custom-scroll {
+    overflow: auto;
+    &-adjust {
+        overflow: auto;
+        // overflow: hidden;
+        // max-width: calc(100% - 8px);
+        // margin-right: 8px;
+        // &:hover {
+        //     overflow-x: auto;
+        //     overflow-y: scroll;
+        //     // margin-right: 0px;
+        //     max-width: 100%;
+        // }
     }
 }
 
-@media screen and (min-width: 768px) {
-    .widget-grid {
-        grid-template-columns: repeat(auto-fit, minmax(calc(100% / 5), 1fr));
-    }
+input[type='text'] {
+    color: currentColor !important;
 }
 
-@media screen and (min-width: 1200px) {
-    .widget-grid {
-        grid-template-columns: repeat(auto-fit, minmax(calc(100% / 7), 1fr));
-    }
+input[type='time']::-webkit-calendar-picker-indicator {
+    width: 20px;
+    height: 20px;
+    opacity: 0.8;
 }
-
-.tw-full {
-    height: 100%;
-    width: 100%;
-}
-
-.tw-center {
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    height: 100% !important;
-    width: 100% !important;
-}
-
-.tw-d-none {
-    display: none !important;
-}
-
-.tw-d-block {
-    display: block !important;
-}
-
-.tw-d-flex {
-    display: flex !important;
-}
-
-///***************************************************************************************************************///
-///                                         WIDGET STYLES - DO NOT MODIFY
-///***************************************************************************************************************///

@@ -1,0 +1,31 @@
+@mixin tw-toolbar-theme($theme) {
+    $background: map-get($theme, background);
+    $foreground: map-get($theme, foreground);
+    $primary: map-get($theme, primary);
+    $accent: map-get($theme, accent);
+    $is-dark: map-get($theme, is-dark);
+
+    tw-broadcast {
+        .broadcast {
+            @if ($is-dark) {
+                background-color: map-get($background, hover);
+            } @else {
+                background-color: #ffffffb0;
+            }
+        }
+    }
+
+    tw-notifications {
+        .notification-btn {
+            &::after {
+                border-bottom-color: map-get($primary, 200);
+            }
+        }
+    }
+
+    .tw-notification-list {
+        .notification-header {
+            background-color: map-get($primary, 200);
+        }
+    }
+}

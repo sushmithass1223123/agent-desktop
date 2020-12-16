@@ -1,0 +1,91 @@
+<!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
+<!-- implement following events in your component to access widget wrapper action events -->
+<!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
+<tw-wrapper [data]="data" (maximizeEvent)="maximizeEvent($event)">
+    <div
+        *ngIf="interactionDetailsTable.loaded"
+        class="w-100-p bg-inherit custom-scroll-adjust"
+        [ngClass]="maximized ? 'h-90-p' : 'h-100-p'"
+    >
+        <mat-table [dataSource]="interactionDetailsTable.source" matSort matSortDisableClear>
+            <ng-container matColumnDef="InteractionID">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{ element.InteractionID || 'NA' }}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="Channel">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Channel</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-icon class="channel-icon" color="primary">
+                        {{
+                            element.Channel === 'Voice'
+                                ? 'phone'
+                                : element.Channel === 'TextChat'
+                                ? 'chat'
+                                : element.Channel === 'Email'
+                                ? 'email'
+                                : 'library_books'
+                        }}
+                    </mat-icon>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="LastStatus">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{ element.LastStatus || 'NA' }}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="User">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>User</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{ element.InteractionData.User || 'NA' }}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="ActiveTime">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Active Time</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{ (element.ActiveTime * 1000 | date: 'HH:mm:ss':'UTC') || '00:00:00' }}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="HoldTime">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Hold Time</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{ (element.HoldTime * 1000 | date: 'HH:mm:ss':'UTC') || '00:00:00' }}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="Actions">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Actions</mat-header-cell>
+                <mat-cell *matCellDef="let element" class="px-12">
+                    <ng-container *ngFor="let feature of configData.AgentFeatures">
+                        <button
+                            #agentActionBtn
+                            mat-icon-button
+                            *ngIf="featureCheck(feature, 'interaction', element.Channel.toLowerCase())"
+                            [matTooltip]="featureMap[feature.Feature].Label"
+                            (click)="performInteractionAction(element, feature)"
+                        >
+                            <mat-icon>{{ featureMap[feature.Feature].Icon }}</mat-icon>
+                        </button>
+                    </ng-container>
+                </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="interactionDetailsTable.columns; sticky: true"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: interactionDetailsTable.columns"></mat-row>
+        </mat-table>
+
+        <p *ngIf="interactionDetailsTable.source.data.length === 0" class="text-center m-0 mat-title">No Data Available</p>
+    </div>
+    <mat-paginator *ngIf="maximized" [pageSizeOptions]="maximized ? [30, 40, 50] : [3, 6, 12]" showFirstLastButtons> </mat-paginator>
+
+    <div *ngIf="!interactionDetailsTable.loaded" class="w-100-p h-100-p" fxLayout fxLayoutAlign="center center">
+        <mat-spinner></mat-spinner>
+    </div>
+</tw-wrapper>

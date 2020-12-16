@@ -1,0 +1,27 @@
+<!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
+<!-- implement following events in your component to access widget wrapper action events -->
+<!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
+
+<!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
+
+<tw-wrapper [data]="data">
+    <!-- your code goes here -->
+    <div class="p-12 custom-scroll-adjust" fxLayout="row wrap">
+        <ng-container *ngIf="entities$ | async as entities">
+            <div fxFlex="50" class="mb-8" *ngFor="let entity of entities">
+                <span class="text-bold"> {{ entity.label }} : </span>
+                <div fxLayout="row wrap" fxLayoutGap="10px" fxLayoutAlign="start center">
+                    <div class="p-4" fxLayout fxLayoutAlign="start center" *ngFor="let data of entity.data">
+                        <span> {{ data }} </span>
+                        <button mat-icon-button [cdkCopyToClipboard]="data">
+                            <mat-icon> content_copy </mat-icon>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <p *ngIf="!entities.length" class="text-center mat-title w-100-p mt-20">No entities available</p>
+        </ng-container>
+        <p *ngIf="!(entities$ | async)" class="text-center mat-title w-100-p mt-20">No entities available</p>
+    </div>
+    <!-- your code goes here -->
+</tw-wrapper>

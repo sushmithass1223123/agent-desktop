@@ -1,0 +1,33 @@
+<!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
+<!-- implement following events in your component to access widget wrapper action events -->
+<!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
+
+<!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
+
+<tw-wrapper [data]="data">
+    <!-- your code goes here -->
+    <div fxFlex fxFill fxLayout="row" class="p-8">
+        <mat-chip-list *ngIf="nlpData.length > 0; else noData">
+            <mat-chip
+                *ngFor="let item of nlpData"
+                removable
+                (click)="openAssitWidget(item.Name, false, item.Url, item.Width, item.Height)"
+                [ngClass]="{
+                    'bg-info': item.Count < 5,
+                    'bg-secondary': item.Count >= 5 && item.Count > 10,
+                    'bg-success': item.Count >= 10 && item.Count > 20,
+                    'bg-warning': item.Count >= 20 && item.Count > 30,
+                    'bg-danger': item.Count >= 30
+                }"
+            >
+                {{ item.Name }}
+                <mat-icon matChipRemove>close</mat-icon>
+            </mat-chip>
+        </mat-chip-list>
+
+        <ng-template #noData>
+            <div fxFill fxLayout fxLayoutAlign="center center" class="mat-title">No Data Available</div>
+        </ng-template>
+    </div>
+    <!-- your code goes here -->
+</tw-wrapper>

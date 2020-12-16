@@ -1,0 +1,97 @@
+@mixin matarial-theme($theme) {
+    $background: map-get($theme, background);
+    $foreground: map-get($theme, foreground);
+    $accent: map-get($theme, accent);
+    $is-dark: map-get($theme, is-dark);
+
+    mat-selection-list {
+        .mat-list-single-selected-option,
+        .mat-list-single-selected-option:hover,
+        .mat-list-single-selected-option:focus {
+            animation: apply 1s;
+
+            @if ($is-dark) {
+                background: mat-color($accent, 700) !important;
+            } @else {
+                background: mat-color($accent, 700) !important;
+            }
+
+            @keyframes apply {
+                from {
+                    background-color: rgba(0, 0, 0, 0.12);
+                }
+                to {
+                    @if ($is-dark) {
+                        background: mat-color($accent, 700) !important;
+                    } @else {
+                        background: mat-color($accent, 700) !important;
+                    }
+                }
+            }
+        }
+    }
+
+    .mat-table {
+        tr {
+            td {
+                @if ($is-dark) {
+                    color: #eaeaea;
+                    background-color: #303030;
+                } @else {
+                    color: #303030;
+                    background-color: #eaeaea;
+                }
+            }
+
+            &.selected {
+                td {
+                    @if ($is-dark) {
+                        color: #eaeaea;
+                        background-color: lighten(#303030, 5);
+                    } @else {
+                        color: #303030;
+                        background-color: darken(#eaeaea, 5);
+                    }
+                }
+            }
+        }
+
+        mat-header-cell {
+            color: mat-color($foreground, text);
+        }
+
+        mat-row {
+            @if ($is-dark) {
+                color: rgb(0 0 0 / 0.04);
+                background-color: map-get($background, hover);
+            } @else {
+                color: map-get($background, hover);
+                background-color: rgb(0 0 0 / 0.02);
+            }
+        }
+    }
+
+    mat-form-field {
+        &.prompt,
+        &.with-bg {
+            .mat-form-field-wrapper .mat-form-field-outline,
+            textarea {
+                @if ($is-dark) {
+                    background-color: map-get($background, hover);
+                } @else {
+                    background-color: #ffffff;
+                }
+            }
+        }
+    }
+
+    .mat-paginator {
+        @if ($is-dark) {
+            color: #eaeaea;
+            background-color: #303030;
+        } @else {
+            color: #303030;
+            background-color: #eaeaea;
+        }
+    }
+}

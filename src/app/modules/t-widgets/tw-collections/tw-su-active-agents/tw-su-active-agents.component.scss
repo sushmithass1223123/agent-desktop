@@ -1,0 +1,101 @@
+@import 'src/app/scss/shared';
+
+tw-su-active-agents {
+    tw-wrapper.active-agent-wrapper {
+        mat-card-content {
+            &.mat-card-content {
+                position: relative;
+                background: inherit !important;
+
+                mat-form-field {
+                    &.custom {
+                        .mat-form-field-wrapper {
+                            margin: 0;
+                            padding-bottom: 0 !important;
+
+                            .mat-form-field-infix {
+                                border: none;
+                                padding: 0.5em 0.5rem !important;
+                            }
+
+                            .mat-form-field-outline-start,
+                            .mat-form-field-outline-end {
+                                border-color: inherit;
+                            }
+                        }
+                    }
+                }
+
+                .agent-list {
+                    gap: 8px;
+
+                    .agent-item {
+                        cursor: pointer;
+                        avatar {
+                            .avatar-content {
+                                width: 54px;
+                                height: 44px;
+                                border-radius: 16px;
+                            }
+                        }
+
+                        .element-status {
+                            &.success {
+                                background: $tw-alt-success;
+                            }
+                            &.warning {
+                                background: $tw-alt-warning;
+                            }
+                            &.danger {
+                                background: $tw-alt-danger;
+                            }
+                        }
+                    }
+                }
+
+                .tw-accordion {
+                    &.active .channel-list {
+                        display: none;
+                    }
+                }
+
+                .channel-list {
+                    transition: opacity 0.3s;
+                    opacity: 1;
+                    .mat-card-avatar {
+                        cursor: default;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        margin: 0px 12px 8px 0px;
+
+                        .mat-badge-content {
+                            top: -6px;
+                            height: 20px;
+                            width: 20px;
+                            background: $tw-success !important;
+                            color: $tw-dark !important;
+                        }
+                    }
+                }
+
+                .feature-actions {
+                    button {
+                        margin: 0px 8px 8px 0px;
+                        background-color: rgba(0, 0, 0, 10%);
+                        width: 36px;
+                        height: 36px;
+                        line-height: 36px;
+                    }
+                }
+
+                .indicators {
+                    .mat-icon {
+                        cursor: default;
+                        margin-left: 4px;
+                    }
+                }
+            }
+        }
+    }
+}

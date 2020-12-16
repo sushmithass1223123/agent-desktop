@@ -8,7 +8,13 @@ import { fuseAnimations } from '@fuse/animations';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseNavigationService } from '@fuse/components/navigation/navigation.service';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
+import { FuseConfig } from '@fuse/types';
+import { ThemeSelector } from 'app/layout/utils/theme-selector';
 
+/**
+ * Need more Description 
+ * Theme options Component
+ */
 @Component({
     selector: 'app-theme-options',
     templateUrl: './theme-options.component.html',
@@ -85,10 +91,17 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
                     background: new FormControl(),
                     customBackgroundColor: new FormControl()
                 }),
+                anchorWidget: this._formBuilder.group({
+                    customBackgroundColor: new FormControl(),
+                    bodyBackground: new FormControl(),
+                    headerBackground: new FormControl(),
+                    contentBackground: new FormControl()
+                }),
                 widget: this._formBuilder.group({
                     customBackgroundColor: new FormControl(),
+                    bodyBackground: new FormControl(),
                     headerBackground: new FormControl(),
-                    bodyBackground: new FormControl()
+                    contentBackground: new FormControl()
                 }),
                 footer: this._formBuilder.group({
                     background: new FormControl(),
@@ -106,7 +119,7 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
         // Subscribe to the config changes
         this._fuseConfigService.config
             .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((config) => {
+            .subscribe((config: FuseConfig) => {
 
                 // Update the stored config
                 this.fuseConfig = config;
@@ -126,10 +139,20 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
                 this._resetFormValues(value);
             });
 
+        // Subscribe to the specific form value changes (colorTheme)
+        this.form.get('colorTheme').valueChanges
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((value) => {
+
+                // Reset the form values based on the
+                // selected layout style
+                this._setTheme(value);
+            });
+
         // Subscribe to the form value changes
         this.form.valueChanges
             .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((config) => {
+            .subscribe((config: FuseConfig) => {
 
                 // Update the config
                 this._fuseConfigService.config = config;
@@ -190,7 +213,7 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
                             width: 'fullwidth',
                             navbar: {
                                 background: 'purple-700',
-                                customBackgroundColor: false,
+                                customBackgroundColor: true,
                                 folded: false,
                                 hidden: false,
                                 position: 'left',
@@ -200,16 +223,23 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
                                 customBackgroundColor: true,
                                 background: 'grey-200',
                                 hidden: false,
-                                position: 'below-static'
+                                position: 'below-fixed'
                             },
                             content: {
                                 customBackgroundColor: true,
-                                background: 'grey-200',
+                                background: 'grey-200'
+                            },
+                            anchorWidget: {
+                                customBackgroundColor: true,
+                                bodyBackground: 'purple-A100',
+                                headerBackground: 'grey-100',
+                                contentBackground: 'grey-100'
                             },
                             widget: {
-                                customBackgroundColor: false,
-                                headerBackground: 'purple-700',
-                                bodyBackground: 'grey-400'
+                                customBackgroundColor: true,
+                                bodyBackground: 'grey-A100',
+                                headerBackground: 'grey-100',
+                                contentBackground: 'grey-100'
                             },
                             footer: {
                                 customBackgroundColor: true,
@@ -235,7 +265,7 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
                             width: 'fullwidth',
                             navbar: {
                                 background: 'purple-700',
-                                customBackgroundColor: false,
+                                customBackgroundColor: true,
                                 folded: false,
                                 hidden: false,
                                 position: 'left',
@@ -245,16 +275,23 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
                                 customBackgroundColor: true,
                                 background: 'grey-200',
                                 hidden: false,
-                                position: 'below-static'
+                                position: 'below-fixed'
                             },
                             content: {
                                 customBackgroundColor: true,
-                                background: 'grey-200',
+                                background: 'grey-200'
+                            },
+                            anchorWidget: {
+                                customBackgroundColor: true,
+                                bodyBackground: 'purple-A100',
+                                headerBackground: 'grey-100',
+                                contentBackground: 'grey-100'
                             },
                             widget: {
-                                customBackgroundColor: false,
-                                headerBackground: 'purple-700',
-                                bodyBackground: 'grey-400'
+                                customBackgroundColor: true,
+                                bodyBackground: 'grey-A100',
+                                headerBackground: 'grey-100',
+                                contentBackground: 'grey-100'
                             },
                             footer: {
                                 customBackgroundColor: true,
@@ -272,6 +309,20 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
                     break;
                 }
         }
+    }
+
+    /**
+     * Set the form theme values based on the
+     * selected theme
+     * 
+     * @param value 
+     * @private
+     */
+    private _setTheme(value: string): void {
+        // get FuseConfig for the theme from selector
+        const getTheme = ThemeSelector.getFuseConfigByTheme(value, true);
+        // patch the value to the form
+        this.form.patchValue(getTheme);
     }
 
     // -----------------------------------------------------------------------------------------------------

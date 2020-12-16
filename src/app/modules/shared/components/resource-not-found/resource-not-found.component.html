@@ -1,0 +1,12 @@
+<div class="not-found animate__animated animate__fadeIn">
+    <img src="assets/images/logos/tetherfi.png" class="logo" width="180" />
+    <div class="content">
+        <img src="assets/images/vectors/not-found.svg" />
+        <div class="desc">
+            <div class="subtitle">{{ subtitle || 'Oops!' }}</div>
+            <div class="title">{{ title || '404' }}</div>
+            <div class="description">{{ description || 'PAGE NOT FOUND' }}</div>
+            <button mat-raised-button *ngIf="login" color="primary" class="mt-12" (click)="routeToLogin()">Go to login page</button>
+        </div>
+    </div>
+</div>

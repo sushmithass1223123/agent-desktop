@@ -1,21 +1,49 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
+/**
+ * Content Page Service
+ */
 @Injectable({
     providedIn: 'root'
 })
 export class ContentPageService {
-    // create a private behaviour subject for viewMode
-    private viewMode = new BehaviorSubject<string>('');
-    viewModeObservable: Observable<string> = this.viewMode.asObservable();
 
-    // to update the view mode
-    updateViewMode(mode: string): void {
-        this.viewMode.next(mode);
+    /**
+     * View Mode Subject
+     * Need More Description
+     */
+    private _viewModeSubject: BehaviorSubject<any>;
+
+    constructor() {
+        // Set the config from the default config
+        this._viewModeSubject = new BehaviorSubject('');
     }
 
-    // to get the current view mode
-    getViewMode(): string {
-        return this.viewMode.value;
+
+    // -----------------------------------------------------------------------------------------------------
+    // @ Accessors
+    // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * Setter for mode
+     */
+    set mode(value) {
+        // Notify the observers
+        this._viewModeSubject.next(value);
+    }
+
+    /**
+     * Getter for mode
+     */
+    get mode(): any | Observable<any> {
+        return this._viewModeSubject.asObservable();
+    }
+
+    /**
+     * To get the current page
+     */
+    getCurrentMode(): string {
+        return this._viewModeSubject.getValue();
     }
 }

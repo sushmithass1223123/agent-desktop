@@ -1,0 +1,30 @@
+@import 'src/app/scss/shared';
+
+tw-active-interactions {
+    .voice {
+        .mat-card-avatar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #ffffff;
+            cursor: pointer;
+        }
+
+        .mat-icon-button {
+            .mat-icon {
+                width: 20px;
+                height: 20px;
+                font-size: 20px;
+            }
+        }
+    }
+
+    avatar {
+        cursor: pointer;
+
+        .mat-badge-content {
+            background: $tw-warning !important;
+            color: $tw-dark !important;
+        }
+    }
+}

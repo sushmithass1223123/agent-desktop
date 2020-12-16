@@ -1,48 +1,65 @@
-<div class="navbar-header" [ngClass]="fuseConfig.layout.navbar.background">
-
-    <!-- <div class="logo">
-        <img class="logo-icon" src="assets/images/logos/fuse.svg">
-        <span class="logo-text">TMAC</span>
-    </div> -->
-
+<div class="navbar-header" [ngClass]="fuseConfig.layout.navbar.customBackgroundColor === true ? fuseConfig.layout.navbar.background : ''">
+    <div class="logo" *ngIf="customerLogo?.Small.Src">
+        <img
+            class="logo-icon"
+            [src]="customerLogo?.Small.Src"
+            [alt]="customerLogo?.Alt"
+            [width]="customerLogo?.Small.Width || 50"
+            [height]="customerLogo?.Small.Height || 50"
+        />
+    </div>
 </div>
 
-<div class="navbar-content" fusePerfectScrollbar [fusePerfectScrollbarOptions]="{suppressScrollX: true}"
-    [ngClass]="fuseConfig.layout.navbar.background">
-
+<div class="navbar-content" [ngClass]="fuseConfig.layout.navbar.customBackgroundColor === true ? fuseConfig.layout.navbar.background : ''">
     <div class="twn-list">
         <mat-selection-list #sidebarList [multiple]="false">
-
-            <div class="top">
-
-                <mat-list-option *ngFor="let item of topWidgets" [value]="item" (click)="selectTab(item)"
-                    [selected]="item.Data.Active" matTooltip="{{ item.Name }}" matTooltipPosition="after"
-                    matTooltipClass="tooltip">
-
-                    <mat-icon class="icon" mat-list-icon>{{item.Data.Icon}}</mat-icon>
-
-                </mat-list-option>
-
+            <div class="top mat-elevation-z1">
                 <mat-divider *ngIf="topWidgets.length > 0"></mat-divider>
+                <ng-container *ngFor="let item of topWidgets">
+                    <mat-list-option
+                        *ngIf="item.Config.Enabled"
+                        [value]="item.Data.Path"
+                        (click)="selectTab(item)"
+                        #sidebarListOption
+                        [selected]="item.Data.Active"
+                        [matTooltip]="item.Name"
+                        matTooltipPosition="after"
+                        matTooltipClass="tooltip"
+                    >
+                        <mat-icon class="icon" mat-list-icon [matBadge]="item.Data.Count || ''">{{ item.Config.Icon || 'widgets' }}</mat-icon>
+                    </mat-list-option>
+                </ng-container>
             </div>
 
-            <div class="bottom">
-
+            <div class="bottom mat-elevation-z1 custom-scroll-adjust">
                 <mat-divider *ngIf="bottomWidgets.length > 0"></mat-divider>
-
-                <mat-list-option *ngFor="let item of bottomWidgets" [value]="item" (click)="selectTab(item)"
-                    [selected]="item.Data.Active" matTooltip="{{ item.Name }}" matTooltipPosition="after"
-                    matTooltipClass="tooltip">
-
-                    <mat-icon class="icon" mat-list-icon>{{item.Data.Icon}}</mat-icon>
-
-                </mat-list-option>
+                <ng-container *ngFor="let item of bottomWidgets">
+                    <mat-list-option
+                        *ngIf="item.Config.Enabled"
+                        [value]="item.Data.Path"
+                        (click)="selectTab(item)"
+                        #sidebarListOption
+                        [selected]="item.Data.Active"
+                        [matTooltip]="item.Name"
+                        matTooltipPosition="after"
+                        matTooltipClass="tooltip"
+                    >
+                        <mat-icon class="icon" mat-list-icon>{{ item.Config.Icon || 'widgets' }}</mat-icon>
+                    </mat-list-option>
+                </ng-container>
             </div>
 
+            <button mat-button class="button-settings" (click)="toggleSidebarOpen('themeOptionsPanel')">
+                <mat-icon class="icon">settings</mat-icon>
+            </button>
         </mat-selection-list>
 
-        <img class="brand-logo" *ngIf="brandLogo" [src]='brandLogo.Src' alt="{{ brandLogo.Alt }}"
-            width="{{ brandLogo.Width }}" height="{{ brandLogo.Height }}" />
+        <img
+            class="brand-logo"
+            [src]="brandLogo?.Small.Src || 'assets/images/logos/tetherfi-logo-round.png'"
+            [alt]="brandLogo?.Alt || 'Tetherfi'"
+            [width]="brandLogo?.Small.Width || 50"
+            [height]="brandLogo?.Small.Height || 50"
+        />
     </div>
-
 </div>

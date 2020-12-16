@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 
+/**
+ * Confirm dialog component
+ */
 @Component({
     selector   : 'fuse-confirm-dialog',
     templateUrl: './confirm-dialog.component.html',

@@ -1,0 +1,37 @@
+<!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
+<!-- implement following events in your component to access widget wrapper action events -->
+<!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
+<tw-wrapper [data]="data" (maximizeEvent)="maximized = $event">
+    <div
+        *ngIf="!gamificationReqStatus.loading && !gamificationReqStatus.error"
+        fxLayout="column"
+        [fxLayoutAlign]="
+            !(performanceChartProgress.goal | keyvalue).length && !(performanceChartProgress.badge | keyvalue).length ? 'center center' : ''
+        "
+        class="h-100-p w-100-p px-16 custom-scroll-adjust"
+    >
+        <p *ngIf="(performanceChartProgress.goal | keyvalue).length" class="my-16 text-bold">KPI Goals :</p>
+
+        <div *ngFor="let g of performanceChartProgress.goal | keyvalue" class="mb-28">
+            <div class="mb-8">{{ g.key }} : {{ g.value.current }} / {{ g.value.max }}</div>
+            <mat-progress-bar color="primary" [value]="(g.value.current * 100) / g.value.max"> </mat-progress-bar>
+        </div>
+
+        <div
+            *ngIf="!(performanceChartProgress.goal | keyvalue).length && !(performanceChartProgress.badge | keyvalue).length"
+            class="w-100-p h-100-p"
+        >
+            <img src="assets/images/vectors/no-data-1.svg" class="w-100-p box-shadow-3d" [ngClass]="{ 'h-95-p': maximized, ' h-80-p': !maximized }" />
+            <p class="text-center mat-title m-0">No Data Available</p>
+        </div>
+    </div>
+
+    <div *ngIf="gamificationReqStatus.loading" fxLayout fxLayoutAlign="center center" class="w-100-p h-100-p">
+        <mat-spinner></mat-spinner>
+    </div>
+
+    <div *ngIf="gamificationReqStatus.error" fxLayout="column" fxLayoutAlign="center center" class="w-100-p h-100-p text-center">
+        <span class="mb-16">{{ gamificationReqStatus.msg }}</span>
+        <button mat-raised-button color="primary" (click)="setChartData()">Retry</button>
+    </div>
+</tw-wrapper>

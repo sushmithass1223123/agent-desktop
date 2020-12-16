@@ -1,0 +1,134 @@
+.advanced-search-form {
+    .mat-form-field-infix {
+        align-items: center;
+    }
+}
+
+workbench-email {
+    .editor-container {
+        border: none;
+        margin-top: 30px;
+    }
+    .email-list {
+        height: 98%;
+        max-height: 98%;
+        overflow: auto;
+        box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+    }
+
+    // .tw-list-item {
+    //     // overflow: auto;
+    // }
+
+    // .email-list-groups {
+    //     // max-height: 70%;
+    // }
+
+    .mat-form-field.custom .mat-form-field-wrapper {
+        padding: 0 !important;
+        margin: 0;
+    }
+    .mat-form-field-infinix {
+        padding: 2px 0px !important;
+    }
+    .email-open {
+        height: 98%;
+        box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+    }
+
+    .search-input {
+        position: relative;
+        margin: auto;
+        z-index: 1;
+        width: calc(100% - 20px);
+    }
+
+    .loader {
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        z-index: 5;
+        background-color: rgba(black, 0.1);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        .mx-auto {
+            margin: auto;
+        }
+    }
+
+    .email-tree-invisible {
+        display: none;
+        // &.ul {
+        //     border: none !important;
+        // }
+    }
+
+    mat-nested-tree-node {
+        &.active li {
+            position: relative;
+            overflow: hidden;
+            &::before {
+                content: '';
+                width: 2px;
+                height: 100%;
+                position: absolute;
+                left: 0;
+            }
+        }
+    }
+
+    .email-tree {
+        background: transparent !important;
+    }
+
+    .email-tree ul,
+    .email-tree li {
+        margin-bottom: 0;
+        list-style-type: none;
+    }
+    .mat-nested-tree-node {
+        & > li > ul:not(.no-scroll) {
+            max-height: 500px;
+            overflow: auto;
+        }
+    }
+    mat-tree-node {
+        cursor: pointer;
+        padding-left: 0 !important;
+        ul {
+            padding-inline-start: 0px !important;
+        }
+    }
+
+    .email-tree ul {
+        padding-inline-start: 15px;
+        margin-top: 0;
+    }
+
+    .email-tree li {
+        margin-top: 0;
+    }
+
+    .hint-mail-text {
+        font-size: 28px;
+        font-weight: 500;
+    }
+}
+
+.advanced-search-form {
+    border-radius: 10px;
+    padding-bottom: 8px;
+    margin-top: 16px;
+    width: 523px;
+    height: 50vh;
+    overflow: auto;
+    background-color: inherit;
+    form {
+        padding: 10px;
+    }
+    .form-field {
+        margin-bottom: 8px;
+    }
+}

@@ -5,6 +5,10 @@ import { takeUntil } from 'rxjs/operators';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { navigation } from 'app/navigation/navigation';
 
+/**
+ * Need more Description 
+ * Layout 1 horizontal component
+ */
 @Component({
     selector     : 'horizontal-layout-1',
     templateUrl  : './layout-1.component.html',

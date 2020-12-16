@@ -1,0 +1,288 @@
+.d {
+    &-block {
+        display: block !important;
+    }
+    &-none {
+        display: none !important;
+    }
+    &-flex {
+        display: flex !important;
+    }
+}
+
+.bg {
+    &-inherit {
+        background: inherit;
+    }
+    &-primary {
+        background-color: $tw-primary !important;
+        color: rgba(0, 0, 0, 0.87) !important;
+    }
+    &-secondary {
+        background-color: $tw-secondary !important;
+        color: rgba(0, 0, 0, 0.87) !important;
+    }
+    &-info {
+        background-color: $tw-info !important;
+        color: rgba(0, 0, 0, 0.87) !important;
+    }
+    &-danger {
+        background-color: $tw-danger !important;
+        color: rgba(0, 0, 0, 0.87) !important;
+    }
+    &-warning {
+        background-color: $tw-warning !important;
+        color: rgba(0, 0, 0, 0.87) !important;
+    }
+    &-success {
+        background-color: $tw-success !important;
+        color: rgba(0, 0, 0, 0.87) !important;
+    }
+    &-dark {
+        background-color: $tw-dark !important;
+        color: #ffffff !important;
+    }
+    &-light {
+        background-color: #ffffff !important;
+        color: $tw-dark !important;
+    }
+}
+
+.bg-alt {
+    &-danger {
+        background-color: $tw-alt-danger !important;
+        color: #ffffff !important;
+    }
+    &-warning {
+        background-color: $tw-alt-warning !important;
+        color: #ffffff !important;
+    }
+    &-success {
+        background-color: $tw-alt-success !important;
+        color: #ffffff !important;
+    }
+}
+
+.border {
+    @mixin border-color($width, $position: false) {
+        $exactPos: '';
+        @if $position {
+            $exactPos: '-' + #{$position};
+        }
+        &-primary {
+            border#{$exactPos}: #{$width}px solid $tw-primary !important;
+        }
+        &-secondary {
+            border#{$exactPos}: #{$width}px solid $tw-secondary !important;
+        }
+        &-info {
+            border#{$exactPos}: #{$width}px solid $tw-info !important;
+        }
+        &-danger {
+            border#{$exactPos}: #{$width}px solid $tw-danger !important;
+        }
+        &-warning {
+            border#{$exactPos}: #{$width}px solid $tw-warning !important;
+        }
+        &-success {
+            border#{$exactPos}: #{$width}px solid $tw-success !important;
+        }
+        &-dark {
+            border#{$exactPos}: #{$width}px solid $tw-dark !important;
+        }
+        &-alt-success {
+            border#{$exactPos}: #{$width}px solid $tw-alt-success !important;
+        }
+        &-alt-warning {
+            border#{$exactPos}: #{$width}px solid $tw-alt-warning !important;
+        }
+        &-alt-danger {
+            border#{$exactPos}: #{$width}px solid $tw-alt-danger !important;
+        }
+    }
+    &-left {
+        @include border-color(1, left);
+        &-xs {
+            @include border-color(0.5, left);
+        }
+        &-sm {
+            @include border-color(2, left);
+        }
+        &-md {
+            @include border-color(3, left);
+        }
+        &-lg {
+            @include border-color(5, left);
+        }
+    }
+    &-right {
+        @include border-color(1, right);
+        &-xs {
+            @include border-color(0.5, right);
+        }
+        &-sm {
+            @include border-color(2, right);
+        }
+        &-md {
+            @include border-color(3, right);
+        }
+        &-lg {
+            @include border-color(5, right);
+        }
+    }
+    &-bottom {
+        @include border-color(1, bottom);
+        &-xs {
+            @include border-color(0.5, bottom);
+        }
+        &-sm {
+            @include border-color(2, bottom);
+        }
+        &-md {
+            @include border-color(3, bottom);
+        }
+        &-lg {
+            @include border-color(5, bottom);
+        }
+    }
+    &-top {
+        @include border-color(1, top);
+        &-xs {
+            @include border-color(0.5, top);
+        }
+        &-sm {
+            @include border-color(2, top);
+        }
+        &-md {
+            @include border-color(3, top);
+        }
+        &-lg {
+            @include border-color(5, top);
+        }
+    }
+    @include border-color(1);
+    &-xs {
+        @include border-color(0.5);
+    }
+    &-sm {
+        @include border-color(2);
+    }
+    &-md {
+        @include border-color(3);
+    }
+    &-lg {
+        @include border-color(5);
+    }
+}
+
+.border-radius {
+    &-10 {
+        border-radius: 10px !important;
+    }
+    &-20 {
+        border-radius: 20px !important;
+    }
+    &-30 {
+        border-radius: 30px !important;
+    }
+}
+
+.spacer {
+    flex: 1 1 auto;
+}
+
+.absolute-center {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+}
+
+.text {
+    &-primary {
+        color: $tw-primary !important;
+    }
+    &-secondary {
+        color: $tw-secondary !important;
+    }
+    &-info {
+        color: $tw-info !important;
+    }
+    &-danger {
+        color: $tw-danger !important;
+    }
+    &-warning {
+        color: $tw-warning !important;
+    }
+    &-success {
+        color: $tw-success !important;
+    }
+    &-dark {
+        color: $tw-dark !important;
+    }
+}
+
+.text-alt {
+    &-danger {
+        color: $tw-alt-danger !important;
+    }
+    &-warning {
+        color: $tw-alt-warning !important;
+    }
+    &-success {
+        color: $tw-alt-success !important;
+    }
+}
+
+.mat-ripple {
+    cursor: pointer;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.custom-btn {
+    &.mat-button-disabled {
+        background-color: rgba(0, 0, 0, 0.12) !important;
+        color: rgba(0, 0, 0, 0.26) !important;
+        cursor: default;
+    }
+}
+
+// z-index helper
+@for $zIndex from -10 through 100 {
+    .z-index-#{$zIndex} {
+        z-index: #{$zIndex};
+    }
+}
+
+// top helper
+@for $top from -100 through 100 {
+    .top-#{$top} {
+        top: #{$top}px;
+    }
+}
+
+// left helper
+@for $left from -100 through 100 {
+    .left-#{$left} {
+        left: #{$left}px;
+    }
+}
+
+// right helper
+@for $right from -100 through 100 {
+    .right-#{$right} {
+        right: #{$right}px;
+    }
+}
+
+// bottom helper
+@for $bottom from -100 through 100 {
+    .bottom-#{$bottom} {
+        bottom: #{$bottom}px;
+    }
+}

@@ -1,7 +1,12 @@
 twc-custom {
-    mat-card {
-        width: 100%;
-        height: 100%;
+    &.twc-card {
+        mat-card {
+            width: 100%;
+            height: 100%;
+            border-radius: 2rem;
+            padding: 0;
+            word-break: break-word;
+        }
     }
 
     .frame {
@@ -9,7 +14,7 @@ twc-custom {
         width: 100%;
         margin: 0px;
         padding: 0px;
-        border-radius: 1.5rem;
+        border-radius: 2rem;
 
         .none {
             display: none;
@@ -24,7 +29,7 @@ twc-custom {
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 1.5rem;
+        border-radius: 2rem;
         background: currentColor;
     }
 }

@@ -1,0 +1,2462 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>agent-desktop documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	      <link rel="stylesheet" href="../styles/style.css">
+    </head>
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top visible-xs">
+            <a href="../" class="navbar-brand">agent-desktop documentation</a>
+            <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="hidden-xs menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+<ol class="breadcrumb">
+  <li>Components</li>
+  <li>TwCustomerJourneyComponent</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="active">
+            <a href="#info" role="tab" id="info-tab" data-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li >
+            <a href="#source" role="tab" id="source-tab" data-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li >
+            <a href="#templateData" role="tab" id="templateData-tab" data-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li >
+            <a href="#styleData" role="tab" id="styleData-tab" data-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li >
+            <a href="#tree" role="tab" id="tree-tab" data-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="c-info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>src/app/modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.component.ts</code>
+</p>
+
+    <p class="comment">
+        <h3>Description</h3>
+    </p>
+    <p class="comment">
+        <p>Customer journey component
+Shows up during interactions
+timeline when minimized and Table when maximised</p>
+
+    </p>
+
+    <p class="comment">
+        <h3>Extends</h3>
+    </p>
+    <p class="comment">
+                <code><a href="../classes/TWidget.html" target="_self" >TWidgetWrapper</a></code>
+    </p>
+
+    <p class="comment">
+        <h3>Implements</h3>
+    </p>
+    <p class="comment">
+                    <code><a href="https://angular.io/api/core/OnInit" target="_blank" >OnInit</a></code>
+                    <code><a href="https://angular.io/api/core/OnDestroy" target="_blank" >OnDestroy</a></code>
+    </p>
+
+
+<section>
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover">
+        <tbody>
+
+
+            <tr>
+                <td class="col-md-3">encapsulation</td>
+                <td class="col-md-9"><code>ViewEncapsulation.None</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>tw-customer-journey</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./tw-customer-journey.component.scss</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./tw-customer-journey.component.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section>
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#customerJourneyTable">customerJourneyTable</a>
+                            </li>
+                            <li>
+                                <a href="#fuseConfig">fuseConfig</a>
+                            </li>
+                            <li>
+                                <a href="#fuseDirective">fuseDirective</a>
+                            </li>
+                            <li>
+                                <a href="#historyParams">historyParams</a>
+                            </li>
+                            <li>
+                                <a href="#InteractionHistoryReadyEvent">InteractionHistoryReadyEvent</a>
+                            </li>
+                            <li>
+                                <a href="#interactionId">interactionId</a>
+                            </li>
+                            <li>
+                                <a href="#maximized">maximized</a>
+                            </li>
+                            <li>
+                                <a href="#searchForm">searchForm</a>
+                            </li>
+                            <li>
+                                <a href="#sessionActions">sessionActions</a>
+                            </li>
+                            <li>
+                                <a href="#wrapperComponent">wrapperComponent</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#createFilter">createFilter</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#getInteractionHistory">getInteractionHistory</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getSessionActions">getSessionActions</a>
+                            </li>
+                            <li>
+                                <a href="#ngOnDestroy">ngOnDestroy</a>
+                            </li>
+                            <li>
+                                <a href="#ngOnInit">ngOnInit</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#onMaximizeEvent">onMaximizeEvent</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#openSentimentDashboard">openSentimentDashboard</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#pageEvent">pageEvent</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#setIframe">setIframe</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Inputs</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#data">data</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Outputs</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#collapseEvent">collapseEvent</a>
+                            </li>
+                            <li>
+                                <a href="#floatEvent">floatEvent</a>
+                            </li>
+                            <li>
+                                <a href="#maximizeEvent">maximizeEvent</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Accessors</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                    <a href="#paginatorContent">paginatorContent</a>
+                                </li>
+                                <li>
+                                    <a href="#sortContent">sortContent</a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+        </tbody>
+    </table>
+</section>
+
+    <section>
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(_fuseConfigService: <a href="../injectables/FuseConfigService.html">FuseConfigService</a>, _tmacEventService: <a href="../injectables/TMACEventService.html">TMACEventService</a>, sanitizer: <a href="https://angular.io/api/platform-browser/DomSanitizer" target="_blank">DomSanitizer</a>, _appUIService: <a href="../injectables/AppUiService.html">AppUiService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="118" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.component.ts:118</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>_fuseConfigService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/FuseConfigService.html" target="_self" >FuseConfigService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>_tmacEventService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/TMACEventService.html" target="_self" >TMACEventService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>sanitizer</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="https://angular.io/api/platform-browser/DomSanitizer" target="_blank" >DomSanitizer</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>_appUIService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/AppUiService.html" target="_self" >AppUiService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+    <section>
+    <h3 id="inputs">Inputs</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="data"></a>
+                        <b>data</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/IWidget.html" target="_self" >IWidget</a></code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="36" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.component.ts:36</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Input data from app config json</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+    <section>
+    <h3 id="outputs">Outputs</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="collapseEvent"></a>
+                        <b>collapseEvent</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://angular.io/api/core/EventEmitter" target="_blank" >EventEmitter</a></code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="102" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.component.ts:102</a></div>
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="floatEvent"></a>
+                        <b>floatEvent</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://angular.io/api/core/EventEmitter" target="_blank" >EventEmitter</a></code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="101" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.component.ts:101</a></div>
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="maximizeEvent"></a>
+                        <b>maximizeEvent</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://angular.io/api/core/EventEmitter" target="_blank" >EventEmitter</a></code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="100" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.component.ts:100</a></div>
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+</section>
+
+
+    <section>
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createFilter"></a>
+                    <span class="name">
+                        <b>
+                            createFilter
+                        </b>
+                        <a href="#createFilter"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>createFilter()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="190"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.component.ts:190</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>    <code>(data: any, filter: string) &#x3D;&gt; boolean</code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getInteractionHistory"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Private</span>
+                            getInteractionHistory
+                        </b>
+                        <a href="#getInteractionHistory"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getInteractionHistory(lastId?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="255"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.component.ts:255</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>lastId</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        Yes
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getSessionActions"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Public</span>
+                            <span class="modifier">Async</span>
+                            getSessionActions
+                        </b>
+                        <a href="#getSessionActions"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getSessionActions(sessionId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="305"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.component.ts:305</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Get actions of selected sessionId</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                    <td>Description</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>sessionId</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                    <td>
+                                        <p>selected Session Id</p>
+
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngOnDestroy"></a>
+                    <span class="name">
+                        <b>
+                            ngOnDestroy
+                        </b>
+                        <a href="#ngOnDestroy"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngOnDestroy()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="228"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.component.ts:228</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngOnInit"></a>
+                    <span class="name">
+                        <b>
+                            ngOnInit
+                        </b>
+                        <a href="#ngOnInit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngOnInit()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="144"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.component.ts:144</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onMaximizeEvent"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Public</span>
+                            onMaximizeEvent
+                        </b>
+                        <a href="#onMaximizeEvent"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>onMaximizeEvent(state: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="296"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.component.ts:296</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Maximize event from Wrapper</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>state</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="openSentimentDashboard"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Public</span>
+                            openSentimentDashboard
+                        </b>
+                        <a href="#openSentimentDashboard"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>openSentimentDashboard(sessionId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="326"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.component.ts:326</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>To open sentiment dashboard for a session</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>sessionId</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="pageEvent"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Public</span>
+                            pageEvent
+                        </b>
+                        <a href="#pageEvent"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>pageEvent()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="286"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.component.ts:286</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="setIframe"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Public</span>
+                            setIframe
+                        </b>
+                        <a href="#setIframe"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>setIframe(row: InteractionHistory)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="277"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.component.ts:277</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>row</td>
+                                    <td>
+                                            <code>InteractionHistory</code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section>
+    
+        <h3 id="inputs">
+            Properties
+        </h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="customerJourneyTable"></a>
+                        <span class="name">
+                            <b>
+                            customerJourneyTable</b>
+                            <a href="#customerJourneyTable"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>    <code>literal type</code>
+
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="107" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.component.ts:107</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Customer journey table Info</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="fuseConfig"></a>
+                        <span class="name">
+                            <b>
+                            fuseConfig</b>
+                            <a href="#fuseConfig"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="../interfaces/FuseConfig.html" target="_self" >FuseConfig</a></code>
+
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.component.ts:41</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Fuse confi</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="fuseDirective"></a>
+                        <span class="name">
+                            <b>
+                            fuseDirective</b>
+                            <a href="#fuseDirective"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>    <code>FusePerfectScrollbarDirective</code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Decorators : </b>
+                            <br />
+                            <code>
+                                @ViewChild(FusePerfectScrollbarDirective)<br />
+                            </code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="92" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.component.ts:92</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Fuse Perfect scrollbar ref</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="historyParams"></a>
+                        <span class="name">
+                            <b>
+                            historyParams</b>
+                            <a href="#historyParams"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>    <code>IGetInteractionHistory</code>
+
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="98" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.component.ts:98</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="InteractionHistoryReadyEvent"></a>
+                        <span class="name">
+                            <b>
+                            InteractionHistoryReadyEvent</b>
+                            <a href="#InteractionHistoryReadyEvent"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>() &#x3D;&gt; {...}</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="235" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.component.ts:235</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="interactionId"></a>
+                        <span class="name">
+                            <b>
+                            interactionId</b>
+                            <a href="#interactionId"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="97" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.component.ts:97</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Current interaction Id</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="maximized"></a>
+                        <span class="name">
+                            <b>
+                            maximized</b>
+                            <a href="#maximized"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>false</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="118" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.component.ts:118</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="searchForm"></a>
+                        <span class="name">
+                            <b>
+                            searchForm</b>
+                            <a href="#searchForm"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>new FormGroup({
+        SessionID: new FormControl(&#x27;&#x27;),
+        InteractionDate: new FormControl(&#x27;&#x27;),
+        Channel: new FormControl(&#x27;&#x27;),
+        CIF: new FormControl(&#x27;&#x27;),
+        NRIC: new FormControl(&#x27;&#x27;),
+        PhoneNumber: new FormControl(&#x27;&#x27;),
+        OverallSentiment: new FormControl(&#x27;&#x27;)
+    })</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="46" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.component.ts:46</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Search for record in table</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="sessionActions"></a>
+                        <span class="name">
+                            <b>
+                            sessionActions</b>
+                            <a href="#sessionActions"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="../interfaces/ResData.html" target="_self" >ResData&lt;InteractionAction[]&gt;</a></code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>{
+        error: false,
+        loading: false
+    }</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="59" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.component.ts:59</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>session actions timeline</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="wrapperComponent"></a>
+                        <span class="name">
+                            <b>
+                            wrapperComponent</b>
+                            <a href="#wrapperComponent"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="../components/TwWrapperComponent.html" target="_self" >TwWrapperComponent</a></code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Decorators : </b>
+                            <br />
+                            <code>
+                                @ViewChild(TwWrapperComponent)<br />
+                            </code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="87" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.component.ts:87</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Wrapper component Ref</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+</section>
+
+    <section>
+    <h3 id="accessors">
+        Accessors
+    </h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="paginatorContent"></a>
+                        <span class="name"><b>paginatorContent</b><a href="#paginatorContent"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td class="col-md-4">
+                        <span class="accessor"><b>set</b><code>paginatorContent(content)</code></span>
+                    </td>
+                </tr>
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.component.ts:67</a></div>
+                                </td>
+                            </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-description"><p>Paginator ref</p>
+</div>
+
+                                <div class="io-description">
+                                        <b>Parameters :</b>
+                                        <table class="params">
+                                            <thead>
+                                                <tr>
+                                                    <td>Name</td>
+                                                    <td>Optional</td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                    <tr>
+                                                            <td>content</td>
+                                                    
+                                                    
+                                                        <td>
+                                                                No
+                                                        </td>
+                                                        
+                                                    </tr>
+                                            </tbody>
+                                        </table>
+                                </div>
+                                <div>
+                                </div>
+                                <div class="io-description">
+                                    <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                                </div>
+                        </td>
+                    </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="sortContent"></a>
+                        <span class="name"><b>sortContent</b><a href="#sortContent"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td class="col-md-4">
+                        <span class="accessor"><b>set</b><code>sortContent(content)</code></span>
+                    </td>
+                </tr>
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="77" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.component.ts:77</a></div>
+                                </td>
+                            </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-description"><p>Sorting Ref</p>
+</div>
+
+                                <div class="io-description">
+                                        <b>Parameters :</b>
+                                        <table class="params">
+                                            <thead>
+                                                <tr>
+                                                    <td>Name</td>
+                                                    <td>Optional</td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                    <tr>
+                                                            <td>content</td>
+                                                    
+                                                    
+                                                        <td>
+                                                                No
+                                                        </td>
+                                                        
+                                                    </tr>
+                                            </tbody>
+                                        </table>
+                                </div>
+                                <div>
+                                </div>
+                                <div class="io-description">
+                                    <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                                </div>
+                        </td>
+                    </tr>
+            </tbody>
+        </table>
+</section>
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="c-source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { SelectionModel } from &#x27;@angular/cdk/collections&#x27;;
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from &#x27;@angular/core&#x27;;
+import { FormControl, FormGroup } from &#x27;@angular/forms&#x27;;
+import { MatPaginator } from &#x27;@angular/material/paginator&#x27;;
+import { MatSort } from &#x27;@angular/material/sort&#x27;;
+import { MatTableDataSource } from &#x27;@angular/material/table&#x27;;
+import { DomSanitizer, SafeResourceUrl } from &#x27;@angular/platform-browser&#x27;;
+import { FusePerfectScrollbarDirective } from &#x27;@fuse/directives/fuse-perfect-scrollbar/fuse-perfect-scrollbar.directive&#x27;;
+import { FuseConfigService } from &#x27;@fuse/services/config.service&#x27;;
+import { FuseConfig } from &#x27;@fuse/types&#x27;;
+import { TwWrapperComponent } from &#x27;@modules/t-widgets/tw-wrapper/tw-wrapper.component&#x27;;
+import { AppUiService } from &#x27;@services/app-ui.service&#x27;;
+import { TMACEventService } from &#x27;@services/tmac-event.service&#x27;;
+import { TWidgetWrapper } from &#x27;@twidgets/utils/widget-wrapper/tw-wrapper&#x27;;
+import { COMMON_ERR_MESSAGE } from &#x27;app/constants&#x27;;
+import { IWidget, ResData } from &#x27;app/interfaces&#x27;;
+import { sortBy, uniqBy } from &#x27;lodash&#x27;;
+import { takeUntil } from &#x27;rxjs/operators&#x27;;
+import { IGetInteractionHistory, InteractionAction, InteractionHistory, InteractionHistoryReadyEvent, IUIEvent, SDKClient } from &#x27;tmac-sdk&#x27;;
+
+/**
+ * Customer journey component
+ * Shows up during interactions
+ * timeline when minimized and Table when maximised
+ */
+@Component({
+    selector: &#x27;tw-customer-journey&#x27;,
+    templateUrl: &#x27;./tw-customer-journey.component.html&#x27;,
+    styleUrls: [&#x27;./tw-customer-journey.component.scss&#x27;],
+    encapsulation: ViewEncapsulation.None
+})
+export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+    /**
+     * Input data from app config json
+     */
+    @Input() data: IWidget;
+
+    /**
+     * Fuse confi
+     */
+    fuseConfig: FuseConfig;
+
+    /**
+     * Search for record in table
+     */
+    searchForm &#x3D; new FormGroup({
+        SessionID: new FormControl(&#x27;&#x27;),
+        InteractionDate: new FormControl(&#x27;&#x27;),
+        Channel: new FormControl(&#x27;&#x27;),
+        CIF: new FormControl(&#x27;&#x27;),
+        NRIC: new FormControl(&#x27;&#x27;),
+        PhoneNumber: new FormControl(&#x27;&#x27;),
+        OverallSentiment: new FormControl(&#x27;&#x27;)
+    });
+
+    /**
+     * session actions timeline
+     */
+    sessionActions: ResData&lt;InteractionAction[]&gt; &#x3D; {
+        error: false,
+        loading: false
+    };
+
+    /**
+     * Paginator ref
+     */
+    @ViewChild(MatPaginator) set paginatorContent(content: MatPaginator) {
+        if (content) {
+            // initially setter gets called with undefined
+            this.customerJourneyTable.tableData.source.paginator &#x3D; content;
+        }
+    }
+
+    /**
+     * Sorting Ref
+     */
+    @ViewChild(MatSort) set sortContent(content: MatSort) {
+        if (content) {
+            // initially setter gets called with undefined
+            this.customerJourneyTable.tableData.source.sort &#x3D; content;
+        }
+    }
+
+    /**
+     * Wrapper component Ref
+     */
+    @ViewChild(TwWrapperComponent) wrapperComponent: TwWrapperComponent;
+
+    /**
+     * Fuse Perfect scrollbar ref
+     */
+    @ViewChild(FusePerfectScrollbarDirective) fuseDirective: FusePerfectScrollbarDirective;
+
+    /**
+     * Current interaction Id
+     */
+    interactionId: number;
+    historyParams: IGetInteractionHistory;
+
+    @Output() maximizeEvent &#x3D; new EventEmitter();
+    @Output() floatEvent &#x3D; new EventEmitter();
+    @Output() collapseEvent &#x3D; new EventEmitter();
+
+    /**
+     * Customer journey table Info
+     */
+    customerJourneyTable: {
+        loading: boolean;
+        lastId: string;
+        iframeUrl: SafeResourceUrl;
+        tableData: {
+            source: MatTableDataSource&lt;InteractionHistory&gt;;
+            columns: string[];
+            selection: SelectionModel&lt;InteractionHistory&gt;;
+        };
+    };
+
+    maximized &#x3D; false;
+
+    constructor(
+        private _fuseConfigService: FuseConfigService,
+        private _tmacEventService: TMACEventService,
+        private sanitizer: DomSanitizer,
+        private _appUIService: AppUiService
+    ) {
+        super();
+
+        this.customerJourneyTable &#x3D; {
+            loading: true,
+            iframeUrl: &#x27;&#x27;,
+            lastId: &#x27;&#x27;,
+            tableData: {
+                columns: [&#x27;SessionID&#x27;, &#x27;InteractionDate&#x27;, &#x27;Channel&#x27;, &#x27;CIF&#x27;, &#x27;NRIC&#x27;, &#x27;PhoneNumber&#x27;, &#x27;OverallSentiment&#x27;, &#x27;Actions&#x27;],
+                selection: new SelectionModel&lt;InteractionHistory&gt;(false, []),
+                source: new MatTableDataSource([])
+            }
+        };
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+    // @ Lifecycle hooks
+    // -----------------------------------------------------------------------------------------------------
+
+    ngOnInit(): void {
+        // call the wrapper init method
+        this.initWrapper(this.data);
+
+        // set the interaction id from data
+        this.interactionId &#x3D; this.data.InteractionDetails.InteractionID;
+
+        // subscribe to fuse
+        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) &#x3D;&gt; {
+            this.fuseConfig &#x3D; config;
+        });
+
+        this.historyParams &#x3D; {
+            cif: &#x27;&#x27;,
+            email: &#x27;&#x27;,
+            nric: &#x27;&#x27;,
+            phone: &#x27;&#x27;,
+            noOfRecords: this.data.Data.NoOfRecords,
+            lastId: &#x27;0&#x27;
+        };
+
+        // get the event from event bag to make sure no events are missed
+        const eventBag &#x3D; this._tmacEventService.get(this.interactionId);
+
+        // process the events if any
+        eventBag.forEach((evt: IUIEvent) &#x3D;&gt; {
+            this[evt.EventName]?.(evt);
+        });
+
+        // this.customerJourneyTable.tableData.source.filter &#x3D; JSON.stringify({ SessionID: &#x27;dev200922183239_1055&#x27; });
+
+        this.customerJourneyTable.tableData.source.filterPredicate &#x3D; this.createFilter();
+        this.searchForm.valueChanges.subscribe((res) &#x3D;&gt; {
+            const searchKey &#x3D; {};
+            Object.keys(res).forEach((k) &#x3D;&gt; {
+                if (res[k]) {
+                    searchKey[k] &#x3D; res[k].trim().toLowerCase();
+                }
+            });
+            const stringifiedSearch &#x3D; JSON.stringify(searchKey);
+            this.customerJourneyTable.tableData.source.filter &#x3D; stringifiedSearch &#x3D;&#x3D;&#x3D; &#x27;{}&#x27; ? &#x27;&#x27; : stringifiedSearch;
+        });
+        SDKClient.events.on(&#x27;InteractionHistoryReadyEvent&#x27;, this.InteractionHistoryReadyEvent);
+    }
+
+    // Custom filter method fot Angular Material Datatable
+    createFilter() {
+        let filterFunction &#x3D; (data: any, filter: string): boolean &#x3D;&gt; {
+            let searchTerms &#x3D; JSON.parse(filter);
+            let isFilterSet &#x3D; false;
+            for (const col in searchTerms) {
+                if (searchTerms[col].toString() !&#x3D;&#x3D; &#x27;&#x27;) {
+                    isFilterSet &#x3D; true;
+                } else {
+                    delete searchTerms[col];
+                }
+            }
+
+            let nameSearch &#x3D; () &#x3D;&gt; {
+                let found &#x3D; false;
+                if (isFilterSet) {
+                    Object.keys(searchTerms).map((col) &#x3D;&gt; {
+                        // for (const col in searchTerms) {
+                        searchTerms[col]
+                            .trim()
+                            .toLowerCase()
+                            .split(&#x27; &#x27;)
+                            .forEach((word: any) &#x3D;&gt; {
+                                if (data[col].toString().toLowerCase().indexOf(word) !&#x3D;&#x3D; -1 &amp;&amp; isFilterSet) {
+                                    found &#x3D; true;
+                                }
+                            });
+                        // }
+                    });
+                    return found;
+                } else {
+                    return true;
+                }
+            };
+            return nameSearch();
+        };
+        return filterFunction;
+    }
+
+    ngOnDestroy(): void {
+        // call the wrapper destroy method
+        this.destroyWrapper();
+        // de-register from TMAC event
+        SDKClient.events.off(&#x27;InteractionHistoryReadyEvent&#x27;, this.InteractionHistoryReadyEvent);
+    }
+
+    InteractionHistoryReadyEvent &#x3D; (evt: InteractionHistoryReadyEvent): void &#x3D;&gt; {
+        // check for the interaction
+        if (this.interactionId !&#x3D;&#x3D; evt.InteractionID) {
+            return;
+        }
+
+        const noOfRecords &#x3D; this.customerJourneyTable.tableData.source.paginator?.pageSize.toString() || this.data.Data.NoOfRecords;
+        // assign the history params
+        this.historyParams &#x3D; {
+            cif: evt.HistoryParameters.CIF,
+            email: evt.HistoryParameters.EmailID,
+            nric: evt.HistoryParameters.NRIC,
+            phone: evt.HistoryParameters.PhoneNumber,
+            noOfRecords,
+            lastId: &#x27;0&#x27;
+        };
+        // get history
+        this.getInteractionHistory();
+    };
+
+    private getInteractionHistory(lastId?: string): void {
+        SDKClient.getInteractionHistory(lastId ? { ...this.historyParams, lastId } : this.historyParams, null)
+            .then((res: any) &#x3D;&gt; {
+                let tableData &#x3D; [];
+                if (lastId) {
+                    tableData &#x3D; uniqBy(
+                        sortBy([...this.customerJourneyTable.tableData.source.data, ...res.response], &#x27;InteractionDate&#x27;).reverse(),
+                        &#x27;SessionID&#x27;
+                    );
+                } else {
+                    tableData &#x3D; uniqBy([...sortBy(res.response, &#x27;InteractionDate&#x27;).reverse()], &#x27;SessionID&#x27;);
+                }
+                this.customerJourneyTable.tableData.source.data &#x3D; tableData;
+                this.customerJourneyTable.lastId &#x3D; res.response[0]?.LastIndex;
+                this.customerJourneyTable.loading &#x3D; false;
+            })
+            .catch((err: string) &#x3D;&gt; {
+                console.log({ err });
+                this.customerJourneyTable.loading &#x3D; false;
+            });
+    }
+
+    public setIframe(row: InteractionHistory): void {
+        if (!this.maximized) {
+            this.maximized &#x3D; true;
+            this.wrapperComponent.maximize();
+        }
+        this.customerJourneyTable.tableData.selection.toggle(row);
+        this.customerJourneyTable.iframeUrl &#x3D; this.sanitizer.bypassSecurityTrustResourceUrl(&#x60;${this.data.Data.IframeBaseUrl}${row.SessionID}&#x60;);
+    }
+
+    public pageEvent(): void {
+        if (!this.customerJourneyTable.tableData.source.paginator?.hasNextPage()) {
+            this.getInteractionHistory(this.customerJourneyTable.tableData.source.data[0].LastID.toString());
+        }
+    }
+
+    /**
+     * Maximize event from Wrapper
+     * @param {Boolean} state
+     */
+    public onMaximizeEvent(state: boolean): void {
+        this.maximizeEvent.emit(state);
+        this.maximized &#x3D; state;
+    }
+
+    /**
+     * Get actions of selected sessionId
+     * @param {String} sessionId selected Session Id
+     */
+    public async getSessionActions(sessionId: string): Promise&lt;void&gt; {
+        try {
+            this.sessionActions &#x3D; { loading: true, error: false };
+            const res &#x3D; await SDKClient.getInteractionActions(sessionId);
+            console.log({ res });
+            this.sessionActions &#x3D; {
+                loading: false,
+                error: false,
+                data: res.response.map((x) &#x3D;&gt; ({ ...x, ActionTime: new Date(parseInt(x.ActionTime.toString().split(&#x27;(&#x27;)[1].split(&#x27;)&#x27;)[0], 10)) }))
+            };
+        } catch (e) {
+            this.sessionActions &#x3D; { loading: false, error: true, msg: COMMON_ERR_MESSAGE };
+            console.error(e);
+        }
+    }
+
+    /**
+     * To open sentiment dashboard for a session
+     * 
+     * @param sessionId 
+     */
+    public openSentimentDashboard(sessionId: string): void {
+        let url &#x3D; this.data.Data.SentimentDashboardUrl;
+
+        // verify the url
+        if (!url) {
+            this._appUIService.showSnackbar(&#x27;Sentiment Dashboard Url is not configured!&#x27;, &#x27;failure&#x27;);
+            return;
+        }
+
+        url +&#x3D; &#x60;?/sessionid&#x3D;${sessionId}&amp;agentid&#x3D;${SDKClient.getAgentData().agentId}&#x60;;
+
+        window.open(
+            url,
+            &#x27;sentimentDashboard&#x27;,
+            &#x60;menubar&#x3D;no,resizable&#x3D;yes,location&#x3D;no,scrollbars&#x3D;no,
+            width&#x3D;${screen.width},
+            height&#x3D;${screen.height}&#x60;
+        );
+    }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="c-templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;ng-template #interactionBrandType let-subType&#x3D;&quot;SubType&quot;&gt;
+    &lt;mat-icon color&#x3D;&quot;primary&quot; *ngIf&#x3D;&quot;subType.toLowerCase() &#x3D;&#x3D;&#x3D; &#x27;chat&#x27;&quot;&gt;chat&lt;/mat-icon&gt;
+    &lt;mat-icon color&#x3D;&quot;primary&quot; *ngIf&#x3D;&quot;subType.toLowerCase() &#x3D;&#x3D;&#x3D; &#x27;text&#x27;&quot;&gt;chat&lt;/mat-icon&gt;
+    &lt;mat-icon color&#x3D;&quot;primary&quot; *ngIf&#x3D;&quot;subType.toLowerCase() &#x3D;&#x3D;&#x3D; &#x27;audio&#x27;&quot;&gt;phone&lt;/mat-icon&gt;
+    &lt;mat-icon color&#x3D;&quot;primary&quot; *ngIf&#x3D;&quot;subType.toLowerCase() &#x3D;&#x3D;&#x3D; &#x27;video&#x27;&quot;&gt;duo&lt;/mat-icon&gt;
+    &lt;mat-icon color&#x3D;&quot;primary&quot; *ngIf&#x3D;&quot;subType.toLowerCase() &#x3D;&#x3D;&#x3D; &#x27;whatsapp&#x27;&quot;&gt;chat&lt;/mat-icon&gt;
+    &lt;mat-icon color&#x3D;&quot;primary&quot; *ngIf&#x3D;&quot;subType.toLowerCase() &#x3D;&#x3D;&#x3D; &#x27;wechat&#x27;&quot;&gt;chat&lt;/mat-icon&gt;
+    &lt;mat-icon color&#x3D;&quot;primary&quot; *ngIf&#x3D;&quot;subType.toLowerCase() &#x3D;&#x3D;&#x3D; &#x27;line&#x27;&quot;&gt;chat&lt;/mat-icon&gt;
+    &lt;mat-icon color&#x3D;&quot;primary&quot; *ngIf&#x3D;&quot;subType.toLowerCase() &#x3D;&#x3D;&#x3D; &#x27;viber&#x27;&quot;&gt;chat&lt;/mat-icon&gt;
+    &lt;mat-icon color&#x3D;&quot;primary&quot; *ngIf&#x3D;&quot;subType.toLowerCase() &#x3D;&#x3D;&#x3D; &#x27;twitter&#x27;&quot;&gt;chat&lt;/mat-icon&gt;
+    &lt;mat-icon color&#x3D;&quot;primary&quot; *ngIf&#x3D;&quot;subType.toLowerCase() &#x3D;&#x3D;&#x3D; &#x27;textchat&#x27;&quot;&gt;chat&lt;/mat-icon&gt;
+    &lt;mat-icon color&#x3D;&quot;primary&quot; *ngIf&#x3D;&quot;subType.toLowerCase() &#x3D;&#x3D;&#x3D; &#x27;store&#x27;&quot;&gt;store&lt;/mat-icon&gt;
+    &lt;mat-icon color&#x3D;&quot;primary&quot; *ngIf&#x3D;&quot;subType.toLowerCase() &#x3D;&#x3D;&#x3D; &#x27;field&#x27;&quot;&gt;roofing&lt;/mat-icon&gt;
+&lt;/ng-template&gt;
+
+&lt;tw-wrapper
+    [data]&#x3D;&quot;data&quot;
+    (maximizeEvent)&#x3D;&quot;onMaximizeEvent($event)&quot;
+    (collapseEvent)&#x3D;&quot;collapseEvent.emit($event)&quot;
+    (floatEvent)&#x3D;&quot;floatEvent.emit($event)&quot;
+&gt;
+    &lt;div *ngIf&#x3D;&quot;!customerJourneyTable.loading&quot; class&#x3D;&quot;customer-journey&quot; [fxLayout]&#x3D;&quot;maximized ? &#x27;column&#x27; : &#x27;row wrap&#x27;&quot; fxLayoutGap&#x3D;&quot;6px&quot;&gt;
+        &lt;div *ngIf&#x3D;&quot;!maximized&quot; class&#x3D;&quot;timeline&quot; fusePerfectScrollbar [fusePerfectScrollbarOptions]&#x3D;&quot;{ suppressScrollX: true }&quot;&gt;
+            &lt;div
+                *ngFor&#x3D;&quot;let s of customerJourneyTable.tableData.source.data&quot;
+                fxLayout&#x3D;&quot;row-wrap&quot;
+                class&#x3D;&quot;step mb-4 p-4 mat-elevation-z1&quot;
+                (click)&#x3D;&quot;setIframe(s)&quot;
+                [ngClass]&#x3D;&quot;
+                    fuseConfig.layout.anchorWidget.customBackgroundColor &#x3D;&#x3D;&#x3D; true &amp;&amp; data.Config.Anchor
+                        ? fuseConfig.layout.anchorWidget.contentBackground
+                        : fuseConfig.layout.widget.customBackgroundColor &#x3D;&#x3D;&#x3D; true
+                        ? fuseConfig.layout.widget.contentBackground
+                        : &#x27;&#x27;
+                &quot;
+            &gt;
+                &lt;div fxFlex&#x3D;&quot;15&quot; fxLayout fxLayoutAlign&#x3D;&quot;center center&quot; class&#x3D;&quot;step-time pr-8&quot;&gt;
+                    &lt;small fxFlex&#x3D;&quot;80&quot; class&#x3D;&quot;text-right&quot;&gt;
+                        {{ s.InteractionDate }}
+                    &lt;/small&gt;
+                &lt;/div&gt;
+                &lt;div fxFlex&#x3D;&quot;85&quot; fxLayout fxLayoutAlign&#x3D;&quot;space-between center&quot; class&#x3D;&quot;step-details px-16&quot;&gt;
+                    &lt;div fxLayout fxFlex&#x3D;&quot;85&quot; fxLayoutAlign&#x3D;&quot;start center&quot;&gt;
+                        &lt;div mat-card-avatar [ngSwitch]&#x3D;&quot;s.Channel | lowercase&quot; class&#x3D;&quot;w-32 h-32 border-sm-primary&quot;&gt;
+                            &lt;ng-container *ngSwitchCase&#x3D;&quot;&#x27;textchat&#x27;&quot;&gt;
+                                &lt;ng-container *ngTemplateOutlet&#x3D;&quot;interactionBrandType; context: s&quot;&gt;&lt;/ng-container&gt;
+                            &lt;/ng-container&gt;
+                            &lt;ng-container *ngSwitchCase&#x3D;&quot;&#x27;audiochat&#x27;&quot;&gt;
+                                &lt;ng-container *ngTemplateOutlet&#x3D;&quot;interactionBrandType; context: s&quot;&gt;&lt;/ng-container&gt;
+                            &lt;/ng-container&gt;
+                            &lt;ng-container *ngSwitchCase&#x3D;&quot;&#x27;videochat&#x27;&quot;&gt;
+                                &lt;ng-container *ngTemplateOutlet&#x3D;&quot;interactionBrandType; context: s&quot;&gt;&lt;/ng-container&gt;
+                            &lt;/ng-container&gt;
+                            &lt;ng-container *ngSwitchCase&#x3D;&quot;&#x27;services&#x27;&quot;&gt;
+                                &lt;ng-container *ngTemplateOutlet&#x3D;&quot;interactionBrandType; context: s&quot;&gt;&lt;/ng-container&gt;
+                            &lt;/ng-container&gt;
+                            &lt;mat-icon color&#x3D;&quot;primary&quot; *ngSwitchCase&#x3D;&quot;&#x27;voice&#x27;&quot;&gt; call &lt;/mat-icon&gt;
+                            &lt;mat-icon color&#x3D;&quot;primary&quot; *ngSwitchCase&#x3D;&quot;&#x27;sms&#x27;&quot;&gt; textsms &lt;/mat-icon&gt;
+                            &lt;mat-icon color&#x3D;&quot;primary&quot; *ngSwitchCase&#x3D;&quot;&#x27;email&#x27;&quot;&gt; email &lt;/mat-icon&gt;
+                            &lt;mat-icon color&#x3D;&quot;primary&quot; *ngSwitchCase&#x3D;&quot;&#x27;fax&#x27;&quot;&gt; print &lt;/mat-icon&gt;
+                            &lt;mat-icon color&#x3D;&quot;primary&quot; *ngSwitchDefault&gt; link_off &lt;/mat-icon&gt;
+                        &lt;/div&gt;
+                        &lt;span class&#x3D;&quot;ml-8&quot; [ngSwitch]&#x3D;&quot;s.Channel | lowercase&quot;&gt;
+                            &lt;ng-container *ngSwitchCase&#x3D;&quot;&#x27;voice&#x27;&quot;&gt; Voice with &lt;/ng-container&gt;
+                            &lt;ng-container *ngSwitchCase&#x3D;&quot;&#x27;chat&#x27;&quot;&gt; Chat with &lt;/ng-container&gt;
+                            &lt;ng-container *ngSwitchCase&#x3D;&quot;&#x27;audiochat&#x27;&quot;&gt; Audio Call with &lt;/ng-container&gt;
+                            &lt;ng-container *ngSwitchCase&#x3D;&quot;&#x27;videochat&#x27;&quot;&gt; Video Call with &lt;/ng-container&gt;
+                            &lt;ng-container *ngSwitchCase&#x3D;&quot;&#x27;textchat&#x27;&quot;&gt; Chat with &lt;/ng-container&gt;
+                            &lt;ng-container *ngSwitchCase&#x3D;&quot;&#x27;sms&#x27;&quot;&gt; SMS chat with &lt;/ng-container&gt;
+                            &lt;ng-container *ngSwitchCase&#x3D;&quot;&#x27;email&#x27;&quot;&gt; Email with &lt;/ng-container&gt;
+                            &lt;ng-container *ngSwitchCase&#x3D;&quot;&#x27;fax&#x27;&quot;&gt; Fax with &lt;/ng-container&gt;
+                            &lt;ng-container *ngSwitchCase&#x3D;&quot;&#x27;line&#x27;&quot;&gt; Line chat with &lt;/ng-container&gt;
+                            &lt;ng-container *ngSwitchCase&#x3D;&quot;&#x27;services&#x27;&quot;&gt; Serviced by &lt;/ng-container&gt;
+                            &lt;ng-container *ngSwitchDefault&gt; Chat with &lt;/ng-container&gt;
+                            {{ s.LastServicedAgentName || s.AgentName }}
+                        &lt;/span&gt;
+                    &lt;/div&gt;
+                    &lt;small fxFlex&#x3D;&quot;15&quot; class&#x3D;&quot;text-center&quot;&gt;{{ s.Intent || &#x27;Default&#x27; }}&lt;/small&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div *ngIf&#x3D;&quot;customerJourneyTable.tableData.source.data.length &#x3D;&#x3D;&#x3D; 0&quot; fxLayout fxLayoutAlign&#x3D;&quot;center center&quot; class&#x3D;&quot;mat-title h-120&quot;&gt;
+                No Data Available
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div
+            [hidden]&#x3D;&quot;!maximized&quot;
+            class&#x3D;&quot;table&quot;
+            [ngClass]&#x3D;&quot;
+                fuseConfig.layout.anchorWidget.customBackgroundColor &#x3D;&#x3D;&#x3D; true &amp;&amp; data.Config.Anchor
+                    ? fuseConfig.layout.anchorWidget.contentBackground
+                    : fuseConfig.layout.widget.customBackgroundColor &#x3D;&#x3D;&#x3D; true
+                    ? fuseConfig.layout.widget.contentBackground
+                    : &#x27;&#x27;
+            &quot;
+            fusePerfectScrollbar
+            [fusePerfectScrollbarOptions]&#x3D;&quot;{ suppressScrollX: true }&quot;
+        &gt;
+            &lt;mat-table
+                [dataSource]&#x3D;&quot;customerJourneyTable.tableData.source&quot;
+                matSort
+                matSortActive&#x3D;&quot;InteractionDate&quot;
+                matSortDirection&#x3D;&quot;desc&quot;
+                matSortDisableClear
+                [formGroup]&#x3D;&quot;searchForm&quot;
+            &gt;
+                &lt;!-- NA Note that these columns can be defined in any order.
+          The actual rendered columns are set as a property on the row definition&quot; --&gt;
+
+                &lt;ng-container matColumnDef&#x3D;&quot;SessionID&quot;&gt;
+                    &lt;mat-header-cell fxFlex&#x3D;&quot;20&quot; *matHeaderCellDef&gt;
+                        &lt;span mat-sort-header&gt; Session Id &lt;/span&gt;
+                        &lt;mat-icon [matMenuTriggerFor]&#x3D;&quot;sessionSearch&quot;&gt;search&lt;/mat-icon&gt;
+                        &lt;mat-menu #sessionSearch&#x3D;&quot;matMenu&quot; class&#x3D;&quot;search-input p-4&quot;&gt;
+                            &lt;div fxLayout&#x3D;&quot;column&quot;&gt;
+                                &lt;mat-form-field (click)&#x3D;&quot;$event.stopPropagation()&quot; appearance&#x3D;&quot;outline&quot; class&#x3D;&quot;custom with-border form-field&quot;&gt;
+                                    &lt;input type&#x3D;&quot;text&quot; matInput class&#x3D;&quot;p-0 login-input&quot; formControlName&#x3D;&quot;SessionID&quot; /&gt;
+                                &lt;/mat-form-field&gt;
+                            &lt;/div&gt;
+                        &lt;/mat-menu&gt;
+                    &lt;/mat-header-cell&gt;
+                    &lt;mat-cell *matCellDef&#x3D;&quot;let element&quot; fxFlex&#x3D;&quot;20&quot;&gt;{{ element.SessionID || &#x27;NA&#x27; }}&lt;/mat-cell&gt;
+                &lt;/ng-container&gt;
+
+                &lt;ng-container matColumnDef&#x3D;&quot;InteractionDate&quot;&gt;
+                    &lt;mat-header-cell fxFlex&#x3D;&quot;15&quot; *matHeaderCellDef class&#x3D;&quot;d-flex w-100-p&quot;&gt;
+                        &lt;span mat-sort-header&gt; Received At &lt;/span&gt;
+                        &lt;mat-icon [matMenuTriggerFor]&#x3D;&quot;receivedAtSearch&quot; mat-ripple&gt;search&lt;/mat-icon&gt;
+                        &lt;mat-menu #receivedAtSearch&#x3D;&quot;matMenu&quot; class&#x3D;&quot;search-input p-4&quot;&gt;
+                            &lt;div fxLayout&#x3D;&quot;column&quot;&gt;
+                                &lt;mat-form-field (click)&#x3D;&quot;$event.stopPropagation()&quot; appearance&#x3D;&quot;outline&quot; class&#x3D;&quot;custom with-border form-field&quot;&gt;
+                                    &lt;input type&#x3D;&quot;text&quot; matInput class&#x3D;&quot;p-0 login-input&quot; formControlName&#x3D;&quot;InteractionDate&quot; /&gt;
+                                &lt;/mat-form-field&gt;
+                            &lt;/div&gt;
+                        &lt;/mat-menu&gt;
+                    &lt;/mat-header-cell&gt;
+                    &lt;mat-cell fxFlex&#x3D;&quot;15&quot; *matCellDef&#x3D;&quot;let element&quot;&gt;{{ element.InteractionDate || &#x27;NA&#x27; }}&lt;/mat-cell&gt;
+                &lt;/ng-container&gt;
+
+                &lt;ng-container matColumnDef&#x3D;&quot;Channel&quot;&gt;
+                    &lt;mat-header-cell *matHeaderCellDef&gt;
+                        &lt;span mat-sort-header&gt; Channel &lt;/span&gt;
+                        &lt;mat-icon [matMenuTriggerFor]&#x3D;&quot;channelSearch&quot; mat-ripple&gt;search&lt;/mat-icon&gt;
+                        &lt;mat-menu #channelSearch&#x3D;&quot;matMenu&quot; class&#x3D;&quot;search-input p-4&quot;&gt;
+                            &lt;div fxLayout&#x3D;&quot;column&quot;&gt;
+                                &lt;mat-form-field (click)&#x3D;&quot;$event.stopPropagation()&quot; appearance&#x3D;&quot;outline&quot; class&#x3D;&quot;custom with-border form-field&quot;&gt;
+                                    &lt;input type&#x3D;&quot;text&quot; matInput class&#x3D;&quot;p-0 login-input&quot; formControlName&#x3D;&quot;Channel&quot; /&gt;
+                                &lt;/mat-form-field&gt;
+                            &lt;/div&gt;
+                        &lt;/mat-menu&gt;
+                    &lt;/mat-header-cell&gt;
+                    &lt;mat-cell *matCellDef&#x3D;&quot;let element&quot; [ngSwitch]&#x3D;&quot;element.Channel | lowercase&quot;&gt;
+                        &lt;ng-container *ngSwitchCase&#x3D;&quot;&#x27;textchat&#x27;&quot;&gt;
+                            &lt;ng-container *ngTemplateOutlet&#x3D;&quot;interactionBrandType; context: element&quot;&gt;&lt;/ng-container&gt;
+                        &lt;/ng-container&gt;
+                        &lt;ng-container *ngSwitchCase&#x3D;&quot;&#x27;audiochat&#x27;&quot;&gt;
+                            &lt;ng-container *ngTemplateOutlet&#x3D;&quot;interactionBrandType; context: element&quot;&gt;&lt;/ng-container&gt;
+                        &lt;/ng-container&gt;
+                        &lt;ng-container *ngSwitchCase&#x3D;&quot;&#x27;videochat&#x27;&quot;&gt;
+                            &lt;ng-container *ngTemplateOutlet&#x3D;&quot;interactionBrandType; context: element&quot;&gt;&lt;/ng-container&gt;
+                        &lt;/ng-container&gt;
+                        &lt;ng-container *ngSwitchCase&#x3D;&quot;&#x27;services&#x27;&quot;&gt;
+                            &lt;ng-container *ngTemplateOutlet&#x3D;&quot;interactionBrandType; context: element&quot;&gt;&lt;/ng-container&gt;
+                        &lt;/ng-container&gt;
+                        &lt;mat-icon color&#x3D;&quot;primary&quot; *ngSwitchCase&#x3D;&quot;&#x27;voice&#x27;&quot;&gt; call &lt;/mat-icon&gt;
+                        &lt;mat-icon color&#x3D;&quot;primary&quot; *ngSwitchCase&#x3D;&quot;&#x27;sms&#x27;&quot;&gt; textsms &lt;/mat-icon&gt;
+                        &lt;mat-icon color&#x3D;&quot;primary&quot; *ngSwitchCase&#x3D;&quot;&#x27;email&#x27;&quot;&gt; email &lt;/mat-icon&gt;
+                        &lt;mat-icon color&#x3D;&quot;primary&quot; *ngSwitchCase&#x3D;&quot;&#x27;fax&#x27;&quot;&gt; print &lt;/mat-icon&gt;
+                        &lt;mat-icon color&#x3D;&quot;primary&quot; *ngSwitchDefault&gt; link_off &lt;/mat-icon&gt;
+                    &lt;/mat-cell&gt;
+                &lt;/ng-container&gt;
+
+                &lt;ng-container matColumnDef&#x3D;&quot;CIF&quot;&gt;
+                    &lt;mat-header-cell *matHeaderCellDef&gt;
+                        &lt;span mat-sort-header&gt; CIF &lt;/span&gt;
+                        &lt;mat-icon [matMenuTriggerFor]&#x3D;&quot;cifSearch&quot; mat-ripple&gt;search&lt;/mat-icon&gt;
+                        &lt;mat-menu #cifSearch&#x3D;&quot;matMenu&quot; class&#x3D;&quot;search-input p-4&quot;&gt;
+                            &lt;div fxLayout&#x3D;&quot;column&quot;&gt;
+                                &lt;mat-form-field (click)&#x3D;&quot;$event.stopPropagation()&quot; appearance&#x3D;&quot;outline&quot; class&#x3D;&quot;custom with-border form-field&quot;&gt;
+                                    &lt;input type&#x3D;&quot;text&quot; matInput class&#x3D;&quot;p-0 login-input&quot; formControlName&#x3D;&quot;CIF&quot; /&gt;
+                                &lt;/mat-form-field&gt;
+                            &lt;/div&gt;
+                        &lt;/mat-menu&gt;
+                    &lt;/mat-header-cell&gt;
+                    &lt;mat-cell *matCellDef&#x3D;&quot;let element&quot;&gt;{{ element.CIF || &#x27;NA&#x27; }}&lt;/mat-cell&gt;
+                &lt;/ng-container&gt;
+
+                &lt;ng-container matColumnDef&#x3D;&quot;EmailID&quot;&gt;
+                    &lt;mat-header-cell *matHeaderCellDef&gt;
+                        &lt;span mat-sort-header&gt; Email &lt;/span&gt;
+                        &lt;mat-icon [matMenuTriggerFor]&#x3D;&quot;emailSearch&quot; mat-ripple&gt;search&lt;/mat-icon&gt;
+                        &lt;mat-menu #emailSearch&#x3D;&quot;matMenu&quot; class&#x3D;&quot;search-input p-4&quot;&gt;
+                            &lt;div fxLayout&#x3D;&quot;column&quot;&gt;
+                                &lt;mat-form-field (click)&#x3D;&quot;$event.stopPropagation()&quot; appearance&#x3D;&quot;outline&quot; class&#x3D;&quot;custom with-border form-field&quot;&gt;
+                                    &lt;input type&#x3D;&quot;text&quot; matInput class&#x3D;&quot;p-0 login-input&quot; formControlName&#x3D;&quot;EmailID&quot; /&gt;
+                                &lt;/mat-form-field&gt;
+                            &lt;/div&gt;
+                        &lt;/mat-menu&gt;
+                    &lt;/mat-header-cell&gt;
+                    &lt;mat-cell *matCellDef&#x3D;&quot;let element&quot;&gt;{{ element.EmailID || &#x27;NA&#x27; }}&lt;/mat-cell&gt;
+                &lt;/ng-container&gt;
+
+                &lt;ng-container matColumnDef&#x3D;&quot;NRIC&quot;&gt;
+                    &lt;mat-header-cell *matHeaderCellDef&gt;
+                        &lt;span mat-sort-header&gt; NRIC &lt;/span&gt;
+                        &lt;mat-icon [matMenuTriggerFor]&#x3D;&quot;nricSearch&quot; mat-ripple&gt;search&lt;/mat-icon&gt;
+                        &lt;mat-menu #nricSearch&#x3D;&quot;matMenu&quot; class&#x3D;&quot;search-input p-4&quot;&gt;
+                            &lt;div fxLayout&#x3D;&quot;column&quot;&gt;
+                                &lt;mat-form-field (click)&#x3D;&quot;$event.stopPropagation()&quot; appearance&#x3D;&quot;outline&quot; class&#x3D;&quot;custom with-border form-field&quot;&gt;
+                                    &lt;input type&#x3D;&quot;text&quot; matInput class&#x3D;&quot;p-0 login-input&quot; formControlName&#x3D;&quot;NRIC&quot; /&gt;
+                                &lt;/mat-form-field&gt;
+                            &lt;/div&gt;
+                        &lt;/mat-menu&gt;
+                    &lt;/mat-header-cell&gt;
+                    &lt;mat-cell *matCellDef&#x3D;&quot;let element&quot;&gt;{{ element.NRIC || &#x27;NA&#x27; }}&lt;/mat-cell&gt;
+                &lt;/ng-container&gt;
+
+                &lt;ng-container matColumnDef&#x3D;&quot;PhoneNumber&quot;&gt;
+                    &lt;mat-header-cell *matHeaderCellDef&gt;
+                        &lt;span mat-sort-header&gt; Phone &lt;/span&gt;
+                        &lt;mat-icon [matMenuTriggerFor]&#x3D;&quot;phoneSearch&quot; mat-ripple&gt;search&lt;/mat-icon&gt;
+                        &lt;mat-menu #phoneSearch&#x3D;&quot;matMenu&quot; class&#x3D;&quot;search-input p-4&quot;&gt;
+                            &lt;div fxLayout&#x3D;&quot;column&quot;&gt;
+                                &lt;mat-form-field (click)&#x3D;&quot;$event.stopPropagation()&quot; appearance&#x3D;&quot;outline&quot; class&#x3D;&quot;custom with-border form-field&quot;&gt;
+                                    &lt;input type&#x3D;&quot;text&quot; matInput class&#x3D;&quot;p-0 login-input&quot; formControlName&#x3D;&quot;PhoneNumber&quot; /&gt;
+                                &lt;/mat-form-field&gt;
+                            &lt;/div&gt;
+                        &lt;/mat-menu&gt;
+                    &lt;/mat-header-cell&gt;
+                    &lt;mat-cell *matCellDef&#x3D;&quot;let element&quot;&gt;{{ element.PhoneNumber || &#x27;NA&#x27; }}&lt;/mat-cell&gt;
+                &lt;/ng-container&gt;
+
+                &lt;ng-container matColumnDef&#x3D;&quot;OverallSentiment&quot;&gt;
+                    &lt;mat-header-cell *matHeaderCellDef&gt;
+                        &lt;span mat-sort-header&gt; Sentiment &lt;/span&gt;
+                        &lt;mat-icon [matMenuTriggerFor]&#x3D;&quot;sentimentSearch&quot; mat-ripple&gt;search&lt;/mat-icon&gt;
+                        &lt;mat-menu #sentimentSearch&#x3D;&quot;matMenu&quot; class&#x3D;&quot;search-input p-4&quot;&gt;
+                            &lt;div fxLayout&#x3D;&quot;column&quot;&gt;
+                                &lt;mat-form-field (click)&#x3D;&quot;$event.stopPropagation()&quot; appearance&#x3D;&quot;outline&quot; class&#x3D;&quot;custom with-border form-field&quot;&gt;
+                                    &lt;input type&#x3D;&quot;text&quot; matInput class&#x3D;&quot;p-0 login-input&quot; formControlName&#x3D;&quot;OverallSentiment&quot; /&gt;
+                                &lt;/mat-form-field&gt;
+                            &lt;/div&gt;
+                        &lt;/mat-menu&gt;
+                    &lt;/mat-header-cell&gt;
+                    &lt;mat-cell *matCellDef&#x3D;&quot;let element&quot;&gt;
+                        &lt;img
+                            *ngIf&#x3D;&quot;element.OverallSentiment &#x3D;&#x3D;&#x3D; &#x27;Positive&#x27;&quot;
+                            class&#x3D;&quot;w-24&quot;
+                            src&#x3D;&quot;assets/images/vectors/positive-score.svg&quot;
+                            alt&#x3D;&quot;Positive&quot;
+                            matTooltip&#x3D;&quot;Sentiment Dashboard&quot;
+                            (click)&#x3D;&quot;openSentimentDashboard(element.SessionID)&quot;
+                        /&gt;
+                        &lt;img
+                            *ngIf&#x3D;&quot;element.OverallSentiment &#x3D;&#x3D;&#x3D; &#x27;Neutral&#x27;&quot;
+                            class&#x3D;&quot;w-24&quot;
+                            src&#x3D;&quot;assets/images/vectors/neutral-score.svg&quot;
+                            alt&#x3D;&quot;Neutral&quot;
+                            matTooltip&#x3D;&quot;Sentiment Dashboard&quot;
+                            (click)&#x3D;&quot;openSentimentDashboard(element.SessionID)&quot;
+                        /&gt;
+                        &lt;img
+                            *ngIf&#x3D;&quot;element.OverallSentiment &#x3D;&#x3D;&#x3D; &#x27;Negative&#x27;&quot;
+                            class&#x3D;&quot;w-24&quot;
+                            src&#x3D;&quot;assets/images/vectors/negative-score.svg&quot;
+                            alt&#x3D;&quot;Negative&quot;
+                            matTooltip&#x3D;&quot;Sentiment Dashboard&quot;
+                            (click)&#x3D;&quot;openSentimentDashboard(element.SessionID)&quot;
+                        /&gt;
+                        &lt;ng-container *ngIf&#x3D;&quot;!element.OverallSentiment&quot;&gt; NA &lt;/ng-container&gt;
+                    &lt;/mat-cell&gt;
+                &lt;/ng-container&gt;
+
+                &lt;ng-container matColumnDef&#x3D;&quot;Actions&quot;&gt;
+                    &lt;mat-header-cell *matHeaderCellDef&gt; Actions &lt;/mat-header-cell&gt;
+                    &lt;mat-cell *matCellDef&#x3D;&quot;let element&quot; (click)&#x3D;&quot;$event.stopPropagation()&quot;&gt;
+                        &lt;div fxLayout fxLayoutAlign&#x3D;&quot;center center&quot; class&#x3D;&quot;h-100-p w-100-p&quot;&gt;
+                            &lt;button mat-icon-button [matMenuTriggerFor]&#x3D;&quot;sessionActionsRef&quot; (click)&#x3D;&quot;getSessionActions(element.SessionID)&quot;&gt;
+                                &lt;mat-icon&gt; history &lt;/mat-icon&gt;
+                            &lt;/button&gt;
+                            &lt;mat-menu #sessionActionsRef&#x3D;&quot;matMenu&quot; backdropClass&#x3D;&quot;ih-actions-menu&quot; xPosition&#x3D;&quot;before&quot;&gt;
+                                &lt;div
+                                    class&#x3D;&quot;timeline&quot;
+                                    *ngIf&#x3D;&quot;!sessionActions.error &amp;&amp; !sessionActions.loading&quot;
+                                    fusePerfectScrollbar
+                                    [fusePerfectScrollbarOptions]&#x3D;&quot;{ suppressScrollX: true }&quot;
+                                &gt;
+                                    &lt;div
+                                        class&#x3D;&quot;step m-8 px-8 py-8 mat-elevation-z1 border-radius-20&quot;
+                                        *ngFor&#x3D;&quot;let action of sessionActions.data&quot;
+                                        [ngClass]&#x3D;&quot;
+                                            fuseConfig.layout.anchorWidget.customBackgroundColor &#x3D;&#x3D;&#x3D; true &amp;&amp; data.Config.Anchor
+                                                ? fuseConfig.layout.anchorWidget.contentBackground
+                                                : fuseConfig.layout.widget.customBackgroundColor &#x3D;&#x3D;&#x3D; true
+                                                ? fuseConfig.layout.widget.contentBackground
+                                                : &#x27;&#x27;
+                                        &quot;
+                                    &gt;
+                                        &lt;div fxFlex&#x3D;&quot;30&quot; class&#x3D;&quot;step-time px-8&quot;&gt;
+                                            {{ action.ActionTime | date: &#x27;short&#x27; }}
+                                        &lt;/div&gt;
+
+                                        &lt;div fxLayout fxLayoutAlign&#x3D;&quot;center center&quot; class&#x3D;&quot;vertical-divide mx-12&quot;&gt;
+                                            &lt;div class&#x3D;&quot;bg-light&quot;&gt;&lt;/div&gt;
+                                        &lt;/div&gt;
+
+                                        &lt;div fxLayout fxLayoutAlign&#x3D;&quot;space-between center&quot; class&#x3D;&quot;step-details&quot;&gt;
+                                            {{ action.Action }}
+                                        &lt;/div&gt;
+                                    &lt;/div&gt;
+                                &lt;/div&gt;
+                                &lt;div *ngIf&#x3D;&quot;sessionActions.loading&quot; class&#x3D;&quot;w-100-p h-100-p&quot; fxLayout fxLayoutAlign&#x3D;&quot;center center&quot;&gt;
+                                    &lt;mat-spinner&gt;&lt;/mat-spinner&gt;
+                                &lt;/div&gt;
+                                &lt;div *ngIf&#x3D;&quot;sessionActions.error&quot; fxLayout&#x3D;&quot;column&quot; fxLayoutAlign&#x3D;&quot;center center&quot; class&#x3D;&quot;text-center&quot;&gt;
+                                    &lt;p&gt;
+                                        {{ sessionActions.msg }}
+                                    &lt;/p&gt;
+                                    &lt;button mat-button color&#x3D;&quot;primary&quot; (click)&#x3D;&quot;getSessionActions(element.SessionID)&quot;&gt;Retry&lt;/button&gt;
+                                &lt;/div&gt;
+                            &lt;/mat-menu&gt;
+                        &lt;/div&gt;
+                    &lt;/mat-cell&gt;
+                &lt;/ng-container&gt;
+
+                &lt;mat-header-row *matHeaderRowDef&#x3D;&quot;customerJourneyTable.tableData.columns; sticky: true&quot;&gt;&lt;/mat-header-row&gt;
+                &lt;mat-row
+                    (click)&#x3D;&quot;setIframe(row)&quot;
+                    class&#x3D;&quot;selectable&quot;
+                    [ngClass]&#x3D;&quot;{ selected: !!customerJourneyTable.tableData.selection.isSelected(row) }&quot;
+                    *matRowDef&#x3D;&quot;let row; columns: customerJourneyTable.tableData.columns&quot;
+                &gt;&lt;/mat-row&gt;
+            &lt;/mat-table&gt;
+            &lt;mat-paginator
+                *ngIf&#x3D;&quot;customerJourneyTable.tableData.source.data.length &gt; 5&quot;
+                (page)&#x3D;&quot;pageEvent()&quot;
+                [pageSizeOptions]&#x3D;&quot;[10, 20, 50, 100]&quot;
+                showFirstLastButtons
+            &gt;
+            &lt;/mat-paginator&gt;
+
+            &lt;p *ngIf&#x3D;&quot;customerJourneyTable.tableData.source.data.length &#x3D;&#x3D;&#x3D; 0&quot; class&#x3D;&quot;text-center m-0 mat-title&quot;&gt;No Data Available&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div
+            *ngIf&#x3D;&quot;maximized&quot;
+            class&#x3D;&quot;spread&quot;
+            [ngClass]&#x3D;&quot;
+                fuseConfig.layout.anchorWidget.customBackgroundColor &#x3D;&#x3D;&#x3D; true &amp;&amp; data.Config.Anchor
+                    ? fuseConfig.layout.anchorWidget.contentBackground
+                    : fuseConfig.layout.widget.customBackgroundColor &#x3D;&#x3D;&#x3D; true
+                    ? fuseConfig.layout.widget.contentBackground
+                    : &#x27;&#x27;
+            &quot;
+        &gt;
+            &lt;p *ngIf&#x3D;&quot;!customerJourneyTable.iframeUrl &amp;&amp; customerJourneyTable.tableData.source.data.length &gt; 0&quot; class&#x3D;&quot;mat-display-1&quot;&gt;
+                Select a session
+            &lt;/p&gt;
+            &lt;iframe
+                *ngIf&#x3D;&quot;!!customerJourneyTable.iframeUrl&quot;
+                [src]&#x3D;&quot;customerJourneyTable.iframeUrl&quot;
+                class&#x3D;&quot;w-100-p h-100-p&quot;
+                frameborder&#x3D;&quot;0&quot;
+                seamless&#x3D;&quot;seamless&quot;
+            &gt;&lt;/iframe&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div *ngIf&#x3D;&quot;customerJourneyTable.loading&quot; class&#x3D;&quot;w-100-p h-100-p&quot; fxLayout&#x3D;&quot;row&quot; fxLayoutAlign&#x3D;&quot;center center&quot;&gt;
+        &lt;mat-spinner&gt;&lt;/mat-spinner&gt;
+    &lt;/div&gt;
+&lt;/tw-wrapper&gt;
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="c-styleData">
+                <p class="comment">
+                    <code>./tw-customer-journey.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">.ih-actions-menu + div {
+    .cdk-overlay-pane {
+        max-height: 60%;
+        min-width: 30%;
+        &amp; &gt; * {
+            min-width: 100%;
+        }
+    }
+
+    .step {
+        &amp;:not(:first-child) .vertical-divide {
+            &amp;::before {
+                content: &#x27;&#x27;;
+                position: absolute;
+                width: 5px;
+                border-radius: 15px;
+                height: 80%;
+                top: -20px;
+                left: 50%;
+                background-color: white;
+                transform: translate(-50%);
+            }
+        }
+        &amp;:not(:last-child) .vertical-divide {
+            &amp;::after {
+                content: &#x27;&#x27;;
+                position: absolute;
+                width: 5px;
+                border-radius: 15px;
+                height: 80%;
+                bottom: -20px;
+                left: 50%;
+                background-color: white;
+                transform: translate(-50%);
+            }
+        }
+    }
+
+    .vertical-divide {
+        position: relative;
+        &amp; &gt; * {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+        }
+    }
+}
+
+.search-input {
+    position: relative;
+    border-radius: 20px;
+    overflow: visible;
+    &amp;::after {
+        content: &#x27;&#x27;;
+        position: absolute;
+        border-left: 12px solid transparent;
+        border-right: 12px solid transparent;
+        border-bottom: 12px solid white;
+        left: 10px;
+        top: -8px;
+    }
+    .mat-menu-content {
+        padding: 0;
+    }
+
+    mat-form-field.custom .mat-form-field-wrapper {
+        padding-bottom: 0 !important;
+    }
+}
+
+tw-customer-journey {
+    .mat-card-content {
+        background: inherit !important;
+        padding: 0 !important;
+    }
+
+    .customer-journey {
+        width: 100%;
+        height: 100%;
+        background: inherit;
+        .timeline {
+            width: 100%;
+            height: 100%;
+            .step {
+                border-radius: 20px;
+                cursor: pointer;
+                .step-details {
+                    position: relative;
+                }
+                &amp;-details::before {
+                    content: &#x27;&#x27;;
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    width: 1px;
+                    height: 150%;
+                    background-color: purple;
+                }
+                &amp;:nth-child(3) .step-details::before {
+                    top: 30%;
+                }
+                &amp;:last-child .step-details::before {
+                    top: unset;
+                    bottom: 70%;
+                }
+                &amp;-details::after {
+                    content: &#x27;&#x27;;
+                    position: absolute;
+                    width: 10px;
+                    z-index: 1;
+                    height: 10px;
+                    border-radius: 50%;
+                    background-color: white;
+                    border: 1px solid purple;
+                    top: 30%;
+                    left: -5px;
+                }
+            }
+        }
+        .table {
+            width: 100%;
+            height: 35%;
+            padding: 0px 8px;
+            background: inherit;
+            border-radius: 20px;
+        }
+        .spread {
+            width: 100%;
+            height: 65%;
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        mat-icon {
+            font-size: 18px;
+            line-height: 18px;
+            width: 18px;
+            height: 18px;
+            min-height: 18px;
+            min-width: 18px;
+        }
+    }
+
+    iframe {
+        height: 100%;
+        width: 100%;
+        margin: 0px;
+        padding: 0px;
+        border-radius: 2rem;
+
+        .none {
+            display: none;
+        }
+    }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="c-tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><ng-template #interactionBrandType let-subType="SubType">    <mat-icon color="primary" *ngIf="subType.toLowerCase() === \'chat\'">chat</mat-icon>    <mat-icon color="primary" *ngIf="subType.toLowerCase() === \'text\'">chat</mat-icon>    <mat-icon color="primary" *ngIf="subType.toLowerCase() === \'audio\'">phone</mat-icon>    <mat-icon color="primary" *ngIf="subType.toLowerCase() === \'video\'">duo</mat-icon>    <mat-icon color="primary" *ngIf="subType.toLowerCase() === \'whatsapp\'">chat</mat-icon>    <mat-icon color="primary" *ngIf="subType.toLowerCase() === \'wechat\'">chat</mat-icon>    <mat-icon color="primary" *ngIf="subType.toLowerCase() === \'line\'">chat</mat-icon>    <mat-icon color="primary" *ngIf="subType.toLowerCase() === \'viber\'">chat</mat-icon>    <mat-icon color="primary" *ngIf="subType.toLowerCase() === \'twitter\'">chat</mat-icon>    <mat-icon color="primary" *ngIf="subType.toLowerCase() === \'textchat\'">chat</mat-icon>    <mat-icon color="primary" *ngIf="subType.toLowerCase() === \'store\'">store</mat-icon>    <mat-icon color="primary" *ngIf="subType.toLowerCase() === \'field\'">roofing</mat-icon></ng-template><tw-wrapper    [data]="data"    (maximizeEvent)="onMaximizeEvent($event)"    (collapseEvent)="collapseEvent.emit($event)"    (floatEvent)="floatEvent.emit($event)">    <div *ngIf="!customerJourneyTable.loading" class="customer-journey" [fxLayout]="maximized ? \'column\' : \'row wrap\'" fxLayoutGap="6px">        <div *ngIf="!maximized" class="timeline" fusePerfectScrollbar [fusePerfectScrollbarOptions]="{ suppressScrollX: true }">            <div                *ngFor="let s of customerJourneyTable.tableData.source.data"                fxLayout="row-wrap"                class="step mb-4 p-4 mat-elevation-z1"                (click)="setIframe(s)"                [ngClass]="                    fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor                        ? fuseConfig.layout.anchorWidget.contentBackground                        : fuseConfig.layout.widget.customBackgroundColor === true                        ? fuseConfig.layout.widget.contentBackground                        : \'\'                "            >                <div fxFlex="15" fxLayout fxLayoutAlign="center center" class="step-time pr-8">                    <small fxFlex="80" class="text-right">                        {{ s.InteractionDate }}                    </small>                </div>                <div fxFlex="85" fxLayout fxLayoutAlign="space-between center" class="step-details px-16">                    <div fxLayout fxFlex="85" fxLayoutAlign="start center">                        <div mat-card-avatar [ngSwitch]="s.Channel | lowercase" class="w-32 h-32 border-sm-primary">                            <ng-container *ngSwitchCase="\'textchat\'">                                <ng-container *ngTemplateOutlet="interactionBrandType; context: s"></ng-container>                            </ng-container>                            <ng-container *ngSwitchCase="\'audiochat\'">                                <ng-container *ngTemplateOutlet="interactionBrandType; context: s"></ng-container>                            </ng-container>                            <ng-container *ngSwitchCase="\'videochat\'">                                <ng-container *ngTemplateOutlet="interactionBrandType; context: s"></ng-container>                            </ng-container>                            <ng-container *ngSwitchCase="\'services\'">                                <ng-container *ngTemplateOutlet="interactionBrandType; context: s"></ng-container>                            </ng-container>                            <mat-icon color="primary" *ngSwitchCase="\'voice\'"> call </mat-icon>                            <mat-icon color="primary" *ngSwitchCase="\'sms\'"> textsms </mat-icon>                            <mat-icon color="primary" *ngSwitchCase="\'email\'"> email </mat-icon>                            <mat-icon color="primary" *ngSwitchCase="\'fax\'"> print </mat-icon>                            <mat-icon color="primary" *ngSwitchDefault> link_off </mat-icon>                        </div>                        <span class="ml-8" [ngSwitch]="s.Channel | lowercase">                            <ng-container *ngSwitchCase="\'voice\'"> Voice with </ng-container>                            <ng-container *ngSwitchCase="\'chat\'"> Chat with </ng-container>                            <ng-container *ngSwitchCase="\'audiochat\'"> Audio Call with </ng-container>                            <ng-container *ngSwitchCase="\'videochat\'"> Video Call with </ng-container>                            <ng-container *ngSwitchCase="\'textchat\'"> Chat with </ng-container>                            <ng-container *ngSwitchCase="\'sms\'"> SMS chat with </ng-container>                            <ng-container *ngSwitchCase="\'email\'"> Email with </ng-container>                            <ng-container *ngSwitchCase="\'fax\'"> Fax with </ng-container>                            <ng-container *ngSwitchCase="\'line\'"> Line chat with </ng-container>                            <ng-container *ngSwitchCase="\'services\'"> Serviced by </ng-container>                            <ng-container *ngSwitchDefault> Chat with </ng-container>                            {{ s.LastServicedAgentName || s.AgentName }}                        </span>                    </div>                    <small fxFlex="15" class="text-center">{{ s.Intent || \'Default\' }}</small>                </div>            </div>            <div *ngIf="customerJourneyTable.tableData.source.data.length === 0" fxLayout fxLayoutAlign="center center" class="mat-title h-120">                No Data Available            </div>        </div>        <div            [hidden]="!maximized"            class="table"            [ngClass]="                fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor                    ? fuseConfig.layout.anchorWidget.contentBackground                    : fuseConfig.layout.widget.customBackgroundColor === true                    ? fuseConfig.layout.widget.contentBackground                    : \'\'            "            fusePerfectScrollbar            [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"        >            <mat-table                [dataSource]="customerJourneyTable.tableData.source"                matSort                matSortActive="InteractionDate"                matSortDirection="desc"                matSortDisableClear                [formGroup]="searchForm"            >                <!-- NA Note that these columns can be defined in any order.          The actual rendered columns are set as a property on the row definition" -->                <ng-container matColumnDef="SessionID">                    <mat-header-cell fxFlex="20" *matHeaderCellDef>                        <span mat-sort-header> Session Id </span>                        <mat-icon [matMenuTriggerFor]="sessionSearch">search</mat-icon>                        <mat-menu #sessionSearch="matMenu" class="search-input p-4">                            <div fxLayout="column">                                <mat-form-field (click)="$event.stopPropagation()" appearance="outline" class="custom with-border form-field">                                    <input type="text" matInput class="p-0 login-input" formControlName="SessionID" />                                </mat-form-field>                            </div>                        </mat-menu>                    </mat-header-cell>                    <mat-cell *matCellDef="let element" fxFlex="20">{{ element.SessionID || \'NA\' }}</mat-cell>                </ng-container>                <ng-container matColumnDef="InteractionDate">                    <mat-header-cell fxFlex="15" *matHeaderCellDef class="d-flex w-100-p">                        <span mat-sort-header> Received At </span>                        <mat-icon [matMenuTriggerFor]="receivedAtSearch" mat-ripple>search</mat-icon>                        <mat-menu #receivedAtSearch="matMenu" class="search-input p-4">                            <div fxLayout="column">                                <mat-form-field (click)="$event.stopPropagation()" appearance="outline" class="custom with-border form-field">                                    <input type="text" matInput class="p-0 login-input" formControlName="InteractionDate" />                                </mat-form-field>                            </div>                        </mat-menu>                    </mat-header-cell>                    <mat-cell fxFlex="15" *matCellDef="let element">{{ element.InteractionDate || \'NA\' }}</mat-cell>                </ng-container>                <ng-container matColumnDef="Channel">                    <mat-header-cell *matHeaderCellDef>                        <span mat-sort-header> Channel </span>                        <mat-icon [matMenuTriggerFor]="channelSearch" mat-ripple>search</mat-icon>                        <mat-menu #channelSearch="matMenu" class="search-input p-4">                            <div fxLayout="column">                                <mat-form-field (click)="$event.stopPropagation()" appearance="outline" class="custom with-border form-field">                                    <input type="text" matInput class="p-0 login-input" formControlName="Channel" />                                </mat-form-field>                            </div>                        </mat-menu>                    </mat-header-cell>                    <mat-cell *matCellDef="let element" [ngSwitch]="element.Channel | lowercase">                        <ng-container *ngSwitchCase="\'textchat\'">                            <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>                        </ng-container>                        <ng-container *ngSwitchCase="\'audiochat\'">                            <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>                        </ng-container>                        <ng-container *ngSwitchCase="\'videochat\'">                            <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>                        </ng-container>                        <ng-container *ngSwitchCase="\'services\'">                            <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>                        </ng-container>                        <mat-icon color="primary" *ngSwitchCase="\'voice\'"> call </mat-icon>                        <mat-icon color="primary" *ngSwitchCase="\'sms\'"> textsms </mat-icon>                        <mat-icon color="primary" *ngSwitchCase="\'email\'"> email </mat-icon>                        <mat-icon color="primary" *ngSwitchCase="\'fax\'"> print </mat-icon>                        <mat-icon color="primary" *ngSwitchDefault> link_off </mat-icon>                    </mat-cell>                </ng-container>                <ng-container matColumnDef="CIF">                    <mat-header-cell *matHeaderCellDef>                        <span mat-sort-header> CIF </span>                        <mat-icon [matMenuTriggerFor]="cifSearch" mat-ripple>search</mat-icon>                        <mat-menu #cifSearch="matMenu" class="search-input p-4">                            <div fxLayout="column">                                <mat-form-field (click)="$event.stopPropagation()" appearance="outline" class="custom with-border form-field">                                    <input type="text" matInput class="p-0 login-input" formControlName="CIF" />                                </mat-form-field>                            </div>                        </mat-menu>                    </mat-header-cell>                    <mat-cell *matCellDef="let element">{{ element.CIF || \'NA\' }}</mat-cell>                </ng-container>                <ng-container matColumnDef="EmailID">                    <mat-header-cell *matHeaderCellDef>                        <span mat-sort-header> Email </span>                        <mat-icon [matMenuTriggerFor]="emailSearch" mat-ripple>search</mat-icon>                        <mat-menu #emailSearch="matMenu" class="search-input p-4">                            <div fxLayout="column">                                <mat-form-field (click)="$event.stopPropagation()" appearance="outline" class="custom with-border form-field">                                    <input type="text" matInput class="p-0 login-input" formControlName="EmailID" />                                </mat-form-field>                            </div>                        </mat-menu>                    </mat-header-cell>                    <mat-cell *matCellDef="let element">{{ element.EmailID || \'NA\' }}</mat-cell>                </ng-container>                <ng-container matColumnDef="NRIC">                    <mat-header-cell *matHeaderCellDef>                        <span mat-sort-header> NRIC </span>                        <mat-icon [matMenuTriggerFor]="nricSearch" mat-ripple>search</mat-icon>                        <mat-menu #nricSearch="matMenu" class="search-input p-4">                            <div fxLayout="column">                                <mat-form-field (click)="$event.stopPropagation()" appearance="outline" class="custom with-border form-field">                                    <input type="text" matInput class="p-0 login-input" formControlName="NRIC" />                                </mat-form-field>                            </div>                        </mat-menu>                    </mat-header-cell>                    <mat-cell *matCellDef="let element">{{ element.NRIC || \'NA\' }}</mat-cell>                </ng-container>                <ng-container matColumnDef="PhoneNumber">                    <mat-header-cell *matHeaderCellDef>                        <span mat-sort-header> Phone </span>                        <mat-icon [matMenuTriggerFor]="phoneSearch" mat-ripple>search</mat-icon>                        <mat-menu #phoneSearch="matMenu" class="search-input p-4">                            <div fxLayout="column">                                <mat-form-field (click)="$event.stopPropagation()" appearance="outline" class="custom with-border form-field">                                    <input type="text" matInput class="p-0 login-input" formControlName="PhoneNumber" />                                </mat-form-field>                            </div>                        </mat-menu>                    </mat-header-cell>                    <mat-cell *matCellDef="let element">{{ element.PhoneNumber || \'NA\' }}</mat-cell>                </ng-container>                <ng-container matColumnDef="OverallSentiment">                    <mat-header-cell *matHeaderCellDef>                        <span mat-sort-header> Sentiment </span>                        <mat-icon [matMenuTriggerFor]="sentimentSearch" mat-ripple>search</mat-icon>                        <mat-menu #sentimentSearch="matMenu" class="search-input p-4">                            <div fxLayout="column">                                <mat-form-field (click)="$event.stopPropagation()" appearance="outline" class="custom with-border form-field">                                    <input type="text" matInput class="p-0 login-input" formControlName="OverallSentiment" />                                </mat-form-field>                            </div>                        </mat-menu>                    </mat-header-cell>                    <mat-cell *matCellDef="let element">                        <img                            *ngIf="element.OverallSentiment === \'Positive\'"                            class="w-24"                            src="assets/images/vectors/positive-score.svg"                            alt="Positive"                            matTooltip="Sentiment Dashboard"                            (click)="openSentimentDashboard(element.SessionID)"                        />                        <img                            *ngIf="element.OverallSentiment === \'Neutral\'"                            class="w-24"                            src="assets/images/vectors/neutral-score.svg"                            alt="Neutral"                            matTooltip="Sentiment Dashboard"                            (click)="openSentimentDashboard(element.SessionID)"                        />                        <img                            *ngIf="element.OverallSentiment === \'Negative\'"                            class="w-24"                            src="assets/images/vectors/negative-score.svg"                            alt="Negative"                            matTooltip="Sentiment Dashboard"                            (click)="openSentimentDashboard(element.SessionID)"                        />                        <ng-container *ngIf="!element.OverallSentiment"> NA </ng-container>                    </mat-cell>                </ng-container>                <ng-container matColumnDef="Actions">                    <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>                    <mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">                        <div fxLayout fxLayoutAlign="center center" class="h-100-p w-100-p">                            <button mat-icon-button [matMenuTriggerFor]="sessionActionsRef" (click)="getSessionActions(element.SessionID)">                                <mat-icon> history </mat-icon>                            </button>                            <mat-menu #sessionActionsRef="matMenu" backdropClass="ih-actions-menu" xPosition="before">                                <div                                    class="timeline"                                    *ngIf="!sessionActions.error && !sessionActions.loading"                                    fusePerfectScrollbar                                    [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"                                >                                    <div                                        class="step m-8 px-8 py-8 mat-elevation-z1 border-radius-20"                                        *ngFor="let action of sessionActions.data"                                        [ngClass]="                                            fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor                                                ? fuseConfig.layout.anchorWidget.contentBackground                                                : fuseConfig.layout.widget.customBackgroundColor === true                                                ? fuseConfig.layout.widget.contentBackground                                                : \'\'                                        "                                    >                                        <div fxFlex="30" class="step-time px-8">                                            {{ action.ActionTime | date: \'short\' }}                                        </div>                                        <div fxLayout fxLayoutAlign="center center" class="vertical-divide mx-12">                                            <div class="bg-light"></div>                                        </div>                                        <div fxLayout fxLayoutAlign="space-between center" class="step-details">                                            {{ action.Action }}                                        </div>                                    </div>                                </div>                                <div *ngIf="sessionActions.loading" class="w-100-p h-100-p" fxLayout fxLayoutAlign="center center">                                    <mat-spinner></mat-spinner>                                </div>                                <div *ngIf="sessionActions.error" fxLayout="column" fxLayoutAlign="center center" class="text-center">                                    <p>                                        {{ sessionActions.msg }}                                    </p>                                    <button mat-button color="primary" (click)="getSessionActions(element.SessionID)">Retry</button>                                </div>                            </mat-menu>                        </div>                    </mat-cell>                </ng-container>                <mat-header-row *matHeaderRowDef="customerJourneyTable.tableData.columns; sticky: true"></mat-header-row>                <mat-row                    (click)="setIframe(row)"                    class="selectable"                    [ngClass]="{ selected: !!customerJourneyTable.tableData.selection.isSelected(row) }"                    *matRowDef="let row; columns: customerJourneyTable.tableData.columns"                ></mat-row>            </mat-table>            <mat-paginator                *ngIf="customerJourneyTable.tableData.source.data.length > 5"                (page)="pageEvent()"                [pageSizeOptions]="[10, 20, 50, 100]"                showFirstLastButtons            >            </mat-paginator>            <p *ngIf="customerJourneyTable.tableData.source.data.length === 0" class="text-center m-0 mat-title">No Data Available</p>        </div>        <div            *ngIf="maximized"            class="spread"            [ngClass]="                fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor                    ? fuseConfig.layout.anchorWidget.contentBackground                    : fuseConfig.layout.widget.customBackgroundColor === true                    ? fuseConfig.layout.widget.contentBackground                    : \'\'            "        >            <p *ngIf="!customerJourneyTable.iframeUrl && customerJourneyTable.tableData.source.data.length > 0" class="mat-display-1">                Select a session            </p>            <iframe                *ngIf="!!customerJourneyTable.iframeUrl"                [src]="customerJourneyTable.iframeUrl"                class="w-100-p h-100-p"                frameborder="0"                seamless="seamless"            ></iframe>        </div>    </div>    <div *ngIf="customerJourneyTable.loading" class="w-100-p h-100-p" fxLayout="row" fxLayoutAlign="center center">        <mat-spinner></mat-spinner>    </div></tw-wrapper></div>'
+    var COMPONENTS = [{'name': 'AlertDialogComponent', 'selector': 'alert-dialog'},{'name': 'AppComponent', 'selector': 'app'},{'name': 'AppConfirmDialogComponent', 'selector': 'app-confirm-dialog'},{'name': 'AppSnackbarComponent', 'selector': 'app-snackbar'},{'name': 'AppThemeOptionsComponent', 'selector': 'app-theme-options'},{'name': 'AvatarComponent', 'selector': 'avatar'},{'name': 'ContentComponent', 'selector': 'content'},{'name': 'CreateSmsComponent', 'selector': 'app-create-sms'},{'name': 'CustomDialogComponent', 'selector': 'custom-dialog'},{'name': 'FooterComponent', 'selector': 'footer'},{'name': 'FuseConfirmDialogComponent', 'selector': 'fuse-confirm-dialog'},{'name': 'FuseCountdownComponent', 'selector': 'fuse-countdown'},{'name': 'FuseDemoContentComponent', 'selector': 'fuse-demo-content'},{'name': 'FuseDemoSidebarComponent', 'selector': 'fuse-demo-sidebar'},{'name': 'FuseHighlightComponent', 'selector': 'fuse-highlight'},{'name': 'FuseMaterialColorPickerComponent', 'selector': 'fuse-material-color-picker'},{'name': 'FuseNavHorizontalCollapsableComponent', 'selector': 'fuse-nav-horizontal-collapsable'},{'name': 'FuseNavHorizontalItemComponent', 'selector': 'fuse-nav-horizontal-item'},{'name': 'FuseNavigationComponent', 'selector': 'fuse-navigation'},{'name': 'FuseNavVerticalCollapsableComponent', 'selector': 'fuse-nav-vertical-collapsable'},{'name': 'FuseNavVerticalGroupComponent', 'selector': 'fuse-nav-vertical-group'},{'name': 'FuseNavVerticalItemComponent', 'selector': 'fuse-nav-vertical-item'},{'name': 'FuseProgressBarComponent', 'selector': 'fuse-progress-bar'},{'name': 'FuseSearchBarComponent', 'selector': 'fuse-search-bar'},{'name': 'FuseShortcutsComponent', 'selector': 'fuse-shortcuts'},{'name': 'FuseSidebarComponent', 'selector': 'fuse-sidebar'},{'name': 'FuseThemeOptionsComponent', 'selector': 'fuse-theme-options'},{'name': 'FuseWidgetComponent', 'selector': 'fuse-widget'},{'name': 'HorizontalLayout1Component', 'selector': 'horizontal-layout-1'},{'name': 'InstantMessagingComponent', 'selector': 'instant-messaging'},{'name': 'LoginComponent', 'selector': 'login'},{'name': 'MainComponent', 'selector': 'main'},{'name': 'NavbarComponent', 'selector': 'navbar'},{'name': 'NoDataAvailableComponent', 'selector': 'no-data-available'},{'name': 'QuickPanelComponent', 'selector': 'quick-panel'},{'name': 'RaceCarTrackComponent', 'selector': 'race-car-track'},{'name': 'ReminderTaskDialogComponent', 'selector': 'reminder-task-dialog'},{'name': 'ResourceNotFoundComponent', 'selector': 'resource-not-found'},{'name': 'SnackbarComponent', 'selector': 'snackbar'},{'name': 'ToolbarComponent', 'selector': 'toolbar'},{'name': 'TwAccountInformationComponent', 'selector': 'tw-account-information'},{'name': 'TwActiveInteractionsComponent', 'selector': 'tw-active-interactions'},{'name': 'TwAdCallbacksComponent', 'selector': 'tw-ad-callbacks'},{'name': 'TwAdFeedbackComponent', 'selector': 'tw-ad-feedback'},{'name': 'TwAdGamificationComponent', 'selector': 'tw-ad-gamification'},{'name': 'TwAdInteractionDetailsComponent', 'selector': 'tw-ad-interaction-details'},{'name': 'TwAdPerformanceComponent', 'selector': 'tw-ad-performance'},{'name': 'TwAdScoreComponent', 'selector': 'tw-ad-score'},{'name': 'TwAdTotalInteractionsComponent', 'selector': 'tw-ad-total-interactions'},{'name': 'TwAgentAssistComponent', 'selector': 'tw-agent-assist'},{'name': 'TwAgentDetailsComponent', 'selector': 'tw-agent-details'},{'name': 'TwAhtTcComponent', 'selector': 'tw-aht-tc'},{'name': 'TwAmdocsBccComponent', 'selector': 'tw-amdocs-bcc'},{'name': 'TwAudioControlsComponent', 'selector': 'tw-audio-controls'},{'name': 'TwAuxCodesComponent', 'selector': 'tw-aux-codes'},{'name': 'TwAuxStatusChartComponent', 'selector': 'tw-aux-status-chart.component'},{'name': 'TwAuxTimerComponent', 'selector': 'tw-aux-timer'},{'name': 'TwBroadcastComponent', 'selector': 'tw-broadcast'},{'name': 'TwCannedResponsesComponent', 'selector': 'tw-canned-responses'},{'name': 'TwCardComponent', 'selector': 'tw-card'},{'name': 'TwCardHeaderComponent', 'selector': 'tw-card-header'},{'name': 'TwcCustomComponent', 'selector': 'twc-custom'},{'name': 'TwcEmailComponent', 'selector': 'twc-email'},{'name': 'TwChatControlsComponent', 'selector': 'tw-chat-controls'},{'name': 'TwChatPanelComponent', 'selector': 'tw-chat-panel'},{'name': 'TwcHomeComponent', 'selector': 'twc-home'},{'name': 'TwcNoInteractionComponent', 'selector': 'twc-no-interaction'},{'name': 'TwcNoWidgetsComponent', 'selector': 'twc-no-widgets'},{'name': 'TwCreateInteractionComponent', 'selector': 'tw-create-interaction'},{'name': 'TwcSupervisorComponent', 'selector': 'twc-supervisor'},{'name': 'TwcTextchatComponent', 'selector': 'twc-textchat'},{'name': 'TwcUnknownComponent', 'selector': 'twc-unknown'},{'name': 'TwCustomComponent', 'selector': 'tw-custom'},{'name': 'TwCustomerDetailsComponent', 'selector': 'tw-customer-details'},{'name': 'TwCustomerJourneyComponent', 'selector': 'tw-customer-journey'},{'name': 'TwCustomerSentimentComponent', 'selector': 'tw-customer-sentiment'},{'name': 'TwcVoiceComponent', 'selector': 'twc-voice'},{'name': 'TwcWorkbenchComponent', 'selector': 'twc-workbench'},{'name': 'TwEmailControlsComponent', 'selector': 'tw-email-controls'},{'name': 'TwEmailPanelComponent', 'selector': 'tw-email-panel'},{'name': 'TwGamificationComponent', 'selector': 'tw-gamification'},{'name': 'TwInstantMessagingComponent', 'selector': 'tw-instant-messaging'},{'name': 'TwLogoutComponent', 'selector': 'tw-logout'},{'name': 'TwNotificationsComponent', 'selector': 'tw-notifications'},{'name': 'TwPanelComponent', 'selector': 'tw-panel'},{'name': 'TwPendingCallbacksComponent', 'selector': 'tw-pending-callbacks'},{'name': 'TwPieChartComponent', 'selector': 'tw-pie-chart.component'},{'name': 'TwRegisterCallbackComponent', 'selector': 'tw-register-callback'},{'name': 'TwSampleComponent', 'selector': 'tw-sample'},{'name': 'TwSuActiveAgentsComponent', 'selector': 'tw-su-active-agents'},{'name': 'TwSuAgentActivityComponent', 'selector': 'tw-su-agent-activity'},{'name': 'TwSuAgentActivityDetailsComponent', 'selector': 'tw-su-agent-activity-details'},{'name': 'TwSuAgentInteractionsComponent', 'selector': 'tw-su-agent-interactions'},{'name': 'TwSuCallsInQueueComponent', 'selector': 'tw-su-calls-in-queue.component'},{'name': 'TwSuChannelsComponent', 'selector': 'tw-su-channels.component'},{'name': 'TwSuGamificationComponent', 'selector': 'tw-su-gamification'},{'name': 'TwSuIntentListComponent', 'selector': 'tw-su-intent-list'},{'name': 'TwSuStatusComponent', 'selector': 'tw-su-status.component'},{'name': 'TwTemplateComponent', 'selector': 'tw-template'},{'name': 'TwToolbarMenuComponent', 'selector': 'tw-toolbar-menu'},{'name': 'TwTransferInteractionComponent', 'selector': 'tw-transfer-interaction'},{'name': 'TwUnknownComponent', 'selector': 'tw-unknown'},{'name': 'TwVideoControlsComponent', 'selector': 'tw-video-controls'},{'name': 'TwVoiceBotTranscriptsComponent', 'selector': 'tw-voice-bot-transcripts'},{'name': 'TwVoiceCannedResponsesComponent', 'selector': 'tw-voice-canned-responses'},{'name': 'TwVoiceControlsComponent', 'selector': 'tw-voice-controls'},{'name': 'TwVoicePanelComponent', 'selector': 'tw-voice-panel'},{'name': 'TwWallboardComponent', 'selector': 'tw-wallboard'},{'name': 'TwWorkbenchPanelComponent', 'selector': 'tw-workbench-panel'},{'name': 'TwWorkCodesComponent', 'selector': 'tw-work-codes'},{'name': 'TwWrapperComponent', 'selector': 'tw-wrapper'},{'name': 'VerticalLayout1Component', 'selector': 'vertical-layout-1'},{'name': 'WidgetFabComponent', 'selector': 'widget-fab'},{'name': 'WidgetPreviewComponent', 'selector': 'widget-preview'},{'name': 'WorkbenchEmailComponent', 'selector': 'workbench-email'}];
+    var DIRECTIVES = [{'name': 'FuseIfOnDomDirective', 'selector': '[fuseIfOnDom]'},{'name': 'FuseInnerScrollDirective', 'selector': '.inner-scroll'},{'name': 'FuseMatSidenavHelperDirective', 'selector': '[fuseMatSidenavHelper]'},{'name': 'FuseMatSidenavTogglerDirective', 'selector': '[fuseMatSidenavToggler]'},{'name': 'FusePerfectScrollbarDirective', 'selector': '[fusePerfectScrollbar]'},{'name': 'FuseWidgetToggleDirective', 'selector': '[fuseWidgetToggle]'},{'name': 'QuillDirective', 'selector': '[quill]'},{'name': 'TWChartDirective', 'selector': '[twChart]'},{'name': 'TwTemplateDirective', 'selector': '[widgetTemplate]'}];
+    var ACTUAL_COMPONENT = {'name': 'TwCustomerJourneyComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+                   
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> result-matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'TwCustomerJourneyComponent.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+       <!-- Required to polyfill modern browsers as code is ES5 for IE... -->
+       <script src="../js/libs/custom-elements-es5-adapter.js" charset="utf-8" defer></script>
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+       <script src="../js/libs/zepto.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

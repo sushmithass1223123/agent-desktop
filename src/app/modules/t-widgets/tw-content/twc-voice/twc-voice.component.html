@@ -1,11 +1,38 @@
-<div class="tw-full">
+<!-- No interaction template -->
+<twc-no-interaction
+    *ngIf="interactions.length === 0"
+    type="voice"
+    [ngStyle]="{ 'width.px': screenWidth, 'height.px': screenHeight }"
+></twc-no-interaction>
 
-    <tw-template class="widget-grid" [widgets]=voiceWidgets></tw-template>
+<!-- Interaction template -->
+<ng-container *ngFor="let item of interactions; index as i">
+    <!-- widget template -->
+    <div
+        class="tw-interaction tw-widget-container custom-scroll"
+        [ngClass]="item.interactionId === activeInteraction ? 'active' : ''"
+        [ngStyle]="{ 'width.px': screenWidth, 'height.px': screenHeight }"
+    >
+        <div fxFill fxFlex fxLayout="row wrap" fxLayoutAlign=" none">
+            <tw-template
+                [fxFlex.gt-md]="item.widgets.dynamic.length > 0 ? 33 : 100"
+                class="static-widget-grid"
+                *ngIf="item.widgets.static.length > 0"
+                [widgets]="item.widgets.static"
+            ></tw-template>
 
-    <div fxFlex fxFill fxLayout="row" fxLayoutAlign="center center" *ngIf="voiceWidgets.length === 0">
-        <span class="mat-display-1 mb-0">
-            No voice widgets found!
-        </span>
+            <tw-template
+                fxFlex.gt-md="66"
+                class="dynamic-widget-grid"
+                *ngIf="item.widgets.dynamic.length > 0"
+                [widgets]="item.widgets.dynamic"
+            ></tw-template>
+
+            <div class="tw-aot-fab" cdkDrag cdkDragBoundary=".tw-widget-container" *ngIf="item.widgets.aot?.length > 0">
+                <widget-fab [fabWidgets]="item.widgets.aot"></widget-fab>
+            </div>
+        </div>
     </div>
-
-</div>
+    <!-- No widget for interaction -->
+    <twc-no-widgets class="twc-card" *ngIf="item.widgets.static.length === 0" type="voice"></twc-no-widgets>
+</ng-container>

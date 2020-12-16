@@ -1,0 +1,1576 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>agent-desktop documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	      <link rel="stylesheet" href="../styles/style.css">
+    </head>
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top visible-xs">
+            <a href="../" class="navbar-brand">agent-desktop documentation</a>
+            <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="hidden-xs menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+<ol class="breadcrumb">
+  <li>Components</li>
+  <li>TwAgentAssistComponent</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="active">
+            <a href="#info" role="tab" id="info-tab" data-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li >
+            <a href="#source" role="tab" id="source-tab" data-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li >
+            <a href="#templateData" role="tab" id="templateData-tab" data-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li >
+            <a href="#styleData" role="tab" id="styleData-tab" data-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li >
+            <a href="#tree" role="tab" id="tree-tab" data-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="c-info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>src/app/modules/t-widgets/tw-collections/tw-agent-assist/tw-agent-assist.component.ts</code>
+</p>
+
+
+    <p class="comment">
+        <h3>Extends</h3>
+    </p>
+    <p class="comment">
+                <code><a href="../classes/TWidget.html" target="_self" >TWidgetWrapper</a></code>
+    </p>
+
+    <p class="comment">
+        <h3>Implements</h3>
+    </p>
+    <p class="comment">
+                    <code><a href="https://angular.io/api/core/OnInit" target="_blank" >OnInit</a></code>
+                    <code><a href="https://angular.io/api/core/OnDestroy" target="_blank" >OnDestroy</a></code>
+    </p>
+
+
+<section>
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover">
+        <tbody>
+
+
+            <tr>
+                <td class="col-md-3">encapsulation</td>
+                <td class="col-md-9"><code>ViewEncapsulation.None</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>tw-agent-assist</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./tw-agent-assist.component.scss</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./tw-agent-assist.component.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section>
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#AgentAssistDataEvent">AgentAssistDataEvent</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#CallerIntentEvent">CallerIntentEvent</a>
+                            </li>
+                            <li>
+                                <a href="#interactionId">interactionId</a>
+                            </li>
+                            <li>
+                                <a href="#nlpData">nlpData</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#OnNLPDataEvent">OnNLPDataEvent</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#TextChatRemoteUserConnectedEvent">TextChatRemoteUserConnectedEvent</a>
+                            </li>
+                            <li>
+                                <a href="#ucid">ucid</a>
+                            </li>
+                            <li>
+                                <a href="#widgetData">widgetData</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#addIntentToNLPData">addIntentToNLPData</a>
+                            </li>
+                            <li>
+                                <a href="#ngOnDestroy">ngOnDestroy</a>
+                            </li>
+                            <li>
+                                <a href="#ngOnInit">ngOnInit</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#openAssitWidget">openAssitWidget</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Inputs</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#data">data</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section>
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(_aotWidgetService: <a href="../injectables/AOTWidgetService.html">AOTWidgetService</a>, _tmacEventService: <a href="../injectables/TMACEventService.html">TMACEventService</a>, _appUIService: <a href="../injectables/AppUiService.html">AppUiService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="58" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-agent-assist/tw-agent-assist.component.ts:58</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div class="io-description"><p>Constructor </p>
+</div>
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>_aotWidgetService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/AOTWidgetService.html" target="_self" >AOTWidgetService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>_tmacEventService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/TMACEventService.html" target="_self" >TMACEventService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>_appUIService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/AppUiService.html" target="_self" >AppUiService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+    <section>
+    <h3 id="inputs">Inputs</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="data"></a>
+                        <b>data</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/IWidget.html" target="_self" >IWidget</a></code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="21" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-agent-assist/tw-agent-assist.component.ts:21</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>To hold all the data related to this widget from the config</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+
+
+    <section>
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="addIntentToNLPData"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Private</span>
+                            addIntentToNLPData
+                        </b>
+                        <a href="#addIntentToNLPData"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>addIntentToNLPData(intent: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, url?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, width?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, height?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="272"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-agent-assist/tw-agent-assist.component.ts:272</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>To process AgentNotificaitonEvent</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>intent</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>url</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        Yes
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>width</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                    </td>
+
+                                    <td>
+                                        Yes
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>height</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                    </td>
+
+                                    <td>
+                                        Yes
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngOnDestroy"></a>
+                    <span class="name">
+                        <b>
+                            ngOnDestroy
+                        </b>
+                        <a href="#ngOnDestroy"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngOnDestroy()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="117"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-agent-assist/tw-agent-assist.component.ts:117</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>A callback method that performs
+  clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngOnInit"></a>
+                    <span class="name">
+                        <b>
+                            ngOnInit
+                        </b>
+                        <a href="#ngOnInit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngOnInit()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="82"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-agent-assist/tw-agent-assist.component.ts:82</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>A callback method that is invoked immediately after the default change detector has checked the directive&#39;s data-bound properties for the first time,
+and before any of the view or content children have been checked. It is invoked only once when the directive is instantiated.</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="openAssitWidget"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Public</span>
+                            openAssitWidget
+                        </b>
+                        <a href="#openAssitWidget"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>openAssitWidget(intent: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, isMandatory?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>, assistUrl?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, width?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, height?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="319"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-agent-assist/tw-agent-assist.component.ts:319</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>To open assist widget</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                    <td>Description</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>intent</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                    <td>
+                                        <p>Intent to be passed to assist widgetData</p>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>isMandatory</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                    </td>
+
+                                    <td>
+                                        Yes
+                                    </td>
+
+
+                                    <td>
+                                        <p>[OPTIONAL] Falg to pop confirmation before the widget close</p>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>assistUrl</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        Yes
+                                    </td>
+
+
+                                    <td>
+                                        <p>[OPTIONAL] Assist url to be opened</p>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>width</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                    </td>
+
+                                    <td>
+                                        Yes
+                                    </td>
+
+
+                                    <td>
+                                        <p>[OPTIONAL] Width of assit widget</p>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>height</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                    </td>
+
+                                    <td>
+                                        Yes
+                                    </td>
+
+
+                                    <td>
+                                        <p>[OPTIONAL] Height of assist widget</p>
+
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section>
+    
+        <h3 id="inputs">
+            Properties
+        </h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="AgentAssistDataEvent"></a>
+                        <span class="name">
+                            <b>
+                                <span class="modifier">Private</span>
+                            AgentAssistDataEvent</b>
+                            <a href="#AgentAssistDataEvent"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>() &#x3D;&gt; {...}</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="295" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-agent-assist/tw-agent-assist.component.ts:295</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>To process AgentAssistDataEvent</p>
+</div>
+                    </td>
+                </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                          <div class="io-description">
+                                  <b>Parameters :</b>
+                                  <table class="params">
+                                      <thead>
+                                          <tr>
+                                                <td>Name</td>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                                <tr>
+                                                        <td>evt</td>
+                                                </tr>
+                                      </tbody>
+                                  </table>
+                          </div>
+                        </td>
+                    </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="CallerIntentEvent"></a>
+                        <span class="name">
+                            <b>
+                                <span class="modifier">Private</span>
+                            CallerIntentEvent</b>
+                            <a href="#CallerIntentEvent"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>() &#x3D;&gt; {...}</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="179" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-agent-assist/tw-agent-assist.component.ts:179</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>To process CallerIntentEvent</p>
+</div>
+                    </td>
+                </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                          <div class="io-description">
+                                  <b>Parameters :</b>
+                                  <table class="params">
+                                      <thead>
+                                          <tr>
+                                                <td>Name</td>
+                                                    <td>Description</td>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                                <tr>
+                                                        <td>evt</td>
+                                                        <td>
+                                                                <code><p>CallerIntentEvent event data</p>
+</code>
+                                                        </td>
+                                                </tr>
+                                      </tbody>
+                                  </table>
+                          </div>
+                        </td>
+                    </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="interactionId"></a>
+                        <span class="name">
+                            <b>
+                            interactionId</b>
+                            <a href="#interactionId"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="29" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-agent-assist/tw-agent-assist.component.ts:29</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>ID of an interaction</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="nlpData"></a>
+                        <span class="name">
+                            <b>
+                            nlpData</b>
+                            <a href="#nlpData"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>    <code>literal type[]</code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>[]</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-agent-assist/tw-agent-assist.component.ts:37</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>NLP data from event</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="OnNLPDataEvent"></a>
+                        <span class="name">
+                            <b>
+                                <span class="modifier">Private</span>
+                            OnNLPDataEvent</b>
+                            <a href="#OnNLPDataEvent"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>() &#x3D;&gt; {...}</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="138" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-agent-assist/tw-agent-assist.component.ts:138</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>To process OnNLPDataEvent</p>
+</div>
+                    </td>
+                </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                          <div class="io-description">
+                                  <b>Parameters :</b>
+                                  <table class="params">
+                                      <thead>
+                                          <tr>
+                                                <td>Name</td>
+                                                    <td>Description</td>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                                <tr>
+                                                        <td>evt</td>
+                                                        <td>
+                                                                <code><p>GenericEvent event data</p>
+</code>
+                                                        </td>
+                                                </tr>
+                                      </tbody>
+                                  </table>
+                          </div>
+                        </td>
+                    </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="TextChatRemoteUserConnectedEvent"></a>
+                        <span class="name">
+                            <b>
+                                <span class="modifier">Private</span>
+                            TextChatRemoteUserConnectedEvent</b>
+                            <a href="#TextChatRemoteUserConnectedEvent"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>() &#x3D;&gt; {...}</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="199" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-agent-assist/tw-agent-assist.component.ts:199</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>To process TextChatRemoteUserConnectedEvent</p>
+</div>
+                    </td>
+                </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                          <div class="io-description">
+                                  <b>Parameters :</b>
+                                  <table class="params">
+                                      <thead>
+                                          <tr>
+                                                <td>Name</td>
+                                                    <td>Description</td>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                                <tr>
+                                                        <td>evt</td>
+                                                        <td>
+                                                                <code><p>TextChatRemoteUserConnectedEvent event data</p>
+</code>
+                                                        </td>
+                                                </tr>
+                                      </tbody>
+                                  </table>
+                          </div>
+                        </td>
+                    </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="ucid"></a>
+                        <span class="name">
+                            <b>
+                            ucid</b>
+                            <a href="#ucid"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-agent-assist/tw-agent-assist.component.ts:25</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>UCID of an interaction</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="widgetData"></a>
+                        <span class="name">
+                            <b>
+                            widgetData</b>
+                            <a href="#widgetData"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-agent-assist/tw-agent-assist.component.ts:33</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Widget custom data</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+</section>
+
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="c-source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from &#x27;@angular/core&#x27;;
+import { AOTWidgetService } from &#x27;@services/aot-widget.service&#x27;;
+import { AppUiService } from &#x27;@services/app-ui.service&#x27;;
+import { TMACEventService } from &#x27;@services/tmac-event.service&#x27;;
+import { TWidgetWrapper } from &#x27;@twidgets/utils/widget-wrapper/tw-wrapper&#x27;;
+import { IWidget } from &#x27;app/interfaces&#x27;;
+import { TwWidgetModel } from &#x27;app/models&#x27;;
+import * as _ from &#x27;lodash&#x27;;
+import { AgentAssistDataEvent, CallerIntentEvent, GenericEvent, IUIEvent, SDKClient, TextChatRemoteUserConnectedEvent } from &#x27;tmac-sdk&#x27;;
+
+@Component({
+    selector: &#x27;tw-agent-assist&#x27;,
+    templateUrl: &#x27;./tw-agent-assist.component.html&#x27;,
+    styleUrls: [&#x27;./tw-agent-assist.component.scss&#x27;],
+    encapsulation: ViewEncapsulation.None
+})
+export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+    /**
+     * To hold all the data related to this widget from the config
+     */
+    @Input() data: IWidget;
+    /**
+     * UCID of an interaction
+     */
+    ucid: string;
+    /**
+     * ID of an interaction
+     */
+    interactionId: number;
+    /**
+     * Widget custom data
+     */
+    widgetData: any;
+    /**
+     * NLP data from event
+     */
+    nlpData: {
+        /**
+         * Name of intent
+         */
+        Name: string;
+        /**
+         * Count of intent
+         */
+        Count: number,
+        /**
+         * Url to assist
+         */
+        Url?: string;
+        /**
+         * Width of assist widget
+         */
+        Width?: number;
+        /**
+         * Height of assist widget
+         */
+        Height?: number;
+    }[] &#x3D; [];
+
+    /**
+     * Constructor 
+     * @param {AOTWidgetService} _aotWidgetService
+     * @param {TMACEventService} _tmacEventService
+     * @param {AppUiService} _appUIService
+     */
+    constructor(
+        private _aotWidgetService: AOTWidgetService,
+        private _tmacEventService: TMACEventService,
+        private _appUIService: AppUiService
+    ) {
+        super();
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+    // @ Lifecycle hooks
+    // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * A callback method that is invoked immediately after the default change detector has checked the directive&#x27;s data-bound properties for the first time,
+     * and before any of the view or content children have been checked. It is invoked only once when the directive is instantiated.
+     */
+    ngOnInit(): void {
+        // call the wrapper init method
+        this.initWrapper(this.data);
+
+        // set the interaction id from data
+        this.interactionId &#x3D; this.data.InteractionDetails?.InteractionID;
+
+        // assign the widget data
+        this.widgetData &#x3D; this.data.Data || new Object();
+
+        // assign the UCID
+        this.ucid &#x3D; this.data?.InteractionDetails?.UCID || &#x27;&#x27;;
+
+        // get the event from event bag to make sure no events are missed
+        const eventBag &#x3D; this._tmacEventService.get(this.interactionId);
+
+        // process the events if any
+        eventBag.forEach((evt: IUIEvent) &#x3D;&gt; {
+            this[evt.EventName]?.(evt);
+        });
+
+        // register to the event
+        SDKClient.events.on(&#x27;OnNLPDataEvent&#x27;, this.OnNLPDataEvent);
+        SDKClient.events.on(&#x27;CallerIntentEvent&#x27;, this.CallerIntentEvent);
+        SDKClient.events.on(&#x27;TextChatRemoteUserConnectedEvent&#x27;, this.TextChatRemoteUserConnectedEvent);
+        SDKClient.events.on(&#x27;AgentAssistDataEvent&#x27;, this.AgentAssistDataEvent);
+
+        // TODO:: To implement interaction based AOT
+        // SDKClient.events.on(&#x27;AgentNotificaitonEvent&#x27;, this.AgentNotificaitonEvent);
+    }
+
+    /**
+     * A callback method that performs
+     *  clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
+     */
+    ngOnDestroy(): void {
+        // call the wrapper destroy method
+        this.destroyWrapper();
+        // de-register from the event
+        SDKClient.events.off(&#x27;OnNLPDataEvent&#x27;, this.OnNLPDataEvent);
+        SDKClient.events.off(&#x27;CallerIntentEvent&#x27;, this.CallerIntentEvent);
+        SDKClient.events.off(&#x27;TextChatRemoteUserConnectedEvent&#x27;, this.TextChatRemoteUserConnectedEvent);
+        SDKClient.events.off(&#x27;AgentAssistDataEvent&#x27;, this.AgentAssistDataEvent);
+
+        // TODO:: To implement interaction based AOT
+        // SDKClient.events.off(&#x27;AgentNotificaitonEvent&#x27;, this.AgentNotificaitonEvent);
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+    // @  Private Methods
+    // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * To process OnNLPDataEvent
+     * @param evt GenericEvent event data
+     */
+    private OnNLPDataEvent &#x3D; (evt?: GenericEvent): void &#x3D;&gt; {
+        const receivedData &#x3D; evt;
+        if (receivedData) {
+            const parsedJson &#x3D; JSON.parse(receivedData.JsonData);
+
+            // check for the interaction
+            if (this.interactionId.toString() !&#x3D;&#x3D; parsedJson.interactionID) {
+                return;
+            }
+
+            // filter for agent only
+            if (parsedJson.messageSource &#x3D;&#x3D;&#x3D; &#x27;agent&#x27;) {
+                return;
+            }
+
+            // get the nlu result
+            const parsedNlu &#x3D; JSON.parse(parsedJson.nluResult) || null;
+
+            // get the intent
+            const intent &#x3D; parsedNlu?.intent;
+
+            if (intent &amp;&amp; intent.confidence &gt;&#x3D; (this.widgetData?.Confidence || 0.5)) {
+                const getData &#x3D; this.nlpData.filter((i) &#x3D;&gt; i.Name &#x3D;&#x3D;&#x3D; intent.name);
+                if (getData.length &gt; 0) {
+                    ++getData[0].Count;
+                } else {
+                    this.nlpData.push({
+                        Name: parsedNlu.intent.name,
+                        Count: 0
+                    });
+                }
+            }
+            // oder by the count
+            this.nlpData &#x3D; _.orderBy(this.nlpData, [&#x27;Count&#x27;], [&#x27;desc&#x27;]);
+        }
+    }
+
+    /**
+     * To process CallerIntentEvent
+     * @param evt CallerIntentEvent event data
+     */
+    private CallerIntentEvent &#x3D; (evt: CallerIntentEvent): void &#x3D;&gt; {
+        // check for the interaction
+        if (this.interactionId !&#x3D;&#x3D; evt.InteractionID) {
+            return;
+        }
+        // get the intent from event
+        const intent &#x3D; evt.IntentName;
+
+        // check if intent is present
+        if (!intent) {
+            return;
+        }
+
+        this.addIntentToNLPData(intent);
+    }
+
+    /**
+     * To process TextChatRemoteUserConnectedEvent
+     * @param evt TextChatRemoteUserConnectedEvent event data
+     */
+    private TextChatRemoteUserConnectedEvent &#x3D; (evt: TextChatRemoteUserConnectedEvent) &#x3D;&gt; {
+        // check for the interaction
+        if (this.interactionId !&#x3D;&#x3D; evt.InteractionID) {
+            return;
+        }
+
+        // get the intent from event
+        const intent &#x3D; evt.TransferIntent || evt.Intent;
+
+        // check if intent is present
+        if (!intent) {
+            return;
+        }
+
+        this.addIntentToNLPData(intent);
+    }
+
+    /**
+     * To process AgentNotificaitonEvent
+     * @param evt AgentNotificaitonEvent event data
+     */
+    // private AgentNotificaitonEvent &#x3D; (evt: AgentNotificaitonEvent) &#x3D;&gt; {
+    //     // check if the event for the interaction
+    //     if (evt.InteractionID !&#x3D;&#x3D; this.interactionId) {
+    //         return;
+    //     }
+
+    //     // check the type
+    //     if (evt.Type.toLowerCase() &#x3D;&#x3D;&#x3D; &#x27;executeaction&#x27;) {
+    //         // parse the action
+    //         const parsedMessage: {
+    //             /**
+    //              * Type of action
+    //              */
+    //             Action: string,
+    //             /**
+    //              * Data for the notification
+    //              */
+    //             Data: string,
+    //             /**
+    //              * Mandatory action to be taken
+    //              */
+    //             IsMandatory: boolean,
+    //             /**
+    //              * Comment for the notification
+    //              */
+    //             Comment: string;
+    //             /**
+    //              * Header for the assist widget
+    //              */
+    //             Header: string,
+    //         } &#x3D; JSON.parse(evt.Message);
+
+    //         // get the action
+    //         switch (parsedMessage.Action.toLowerCase()) {
+    //             case &#x27;vivr&#x27;:
+    //                 {
+    //                     this.openAssitWidget(parsedMessage.Header, parsedMessage.IsMandatory, parsedMessage.Data);
+    //                     break;
+    //                 }
+    //         }
+    //     }
+
+    // }
+
+    /**
+     * To add intent to NLP data
+     * 
+     * @param intent Intent to be added
+     * @param url [OPTIONAL] Assist url to be opened
+     * @param width [OPTIONAL] Width of assit widget
+     * @param height [OPTIONAL] Height of assist widget
+     */
+    private addIntentToNLPData(intent: string, url?: string, width?: number, height?: number): void {
+        const getData &#x3D; this.nlpData.filter((i) &#x3D;&gt; i.Name &#x3D;&#x3D;&#x3D; intent);
+        if (getData.length &gt; 0) {
+            ++getData[0].Count;
+        } else {
+            this.nlpData.push({
+                Name: intent,
+                Count: 0,
+                Url: url,
+                Width: width,
+                Height: height
+            });
+        }
+
+        // oder by the count
+        this.nlpData &#x3D; _.orderBy(this.nlpData, [&#x27;Count&#x27;], [&#x27;desc&#x27;]);
+    }
+
+    /**
+     * To process AgentAssistDataEvent
+     * 
+     * @param {AgentAssistDataEvent} evt
+     */
+    private AgentAssistDataEvent &#x3D; (evt: AgentAssistDataEvent) &#x3D;&gt; {
+        // check for the interaction
+        if (this.interactionId !&#x3D;&#x3D; evt.InteractionID) {
+            return;
+        }
+
+        // add intent to the list
+        this.addIntentToNLPData(evt.Name, evt.Url, evt.Width, evt.Height);
+    }
+
+
+    // -----------------------------------------------------------------------------------------------------
+    // @  Public Methods
+    // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * To open assist widget
+     * 
+     * @param intent Intent to be passed to assist widgetData
+     * @param isMandatory [OPTIONAL] Falg to pop confirmation before the widget close
+     * @param assistUrl [OPTIONAL] Assist url to be opened
+     * @param width [OPTIONAL] Width of assit widget
+     * @param height [OPTIONAL] Height of assist widget
+     */
+    public openAssitWidget(intent: string, isMandatory?: boolean, assistUrl?: string, width?: number, height?: number): void {
+        // check if the url to be taken from param
+        let url &#x3D; assistUrl ? assistUrl : this.widgetData.AssistWidgetUrl;
+
+        // check if url is provided
+        if (!url) {
+            this._appUIService.showSnackbar(&#x27;Assist widget URL not found!&#x27;, &#x27;failure&#x27;);
+            return;
+        }
+
+        // if the url is provided with the method then do not process it query params
+        if (!assistUrl) {
+            // get the intent name
+            const ucid &#x3D; this.ucid;
+
+            // get the map object
+            const mapObj &#x3D; {
+                _intent: intent,
+                _ucid: ucid
+            };
+
+            // check the regex and replace the item in the url
+            const reg &#x3D; new RegExp(Object.keys(mapObj).join(&#x27;|&#x27;), &#x27;gi&#x27;);
+            url &#x3D; url.replace(reg, (matched: any) &#x3D;&gt; {
+                return mapObj[matched];
+            });
+        }
+
+        // get assist widget config
+        const title &#x3D; &#x60;${this.widgetData.Title || &#x27;Custom&#x27;} - ${intent}&#x60;;
+        const icon &#x3D; this.widgetData.Icon || &#x27;&#x27;;
+        const actions &#x3D; this.widgetData.Actions || [&#x27;destroy&#x27;];
+        const viewState &#x3D; this.widgetData.ViewState || &#x27;restore&#x27;;
+
+        width &#x3D; width || this.widgetData.Width || 500;
+        height &#x3D; height || this.widgetData.Height || 500;
+
+        // create a widget model
+        const widget &#x3D; new TwWidgetModel(title, &#x27;tw-custom&#x27;, icon);
+        widget.Config.Position.W &#x3D; width;
+        widget.Config.Position.H &#x3D; height;
+        widget.Config.Actions &#x3D; actions;
+        widget.Config.ViewState &#x3D; viewState;
+
+        widget.Data.Url &#x3D; url;
+
+        // if mandatory, pop a confiration and destroy
+        if (isMandatory) {
+            widget.OnDestroy &#x3D; () &#x3D;&gt; {
+                // get confiration before close
+                const confirmDialogRef &#x3D; this._appUIService.showAppConfirmDialog(&#x27;generic&#x27;, &#x27;Confirm Close&#x27;, &#x27;Are you sure to close?&#x27;);
+                confirmDialogRef.afterClosed().subscribe((resp) &#x3D;&gt; {
+                    if (resp) {
+                        widget.destroy();
+                    }
+                });
+                return false;
+            };
+        }
+
+        // add to AOT widget service
+        this._aotWidgetService.addWidget(widget);
+    }
+}
+
+// for more info visit - https://angular.io/api/core
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="c-templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper --&gt;
+&lt;!-- implement following events in your component to access widget wrapper action events --&gt;
+&lt;!-- (maximizeEvent)&#x3D;&quot;maximizeEvent.emit($event)&quot; (collapseEvent)&#x3D;&quot;collapseEvent.emit($event)&quot; (floatEvent)&#x3D;&quot;floatEvent.emit($event)&quot; --&gt;
+
+&lt;!-- PLEASE NOTE: do not add any other attributes or directive to &#x27;tw-wrapper&#x27; selector --&gt;
+
+&lt;tw-wrapper [data]&#x3D;&quot;data&quot;&gt;
+    &lt;!-- your code goes here --&gt;
+    &lt;div fxFlex fxFill fxLayout&#x3D;&quot;row&quot; class&#x3D;&quot;p-8&quot;&gt;
+        &lt;mat-chip-list *ngIf&#x3D;&quot;nlpData.length &gt; 0; else noData&quot;&gt;
+            &lt;mat-chip
+                *ngFor&#x3D;&quot;let item of nlpData&quot;
+                removable
+                (click)&#x3D;&quot;openAssitWidget(item.Name, false, item.Url, item.Width, item.Height)&quot;
+                [ngClass]&#x3D;&quot;{
+                    &#x27;bg-info&#x27;: item.Count &lt; 5,
+                    &#x27;bg-secondary&#x27;: item.Count &gt;&#x3D; 5 &amp;&amp; item.Count &gt; 10,
+                    &#x27;bg-success&#x27;: item.Count &gt;&#x3D; 10 &amp;&amp; item.Count &gt; 20,
+                    &#x27;bg-warning&#x27;: item.Count &gt;&#x3D; 20 &amp;&amp; item.Count &gt; 30,
+                    &#x27;bg-danger&#x27;: item.Count &gt;&#x3D; 30
+                }&quot;
+            &gt;
+                {{ item.Name }}
+                &lt;mat-icon matChipRemove&gt;close&lt;/mat-icon&gt;
+            &lt;/mat-chip&gt;
+        &lt;/mat-chip-list&gt;
+
+        &lt;ng-template #noData&gt;
+            &lt;div fxFill fxLayout fxLayoutAlign&#x3D;&quot;center center&quot; class&#x3D;&quot;mat-title&quot;&gt;No Data Available&lt;/div&gt;
+        &lt;/ng-template&gt;
+    &lt;/div&gt;
+    &lt;!-- your code goes here --&gt;
+&lt;/tw-wrapper&gt;
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="c-styleData">
+                <p class="comment">
+                    <code>./tw-agent-assist.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">tw-agent-assist {
+    mat-chip mat-icon {
+        color: rgba(0, 0, 0, 0.47) !important;
+    }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="c-tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper --><!-- implement following events in your component to access widget wrapper action events --><!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" --><!-- PLEASE NOTE: do not add any other attributes or directive to \'tw-wrapper\' selector --><tw-wrapper [data]="data">    <!-- your code goes here -->    <div fxFlex fxFill fxLayout="row" class="p-8">        <mat-chip-list *ngIf="nlpData.length > 0; else noData">            <mat-chip                *ngFor="let item of nlpData"                removable                (click)="openAssitWidget(item.Name, false, item.Url, item.Width, item.Height)"                [ngClass]="{                    \'bg-info\': item.Count < 5,                    \'bg-secondary\': item.Count >= 5 && item.Count > 10,                    \'bg-success\': item.Count >= 10 && item.Count > 20,                    \'bg-warning\': item.Count >= 20 && item.Count > 30,                    \'bg-danger\': item.Count >= 30                }"            >                {{ item.Name }}                <mat-icon matChipRemove>close</mat-icon>            </mat-chip>        </mat-chip-list>        <ng-template #noData>            <div fxFill fxLayout fxLayoutAlign="center center" class="mat-title">No Data Available</div>        </ng-template>    </div>    <!-- your code goes here --></tw-wrapper></div>'
+    var COMPONENTS = [{'name': 'AlertDialogComponent', 'selector': 'alert-dialog'},{'name': 'AppComponent', 'selector': 'app'},{'name': 'AppConfirmDialogComponent', 'selector': 'app-confirm-dialog'},{'name': 'AppSnackbarComponent', 'selector': 'app-snackbar'},{'name': 'AppThemeOptionsComponent', 'selector': 'app-theme-options'},{'name': 'AvatarComponent', 'selector': 'avatar'},{'name': 'ContentComponent', 'selector': 'content'},{'name': 'CreateSmsComponent', 'selector': 'app-create-sms'},{'name': 'CustomDialogComponent', 'selector': 'custom-dialog'},{'name': 'FooterComponent', 'selector': 'footer'},{'name': 'FuseConfirmDialogComponent', 'selector': 'fuse-confirm-dialog'},{'name': 'FuseCountdownComponent', 'selector': 'fuse-countdown'},{'name': 'FuseDemoContentComponent', 'selector': 'fuse-demo-content'},{'name': 'FuseDemoSidebarComponent', 'selector': 'fuse-demo-sidebar'},{'name': 'FuseHighlightComponent', 'selector': 'fuse-highlight'},{'name': 'FuseMaterialColorPickerComponent', 'selector': 'fuse-material-color-picker'},{'name': 'FuseNavHorizontalCollapsableComponent', 'selector': 'fuse-nav-horizontal-collapsable'},{'name': 'FuseNavHorizontalItemComponent', 'selector': 'fuse-nav-horizontal-item'},{'name': 'FuseNavigationComponent', 'selector': 'fuse-navigation'},{'name': 'FuseNavVerticalCollapsableComponent', 'selector': 'fuse-nav-vertical-collapsable'},{'name': 'FuseNavVerticalGroupComponent', 'selector': 'fuse-nav-vertical-group'},{'name': 'FuseNavVerticalItemComponent', 'selector': 'fuse-nav-vertical-item'},{'name': 'FuseProgressBarComponent', 'selector': 'fuse-progress-bar'},{'name': 'FuseSearchBarComponent', 'selector': 'fuse-search-bar'},{'name': 'FuseShortcutsComponent', 'selector': 'fuse-shortcuts'},{'name': 'FuseSidebarComponent', 'selector': 'fuse-sidebar'},{'name': 'FuseThemeOptionsComponent', 'selector': 'fuse-theme-options'},{'name': 'FuseWidgetComponent', 'selector': 'fuse-widget'},{'name': 'HorizontalLayout1Component', 'selector': 'horizontal-layout-1'},{'name': 'InstantMessagingComponent', 'selector': 'instant-messaging'},{'name': 'LoginComponent', 'selector': 'login'},{'name': 'MainComponent', 'selector': 'main'},{'name': 'NavbarComponent', 'selector': 'navbar'},{'name': 'NoDataAvailableComponent', 'selector': 'no-data-available'},{'name': 'QuickPanelComponent', 'selector': 'quick-panel'},{'name': 'RaceCarTrackComponent', 'selector': 'race-car-track'},{'name': 'ReminderTaskDialogComponent', 'selector': 'reminder-task-dialog'},{'name': 'ResourceNotFoundComponent', 'selector': 'resource-not-found'},{'name': 'SnackbarComponent', 'selector': 'snackbar'},{'name': 'ToolbarComponent', 'selector': 'toolbar'},{'name': 'TwAccountInformationComponent', 'selector': 'tw-account-information'},{'name': 'TwActiveInteractionsComponent', 'selector': 'tw-active-interactions'},{'name': 'TwAdCallbacksComponent', 'selector': 'tw-ad-callbacks'},{'name': 'TwAdFeedbackComponent', 'selector': 'tw-ad-feedback'},{'name': 'TwAdGamificationComponent', 'selector': 'tw-ad-gamification'},{'name': 'TwAdInteractionDetailsComponent', 'selector': 'tw-ad-interaction-details'},{'name': 'TwAdPerformanceComponent', 'selector': 'tw-ad-performance'},{'name': 'TwAdScoreComponent', 'selector': 'tw-ad-score'},{'name': 'TwAdTotalInteractionsComponent', 'selector': 'tw-ad-total-interactions'},{'name': 'TwAgentAssistComponent', 'selector': 'tw-agent-assist'},{'name': 'TwAgentDetailsComponent', 'selector': 'tw-agent-details'},{'name': 'TwAhtTcComponent', 'selector': 'tw-aht-tc'},{'name': 'TwAmdocsBccComponent', 'selector': 'tw-amdocs-bcc'},{'name': 'TwAudioControlsComponent', 'selector': 'tw-audio-controls'},{'name': 'TwAuxCodesComponent', 'selector': 'tw-aux-codes'},{'name': 'TwAuxStatusChartComponent', 'selector': 'tw-aux-status-chart.component'},{'name': 'TwAuxTimerComponent', 'selector': 'tw-aux-timer'},{'name': 'TwBroadcastComponent', 'selector': 'tw-broadcast'},{'name': 'TwCannedResponsesComponent', 'selector': 'tw-canned-responses'},{'name': 'TwCardComponent', 'selector': 'tw-card'},{'name': 'TwCardHeaderComponent', 'selector': 'tw-card-header'},{'name': 'TwcCustomComponent', 'selector': 'twc-custom'},{'name': 'TwcEmailComponent', 'selector': 'twc-email'},{'name': 'TwChatControlsComponent', 'selector': 'tw-chat-controls'},{'name': 'TwChatPanelComponent', 'selector': 'tw-chat-panel'},{'name': 'TwcHomeComponent', 'selector': 'twc-home'},{'name': 'TwcNoInteractionComponent', 'selector': 'twc-no-interaction'},{'name': 'TwcNoWidgetsComponent', 'selector': 'twc-no-widgets'},{'name': 'TwCreateInteractionComponent', 'selector': 'tw-create-interaction'},{'name': 'TwcSupervisorComponent', 'selector': 'twc-supervisor'},{'name': 'TwcTextchatComponent', 'selector': 'twc-textchat'},{'name': 'TwcUnknownComponent', 'selector': 'twc-unknown'},{'name': 'TwCustomComponent', 'selector': 'tw-custom'},{'name': 'TwCustomerDetailsComponent', 'selector': 'tw-customer-details'},{'name': 'TwCustomerJourneyComponent', 'selector': 'tw-customer-journey'},{'name': 'TwCustomerSentimentComponent', 'selector': 'tw-customer-sentiment'},{'name': 'TwcVoiceComponent', 'selector': 'twc-voice'},{'name': 'TwcWorkbenchComponent', 'selector': 'twc-workbench'},{'name': 'TwEmailControlsComponent', 'selector': 'tw-email-controls'},{'name': 'TwEmailPanelComponent', 'selector': 'tw-email-panel'},{'name': 'TwGamificationComponent', 'selector': 'tw-gamification'},{'name': 'TwInstantMessagingComponent', 'selector': 'tw-instant-messaging'},{'name': 'TwLogoutComponent', 'selector': 'tw-logout'},{'name': 'TwNotificationsComponent', 'selector': 'tw-notifications'},{'name': 'TwPanelComponent', 'selector': 'tw-panel'},{'name': 'TwPendingCallbacksComponent', 'selector': 'tw-pending-callbacks'},{'name': 'TwPieChartComponent', 'selector': 'tw-pie-chart.component'},{'name': 'TwRegisterCallbackComponent', 'selector': 'tw-register-callback'},{'name': 'TwSampleComponent', 'selector': 'tw-sample'},{'name': 'TwSuActiveAgentsComponent', 'selector': 'tw-su-active-agents'},{'name': 'TwSuAgentActivityComponent', 'selector': 'tw-su-agent-activity'},{'name': 'TwSuAgentActivityDetailsComponent', 'selector': 'tw-su-agent-activity-details'},{'name': 'TwSuAgentInteractionsComponent', 'selector': 'tw-su-agent-interactions'},{'name': 'TwSuCallsInQueueComponent', 'selector': 'tw-su-calls-in-queue.component'},{'name': 'TwSuChannelsComponent', 'selector': 'tw-su-channels.component'},{'name': 'TwSuGamificationComponent', 'selector': 'tw-su-gamification'},{'name': 'TwSuIntentListComponent', 'selector': 'tw-su-intent-list'},{'name': 'TwSuStatusComponent', 'selector': 'tw-su-status.component'},{'name': 'TwTemplateComponent', 'selector': 'tw-template'},{'name': 'TwToolbarMenuComponent', 'selector': 'tw-toolbar-menu'},{'name': 'TwTransferInteractionComponent', 'selector': 'tw-transfer-interaction'},{'name': 'TwUnknownComponent', 'selector': 'tw-unknown'},{'name': 'TwVideoControlsComponent', 'selector': 'tw-video-controls'},{'name': 'TwVoiceBotTranscriptsComponent', 'selector': 'tw-voice-bot-transcripts'},{'name': 'TwVoiceCannedResponsesComponent', 'selector': 'tw-voice-canned-responses'},{'name': 'TwVoiceControlsComponent', 'selector': 'tw-voice-controls'},{'name': 'TwVoicePanelComponent', 'selector': 'tw-voice-panel'},{'name': 'TwWallboardComponent', 'selector': 'tw-wallboard'},{'name': 'TwWorkbenchPanelComponent', 'selector': 'tw-workbench-panel'},{'name': 'TwWorkCodesComponent', 'selector': 'tw-work-codes'},{'name': 'TwWrapperComponent', 'selector': 'tw-wrapper'},{'name': 'VerticalLayout1Component', 'selector': 'vertical-layout-1'},{'name': 'WidgetFabComponent', 'selector': 'widget-fab'},{'name': 'WidgetPreviewComponent', 'selector': 'widget-preview'},{'name': 'WorkbenchEmailComponent', 'selector': 'workbench-email'}];
+    var DIRECTIVES = [{'name': 'FuseIfOnDomDirective', 'selector': '[fuseIfOnDom]'},{'name': 'FuseInnerScrollDirective', 'selector': '.inner-scroll'},{'name': 'FuseMatSidenavHelperDirective', 'selector': '[fuseMatSidenavHelper]'},{'name': 'FuseMatSidenavTogglerDirective', 'selector': '[fuseMatSidenavToggler]'},{'name': 'FusePerfectScrollbarDirective', 'selector': '[fusePerfectScrollbar]'},{'name': 'FuseWidgetToggleDirective', 'selector': '[fuseWidgetToggle]'},{'name': 'QuillDirective', 'selector': '[quill]'},{'name': 'TWChartDirective', 'selector': '[twChart]'},{'name': 'TwTemplateDirective', 'selector': '[widgetTemplate]'}];
+    var ACTUAL_COMPONENT = {'name': 'TwAgentAssistComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+                   
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> result-matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'TwAgentAssistComponent.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+       <!-- Required to polyfill modern browsers as code is ES5 for IE... -->
+       <script src="../js/libs/custom-elements-es5-adapter.js" charset="utf-8" defer></script>
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+       <script src="../js/libs/zepto.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

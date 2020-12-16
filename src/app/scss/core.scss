@@ -1,0 +1,16 @@
+// This file meant to be imported only once! Use shared.scss to access to the styles and colors
+
+// Shared
+@import 'shared';
+
+// Theme
+@import 'theme';
+
+// General
+@import 'general/material'; 
+@import 'general/widget';
+@import 'general/common';
+@import 'general/utils';
+
+// Plugins
+@import 'plugins/plugins';

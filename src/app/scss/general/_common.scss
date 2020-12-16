@@ -1,0 +1,181 @@
+.breadcrumbs {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    overflow: hidden;
+    white-space: nowrap;
+
+    > li {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+
+    > li {
+        display: inline-block;
+    }
+
+    > li a,
+    > li span {
+        position: relative;
+        display: block;
+        font-size: 12px;
+        line-height: 24px;
+    }
+
+    > li + li a,
+    > li + li span {
+        padding-left: 40px;
+    }
+
+    > li + li a:before,
+    > li + li span:before {
+        position: absolute;
+        top: 50%;
+        left: 8px;
+        margin-top: -12px;
+        content: 'label_important';
+        font-family: 'Material Icons';
+        font-size: 20px;
+        display: block;
+        color: #727272;
+    }
+}
+
+.element-status {
+    position: absolute;
+    right: -8px;
+    bottom: 4px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #bdbdbd;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(360deg);
+    }
+    to {
+        transform: rotate(0deg);
+    }
+}
+
+.spin {
+    animation-name: spin;
+    animation-duration: 2000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+
+@keyframes spin-0 {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spin-o {
+    animation-name: spin-0;
+    animation-duration: 2000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+
+.label {
+    background-color: rgba(0, 0, 0, 0.08);
+    width: fit-content;
+    border-radius: 4px;
+    margin: 0 4px 0 0;
+    padding: 3px 8px;
+
+    &-primary {
+        background-color: $tw-primary !important;
+        color: rgba(0, 0, 0, 0.87) !important;
+    }
+    &-secondary {
+        background-color: $tw-secondary !important;
+        color: rgba(0, 0, 0, 0.87) !important;
+    }
+    &-info {
+        background-color: $tw-info !important;
+        color: rgba(0, 0, 0, 0.87) !important;
+    }
+    &-danger {
+        background-color: $tw-danger !important;
+        color: rgba(0, 0, 0, 0.87) !important;
+    }
+    &-warning {
+        background-color: $tw-warning !important;
+        color: rgba(0, 0, 0, 0.87) !important;
+    }
+    &-success {
+        background-color: $tw-success !important;
+        color: rgba(0, 0, 0, 0.87) !important;
+    }
+    &-alt-danger {
+        background-color: $tw-alt-danger !important;
+        color: #ffffff !important;
+    }
+    &-alt-warning {
+        background-color: $tw-alt-warning !important;
+        color: #ffffff !important;
+    }
+    &-alt-success {
+        background-color: $tw-alt-success !important;
+        color: #ffffff !important;
+    }
+    &-dark {
+        background-color: $tw-dark !important;
+        color: #ffffff !important;
+    }
+    &-light {
+        background-color: #ffffff !important;
+        color: $tw-dark !important;
+    }
+}
+
+.advanced-search-form {
+    border-radius: 10px;
+    min-width: 400px;
+    width: 100%;
+    padding-bottom: 8px;
+    top: 100%;
+
+    .form-field {
+        margin-bottom: 8px;
+    }
+}
+
+.interactions {
+    position: relative;
+    button {
+        border-radius: 1.5rem;
+        width: 5.3rem;
+    }
+    avatar {
+        width: 53px;
+        height: 38px;
+        margin-bottom: 6px;
+
+        .avatar-content {
+            width: inherit;
+            height: inherit;
+            border-radius: 16px;
+            cursor: pointer;
+        }
+
+        &.active {
+            .avatar-content {
+                box-shadow: 0px 3px 3px -2px rgba(0, 0, 0, 0.2), 0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12);
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+                border-right: none !important;
+                position: absolute;
+                left: 7px;
+            }
+        }
+    }
+}

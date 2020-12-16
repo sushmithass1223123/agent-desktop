@@ -1,0 +1,24 @@
+tw-ad-interaction-details {
+    .mat-table {
+        mat-header-row {
+            min-height: 30px;
+        }
+
+        mat-cell:first-of-type {
+            padding: 0;
+        }
+    }
+
+    .status {
+        margin: 4px auto;
+        border-radius: 20px;
+    }
+
+    small {
+        font-weight: bold;
+    }
+    mat-header-row {
+        background-color: inherit;
+        background: inherit;
+    }
+}

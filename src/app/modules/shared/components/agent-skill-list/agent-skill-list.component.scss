@@ -1,0 +1,73 @@
+agent-skill-list {
+    .mat-card-content {
+        background: inherit !important;
+        padding: 0 !important;
+
+        mat-form-field {
+            &.custom {
+                .mat-form-field-wrapper {
+                    padding: 0 !important;
+                    .mat-form-field-outline {
+                        border-radius: 16px;
+                        // background-color: #ffffff;
+                    }
+                    .mat-form-field-infix {
+                        padding: 0.65em 0.5rem !important;
+
+                        .mat-input-element:disabled {
+                            color: currentColor;
+                        }
+                    }
+                }
+            }
+        }
+
+        mat-form-field {
+            &.comments {
+                .mat-form-field-wrapper {
+                    padding-bottom: 0.5em;
+
+                    .mat-form-field-flex {
+                        padding: 0 !important;
+
+                        .mat-form-field-infix {
+                            border-top: 0.3em solid transparent;
+                            padding: 0 !important;
+
+                            textarea {
+                                border-radius: 16px;
+                                overflow: hidden;
+                                width: 100%;
+                                padding: 12px 12px 10px 12px;
+                            }
+                        }
+                    }
+
+                    .mat-form-field-underline {
+                        display: none !important;
+                    }
+                }
+            }
+        }
+
+        .grid-layout {
+            margin-top: 6px;
+        }
+
+        .switcher {
+            .switch-item {
+                padding: 8px;
+                margin-right: 8px;
+                border-radius: 20px;
+                text-align: center;
+                font-weight: 700;
+                // background-color: #ffffff;
+                cursor: pointer;
+
+                &:last-child {
+                    margin-right: 0;
+                }
+            }
+        }
+    }
+}

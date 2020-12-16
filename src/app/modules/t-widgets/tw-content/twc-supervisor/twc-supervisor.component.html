@@ -1,11 +1,42 @@
-<div class="tw-full">
+<div class="tw-widget-container custom-scroll" [ngStyle]="{ 'width.px': screenWidth, 'height.px': screenHeight }" *ngIf="loaded">
+    <div fxFill fxFlex fxLayout="row wrap" fxLayoutAlign=" none">
+        <tw-template fxFlex.gt-md="33" class="static-widget-grid" *ngIf="staticWidgets.length > 0" [widgets]="staticWidgets"></tw-template>
+        <tw-template fxFlex.gt-md="66" class="dynamic-widget-grid" *ngIf="dynamicWidgets.length > 0" [widgets]="dynamicWidgets"></tw-template>
+        <div class="tw-aot-fab" cdkDrag cdkDragBoundary=".tw-widget-container" *ngIf="aotWidgets.length > 0">
+            <widget-fab [fabWidgets]="aotWidgets"></widget-fab>
+        </div>
+        <button
+            mat-raised-button
+            color="primary"
+            cdkOverlayOrigin
+            class="time-filter w-52 h-52"
+            #dashboardDataOverlay="cdkOverlayOrigin"
+            (click)="showDashboardDataSpanOverlay = !showDashboardDataSpanOverlay"
+        >
+            <mat-icon *ngIf="!dataLoading"> access_time </mat-icon>
+            <mat-icon class="spin" *ngIf="dataLoading"> loop </mat-icon>
+        </button>
 
-    <tw-template class="widget-grid" [widgets]=supervisorWidgets></tw-template>
-
-    <div fxFlex fxFill fxLayout="row" fxLayoutAlign="center center" *ngIf="supervisorWidgets.length === 0">
-        <span class="mat-display-1 mb-0">
-            No supervisor widgets found!
-        </span>
+        <ng-template
+            cdkConnectedOverlay
+            [cdkConnectedOverlayOrigin]="dashboardDataOverlay"
+            [cdkConnectedOverlayOpen]="showDashboardDataSpanOverlay"
+            cdkConnectedOverlayHasBackdrop
+            cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+            (backdropClick)="showDashboardDataSpanOverlay = false"
+            [cdkConnectedOverlayPositions]="[{ originX: 'start', originY: 'center', overlayX: 'end', overlayY: 'center', offsetX: -10 }]"
+        >
+            <ng-container *ngIf="fuseBg | async as fuseBackground">
+                <div [class]="fuseBackground.body + ' border-radius-20 p-8 mat-elevation-z1'">
+                    <mat-form-field appearance="fill" [class]="fuseBackground.content + ' border-radius-20 p-12'">
+                        <mat-label>Choose from date</mat-label>
+                        <input matInput [max]="maxDate" [matDatepicker]="picker" [formControl]="dashboardDataFromDate.formControl" />
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                </div>
+            </ng-container>
+        </ng-template>
     </div>
-
+    <twc-no-widgets class="twc-card" *ngIf="dynamicWidgets.length === 0" type="supervisor"></twc-no-widgets>
 </div>

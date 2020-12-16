@@ -1,0 +1,489 @@
+<ng-template #interactionBrandType let-subType="SubType">
+    <mat-icon color="primary" *ngIf="subType.toLowerCase() === 'chat'">chat</mat-icon>
+    <mat-icon color="primary" *ngIf="subType.toLowerCase() === 'text'">chat</mat-icon>
+    <mat-icon color="primary" *ngIf="subType.toLowerCase() === 'audio'">phone</mat-icon>
+    <mat-icon color="primary" *ngIf="subType.toLowerCase() === 'video'">duo</mat-icon>
+    <mat-icon color="primary" *ngIf="subType.toLowerCase() === 'whatsapp'" svgIcon="custom-whatsapp"></mat-icon>
+    <mat-icon color="primary" *ngIf="subType.toLowerCase() === 'we'" svgIcon="custom-we"></mat-icon>
+    <mat-icon color="primary" *ngIf="subType.toLowerCase() === 'line'" svgIcon="custom-line"></mat-icon>
+    <mat-icon color="primary" *ngIf="subType.toLowerCase() === 'viber'" svgIcon="custom-viber"></mat-icon>
+    <mat-icon color="primary" *ngIf="subType.toLowerCase() === 'twitter'" svgIcon="custom-twitter"></mat-icon>
+    <mat-icon color="primary" *ngIf="subType.toLowerCase() === 'fb'" svgIcon="custom-fb"></mat-icon>
+    <mat-icon color="primary" *ngIf="subType.toLowerCase() === 'telegram'" svgIcon="custom-telegram"></mat-icon>
+    <mat-icon color="primary" *ngIf="subType.toLowerCase() === 'textchat'">chat</mat-icon>
+    <mat-icon color="primary" *ngIf="subType.toLowerCase() === 'store'">store</mat-icon>
+    <mat-icon color="primary" *ngIf="subType.toLowerCase() === 'field'">roofing</mat-icon>
+</ng-template>
+
+<tw-wrapper [data]="data" (maximizeEvent)="onMaximized($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)">
+    <div *ngIf="!customerJourneyTable.loading" class="customer-journey" [fxLayout]="maximized ? 'column' : 'row wrap'" fxLayoutGap="6px">
+        <!-- minimised view start  -->
+        <div *ngIf="!maximized" class="timeline custom-scroll-adjust h-100-p w-100-p">
+            <div
+                *ngFor="let s of customerJourneyTable.tableData.source.data"
+                fxLayout="row-wrap"
+                class="step mb-4 p-4 mat-elevation-z1"
+                (click)="switchMaximizedViewMode('Session History', s)"
+                [ngClass]="fuseBg.content"
+            >
+                <div fxFlex="15" fxLayout fxLayoutAlign="center center" class="step-time pr-8">
+                    <small fxFlex="80" class="text-right">
+                        {{ s.InteractionDate }}
+                    </small>
+                </div>
+                <div fxFlex="85" fxLayout fxLayoutAlign="space-between center" class="step-details px-16">
+                    <div fxLayout fxFlex="85" fxLayoutAlign="start center">
+                        <div mat-card-avatar [ngSwitch]="s.Channel | lowercase" class="w-32 h-32 border-sm-primary">
+                            <ng-container *ngSwitchCase="'textchat'">
+                                <ng-container *ngTemplateOutlet="interactionBrandType; context: s"></ng-container>
+                            </ng-container>
+                            <ng-container *ngSwitchCase="'audiochat'">
+                                <ng-container *ngTemplateOutlet="interactionBrandType; context: s"></ng-container>
+                            </ng-container>
+                            <ng-container *ngSwitchCase="'videochat'">
+                                <ng-container *ngTemplateOutlet="interactionBrandType; context: s"></ng-container>
+                            </ng-container>
+                            <ng-container *ngSwitchCase="'services'">
+                                <ng-container *ngTemplateOutlet="interactionBrandType; context: s"></ng-container>
+                            </ng-container>
+                            <mat-icon color="primary" *ngSwitchCase="'voice'"> call </mat-icon>
+                            <mat-icon color="primary" *ngSwitchCase="'sms'"> textsms </mat-icon>
+                            <mat-icon color="primary" *ngSwitchCase="'email'"> email </mat-icon>
+                            <mat-icon color="primary" *ngSwitchCase="'fax'"> print </mat-icon>
+                            <mat-icon color="primary" *ngSwitchDefault> link_off </mat-icon>
+                        </div>
+                        <span class="ml-8" [ngSwitch]="s.Channel | lowercase">
+                            <ng-container *ngSwitchCase="'voice'"> Voice with </ng-container>
+                            <ng-container *ngSwitchCase="'chat'"> Chat with </ng-container>
+                            <ng-container *ngSwitchCase="'audiochat'"> Audio Call with </ng-container>
+                            <ng-container *ngSwitchCase="'videochat'"> Video Call with </ng-container>
+                            <ng-container *ngSwitchCase="'textchat'"> Chat with </ng-container>
+                            <ng-container *ngSwitchCase="'sms'"> SMS chat with </ng-container>
+                            <ng-container *ngSwitchCase="'email'"> Email with </ng-container>
+                            <ng-container *ngSwitchCase="'fax'"> Fax with </ng-container>
+                            <ng-container *ngSwitchCase="'line'"> Line chat with </ng-container>
+                            <ng-container *ngSwitchCase="'services'"> Serviced by </ng-container>
+                            <ng-container *ngSwitchDefault> Chat with </ng-container>
+                            {{ s.LastServicedAgentName || s.AgentName }}
+                        </span>
+                    </div>
+                    <small fxFlex="15" class="text-center">{{ s.Intent || 'Default' }}</small>
+                </div>
+            </div>
+            <p *ngIf="!customerJourneyTable.tableData.source.data.length" class="mat-title w-100-p text-center mt-20">No Data Available</p>
+        </div>
+        <!-- minimised view end  -->
+
+        <!-- maximised view  start -->
+        <!-- <div *ngIf="maximized" class="h-100-p"> -->
+        <div *ngIf="maximized" class="table custom-scroll-adjust" [ngClass]="fuseBg.content + (mode ? ' h-35-p' : '')">
+            <mat-table
+                [dataSource]="customerJourneyTable.tableData.source"
+                matSort
+                matSortActive="InteractionDate"
+                matSortDirection="desc"
+                class="pb-0"
+                matSortDisableClear
+                [formGroup]="searchForm"
+            >
+                <!-- NA Note that these columns can be defined in any order.
+          The actual rendered columns are set as a property on the row definition" -->
+                <ng-container matColumnDef="InteractionDate">
+                    <mat-header-cell fxFlex="15" *matHeaderCellDef class="d-flex w-100-p">
+                        <span mat-sort-header> Received At </span>
+                    </mat-header-cell>
+                    <mat-cell fxFlex="15" *matCellDef="let element">{{ element.InteractionDate || 'NA' }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="Channel">
+                    <mat-header-cell *matHeaderCellDef fxFlex="10">
+                        <span mat-sort-header> Channel </span>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxFlex="10" [ngSwitch]="element.Channel | lowercase">
+                        <ng-container *ngSwitchCase="'textchat'">
+                            <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'audiochat'">
+                            <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'videochat'">
+                            <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'services'">
+                            <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>
+                        </ng-container>
+                        <mat-icon color="primary" *ngSwitchCase="'voice'"> call </mat-icon>
+                        <mat-icon color="primary" *ngSwitchCase="'sms'"> textsms </mat-icon>
+                        <mat-icon color="primary" *ngSwitchCase="'email'"> email </mat-icon>
+                        <mat-icon color="primary" *ngSwitchCase="'fax'"> print </mat-icon>
+                        <mat-icon color="primary" *ngSwitchDefault> link_off </mat-icon>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="CIF">
+                    <mat-header-cell *matHeaderCellDef>
+                        <span mat-sort-header> CIF </span>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">{{ element.CIF || 'NA' }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="AgentName">
+                    <mat-header-cell *matHeaderCellDef>
+                        <span mat-sort-header> Agent </span>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">{{ element.AgentName || 'NA' }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="Intent">
+                    <mat-header-cell *matHeaderCellDef>
+                        <span mat-sort-header> Intent </span>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">{{ element.Intent || 'NA' }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="EmailID">
+                    <mat-header-cell *matHeaderCellDef>
+                        <span mat-sort-header> Email </span>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">{{ element.EmailID || 'NA' }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="NRIC">
+                    <mat-header-cell *matHeaderCellDef>
+                        <span mat-sort-header> NRIC </span>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">{{ element.NRIC || 'NA' }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="PhoneNumber">
+                    <mat-header-cell *matHeaderCellDef>
+                        <span mat-sort-header> Phone </span>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">{{ element.PhoneNumber || 'NA' }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="OverallSentiment">
+                    <mat-header-cell *matHeaderCellDef>
+                        <span mat-sort-header> Sentiment </span>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <img
+                            *ngIf="element.OverallSentiment === 'Positive'"
+                            class="w-24"
+                            src="assets/images/vectors/positive-score.svg"
+                            alt="Positive"
+                            matTooltip="Sentiment Dashboard"
+                            (click)="openSentimentDashboard(element.SessionID)"
+                        />
+                        <img
+                            *ngIf="element.OverallSentiment === 'Neutral'"
+                            class="w-24"
+                            src="assets/images/vectors/neutral-score.svg"
+                            alt="Neutral"
+                            matTooltip="Sentiment Dashboard"
+                            (click)="openSentimentDashboard(element.SessionID)"
+                        />
+                        <img
+                            *ngIf="element.OverallSentiment === 'Negative'"
+                            class="w-24"
+                            src="assets/images/vectors/negative-score.svg"
+                            alt="Negative"
+                            matTooltip="Sentiment Dashboard"
+                            (click)="openSentimentDashboard(element.SessionID)"
+                        />
+                        <ng-container *ngIf="!element.OverallSentiment"> NA </ng-container>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="Actions">
+                    <mat-header-cell *matHeaderCellDef fxFlex="15"> Actions </mat-header-cell>
+                    <mat-cell *matCellDef="let element; let i = index" fxFlex="15" (click)="$event.stopPropagation()">
+                        <div fxLayout fxLayoutAlign="start center" class="h-100-p w-100-p">
+                            <button
+                                class="w-32"
+                                mat-icon-button
+                                matTooltip="Load Session"
+                                (click)="switchMaximizedViewMode('Session History', element)"
+                            >
+                                <mat-icon> filter_frames </mat-icon>
+                            </button>
+                            <button class="w-32" mat-icon-button matTooltip="History" (click)="switchMaximizedViewMode('Actions', element)">
+                                <mat-icon> history </mat-icon>
+                            </button>
+                            <button class="w-32" mat-icon-button matTooltip="Notes" (click)="switchMaximizedViewMode('Notes', element)">
+                                <mat-icon> notes </mat-icon>
+                            </button>
+                            <button
+                                class="w-32"
+                                *ngIf="(element.Channel || '' | lowercase).includes('chat')"
+                                mat-icon-button
+                                matTooltip="Transcript"
+                                (click)="switchMaximizedViewMode('Transcript', element)"
+                            >
+                                <mat-icon> chat </mat-icon>
+                            </button>
+                        </div>
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="customerJourneyTable.tableData.columns; sticky: true"></mat-header-row>
+                <mat-row
+                    class="selectable"
+                    [ngClass]="{ selected: !!customerJourneyTable.tableData.selection.isSelected(row) }"
+                    *matRowDef="let row; columns: customerJourneyTable.tableData.columns"
+                ></mat-row>
+            </mat-table>
+
+            <!-- *ngIf="customerJourneyTable.tableData.source.data.length > 5" -->
+            <!-- (backdropClick)="showAdvancedSearchOverlay = false" -->
+            <div fxLayout fxLayoutAlign="space-between">
+                <button
+                    cdkOverlayOrigin
+                    #advancedSearchOverlay="cdkOverlayOrigin"
+                    (click)="showAdvancedSearchOverlay = !showAdvancedSearchOverlay"
+                    mat-button
+                    color="primary"
+                >
+                    <mat-icon>search</mat-icon>
+                    Search
+                </button>
+                <ng-template
+                    cdkConnectedOverlay
+                    [cdkConnectedOverlayOrigin]="advancedSearchOverlay"
+                    [cdkConnectedOverlayOpen]="showAdvancedSearchOverlay"
+                    cdkConnectedOverlayHasBackdrop
+                    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+                    (overlayOutsideClick)="showAdvancedSearchOverlay = false; searchForm.reset()"
+                >
+                    <div class="mat-elevation-z1 w-50-p border-radius-20 p-12" [ngClass]="fuseBg.body">
+                        <form
+                            fxLayout="row wrap"
+                            fxLayoutAlign="space-between"
+                            fxLayoutGap="20px"
+                            [class]="fuseBg.content + ' p-12 border-radius-20'"
+                            [formGroup]="searchForm"
+                            (ngSubmit)="doAdvancedSearch(); showAdvancedSearchOverlay = false"
+                            novalidate
+                        >
+                            <mat-form-field fxFlex="45">
+                                <mat-label>SessionID</mat-label>
+                                <input matInput type="text" formControlName="SessionID" />
+                            </mat-form-field>
+
+                            <mat-form-field fxFlex="45">
+                                <mat-label>PhoneNumber</mat-label>
+                                <input matInput type="text" formControlName="PhoneNumber" />
+                            </mat-form-field>
+
+                            <mat-form-field fxFlex="45">
+                                <mat-label>Channel</mat-label>
+                                <input matInput type="text" formControlName="Channel" />
+                            </mat-form-field>
+
+                            <mat-form-field fxFlex="45">
+                                <mat-label>Agent</mat-label>
+                                <input matInput type="text" formControlName="Agent" />
+                            </mat-form-field>
+
+                            <mat-form-field fxFlex="45">
+                                <mat-label>Intent</mat-label>
+                                <input matInput type="text" formControlName="Intent" />
+                            </mat-form-field>
+
+                            <mat-form-field fxFlex="45">
+                                <mat-label>CIF</mat-label>
+                                <input matInput type="text" formControlName="CIF" />
+                            </mat-form-field>
+
+                            <mat-form-field fxFlex="45">
+                                <mat-label>NRIC</mat-label>
+                                <input matInput type="text" formControlName="NRIC" />
+                            </mat-form-field>
+
+                            <mat-form-field fxFlex="45">
+                                <mat-label>Interaction Date</mat-label>
+                                <mat-date-range-input [rangePicker]="interactionDatePicker">
+                                    <input matStartDate placeholder="Start date" formControlName="InteractionDateStart" />
+                                    <input matEndDate placeholder="End date" formControlName="InteractionDateEnd" />
+                                </mat-date-range-input>
+                                <mat-datepicker-toggle matSuffix [for]="interactionDatePicker"></mat-datepicker-toggle>
+                                <mat-date-range-picker #interactionDatePicker></mat-date-range-picker>
+                            </mat-form-field>
+
+                            <mat-form-field fxFlex="45">
+                                <mat-label>Overall Sentiment</mat-label>
+                                <input matInput type="text" formControlName="OverallSentiment" />
+                            </mat-form-field>
+
+                            <div fxFlex="100" class="mt-12">
+                                <div class="mx-auto w-40-p">
+                                    <button mat-raised-button class="w-100-p" color="primary">Search</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </ng-template>
+
+                <mat-paginator
+                    *ngIf="customerJourneyTable.tableData.source.data.length"
+                    (page)="pageEvent()"
+                    [pageSizeOptions]="[15, 20, 50, 100]"
+                    showFirstLastButtons
+                >
+                </mat-paginator>
+            </div>
+            <p *ngIf="!customerJourneyTable.tableData.source.data.length" class="text-center m-0 mat-title">No Data Available</p>
+        </div>
+        <div *ngIf="maximized && mode" class="spread" [ngClass]="fuseBg.content + (mode ? ' h-65-p' : '')">
+            <div class="mat-title px-20 py-12" fxLayout fxLayoutAlign="space-between">
+                <span>
+                    {{ mode }}
+                </span>
+                <button mat-icon-button color="accent" (click)="closeActionWindow()">
+                    <mat-icon> close </mat-icon>
+                </button>
+            </div>
+            <ng-container *ngIf="mode === 'Notes'">
+                <ng-container *ngIf="interactionNotesReq.data | async as iNotes">
+                    <div class="custom-scroll-adjust px-12 pb-12" *ngIf="!interactionNotesReq.error && !interactionNotesReq.loading">
+                        <p *ngIf="!iNotes.length" class="text-center mat-headline mt-20">No notes available</p>
+                        <div class="step m-8 px-8 py-8 mat-elevation-z1 border-radius-20" *ngFor="let note of iNotes" [ngClass]="fuseBg.content">
+                            {{ note }}
+                        </div>
+                    </div>
+                </ng-container>
+                <p class="text-center" *ngIf="interactionNotesReq.loading">Loading ...</p>
+                <p class="text-center" *ngIf="interactionNotesReq.error">Some error occured</p>
+            </ng-container>
+
+            <ng-container *ngIf="mode === 'Actions'">
+                <div class="custom-scroll-adjust px-12 pb-12" *ngIf="!sessionActions.error && !sessionActions.loading">
+                    <div *ngIf="!sessionActions.data?.length" class="text-center mt-40 mat-headline">No data available</div>
+
+                    <div
+                        *ngFor="let action of sessionActions.data"
+                        fxLayout="row-wrap"
+                        class="step mb-4 p-4 mat-elevation-z1"
+                        [ngClass]="fuseBg.content"
+                    >
+                        <div fxFlex="20" fxLayout fxLayoutAlign="center center" class="step-time p-8">
+                            {{ action.ActionTime | date: 'short' }}
+                        </div>
+                        <div fxFlex="75" fxLayout fxLayoutAlign="space-between center" class="step-details px-16 p-8">
+                            {{ action.Action }}
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="sessionActions.loading" fxLayout fxLayoutAlign="center">
+                    <p class="mt-20">
+                        <mat-spinner></mat-spinner>
+                    </p>
+                </div>
+                <div *ngIf="sessionActions.error" fxLayout="column" fxLayoutAlign="center center" class="text-center">
+                    <p>
+                        {{ sessionActions.msg }}
+                    </p>
+                    <!-- <button mat-button color="primary" (click)="getSessionActions(element.SessionID)">Retry</button> -->
+                </div>
+            </ng-container>
+
+            <ng-container *ngIf="mode === 'Session History'">
+                <iframe
+                    *ngIf="!!customerJourneyTable.iframeUrl"
+                    [src]="customerJourneyTable.iframeUrl"
+                    class="w-100-p h-100-p"
+                    frameborder="0"
+                    seamless="seamless"
+                ></iframe>
+            </ng-container>
+
+            <ng-container *ngIf="mode === 'Transcript'">
+                <ng-container *ngIf="interactionTranscripts && customerJourneyTable.tableData.selection?.selected[0]?.SessionID as selectedSessionId">
+                    <ng-container *ngIf="interactionTranscripts[selectedSessionId] as chatTranscripts">
+                        <div
+                            *ngIf="chatTranscripts.length"
+                            fxLayout="row"
+                            fxLayoutAlign=" none"
+                            class="w-100-p pb-16 chat-container custom-scroll-adjust"
+                        >
+                            <div fxLayout="column" fxLayoutAlign=" none" class="border-radius-20 chat-content">
+                                <!-- CHAT CONTENT -->
+                                <div class="chat-transcripts" fxFlex="1 1 auto">
+                                    <!-- CHAT MESSAGES -->
+                                    <div class="chat-messages px-12">
+                                        <!-- MESSAGE -->
+                                        <ng-container *ngFor="let message of chatTranscripts; let i = index">
+                                            <div
+                                                *ngIf="message.message"
+                                                class="message-row"
+                                                [ngClass]="{
+                                                    me: message?.who !== defaultCustomerName,
+                                                    contact: message?.who === defaultCustomerName
+                                                }"
+                                            >
+                                                <div
+                                                    fxLayout="column"
+                                                    fxLayoutAlign="start start"
+                                                    class="bubble"
+                                                    [ngClass]="message.who === defaultCustomerName && fuseBg.body"
+                                                >
+                                                    <div
+                                                        *ngIf="chatTranscripts[i - 1]?.who !== message.who"
+                                                        class="user-label font-size-16 text-bold mb-4"
+                                                    >
+                                                        {{ message.who }}
+                                                    </div>
+
+                                                    <div class="message">
+                                                        <span *ngIf="message.message.type !== 'attachment'" [innerHTML]="message.message"></span>
+                                                        <div *ngIf="message.message.type === 'attachment'">
+                                                            <!-- <img
+                                                                [src]="
+                                                                    ((fileUploadUrl$ | async) || 'TmacProxy') +
+                                                                    '/' +
+                                                                    selectedSessionId +
+                                                                    '/' +
+                                                                    message.message.attachment.name
+                                                                "
+                                                                class="w-100-p"
+                                                                [alt]="message.message.attachment.name"
+                                                            /> -->
+                                                            <img
+                                                                [src]="message.message.attachment.src"
+                                                                class="w-100-p"
+                                                                [alt]="message.message.attachment.name"
+                                                            />
+                                                            <span [innerHTML]="message.message.message"></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mat-caption">
+                                                        {{ message.time }}
+                                                        <!-- {{ message.time ? (message.time | date: 'short') : '' }} -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </ng-container>
+                                        <!-- / MESSAGE -->
+                                    </div>
+                                    <!-- CHAT MESSAGES -->
+                                </div>
+                                <!-- / CHAT CONTENT -->
+                            </div>
+                        </div>
+                        <div *ngIf="!chatTranscripts.length" class="w-100-p">
+                            <div class="w-25-p mx-auto mb-20">
+                                <img src="assets/images/vectors/no-data-2.svg" class="box-shadow-3d" />
+                            </div>
+                            <p class="text-center mat-title m-0">No Transcripts Available</p>
+                        </div>
+                    </ng-container>
+                </ng-container>
+            </ng-container>
+        </div>
+        <!-- </div> -->
+        <!-- maximised view  end -->
+    </div>
+    <div *ngIf="customerJourneyTable.loading" class="w-100-p h-100-p" fxLayout="row" fxLayoutAlign="center center">
+        <mat-spinner></mat-spinner>
+    </div>
+</tw-wrapper>

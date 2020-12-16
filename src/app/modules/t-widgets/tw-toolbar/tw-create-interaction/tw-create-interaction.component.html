@@ -1,0 +1,36 @@
+<div class="fab-container">
+    <button
+        mat-icon-button
+        cdkOverlayOrigin
+        #channelList="cdkOverlayOrigin"
+        (click)="channels = channels.length ? [] : data.Data.Channels"
+        matTooltip="More Actions"
+    >
+        <mat-icon [@fabToggler]="{ value: !!channels.length ? 'active' : 'inactive' }">add </mat-icon>
+    </button>
+
+    <!-- This template displays the overlay content and is connected to the button -->
+    <ng-template
+        cdkConnectedOverlay
+        [cdkConnectedOverlayOrigin]="channelList"
+        [cdkConnectedOverlayOpen]="channels.length"
+        cdkConnectedOverlayHasBackdrop
+        cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+        (overlayOutsideClick)="channels = []"
+    >
+        <div fxLayout="column" fxLayoutGap="10px" class="mt-12 create-interaction-buttons" [@widgetStagger]="channels.length">
+            <button
+                mat-mini-fab
+                color="secondary"
+                *ngFor="let channel of data.Data.Channels"
+                (click)="addInteraction(channel.Type, channel)"
+                class="fab-secondary"
+                [disabled]="!checkAux(channel.EnableState)"
+                [matTooltip]="channel.Name"
+            >
+                <mat-icon *ngIf="channel.Icon.indexOf('custom') < 0">{{ channel.Icon }}</mat-icon>
+                <mat-icon [svgIcon]="channel.Icon" *ngIf="channel.Icon.indexOf('custom') >= 0"></mat-icon>
+            </button>
+        </div>
+    </ng-template>
+</div>

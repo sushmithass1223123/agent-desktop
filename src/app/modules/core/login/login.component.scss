@@ -1,20 +1,37 @@
-@import "src/@fuse/scss/fuse";
+@import 'src/@fuse/scss/fuse';
 
 login {
     width: 100%;
+
+    .brand-logo {
+        position: fixed;
+        bottom: 2%;
+        left: 2%;
+        filter: drop-shadow(0px 10px 6px rgba(0, 0, 0, 0.2));
+    }
 
     #login {
         width: 100%;
         height: 100%;
         overflow: hidden;
-        background: url("/assets/images/backgrounds/dark-material-bg.jpg")
-            no-repeat;
-        background-size: cover;
 
         #login-intro {
             padding: 128px;
+            background: url('../../../../assets/images/vectors/login.svg') no-repeat;
+            background-size: 140%;
+            background-position: bottom left;
+            &::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                background-color: rgba(#732b90, 0.8);
+                height: 100%;
+                width: 140%;
+                z-index: -1;
+            }
 
-            @include media-breakpoint("sm") {
+            @include media-breakpoint('sm') {
                 padding: 128px 64px;
             }
 
@@ -37,9 +54,9 @@ login {
         }
 
         #login-form-wrapper {
-            width: 600px;
-            min-width: 600px;
-            max-width: 600px;
+            width: 700px;
+            min-width: 700px;
+            max-width: 700px;
             overflow: auto;
             -webkit-overflow-scrolling: touch;
             border-top-left-radius: 3rem;
@@ -47,22 +64,22 @@ login {
 
             @include mat-elevation(16);
 
-            @include media-breakpoint("sm") {
+            @include media-breakpoint('sm') {
                 width: 400px;
                 min-width: 400px;
                 max-width: 400px;
             }
 
-            @include media-breakpoint("xs") {
+            @include media-breakpoint('xs') {
                 width: 100%;
                 min-width: 100%;
                 max-width: 100%;
                 border-radius: 0;
             }
 
-            .spinner {
+            .overlay {
                 position: absolute;
-                z-index: 1;
+                z-index: 2;
                 width: 100%;
                 height: 100%;
                 display: flex;
@@ -91,11 +108,11 @@ login {
                     pointer-events: none;
                 }
 
-                @include media-breakpoint("sm") {
+                @include media-breakpoint('sm') {
                     padding: 0rem 4rem;
                 }
 
-                @include media-breakpoint("xs") {
+                @include media-breakpoint('xs') {
                     text-align: center;
                     padding: 24px;
                 }
@@ -114,6 +131,36 @@ login {
                     padding-top: 8px;
                 }
 
+                .self-view {
+                    position: relative;
+                    border-radius: 30px;
+                    border: 1px solid #732b90;
+
+                    video {
+                        width: 100%;
+                        max-width: 100%;
+                        height: 100%;
+                        max-height: 100%;
+                        border-radius: 30px;
+                        object-fit: cover;
+                        -webkit-transform: scaleX(-1);
+                        transform: scaleX(-1);
+                    }
+
+                    .face-shape {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        margin: auto;
+                        width: 42%;
+                        height: 78%;
+                        box-shadow: 0 0 5px 1px rgba(220, 53, 69, 0.6), 0 0 4px 2px rgba(220, 53, 69, 0.6), 0 0 1px 2px rgba(220, 53, 69, 0.6);
+                        border-radius: 70% 70% 80% 80%/60% 60% 90% 90%;
+                    }
+                }
+
                 form {
                     width: 100%;
                     padding-top: 32px;
@@ -121,43 +168,65 @@ login {
                     mat-form-field {
                         width: 100%;
 
-                        @include media-breakpoint("xs") {
+                        @include media-breakpoint('xs') {
                             width: 80%;
                         }
-                    }
 
-                    mat-checkbox {
-                        margin: 0;
-                    }
+                        .mat-form-field-wrapper {
+                            .mat-select-arrow,
+                            .mat-form-field.mat-focused.mat-primary .mat-select-arrow,
+                            .mat-select-placeholder,
+                            .mat-select-value {
+                                color: #732b90 !important;
+                            }
 
-                    .remember-forgot-password {
-                        font-size: 13px;
-                        margin-top: 8px;
+                            .mat-form-field-label {
+                                color: #732b90 !important;
+                            }
 
-                        .remember-me {
-                            margin-bottom: 16px;
+                            .mat-form-field-outline {
+                                color: #f9f1ff !important;
+                                background: #f9f1ff !important;
+                            }
                         }
 
-                        .forgot-password {
-                            font-size: 13px;
-                            font-weight: 600;
-                            margin-bottom: 16px;
+                        input {
+                            &::-webkit-input-placeholder {
+                                /* Chrome/Opera/Safari */
+                                color: #732b90 !important;
+                            }
+
+                            &::-moz-placeholder {
+                                /* Firefox 19+ */
+                                color: #732b90 !important;
+                            }
+
+                            &:-ms-input-placeholder {
+                                /* IE 10+ */
+                                color: #732b90 !important;
+                            }
+
+                            &:-moz-placeholder {
+                                /* Firefox 18- */
+                                color: #732b90 !important;
+                            }
                         }
                     }
 
                     .submit-button {
-                        width: 100%;
-                        margin: 16px auto;
+                        width: 40%;
+                        margin: 3rem auto;
                         display: block;
+                        padding: 0.4rem 4rem;
+                        border-radius: 2rem;
+                    }
 
-                        @include media-breakpoint("xs") {
-                            width: 80%;
+                    mat-slide-toggle {
+                        .mat-slide-toggle-content {
+                            flex: 1;
+                            color: #732b90 !important;
                         }
                     }
-                }
-
-                .mat-slide-toggle-content {
-                    flex: 1;
                 }
 
                 .separator {
@@ -177,7 +246,7 @@ login {
 
                         &:before,
                         &:after {
-                            content: "";
+                            content: '';
                             display: block;
                             width: 30px;
                             position: absolute;
@@ -192,6 +261,17 @@ login {
                         &:after {
                             left: 100%;
                         }
+                    }
+                }
+
+                .copyright-version {
+                    position: absolute;
+                    bottom: 10px;
+                    right: 10px;
+
+                    .element-status {
+                        position: initial;
+                        margin-right: 4px;
                     }
                 }
             }

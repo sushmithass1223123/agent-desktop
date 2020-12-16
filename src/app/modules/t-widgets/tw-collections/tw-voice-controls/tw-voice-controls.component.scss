@@ -1,0 +1,77 @@
+@import 'src/app/scss/shared';
+
+tw-voice-controls {
+    .collapsed {
+        flex: 0;
+    }
+
+    .mat-card-content {
+        background: inherit !important;
+        box-shadow: none !important;
+        padding: 0px 3px 3px 3px !important;
+
+        .voice-controls {
+            // avatar {
+            //     .avatar-content {
+            //         width: 53px;
+            //         height: 38px;
+            //         border-radius: 16px;
+            //         margin-bottom: 6px;
+            //         cursor: pointer;
+            //     }
+
+            //     &.active {
+            //         .avatar-content {
+            //             box-shadow: 0px 3px 3px -2px rgba(0, 0, 0, 0.2), 0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12);
+            //         }
+            //     }
+            // }
+
+            .interaction-details {
+                line-height: 1.8;
+
+                .ivr-history {
+                    border: 1px solid #d5d5d5;
+
+                    .ivr-label {
+                        position: absolute;
+                        top: -20px;
+                        right: 10px;
+                        font-size: 12px;
+                    }
+                }
+            }
+
+            .call-controls {
+                button:not(.mat-button-disabled, .mat-warn) {
+                    background: $tw-primary;
+                    color: $tw-dark;
+                }
+
+                button {
+                    .mat-button-wrapper {
+                        justify-content: center;
+                        align-items: center;
+                        display: flex;
+                    }
+
+                    margin: 8px 4px 0px;
+                    height: 36px;
+                    border-radius: 20px;
+
+                    &.success:not(.mat-button-disabled) {
+                        background: $tw-success;
+                    }
+
+                    &.danger:not(.mat-button-disabled) {
+                        background: $tw-danger;
+                    }
+
+                    &.warning:not(.mat-button-disabled) {
+                        background: $tw-warning;
+                    }
+                }
+            }
+        }
+    }
+}

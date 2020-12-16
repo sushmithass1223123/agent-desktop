@@ -1,0 +1,24 @@
+tw-ad-callbacks {
+    .callbacks {
+        padding: 10px;
+    }
+    .callback-total {
+        & > * {
+            min-width: 210px;
+            background-color: white;
+            padding: 8px 14px;
+            border-radius: 20px;
+            margin-bottom: 8px;
+            &:last-child {
+                margin-bottom: 0px;
+            }
+        }
+        &.maximized {
+            & > * {
+                font-size: 16px;
+                padding: 16px;
+                margin: 10px;
+            }
+        }
+    }
+}

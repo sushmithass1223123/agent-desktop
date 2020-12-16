@@ -1,0 +1,75 @@
+<!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
+<!-- implement following events in your component to access widget wrapper action events -->
+<!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
+<tw-wrapper [data]="data">
+    <!-- your code goes here -->
+    <div *ngIf="!loadWorkCodesReq.loading && !loadWorkCodesReq.error" fxFlex fxFill fxLayout="row" fxLayoutAlign="center" class="p-4">
+        <mat-form-field *ngIf="DataConf.Source === 'interaction'" class="w-100-p" appearance="outline">
+            <mat-autocomplete class="w-100-p" #allWorkCodesRef (optionSelected)="setWorkCode($event)">
+                <ng-container *ngIf="DataConf.ByGroup">
+                    <mat-optgroup *ngFor="let group of filteredOptions | async | keyvalue" [label]="group.key">
+                        <mat-option *ngFor="let workCode of group.value" [value]="getOptionValue(workCode, { ParentName: group.key })">
+                            {{ workCode.Name }}
+                        </mat-option>
+                    </mat-optgroup>
+                </ng-container>
+                <ng-container *ngIf="!DataConf.ByGroup">
+                    <mat-option *ngFor="let workCode of (filteredOptions | async).listData" [value]="workCode">
+                        {{ workCode.Name }}
+                    </mat-option>
+                </ng-container>
+            </mat-autocomplete>
+            <mat-chip-list #selectedWorkCodesRef aria-label="WorkCodes">
+                <mat-chip *ngFor="let workCode of selectedWorkCodes" removable (removed)="removeWorkCode(workCode)" class="bg-secondary">
+                    <mat-icon class="mat-icon-mirror mr-4">local_offer</mat-icon>
+                    {{ workCode.Name }}
+                    <mat-icon matChipRemove>cancel</mat-icon>
+                </mat-chip>
+                <input
+                    #workCodeInput
+                    placeholder="Select Workcodes..."
+                    [formControl]="workCodeCtrl"
+                    [matAutocomplete]="allWorkCodesRef"
+                    [matChipInputFor]="selectedWorkCodesRef"
+                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                />
+            </mat-chip-list>
+        </mat-form-field>
+        <div
+            *ngIf="DataConf.Source === 'supervisor'"
+            class="w-100-p h-100-p p-12 custom-scroll-adjust"
+        >
+            <mat-chip-list aria-label="WorkCodes">
+                <mat-chip
+                    *ngFor="let workCode of selectedWorkCodes"
+                    [ngClass]="{
+                        'bg-info': workCode.Count < 10,
+                        'bg-secondary': workCode.Count >= 10 && workCode.Count < 20,
+                        'bg-success': workCode.Count >= 20 && workCode.Count < 30,
+                        'bg-warning': workCode.Count >= 30 && workCode.Count < 50,
+                        'bg-danger': workCode.Count >= 50
+                    }"
+                >
+                    <mat-icon class="mat-icon-mirror mr-4">local_offer</mat-icon>
+                    {{ workCode.WorkCodeName + ' [' + workCode.Count + ']' }}
+                </mat-chip>
+            </mat-chip-list>
+
+            <div *ngIf="selectedWorkCodes.length === 0" class="w-100-p h-90-p">
+                <img src="assets/images/vectors/no-data-2.svg" class="w-100-p h-100-p box-shadow-3d" />
+                <p class="text-center mat-title m-0">No Data Available</p>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="loadWorkCodesReq.loading" class="w-100-p h-100-p" fxLayout fxLayoutAlign="center center">
+        <mat-spinner></mat-spinner>
+    </div>
+
+    <div *ngIf="loadWorkCodesReq.error" class="w-100-p h-100-p text-center p-8" fxLayout="column" fxLayoutAlign="center center">
+        <p>{{ loadWorkCodesReq.msg }}</p>
+        <button mat-button mat-raised-button color="primary" class="ml-8" (click)="setup()">Retry</button>
+    </div>
+
+    <!-- your code goes here -->
+</tw-wrapper>

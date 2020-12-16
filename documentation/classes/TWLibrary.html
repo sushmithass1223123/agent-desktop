@@ -1,0 +1,481 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>agent-desktop documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	      <link rel="stylesheet" href="../styles/style.css">
+    </head>
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top visible-xs">
+            <a href="../" class="navbar-brand">agent-desktop documentation</a>
+            <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="hidden-xs menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content class">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li>Classes</li>
+  <li>TWLibrary</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="active">
+            <a href="#info" role="tab" id="info-tab" data-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li >
+            <a href="#source" role="tab" id="source-tab" data-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="c-info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/modules/t-widgets/utils/widget-library/tw-library.ts</code>
+        </p>
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Widgets library</p>
+
+            </p>
+
+
+
+
+            <section>
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Static</span>
+                                <a href="#widgetLibrary">widgetLibrary</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Static</span>
+                                <a href="#getWidget">getWidget</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+
+            <section>
+    
+        <h3 id="inputs">
+            Properties
+        </h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="widgetLibrary"></a>
+                        <span class="name">
+                            <b>
+                                <span class="modifier">Static</span>
+                            widgetLibrary</b>
+                            <a href="#widgetLibrary"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>    <code>Record&lt;string | Type&lt;any&gt;&gt;</code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>{
+        &#x27;tw-sample&#x27;: TwSampleComponent,
+        &#x27;tw-custom&#x27;: TwCustomComponent,
+        &#x27;tw-wallboard&#x27;: TwWallboardComponent,
+        &#x27;tw-voice-panel&#x27;: TwVoicePanelComponent,
+        &#x27;tw-chat-panel&#x27;: TwChatPanelComponent,
+        &#x27;tw-ad-total-interactions&#x27;: TwAdTotalInteractionsComponent,
+        &#x27;tw-ad-interaction-details&#x27;: TwAdInteractionDetailsComponent,
+        &#x27;tw-ad-callbacks&#x27;: TwAdCallbacksComponent,
+        &#x27;tw-su-calls-in-queue&#x27;: TwSuCallsInQueueComponent,
+        &#x27;tw-su-channels&#x27;: TwSuChannelsComponent,
+        &#x27;tw-su-status&#x27;: TwSuStatusComponent,
+        &#x27;tw-su-active-agents&#x27;: TwSuActiveAgentsComponent,
+        &#x27;tw-work-codes&#x27;: TwWorkCodesComponent,
+        &#x27;tw-su-agent-activity&#x27;: TwSuAgentActivityComponent,
+        &#x27;tw-ad-feedback&#x27;: TwAdFeedbackComponent,
+        &#x27;tw-ad-score&#x27;: TwAdScoreComponent,
+        &#x27;tw-ad-performance&#x27;: TwAdPerformanceComponent,
+        &#x27;tw-ad-gamification&#x27;: TwAdGamificationComponent,
+        &#x27;tw-su-gamification&#x27;: TwSuGamificationComponent,
+        &#x27;tw-amdocs-bcc&#x27;: TwAmdocsBccComponent,
+        &#x27;tw-account-information&#x27;: TwAccountInformationComponent,
+        &#x27;tw-canned-responses&#x27;: TwCannedResponsesComponent,
+        &#x27;tw-agent-assist&#x27;: TwAgentAssistComponent,
+        &#x27;tw-customer-sentiment&#x27;: TwCustomerSentimentComponent,
+        &#x27;tw-audio-controls&#x27;: TwAudioControlsComponent,
+        &#x27;tw-video-controls&#x27;: TwVideoControlsComponent,
+        &#x27;tw-aux-status-chart&#x27;: TwAuxStatusChartComponent,
+        &#x27;tw-aht-tc&#x27;: TwAhtTcComponent,
+        &#x27;tw-su-intent-list&#x27;: TwSuIntentListComponent,
+        &#x27;tw-voice-bot-transcripts&#x27;: TwVoiceBotTranscriptsComponent,
+        &#x27;tw-register-callback&#x27;: TwRegisterCallbackComponent,
+        &#x27;tw-su-agent-interactions&#x27;: TwSuAgentInteractionsComponent,
+        &#x27;tw-pie-chart&#x27;: TwPieChartComponent,
+        &#x27;tw-transfer-interaction&#x27;: TwTransferInteractionComponent,
+        &#x27;tw-voice-canned-responses&#x27;: TwVoiceCannedResponsesComponent,
+        &#x27;tw-workbench-panel&#x27;: TwWorkbenchPanelComponent,
+        &#x27;tw-email-panel&#x27;: TwEmailPanelComponent,
+        &#x27;tw-email-controls&#x27;: TwEmailControlsComponent,
+        &#x27;tw-pending-callbacks&#x27;: TwPendingCallbacksComponent,
+        &#x27;tw-gamification&#x27;: TwGamificationComponent
+    }</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="52" class="link-to-prism">src/app/modules/t-widgets/utils/widget-library/tw-library.ts:52</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>coded components for library</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+</section>
+
+            <section>
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getWidget"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Static</span>
+                            getWidget
+                        </b>
+                        <a href="#getWidget"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getWidget(type: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, data: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="101"
+                            class="link-to-prism">src/app/modules/t-widgets/utils/widget-library/tw-library.ts:101</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Get widget by type with added input data</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>type</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>data</td>
+                                    <td>
+                                                <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="../classes/TWidget.html" target="_self" >TWidget</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+
+
+
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="c-source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Type } from &#x27;@angular/core&#x27;;
+import { TwAccountInformationComponent } from &#x27;@modules/t-widgets/tw-collections/tw-account-information/tw-account-information.component&#x27;;
+import { TwAdCallbacksComponent } from &#x27;@modules/t-widgets/tw-collections/tw-ad-callbacks/tw-ad-callbacks.component&#x27;;
+import { TwAdFeedbackComponent } from &#x27;@modules/t-widgets/tw-collections/tw-ad-feedback/tw-ad-feedback.component&#x27;;
+import { TwAdGamificationComponent } from &#x27;@modules/t-widgets/tw-collections/tw-ad-gamification/tw-ad-gamification.component&#x27;;
+import { TwAdInteractionDetailsComponent } from &#x27;@modules/t-widgets/tw-collections/tw-ad-interaction-details/tw-ad-interaction-details.component&#x27;;
+import { TwAdPerformanceComponent } from &#x27;@modules/t-widgets/tw-collections/tw-ad-performance/tw-ad-performance.component&#x27;;
+import { TwAdScoreComponent } from &#x27;@modules/t-widgets/tw-collections/tw-ad-score/tw-ad-score.component&#x27;;
+import { TwAdTotalInteractionsComponent } from &#x27;@modules/t-widgets/tw-collections/tw-ad-total-interactions/tw-ad-total-interactions.component&#x27;;
+import { TwAgentAssistComponent } from &#x27;@modules/t-widgets/tw-collections/tw-agent-assist/tw-agent-assist.component&#x27;;
+import { TwAhtTcComponent } from &#x27;@modules/t-widgets/tw-collections/tw-aht-tc/tw-aht-tc.component&#x27;;
+import { TwAmdocsBccComponent } from &#x27;@modules/t-widgets/tw-collections/tw-amdocs-bcc/tw-amdocs-bcc.component&#x27;;
+import { TwAudioControlsComponent } from &#x27;@modules/t-widgets/tw-collections/tw-audio-controls/tw-audio-controls.component&#x27;;
+import { TwAuxStatusChartComponent } from &#x27;@modules/t-widgets/tw-collections/tw-aux-status-chart/tw-aux-status-chart.component&#x27;;
+import { TwCannedResponsesComponent } from &#x27;@modules/t-widgets/tw-collections/tw-canned-responses/tw-canned-responses.component&#x27;;
+import { TwChatPanelComponent } from &#x27;@modules/t-widgets/tw-collections/tw-chat-panel/tw-chat-panel.component&#x27;;
+import { TwCustomComponent } from &#x27;@modules/t-widgets/tw-collections/tw-custom/tw-custom.component&#x27;;
+import { TwCustomerSentimentComponent } from &#x27;@modules/t-widgets/tw-collections/tw-customer-sentiment/tw-customer-sentiment.component&#x27;;
+import { TwEmailControlsComponent } from &#x27;@modules/t-widgets/tw-collections/tw-email-controls/tw-email-controls.component&#x27;;
+import { TwEmailPanelComponent } from &#x27;@modules/t-widgets/tw-collections/tw-email-panel/tw-email-panel.component&#x27;;
+import { TwGamificationComponent } from &#x27;@modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component&#x27;;
+import { TwPendingCallbacksComponent } from &#x27;@modules/t-widgets/tw-collections/tw-pending-callbacks/tw-pending-callbacks.component&#x27;;
+import { TwPieChartComponent } from &#x27;@modules/t-widgets/tw-collections/tw-pie-chart/tw-pie-chart.component&#x27;;
+import { TwRegisterCallbackComponent } from &#x27;@modules/t-widgets/tw-collections/tw-register-callback/tw-register-callback.component&#x27;;
+import { TwSampleComponent } from &#x27;@modules/t-widgets/tw-collections/tw-sample/tw-sample.component&#x27;;
+import { TwSuActiveAgentsComponent } from &#x27;@modules/t-widgets/tw-collections/tw-su-active-agents/tw-su-active-agents.component&#x27;;
+import { TwSuAgentActivityComponent } from &#x27;@modules/t-widgets/tw-collections/tw-su-agent-activity/tw-su-agent-activity.component&#x27;;
+import { TwSuAgentInteractionsComponent } from &#x27;@modules/t-widgets/tw-collections/tw-su-agent-interactions/tw-su-agent-interactions.component&#x27;;
+import { TwSuCallsInQueueComponent } from &#x27;@modules/t-widgets/tw-collections/tw-su-calls-in-queue/tw-su-calls-in-queue.component&#x27;;
+import { TwSuChannelsComponent } from &#x27;@modules/t-widgets/tw-collections/tw-su-channels/tw-su-channels.component&#x27;;
+import { TwSuGamificationComponent } from &#x27;@modules/t-widgets/tw-collections/tw-su-gamification/tw-su-gamification.component&#x27;;
+import { TwSuIntentListComponent } from &#x27;@modules/t-widgets/tw-collections/tw-su-intent-list/tw-su-intent-list.component&#x27;;
+import { TwSuStatusComponent } from &#x27;@modules/t-widgets/tw-collections/tw-su-status/tw-su-status.component&#x27;;
+import { TwTransferInteractionComponent } from &#x27;@modules/t-widgets/tw-collections/tw-transfer-interaction/tw-transfer-interaction.component&#x27;;
+import { TwUnknownComponent } from &#x27;@modules/t-widgets/tw-collections/tw-unknown/tw-unknown.component&#x27;;
+import { TwVideoControlsComponent } from &#x27;@modules/t-widgets/tw-collections/tw-video-controls/tw-video-controls.component&#x27;;
+import { TwVoiceBotTranscriptsComponent } from &#x27;@modules/t-widgets/tw-collections/tw-voice-bot-transcripts/tw-voice-bot-transcripts.component&#x27;;
+import { TwVoiceCannedResponsesComponent } from &#x27;@modules/t-widgets/tw-collections/tw-voice-canned-responses/tw-voice-canned-responses.component&#x27;;
+import { TwVoicePanelComponent } from &#x27;@modules/t-widgets/tw-collections/tw-voice-panel/tw-voice-panel.component&#x27;;
+import { TwWallboardComponent } from &#x27;@modules/t-widgets/tw-collections/tw-wallboard/tw-wallboard.component&#x27;;
+import { TwWorkCodesComponent } from &#x27;@modules/t-widgets/tw-collections/tw-work-codes/tw-work-codes.component&#x27;;
+import { TwWorkbenchPanelComponent } from &#x27;@modules/t-widgets/tw-collections/tw-workbench-panel/tw-workbench-panel.component&#x27;;
+import { TWidget } from &#x27;@modules/t-widgets/utils/t-widget&#x27;;
+
+/**
+ * Widgets library
+ */
+export class TWLibrary {
+    /**
+     * coded components for library
+     */
+    static widgetLibrary: Record&lt;string, Type&lt;any&gt;&gt; &#x3D; {
+        &#x27;tw-sample&#x27;: TwSampleComponent,
+        &#x27;tw-custom&#x27;: TwCustomComponent,
+        &#x27;tw-wallboard&#x27;: TwWallboardComponent,
+        &#x27;tw-voice-panel&#x27;: TwVoicePanelComponent,
+        &#x27;tw-chat-panel&#x27;: TwChatPanelComponent,
+        &#x27;tw-ad-total-interactions&#x27;: TwAdTotalInteractionsComponent,
+        &#x27;tw-ad-interaction-details&#x27;: TwAdInteractionDetailsComponent,
+        &#x27;tw-ad-callbacks&#x27;: TwAdCallbacksComponent,
+        &#x27;tw-su-calls-in-queue&#x27;: TwSuCallsInQueueComponent,
+        &#x27;tw-su-channels&#x27;: TwSuChannelsComponent,
+        &#x27;tw-su-status&#x27;: TwSuStatusComponent,
+        &#x27;tw-su-active-agents&#x27;: TwSuActiveAgentsComponent,
+        &#x27;tw-work-codes&#x27;: TwWorkCodesComponent,
+        &#x27;tw-su-agent-activity&#x27;: TwSuAgentActivityComponent,
+        &#x27;tw-ad-feedback&#x27;: TwAdFeedbackComponent,
+        &#x27;tw-ad-score&#x27;: TwAdScoreComponent,
+        &#x27;tw-ad-performance&#x27;: TwAdPerformanceComponent,
+        &#x27;tw-ad-gamification&#x27;: TwAdGamificationComponent,
+        &#x27;tw-su-gamification&#x27;: TwSuGamificationComponent,
+        &#x27;tw-amdocs-bcc&#x27;: TwAmdocsBccComponent,
+        &#x27;tw-account-information&#x27;: TwAccountInformationComponent,
+        &#x27;tw-canned-responses&#x27;: TwCannedResponsesComponent,
+        &#x27;tw-agent-assist&#x27;: TwAgentAssistComponent,
+        &#x27;tw-customer-sentiment&#x27;: TwCustomerSentimentComponent,
+        &#x27;tw-audio-controls&#x27;: TwAudioControlsComponent,
+        &#x27;tw-video-controls&#x27;: TwVideoControlsComponent,
+        &#x27;tw-aux-status-chart&#x27;: TwAuxStatusChartComponent,
+        &#x27;tw-aht-tc&#x27;: TwAhtTcComponent,
+        &#x27;tw-su-intent-list&#x27;: TwSuIntentListComponent,
+        &#x27;tw-voice-bot-transcripts&#x27;: TwVoiceBotTranscriptsComponent,
+        &#x27;tw-register-callback&#x27;: TwRegisterCallbackComponent,
+        &#x27;tw-su-agent-interactions&#x27;: TwSuAgentInteractionsComponent,
+        &#x27;tw-pie-chart&#x27;: TwPieChartComponent,
+        &#x27;tw-transfer-interaction&#x27;: TwTransferInteractionComponent,
+        &#x27;tw-voice-canned-responses&#x27;: TwVoiceCannedResponsesComponent,
+        &#x27;tw-workbench-panel&#x27;: TwWorkbenchPanelComponent,
+        &#x27;tw-email-panel&#x27;: TwEmailPanelComponent,
+        &#x27;tw-email-controls&#x27;: TwEmailControlsComponent,
+        &#x27;tw-pending-callbacks&#x27;: TwPendingCallbacksComponent,
+        &#x27;tw-gamification&#x27;: TwGamificationComponent
+    };
+
+    /**
+     * Get widget by type with added input data
+     * @param type
+     * @param data
+     */
+
+    public static getWidget(type: string, data: any): TWidget {
+        const widget &#x3D; this.widgetLibrary[type];
+        // check the widget is found
+        if (widget) {
+            // retrun the widget
+            return new TWidget(widget, data);
+        }
+        // if widget is not found return unknown widget
+        return new TWidget(TwUnknownComponent, data);
+    }
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+                   
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> result-matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'class';
+            var COMPODOC_CURRENT_PAGE_URL = 'TWLibrary.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+       <!-- Required to polyfill modern browsers as code is ES5 for IE... -->
+       <script src="../js/libs/custom-elements-es5-adapter.js" charset="utf-8" defer></script>
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+       <script src="../js/libs/zepto.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

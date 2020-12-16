@@ -1,43 +1,115 @@
-import { Component, Inject, OnDestroy, OnInit, HostListener } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
 import { Platform } from '@angular/cdk/platform';
-import { TranslateService } from '@ngx-translate/core';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-
-import { FuseConfigService } from '@fuse/services/config.service';
+import { DOCUMENT } from '@angular/common';
+import { Component, HostListener, Inject, OnDestroy, OnInit } from '@angular/core';
+import { MatIconRegistry } from '@angular/material/icon';
+import { DomSanitizer, Title } from '@angular/platform-browser';
 import { FuseNavigationService } from '@fuse/components/navigation/navigation.service';
-import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
+import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseSplashScreenService } from '@fuse/services/splash-screen.service';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
-
-import { navigation } from 'app/navigation/navigation';
+import { TranslateService } from '@ngx-translate/core';
+import { AppUiService } from '@services/app-ui.service';
 import { locale as navigationEnglish } from 'app/navigation/i18n/en';
 import { locale as navigationTurkish } from 'app/navigation/i18n/tr';
-import { Title } from '@angular/platform-browser';
-
-import { AppDataService } from './services/app-data.service';
-import { Router } from '@angular/router';
-
+import { navigation } from 'app/navigation/navigation';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { SDKClient } from 'tmac-sdk';
+import { environment } from '../environments/environment';
+import { AppDataService } from './services/app-data.service';
 
+// declare global
+declare global {
+    interface Window {
+        /**
+         * SDK Client global
+         */
+        SDKClient: typeof SDKClient;
+    }
+}
 
+/**
+ * App / root component
+ */
 @Component({
     selector: 'app',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit, OnDestroy {
+    /**
+     * fuse Config data
+     */
     fuseConfig: any;
+    /**
+     * Need more Description
+     * Navigation 
+     */
     navigation: any;
+    /**
+     * Need more description
+     * Config
+     */
     config: any;
 
-    configPath = '/assets/app-config.json';
+    /**
+     * Production conofig path
+     */
+    prodConfigPath = 'assets/production.json';
+
+    /**
+     * Dev config path
+     */
+    devConfigPath = 'assets/development.json';
+
+    /**
+     * loading state
+     */
     loaded = false;
 
-    // Private
+    /**
+     * Custom icon list 
+     */
+    customIconList = [
+        {
+            label: 'custom-whatsapp',
+            name: 'whatsapp'
+        },
+        {
+            label: 'custom-line',
+            name: 'line'
+        },
+        {
+            label: 'custom-fb',
+            name: 'fb'
+        },
+        {
+            label: 'custom-viber',
+            name: 'viber'
+        },
+        {
+            label: 'custom-we',
+            name: 'we'
+        },
+        {
+            label: 'custom-telegram',
+            name: 'telegram'
+        },
+        {
+            label: 'custom-twitter',
+            name: 'twitter'
+        }
+    ];
+
+    /**
+     * Unsubscribe all subject
+     */
     private _unsubscribeAll: Subject<any>;
 
+    /**
+     * Disable opening console / refreshing
+     * @param {KeyboardEvent} event 
+     */
     @HostListener('document:keydown', ['$event'])
     handleKeyboardEvent(event: KeyboardEvent): any {
         if (!this.config) {
@@ -73,7 +145,10 @@ export class AppComponent implements OnInit, OnDestroy {
      * @param {FuseSplashScreenService} _fuseSplashScreenService
      * @param {FuseTranslationLoaderService} _fuseTranslationLoaderService
      * @param {Platform} _platform
-     * @param {TranslateService} _translateService
+     * @param {TranslateService} _translateService  
+     * @param {AppUiService} _appUIService
+     * @param {MatIconRegistry} _matIconRegistry
+     * @param {DomSanitizer} _domSanitizer
      */
     constructor(
         @Inject(DOCUMENT) private document: any,
@@ -81,11 +156,11 @@ export class AppComponent implements OnInit, OnDestroy {
         private _fuseNavigationService: FuseNavigationService,
         private _fuseSplashScreenService: FuseSplashScreenService,
         private _fuseTranslationLoaderService: FuseTranslationLoaderService,
-        private _translateService: TranslateService,
         private _platform: Platform,
-        private _titleService: Title,
-        private _appDataService: AppDataService,
-        private _router: Router,
+        private _translateService: TranslateService,
+        private _appUIService: AppUiService,
+        private _matIconRegistry: MatIconRegistry,
+        private _domSanitizer: DomSanitizer
     ) {
         // Get default navigation
         this.navigation = navigation;
@@ -149,8 +224,12 @@ export class AppComponent implements OnInit, OnDestroy {
         // Set the private defaults
         this._unsubscribeAll = new Subject();
 
-        // Get the app config
-        this.getConfig();
+        // add the custom icons to iconRegistry
+        this.customIconList.forEach((icon) => {
+            this._matIconRegistry.addSvgIcon(
+                icon.label,
+                this._domSanitizer.bypassSecurityTrustResourceUrl(`assets/icons/custom/${icon.name}.svg`));
+        });
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -161,6 +240,14 @@ export class AppComponent implements OnInit, OnDestroy {
      * On init
      */
     ngOnInit(): void {
+        // do not load config for preview page
+        if (location.pathname.includes('preview')) {
+            return;
+        }
+
+        // subscribe to app ui service
+        this._appUIService.subscribe();
+
         // Subscribe to config changes
         this._fuseConfigService.config
             .pipe(takeUntil(this._unsubscribeAll))
@@ -188,6 +275,12 @@ export class AppComponent implements OnInit, OnDestroy {
 
                 this.document.body.classList.add(this.fuseConfig.colorTheme);
             });
+
+        // check the environment and set window variable
+        if (!environment.production) {
+            // set a global variable to access SDK client on development mode
+            window.SDKClient = SDKClient;
+        }
     }
 
     /**
@@ -197,72 +290,13 @@ export class AppComponent implements OnInit, OnDestroy {
         // Unsubscribe from all subscriptions
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
+
+        // subscribe to app ui service
+        this._appUIService.unsubscribe();
     }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Private methods
     // -----------------------------------------------------------------------------------------------------
-
-    private getConfig = async () => {
-
-        let data = null;
-        try {
-            const respnse = await fetch(this.configPath);
-            data = await respnse.json();
-            console.log('App config loaded: ', data);
-            // check if the config is empty or null
-            if (data === null || Object.keys(data).length === 0) {
-                data = null;
-            }
-            // set the local config
-            this.config = data;
-            // set the config to service
-            if (data) {
-                this._appDataService.setConfig(data);
-            }
-        } catch (error) {
-            console.error(error);
-        }
-        // set the loaded flag to true
-        this.loaded = true;
-        // set the TMAC SDK config
-        this.setTMACConfig(data);
-    }
-
-    private setTMACConfig(config: any): void {
-        // check if the config is null
-        if (config !== null) {
-            // set the title
-            if (config.AppConfigs.TitleName) {
-                this._titleService.setTitle(config.AppConfigs.TitleName);
-            }
-            // set the favicon
-            if (config.AppConfigs.Favicon) {
-                this.document.getElementById('appFavicon').setAttribute('href', config.AppConfigs.Favicon);
-            }
-
-            // set the SDK config
-            SDKClient.setConfig({
-                proxy: {
-                    urls: config.AppConfigs.SDK.Proxy.Urls,
-                    type: config.AppConfigs.SDK.Proxy.Type
-                },
-                signalRProxy: {
-                    logging: config.AppConfigs.SDK.SignalRProxy.Logging,
-                    protocol: config.AppConfigs.SDK.SignalRProxy.Protocol,
-                    timeout: config.AppConfigs.SDK.SignalRProxy.Timeout
-                },
-                logging: {
-                    enabled: config.AppConfigs.SDK.Logging.Enabled,
-                    remote: config.AppConfigs.SDK.Logging.Remote,
-                    remoteThreshold: config.AppConfigs.SDK.Logging.RemoteThreshold
-                }
-            });
-        }
-        else {
-            // we will route to error page
-            this._router.navigate(['error']);
-        }
-    }
 
 }

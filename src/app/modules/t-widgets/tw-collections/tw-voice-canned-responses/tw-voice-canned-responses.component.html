@@ -1,0 +1,25 @@
+<!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
+<!-- implement following events in your component to access widget wrapper action events -->
+<!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
+
+<!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
+<tw-wrapper [data]="data">
+    <div fxLayout="column" fxFill class="px-8 h-256 custom-scroll-adjust">
+        <p *ngIf="!voiceTemplates.length" fxLayout fxLayoutAlign="center center" class="text-center m-0 mat-title h-100-p">No Data Available</p>
+        <mat-list *ngFor="let group of voiceTemplates | keyvalue" class="position-relative w-100-p">
+            <div mat-subheader class="py-0 h-32">{{ group.key }}</div>
+            <mat-list-item *ngFor="let template of group.value" class="mat-elevation-z1 border-radius-16 mb-8">
+                <mat-icon mat-list-icon color="primary">audiotrack</mat-icon>
+                <div mat-line>{{ template.Name }}</div>
+                <!-- <button mat-raised-button mat-icon-button class="mr-12" matTooltip="Play">
+                    <mat-icon>play_arrow</mat-icon>
+                </button> -->
+                <button mat-raised-button mat-icon-button class="" matTooltip="Send" (click)="sendItem(template)">
+                    <mat-icon>done</mat-icon>
+                </button>
+                <!-- <div mat-line>{{ template.CreatedDate | date }}</div> -->
+            </mat-list-item>
+            <!-- <mat-divider></mat-divider> -->
+        </mat-list>
+    </div>
+</tw-wrapper>

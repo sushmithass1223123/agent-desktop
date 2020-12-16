@@ -1,0 +1,264 @@
+<!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
+<!-- implement following events in your component to access widget wrapper action events -->
+<!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
+
+<!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
+
+<tw-wrapper [data]="data">
+    <!-- your code goes here -->
+    <div
+        *ngIf="
+            !this.leaderBoardRes.loading &&
+            !this.getAgentProgressRes.loading &&
+            !this.getAgentLevelsRes.loading &&
+            !this.getQuizInfoRes.loading &&
+            !this.dashboardState.loading &&
+            !this.leaderBoardRes.error &&
+            !this.getAgentProgressRes.error &&
+            !this.getAgentLevelsRes.error &&
+            !this.getQuizInfoRes.error &&
+            !this.dashboardState.error
+        "
+        fxLayout="row wrap"
+        class="p-8 gamification-cards"
+    >
+        <!-- fxLayoutAlign="center center" -->
+        <div fxFlex="20" class="top-performers-card">
+            <p class="mat-title mb-8">Top Performers</p>
+            <div *ngIf="leaderBoardRes.data.length" class="records-list h-100-p p-12 custom-scroll-adjust">
+                <div *ngFor="let p of leaderBoardRes.data; let i = index" fxLayout fxLayoutAlign="start center" class="mb-16">
+                    <!-- <div class="w-20 h-20 text-center mat-elevation-z1 border-radius-100 position-absolute rank font-weight-700">{{ i + 1 }}</div> -->
+                    <avatar
+                        [matBadge]="i + 1"
+                        matBadgePosition="before"
+                        [name]="p.AgentName || p.AgentId"
+                        classes="w-44 mat-elevation-z2 h-44 border-radius-100 mr-12"
+                        [photoUrl]="p.ProfilePic"
+                    ></avatar>
+                    <div>
+                        <span>{{ p.AgentName || p.AgentId }}</span>
+                        <br />
+                        <span>{{ p.TotalPoints }} points </span>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="!leaderBoardRes.data.length" fxLayout="row wrap" fxLayoutAlign="center center">
+                <no-data-available> </no-data-available>
+            </div>
+        </div>
+
+        <div fxFlex="20" class="leaderboard-card">
+            <p class="mat-title mb-8">Leaderboard</p>
+            <div *ngIf="leaderBoardRes.data.length" class="records-list h-100-p px-12 custom-scroll-adjust">
+                <div *ngFor="let p of leaderBoardRes.data" class="mb-12">
+                    <span class="mat-body-2"> {{ p.AgentName || p.AgentId || 'Unknown' }} </span>
+                    <div fxLayout fxLayoutAlign="space-between center" fxLayoutGap="10px">
+                        <div class="leader-progress-bar" fxFlex="70">
+                            <div
+                                class="marker"
+                                [ngStyle]="{
+                                    left:
+                                        (p.TotalPoints * 100) / (getAgentLevelsRes.data | slice: -1)[0].Points > 100
+                                            ? 100
+                                            : (p.TotalPoints * 100) / (getAgentLevelsRes.data | slice: -1)[0].Points + '%'
+                                }"
+                            ></div>
+                            <div
+                                *ngFor="let level of getAgentLevelsRes.data; let i = index"
+                                [ngClass]="scoreBgs[i] + ' ' + level + '-' + i"
+                                fxFlex="100"
+                            ></div>
+                        </div>
+                        <strong class="ml-4"> {{ p.TotalPoints }} Pt</strong>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="!leaderBoardRes.data.length" fxLayout="row wrap" fxLayoutAlign="center center">
+                <no-data-available> </no-data-available>
+            </div>
+        </div>
+
+        <div fxFlex="50">
+            <!-- <div fxLayout="row wrap" fxLayoutAlign="center center" class="w-100-p h-100-p p-12"> -->
+            <div class="w-100-p">
+                <race-car-track
+                    [leaders]="leaderBoardRes.data | slice: 0:4"
+                    [highest]="(getAgentLevelsRes.data | slice: -1)[0] ? (getAgentLevelsRes.data | slice: -1)[0].Points : 0"
+                ></race-car-track>
+            </div>
+            <!-- </div> -->
+        </div>
+
+        <div fxFlex="10" fxLayout="column" fxayoutAlign="center space-between" class="text-center py-20">
+            <ng-container *ngIf="leaderBoardRes.data.length">
+                <div class="mb-20">
+                    <img class="w-40-p mb-4" src="assets/images/vectors/trophy.svg" alt="" />
+                    <br />
+                    <span> {{ leaderBoardRes.data[0]?.AgentName }} </span>
+                </div>
+
+                <div class="mb-20">
+                    <img class="w-40-p mb-4" src="assets/images/vectors/total-points.svg" alt="" />
+                    <br />
+                    <span> {{ leaderBoardRes.data[0]?.TotalPoints }} </span>
+                </div>
+
+                <div class="mb-20">
+                    <img class="w-40-p mb-4" src="assets/images/vectors/team-car.svg" alt="" />
+                    <br />
+                    <span> {{ leaderBoardRes.data[0]?.TeamName }} </span>
+                </div>
+            </ng-container>
+        </div>
+
+        <div fxFlex="30">
+            <p class="mat-title mb-8">My Position</p>
+            <div *ngIf="(getAgentLevelsRes.data | slice: -1)[0]" fxLayout="row wrap" fxLayoutAlign="start center" class="mb-12">
+                <div fxFlex="15">
+                    <span class="mat-display-1 mb-0"> L{{ currentUser.level }} </span>
+                </div>
+                <div fxFlex="70" class="leader-progress-bar">
+                    <div
+                        class="marker"
+                        [ngStyle]="{
+                            left:
+                                (currentUser.totalPoints * 100) / (getAgentLevelsRes.data | slice: -1)[0].Points > 100
+                                    ? 100
+                                    : (currentUser.totalPoints * 100) / (getAgentLevelsRes.data | slice: -1)[0].Points + '%'
+                        }"
+                    ></div>
+                    <div
+                        *ngFor="let level of getAgentLevelsRes.data; let i = index"
+                        [ngClass]="scoreBgs[i] + ' ' + level + '-' + i"
+                        fxFlex="100"
+                    ></div>
+                </div>
+                <div fxFlex="100">
+                    <span class="mr-4"> {{ currentUser.totalPoints }} Pts </span>
+                    |
+                    <span class="ml-4">
+                        {{
+                            getAgentLevelsRes.data[currentUser.level]
+                                ? '+' +
+                                  (getAgentLevelsRes.data[currentUser.level].Points - currentUser.totalPoints) +
+                                  ' for Level ' +
+                                  (currentUser.level + 1)
+                                : 'Top Level'
+                        }}
+                    </span>
+                </div>
+            </div>
+            <p *ngIf="!(getAgentLevelsRes.data | slice: -1)[0]">No Data available</p>
+            <p class="mat-title mb-8">Earned Badges</p>
+            <div fxLayout="row" fxLayoutAlign="start center" class="mb-12">
+                <div *ngFor="let b of currentUser.badges | slice: 0:3; trackBy: badgeName" fxFlex="30" class="text-center">
+                    <img
+                        [src]="b.BadgeUrl"
+                        class="mx-auto mb-4 d-block"
+                        [ngClass]="{ 'w-30-p': b.BadgeName === 'Locked', 'w-50-p': b.BadgeName !== 'Locked' }"
+                        [alt]="b.BadgeName"
+                    />
+                    <div class="text-center">{{ b.BadgeName }}</div>
+                    <strong> {{ b.BadgePoints }} </strong>
+                    <!-- <div *ngIf="b.BadgeName === 'Locked'">
+                        <mat-icon [color]="b.BadgeId > 33 ? 'primary' : ''"> star_rating </mat-icon>
+                        <mat-icon [color]="b.BadgeId > 66 ? 'primary' : ''"> star_rating </mat-icon>
+                        <mat-icon [color]="b.BadgeId > 99 ? 'primary' : ''"> star_rating </mat-icon>
+                    </div> -->
+                </div>
+                <p *ngIf="!currentUser.badges.length">No Data available</p>
+            </div>
+        </div>
+
+        <div fxFlex="30">
+            <p class="mat-title mb-8">Coins and Points</p>
+            <div fxLayout="row wrap" fxLayoutAlign="start center">
+                <div *ngFor="let c of currentUser.coins | slice: 0:5; trackBy: valueField" fxFlex="30" class="mb-8">
+                    <img [src]="c.image" class="mx-auto mb-4 d-block" [alt]="c.name" />
+                    <div class="text-center">
+                        {{ c.name }}
+                        <br />
+                        <strong> {{ c.value }} </strong>
+                    </div>
+                </div>
+                <no-data-available *ngIf="!currentUser.coins.length"> </no-data-available>
+            </div>
+        </div>
+
+        <div fxFlex="40" class="my-performance-card">
+            <p class="mat-title mb-8">My Performance</p>
+            <div *ngIf="getAgentProgressRes.data.length" class="records-list px-8 custom-scroll-adjust">
+                <div *ngFor="let p of getAgentProgressRes.data; trackBy: pointsAssigned" fxLayout fxLayoutAlign="space-between center" class="mb-16">
+                    <ng-container [ngSwitch]="p.Channel | lowercase">
+                        <mat-icon *ngSwitchCase="'textchat'"> chat </mat-icon>
+                        <mat-icon *ngSwitchCase="'voice'"> phone </mat-icon>
+                    </ng-container>
+                    <span fxFlex="35" class="text-center px-4 border-right-secondary">
+                        {{ p.Channel }}{{ p.Channel ? '_' : '' }}{{ p.MetricName }}
+                    </span>
+                    <mat-slider
+                        fxFlex="30"
+                        [value]="p.MetricAverageValue"
+                        step="1"
+                        [ngClass]="
+                            p.MetricAverageValue <= p.MetricMaxValue
+                                ? (p.MetricName || '').toLowerCase().includes('total')
+                                    ? 'red-slider'
+                                    : 'green-slider'
+                                : (p.MetricName || '').toLowerCase().includes('total')
+                                ? 'green-slider'
+                                : 'red-slider'
+                        "
+                        [max]="p.MetricMaxValue"
+                    ></mat-slider>
+                    <span fxFlex="30" class="ml-4"> {{ p.MetricAverageValue }} / {{ p.MetricMaxValue }} </span>
+                </div>
+            </div>
+            <div *ngIf="!getAgentProgressRes.data.length" fxLayout="row wrap" fxLayoutAlign="center center">
+                <no-data-available> </no-data-available>
+            </div>
+        </div>
+
+        <div fxFlex="100" fxLayoutAlign="center center">
+            <button mat-raised-button color="primary" class="w-40-p" (click)="redeem()">Redeem Now !</button>
+        </div>
+    </div>
+
+    <div
+        *ngIf="
+            this.leaderBoardRes.loading ||
+            this.getAgentProgressRes.loading ||
+            this.getAgentLevelsRes.loading ||
+            this.getQuizInfoRes.loading ||
+            this.dashboardState.loading
+        "
+        fxLayout="column"
+        fxLayoutAlign="center center"
+        class="w-100-p h-100-p"
+    >
+        <div class="w-70-p text-center">
+            <p class="mat-title mb-40">Setting Up Gamification Dashboard</p>
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        </div>
+    </div>
+
+    <div
+        *ngIf="
+            this.leaderBoardRes.error ||
+            this.getAgentProgressRes.error ||
+            this.getAgentLevelsRes.error ||
+            this.getQuizInfoRes.error ||
+            this.dashboardState.error
+        "
+        fxLayout="column"
+        fxLayoutAlign="center center"
+        class="w-100-p h-100-p"
+    >
+        <div class="w-70-p text-center">
+            <p class="mat-title mb-40">{{ dashboardState.msg }}</p>
+            <button mat-raised-button color="primary" class="w-20-p" (click)="setupDashboard()">Retry</button>
+        </div>
+    </div>
+
+    <!-- your code goes here -->
+</tw-wrapper>

@@ -1,0 +1,94 @@
+<!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
+<!-- implement following events in your component to access widget wrapper action events -->
+<!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
+
+<!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
+
+<tw-wrapper [data]="data" (maximizeEvent)="maximizeEvent($event)">
+    <!-- your code goes here -->
+
+    <div *ngIf="gamificationReqStatus.error" fxLayout fxLayoutAlign="center center" class="w-100-p h-100-p text-center">
+        <p>{{ gamificationReqStatus.msg }}</p>
+    </div>
+
+    <div *ngIf="gamificationReqStatus.loading" fxLayout fxLayoutAlign="center center" class="w-100-p h-100-p">
+        <mat-spinner></mat-spinner>
+    </div>
+
+    <div *ngIf="!gamificationReqStatus.loading && !gamificationReqStatus.error" class="w-100-p h-100-p">
+        <mat-table [dataSource]="leaderboardTable.source" matSort class="mat-elevation-z0">
+            <!--- Note that these columns can be defined in any order.
+      The actual rendered columns are set as a property on the row definition" -->
+
+            <ng-container matColumnDef="Position">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>#</mat-header-cell>
+                <mat-cell *matCellDef="let element">{{ element.Position }}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="AgentName">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Agent</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <div fxLayout fxLayoutAlign="start center" class="p-4">
+                        <img [src]="element.ProfilePic" width="40" style="border-radius: 50%" />
+                        <span class="ml-4">{{ element.AgentName }}</span>
+                    </div>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="TeamName">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Team</mat-header-cell>
+                <mat-cell *matCellDef="let element">{{ element.TeamName }}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="TotalBadges">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Badges</mat-header-cell>
+                <mat-cell class="w-40-p" mat-cell *matCellDef="let element">
+                    <div fxLayout="row wrap">
+                        <img
+                            *ngFor="let badge of element.TotalBadges | slice: 0:10"
+                            [src]="badge.BadgeUrl"
+                            [title]="badge.BadgeName"
+                            class="mx-4"
+                            width="30"
+                            style="border-radius: 50%"
+                        />
+                        <span
+                            fxLayout
+                            fxLayoutAlign="center center"
+                            *ngIf="element.TotalBadges.length > 10"
+                            [matMenuTriggerFor]="badgesMenu"
+                            class="ml-4"
+                            mat-ripple
+                        >
+                            + {{ element.TotalBadges.length - 10 }} more
+                        </span>
+                        <mat-menu
+                            backdropClass="badges-menu"
+                            #badgesMenu
+                            class="custom-scroll-adjust"
+                        >
+                            <div fxLayout="row wrap" flexLayoutAlign="space-evenly" class="p-4">
+                                <div fxFlex="20" *ngFor="let badge of element.TotalBadges | slice: 10">
+                                    <img [src]="badge.BadgeUrl" [title]="badge.BadgeName" class="p-8" style="border-radius: 50%" />
+                                    <small class="text-center text-truncate">
+                                        {{ badge.BadgeName }}
+                                    </small>
+                                </div>
+                            </div>
+                        </mat-menu>
+                    </div>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="TotalPoints">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Points</mat-header-cell>
+                <mat-cell *matCellDef="let element">{{ element.TotalPoints }}</mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="leaderboardTable.columns; sticky: true"></mat-header-row>>
+            <mat-row *matRowDef="let row; columns: leaderboardTable.columns"></mat-row>>
+        </mat-table>
+    </div>
+
+    <!-- your code goes here -->
+</tw-wrapper>

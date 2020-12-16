@@ -1,0 +1,32 @@
+tw-register-callback {
+    mat-form-field {
+        &.custom {
+            .mat-form-field-wrapper {
+                .mat-form-field-infix {
+                    border: none;
+                    padding: 0.5em 0.5rem !important;
+                }
+
+                .mat-form-field-outline-start,
+                .mat-form-field-outline-end {
+                    border-color: inherit;
+                }
+            }
+        }
+    }
+
+    .campaign-list {
+        .tw-list {
+            max-height: 400px;
+        }
+    }
+}
+
+.new-campaign-contact {
+    .mat-dialog-container {
+        padding: 0 0 25px 0 !important;
+        .mat-toolbar {
+            padding-bottom: 30px;
+        }
+    }
+}

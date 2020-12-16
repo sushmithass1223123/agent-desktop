@@ -1,0 +1,64 @@
+<!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
+<!-- implement following events in your component to access widget wrapper action events -->
+<!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
+
+<!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
+
+<tw-wrapper [data]="data" (destroyEvent)="destroyEvent.emit()">
+    <!-- your code goes here -->
+    <div fxFlex fxFill fxLayout="row" fxLayoutAlign=" none" style="gap: 8px">
+        <div fxFlex fxLayout="column" fxLayoutAlign=" none" style="gap: 8px">
+            <tw-panel fxFlex [data]="activityWidgets['profileWidget']">
+                <div fxFlex fxLayout="row" fxLayoutAlign=" none">
+                    <img *ngIf="activityWidgets['profileWidget'].Data.ImageURL; else noData" [src]="activityWidgets['profileWidget'].Data.ImageURL" />
+                </div>
+                <div
+                    fxFlex
+                    fxLayout="column"
+                    fxLayoutAlign=" none"
+                    *ngIf="activityWidgets['profileWidget'].Data.Details && activityWidgets['profileWidget'].Data.Details.length > 0; else noData"
+                    class="p-8 custom-scroll-adjust"
+                >
+                    <div *ngFor="let item of activityWidgets['profileWidget'].Data.Details" class="mb-8">
+                        <span class="font-weight-700"> {{ item.Title }}: </span>
+                        <span>{{ item.Value }}</span>
+                    </div>
+                </div>
+            </tw-panel>
+            <tw-panel fxFlex [data]="activityWidgets['snapshotWidget']">
+                <img *ngIf="activityWidgets['snapshotWidget'].Data.ImageURL; else noData" [src]="activityWidgets['snapshotWidget'].Data.ImageURL" />
+            </tw-panel>
+            <tw-panel fxFlex [data]="activityWidgets['locationWidget']">
+                <div
+                    *ngIf="activityWidgets['locationWidget'].Data.Location; else noData"
+                    class="w-100-p h-100-h"
+                    leaflet
+                    [leafletOptions]="activityWidgets['locationWidget'].Data.Location"
+                ></div>
+            </tw-panel>
+        </div>
+        <div fxFlex fxLayout="column" fxLayoutAlign=" none" style="gap: 8px">
+            <tw-panel fxFlex [data]="activityWidgets['screenshotWidget']">
+                <img
+                    *ngIf="activityWidgets['screenshotWidget'].Data.ImageURL; else noData"
+                    [src]="activityWidgets['screenshotWidget'].Data.ImageURL"
+                />
+            </tw-panel>
+            <tw-panel fxFlex [data]="activityWidgets['screenVideoWidget']">
+                <video
+                    *ngIf="activityWidgets['screenVideoWidget'].Data.VideoURL; else noData"
+                    [src]="activityWidgets['screenVideoWidget'].Data.VideoURL"
+                    controls
+                ></video>
+            </tw-panel>
+        </div>
+    </div>
+
+    <ng-template #noData>
+        <div fxFlex fxFlex fxLayout="column" fxLayoutAlign="center center" class="border-radius-20 border-md-primary">
+            <span class="mat-title m-0">No Preview</span>
+        </div>
+    </ng-template>
+
+    <!-- your code goes here -->
+</tw-wrapper>

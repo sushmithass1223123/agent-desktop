@@ -1,0 +1,28 @@
+tw-create-interaction {
+    .fab-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        > div {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    }
+
+    .fab-toggler {
+        float: right;
+        z-index: 1000;
+    }
+}
+
+.create-messaging-dialog,
+.agent-skill-dialog {
+    .mat-dialog-container {
+        padding: 0;
+        border-radius: 20px !important;
+        overflow-x: hidden;
+    }
+}
+

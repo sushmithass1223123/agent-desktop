@@ -1,0 +1,112 @@
+@import 'src/app/scss/shared';
+
+tw-audio-controls {
+    .mat-card-content {
+        background: inherit !important;
+
+        avatar {
+            &.talking {
+                .avatar-content {
+                    border: 3px solid $tw-primary;
+                }
+            }
+        }
+
+        .call-details {
+            line-height: 1.8;
+
+            .mat-icon {
+                font-size: 20px;
+            }
+        }
+
+        .call-controls {
+            .actions {
+                button {
+                    margin: 8px 4px 0px;
+                }
+                button:not(.mat-warn) {
+                    background-color: rgba(0, 0, 0, 0.05);
+                }
+            }
+
+            .controls {
+                button:not(.mat-button-disabled, .mat-warn) {
+                    background: $tw-primary;
+                    color: $tw-dark;
+                }
+
+                button {
+                    .mat-button-wrapper {
+                        justify-content: center;
+                        align-items: center;
+                        display: flex;
+                    }
+
+                    margin: 8px 4px 0px;
+                    width: 70px;
+                    height: 40px;
+                    border-radius: 20px;
+
+                    &.success:not(.mat-button-disabled) {
+                        background: $tw-success;
+                    }
+
+                    &.danger:not(.mat-button-disabled) {
+                        background: $tw-danger;
+                    }
+
+                    &.warning:not(.mat-button-disabled) {
+                        background: $tw-warning;
+                    }
+                }
+            }
+        }
+
+        .remote-video-container {
+            position: relative;
+            height: calc(100% - (50px));
+
+            .remote-video {
+                overflow: hidden;
+                position: relative;
+                min-width: 160px;
+                min-height: 120px;
+                max-width: 100%;
+                max-height: 44vh;
+                border: 2px solid #ffffff;
+                transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+                &.maximized {
+                    max-height: 85vh;
+                }
+
+                video {
+                    display: block;
+                    width: 100%;
+                    height: 100%;
+                    border-radius: 16px;
+                    transition: opacity 1s;
+                }
+
+                button {
+                    position: absolute;
+                    top: 10px;
+                    left: 10px;
+                    width: 32px;
+                    height: 32px;
+                }
+
+                .user {
+                    position: absolute;
+                    bottom: 5px;
+                    left: 5px;
+                    z-index: 1;
+                    font-size: 14px;
+                    background-color: rgb(49 49 49);
+                    color: rgb(255 255 255 / 54%);
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,24 @@
+<!-- PROGRESS BAR -->
+<fuse-progress-bar></fuse-progress-bar>
+<!-- / PROGRESS BAR -->
+
+<div fxFill class="p-md-36 pt-16" fxLayout xLayoutAlign="center center">
+    <div
+        fxFill
+        fxLayout="row wrap"
+        fxLayoutAlign="center none"
+        *ngIf="!loading && dynamicWidgets.length > 0; else noWidgets"
+        class="widget-grid custom-scroll-adjust"
+    >
+        <tw-template fxFlex.gt-md="33" class="static-widget-grid" *ngIf="staticWidgets.length > 0" [widgets]="staticWidgets"></tw-template>
+        <tw-template fxFlex.gt-md="66" class="dynamic-widget-grid" *ngIf="dynamicWidgets.length > 0" [widgets]="dynamicWidgets"></tw-template>
+    </div>
+</div>
+
+<ng-template #noWidgets>
+    <twc-no-widgets class="twc-card" type="Preview"></twc-no-widgets>
+</ng-template>
+
+<div class="spinner" *ngIf="loading">
+    <mat-spinner></mat-spinner>
+</div>

@@ -1,0 +1,1881 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>agent-desktop documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	      <link rel="stylesheet" href="../styles/style.css">
+    </head>
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top visible-xs">
+            <a href="../" class="navbar-brand">agent-desktop documentation</a>
+            <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="hidden-xs menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+<ol class="breadcrumb">
+  <li>Components</li>
+  <li>TwCannedResponsesComponent</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="active">
+            <a href="#info" role="tab" id="info-tab" data-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li >
+            <a href="#source" role="tab" id="source-tab" data-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li >
+            <a href="#templateData" role="tab" id="templateData-tab" data-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li >
+            <a href="#styleData" role="tab" id="styleData-tab" data-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li >
+            <a href="#tree" role="tab" id="tree-tab" data-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="c-info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>src/app/modules/t-widgets/tw-collections/tw-canned-responses/tw-canned-responses.component.ts</code>
+</p>
+
+    <p class="comment">
+        <h3>Description</h3>
+    </p>
+    <p class="comment">
+        <p>TW canned Responses</p>
+
+    </p>
+
+    <p class="comment">
+        <h3>Extends</h3>
+    </p>
+    <p class="comment">
+                <code><a href="../classes/TWidget.html" target="_self" >TWidgetWrapper</a></code>
+    </p>
+
+    <p class="comment">
+        <h3>Implements</h3>
+    </p>
+    <p class="comment">
+                    <code><a href="https://angular.io/api/core/OnInit" target="_blank" >OnInit</a></code>
+                    <code><a href="https://angular.io/api/core/OnDestroy" target="_blank" >OnDestroy</a></code>
+    </p>
+
+
+<section>
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover">
+        <tbody>
+
+
+            <tr>
+                <td class="col-md-3">encapsulation</td>
+                <td class="col-md-9"><code>ViewEncapsulation.None</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>tw-canned-responses</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./tw-canned-responses.component.scss</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./tw-canned-responses.component.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section>
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#CallerIntentEvent">CallerIntentEvent</a>
+                            </li>
+                            <li>
+                                <a href="#departments">departments</a>
+                            </li>
+                            <li>
+                                <a href="#groups">groups</a>
+                            </li>
+                            <li>
+                                <a href="#interactionId">interactionId</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#OnNLPDataEvent">OnNLPDataEvent</a>
+                            </li>
+                            <li>
+                                <a href="#responseMode">responseMode</a>
+                            </li>
+                            <li>
+                                <a href="#selectedDepartment">selectedDepartment</a>
+                            </li>
+                            <li>
+                                <a href="#selectedGroup">selectedGroup</a>
+                            </li>
+                            <li>
+                                <a href="#selectedTemplate">selectedTemplate</a>
+                            </li>
+                            <li>
+                                <a href="#templates">templates</a>
+                            </li>
+                            <li>
+                                <a href="#templateText">templateText</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#WorkCodeAddedEvent">WorkCodeAddedEvent</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#changeMode">changeMode</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#clearAllData">clearAllData</a>
+                            </li>
+                            <li>
+                                <a href="#ngOnDestroy">ngOnDestroy</a>
+                            </li>
+                            <li>
+                                <a href="#ngOnInit">ngOnInit</a>
+                            </li>
+                            <li>
+                                <a href="#onSelectDepartment">onSelectDepartment</a>
+                            </li>
+                            <li>
+                                <a href="#onSelectGroups">onSelectGroups</a>
+                            </li>
+                            <li>
+                                <a href="#onTemplateSelect">onTemplateSelect</a>
+                            </li>
+                            <li>
+                                <a href="#sendTemplate">sendTemplate</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Inputs</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#data">data</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section>
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(_tmacEventService: <a href="../injectables/TMACEventService.html">TMACEventService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="59" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-canned-responses/tw-canned-responses.component.ts:59</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div class="io-description"><p>Constructor </p>
+</div>
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>_tmacEventService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/TMACEventService.html" target="_self" >TMACEventService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+    <section>
+    <h3 id="inputs">Inputs</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="data"></a>
+                        <b>data</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/IWidget.html" target="_self" >IWidget</a></code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-canned-responses/tw-canned-responses.component.ts:22</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>holds all the data related to this widget from the config</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+
+
+    <section>
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="changeMode"></a>
+                    <span class="name">
+                        <b>
+                            changeMode
+                        </b>
+                        <a href="#changeMode"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>changeMode(event: MatSelectChange)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="271"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-canned-responses/tw-canned-responses.component.ts:271</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Change Mode</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>event</td>
+                                    <td>
+                                            <code>MatSelectChange</code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="clearAllData"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Private</span>
+                            clearAllData
+                        </b>
+                        <a href="#clearAllData"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>clearAllData()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="171"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-canned-responses/tw-canned-responses.component.ts:171</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Reset form</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngOnDestroy"></a>
+                    <span class="name">
+                        <b>
+                            ngOnDestroy
+                        </b>
+                        <a href="#ngOnDestroy"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngOnDestroy()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="106"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-canned-responses/tw-canned-responses.component.ts:106</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngOnInit"></a>
+                    <span class="name">
+                        <b>
+                            ngOnInit
+                        </b>
+                        <a href="#ngOnInit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngOnInit()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="78"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-canned-responses/tw-canned-responses.component.ts:78</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>A callback method that is invoked immediately after the default change detector has checked the directive&#39;s data-bound properties for the first time,
+and before any of the view or content children have been checked. It is invoked only once when the directive is instantiated.</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onSelectDepartment"></a>
+                    <span class="name">
+                        <b>
+                            onSelectDepartment
+                        </b>
+                        <a href="#onSelectDepartment"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>onSelectDepartment(event: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="188"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-canned-responses/tw-canned-responses.component.ts:188</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Select Department</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>event</td>
+                                    <td>
+                                                <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onSelectGroups"></a>
+                    <span class="name">
+                        <b>
+                            onSelectGroups
+                        </b>
+                        <a href="#onSelectGroups"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>onSelectGroups(event: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="208"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-canned-responses/tw-canned-responses.component.ts:208</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Slect Groups</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>event</td>
+                                    <td>
+                                                <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onTemplateSelect"></a>
+                    <span class="name">
+                        <b>
+                            onTemplateSelect
+                        </b>
+                        <a href="#onTemplateSelect"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>onTemplateSelect(template: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="235"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-canned-responses/tw-canned-responses.component.ts:235</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Template Selct</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>template</td>
+                                    <td>
+                                                <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="sendTemplate"></a>
+                    <span class="name">
+                        <b>
+                            sendTemplate
+                        </b>
+                        <a href="#sendTemplate"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>sendTemplate(template: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="245"
+                            class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-canned-responses/tw-canned-responses.component.ts:245</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Send selected template</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>template</td>
+                                    <td>
+                                                <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section>
+    
+        <h3 id="inputs">
+            Properties
+        </h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="CallerIntentEvent"></a>
+                        <span class="name">
+                            <b>
+                                <span class="modifier">Private</span>
+                            CallerIntentEvent</b>
+                            <a href="#CallerIntentEvent"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>() &#x3D;&gt; {...}</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="139" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-canned-responses/tw-canned-responses.component.ts:139</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>CallerIntentEvent Handler</p>
+</div>
+                    </td>
+                </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                          <div class="io-description">
+                                  <b>Parameters :</b>
+                                  <table class="params">
+                                      <thead>
+                                          <tr>
+                                                <td>Name</td>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                                <tr>
+                                                        <td>evt</td>
+                                                </tr>
+                                      </tbody>
+                                  </table>
+                          </div>
+                        </td>
+                    </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="departments"></a>
+                        <span class="name">
+                            <b>
+                            departments</b>
+                            <a href="#departments"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>    <code>[]</code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>[]</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="31" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-canned-responses/tw-canned-responses.component.ts:31</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Departments</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="groups"></a>
+                        <span class="name">
+                            <b>
+                            groups</b>
+                            <a href="#groups"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>    <code>[]</code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>[]</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="39" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-canned-responses/tw-canned-responses.component.ts:39</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Groups</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="interactionId"></a>
+                        <span class="name">
+                            <b>
+                            interactionId</b>
+                            <a href="#interactionId"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="27" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-canned-responses/tw-canned-responses.component.ts:27</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Interaction Id</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="OnNLPDataEvent"></a>
+                        <span class="name">
+                            <b>
+                                <span class="modifier">Private</span>
+                            OnNLPDataEvent</b>
+                            <a href="#OnNLPDataEvent"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>() &#x3D;&gt; {...}</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="155" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-canned-responses/tw-canned-responses.component.ts:155</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>OnNLPDataEvent Handler</p>
+</div>
+                    </td>
+                </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                          <div class="io-description">
+                                  <b>Parameters :</b>
+                                  <table class="params">
+                                      <thead>
+                                          <tr>
+                                                <td>Name</td>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                                <tr>
+                                                        <td>evt</td>
+                                                </tr>
+                                      </tbody>
+                                  </table>
+                          </div>
+                        </td>
+                    </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="responseMode"></a>
+                        <span class="name">
+                            <b>
+                            responseMode</b>
+                            <a href="#responseMode"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>&#x27;auto&#x27;</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="59" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-canned-responses/tw-canned-responses.component.ts:59</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Type of response &#39;auto&#39; or &#39;manual&#39;</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="selectedDepartment"></a>
+                        <span class="name">
+                            <b>
+                            selectedDepartment</b>
+                            <a href="#selectedDepartment"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="35" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-canned-responses/tw-canned-responses.component.ts:35</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Selected Departments</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="selectedGroup"></a>
+                        <span class="name">
+                            <b>
+                            selectedGroup</b>
+                            <a href="#selectedGroup"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="43" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-canned-responses/tw-canned-responses.component.ts:43</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Selected Groups</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="selectedTemplate"></a>
+                        <span class="name">
+                            <b>
+                            selectedTemplate</b>
+                            <a href="#selectedTemplate"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="51" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-canned-responses/tw-canned-responses.component.ts:51</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Selected Templates</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="templates"></a>
+                        <span class="name">
+                            <b>
+                            templates</b>
+                            <a href="#templates"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>    <code>[]</code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>[]</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="47" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-canned-responses/tw-canned-responses.component.ts:47</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Template list</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="templateText"></a>
+                        <span class="name">
+                            <b>
+                            templateText</b>
+                            <a href="#templateText"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="55" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-canned-responses/tw-canned-responses.component.ts:55</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Template text</p>
+</div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="WorkCodeAddedEvent"></a>
+                        <span class="name">
+                            <b>
+                                <span class="modifier">Private</span>
+                            WorkCodeAddedEvent</b>
+                            <a href="#WorkCodeAddedEvent"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>() &#x3D;&gt; {...}</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="124" class="link-to-prism">src/app/modules/t-widgets/tw-collections/tw-canned-responses/tw-canned-responses.component.ts:124</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>WorkCodeAddedEvent Handler</p>
+</div>
+                    </td>
+                </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                          <div class="io-description">
+                                  <b>Parameters :</b>
+                                  <table class="params">
+                                      <thead>
+                                          <tr>
+                                                <td>Name</td>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                                <tr>
+                                                        <td>evt</td>
+                                                </tr>
+                                      </tbody>
+                                  </table>
+                          </div>
+                        </td>
+                    </tr>
+            </tbody>
+        </table>
+</section>
+
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="c-source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from &#x27;@angular/core&#x27;;
+import { MatSelectChange } from &#x27;@angular/material/select&#x27;;
+import { TMACEventService } from &#x27;@services/tmac-event.service&#x27;;
+import { TWidgetWrapper } from &#x27;@twidgets/utils/widget-wrapper/tw-wrapper&#x27;;
+import { IWidget } from &#x27;app/interfaces&#x27;;
+import { sortBy, uniqBy } from &#x27;lodash&#x27;;
+import { CallerIntentEvent, IResponse, IUIEvent, SDKClient, WorkCodeAddedEvent } from &#x27;tmac-sdk&#x27;;
+
+/**
+ * TW canned Responses
+ */
+@Component({
+    selector: &#x27;tw-canned-responses&#x27;,
+    templateUrl: &#x27;./tw-canned-responses.component.html&#x27;,
+    styleUrls: [&#x27;./tw-canned-responses.component.scss&#x27;],
+    encapsulation: ViewEncapsulation.None
+})
+export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+    /**
+     * holds all the data related to this widget from the config
+     */
+    @Input() data: IWidget;
+
+    /**
+     * Interaction Id
+     */
+    interactionId: number;
+    /**
+     * Departments
+     */
+    departments &#x3D; [];
+    /**
+     * Selected Departments
+     */
+    selectedDepartment: any;
+    /**
+     * Groups
+     */
+    groups &#x3D; [];
+    /**
+     * Selected Groups
+     */
+    selectedGroup: any;
+    /**
+     * Template list
+     */
+    templates &#x3D; [];
+    /**
+     * Selected Templates
+     */
+    selectedTemplate: any;
+    /**
+     * Template text
+     */
+    templateText: string;
+    /**
+     * Type of response &#x27;auto&#x27; or &#x27;manual&#x27;
+     */
+    responseMode &#x3D; &#x27;auto&#x27;;
+
+    /**
+     * Constructor 
+     */
+    constructor(
+        private _tmacEventService: TMACEventService
+    ) {
+        super();
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+    // @ Lifecycle hooks
+    // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * A callback method that is invoked immediately after the default change detector has checked the directive&#x27;s data-bound properties for the first time,
+     * and before any of the view or content children have been checked. It is invoked only once when the directive is instantiated.
+     */
+    ngOnInit(): void {
+        // call the wrapper init method
+        this.initWrapper(this.data);
+
+        // assign the interaction id
+        this.interactionId &#x3D; this.data.InteractionDetails?.InteractionID;
+
+        SDKClient.getTextTemplateDepartments({}).then((result: IResponse) &#x3D;&gt; {
+            this.departments &#x3D; result.response;
+        });
+
+
+        // get the event from event bag to make sure no events are missed
+        const eventBag &#x3D; this._tmacEventService.get(this.interactionId);
+
+        // process the events if any
+        eventBag.forEach((evt: IUIEvent) &#x3D;&gt; {
+            this[evt.EventName]?.(evt);
+        });
+
+        SDKClient.events.on(&#x27;OnNLPDataEvent&#x27;, this.OnNLPDataEvent);
+        SDKClient.events.on(&#x27;CallerIntentEvent&#x27;, this.CallerIntentEvent);
+        SDKClient.events.on(&#x27;WorkCodeAddedEvent&#x27;, this.WorkCodeAddedEvent);
+    }
+
+    /**
+     * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
+     */
+    ngOnDestroy(): void {
+        // call the wrapper destroy method
+        this.destroyWrapper();
+
+        SDKClient.events.off(&#x27;OnNLPDataEvent&#x27;, this.OnNLPDataEvent);
+        SDKClient.events.on(&#x27;CallerIntentEvent&#x27;, this.CallerIntentEvent);
+        SDKClient.events.off(&#x27;CallerIntentEvent&#x27;, this.CallerIntentEvent);
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+    // @  Private Methods
+    // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * WorkCodeAddedEvent Handler
+     * @method WorkCodeAddedEvent
+     * @param {WorkCodeAddedEvent} evt 
+     */
+    private WorkCodeAddedEvent &#x3D; (evt: WorkCodeAddedEvent) &#x3D;&gt; {
+        // check for the interaction
+        if (this.interactionId !&#x3D;&#x3D; evt.InteractionID) {
+            return;
+        }
+
+        const newGroups &#x3D; sortBy(uniqBy([...this.groups, evt], &#x27;Name&#x27;), &#x27;Name&#x27;);
+        this.groups &#x3D; newGroups;
+    }
+
+    /**
+     * CallerIntentEvent Handler
+     * @method CallerIntentEvent
+     * @param {CallerIntentEvent} evt 
+     */
+    private CallerIntentEvent &#x3D; (evt: CallerIntentEvent) &#x3D;&gt; {
+        // check for the interaction
+        if (this.interactionId !&#x3D;&#x3D; evt.InteractionID) {
+            return;
+        }
+
+        const newGroup &#x3D; { ...evt, Name: evt.IntentName };
+        const newGroups &#x3D; sortBy(uniqBy([...this.groups, newGroup], &#x27;Name&#x27;), &#x27;Name&#x27;);
+        this.groups &#x3D; newGroups;
+    }
+
+    /**
+     * OnNLPDataEvent Handler
+     * @method OnNLPDataEvent
+     * @param {OnNLPDataEvent} evt 
+     */
+    private OnNLPDataEvent &#x3D; (evt: any): void &#x3D;&gt; {
+        const parsedJson &#x3D; JSON.parse(evt.JsonData);
+
+        // check for the interaction
+        if (this.interactionId.toString() !&#x3D;&#x3D; parsedJson.interactionID) {
+            return;
+        }
+
+        const newGroup &#x3D; JSON.parse(parsedJson.nluResult);
+        this.onSelectGroups({ value: newGroup.intent.name });
+    }
+
+    /**
+     * Reset form
+     * @method clearAllData
+     */
+    private clearAllData(): void {
+        this.selectedDepartment &#x3D; null;
+        this.groups &#x3D; [];
+        this.selectedGroup &#x3D; null;
+        this.templates &#x3D; [];
+        this.selectedTemplate &#x3D; null;
+        this.templateText &#x3D; &#x27;&#x27;;
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+    // @  Public Methods
+    // -----------------------------------------------------------------------------------------------------
+    /**
+     * Select Department
+     * @method onSelectDepartment
+     * @param {any} event 
+     */
+    onSelectDepartment(event: any): void {
+        const value &#x3D; event.value;
+        // check if value is there
+        if (!value) {
+            // clear all data
+            this.clearAllData();
+            return;
+        }
+
+        // get the groups for the department
+        SDKClient.getTextTemplateGroups(value, null).then((result: IResponse) &#x3D;&gt; {
+            this.groups &#x3D; sortBy(result.response, &#x27;Name&#x27;);
+        });
+    }
+
+    /**
+     * Slect Groups
+     * @method onSelectGroups
+     * @param {any} event 
+     */
+    onSelectGroups(event: any): void {
+        const value &#x3D; event.value;
+        // check if value is there
+        if (!value) {
+            // if none selected then clear templates and selected template
+            this.templates &#x3D; [];
+            this.selectedTemplate &#x3D; null;
+            this.templateText &#x3D; &#x27;&#x27;;
+            return;
+        }
+
+        // get the templates for the group
+        SDKClient.getTextTemplates(value, null).then((result: IResponse) &#x3D;&gt; {
+            if (this.responseMode &#x3D;&#x3D;&#x3D; &#x27;auto&#x27;) {
+                this.templates &#x3D; [...result.response, ...this.templates];
+            }
+            else {
+                this.templates &#x3D; result.response;
+            }
+        });
+    }
+
+    /**
+     * Template Selct
+     * @method onTemplateSelect
+     * @param template 
+     */
+    onTemplateSelect(template: any): void {
+        this.selectedTemplate &#x3D; template;
+        this.templateText &#x3D; template.Text;
+    }
+
+    /**
+     * Send selected template
+     * @method sendTemplate
+     * @param {sendTemplate} template 
+     */
+    sendTemplate(template: any): void {
+        // check if any interaction is present
+        if (!this.interactionId) {
+            return;
+        }
+
+        // modify the tmplate text with typed value
+        template.Text &#x3D; this.templateText;
+
+        // send an event out for the listner to send
+        SDKClient.events.emit(&#x27;CannedResposeEvent&#x27;, {
+            InteractionID: this.interactionId,
+            Template: template
+        });
+
+        if (this.responseMode !&#x3D;&#x3D; &#x27;auto&#x27;) {
+            // clear all data
+            this.clearAllData();
+        }
+    }
+
+    /**
+     * Change Mode
+     * @method changeMode
+     * @param {MatSelectChange} event 
+     */
+    changeMode(event: MatSelectChange): void {
+        if (event.value &#x3D;&#x3D;&#x3D; &#x27;manual&#x27;) {
+            console.log(&#x27;Cancelling listeners&#x27;);
+            SDKClient.events.off(&#x27;OnNLPDataEvent&#x27;, this.OnNLPDataEvent);
+            SDKClient.events.off(&#x27;CallerIntentEvent&#x27;, this.CallerIntentEvent);
+            SDKClient.events.off(&#x27;WorkCodeAddedEvent&#x27;, this.WorkCodeAddedEvent);
+            this.clearAllData();
+        } else {
+            console.log(&#x27;Llistening&#x27;);
+            SDKClient.events.on(&#x27;OnNLPDataEvent&#x27;, this.OnNLPDataEvent);
+            SDKClient.events.on(&#x27;CallerIntentEvent&#x27;, this.CallerIntentEvent);
+            SDKClient.events.on(&#x27;WorkCodeAddedEvent&#x27;, this.WorkCodeAddedEvent);
+            this.clearAllData();
+        }
+    }
+}
+
+// for more info visit - https://angular.io/api/core
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="c-templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper --&gt;
+&lt;!-- implement following events in your component to access widget wrapper action events --&gt;
+&lt;!-- (maximizeEvent)&#x3D;&quot;maximizeEvent.emit($event)&quot; (collapseEvent)&#x3D;&quot;collapseEvent.emit($event)&quot; (floatEvent)&#x3D;&quot;floatEvent.emit($event)&quot; --&gt;
+
+&lt;!-- PLEASE NOTE: do not add any other attributes or directive to &#x27;tw-wrapper&#x27; selector --&gt;
+
+&lt;tw-wrapper [data]&#x3D;&quot;data&quot;&gt;
+    &lt;!-- your code goes here --&gt;
+    &lt;div fxFill fxFlex fxLayout&#x3D;&quot;column&quot; fxLayoutAlign&#x3D;&quot; none&quot; class&#x3D;&quot;px-16 py-4&quot;&gt;
+        &lt;div fxLayout&#x3D;&quot;row&quot; fxLayoutAlign&#x3D;&quot;space-between center&quot; class&#x3D;&quot;w-100-p template-selector&quot;&gt;
+            &lt;div fxFill fxFlex&#x3D;&quot;50&quot; class&#x3D;&quot;mr-4&quot;&gt;
+                &lt;mat-form-field fxFill class&#x3D;&quot;custom select-box&quot; appearance&#x3D;&quot;outline&quot;&gt;
+                    &lt;mat-select placeholder&#x3D;&quot;Mode&quot; [(ngModel)]&#x3D;&quot;responseMode&quot; (selectionChange)&#x3D;&quot;changeMode($event)&quot;&gt;
+                        &lt;mat-option value&#x3D;&quot;auto&quot;&gt;Auto&lt;/mat-option&gt;
+                        &lt;mat-option value&#x3D;&quot;manual&quot;&gt;Manual&lt;/mat-option&gt;
+                    &lt;/mat-select&gt;
+                &lt;/mat-form-field&gt;
+            &lt;/div&gt;
+
+            &lt;div fxFill fxFlex&#x3D;&quot;50&quot; class&#x3D;&quot;mr-4&quot;&gt;
+                &lt;mat-form-field fxFill class&#x3D;&quot;custom select-box&quot; appearance&#x3D;&quot;outline&quot;&gt;
+                    &lt;mat-select
+                        placeholder&#x3D;&quot;Department&quot;
+                        [(ngModel)]&#x3D;&quot;selectedDepartment&quot;
+                        (selectionChange)&#x3D;&quot;onSelectDepartment($event)&quot;
+                        [disabled]&#x3D;&quot;responseMode &#x3D;&#x3D;&#x3D; &#x27;auto&#x27;&quot;
+                    &gt;
+                        &lt;mat-option&gt;None&lt;/mat-option&gt;
+                        &lt;mat-option *ngFor&#x3D;&quot;let item of departments&quot; [value]&#x3D;&quot;item.ID&quot;&gt;{{ item.Name }}&lt;/mat-option&gt;
+                    &lt;/mat-select&gt;
+                    &lt;mat-error&gt; Department is required &lt;/mat-error&gt;
+                &lt;/mat-form-field&gt;
+            &lt;/div&gt;
+            &lt;div fxFill fxFlex&#x3D;&quot;50&quot;&gt;
+                &lt;mat-form-field fxFill class&#x3D;&quot;custom select-box&quot; appearance&#x3D;&quot;outline&quot;&gt;
+                    &lt;mat-select
+                        placeholder&#x3D;&quot;Groups&quot;
+                        [disabled]&#x3D;&quot;!selectedDepartment &amp;&amp; responseMode &#x3D;&#x3D;&#x3D; &#x27;manual&#x27;&quot;
+                        [(ngModel)]&#x3D;&quot;selectedGroup&quot;
+                        (selectionChange)&#x3D;&quot;onSelectGroups($event)&quot;
+                    &gt;
+                        &lt;mat-option&gt;None&lt;/mat-option&gt;
+                        &lt;mat-option *ngFor&#x3D;&quot;let item of groups&quot; [value]&#x3D;&quot;item.Name&quot;&gt;{{ item.Name }}&lt;/mat-option&gt;
+                    &lt;/mat-select&gt;
+                    &lt;mat-error&gt; Groups is required &lt;/mat-error&gt;
+                &lt;/mat-form-field&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div fxLayout&#x3D;&quot;row&quot; class&#x3D;&quot;mt-4 w-100-p template-items&quot;&gt;
+            &lt;div
+                *ngIf&#x3D;&quot;templates.length &gt; 0&quot;
+                fxFlex&#x3D;&quot;40&quot;
+                fxLayout&#x3D;&quot;column&quot;
+                class&#x3D;&quot;animate__animated animate__faster animate__slideInLeft&quot;
+                fusePerfectScrollbar
+                [fusePerfectScrollbarOptions]&#x3D;&quot;{ suppressScrollX: true }&quot;
+            &gt;
+                &lt;button
+                    mat-flat-button
+                    class&#x3D;&quot;w-90-p mb-8 border-radius-10 template&quot;
+                    [color]&#x3D;&quot;template &#x3D;&#x3D;&#x3D; selectedTemplate ? &#x27;primary&#x27; : &#x27;&#x27;&quot;
+                    *ngFor&#x3D;&quot;let template of templates&quot;
+                    (click)&#x3D;&quot;onTemplateSelect(template)&quot;
+                    [matTooltip]&#x3D;&quot;template.Name&quot;
+                &gt;
+                    {{ template.Name }}
+                &lt;/button&gt;
+            &lt;/div&gt;
+            &lt;mat-form-field [fxFlex]&#x3D;&quot;templates.length &gt; 0 ? 60 : 100&quot; floatLabel&#x3D;&quot;never&quot; appearance&#x3D;&quot;standard&quot; class&#x3D;&quot;custom selected-template&quot;&gt;
+                &lt;textarea
+                    fxFlex
+                    matInput
+                    matAutosizeMinRows&#x3D;&quot;1&quot;
+                    [matTextareaAutosize]&#x3D;&quot;true&quot;
+                    placeholder&#x3D;&quot;Please select a template...&quot;
+                    [(ngModel)]&#x3D;&quot;templateText&quot;
+                    [disabled]&#x3D;&quot;!selectedTemplate&quot;
+                &gt;&lt;/textarea&gt;
+                &lt;button
+                    mat-button
+                    class&#x3D;&quot;select-btn bg-success border-radius-20&quot;
+                    [disabled]&#x3D;&quot;!selectedTemplate&quot;
+                    (click)&#x3D;&quot;sendTemplate(selectedTemplate)&quot;
+                &gt;
+                    Select
+                &lt;/button&gt;
+            &lt;/mat-form-field&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;!-- your code goes here --&gt;
+&lt;/tw-wrapper&gt;
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="c-styleData">
+                <p class="comment">
+                    <code>./tw-canned-responses.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">tw-canned-responses {
+    .template-selector {
+        height: 44px;
+    }
+
+    .template-items {
+        height: calc(100% - 44px);
+    }
+
+    .select-box {
+        border-radius: 20px;
+        background-color: rgb(0 0 0 / 0.1);
+        padding: 0px 7px;
+
+        .mat-form-field-wrapper {
+            .mat-form-field-flex {
+                padding: 0px 15px;
+
+                .mat-form-field-infix {
+                    padding: 0px !important;
+                    border: none;
+                    margin-top: 12px;
+
+                    .mat-form-field-label-wrapper {
+                        top: 0px !important;
+
+                        .mat-form-field-label {
+                            top: 0 !important;
+                        }
+                    }
+                }
+            }
+        }
+        .mat-form-field-underline {
+            display: none;
+        }
+    }
+
+    .mat-flat-button {
+        &amp;.template {
+            background-color: rgb(0 0 0 / 0.1);
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+    }
+
+    .selected-template {
+        .mat-form-field-wrapper {
+            height: 100%;
+
+            .mat-form-field-flex {
+                height: 100%;
+                padding: 0 !important;
+
+                .mat-form-field-infix {
+                    border-top: 0.3em solid transparent;
+                    height: 100%;
+                    padding: 0 !important;
+
+                    textarea {
+                        border-radius: 16px;
+                        overflow: hidden;
+                        width: 100%;
+                        height: 100% !important;
+                        padding: 12px 12px 10px 12px;
+                    }
+                }
+            }
+
+            .mat-form-field-underline {
+                display: none !important;
+            }
+        }
+
+        button {
+            position: absolute;
+            bottom: -12px;
+            right: 20px;
+        }
+    }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="c-tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper --><!-- implement following events in your component to access widget wrapper action events --><!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" --><!-- PLEASE NOTE: do not add any other attributes or directive to \'tw-wrapper\' selector --><tw-wrapper [data]="data">    <!-- your code goes here -->    <div fxFill fxFlex fxLayout="column" fxLayoutAlign=" none" class="px-16 py-4">        <div fxLayout="row" fxLayoutAlign="space-between center" class="w-100-p template-selector">            <div fxFill fxFlex="50" class="mr-4">                <mat-form-field fxFill class="custom select-box" appearance="outline">                    <mat-select placeholder="Mode" [(ngModel)]="responseMode" (selectionChange)="changeMode($event)">                        <mat-option value="auto">Auto</mat-option>                        <mat-option value="manual">Manual</mat-option>                    </mat-select>                </mat-form-field>            </div>            <div fxFill fxFlex="50" class="mr-4">                <mat-form-field fxFill class="custom select-box" appearance="outline">                    <mat-select                        placeholder="Department"                        [(ngModel)]="selectedDepartment"                        (selectionChange)="onSelectDepartment($event)"                        [disabled]="responseMode === \'auto\'"                    >                        <mat-option>None</mat-option>                        <mat-option *ngFor="let item of departments" [value]="item.ID">{{ item.Name }}</mat-option>                    </mat-select>                    <mat-error> Department is required </mat-error>                </mat-form-field>            </div>            <div fxFill fxFlex="50">                <mat-form-field fxFill class="custom select-box" appearance="outline">                    <mat-select                        placeholder="Groups"                        [disabled]="!selectedDepartment && responseMode === \'manual\'"                        [(ngModel)]="selectedGroup"                        (selectionChange)="onSelectGroups($event)"                    >                        <mat-option>None</mat-option>                        <mat-option *ngFor="let item of groups" [value]="item.Name">{{ item.Name }}</mat-option>                    </mat-select>                    <mat-error> Groups is required </mat-error>                </mat-form-field>            </div>        </div>        <div fxLayout="row" class="mt-4 w-100-p template-items">            <div                *ngIf="templates.length > 0"                fxFlex="40"                fxLayout="column"                class="animate__animated animate__faster animate__slideInLeft"                fusePerfectScrollbar                [fusePerfectScrollbarOptions]="{ suppressScrollX: true }"            >                <button                    mat-flat-button                    class="w-90-p mb-8 border-radius-10 template"                    [color]="template === selectedTemplate ? \'primary\' : \'\'"                    *ngFor="let template of templates"                    (click)="onTemplateSelect(template)"                    [matTooltip]="template.Name"                >                    {{ template.Name }}                </button>            </div>            <mat-form-field [fxFlex]="templates.length > 0 ? 60 : 100" floatLabel="never" appearance="standard" class="custom selected-template">                <textarea                    fxFlex                    matInput                    matAutosizeMinRows="1"                    [matTextareaAutosize]="true"                    placeholder="Please select a template..."                    [(ngModel)]="templateText"                    [disabled]="!selectedTemplate"                ></textarea>                <button                    mat-button                    class="select-btn bg-success border-radius-20"                    [disabled]="!selectedTemplate"                    (click)="sendTemplate(selectedTemplate)"                >                    Select                </button>            </mat-form-field>        </div>    </div>    <!-- your code goes here --></tw-wrapper></div>'
+    var COMPONENTS = [{'name': 'AlertDialogComponent', 'selector': 'alert-dialog'},{'name': 'AppComponent', 'selector': 'app'},{'name': 'AppConfirmDialogComponent', 'selector': 'app-confirm-dialog'},{'name': 'AppSnackbarComponent', 'selector': 'app-snackbar'},{'name': 'AppThemeOptionsComponent', 'selector': 'app-theme-options'},{'name': 'AvatarComponent', 'selector': 'avatar'},{'name': 'ContentComponent', 'selector': 'content'},{'name': 'CreateSmsComponent', 'selector': 'app-create-sms'},{'name': 'CustomDialogComponent', 'selector': 'custom-dialog'},{'name': 'FooterComponent', 'selector': 'footer'},{'name': 'FuseConfirmDialogComponent', 'selector': 'fuse-confirm-dialog'},{'name': 'FuseCountdownComponent', 'selector': 'fuse-countdown'},{'name': 'FuseDemoContentComponent', 'selector': 'fuse-demo-content'},{'name': 'FuseDemoSidebarComponent', 'selector': 'fuse-demo-sidebar'},{'name': 'FuseHighlightComponent', 'selector': 'fuse-highlight'},{'name': 'FuseMaterialColorPickerComponent', 'selector': 'fuse-material-color-picker'},{'name': 'FuseNavHorizontalCollapsableComponent', 'selector': 'fuse-nav-horizontal-collapsable'},{'name': 'FuseNavHorizontalItemComponent', 'selector': 'fuse-nav-horizontal-item'},{'name': 'FuseNavigationComponent', 'selector': 'fuse-navigation'},{'name': 'FuseNavVerticalCollapsableComponent', 'selector': 'fuse-nav-vertical-collapsable'},{'name': 'FuseNavVerticalGroupComponent', 'selector': 'fuse-nav-vertical-group'},{'name': 'FuseNavVerticalItemComponent', 'selector': 'fuse-nav-vertical-item'},{'name': 'FuseProgressBarComponent', 'selector': 'fuse-progress-bar'},{'name': 'FuseSearchBarComponent', 'selector': 'fuse-search-bar'},{'name': 'FuseShortcutsComponent', 'selector': 'fuse-shortcuts'},{'name': 'FuseSidebarComponent', 'selector': 'fuse-sidebar'},{'name': 'FuseThemeOptionsComponent', 'selector': 'fuse-theme-options'},{'name': 'FuseWidgetComponent', 'selector': 'fuse-widget'},{'name': 'HorizontalLayout1Component', 'selector': 'horizontal-layout-1'},{'name': 'InstantMessagingComponent', 'selector': 'instant-messaging'},{'name': 'LoginComponent', 'selector': 'login'},{'name': 'MainComponent', 'selector': 'main'},{'name': 'NavbarComponent', 'selector': 'navbar'},{'name': 'NoDataAvailableComponent', 'selector': 'no-data-available'},{'name': 'QuickPanelComponent', 'selector': 'quick-panel'},{'name': 'RaceCarTrackComponent', 'selector': 'race-car-track'},{'name': 'ReminderTaskDialogComponent', 'selector': 'reminder-task-dialog'},{'name': 'ResourceNotFoundComponent', 'selector': 'resource-not-found'},{'name': 'SnackbarComponent', 'selector': 'snackbar'},{'name': 'ToolbarComponent', 'selector': 'toolbar'},{'name': 'TwAccountInformationComponent', 'selector': 'tw-account-information'},{'name': 'TwActiveInteractionsComponent', 'selector': 'tw-active-interactions'},{'name': 'TwAdCallbacksComponent', 'selector': 'tw-ad-callbacks'},{'name': 'TwAdFeedbackComponent', 'selector': 'tw-ad-feedback'},{'name': 'TwAdGamificationComponent', 'selector': 'tw-ad-gamification'},{'name': 'TwAdInteractionDetailsComponent', 'selector': 'tw-ad-interaction-details'},{'name': 'TwAdPerformanceComponent', 'selector': 'tw-ad-performance'},{'name': 'TwAdScoreComponent', 'selector': 'tw-ad-score'},{'name': 'TwAdTotalInteractionsComponent', 'selector': 'tw-ad-total-interactions'},{'name': 'TwAgentAssistComponent', 'selector': 'tw-agent-assist'},{'name': 'TwAgentDetailsComponent', 'selector': 'tw-agent-details'},{'name': 'TwAhtTcComponent', 'selector': 'tw-aht-tc'},{'name': 'TwAmdocsBccComponent', 'selector': 'tw-amdocs-bcc'},{'name': 'TwAudioControlsComponent', 'selector': 'tw-audio-controls'},{'name': 'TwAuxCodesComponent', 'selector': 'tw-aux-codes'},{'name': 'TwAuxStatusChartComponent', 'selector': 'tw-aux-status-chart.component'},{'name': 'TwAuxTimerComponent', 'selector': 'tw-aux-timer'},{'name': 'TwBroadcastComponent', 'selector': 'tw-broadcast'},{'name': 'TwCannedResponsesComponent', 'selector': 'tw-canned-responses'},{'name': 'TwCardComponent', 'selector': 'tw-card'},{'name': 'TwCardHeaderComponent', 'selector': 'tw-card-header'},{'name': 'TwcCustomComponent', 'selector': 'twc-custom'},{'name': 'TwcEmailComponent', 'selector': 'twc-email'},{'name': 'TwChatControlsComponent', 'selector': 'tw-chat-controls'},{'name': 'TwChatPanelComponent', 'selector': 'tw-chat-panel'},{'name': 'TwcHomeComponent', 'selector': 'twc-home'},{'name': 'TwcNoInteractionComponent', 'selector': 'twc-no-interaction'},{'name': 'TwcNoWidgetsComponent', 'selector': 'twc-no-widgets'},{'name': 'TwCreateInteractionComponent', 'selector': 'tw-create-interaction'},{'name': 'TwcSupervisorComponent', 'selector': 'twc-supervisor'},{'name': 'TwcTextchatComponent', 'selector': 'twc-textchat'},{'name': 'TwcUnknownComponent', 'selector': 'twc-unknown'},{'name': 'TwCustomComponent', 'selector': 'tw-custom'},{'name': 'TwCustomerDetailsComponent', 'selector': 'tw-customer-details'},{'name': 'TwCustomerJourneyComponent', 'selector': 'tw-customer-journey'},{'name': 'TwCustomerSentimentComponent', 'selector': 'tw-customer-sentiment'},{'name': 'TwcVoiceComponent', 'selector': 'twc-voice'},{'name': 'TwcWorkbenchComponent', 'selector': 'twc-workbench'},{'name': 'TwEmailControlsComponent', 'selector': 'tw-email-controls'},{'name': 'TwEmailPanelComponent', 'selector': 'tw-email-panel'},{'name': 'TwGamificationComponent', 'selector': 'tw-gamification'},{'name': 'TwInstantMessagingComponent', 'selector': 'tw-instant-messaging'},{'name': 'TwLogoutComponent', 'selector': 'tw-logout'},{'name': 'TwNotificationsComponent', 'selector': 'tw-notifications'},{'name': 'TwPanelComponent', 'selector': 'tw-panel'},{'name': 'TwPendingCallbacksComponent', 'selector': 'tw-pending-callbacks'},{'name': 'TwPieChartComponent', 'selector': 'tw-pie-chart.component'},{'name': 'TwRegisterCallbackComponent', 'selector': 'tw-register-callback'},{'name': 'TwSampleComponent', 'selector': 'tw-sample'},{'name': 'TwSuActiveAgentsComponent', 'selector': 'tw-su-active-agents'},{'name': 'TwSuAgentActivityComponent', 'selector': 'tw-su-agent-activity'},{'name': 'TwSuAgentActivityDetailsComponent', 'selector': 'tw-su-agent-activity-details'},{'name': 'TwSuAgentInteractionsComponent', 'selector': 'tw-su-agent-interactions'},{'name': 'TwSuCallsInQueueComponent', 'selector': 'tw-su-calls-in-queue.component'},{'name': 'TwSuChannelsComponent', 'selector': 'tw-su-channels.component'},{'name': 'TwSuGamificationComponent', 'selector': 'tw-su-gamification'},{'name': 'TwSuIntentListComponent', 'selector': 'tw-su-intent-list'},{'name': 'TwSuStatusComponent', 'selector': 'tw-su-status.component'},{'name': 'TwTemplateComponent', 'selector': 'tw-template'},{'name': 'TwToolbarMenuComponent', 'selector': 'tw-toolbar-menu'},{'name': 'TwTransferInteractionComponent', 'selector': 'tw-transfer-interaction'},{'name': 'TwUnknownComponent', 'selector': 'tw-unknown'},{'name': 'TwVideoControlsComponent', 'selector': 'tw-video-controls'},{'name': 'TwVoiceBotTranscriptsComponent', 'selector': 'tw-voice-bot-transcripts'},{'name': 'TwVoiceCannedResponsesComponent', 'selector': 'tw-voice-canned-responses'},{'name': 'TwVoiceControlsComponent', 'selector': 'tw-voice-controls'},{'name': 'TwVoicePanelComponent', 'selector': 'tw-voice-panel'},{'name': 'TwWallboardComponent', 'selector': 'tw-wallboard'},{'name': 'TwWorkbenchPanelComponent', 'selector': 'tw-workbench-panel'},{'name': 'TwWorkCodesComponent', 'selector': 'tw-work-codes'},{'name': 'TwWrapperComponent', 'selector': 'tw-wrapper'},{'name': 'VerticalLayout1Component', 'selector': 'vertical-layout-1'},{'name': 'WidgetFabComponent', 'selector': 'widget-fab'},{'name': 'WidgetPreviewComponent', 'selector': 'widget-preview'},{'name': 'WorkbenchEmailComponent', 'selector': 'workbench-email'}];
+    var DIRECTIVES = [{'name': 'FuseIfOnDomDirective', 'selector': '[fuseIfOnDom]'},{'name': 'FuseInnerScrollDirective', 'selector': '.inner-scroll'},{'name': 'FuseMatSidenavHelperDirective', 'selector': '[fuseMatSidenavHelper]'},{'name': 'FuseMatSidenavTogglerDirective', 'selector': '[fuseMatSidenavToggler]'},{'name': 'FusePerfectScrollbarDirective', 'selector': '[fusePerfectScrollbar]'},{'name': 'FuseWidgetToggleDirective', 'selector': '[fuseWidgetToggle]'},{'name': 'QuillDirective', 'selector': '[quill]'},{'name': 'TWChartDirective', 'selector': '[twChart]'},{'name': 'TwTemplateDirective', 'selector': '[widgetTemplate]'}];
+    var ACTUAL_COMPONENT = {'name': 'TwCannedResponsesComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+                   
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> result-matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'TwCannedResponsesComponent.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+       <!-- Required to polyfill modern browsers as code is ES5 for IE... -->
+       <script src="../js/libs/custom-elements-es5-adapter.js" charset="utf-8" defer></script>
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+       <script src="../js/libs/zepto.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

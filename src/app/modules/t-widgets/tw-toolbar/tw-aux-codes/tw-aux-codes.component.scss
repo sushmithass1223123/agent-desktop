@@ -1,10 +1,10 @@
 tw-aux-codes {
-    .tw-aux-codes {
+    .aux-codes-btn {
         &::after {
             position: absolute;
-            bottom: -2px;
+            bottom: -4px;
             left: 20%;
-            content: "";
+            content: '';
             display: block;
             height: 0;
             width: 0;
@@ -20,27 +20,6 @@ tw-aux-codes {
                 transition: opacity 300ms cubic-bezier(0.25, 0.8, 0.25, 1);
                 opacity: 1;
                 z-index: 1104;
-            }
-        }
-    }
-}
-
-.tw-aux-codes-list {
-    border-radius: 2rem !important;
-
-    button {
-        height: 3.2rem;
-        line-height: 2rem;
-
-        .mat-icon {
-            color: #6c757d;
-
-            &.available {
-                color: #28a745;
-            }
-
-            &.logout {
-                color: #dc3545;
             }
         }
     }

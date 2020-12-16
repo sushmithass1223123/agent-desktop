@@ -1,0 +1,48 @@
+.reject-reason-dialog {
+    .mat-dialog-container {
+        // background-color: inherit;
+        padding: 0;
+        border-radius: 20px;
+    }
+}
+
+tw-email-controls {
+    .mat-standard-chip {
+        min-height: 50px;
+    }
+
+    .mat-card-content {
+        background: inherit !important;
+        box-shadow: none !important;
+        padding: 0px 3px 3px 3px !important;
+    }
+
+    .email-content {
+        // min-height: 500px;
+        height: 100%;
+        width: 100%;
+        overflow: auto;
+    }
+
+    .email-content-body {
+        top: 16px;
+        left: 0;
+        min-width: 100%;
+        width: 100%;
+        min-height: 200px;
+    }
+
+    .email-controls {
+        flex: 1;
+        overflow: auto;
+    }
+
+    button {
+        height: 36px;
+        .mat-button-wrapper {
+            justify-content: center;
+            align-items: center;
+            display: flex;
+        }
+    }
+}
