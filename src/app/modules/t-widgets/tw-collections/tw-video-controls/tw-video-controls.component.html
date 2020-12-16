@@ -53,7 +53,7 @@
                 <span fxLayout="row" fxLayoutAlign=" center"> <mat-icon>wifi</mat-icon> {{ mos }} </span>
                 <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>alarm_on</mat-icon> {{ startTime | date: 'mediumTime' }}</div>
                 <span fxLayout="row" fxLayoutAlign=" center">
-                    <mat-icon>timer</mat-icon> {{ (duration | date: 'H:mm:ss':'UTC') || '00:00:00' }}
+                    <mat-icon>timer</mat-icon> {{ (duration | date: 'HH:mm:ss':'UTC') || '00:00:00' }}
                 </span>
             </div>
         </div>

@@ -51,7 +51,7 @@
 
             <div fxLayout="row" fxLayoutAlign="space-between none">
                 <span fxLayout="row" fxLayoutAlign=" center">
-                    <mat-icon>timer</mat-icon> {{ (duration | date: 'H:mm:ss':'UTC') || '00:00:00' }}
+                    <mat-icon>timer</mat-icon> {{ (duration | date: 'HH:mm:ss':'UTC') || '00:00:00' }}
                 </span>
                 <span fxLayout="row" fxLayoutAlign=" center"> <mat-icon>offline_bolt</mat-icon> {{ status }} </span>
             </div>
@@ -90,7 +90,7 @@
                     <mat-icon>phone_in_talk</mat-icon>
                 </button>
 
-                <button mat-flat-button class="danger" matTooltip="End Call" (click)="endCall()">
+                <button mat-flat-button color="warn" matTooltip="End Call" (click)="endCall()">
                     <mat-icon>call_end</mat-icon>
                 </button>
             </div>

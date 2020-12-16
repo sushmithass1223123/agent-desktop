@@ -6,7 +6,7 @@
                 <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>construction</mat-icon> {{ sessionID + '|' + interactionId }}</div>
             </div>
             <div fxLayout="row" fxLayoutAlign="space-between none">
-                <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>timer</mat-icon> {{ (duration | date: 'H:mm:ss':'UTC') || '00:00:00' }}</div>
+                <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>timer</mat-icon> {{ (duration | date: 'HH:mm:ss':'UTC') || '00:00:00' }}</div>
                 <div fxLayout="row" fxLayoutAlign=" center" *ngIf="isSMM">
                     <mat-icon [svgIcon]="'custom-' + channel"></mat-icon>
                     <span class="text-bold ml-4">{{ channel }}</span>
