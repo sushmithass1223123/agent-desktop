@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { FuseConfigService } from '@fuse/services/config.service';
@@ -32,6 +32,26 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * data from widget
      */
     @Input() data: IWidget;
+
+    /**
+     * Reject email dialog
+     */
+    @ViewChild('rejectEmailDialog')
+    RejectEmailDialog: TemplateRef<any>;
+
+    /**
+     * Mat dialog ref for closing
+     */
+    rejectEmailDialogRef: MatDialogRef<any>;
+
+    /**
+     * Reject reason form inputs
+     */
+    rejectReason = {
+        allReasons: [],
+        reasonTags: '',
+        comment: ''
+    };
 
     /**
      * appConfig
@@ -230,6 +250,14 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             )
             .subscribe(async (x) => {
                 this.currentInteraction = await x;
+                // console.log({ x });
+                if (this.currentInteraction.RouteReason === 'CheckerQueue') {
+                    this.rejectReason.allReasons = this.currentInteraction.JsonData?.split(',') || [];
+                }
+                if (this.currentInteraction.RejectReason) {
+                    this.currentInteraction.RejectReason = JSON.parse(this.currentInteraction.RejectReason);
+                    this.currentInteraction.RejectReason.reasonTags = this.currentInteraction.RejectReason.reasonTags?.join(',') || '';
+                }
             });
 
         // set the user info
@@ -627,11 +655,15 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
         evt.disabled = true;
         const currentInteraction = this.currentInteraction;
-        const dialogRef = this._appUIService.showCustomDialog('prompt', 'Enter the comments', 'Reject Email');
-        dialogRef.afterClosed().subscribe((comment) => {
+        // const dialogRef = this._appUIService.showCustomDialog('prompt', 'Enter the comments', 'Reject Email');
+        this.rejectEmailDialogRef = this.matDialog.open(this.RejectEmailDialog, {
+            panelClass: 'reject-reason-dialog'
+        });
+        this.rejectEmailDialogRef.afterClosed().subscribe(() => {
+            const { comment, reasonTags } = this.rejectReason;
             if (comment) {
                 SDKClient.rejectEmail({
-                    reason: comment,
+                    reason: JSON.stringify({ comment, reasonTags }),
                     routeId: currentInteraction.RouteId,
                     sessionId: currentInteraction.OutSessionID
                 })
@@ -650,6 +682,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                         this._appUIService.showSnackbar('Error in saving interaction comment', 'failure');
                         evt.disabled = true;
                     });
+            } else {
+                evt.disabled = false;
             }
         });
     }

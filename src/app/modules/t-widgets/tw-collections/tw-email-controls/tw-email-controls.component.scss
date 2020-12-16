@@ -1,3 +1,11 @@
+.reject-reason-dialog {
+    .mat-dialog-container {
+        // background-color: inherit;
+        padding: 0;
+        border-radius: 20px;
+    }
+}
+
 tw-email-controls {
     .mat-standard-chip {
         min-height: 50px;

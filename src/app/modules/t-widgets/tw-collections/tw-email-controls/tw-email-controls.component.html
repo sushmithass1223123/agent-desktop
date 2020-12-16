@@ -98,11 +98,11 @@
                 class="email-content position-relative"
             >
                 <div fxLayout="column" class="px-12 py-8 mat-elevation-z1 z-index-1">
-                    <div *ngIf="currentInteraction.RejectReason" class="mat-title">
-                        <span class="text-danger"> [ REJECTED ] </span>
-                        {{ currentInteraction.RejectReason }}
+                    <div *ngIf="currentInteraction.RejectReason">
+                        <p class="text-danger p-4 mat-title">[ REJECTED ] : {{ currentInteraction.RejectReason.reasonTags }}</p>
+                        {{ currentInteraction.RejectReason.comment || '' }}
                     </div>
-
+                    <hr />
                     <div class="mat-title mb-8">
                         {{ currentInteraction.Subject }}
                     </div>
@@ -245,3 +245,30 @@
         </div>
     </div>
 </tw-wrapper>
+
+<ng-template #rejectEmailDialog>
+    <div
+        class="p-28"
+        [ngClass]="
+            fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                ? fuseConfig.layout.anchorWidget.contentBackground
+                : fuseConfig.layout.widget.customBackgroundColor === true
+                ? fuseConfig.layout.widget.contentBackground
+                : ''
+        "
+    >
+        <p class="mat-title">Reject Email</p>
+        <form (ngSubmit)="rejectEmailDialogRef.close()" novalidate fxLayout="row wrap" fxLayoutAlign="end" fxLayoutGap="20px">
+            <mat-form-field fxFlex="100" class="form-field custom with-bg" appearance="outline">
+                <mat-select placeholder="Select Reject Reason" name="reason" multiple [(ngModel)]="rejectReason.reasonTags">
+                    <mat-option [value]="reason" *ngFor="let reason of rejectReason.allReasons">{{ reason }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field fxFlex="100" class="message-text">
+                <textarea rows="5" matInput name="comment" placeholder="Describe Reason" [(ngModel)]="rejectReason.comment" required> </textarea>
+            </mat-form-field>
+            <button fxFlex="30" mat-raised-button color="primary" class="border-radius-20">Submit</button>
+            <button fxFlex="30" mat-raised-button type="button" (click)="rejectEmailDialogRef.close()" class="border-radius-20">Cancel</button>
+        </form>
+    </div>
+</ng-template>
