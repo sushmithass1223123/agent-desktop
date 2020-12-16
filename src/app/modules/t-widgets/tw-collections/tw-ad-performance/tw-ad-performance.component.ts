@@ -77,7 +77,8 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
         this.initWrapper(this.data);
 
         this.setChartData();
-        SDKClient.events.on('InteractionClosedEvent', this.startPolling);
+        // SDKClient.events.on('InteractionClosedEvent', this.startPolling);
+        this.startPolling();
     }
 
     /**
@@ -96,7 +97,7 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-        SDKClient.events.off('InteractionClosedEvent', this.startPolling);
+        // SDKClient.events.off('InteractionClosedEvent', this.startPolling);
     }
 
     /**
