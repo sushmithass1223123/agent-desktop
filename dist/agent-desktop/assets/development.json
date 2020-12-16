@@ -350,8 +350,8 @@
                         "Enabled": true,
                         "Class": "",
                         "Position": {
-                            "X": 3,
-                            "Y": 6
+                            "X": 6,
+                            "Y": 3
                         }
                     },
                     "Data": {
@@ -370,8 +370,8 @@
                                         "Icon": "dvr",
                                         "Class": "",
                                         "Position": {
-                                            "X": 3,
-                                            "Y": 2
+                                            "X": 2,
+                                            "Y": 3
                                         },
                                         "Actions": [],
                                         "ViewState": "restore",
@@ -398,7 +398,7 @@
                                         "Icon": "dvr",
                                         "Class": "",
                                         "Position": {
-                                            "X": 0,
+                                            "X": 1,
                                             "Y": 1
                                         },
                                         "Actions": [
@@ -418,7 +418,7 @@
                                     "Name": "AHT/Transfer/Conference ",
                                     "Description": "",
                                     "Key": "AHT-Trans-Conf-Count",
-                                    "Type": "tw-aht-tc",
+                                    "Type": "tw-sample",
                                     "Config": {
                                         "Enabled": true,
                                         "Static": false,
@@ -427,8 +427,8 @@
                                         "Icon": "phone",
                                         "Class": "",
                                         "Position": {
-                                            "X": 0,
-                                            "Y": 2
+                                            "X": 2,
+                                            "Y": 1
                                         },
                                         "Actions": [
                                             "maximize",
@@ -455,7 +455,7 @@
                                         "Icon": "",
                                         "Class": "duo",
                                         "Position": {
-                                            "X": 0,
+                                            "X": 1,
                                             "Y": 1
                                         },
                                         "Actions": [
@@ -484,7 +484,7 @@
                                         "Icon": "format_list_bulleted",
                                         "Class": "",
                                         "Position": {
-                                            "X": 0,
+                                            "X": 2,
                                             "Y": 2
                                         },
                                         "Actions": [
@@ -498,76 +498,19 @@
                                     "Data": {}
                                 },
                                 {
-                                    "Name": "Performance",
+                                    "Name": "Reminders",
                                     "Description": "",
-                                    "Key": "AgentPerformance",
-                                    "Type": "tw-ad-performance",
+                                    "Key": "AgentReminders",
+                                    "Type": "tw-custom",
                                     "Config": {
                                         "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
-                                        "Icon": "pie_chart",
+                                        "Icon": "event_note",
                                         "Class": "",
                                         "Position": {
-                                            "X": 0,
-                                            "Y": 1
-                                        },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "AgentProgressUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetProgress"
-                                    }
-                                },
-                                {
-                                    "Name": "Coins and Badges",
-                                    "Description": "",
-                                    "Key": "AgentGamification",
-                                    "Type": "tw-ad-gamification",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "Icon": "extension",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 1
-                                        },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "LeaderBoardUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetLeaderBoard",
-                                        "AgentProgressUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetProgress"
-                                    }
-                                },
-                                {
-                                    "Name": "Call-backs",
-                                    "Description": "phone_callback",
-                                    "Key": "AgentPendingCallbacks",
-                                    "Type": "tw-ad-callbacks",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "Icon": "",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
+                                            "X": 2,
                                             "Y": 2
                                         },
                                         "Actions": [
@@ -579,62 +522,10 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "GetCallbacksUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api/Contact/GetContactSessionByAgent"
+                                        "AutoOpen": false,
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/agent-desktop/reminders/index.html?agentid=_agentId&tmacserver=TmacServer1"
                                     }
-                                },
-                                {
-                                    "Name": "Feedback",
-                                    "Description": "",
-                                    "Key": "AgentFeeback",
-                                    "Type": "tw-ad-feedback",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "Icon": "feedback",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 1
-                                        },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "Source": "dashboard"
-                                    }
-                                },
-                                {
-                                    "Name": "Score",
-                                    "Description": "",
-                                    "Key": "AgentScore",
-                                    "Type": "tw-ad-score",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "Icon": "score",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 1
-                                        },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {}
                                 }
                             ],
                             "AOT": [
@@ -652,7 +543,7 @@
                                         "Class": "",
                                         "Position": {
                                             "X": 0,
-                                            "Y": 0,
+                                            "Y": 1,
                                             "W": 800,
                                             "H": 700
                                         },
@@ -683,7 +574,7 @@
                                         "Class": "",
                                         "Position": {
                                             "X": 0,
-                                            "Y": 0,
+                                            "Y": 1,
                                             "W": 300,
                                             "H": 300
                                         },
@@ -723,7 +614,7 @@
                                         "Class": "",
                                         "Position": {
                                             "X": 0,
-                                            "Y": 0,
+                                            "Y": 1,
                                             "W": 325,
                                             "H": 740
                                         },
@@ -755,8 +646,8 @@
                                         "Icon": "extension",
                                         "Class": "",
                                         "Position": {
-                                            "X": 2,
-                                            "Y": 4,
+                                            "X": 4,
+                                            "Y": 2,
                                             "W": 1200,
                                             "H": 700
                                         },
@@ -790,7 +681,7 @@
                                         "Class": "",
                                         "Position": {
                                             "X": 0,
-                                            "Y": 0
+                                            "Y": 1
                                         },
                                         "Actions": [],
                                         "ViewState": "restore",
@@ -801,39 +692,6 @@
                                         "AutoOpen": false,
                                         "OpenInNew": true,
                                         "Url": "https://www.singtel.com/contact-us"
-                                    }
-                                },
-                                {
-                                    "Name": "Reminders",
-                                    "Description": "",
-                                    "Key": "AgentReminders",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Static": false,
-                                        "Anchor": true,
-                                        "AOT": true,
-                                        "Icon": "event_note",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 0,
-                                            "W": 700,
-                                            "H": 600
-                                        },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy",
-                                            "pin"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "AutoOpen": false,
-                                        "OpenInNew": false,
-                                        "Url": "https://dice.tetherfi.cloud/agent-desktop/reminders/index.html?agentid=_agentId&tmacserver=TmacServer1"
                                     }
                                 }
                             ]
@@ -848,8 +706,8 @@
                         "Enabled": true,
                         "Class": "",
                         "Position": {
-                            "X": 3,
-                            "Y": 6
+                            "X": 6,
+                            "Y": 3
                         }
                     },
                     "Data": {
@@ -868,8 +726,8 @@
                                         "Icon": "vertical_split",
                                         "Class": "",
                                         "Position": {
-                                            "X": 3,
-                                            "Y": 2
+                                            "X": 2,
+                                            "Y": 3
                                         },
                                         "Actions": [],
                                         "ViewState": "restore",
@@ -895,7 +753,7 @@
                                         "Icon": "",
                                         "Class": "",
                                         "Position": {
-                                            "X": 0,
+                                            "X": 1,
                                             "Y": 1
                                         },
                                         "Actions": [
@@ -924,7 +782,7 @@
                                         "Icon": "",
                                         "Class": "",
                                         "Position": {
-                                            "X": 0,
+                                            "X": 1,
                                             "Y": 1
                                         },
                                         "Actions": [
@@ -951,7 +809,7 @@
                                         "Icon": "",
                                         "Class": "",
                                         "Position": {
-                                            "X": 0,
+                                            "X": 1,
                                             "Y": 1
                                         },
                                         "Actions": [
@@ -980,7 +838,7 @@
                                         "Icon": "",
                                         "Class": "",
                                         "Position": {
-                                            "X": 0,
+                                            "X": 1,
                                             "Y": 1
                                         },
                                         "Actions": [
@@ -1036,7 +894,7 @@
                                         "Icon": "",
                                         "Class": "",
                                         "Position": {
-                                            "X": 0,
+                                            "X": 1,
                                             "Y": 1
                                         },
                                         "Actions": [
@@ -1065,7 +923,7 @@
                                         "Icon": "",
                                         "Class": "",
                                         "Position": {
-                                            "X": 0,
+                                            "X": 1,
                                             "Y": 1
                                         },
                                         "Actions": [
@@ -1093,8 +951,8 @@
                                         "Icon": "",
                                         "Class": "",
                                         "Position": {
-                                            "X": 0,
-                                            "Y": 2
+                                            "X": 2,
+                                            "Y": 1
                                         },
                                         "Actions": [
                                             "maximize",
@@ -1125,7 +983,7 @@
                                         "Icon": "extension",
                                         "Class": "",
                                         "Position": {
-                                            "X": 0,
+                                            "X": 1,
                                             "Y": 1,
                                             "W": 500,
                                             "H": "300"
@@ -1155,7 +1013,7 @@
                                         "Icon": "store",
                                         "Class": "",
                                         "Position": {
-                                            "X": 0,
+                                            "X": 1,
                                             "Y": 1,
                                             "W": 1200,
                                             "H": 800
@@ -1186,8 +1044,8 @@
                         "Enabled": true,
                         "Class": "",
                         "Position": {
-                            "X": 3,
-                            "Y": 6
+                            "X": 6,
+                            "Y": 3
                         }
                     },
                     "Data": {
@@ -1206,8 +1064,8 @@
                                         "Icon": "",
                                         "Class": "",
                                         "Position": {
-                                            "X": 3,
-                                            "Y": 2
+                                            "X": 2,
+                                            "Y": 3
                                         },
                                         "Actions": [],
                                         "ViewState": "restore",
@@ -1228,8 +1086,8 @@
                                                     "Icon": "phone",
                                                     "Class": "",
                                                     "Position": {
-                                                        "X": 1,
-                                                        "Y": 2
+                                                        "X": 2,
+                                                        "Y": 1
                                                     },
                                                     "Actions": [
                                                         "maximize",
@@ -1309,8 +1167,8 @@
                                                     "Icon": "person",
                                                     "Class": "",
                                                     "Position": {
-                                                        "X": 1,
-                                                        "Y": 2
+                                                        "X": 2,
+                                                        "Y": 1
                                                     },
                                                     "Actions": [
                                                         "maximize",
@@ -1379,8 +1237,8 @@
                                                     "Icon": "storage",
                                                     "Class": "",
                                                     "Position": {
-                                                        "X": 1,
-                                                        "Y": 2
+                                                        "X": 2,
+                                                        "Y": 1
                                                     },
                                                     "Actions": [
                                                         "maximize",
@@ -1414,8 +1272,8 @@
                                         "Icon": "verified_user",
                                         "Class": "",
                                         "Position": {
-                                            "X": 1,
-                                            "Y": 2
+                                            "X": 2,
+                                            "Y": 1
                                         },
                                         "Actions": [
                                             "float"
@@ -1452,8 +1310,8 @@
                                         "Icon": "",
                                         "Class": "",
                                         "Position": {
-                                            "X": 1,
-                                            "Y": 2
+                                            "X": 2,
+                                            "Y": 1
                                         },
                                         "Actions": [
                                             "maximize",
@@ -1480,8 +1338,8 @@
                                         "Icon": "event_note",
                                         "Class": "",
                                         "Position": {
-                                            "X": 1,
-                                            "Y": 2,
+                                            "X": 2,
+                                            "Y": 1,
                                             "W": 700,
                                             "H": 600
                                         },
@@ -1511,8 +1369,8 @@
                                         "Icon": "",
                                         "Class": "",
                                         "Position": {
-                                            "X": 1,
-                                            "Y": 2
+                                            "X": 2,
+                                            "Y": 1
                                         },
                                         "Actions": [
                                             "maximize",
@@ -1537,8 +1395,8 @@
                                         "Icon": "sentiment_satisfied_alt",
                                         "Class": "",
                                         "Position": {
-                                            "X": 0,
-                                            "Y": 2
+                                            "X": 2,
+                                            "Y": 1
                                         },
                                         "Actions": [
                                             "maximize",
@@ -1563,8 +1421,8 @@
                                         "Icon": "",
                                         "Class": "",
                                         "Position": {
-                                            "X": 1,
-                                            "Y": 2
+                                            "X": 2,
+                                            "Y": 1
                                         },
                                         "Actions": [
                                             "maximize",
@@ -1593,8 +1451,8 @@
                                         "Icon": "",
                                         "Class": "",
                                         "Position": {
-                                            "X": 1,
-                                            "Y": 2
+                                            "X": 2,
+                                            "Y": 1
                                         },
                                         "Actions": [
                                             "maximize",
@@ -1622,7 +1480,7 @@
                                         "Class": "",
                                         "Position": {
                                             "X": 0,
-                                            "Y": 0,
+                                            "Y": 1,
                                             "W": 700,
                                             "H": 600
                                         },
@@ -1653,7 +1511,7 @@
                                         "Class": "",
                                         "Position": {
                                             "X": 0,
-                                            "Y": 0,
+                                            "Y": 1,
                                             "W": 300,
                                             "H": 300
                                         },
@@ -1694,7 +1552,7 @@
                                         "Class": "",
                                         "Position": {
                                             "X": 0,
-                                            "Y": 0,
+                                            "Y": 1,
                                             "W": 700,
                                             "H": 300
                                         },
@@ -1724,7 +1582,7 @@
                                         "Class": "",
                                         "Position": {
                                             "X": 0,
-                                            "Y": 0,
+                                            "Y": 1,
                                             "W": 1000,
                                             "H": 700
                                         },
@@ -1756,7 +1614,7 @@
                                         "Class": "",
                                         "Position": {
                                             "X": 0,
-                                            "Y": 0,
+                                            "Y": 1,
                                             "W": 1000,
                                             "H": 700
                                         },
@@ -1788,7 +1646,7 @@
                                         "Class": "",
                                         "Position": {
                                             "X": 0,
-                                            "Y": 0,
+                                            "Y": 1,
                                             "W": 300,
                                             "H": 300
                                         },
@@ -1816,7 +1674,7 @@
                                         "Class": "",
                                         "Position": {
                                             "X": 0,
-                                            "Y": 0,
+                                            "Y": 1,
                                             "W": 900,
                                             "H": 400
                                         },
@@ -1848,7 +1706,7 @@
                                         "Class": "",
                                         "Position": {
                                             "X": 0,
-                                            "Y": 0,
+                                            "Y": 1,
                                             "W": 800,
                                             "H": 700
                                         },
@@ -1880,7 +1738,7 @@
                                         "Class": "",
                                         "Position": {
                                             "X": 0,
-                                            "Y": 0,
+                                            "Y": 1,
                                             "W": 800,
                                             "H": 700
                                         },
@@ -1912,7 +1770,7 @@
                                         "Class": "",
                                         "Position": {
                                             "X": 0,
-                                            "Y": 0,
+                                            "Y": 1,
                                             "W": 450,
                                             "H": 800
                                         },
@@ -1944,7 +1802,7 @@
                                         "Class": "",
                                         "Position": {
                                             "X": 0,
-                                            "Y": 0
+                                            "Y": 1
                                         },
                                         "Actions": [],
                                         "ViewState": "restore",
@@ -1968,8 +1826,8 @@
                         "Enabled": true,
                         "Class": "",
                         "Position": {
-                            "X": 3,
-                            "Y": 6
+                            "X": 6,
+                            "Y": 3
                         }
                     },
                     "Data": {
@@ -1988,8 +1846,8 @@
                                         "Icon": "",
                                         "Class": "",
                                         "Position": {
-                                            "X": 3,
-                                            "Y": 2
+                                            "X": 2,
+                                            "Y": 3
                                         },
                                         "Actions": [],
                                         "ViewState": "restore",
@@ -2010,8 +1868,8 @@
                                                     "Icon": "chat",
                                                     "Class": "",
                                                     "Position": {
-                                                        "X": 1,
-                                                        "Y": 2
+                                                        "X": 2,
+                                                        "Y": 1
                                                     },
                                                     "Actions": [
                                                         "maximize",
@@ -2105,8 +1963,8 @@
                                                     "Icon": "person",
                                                     "Class": "",
                                                     "Position": {
-                                                        "X": 1,
-                                                        "Y": 2
+                                                        "X": 2,
+                                                        "Y": 1
                                                     },
                                                     "Actions": [
                                                         "maximize",
@@ -2187,8 +2045,8 @@
                                                     "Icon": "storage",
                                                     "Class": "",
                                                     "Position": {
-                                                        "X": 1,
-                                                        "Y": 2
+                                                        "X": 2,
+                                                        "Y": 1
                                                     },
                                                     "Actions": [
                                                         "maximize",
@@ -2222,8 +2080,8 @@
                                         "Icon": "verified_user",
                                         "Class": "",
                                         "Position": {
-                                            "X": 1,
-                                            "Y": 2
+                                            "X": 2,
+                                            "Y": 1
                                         },
                                         "Actions": [
                                             "float"
@@ -2260,8 +2118,8 @@
                                         "Icon": "",
                                         "Class": "",
                                         "Position": {
-                                            "X": 1,
-                                            "Y": 2
+                                            "X": 2,
+                                            "Y": 1
                                         },
                                         "Actions": [
                                             "maximize",
@@ -2288,8 +2146,8 @@
                                         "Icon": "",
                                         "Class": "",
                                         "Position": {
-                                            "X": 1,
-                                            "Y": 2
+                                            "X": 2,
+                                            "Y": 1
                                         },
                                         "Actions": [
                                             "maximize",
@@ -2314,8 +2172,8 @@
                                         "Icon": "sentiment_satisfied_alt",
                                         "Class": "",
                                         "Position": {
-                                            "X": 0,
-                                            "Y": 2
+                                            "X": 2,
+                                            "Y": 1
                                         },
                                         "Actions": [
                                             "maximize",
@@ -2340,8 +2198,8 @@
                                         "Icon": "",
                                         "Class": "",
                                         "Position": {
-                                            "X": 1,
-                                            "Y": 2
+                                            "X": 2,
+                                            "Y": 1
                                         },
                                         "Actions": [
                                             "maximize",
@@ -2370,8 +2228,8 @@
                                         "Icon": "",
                                         "Class": "",
                                         "Position": {
-                                            "X": 1,
-                                            "Y": 2
+                                            "X": 2,
+                                            "Y": 1
                                         },
                                         "Actions": [
                                             "maximize",
@@ -2399,7 +2257,7 @@
                                         "Class": "",
                                         "Position": {
                                             "X": 0,
-                                            "Y": 0,
+                                            "Y": 1,
                                             "W": 700,
                                             "H": 600
                                         },
@@ -2430,7 +2288,7 @@
                                         "Class": "",
                                         "Position": {
                                             "X": 0,
-                                            "Y": 0,
+                                            "Y": 1,
                                             "W": 300,
                                             "H": 300
                                         },
@@ -2471,7 +2329,7 @@
                                         "Class": "",
                                         "Position": {
                                             "X": 0,
-                                            "Y": 0,
+                                            "Y": 1,
                                             "W": 1000,
                                             "H": 700
                                         },
@@ -2503,7 +2361,7 @@
                                         "Class": "",
                                         "Position": {
                                             "X": 0,
-                                            "Y": 0,
+                                            "Y": 1,
                                             "W": 1000,
                                             "H": 700
                                         },
@@ -2535,7 +2393,7 @@
                                         "Class": "",
                                         "Position": {
                                             "X": 0,
-                                            "Y": 0,
+                                            "Y": 1,
                                             "W": 900,
                                             "H": 400
                                         },
@@ -2567,7 +2425,7 @@
                                         "Class": "",
                                         "Position": {
                                             "X": 0,
-                                            "Y": 0,
+                                            "Y": 1,
                                             "W": 1000,
                                             "H": 700
                                         },
@@ -2599,7 +2457,7 @@
                                         "Class": "",
                                         "Position": {
                                             "X": 0,
-                                            "Y": 0,
+                                            "Y": 1,
                                             "W": 1000,
                                             "H": 700
                                         },
@@ -2631,7 +2489,7 @@
                                         "Class": "",
                                         "Position": {
                                             "X": 0,
-                                            "Y": 0,
+                                            "Y": 1,
                                             "W": 450,
                                             "H": 800
                                         },
@@ -2661,8 +2519,8 @@
                         "Enabled": true,
                         "Class": "",
                         "Position": {
-                            "X": 3,
-                            "Y": 6
+                            "X": 6,
+                            "Y": 3
                         }
                     },
                     "Data": {
@@ -2681,8 +2539,8 @@
                                         "Icon": "",
                                         "Class": "",
                                         "Position": {
-                                            "X": 3,
-                                            "Y": 2
+                                            "X": 2,
+                                            "Y": 3
                                         },
                                         "Actions": [],
                                         "ViewState": "restore",
@@ -2703,8 +2561,8 @@
                                                     "Icon": "chat",
                                                     "Class": "",
                                                     "Position": {
-                                                        "X": 1,
-                                                        "Y": 2
+                                                        "X": 2,
+                                                        "Y": 1
                                                     },
                                                     "Actions": [
                                                         "maximize",
@@ -2749,8 +2607,8 @@
                                                     "Icon": "storage",
                                                     "Class": "",
                                                     "Position": {
-                                                        "X": 1,
-                                                        "Y": 2
+                                                        "X": 2,
+                                                        "Y": 1
                                                     },
                                                     "Actions": [
                                                         "maximize",
@@ -2784,8 +2642,8 @@
                                         "Icon": "verified_user",
                                         "Class": "",
                                         "Position": {
-                                            "X": 1,
-                                            "Y": 2
+                                            "X": 2,
+                                            "Y": 1
                                         },
                                         "Actions": [
                                             "float"
@@ -2822,8 +2680,8 @@
                                         "Icon": "verified_user",
                                         "Class": "",
                                         "Position": {
-                                            "X": 1,
-                                            "Y": 2
+                                            "X": 2,
+                                            "Y": 1
                                         },
                                         "Actions": [
                                             "float"
@@ -2847,8 +2705,8 @@
                                         "Icon": "",
                                         "Class": "",
                                         "Position": {
-                                            "X": 1,
-                                            "Y": 2
+                                            "X": 2,
+                                            "Y": 1
                                         },
                                         "Actions": [
                                             "maximize",
@@ -2875,8 +2733,8 @@
                                         "Icon": "",
                                         "Class": "",
                                         "Position": {
-                                            "X": 1,
-                                            "Y": 2
+                                            "X": 2,
+                                            "Y": 1
                                         },
                                         "Actions": [
                                             "maximize",
@@ -2901,8 +2759,8 @@
                                         "Icon": "",
                                         "Class": "",
                                         "Position": {
-                                            "X": 1,
-                                            "Y": 2
+                                            "X": 2,
+                                            "Y": 1
                                         },
                                         "Actions": [
                                             "maximize",
@@ -2931,8 +2789,8 @@
                                         "Icon": "",
                                         "Class": "",
                                         "Position": {
-                                            "X": 1,
-                                            "Y": 2
+                                            "X": 2,
+                                            "Y": 1
                                         },
                                         "Actions": [
                                             "maximize",
@@ -2960,7 +2818,7 @@
                                         "Class": "",
                                         "Position": {
                                             "X": 0,
-                                            "Y": 0,
+                                            "Y": 1,
                                             "W": 300,
                                             "H": 300
                                         },
@@ -3001,7 +2859,7 @@
                                         "Class": "",
                                         "Position": {
                                             "X": 0,
-                                            "Y": 0,
+                                            "Y": 1,
                                             "W": 1000,
                                             "H": 700
                                         },
@@ -3033,7 +2891,7 @@
                                         "Class": "",
                                         "Position": {
                                             "X": 0,
-                                            "Y": 0,
+                                            "Y": 1,
                                             "W": 1000,
                                             "H": 700
                                         },
@@ -3065,7 +2923,7 @@
                                         "Class": "",
                                         "Position": {
                                             "X": 0,
-                                            "Y": 0,
+                                            "Y": 1,
                                             "W": 900,
                                             "H": 400
                                         },
@@ -3097,7 +2955,7 @@
                                         "Class": "",
                                         "Position": {
                                             "X": 0,
-                                            "Y": 0,
+                                            "Y": 1,
                                             "W": 1000,
                                             "H": 700
                                         },
@@ -3129,7 +2987,7 @@
                                         "Class": "",
                                         "Position": {
                                             "X": 0,
-                                            "Y": 0,
+                                            "Y": 1,
                                             "W": 1000,
                                             "H": 700
                                         },
@@ -3161,7 +3019,7 @@
                                         "Class": "",
                                         "Position": {
                                             "X": 0,
-                                            "Y": 0,
+                                            "Y": 1,
                                             "W": 450,
                                             "H": 800
                                         },
@@ -3191,8 +3049,8 @@
                         "Enabled": true,
                         "Class": "",
                         "Position": {
-                            "X": 3,
-                            "Y": 6
+                            "X": 6,
+                            "Y": 3
                         }
                     },
                     "Data": {
@@ -3211,8 +3069,8 @@
                                         "Icon": "dvr",
                                         "Class": "",
                                         "Position": {
-                                            "X": 3,
-                                            "Y": 2
+                                            "X": 2,
+                                            "Y": 3
                                         },
                                         "Actions": [],
                                         "ViewState": "restore"
@@ -3252,8 +3110,8 @@
                         "Enabled": true,
                         "Class": "",
                         "Position": {
-                            "X": 3,
-                            "Y": 6
+                            "X": 6,
+                            "Y": 3
                         }
                     },
                     "Data": {
@@ -3270,8 +3128,8 @@
                         "Enabled": true,
                         "Class": "",
                         "Position": {
-                            "X": 3,
-                            "Y": 6
+                            "X": 6,
+                            "Y": 3
                         }
                     },
                     "Data": {
@@ -3288,8 +3146,8 @@
                         "Enabled": true,
                         "Class": "",
                         "Position": {
-                            "X": 3,
-                            "Y": 6
+                            "X": 6,
+                            "Y": 3
                         }
                     },
                     "Data": {
@@ -3306,8 +3164,8 @@
                         "Enabled": true,
                         "Class": "",
                         "Position": {
-                            "X": 3,
-                            "Y": 6
+                            "X": 6,
+                            "Y": 3
                         }
                     },
                     "Data": {
@@ -3324,8 +3182,8 @@
                         "Enabled": true,
                         "Class": "",
                         "Position": {
-                            "X": 3,
-                            "Y": 6
+                            "X": 6,
+                            "Y": 3
                         }
                     },
                     "Data": {
@@ -3342,8 +3200,8 @@
                         "Enabled": true,
                         "Class": "",
                         "Position": {
-                            "X": 3,
-                            "Y": 6
+                            "X": 6,
+                            "Y": 3
                         }
                     },
                     "Data": {
@@ -3360,8 +3218,8 @@
                         "Enabled": true,
                         "Class": "",
                         "Position": {
-                            "X": 3,
-                            "Y": 6
+                            "X": 6,
+                            "Y": 3
                         }
                     },
                     "Data": {
@@ -3398,7 +3256,7 @@
                         "Class": "",
                         "Position": {
                             "X": 0,
-                            "Y": 0,
+                            "Y": 1,
                             "W": 325,
                             "H": 740
                         },
@@ -3431,7 +3289,7 @@
                         "Class": "",
                         "Position": {
                             "X": 0,
-                            "Y": 0,
+                            "Y": 1,
                             "W": 300,
                             "H": 300
                         },
@@ -3464,7 +3322,7 @@
                         "Class": "",
                         "Position": {
                             "X": 0,
-                            "Y": 0,
+                            "Y": 1,
                             "W": 0,
                             "H": 0
                         },
@@ -3493,7 +3351,7 @@
             "Favicon": "",
             "Default": {
                 "Large": {
-                    "Src": "https://dice.tetherfi.cloud/agent-desktop/assets/images/logos/tetherfi.png",
+                    "Src": "",
                     "Width": 180,
                     "Height": 90
                 },
@@ -3506,12 +3364,12 @@
             },
             "Customer": {
                 "Large": {
-                    "Src": "https://dice.tetherfi.cloud/agent-desktop/assets/images/logos/tetherfi.png",
+                    "Src": "",
                     "Width": 160,
                     "Height": 88
                 },
                 "Small": {
-                    "Src": "https://dice.tetherfi.cloud/agent-desktop/assets/images/logos/tetherfi-logo-white.png",
+                    "Src": "",
                     "Width": 50,
                     "Height": 50
                 },
@@ -3600,7 +3458,7 @@
             },
             "CustomSripts": [
                 "https://dice.tetherfi.cloud/tmaclibs/adapter.js",
-                "https://dice.tetherfi.cloud/tmaclibs/webclientapi-lib.debug.js",
+                "https://dice.tetherfi.cloud/tmaclibs/webclientapi-lib.min.js",
                 "https://dice.tetherfi.cloud/tmaclibs/collector.min.js"
             ]
         }
