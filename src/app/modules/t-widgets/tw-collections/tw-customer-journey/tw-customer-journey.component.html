@@ -23,7 +23,7 @@
                 *ngFor="let s of customerJourneyTable.tableData.source.data"
                 fxLayout="row-wrap"
                 class="step mb-4 p-4 mat-elevation-z1"
-                (click)="switchMaximizedView('Session History', s)"
+                (click)="switchMaximizedViewMode('Session History', s)"
                 [ngClass]="fuseBg.content"
             >
                 <div fxFlex="15" fxLayout fxLayoutAlign="center center" class="step-time pr-8">
@@ -199,13 +199,18 @@
                     <mat-header-cell *matHeaderCellDef fxFlex="15"> Actions </mat-header-cell>
                     <mat-cell *matCellDef="let element; let i = index" fxFlex="15" (click)="$event.stopPropagation()">
                         <div fxLayout fxLayoutAlign="start center" class="h-100-p w-100-p">
-                            <button class="w-32" mat-icon-button matTooltip="Load Session" (click)="switchMaximizedView('Session History', element)">
+                            <button
+                                class="w-32"
+                                mat-icon-button
+                                matTooltip="Load Session"
+                                (click)="switchMaximizedViewMode('Session History', element)"
+                            >
                                 <mat-icon> filter_frames </mat-icon>
                             </button>
-                            <button class="w-32" mat-icon-button matTooltip="History" (click)="switchMaximizedView('Actions', element)">
+                            <button class="w-32" mat-icon-button matTooltip="History" (click)="switchMaximizedViewMode('Actions', element)">
                                 <mat-icon> history </mat-icon>
                             </button>
-                            <button class="w-32" mat-icon-button matTooltip="Notes" (click)="switchMaximizedView('Notes', element)">
+                            <button class="w-32" mat-icon-button matTooltip="Notes" (click)="switchMaximizedViewMode('Notes', element)">
                                 <mat-icon> notes </mat-icon>
                             </button>
                             <button
@@ -213,7 +218,7 @@
                                 *ngIf="(element.Channel || '' | lowercase).includes('chat')"
                                 mat-icon-button
                                 matTooltip="Transcript"
-                                (click)="switchMaximizedView('Transcript', element)"
+                                (click)="switchMaximizedViewMode('Transcript', element)"
                             >
                                 <mat-icon> chat </mat-icon>
                             </button>
@@ -393,70 +398,85 @@
             </ng-container>
 
             <ng-container *ngIf="mode === 'Transcript'">
-                <ng-container
-                    *ngIf="
-                        interactionTranscripts &&
-                        customerJourneyTable.tableData.selection?.selected[0]?.SessionID &&
-                        interactionTranscripts[customerJourneyTable.tableData.selection.selected[0].SessionID] as chatTranscripts
-                    "
-                >
-                    <div
-                        *ngIf="chatTranscripts.length"
-                        fxLayout="row"
-                        fxLayoutAlign=" none"
-                        class="w-100-p pb-16 chat-container custom-scroll-adjust"
-                    >
-                        <div fxLayout="column" fxLayoutAlign=" none" class="border-radius-20 chat-content">
-                            <!-- CHAT CONTENT -->
-                            <div class="chat-transcripts" fxFlex="1 1 auto">
-                                <!-- CHAT MESSAGES -->
-                                <div class="chat-messages px-12">
-                                    <!-- MESSAGE -->
-                                    <ng-container *ngFor="let message of chatTranscripts; let i = index">
-                                        <div
-                                            *ngIf="message.message"
-                                            class="message-row"
-                                            [ngClass]="{
-                                                me: message?.who !== defaultCustomerName,
-                                                contact: message?.who === defaultCustomerName
-                                            }"
-                                        >
+                <ng-container *ngIf="interactionTranscripts && customerJourneyTable.tableData.selection?.selected[0]?.SessionID as selectedSessionId">
+                    <ng-container *ngIf="interactionTranscripts[selectedSessionId] as chatTranscripts">
+                        <div
+                            *ngIf="chatTranscripts.length"
+                            fxLayout="row"
+                            fxLayoutAlign=" none"
+                            class="w-100-p pb-16 chat-container custom-scroll-adjust"
+                        >
+                            <div fxLayout="column" fxLayoutAlign=" none" class="border-radius-20 chat-content">
+                                <!-- CHAT CONTENT -->
+                                <div class="chat-transcripts" fxFlex="1 1 auto">
+                                    <!-- CHAT MESSAGES -->
+                                    <div class="chat-messages px-12">
+                                        <!-- MESSAGE -->
+                                        <ng-container *ngFor="let message of chatTranscripts; let i = index">
                                             <div
-                                                fxLayout="column"
-                                                fxLayoutAlign="start start"
-                                                class="bubble"
-                                                [ngClass]="message.who === defaultCustomerName && fuseBg.body"
+                                                *ngIf="message.message"
+                                                class="message-row"
+                                                [ngClass]="{
+                                                    me: message?.who !== defaultCustomerName,
+                                                    contact: message?.who === defaultCustomerName
+                                                }"
                                             >
                                                 <div
-                                                    *ngIf="chatTranscripts[i - 1]?.who !== message.who"
-                                                    class="user-label font-size-16 text-bold mb-4"
+                                                    fxLayout="column"
+                                                    fxLayoutAlign="start start"
+                                                    class="bubble"
+                                                    [ngClass]="message.who === defaultCustomerName && fuseBg.body"
                                                 >
-                                                    {{ message.who }}
-                                                </div>
+                                                    <div
+                                                        *ngIf="chatTranscripts[i - 1]?.who !== message.who"
+                                                        class="user-label font-size-16 text-bold mb-4"
+                                                    >
+                                                        {{ message.who }}
+                                                    </div>
 
-                                                <div class="message">
-                                                    <span [innerHTML]="message.message"></span>
-                                                    <!-- <span class="spacer"></span> -->
-                                                </div>
-                                                <div class="mat-caption">
-                                                    {{ message.time ? (message.time | date: 'short') : '' }}
+                                                    <div class="message">
+                                                        <span *ngIf="message.message.type !== 'attachment'" [innerHTML]="message.message"></span>
+                                                        <div *ngIf="message.message.type === 'attachment'">
+                                                            <!-- <img
+                                                                [src]="
+                                                                    ((fileUploadUrl$ | async) || 'TmacProxy') +
+                                                                    '/' +
+                                                                    selectedSessionId +
+                                                                    '/' +
+                                                                    message.message.attachment.name
+                                                                "
+                                                                class="w-100-p"
+                                                                [alt]="message.message.attachment.name"
+                                                            /> -->
+                                                            <img
+                                                                [src]="message.message.attachment.src"
+                                                                class="w-100-p"
+                                                                [alt]="message.message.attachment.name"
+                                                            />
+                                                            <span [innerHTML]="message.message.message"></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mat-caption">
+                                                        {{ message.time }}
+                                                        <!-- {{ message.time ? (message.time | date: 'short') : '' }} -->
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </ng-container>
-                                    <!-- / MESSAGE -->
+                                        </ng-container>
+                                        <!-- / MESSAGE -->
+                                    </div>
+                                    <!-- CHAT MESSAGES -->
                                 </div>
-                                <!-- CHAT MESSAGES -->
+                                <!-- / CHAT CONTENT -->
                             </div>
-                            <!-- / CHAT CONTENT -->
                         </div>
-                    </div>
-                    <div *ngIf="!chatTranscripts.length" class="w-100-p">
-                        <div class="w-25-p mx-auto mb-20">
-                            <img src="assets/images/vectors/no-data-2.svg" class="box-shadow-3d" />
+                        <div *ngIf="!chatTranscripts.length" class="w-100-p">
+                            <div class="w-25-p mx-auto mb-20">
+                                <img src="assets/images/vectors/no-data-2.svg" class="box-shadow-3d" />
+                            </div>
+                            <p class="text-center mat-title m-0">No Transcripts Available</p>
                         </div>
-                        <p class="text-center mat-title m-0">No Transcripts Available</p>
-                    </div>
+                    </ng-container>
                 </ng-container>
             </ng-container>
         </div>

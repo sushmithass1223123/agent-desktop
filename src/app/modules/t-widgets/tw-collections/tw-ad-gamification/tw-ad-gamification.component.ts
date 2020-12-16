@@ -39,12 +39,10 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
     pollingSubscription: Subscription;
 
     /**
-     * Constructor 
+     * Constructor
      * @param {gamificationService} GamificationService
      */
-    constructor(
-        private _http: HttpClient
-    ) {
+    constructor(private _http: HttpClient) {
         super();
     }
 
@@ -61,7 +59,8 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
         this.initWrapper(this.data);
 
         this.setBadges();
-        SDKClient.events.on('InteractionClosedEvent', this.startPolling);
+        // SDKClient.events.on('InteractionClosedEvent', this.startPolling);
+        this.startPolling();
         // this.setupBadgeListeners();
     }
 
@@ -71,7 +70,8 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-        SDKClient.events.off('InteractionClosedEvent', this.setBadges);
+        // this.pollingSubscription.unsubscribe();
+        // SDKClient.events.off('InteractionClosedEvent', this.setBadges);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -86,7 +86,7 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
             this.pollingSubscription.unsubscribe();
         }
         this.pollingSubscription = interval(10000).pipe(takeUntil(this.unsubscribeAll)).subscribe(this.setBadges);
-    }
+    };
 
     /**
      * Set Badges
@@ -100,8 +100,10 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
         // const agentId = '50005';
         this._http
             .post<{
-                // tslint:disable-next-line: completed-docs
-                d: string
+                /**
+                 * server response
+                 */
+                d: string;
             }>(this.data.Data.LeaderBoardUrl, {})
             .pipe(
                 map((x) => JSON.parse(x.d)),
@@ -115,28 +117,28 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
                         error: false,
                         data: currentAgentData
                             ? {
-                                ...currentAgentData,
-                                TotalBadges: [
-                                    {
-                                        BadgeName: 'Novice',
-                                        BadgeId: 0,
-                                        BadgeUrl: currentAgentData.NoviceBadgeUrl,
-                                        BadgePoints: currentAgentData.NoviceBadges
-                                    },
-                                    {
-                                        BadgeName: 'Influencer',
-                                        BadgeId: 1,
-                                        BadgeUrl: currentAgentData.InfluencerBadgeUrl,
-                                        BadgePoints: currentAgentData.InfluencerBadges
-                                    },
-                                    {
-                                        BadgeName: 'Master',
-                                        BadgeId: 2,
-                                        BadgeUrl: currentAgentData.MasterBadgeUrl,
-                                        BadgePoints: currentAgentData.MasterBadges
-                                    }
-                                ]
-                            }
+                                  ...currentAgentData,
+                                  TotalBadges: [
+                                      {
+                                          BadgeName: 'Novice',
+                                          BadgeId: 0,
+                                          BadgeUrl: currentAgentData.NoviceBadgeUrl,
+                                          BadgePoints: currentAgentData.NoviceBadges
+                                      },
+                                      {
+                                          BadgeName: 'Influencer',
+                                          BadgeId: 1,
+                                          BadgeUrl: currentAgentData.InfluencerBadgeUrl,
+                                          BadgePoints: currentAgentData.InfluencerBadges
+                                      },
+                                      {
+                                          BadgeName: 'Master',
+                                          BadgeId: 2,
+                                          BadgeUrl: currentAgentData.MasterBadgeUrl,
+                                          BadgePoints: currentAgentData.MasterBadges
+                                      }
+                                  ]
+                              }
                             : { GoldCoins: 0, SilverCoins: 0, BronzeCoins: 0, TotalBadges: [] }
                     };
                 },
@@ -154,7 +156,6 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
     public maximizeEvent(state: boolean): void {
         this.maximized = state;
     }
-
 }
 
 // for more info visit - https://angular.io/api/core
