@@ -40,6 +40,11 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     RejectEmailDialog: TemplateRef<any>;
 
     /**
+     * Email description collapse flag
+     */
+    smallEmailDescription = true;
+
+    /**
      * Mat dialog ref for closing
      */
     rejectEmailDialogRef: MatDialogRef<any>;
@@ -254,7 +259,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 if (this.currentInteraction.RouteReason === 'CheckerQueue') {
                     this.rejectReason.allReasons = this.currentInteraction.JsonData?.split(',') || [];
                 }
-                if (this.currentInteraction.RejectReason) {
+                if (this.currentInteraction.RejectReason && typeof this.currentInteraction.RejectReason === 'string') {
                     this.currentInteraction.RejectReason = JSON.parse(this.currentInteraction.RejectReason);
                     this.currentInteraction.RejectReason.reasonTags = this.currentInteraction.RejectReason.reasonTags?.join(',') || '';
                 }
@@ -657,7 +662,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         const currentInteraction = this.currentInteraction;
         // const dialogRef = this._appUIService.showCustomDialog('prompt', 'Enter the comments', 'Reject Email');
         this.rejectEmailDialogRef = this.matDialog.open(this.RejectEmailDialog, {
-            panelClass: 'reject-reason-dialog'
+            panelClass: 'reject-reason-dialog',
+            maxWidth: '60%'
         });
         this.rejectEmailDialogRef.afterClosed().subscribe(() => {
             const { comment, reasonTags } = this.rejectReason;

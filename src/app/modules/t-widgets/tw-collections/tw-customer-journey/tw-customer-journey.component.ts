@@ -7,6 +7,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { TwWrapperComponent } from '@modules/t-widgets/tw-wrapper/tw-wrapper.component';
+import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
@@ -79,8 +80,14 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         data: from([])
     };
 
-    interactionTranscripts: Record<string, ChatTranscripts[]> = {};
+    interactionTranscripts: string = '{}';
     defaultCustomerName = 'Customer';
+    fileUploadUrl$ = this._appDataService.config.pipe(
+        takeUntil(this.unsubscribeAll),
+        map((conf: any) => {
+            return conf.Main.Content.Urls?.FileServerUrl?.MediaProxy;
+        })
+    );
 
     /**
      * Show advanced search form
@@ -155,7 +162,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         private _fuseConfigService: FuseConfigService,
         private _tmacEventService: TMACEventService,
         private sanitizer: DomSanitizer,
-        private _appUIService: AppUiService
+        private _appUIService: AppUiService,
+        private _appDataService: AppDataService
     ) {
         super();
         this.customerJourneyTable = {
@@ -192,14 +200,14 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                     config.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor
                         ? config.layout.anchorWidget.contentBackground
                         : config.layout.widget.customBackgroundColor === true
-                            ? config.layout.widget.contentBackground
-                            : '',
+                        ? config.layout.widget.contentBackground
+                        : '',
                 body:
                     config.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor
                         ? config.layout.anchorWidget.bodyBackground
                         : config.layout.widget.customBackgroundColor === true
-                            ? config.layout.widget.bodyBackground
-                            : ''
+                        ? config.layout.widget.bodyBackground
+                        : ''
             };
         });
 
@@ -222,11 +230,10 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
 
         // SDKClient.events.on('InteractionHistoryReadyEvent', this.InteractionHistoryReadyEvent);
 
-        this._tmacEventService.getInteractionEvents([
-            'InteractionHistoryReadyEvent'
-        ], this.interactionId)
+        this._tmacEventService
+            .getInteractionEvents(['InteractionHistoryReadyEvent'], this.interactionId)
             .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(evts => this.InteractionHistoryReadyEvent(evts[0]));
+            .subscribe((evts) => this.InteractionHistoryReadyEvent(evts[0]));
 
         this.customerJourneyTable.tableData.source.filterPredicate = this.createFilter();
     }
@@ -352,51 +359,54 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      */
     private getInteractionHistory(lastId?: string): void {
         // SDKClient.getInteractionHistory(
-        //     lastId ? { ...this.historyParams, lastId, phone: '6596975347' } : { ...this.historyParams, phone: '6596975347' },
+        //     lastId ? { ...this.historyParams, lastId, phone: '96975347' } : { ...this.historyParams, phone: '96975347' },
         //     null
         // )
         SDKClient.getInteractionHistory(lastId ? { ...this.historyParams, lastId } : this.historyParams, null)
             .then((res) => {
                 const tableData = {};
                 const transcripts: Record<string, ChatTranscripts[]> = {};
+                let sortedTabledata = [];
                 if (lastId) {
-                    let sortedTabledata = sortBy([...this.customerJourneyTable.tableData.source.data, ...res.response], 'InteractionDate');
-                    sortedTabledata.forEach((data) => {
-                        if (!tableData[data.SessionID]) {
-                            tableData[data.SessionID] = data;
-                            transcripts[data.SessionID] = [];
-                        }
-                        transcripts[data.SessionID].push({
-                            who: data.Direction === 'Out' ? data.AgentName : this.defaultCustomerName,
-                            isAgent: data.Direction === 'Out',
-                            message: data.InteractionText,
-                            time: new Date(data.InteractionDate),
-                            type: data.SubType,
-                            messageId: data.ID
-                        });
-                    });
-                    sortedTabledata = sortedTabledata.reverse();
-                    // tableData = uniqBy(sortedTabledata, 'SessionID');
+                    sortedTabledata = sortBy([...this.customerJourneyTable.tableData.source.data, ...res.response], 'ItemID');
                 } else {
-                    let sortedTabledata = [...sortBy(res.response, 'InteractionDate').reverse()];
-                    sortedTabledata.forEach((data) => {
-                        if (!tableData[data.SessionID]) {
-                            tableData[data.SessionID] = data;
-                            transcripts[data.SessionID] = [];
-                        }
-                        transcripts[data.SessionID].push({
-                            who: data.Direction === 'Out' ? data.AgentName : this.defaultCustomerName,
-                            isAgent: data.Direction === 'Out',
-                            message: data.InteractionText,
-                            time: new Date(data.InteractionDate),
-                            type: data.SubType,
-                            messageId: data.ID
-                        });
-                    });
-                    sortedTabledata = sortedTabledata.reverse();
-                    // tableData = uniqBy(sortedTabledata, 'SessionID');
+                    sortedTabledata = [...sortBy(res.response, 'ItemID').reverse()];
                 }
-                this.interactionTranscripts = transcripts;
+                sortedTabledata.forEach((data) => {
+                    if (!tableData[data.SessionID]) {
+                        tableData[data.SessionID] = {
+                            InteractionDate: data.InteractionDate,
+                            Channel: data.Channel,
+                            Intent: data.Intent,
+                            AgentName: data.AgentName,
+                            CIF: data.CIF,
+                            NRIC: data.NRIC,
+                            PhoneNumber: data.PhoneNumber,
+                            OverallSentiment: data.OverallSentiment,
+                            ItemID: data.ItemID,
+                            SubType: data.SubType,
+                            SessionID: data.SessionID,
+                            ID: data.ID
+                        };
+                        // tableData[data.SessionID] = data;
+                        transcripts[data.SessionID] = [];
+                    }
+                    let message: any;
+                    try {
+                        message = JSON.parse(data.InteractionText);
+                    } catch (e) {
+                        message = data.InteractionText;
+                    }
+                    transcripts[data.SessionID].push({
+                        who: data.Direction === 'Out' ? data.AgentName : this.defaultCustomerName,
+                        isAgent: data.Direction === 'Out',
+                        message,
+                        time: data.InteractionDate,
+                        type: data.SubType,
+                        messageId: data.ID
+                    });
+                });
+                this.interactionTranscripts = JSON.stringify(transcripts);
                 this.customerJourneyTable.tableData.source.data = Object.values(tableData);
                 this.customerJourneyTable.lastId = res.response[0]?.LastID?.toString();
                 this.customerJourneyTable.loading = false;
@@ -512,7 +522,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      * Switches Maximized View
      * @param {Mode} mode
      */
-    public switchMaximizedView(mode: Mode, row: InteractionHistory): void {
+    public switchMaximizedViewMode(mode: Mode, row: InteractionHistory): void {
         this.mode = mode;
         if (!this.maximized) {
             this.maximized = true;
@@ -533,6 +543,9 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 break;
             }
             case 'Transcript': {
+                if (typeof this.interactionTranscripts === 'string') {
+                    this.interactionTranscripts = JSON.parse(this.interactionTranscripts);
+                }
                 break;
             }
             case 'Notes': {
@@ -548,5 +561,6 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     public closeActionWindow(): void {
         this.mode = null;
         this.customerJourneyTable.tableData.selection.clear();
+        this.interactionTranscripts = JSON.stringify(this.interactionTranscripts);
     }
 }
