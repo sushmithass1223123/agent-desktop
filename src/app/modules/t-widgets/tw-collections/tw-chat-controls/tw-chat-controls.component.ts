@@ -584,7 +584,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         //     return;
         // }
 
-        this.selfServiceDestinations = evt.Destinations;
+        this.selfServiceDestinations = evt.Destinations || [];
     }
 
     /**
