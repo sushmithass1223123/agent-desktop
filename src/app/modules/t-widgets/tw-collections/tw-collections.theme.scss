@@ -233,13 +233,13 @@
                     background-color: map-get($background, hover);
                 }
 
-                mat-nested-tree-node {
-                    &.active li {
-                        &::before {
-                            background: map-get($primary, 300);
-                        }
-                    }
-                }
+                // mat-nested-tree-node {
+                //     &.active li {
+                //         &::before {
+                //             background: map-get($primary, 300);
+                //         }
+                //     }
+                // }
 
                 .email-list {
                     @if ($is-dark == true) {

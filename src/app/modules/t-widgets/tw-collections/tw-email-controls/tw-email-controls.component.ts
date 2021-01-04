@@ -452,9 +452,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         </p>
         <br />`;
         this.replyInfo = {
-            BCC: [],
-            CC: [],
-            To: From ? [From] : [],
+            BCC: '',
+            CC: '',
+            To: From || '',
             Body: `
             ${preBody} 
             ${
@@ -489,9 +489,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         </p>
         <br />`;
         this.replyInfo = {
-            BCC: [],
-            CC: CCList ? CCList.split(',') : [],
-            To: From ? [From] : [],
+            BCC: '',
+            CC: CCList || '',
+            To: From || '',
             Body: `
                 ${preBody}
                 ${this.domSanitizer.bypassSecurityTrustHtml(Body)['changingThisBreaksApplicationSecurity']['changingThisBreaksApplicationSecurity']}`,
@@ -522,9 +522,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         </p>
         <br />`;
         this.replyInfo = {
-            BCC: [],
-            CC: [],
-            To: [],
+            BCC: '',
+            CC: '',
+            To: '',
             Body: `
                 ${preBody}
                 ${this.domSanitizer.bypassSecurityTrustHtml(Body)['changingThisBreaksApplicationSecurity']['changingThisBreaksApplicationSecurity']}`,
@@ -547,14 +547,14 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         }
         SDKClient.sendEmail({
             attachmentFileList: Files && Files.length ? JSON.stringify(Files.map((x) => ({ ...x, SessionID: currentInteraction.SessionId }))) : '',
-            bccList: BCC.join(','),
+            bccList: BCC.replaceAll(';', ','),
             body: Body.toString(),
-            ccList: CC.join(','),
+            ccList: CC.replaceAll(';', ','),
             inboxSessionId: currentInteraction.SessionId,
             outboxSessionId: currentInteraction.OutboxSessionId,
             routeId: '',
             subject: Subject,
-            toList: To.join(','),
+            toList: To.replaceAll(';', ','),
             typeOfResponse: ''
         })
             .then((res) => {
@@ -626,14 +626,14 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             // @TODO Files not sent as draft arg
             const { BCC, CC, To, Subject, Body, Files } = email;
             SDKClient.saveEmailDraft({
-                bccList: BCC.join(','),
+                bccList: BCC.replaceAll(';', ','),
                 body: Body.toString(),
-                ccList: CC.join(','),
+                ccList: CC.replaceAll(';', ','),
                 inboxSessionId: currentInteraction.SessionId,
                 outboxSessionId: currentInteraction.OutboxSessionId || '',
                 routeId: '',
                 subject: Subject,
-                toList: To.join(','),
+                toList: To.replaceAll(';', ','),
                 typeOfResponse: ''
             }).then((x) => {
                 currentInteraction.OutboxSessionId = x.response;

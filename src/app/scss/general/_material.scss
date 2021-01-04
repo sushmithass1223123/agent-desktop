@@ -12,6 +12,15 @@
     }
 }
 
+
+.rotate-90-inverse {
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+}
+
 .rotate-45 {
     -webkit-transform: rotate(45deg);
     -moz-transform: rotate(45deg);

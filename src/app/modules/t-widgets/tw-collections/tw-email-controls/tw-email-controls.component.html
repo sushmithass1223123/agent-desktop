@@ -11,7 +11,7 @@
     (floatEvent)="floatEvent.emit($event)"
 >
     <div fxLayout class="w-100-p h-100-p" fxLayoutAlign="center">
-        <div fxLayout="column" fxLayoutAlign=" start" class="w-60 h-100-p mt-8 pt-8 interactions custom-scroll-adjust">
+        <div fxLayout="column" fxLayoutAlign=" start" class="w-60 h-100-p mt-8 pt-8 interactions">
             <ng-container *ngIf="interactionList">
                 <avatar
                     *ngFor="let item of interactionList"
@@ -87,7 +87,7 @@
             </div>
 
             <ng-container *ngIf="replyInfo">
-                <create-email [emailInfo]="replyInfo" #createEmailRef></create-email>
+                    <create-email [emailInfo]="replyInfo" #createEmailRef  (sendEmail)="sendEmailAsMaker()"  ></create-email>
             </ng-container>
 
             <div
@@ -130,7 +130,7 @@
                         </span>
                     </div>
                     <span fxLayout="row" fxLayoutAlign=" center">
-                        <mat-icon matToolTip="Mailbox">list_alt</mat-icon>
+                        <mat-icon matTooltip="Mailbox">list_alt</mat-icon>
                         <span class="text-bold"> {{ currentInteraction.Email_Mailbox || 'NA' }} </span>
                     </span>
                     <div fxLayout fxLayoutAlign="space-between" class="font-weight-700 mt-8">

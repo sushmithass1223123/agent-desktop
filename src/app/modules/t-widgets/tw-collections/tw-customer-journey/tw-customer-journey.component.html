@@ -76,13 +76,12 @@
 
         <!-- maximised view  start -->
         <!-- <div *ngIf="maximized" class="h-100-p"> -->
-        <div *ngIf="maximized" class="table custom-scroll-adjust" [ngClass]="fuseBg.content + (mode ? ' h-35-p' : '')">
+        <div *ngIf="maximized" fxLayout="column" class="table custom-scroll-adjust" [ngClass]="fuseBg.content + (mode ? ' h-35-p' : ' h-100-p')">
             <mat-table
                 [dataSource]="customerJourneyTable.tableData.source"
                 matSort
                 matSortActive="InteractionDate"
                 matSortDirection="desc"
-                class="pb-0"
                 matSortDisableClear
                 [formGroup]="searchForm"
             >

@@ -503,9 +503,7 @@
                     >
                         <div class="mat-tree-node">
                             <button mat-icon-button [attr.aria-label]="'Toggle ' + (node.name || 'NA')">
-                                <mat-icon class="mat-icon-rtl-mirror">
-                                    {{ treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right' }}
-                                </mat-icon>
+                                <mat-icon [ngClass]="{ 'rotate-90-inverse': !treeControl.isExpanded(node) }"> arrow_drop_down_circle </mat-icon>
                             </button>
                             <span class="font-weight-700">
                                 {{ node.name || 'NA' }}
