@@ -1,14 +1,15 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSelectChange } from '@angular/material/select';
 import { TwEmailTemplatePreviewComponent } from '@modules/t-widgets/tw-collections/tw-email-template-preview/tw-email-template-preview.component';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
 import { QUILL_EDITOR_CONFIG } from 'app/constants';
 import { CreateEmailInfo, TwWidgetModel } from 'app/models';
+import { merge } from 'rxjs';
+import { debounceTime, map } from 'rxjs/operators';
 import { EmailTemplate, SDKClient } from 'tmac-sdk';
 
 /**
@@ -21,12 +22,18 @@ import { EmailTemplate, SDKClient } from 'tmac-sdk';
     encapsulation: ViewEncapsulation.None
 })
 export class CreateEmailComponent implements OnInit, OnDestroy {
+    @Output() sendEmail = new EventEmitter();
     /**
      * Template preview data
      */
     templatePreview = {
         aots: []
     };
+
+    /**
+     * Show toolbar flag
+     */
+    showToolbar = false;
 
     /**
      * Config for quill editor
@@ -36,28 +43,17 @@ export class CreateEmailComponent implements OnInit, OnDestroy {
     /**
      * Suggested users for autocomplete
      */
-    suggestedUsers: {
-        /**
-         * Available users
-         */
-        all: string[];
-        /**
-         * Filtered users
-         */
-        filtered: string[];
-    } = {
-            all: ['rahil@email.com', 'rahil2@email.com', 'rahil3@email.com'],
-            filtered: []
-        };
+    suggestedUsers: string[];
+    allUsers = ['rahil@email.com', 'rahil2@email.com', 'rahil3@email.com'];
 
     /**
      * Email form control
      */
     emailCtrl = new FormGroup({
-        directRecipients: new FormControl(),
-        ccdRecipients: new FormControl([]),
-        bccdRecipients: new FormControl([]),
-        emailBody: new FormControl('')
+        To: new FormControl('', [Validators.required]),
+        CC: new FormControl(''),
+        BCC: new FormControl(''),
+        Subject: new FormControl('')
     });
 
     /**
@@ -68,15 +64,6 @@ export class CreateEmailComponent implements OnInit, OnDestroy {
      * Recipient input ref
      */
     @ViewChild('recipientsInput') recipientsInput: ElementRef<HTMLInputElement>;
-
-    /**
-     * Recipients available fields
-     */
-    recipients: Record<string, string> = {
-        To: '',
-        CC: '',
-        BCC: ''
-    };
 
     /**
      * Available templates
@@ -105,29 +92,41 @@ export class CreateEmailComponent implements OnInit, OnDestroy {
      */
     @Input() emailInfo?: CreateEmailInfo;
 
-    constructor(private appUiService: AppUiService, private matDialog: MatDialog, private aotService: AOTWidgetService) {
-        this.email = {
-            To: [],
-            CC: [],
-            BCC: [],
-            Body: '',
-            Subject: '',
-            Files: []
-        };
-    }
+    constructor(private appUiService: AppUiService, private matDialog: MatDialog, private aotService: AOTWidgetService) {}
 
     /**
      * Lifecycle hook
      */
     ngOnInit(): void {
+        this.suggestedUsers = this.allUsers;
+        this.emailCtrl.setValue({
+            To: this.emailInfo?.To || '',
+            CC: this.emailInfo?.CC || '',
+            BCC: this.emailInfo?.BCC || '',
+            Subject: this.emailInfo?.Subject || ''
+        });
         this.email = {
-            To: this.emailInfo?.To || [],
-            CC: this.emailInfo?.CC || [],
-            BCC: this.emailInfo?.BCC || [],
+            // To: this.emailCtrl.value.To,
+            // CC: this.emailCtrl.value.CC,
+            // BCC: this.emailCtrl.value.BCC,
+            // Subject: this.emailCtrl.value.Subject,
             Body: this.emailInfo?.Body || '',
-            Subject: this.emailInfo?.Subject || '',
-            Files: this.emailInfo?.Files || []
+            Files: this.emailInfo?.Files || [],
+            ...this.emailCtrl.value
         };
+
+        merge(this.emailCtrl.controls.To.valueChanges, this.emailCtrl.controls.CC.valueChanges, this.emailCtrl.controls.BCC.valueChanges)
+            .pipe(
+                debounceTime(1000),
+                map((val) => val.split(';').pop()?.toLowerCase())
+            )
+            .subscribe((val) => {
+                if (val) {
+                    this.suggestedUsers = this.allUsers.filter((x) => x.includes(val));
+                } else {
+                    this.suggestedUsers = [];
+                }
+            });
 
         SDKClient.getEmailTemplateDepartments()
             .then((res) => {
@@ -152,12 +151,9 @@ export class CreateEmailComponent implements OnInit, OnDestroy {
      * @param {MatAutocompleteSelectedEvent} evt
      */
     selectUser(key: string, evt: MatAutocompleteSelectedEvent): void {
-        if (!this.email[key]) {
-            this.email[key] = [];
-        }
-        this.email[key].push(evt.option.value);
-        this.recipientsInput.nativeElement.value = '';
-        this.recipients[key] = '';
+        const missingColon = this.email[key] && this.email[key].slice(-1) !== ';' ? ';' : '';
+        this.email[key] += missingColon + evt.option.value + ';';
+        this.emailCtrl.patchValue({ [key]: this.email[key] });
         this.removePrevSuggestions();
     }
 
@@ -171,31 +167,20 @@ export class CreateEmailComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Filter user based on searchkey
-     * @param {String} key
-     * @param {String} user
-     */
-    filterUsers(key: string, user: string): void {
-        this.suggestedUsers.filtered = this.suggestedUsers.all.filter((x) => x.toLowerCase().includes(user.toLowerCase()));
-        if (!this.suggestedUsers.filtered.length) {
-            this.suggestedUsers.filtered.push(user);
-        }
-    }
-
-    /**
      * Remove Previous Suggestions
      */
     removePrevSuggestions(): void {
-        if (!this.suggestedUsers) {
-            this.suggestedUsers.filtered = [];
-        }
+        // if (!this.suggestedUsers) {
+        //     this.suggestedUsers.filtered = [];
+        // }
+        this.suggestedUsers = this.allUsers;
     }
 
     /**
      * test functionn for quill editor
      * @param {any} evt
      */
-    onContentChanged(evt: any): void { }
+    onContentChanged(evt: any): void {}
 
     /**
      * Attach files to email
@@ -276,7 +261,7 @@ export class CreateEmailComponent implements OnInit, OnDestroy {
 
     /**
      * Select template for email
-     * @param {MatSelectChange} html
+     * @param {EmailTemplate} preview
      */
     selectTemplate(preview: EmailTemplate): void {
         // this.templatePreview.preview = preview.BodyHTML;
@@ -347,7 +332,7 @@ export class CreateEmailComponent implements OnInit, OnDestroy {
     /**
      * Groups by id and returns the value
      */
-    getDropdownKeyvaluePair(records: any[], idKey: string): any {
+    private getDropdownKeyvaluePair(records: any[], idKey: string): any {
         const keyVal = {};
         records.forEach((r) => {
             keyVal[r[idKey]] = r;

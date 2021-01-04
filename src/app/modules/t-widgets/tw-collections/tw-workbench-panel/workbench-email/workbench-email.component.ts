@@ -17,8 +17,9 @@ import { AgentSkillListData, IWidget, ResData } from 'app/interfaces';
 import { groupBy } from 'lodash';
 import * as moment from 'moment';
 import { Observable } from 'rxjs';
-import { debounceTime, map, takeUntil } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 import { SDKClient } from 'tmac-sdk';
+import { formatJsonData } from 'app/utils';
 
 type AvailableTabs = 'inbox' | 'sentitem' | 'queue' | 'draft';
 type EmailPullItem = { sessionId: string; routeId: string; conversationId: string };
@@ -586,21 +587,22 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
             .pipe(
                 map((res: any) => ({
                     ...res,
-                    result: res.result.map((x: any, uiId) => {
+                    result: res.result.map((x: any) => {
                         const addedTime = new Date(x.receivedDate);
                         const time = x.receivedTime.split(':');
                         addedTime.setHours(time[0]);
                         addedTime.setMinutes(time[1]);
                         return {
-                            ...x,
-                            To: x.mailbox,
-                            Skill: x.makerSkillName || x.cmSkill,
-                            Subject: x.subject,
-                            From: x.from,
-                            addedTime,
-                            uiId,
-                            SessionId: x.sessionID,
-                            RouteId: x.routeId
+                            ...formatJsonData(x, {
+                                To: 'mailbox',
+                                Skill: 'makerSkillName',
+                                Subject: 'subject',
+                                From: 'from',
+                                SessionId: 'sessionID',
+                                RouteId: 'routeId',
+                                RouteReason: 'RouteReason'
+                            }),
+                            addedTime
                         };
                     })
                 }))
