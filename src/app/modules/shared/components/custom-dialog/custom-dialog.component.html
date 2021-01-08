@@ -3,33 +3,17 @@
 <div mat-dialog-content *ngIf="data.message" fxLayout="column" fxLayoutAlign=" none">
     <p class="font-size-16 font-weight-600 my-8" [innerHTML]="data.message"></p>
 
-    <mat-form-field
-        fxFlex
-        floatLabel="never"
-        appearance="standard"
-        class="prompt mb-8 border-radius-20 border-sm-info"
-        *ngIf="data.type === 'prompt'"
-    >
-        <textarea
-            [(ngModel)]="promptData"
-            matInput
-            matTextareaAutosize
-            matAutosizeMinRows="2"
-            matAutosizeMaxRows="5"
-            placeholder="Enter here..."
-        ></textarea>
+    <mat-form-field fxFlex floatLabel="never" appearance="standard" class="prompt mb-8 border-radius-20 border-sm-info"
+        *ngIf="data.type === 'prompt'">
+        <textarea [(ngModel)]="promptData" matInput matTextareaAutosize [matAutosizeMinRows]="data.minRows || 2"
+            [matAutosizeMaxRows]="(data.minRows || 5) + 3" placeholder="Enter here..."></textarea>
     </mat-form-field>
 </div>
 
 <div mat-dialog-actions xLayout="row" fxLayoutAlign="end none">
     <button mat-button color="warn" (click)="data.cancel()" tabindex="-1" *ngIf="data.type !== 'alert'">Cancel</button>
-    <button
-        mat-raised-button
-        [disabled]="data.type === 'prompt' && promptData.trim() === ''"
-        color="primary"
-        (click)="data.done(data.type === 'prompt' ? promptData : true)"
-        tabindex="-1"
-    >
+    <button mat-raised-button [disabled]="data.type === 'prompt' && promptData.trim() === ''" color="primary"
+        (click)="data.done(data.type === 'prompt' ? promptData : true)" tabindex="-1">
         {{ data.type === 'prompt' || data.type === 'alert' ? 'Ok' : data.type === 'confirm' ? 'Confirm' : 'Done' }}
     </button>
 </div>

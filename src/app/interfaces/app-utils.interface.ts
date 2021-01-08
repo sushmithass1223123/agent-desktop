@@ -14,37 +14,37 @@ export interface TWChartPieceLabel {
      */
     precision: number;
     /**
-     * 
+     *
      *  identifies whether or not labels of value 0 are displayed, default is false
      */
     showZero: boolean;
 
     /**
-     * 
+     *
      *  font size, default is defaultFontSize
      */
     fontSize: number;
 
     /**
-     * 
+     *
      *  font color, can be color array for each data or function for dynamic color, default is defaultFontColor
      */
     fontColor: string;
 
     /**
-     * 
+     *
      *  font style, default is defaultFontStyle
      */
     fontStyle: 'normal' | 'bold' | 'italic';
 
     /**
-     * 
+     *
      *  font family, default is defaultFontFamily
      */
     fontFamily: string;
 
     /**
-     * 
+     *
      *  draw label in arc, default is false
      */
     arc: boolean;
@@ -118,9 +118,9 @@ export interface TwChartConfig {
          */
         setFeedbackEmoji?: boolean;
         /**
-         * Piece label 
+         * Piece label
          */
-        pieceLabel?: Partial<TWChartPieceLabel>
+        pieceLabel?: Partial<TWChartPieceLabel>;
     };
     /**
      * Colors for chart
@@ -186,7 +186,7 @@ export interface ChatTranscripts {
          */
         src: string;
         /**
-         * Type 
+         * Type
          */
         type: string;
         /**
@@ -214,7 +214,7 @@ export interface AppNotification {
      */
     time?: string | Date;
     /**
-     * Status of the app notification 
+     * Status of the app notification
      */
     status: 'new' | 'read';
     /**
@@ -336,14 +336,13 @@ export interface CustomDialogData {
      * Message for the dialog
      */
     message: any;
+}
+
+export interface CustomDialogOtherData {
     /**
-     * Done callback
+     * Minimim Rows
      */
-    done: (data?: any) => void;
-    /**
-     * Cancel callback
-     */
-    cancel: () => void;
+    minRows?: number;
 }
 
 export interface AgentSkillListData {

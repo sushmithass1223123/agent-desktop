@@ -1,6 +1,17 @@
 import { Component, Inject, OnInit, ViewEncapsulation } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { CustomDialogData } from 'app/interfaces';
+import { CustomDialogData, CustomDialogOtherData } from 'app/interfaces';
+
+type CustomDialogActions = {
+    /**
+     * Done callback
+     */
+    done: (data?: any) => void;
+    /**
+     * Cancel callback
+     */
+    cancel: () => void;
+};
 
 @Component({
     selector: 'custom-dialog',
@@ -9,7 +20,6 @@ import { CustomDialogData } from 'app/interfaces';
     encapsulation: ViewEncapsulation.None
 })
 export class CustomDialogComponent implements OnInit {
-
     /**
      * Prompt data entered
      */
@@ -20,14 +30,12 @@ export class CustomDialogComponent implements OnInit {
      *
      * @param {CustomDialogData} data
      */
-    constructor(@Inject(MAT_DIALOG_DATA) public data: CustomDialogData) {
+    constructor(@Inject(MAT_DIALOG_DATA) public data: CustomDialogData & CustomDialogOtherData & CustomDialogActions) {
         this.promptData = '';
     }
 
     /**
      * OnInit
      */
-    ngOnInit(): void {
-
-    }
+    ngOnInit(): void {}
 }

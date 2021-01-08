@@ -76,7 +76,6 @@ export const FAILED_CALL_STATUSES = ['DacNotificationFailed'];
  */
 export const PENDING_CALL_STATUSES = ['Open', 'QueueConnected'];
 
-
 /**
  * Agent Data map
  */
@@ -100,7 +99,6 @@ export const AGENT_DATA_MAP = () => {
     return new Object();
 };
 
-
 /**
  * Alert dialog constants
  */
@@ -123,11 +121,10 @@ export const AppAlertDialogConstants: Record<AppAlertDialogTypes, { heading: str
     }
 };
 
-
 /**
  * Reminder Task dialog constants
  */
-export const RemiderTaskDialogConstants: Record<ReminderTaskDialogTypes, { title: string, message: string, type: ReminderTaskDialogTypes }> = {
+export const RemiderTaskDialogConstants: Record<ReminderTaskDialogTypes, { title: string; message: string; type: ReminderTaskDialogTypes }> = {
     makecall: {
         title: 'Task Reminder',
         message: 'Do you want to make this call?',
@@ -163,7 +160,7 @@ export const RemiderTaskDialogConstants: Record<ReminderTaskDialogTypes, { title
 /**
  * App confirm dialog constants
  */
-export const AppConfirmDialogConstants: Record<AppConfirmDialogTypes, { title: string, message: string, type: string }> = {
+export const AppConfirmDialogConstants: Record<AppConfirmDialogTypes, { title: string; message: string; type: string }> = {
     takeoverSession: {
         title: 'Confirm Login',
         message: 'Another session detected. Do you want to take it over?',
@@ -179,12 +176,12 @@ export const AppConfirmDialogConstants: Record<AppConfirmDialogTypes, { title: s
         message: 'Are you sure to close this interaction?',
         type: 'closeInteraction'
     },
-    'logout': {
+    logout: {
         title: 'Confirm Logout',
         message: 'Are you sure you want to logout?',
         type: 'logout'
     },
-    'generic': {
+    generic: {
         title: 'Confirm',
         message: 'Are you sure?',
         type: 'generic'
@@ -279,3 +276,22 @@ export const AGENT_FEATURES_MAP = {
  * Duration interval for saving email as draft in milliseconds
  */
 export const EMAIL_DRAFT_SAVE_INTERVAL = 20000;
+
+export const AUX_STATUSES = {
+    available: {
+        type: 'available',
+        code: 112
+    },
+    acw: {
+        type: 'acw',
+        code: 0
+    },
+    aux_10: {
+        type: 'aux',
+        code: 10
+    },
+    aux_4: {
+        type: 'aux',
+        code: 4
+    }
+};

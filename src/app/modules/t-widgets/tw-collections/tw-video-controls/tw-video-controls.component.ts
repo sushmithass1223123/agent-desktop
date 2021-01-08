@@ -13,7 +13,17 @@ import { IWidget } from 'app/interfaces';
 import { map } from 'lodash';
 import { timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AVChannel, AVControlMessageReceivedEvent, AVEvent, IAgentData, IResponse, SDKClient, TEnums, TextChatDisconnectedEvent, TUtils } from 'tmac-sdk';
+import {
+    AVChannel,
+    AVControlMessageReceivedEvent,
+    AVEvent,
+    IAgentData,
+    IResponse,
+    SDKClient,
+    TEnums,
+    TextChatDisconnectedEvent,
+    TUtils
+} from 'tmac-sdk';
 import { TwChatControlsComponent } from '../tw-chat-controls/tw-chat-controls.component';
 
 /**
@@ -78,7 +88,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     userList: any[] = [];
     /**
-     * Start time 
+     * Start time
      */
     startTime: Date;
     /**
@@ -136,7 +146,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
     @ViewChildren('remoteVideo') remoteVideoElements: QueryList<ElementRef>;
 
     /**
-     * Constructor 
+     * Constructor
      */
     constructor(
         private _fuseConfigService: FuseConfigService,
@@ -161,17 +171,13 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        this._fuseConfigService.config
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((config: any) => {
-                this.fuseConfig = config;
-            });
+        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+            this.fuseConfig = config;
+        });
 
-        this._appDataService.config
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((config: any) => {
-                this.appConfig = config;
-            });
+        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+            this.appConfig = config;
+        });
 
         // listen to tmac events
         SDKClient.events.on('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
@@ -196,18 +202,25 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         // create the AV channel connection
         this.createAVConnection(avEvent);
         // start call
-        this.avConn?.startCall(TEnums.WrcCallTypes.Video, null)
-            .then((dt: any) => {
-                this.showUI = true;
-                // check the response is sucess or timed out
-                if (dt.code === TEnums.WrcCodes.RequestTimeout) {
-                    // close the call widget
-                    this._aotWidgetService.destroyWidget(this.data.ID);
-                }
-            })
-            .catch((error) => {
-                this._appUIService.showSnackbar('Error in starting the call: ' + error, 'failure');
-            });
+
+        if (this.data.Data.DirectCall) {
+            this.avConn?.directCall(TEnums.WrcCallTypes.Video);
+            this.showUI = true;
+        } else {
+            this.avConn
+                ?.startCall(TEnums.WrcCallTypes.Video, null)
+                .then((dt: any) => {
+                    this.showUI = true;
+                    // check the response is sucess or timed out
+                    if (dt.code === TEnums.WrcCodes.RequestTimeout) {
+                        // close the call widget
+                        this._aotWidgetService.destroyWidget(this.data.ID);
+                    }
+                })
+                .catch((error) => {
+                    this._appUIService.showSnackbar('Error in starting the call: ' + error, 'failure');
+                });
+        }
     }
 
     /**
@@ -231,7 +244,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Create Av connection
      * @method createAVConnection
-     * @param {AVControlMessageReceivedEvent} avEvent 
+     * @param {AVControlMessageReceivedEvent} avEvent
      */
     private createAVConnection(avEvent: AVControlMessageReceivedEvent): void {
         // create a AV channel connection
@@ -267,7 +280,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * AVControlMessageReceivedEvent Handler
      * @method AVControlMessageReceivedEvent
-     * @param {AVControlMessageReceivedEvent} evt 
+     * @param {AVControlMessageReceivedEvent} evt
      */
     private AVControlMessageReceivedEvent = (evt: AVControlMessageReceivedEvent) => {
         // check the interaction
@@ -277,13 +290,12 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // forward the av messages to av channel
         this.avConn?.onMessage(evt.Message);
-    }
-
+    };
 
     /**
      * AVEvent Handler
      * @method onAVEvent
-     * @param {AVEvent} evt 
+     * @param {AVEvent} evt
      */
     private onAVEvent = (evt: AVEvent) => {
         // swtich the av events
@@ -292,15 +304,17 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                 // request param
                 const param = evt.data.param.charAt(0).toUpperCase() + evt.data.param.slice(1);
                 // config incoming call
-                const confirmDialogRef = this._appUIService.showCustomDialog('confirm', param + ' call requested by customer, Do you want to accept it?');
+                const confirmDialogRef = this._appUIService.showCustomDialog(
+                    'confirm',
+                    param + ' call requested by customer, Do you want to accept it?'
+                );
                 confirmDialogRef.afterClosed().subscribe((resp) => {
                     if (resp) {
                         // accept request
                         evt.data.response(true);
                         // show the UI
                         this.showUI = true;
-                    }
-                    else {
+                    } else {
                         // reject request
                         evt.data.response(false);
                         // close the call widget
@@ -367,7 +381,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                 this.status = 'ss-disconnected';
                 this.remoteScreenSharing = false;
                 // remove the screenshare user
-                this.userList = this.userList.filter(u => u.streamInfo.type !== 'screenshare');
+                this.userList = this.userList.filter((u) => u.streamInfo.type !== 'screenshare');
                 break;
             case 'onFail':
                 // show the error
@@ -412,12 +426,12 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
             default:
             // console.log(`unhandled:: [${evt.event}]`, evt);
         }
-    }
+    };
 
     /**
      * TextChatDisconnectedEvent Handler
      * @method TextChatDisconnectedEvent
-     * @param {TextChatDisconnectedEvent} evt 
+     * @param {TextChatDisconnectedEvent} evt
      */
     private TextChatDisconnectedEvent = (evt: TextChatDisconnectedEvent) => {
         // check the interaction
@@ -426,7 +440,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         }
         // close the widget
         this.destroyWidget();
-    }
+    };
 
     /**
      * Widget Cleanup
@@ -501,76 +515,104 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Take Snap shot
      * @method takeSnapShot
-     * @param {any} user 
+     * @param {any} user
      */
-    public takeSnapShot(user: any): void {
-        this.remoteVideoElements?.forEach((element: ElementRef) => {
-            if (element.nativeElement.id === user.stream.id) {
-                // create a canvas
-                const canvas = document.createElement('canvas');
-                // scale the canvas accordingly
-                canvas.width = element.nativeElement.videoWidth;
-                canvas.height = element.nativeElement.videoHeight;
-                // get the context
-                const ctx = canvas.getContext('2d');
-                // draw the canvas
-                ctx.drawImage(element.nativeElement, 0, 0, canvas.width, canvas.height);
-                // get base64 url
-                const base64 = canvas.toDataURL();
-                // config force login
-                const confirmDialogRef = this._appUIService.showCustomDialog('confirm', `<img src="${base64}" width="640" height="320" />`, 'Confirm Snapshot');
-                confirmDialogRef.afterClosed().subscribe((resp) => {
-                    if (resp) {
-                        this._appUIService.showSnackbar('Saving ...', 'loading');
-                        // send snapshot
-                        SDKClient.saveVideoSnap({
-                            base64,
-                            email: '',
-                            interactionId: this.interactionId.toString(),
-                            name: this.widgetData.customerName,
-                            nric: this.data.InteractionDetails.NRIC || '',
-                            phone: this.data.InteractionDetails.RegNo1 || '',
-                            sessionId: this.sessionID
-                        }, { base64 })
-                            .then((result: IResponse) => {
-                                if (result.response && result.response.ImageUrl) {
-                                    // snapsot saved sucessfully
-                                    this._appUIService.showSnackbar('Snapshot saved successfully!', 'success');
+    public async takeSnapShot(user: any): Promise<void> {
+        if (this.widgetData.chatConfig.Snapshot.Source === 'Local') {
+            this.remoteVideoElements?.forEach((element: ElementRef) => {
+                if (element.nativeElement.id === user.stream.id) {
+                    // create a canvas
+                    const canvas = document.createElement('canvas');
+                    // scale the canvas accordingly
+                    canvas.width = element.nativeElement.videoWidth;
+                    canvas.height = element.nativeElement.videoHeight;
+                    // get the context
+                    const ctx = canvas.getContext('2d');
+                    // draw the canvas
+                    ctx.drawImage(element.nativeElement, 0, 0, canvas.width, canvas.height);
+                    // get base64 url
+                    const base64 = canvas.toDataURL();
+                    // config force login
+                    const confirmDialogRef = this._appUIService.showCustomDialog(
+                        'confirm',
+                        `<img src="${base64}" width="640" height="320" />`,
+                        'Confirm Snapshot'
+                    );
+                    confirmDialogRef.afterClosed().subscribe((resp) => {
+                        if (resp) {
+                            this._appUIService.showSnackbar('Saving ...', 'loading');
+                            // send snapshot
+                            SDKClient.saveVideoSnap(
+                                {
+                                    base64,
+                                    email: '',
+                                    interactionId: this.interactionId.toString(),
+                                    name: this.widgetData.customerName,
+                                    nric: this.data.InteractionDetails.NRIC || '',
+                                    phone: this.data.InteractionDetails.RegNo1 || '',
+                                    sessionId: this.sessionID
+                                },
+                                { base64 }
+                            )
+                                .then((result: IResponse) => {
+                                    if (result.response && result.response.ImageUrl) {
+                                        // snapsot saved sucessfully
+                                        this._appUIService.showSnackbar('Snapshot saved successfully!', 'success');
 
-                                    // create the message to emit
-                                    const message = JSON.stringify({
-                                        messageId: TUtils.Generic.uuid(),
-                                        message: '',
-                                        type: 'image',
-                                        attachment: {
-                                            src: result.userObject.base64,
+                                        // create the message to emit
+                                        const message = JSON.stringify({
+                                            messageId: TUtils.Generic.uuid(),
+                                            message: '',
                                             type: 'image',
-                                            name: ''
-                                        }
-                                    });
+                                            attachment: {
+                                                src: result.userObject.base64,
+                                                type: 'image',
+                                                name: ''
+                                            }
+                                        });
 
-                                    const customEvent = {
-                                        Message: message,
-                                        InteractionID: this.interactionId,
-                                        CreatedTime: new Date(),
-                                        EventName: 'TextChatMessageTemplateSentEvent',
-                                        Result: true
-                                    };
+                                        const customEvent = {
+                                            Message: message,
+                                            InteractionID: this.interactionId,
+                                            CreatedTime: new Date(),
+                                            EventName: 'TextChatMessageTemplateSentEvent',
+                                            Result: true
+                                        };
 
-                                    // emit a template message sent event to show in UI
-                                    this._tmacEventService.emitCustomEvent(customEvent, true);
-                                }
-                                else {
-                                    this._appUIService.showSnackbar('Snapshot save failed!', 'failure');
-                                }
-                            })
-                            .catch(() => {
-                                this._appUIService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
-                            });
-                    }
+                                        // emit a template message sent event to show in UI
+                                        this._tmacEventService.emitCustomEvent(customEvent, true);
+                                    } else {
+                                        this._appUIService.showSnackbar('Snapshot save failed!', 'failure');
+                                    }
+                                })
+                                .catch(() => {
+                                    this._appUIService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
+                                });
+                        }
+                    });
+                }
+            });
+        } else if (this.widgetData.chatConfig.Snapshot.Source === 'Remote') {
+            try {
+                const res = await SDKClient.sendActionMessage({
+                    interactionId: this.interactionId.toString(),
+                    message: JSON.stringify({
+                        source: 'agent',
+                        options: {},
+                        data: {
+                            interactionId: this.interactionId.toString()
+                        },
+                        status: 'request',
+                        type: 'snapshot',
+                        eventName: 'ActionMessage',
+                        id: TUtils.Generic.uuid()
+                    })
                 });
+                console.log({ res });
+            } catch (e) {
+                console.error(e);
             }
-        });
+        }
     }
 
     /**

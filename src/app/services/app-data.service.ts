@@ -30,10 +30,7 @@ export class AppDataService {
      */
     private _appConfigSubject: BehaviorSubject<any>;
 
-    constructor(
-        @Inject(DOCUMENT) private document: any,
-        private _titleService: Title
-    ) {
+    constructor(@Inject(DOCUMENT) private document: any, private _titleService: Title) {
         // Set the config from the default config
         this._configSubject = new BehaviorSubject(new Object());
         this._appConfigSubject = new BehaviorSubject(new Object());
@@ -88,7 +85,7 @@ export class AppDataService {
 
     /**
      * To get config for the app
-     * 
+     *
      * @param {string} agentId
      */
     async getConfig(agentId?: string): Promise<any> {
@@ -99,8 +96,7 @@ export class AppDataService {
                 // get the config from server for production
                 data = await this.getProductionConfig(agentId);
                 TUtils.Logger.console('info', 'App config loaded');
-            }
-            else {
+            } else {
                 // get the config from local for development
                 data = await this.getDevelopmentConfig();
                 TUtils.Logger.console('info', 'App config loaded', data);
@@ -112,7 +108,6 @@ export class AppDataService {
                 this.setAppConfig(data);
                 return data;
             }
-
         } catch (error) {
             TUtils.Logger.log('Exception in AppDataService.getConfig', error);
         }
@@ -121,7 +116,7 @@ export class AppDataService {
 
     /**
      * To get production config
-     * 
+     *
      * @param {string} agentId
      */
     private async getProductionConfig(agentId?: string): Promise<any> {
@@ -199,15 +194,15 @@ export class AppDataService {
                 enabled: config.AppConfigs.SDK.SignalRProxy.enabled || true,
                 logging: config.AppConfigs.SDK.SignalRProxy.Logging || false,
                 protocol: config.AppConfigs.SDK.SignalRProxy?.Protocol,
-                timeout: config.AppConfigs.SDK.SignalRProxy.Timeout || 30
+                timeout: config.AppConfigs.SDK.SignalRProxy.Timeout || 30,
+                fallback: false
             },
             logging: {
                 enabled: config.AppConfigs.SDK.Logging.Enabled || false,
                 remote: config.AppConfigs.SDK.Logging.Remote || false,
                 remoteThreshold: config.AppConfigs.SDK.Logging.RemoteThreshold || 15
             },
-            customScripts:
-                [...config.AppConfigs.SDK.CustomSripts]
+            customScripts: [...config.AppConfigs.SDK.CustomSripts]
         });
     }
 }
