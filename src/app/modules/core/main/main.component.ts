@@ -4,15 +4,17 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { FuseConfigService } from '@fuse/services/config.service';
+import { FuseSplashScreenService } from '@fuse/services/splash-screen.service';
 import { FuseConfig } from '@fuse/types';
 import { AgentFeaturesService } from '@services/agent-features.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
+import { AUX_STATUSES } from 'app/constants';
 import { ThemeSelector } from 'app/layout/utils/theme-selector';
 import { environment } from 'environments/environment';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { delay, filter, map, takeUntil } from 'rxjs/operators';
 import { SDKClient } from 'tmac-sdk';
 
 /**
@@ -47,16 +49,16 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
 
     /**
      * Constructor
-     * 
-     * @param {DOCUMENT} document 
-     * @param {FuseConfigService} _fuseConfigService 
-     * @param {AppDataService} _appDataService 
-     * @param {FuseSidebarService} _fuseSidebarService 
-     * @param {Router} _router 
-     * @param {AppUiService} _appUIService 
-     * @param {AgentFeaturesService} _agentFeaturesService 
-     * @param {TMACEventService} _tmacEventsService 
-     * @param {ActivatedRoute} _activatedRouter 
+     *
+     * @param {DOCUMENT} document
+     * @param {FuseConfigService} _fuseConfigService
+     * @param {AppDataService} _appDataService
+     * @param {FuseSidebarService} _fuseSidebarService
+     * @param {Router} _router
+     * @param {AppUiService} _appUIService
+     * @param {AgentFeaturesService} _agentFeaturesService
+     * @param {TMACEventService} _tmacEventsService
+     * @param {ActivatedRoute} _activatedRouter
      */
     constructor(
         @Inject(DOCUMENT) private document: any,
@@ -64,24 +66,25 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
         private _appDataService: AppDataService,
         private _fuseSidebarService: FuseSidebarService,
         private _router: Router,
+        private route: ActivatedRoute,
         private _appUIService: AppUiService,
         private _agentFeaturesService: AgentFeaturesService,
         // this service must not be removed, this will listen to some TMAC events
         private _tmacEventsService: TMACEventService,
         private _activatedRouter: ActivatedRoute,
-        private _titleService: Title
+        private _titleService: Title,
+        private fuseSpashService: FuseSplashScreenService
     ) {
         // Set the private defaults
         this._unsubscribeAll = new Subject();
 
         // subscribe to _activatedRouter for loging agent id
-        this._activatedRouter.paramMap
-            .subscribe(paramMap => {
-                // check if agentId in param
-                if (paramMap.has('agentId')) {
-                    this.agentId = paramMap.get('agentId');
-                }
-            });
+        this._activatedRouter.paramMap.subscribe((paramMap) => {
+            // check if agentId in param
+            if (paramMap.has('agentId')) {
+                this.agentId = paramMap.get('agentId');
+            }
+        });
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -92,25 +95,24 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
      * On init
      */
     ngOnInit(): void {
+        this.fuseSpashService.hide();
         // register to all the tmac events in service
         this._tmacEventsService.subscribe();
 
         // subscribe to config changes
-        this._fuseConfigService.config
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((config: any) => {
-                this.fuseConfig = config;
-            });
+        this._fuseConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
+            this.fuseConfig = config;
+        });
 
         // subscribe to app changes
-        this._appDataService.config
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((config: any) => {
-                if (Object.keys(config).length) {
-                    this.appConfig = config;
-                    this.setTheme();
-                }
-            });
+        this._appDataService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
+            if (Object.keys(config).length) {
+                this.appConfig = config;
+                this.setTheme();
+            }
+        });
+
+        this.autoStatusChange();
     }
 
     /**
@@ -134,12 +136,37 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
 
         // remove the processed features
         this._agentFeaturesService.unsubscribe();
-
     }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Private methods
     // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * changes status automatically
+     */
+    private autoStatusChange(): void {
+        /**
+         * subscribes to Activated route
+         */
+        this.route.queryParams
+            .pipe(
+                takeUntil(this._unsubscribeAll),
+                // delay(2000),
+                // continue only if userId present
+                filter((params) => params.state),
+                map((params) => params.state.toLowerCase())
+            )
+            .subscribe(async (state) => {
+                try {
+                    const item = AUX_STATUSES[state];
+                    // change the status
+                    await SDKClient.changeStatus(item);
+                } catch (e) {
+                    console.error(e);
+                }
+            });
+    }
 
     /**
      * Set the app config
@@ -159,11 +186,10 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
      * To verify the login
      */
     private async checkLogin(): Promise<any> {
-
         // get the route history
         const route = history.state?.routeFrom;
         // for production build if the main url is opened directly route to login page
-        if (environment.production && (!route || route !== 'login') && (opener && opener === window)) {
+        if (environment.production && (!route || route !== 'login') && opener && opener === window) {
             // we will route to login page
             this.routeToLogin();
             return;
@@ -185,8 +211,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
                 // we will route to login page
                 this.routeToLogin();
                 return;
-            }
-            else {
+            } else {
                 const stationEnabled = loginData.agentData.lanId !== loginData.agentData.deviceId;
                 const station = loginData.agentData.deviceId;
                 const title = this._titleService.getTitle();
@@ -197,8 +222,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
             if (!environment.production) {
                 console.log('LoginData: ', loginData);
             }
-        }
-        else {
+        } else {
             // we will route to login page
             this.routeToLogin();
         }

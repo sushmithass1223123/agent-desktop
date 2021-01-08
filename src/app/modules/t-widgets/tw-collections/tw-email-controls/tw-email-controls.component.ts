@@ -744,7 +744,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         });
         message += 'Add new comment:';
 
-        const dialogRef = this._appUIService.showCustomDialog('prompt', message, 'Interaction Comments');
+        const dialogRef = this._appUIService.showCustomDialog('prompt', message, 'Interaction Notes', { minRows: 4 }, { minWidth: '30%' });
         dialogRef.afterClosed().subscribe((resp1) => {
             if (resp1) {
                 this._fuseProgressBarService.show();

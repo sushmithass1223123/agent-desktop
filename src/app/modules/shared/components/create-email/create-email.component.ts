@@ -349,4 +349,14 @@ export class CreateEmailComponent implements OnInit, OnDestroy {
             editor.focus();
         }
     }
+
+    /**
+     * Triggers email send action
+     */
+    triggerEmailSend(): void {
+        if (!this.emailCtrl.valid) {
+            return;
+        }
+        this.sendEmail.emit();
+    }
 }

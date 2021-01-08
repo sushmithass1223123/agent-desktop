@@ -29,7 +29,7 @@
                 <video autoplay playsinline="true" [srcObject]="user.stream" [id]="user.stream.id" #remoteVideo></video>
 
                 <button
-                    *ngIf="this.widgetData.chatConfig.SnapshotAllowed"
+                    *ngIf="this.widgetData.chatConfig.Snapshot.Allowed"
                     mat-flat-button
                     mat-icon-button
                     [disabled]="!connected"

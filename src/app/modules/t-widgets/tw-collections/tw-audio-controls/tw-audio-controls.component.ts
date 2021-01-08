@@ -21,9 +21,8 @@ import { TwChatControlsComponent } from '../tw-chat-controls/tw-chat-controls.co
     encapsulation: ViewEncapsulation.None
 })
 export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-
     /**
-     * holds all the data related to this widget from the config    
+     * holds all the data related to this widget from the config
      */
     @Input() data: IWidget;
 
@@ -37,7 +36,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
     appConfig: any;
 
     /**
-     * Widget Data 
+     * Widget Data
      */
     widgetData: {
         /**
@@ -124,7 +123,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
     remoateScreenshareRef: any;
 
     /**
-     * Constructor 
+     * Constructor
      */
     constructor(
         private _fuseConfigService: FuseConfigService,
@@ -147,21 +146,13 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        this._fuseConfigService.config
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(
-                (config: any) => {
-                    this.fuseConfig = config;
-                }
-            );
+        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+            this.fuseConfig = config;
+        });
 
-        this._appDataService.config
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(
-                (config: any) => {
-                    this.appConfig = config;
-                }
-            );
+        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+            this.appConfig = config;
+        });
 
         // listen to tmac events
         SDKClient.events.on('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
@@ -186,18 +177,24 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         // create the AV channel connection
         this.createAVConnection(avEvent);
         // start call
-        this.avConn?.startCall(TEnums.WrcCallTypes.Audio, null)
-            .then((dt: any) => {
-                this.showUI = true;
-                // check the response is sucess or timed out
-                if (dt.code === TEnums.WrcCodes.RequestTimeout) {
-                    // close the call widget
-                    this._aotWidgetService.destroyWidget(this.data.ID);
-                }
-            })
-            .catch((error) => {
-                this._appUIService.showSnackbar('Error in starting the call: ' + error, 'failure');
-            });
+
+        if (this.data.Data.DirectCall) {
+            this.avConn?.directCall(TEnums.WrcCallTypes.Audio);
+        } else {
+            this.avConn
+                ?.startCall(TEnums.WrcCallTypes.Audio, null)
+                .then((dt: any) => {
+                    this.showUI = true;
+                    // check the response is sucess or timed out
+                    if (dt.code === TEnums.WrcCodes.RequestTimeout) {
+                        // close the call widget
+                        this._aotWidgetService.destroyWidget(this.data.ID);
+                    }
+                })
+                .catch((error) => {
+                    this._appUIService.showSnackbar('Error in starting the call: ' + error, 'failure');
+                });
+        }
 
         this.showUI = true;
     }
@@ -223,7 +220,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Create AV connection
      * @method createAVConnection
-     * @param {AVControlMessageReceivedEvent} avEvent 
+     * @param {AVControlMessageReceivedEvent} avEvent
      */
     private createAVConnection(avEvent: AVControlMessageReceivedEvent): void {
         if (!this.interactionId) {
@@ -263,7 +260,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * AVControlMessageReceivedEvent Handler
      * @method AVControlMessageReceivedEvent
-     * @param {AVControlMessageReceivedEvent} evt 
+     * @param {AVControlMessageReceivedEvent} evt
      */
     private AVControlMessageReceivedEvent = (evt: AVControlMessageReceivedEvent) => {
         // check the interaction
@@ -273,12 +270,12 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // forward the av messages to av channel
         this.avConn?.onMessage(evt.Message);
-    }
+    };
 
     /**
      * AVEvent Handler
      * @method onAVEvent
-     * @param {AVEvent} evt 
+     * @param {AVEvent} evt
      */
     private onAVEvent = (evt: AVEvent) => {
         // swtich the av events
@@ -287,15 +284,17 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
                 // request param
                 const param = evt.data.param.charAt(0).toUpperCase() + evt.data.param.slice(1);
                 // get confirmation
-                const confirmDialogRef = this._appUIService.showCustomDialog('confirm', param + ' call requested by customer, Do you want to accept it?');
+                const confirmDialogRef = this._appUIService.showCustomDialog(
+                    'confirm',
+                    param + ' call requested by customer, Do you want to accept it?'
+                );
                 confirmDialogRef.afterClosed().subscribe((resp) => {
                     if (resp) {
                         // accept request
                         evt.data.response(true);
                         // show the UI
                         this.showUI = true;
-                    }
-                    else {
+                    } else {
                         // reject request
                         evt.data.response(false);
                         // close the call widget
@@ -360,7 +359,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
                 this.remoteScreenSharing = false;
                 this.remoateScreenshareRef = null;
                 // remove the screenshare user
-                this.userList = this.userList.filter(u => u.streamInfo.type !== 'screenshare');
+                this.userList = this.userList.filter((u) => u.streamInfo.type !== 'screenshare');
                 break;
             case 'onFail':
                 // show the error
@@ -405,13 +404,12 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
             default:
             // console.log(`unhandled:: [${evt.event}]`, evt);
         }
-    }
-
+    };
 
     /**
      * TextChatDisconnectedEvent Handler
      * @method TextChatDisconnectedEvent
-     * @param {TextChatDisconnectedEvent} evt 
+     * @param {TextChatDisconnectedEvent} evt
      */
     private TextChatDisconnectedEvent = (evt: TextChatDisconnectedEvent) => {
         // check the interaction
@@ -420,8 +418,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         }
         // close the widget
         this.destroyWidget();
-    }
-
+    };
 
     /**
      * Widget Cleanup
@@ -436,7 +433,6 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
 
-
     /**
      * Mute call
      * @method muteCall
@@ -446,15 +442,13 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         if (this.muted) {
             // un mute the call
             this.avConn.unMute(true, false);
-        }
-        else {
+        } else {
             // mute the call
             this.avConn.mute(true, false);
         }
         // set the reference varaible
         this.muted = !this.muted;
     }
-
 
     /**
      * Hold call
@@ -465,15 +459,13 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         if (this.hold) {
             // un hold the call
             this.avConn.unHold();
-        }
-        else {
+        } else {
             // hold the call
             this.avConn.hold();
         }
-        // set the reference varaible 
+        // set the reference varaible
         this.hold = !this.hold;
     }
-
 
     /**
      * Share Screen
@@ -484,13 +476,11 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         if (this.screenSharing) {
             // stop screen sharing
             this.avConn.stopScreenshare();
-        }
-        else {
+        } else {
             // start screen sharing
             this.avConn.startScreenshare();
         }
     }
-
 
     /**
      * End call
@@ -501,8 +491,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         // if there is only customer then endCall else dropCall
         if (this.userList.length > 1) {
             this.avConn.dropCall('');
-        }
-        else {
+        } else {
             this.avConn.endCall(TEnums.WrcCallTypes.Audio, '');
         }
         // close the widget
