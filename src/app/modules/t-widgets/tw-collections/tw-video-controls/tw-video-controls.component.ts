@@ -326,9 +326,12 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
             case 'onTrace':
                 TUtils.Logger.log(evt.data);
                 break;
-            case 'onError':
+            case 'onError': {
+                this.status = `Error : ${evt.data?.error}`;
+                this._appUIService.showSnackbar(evt.data?.error || 'Something went wrong', 'failure');
                 TUtils.Logger.log('Exception in TwAudioControlsComponent.onAVEvent', evt.data);
                 break;
+            }
             case 'onAVStats':
                 this.status = evt.data;
                 break;
