@@ -10,6 +10,7 @@ import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { IWidget } from 'app/interfaces';
+import { TwWidgetModel } from 'app/models';
 import { map } from 'lodash';
 import { timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -595,12 +596,12 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         } else if (this.widgetData.chatConfig.Snapshot.Source === 'Remote') {
             try {
                 const res = await SDKClient.sendActionMessage({
-                    interactionId: this.interactionId.toString(),
+                    interactionId: this.interactionId as any,
                     message: JSON.stringify({
                         source: 'agent',
                         options: {},
                         data: {
-                            interactionId: this.interactionId.toString()
+                            interactionId: this.interactionId
                         },
                         status: 'request',
                         type: 'snapshot',
@@ -646,6 +647,50 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         }
         // close the widget
         this.destroyWidget();
+    }
+
+    /**
+     * Opens webrtc stats inside an iframe
+     */
+    async showWebRTCStats(): Promise<void> {
+        try {
+            if (this.data.Data.Config.WebRTCUrl) {
+                const { WebRTCUrl, TroubleshootWebRtcForCustomer } = this.data.Data.Config;
+                // create a call AOT widget
+                const widget = new TwWidgetModel('WebRTC Stats', 'tw-custom', 'event_note');
+                widget.Config.Anchor = false;
+                widget.Config.Position.W = 640;
+                widget.Config.Position.H = 480;
+                widget.Config.Actions = ['collapse', 'maximize', 'destroy'];
+
+                widget.Data = {
+                    AutoOpen: false,
+                    OpenInNew: false,
+                    Url: WebRTCUrl
+                };
+
+                this._aotWidgetService.addWidget(widget);
+
+                if (TroubleshootWebRtcForCustomer) {
+                    await SDKClient.sendActionMessage({
+                        interactionId: this.interactionId as any,
+                        message: JSON.stringify({
+                            source: 'agent',
+                            options: {},
+                            data: { webRTCUrl: WebRTCUrl },
+                            status: 'request',
+                            type: 'webrtcTroubleshoot',
+                            eventName: 'ActionMessage',
+                            id: TUtils.Generic.uuid()
+                        })
+                    });
+                }
+            } else {
+                throw new Error('WebRTC Url missing in app config');
+            }
+        } catch (err) {
+            this._appUIService.showSnackbar(err, 'failure');
+        }
     }
 }
 

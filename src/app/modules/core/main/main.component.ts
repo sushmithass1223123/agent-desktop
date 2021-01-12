@@ -14,7 +14,7 @@ import { AUX_STATUSES } from 'app/constants';
 import { ThemeSelector } from 'app/layout/utils/theme-selector';
 import { environment } from 'environments/environment';
 import { Subject } from 'rxjs';
-import { delay, filter, map, takeUntil } from 'rxjs/operators';
+import { filter, map, takeUntil } from 'rxjs/operators';
 import { SDKClient } from 'tmac-sdk';
 
 /**

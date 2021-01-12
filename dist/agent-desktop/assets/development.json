@@ -401,10 +401,7 @@
                                             "X": 1,
                                             "Y": 1
                                         },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
+                                        "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -418,7 +415,7 @@
                                     "Name": "AHT/Transfer/Conference ",
                                     "Description": "",
                                     "Key": "AHT-Trans-Conf-Count",
-                                    "Type": "tw-sample",
+                                    "Type": "tw-aht-tc",
                                     "Config": {
                                         "Enabled": true,
                                         "Static": false,
@@ -430,10 +427,7 @@
                                             "X": 2,
                                             "Y": 1
                                         },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
+                                        "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -458,10 +452,7 @@
                                             "X": 1,
                                             "Y": 1
                                         },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
+                                        "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -487,10 +478,7 @@
                                             "X": 2,
                                             "Y": 2
                                         },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
+                                        "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -513,10 +501,7 @@
                                             "X": 2,
                                             "Y": 2
                                         },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
+                                        "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -529,6 +514,35 @@
                                 }
                             ],
                             "AOT": [
+                                {
+                                    "Name": "WebRTC tracker",
+                                    "Description": "",
+                                    "Key": "WebRTC",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "event_note",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 4,
+                                            "Y": 4,
+                                            "W": 1200,
+                                            "H": 700
+                                        },
+                                        "Actions": ["maximize", "destroy"],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "OpenInNew": false,
+                                        "Url": "https://mx.tetherfi.cloud/testrtc/index.html?turnURI=turn%3Amx.tetherfi.cloud%3A3585&turnUsername=tetherfi&turnCredential=nuwan"
+                                    }
+                                },
                                 {
                                     "Name": "CRM-Zoho",
                                     "Description": "",
@@ -547,10 +561,7 @@
                                             "W": 800,
                                             "H": 700
                                         },
-                                        "Actions": [
-                                            "minimize",
-                                            "destroy"
-                                        ],
+                                        "Actions": ["minimize", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -578,10 +589,7 @@
                                             "W": 300,
                                             "H": 300
                                         },
-                                        "Actions": [
-                                            "minimize",
-                                            "destroy"
-                                        ],
+                                        "Actions": ["minimize", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -618,11 +626,7 @@
                                             "W": 325,
                                             "H": 740
                                         },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy",
-                                            "pin"
-                                        ],
+                                        "Actions": ["collapse", "destroy", "pin"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -651,19 +655,13 @@
                                             "W": 1200,
                                             "H": 700
                                         },
-                                        "Actions": [
-                                            "maximize",
-                                            "destroy"
-                                        ],
+                                        "Actions": ["maximize", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "LeaderBoardUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetLeaderBoard",
-                                        "AgentProgressUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetProgress",
-                                        "GetAgentLevelsUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetAgentLevels",
-                                        "GetQuizInfoUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetQuizInformation",
+                                        "GamificationProxy": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx",
                                         "TVirtualStoreUrl": "https://dice.tetherfi.cloud/TVirtualStore"
                                     }
                                 },
@@ -756,10 +754,7 @@
                                             "X": 1,
                                             "Y": 1
                                         },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
+                                        "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -785,10 +780,7 @@
                                             "X": 1,
                                             "Y": 1
                                         },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
+                                        "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -812,10 +804,7 @@
                                             "X": 1,
                                             "Y": 1
                                         },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
+                                        "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -841,10 +830,7 @@
                                             "X": 1,
                                             "Y": 1
                                         },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
+                                        "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -868,10 +854,7 @@
                                             "X": 2,
                                             "Y": 2
                                         },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
+                                        "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -897,10 +880,7 @@
                                             "X": 1,
                                             "Y": 1
                                         },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
+                                        "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -926,10 +906,7 @@
                                             "X": 1,
                                             "Y": 1
                                         },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
+                                        "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -954,10 +931,7 @@
                                             "X": 2,
                                             "Y": 1
                                         },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
+                                        "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -988,16 +962,13 @@
                                             "W": 500,
                                             "H": "300"
                                         },
-                                        "Actions": [
-                                            "maximize",
-                                            "destroy"
-                                        ],
+                                        "Actions": ["maximize", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "LeaderBoardUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetLeaderBoard"
+                                        "GamificationProxy": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx"
                                     }
                                 },
                                 {
@@ -1018,10 +989,7 @@
                                             "W": 1200,
                                             "H": 800
                                         },
-                                        "Actions": [
-                                            "maximize",
-                                            "destroy"
-                                        ],
+                                        "Actions": ["maximize", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -1089,11 +1057,7 @@
                                                         "X": 2,
                                                         "Y": 1
                                                     },
-                                                    "Actions": [
-                                                        "maximize",
-                                                        "collapse",
-                                                        "float"
-                                                    ],
+                                                    "Actions": ["maximize", "collapse", "float"],
                                                     "ViewState": "restore",
                                                     "Header": true,
                                                     "Pinned": false
@@ -1111,9 +1075,7 @@
                                                             "Allowed": true,
                                                             "Blind": false,
                                                             "Source": "skill",
-                                                            "ChannelPrefix": [
-                                                                "VO"
-                                                            ]
+                                                            "ChannelPrefix": ["VO"]
                                                         }
                                                     },
                                                     "Conference": {
@@ -1128,19 +1090,12 @@
                                                             "Allowed": true,
                                                             "Blind": false,
                                                             "Source": "skill",
-                                                            "ChannelPrefix": [
-                                                                "VO"
-                                                            ]
+                                                            "ChannelPrefix": ["VO"]
                                                         }
                                                     },
                                                     "IVR": {
                                                         "MenuEnabled": true,
-                                                        "DefaultMenu": [
-                                                            "Main Menu",
-                                                            "Products",
-                                                            "Mobile",
-                                                            "Agent"
-                                                        ],
+                                                        "DefaultMenu": ["Main Menu", "Products", "Mobile", "Agent"],
                                                         "Transfer": {
                                                             "Allowed": false,
                                                             "Menu": [
@@ -1170,10 +1125,7 @@
                                                         "X": 2,
                                                         "Y": 1
                                                     },
-                                                    "Actions": [
-                                                        "maximize",
-                                                        "collapse"
-                                                    ],
+                                                    "Actions": ["maximize", "collapse"],
                                                     "ViewState": "restore",
                                                     "Header": true,
                                                     "Pinned": false
@@ -1240,10 +1192,7 @@
                                                         "X": 2,
                                                         "Y": 1
                                                     },
-                                                    "Actions": [
-                                                        "maximize",
-                                                        "collapse"
-                                                    ],
+                                                    "Actions": ["maximize", "collapse"],
                                                     "ViewState": "restore",
                                                     "Header": true,
                                                     "Pinned": false
@@ -1275,9 +1224,7 @@
                                             "X": 2,
                                             "Y": 1
                                         },
-                                        "Actions": [
-                                            "float"
-                                        ],
+                                        "Actions": ["float"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -1289,11 +1236,7 @@
                                         "Icon": "assistant",
                                         "Width": 450,
                                         "Height": 800,
-                                        "Actions": [
-                                            "collapse",
-                                            "maximize",
-                                            "destroy"
-                                        ],
+                                        "Actions": ["collapse", "maximize", "destroy"],
                                         "ViewState": "restore"
                                     }
                                 },
@@ -1313,10 +1256,7 @@
                                             "X": 2,
                                             "Y": 1
                                         },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
+                                        "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -1343,10 +1283,7 @@
                                             "W": 700,
                                             "H": 600
                                         },
-                                        "Actions": [
-                                            "minimize",
-                                            "destroy"
-                                        ],
+                                        "Actions": ["minimize", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -1372,10 +1309,7 @@
                                             "X": 2,
                                             "Y": 1
                                         },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
+                                        "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -1398,10 +1332,7 @@
                                             "X": 2,
                                             "Y": 1
                                         },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
+                                        "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -1424,10 +1355,7 @@
                                             "X": 2,
                                             "Y": 1
                                         },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
+                                        "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -1454,10 +1382,7 @@
                                             "X": 2,
                                             "Y": 1
                                         },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
+                                        "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -1484,10 +1409,7 @@
                                             "W": 700,
                                             "H": 600
                                         },
-                                        "Actions": [
-                                            "minimize",
-                                            "destroy"
-                                        ],
+                                        "Actions": ["minimize", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -1515,10 +1437,7 @@
                                             "W": 300,
                                             "H": 300
                                         },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
+                                        "Actions": ["collapse", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -1556,10 +1475,7 @@
                                             "W": 700,
                                             "H": 300
                                         },
-                                        "Actions": [
-                                            "maximize",
-                                            "destroy"
-                                        ],
+                                        "Actions": ["maximize", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -1586,10 +1502,7 @@
                                             "W": 1000,
                                             "H": 700
                                         },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
+                                        "Actions": ["collapse", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -1618,10 +1531,7 @@
                                             "W": 1000,
                                             "H": 700
                                         },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
+                                        "Actions": ["collapse", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -1650,10 +1560,7 @@
                                             "W": 300,
                                             "H": 300
                                         },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
+                                        "Actions": ["collapse", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -1678,10 +1585,7 @@
                                             "W": 900,
                                             "H": 400
                                         },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
+                                        "Actions": ["collapse", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -1710,10 +1614,7 @@
                                             "W": 800,
                                             "H": 700
                                         },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
+                                        "Actions": ["collapse", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -1742,10 +1643,7 @@
                                             "W": 800,
                                             "H": 700
                                         },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
+                                        "Actions": ["collapse", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -1774,10 +1672,7 @@
                                             "W": 450,
                                             "H": 800
                                         },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
+                                        "Actions": ["collapse", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -1871,11 +1766,7 @@
                                                         "X": 2,
                                                         "Y": 1
                                                     },
-                                                    "Actions": [
-                                                        "maximize",
-                                                        "collapse",
-                                                        "float"
-                                                    ],
+                                                    "Actions": ["maximize", "collapse", "float"],
                                                     "ViewState": "restore",
                                                     "Header": true,
                                                     "Pinned": false
@@ -1893,9 +1784,7 @@
                                                             "Allowed": true,
                                                             "Blind": false,
                                                             "Source": "skill",
-                                                            "ChannelPrefix": [
-                                                                "CH"
-                                                            ]
+                                                            "ChannelPrefix": ["CH"]
                                                         }
                                                     },
                                                     "Conference": {
@@ -1910,9 +1799,7 @@
                                                             "Allowed": true,
                                                             "Blind": false,
                                                             "Source": "skill",
-                                                            "ChannelPrefix": [
-                                                                "CH"
-                                                            ]
+                                                            "ChannelPrefix": ["CH"]
                                                         }
                                                     },
                                                     "ImmediateCallbackAllowed": false,
@@ -1925,7 +1812,10 @@
                                                     "VoiceNoteAllowed": false,
                                                     "AttachmentAllowed": true,
                                                     "ScreenShareAllowed": true,
-                                                    "SnapshotAllowed": true,
+                                                    "Snapshot": {
+                                                        "Allowed": true,
+                                                        "Source": "Remote"
+                                                    },
                                                     "ShowUserLabel": false,
                                                     "ChatTemplate": {
                                                         "Filter": "startswith",
@@ -1944,11 +1834,10 @@
                                                                 "Label": "Audio Video"
                                                             }
                                                         ],
-                                                        "On": [
-                                                            "oncall",
-                                                            "afterdisconnect"
-                                                        ]
-                                                    }
+                                                        "On": ["oncall", "afterdisconnect"]
+                                                    },
+                                                    "WebRTCUrl" : "https://mx.tetherfi.cloud/testrtc/index.html?turnURI=turn%3Amx.tetherfi.cloud%3A3585&turnUsername=tetherfi&turnCredential=nuwan",
+                                                    "TroubleshootWebRtcForCustomer" : true
                                                 }
                                             },
                                             {
@@ -1966,10 +1855,7 @@
                                                         "X": 2,
                                                         "Y": 1
                                                     },
-                                                    "Actions": [
-                                                        "maximize",
-                                                        "collapse"
-                                                    ],
+                                                    "Actions": ["maximize", "collapse"],
                                                     "ViewState": "restore",
                                                     "Header": true,
                                                     "Pinned": false
@@ -2048,10 +1934,7 @@
                                                         "X": 2,
                                                         "Y": 1
                                                     },
-                                                    "Actions": [
-                                                        "maximize",
-                                                        "collapse"
-                                                    ],
+                                                    "Actions": ["maximize", "collapse"],
                                                     "ViewState": "collapse",
                                                     "Header": true,
                                                     "Pinned": false
@@ -2068,6 +1951,31 @@
                             ],
                             "Dynamic": [
                                 {
+                                    "Name": "Custom Snapshot widget",
+                                    "Description": "",
+                                    "Key": "Custom Snapshot widget",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "verified_user",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": ["float"],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "Url": "/assets/custom-snapshot-widget.html"
+                                    }
+                                },
+                                {
                                     "Name": "Agent Assist",
                                     "Description": "",
                                     "Key": "AgentAssist",
@@ -2083,9 +1991,7 @@
                                             "X": 2,
                                             "Y": 1
                                         },
-                                        "Actions": [
-                                            "float"
-                                        ],
+                                        "Actions": ["float"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -2097,11 +2003,7 @@
                                         "Icon": "assistant",
                                         "Width": 450,
                                         "Height": 800,
-                                        "Actions": [
-                                            "collapse",
-                                            "maximize",
-                                            "destroy"
-                                        ],
+                                        "Actions": ["collapse", "maximize", "destroy"],
                                         "ViewState": "restore"
                                     }
                                 },
@@ -2121,10 +2023,7 @@
                                             "X": 2,
                                             "Y": 1
                                         },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
+                                        "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -2149,10 +2048,7 @@
                                             "X": 2,
                                             "Y": 1
                                         },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
+                                        "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -2175,10 +2071,7 @@
                                             "X": 2,
                                             "Y": 1
                                         },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
+                                        "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -2201,10 +2094,7 @@
                                             "X": 2,
                                             "Y": 1
                                         },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
+                                        "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -2231,10 +2121,7 @@
                                             "X": 2,
                                             "Y": 1
                                         },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
+                                        "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -2261,10 +2148,7 @@
                                             "W": 700,
                                             "H": 600
                                         },
-                                        "Actions": [
-                                            "minimize",
-                                            "destroy"
-                                        ],
+                                        "Actions": ["minimize", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true
                                     },
@@ -2292,10 +2176,7 @@
                                             "W": 300,
                                             "H": 300
                                         },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
+                                        "Actions": ["collapse", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -2333,10 +2214,7 @@
                                             "W": 1000,
                                             "H": 700
                                         },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
+                                        "Actions": ["collapse", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -2365,10 +2243,7 @@
                                             "W": 1000,
                                             "H": 700
                                         },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
+                                        "Actions": ["collapse", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -2397,10 +2272,7 @@
                                             "W": 900,
                                             "H": 400
                                         },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
+                                        "Actions": ["collapse", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -2429,10 +2301,7 @@
                                             "W": 1000,
                                             "H": 700
                                         },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
+                                        "Actions": ["collapse", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -2461,10 +2330,7 @@
                                             "W": 1000,
                                             "H": 700
                                         },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
+                                        "Actions": ["collapse", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -2493,10 +2359,7 @@
                                             "W": 450,
                                             "H": 800
                                         },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
+                                        "Actions": ["collapse", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -2564,11 +2427,7 @@
                                                         "X": 2,
                                                         "Y": 1
                                                     },
-                                                    "Actions": [
-                                                        "maximize",
-                                                        "collapse",
-                                                        "float"
-                                                    ],
+                                                    "Actions": ["maximize", "collapse", "float"],
                                                     "ViewState": "restore",
                                                     "Header": true,
                                                     "Pinned": false
@@ -2586,9 +2445,7 @@
                                                             "Allowed": true,
                                                             "Blind": false,
                                                             "Source": "skill",
-                                                            "ChannelPrefix": [
-                                                                "EM"
-                                                            ]
+                                                            "ChannelPrefix": ["EM"]
                                                         }
                                                     },
                                                     "ForwardAllowed": true,
@@ -2610,10 +2467,7 @@
                                                         "X": 2,
                                                         "Y": 1
                                                     },
-                                                    "Actions": [
-                                                        "maximize",
-                                                        "collapse"
-                                                    ],
+                                                    "Actions": ["maximize", "collapse"],
                                                     "ViewState": "restore",
                                                     "Header": true,
                                                     "Pinned": false
@@ -2645,9 +2499,7 @@
                                             "X": 2,
                                             "Y": 1
                                         },
-                                        "Actions": [
-                                            "float"
-                                        ],
+                                        "Actions": ["float"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -2659,11 +2511,7 @@
                                         "Icon": "assistant",
                                         "Width": 450,
                                         "Height": 800,
-                                        "Actions": [
-                                            "collapse",
-                                            "maximize",
-                                            "destroy"
-                                        ],
+                                        "Actions": ["collapse", "maximize", "destroy"],
                                         "ViewState": "restore"
                                     }
                                 },
@@ -2683,9 +2531,7 @@
                                             "X": 2,
                                             "Y": 1
                                         },
-                                        "Actions": [
-                                            "float"
-                                        ],
+                                        "Actions": ["float"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -2708,10 +2554,7 @@
                                             "X": 2,
                                             "Y": 1
                                         },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
+                                        "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -2736,10 +2579,7 @@
                                             "X": 2,
                                             "Y": 1
                                         },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
+                                        "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -2762,10 +2602,7 @@
                                             "X": 2,
                                             "Y": 1
                                         },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
+                                        "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -2792,10 +2629,7 @@
                                             "X": 2,
                                             "Y": 1
                                         },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
+                                        "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -2822,10 +2656,7 @@
                                             "W": 300,
                                             "H": 300
                                         },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
+                                        "Actions": ["collapse", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -2863,10 +2694,7 @@
                                             "W": 1000,
                                             "H": 700
                                         },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
+                                        "Actions": ["collapse", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -2895,10 +2723,7 @@
                                             "W": 1000,
                                             "H": 700
                                         },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
+                                        "Actions": ["collapse", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -2927,10 +2752,7 @@
                                             "W": 900,
                                             "H": 400
                                         },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
+                                        "Actions": ["collapse", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -2959,10 +2781,7 @@
                                             "W": 1000,
                                             "H": 700
                                         },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
+                                        "Actions": ["collapse", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -2991,10 +2810,7 @@
                                             "W": 1000,
                                             "H": 700
                                         },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
+                                        "Actions": ["collapse", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -3023,10 +2839,7 @@
                                             "W": 450,
                                             "H": 800
                                         },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
+                                        "Actions": ["collapse", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -3090,9 +2903,7 @@
                                                     "Allowed": true,
                                                     "Blind": false,
                                                     "Source": "skill",
-                                                    "ChannelPrefix": [
-                                                        "EM"
-                                                    ]
+                                                    "ChannelPrefix": ["EM"]
                                                 }
                                             }
                                         }
@@ -3230,9 +3041,7 @@
                 }
             ],
             "Urls": {
-                "DashboardServerUrls": [
-                    "https://dice.tetherfi.cloud:443/SignalRDashboardSup"
-                ],
+                "DashboardServerUrls": ["https://dice.tetherfi.cloud:443/SignalRDashboardSup"],
                 "FileServerUrl": {
                     "SMM": "https://dice.tetherfi.cloud:13019/upload",
                     "MediaProxy": "https://dice.tetherfi.cloud/ApiFileUploadDownLoad"
@@ -3260,11 +3069,7 @@
                             "W": 325,
                             "H": 740
                         },
-                        "Actions": [
-                            "collapse",
-                            "destroy",
-                            "pin"
-                        ],
+                        "Actions": ["collapse", "destroy", "pin"],
                         "ViewState": "restore",
                         "Header": true,
                         "Pinned": true
@@ -3293,11 +3098,7 @@
                             "W": 300,
                             "H": 300
                         },
-                        "Actions": [
-                            "collapse",
-                            "destroy",
-                            "pin"
-                        ],
+                        "Actions": ["collapse", "destroy", "pin"],
                         "ViewState": "restore",
                         "Header": true,
                         "Pinned": true
@@ -3326,11 +3127,7 @@
                             "W": 0,
                             "H": 0
                         },
-                        "Actions": [
-                            "collapse",
-                            "destroy",
-                            "pin"
-                        ],
+                        "Actions": ["collapse", "destroy", "pin"],
                         "ViewState": "restore",
                         "Header": true,
                         "Pinned": true
@@ -3440,9 +3237,7 @@
         },
         "SDK": {
             "Proxy": {
-                "Urls": [
-                    "https://dice.tetherfi.cloud/TMACHttpProxy/TmacProxy.asmx"
-                ],
+                "Urls": ["https://dice.tetherfi.cloud/Dev_TMACSDKProxy/TmacProxy.asmx"],
                 "Type": "soap",
                 "Timeout": 30
             },

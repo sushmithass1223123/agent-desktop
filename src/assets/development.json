@@ -968,8 +968,7 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "GamificationProxy": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx",
-                                        "LeaderBoardUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx/GetLeaderBoard"
+                                        "GamificationProxy": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx"
                                     }
                                 },
                                 {
@@ -1836,7 +1835,9 @@
                                                             }
                                                         ],
                                                         "On": ["oncall", "afterdisconnect"]
-                                                    }
+                                                    },
+                                                    "WebRTCUrl" : "https://mx.tetherfi.cloud/testrtc/index.html?turnURI=turn%3Amx.tetherfi.cloud%3A3585&turnUsername=tetherfi&turnCredential=nuwan",
+                                                    "TroubleshootWebRtcForCustomer" : true
                                                 }
                                             },
                                             {
@@ -1949,6 +1950,31 @@
                                 }
                             ],
                             "Dynamic": [
+                                {
+                                    "Name": "Custom Snapshot widget",
+                                    "Description": "",
+                                    "Key": "Custom Snapshot widget",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "verified_user",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": ["float"],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "Url": "/assets/custom-snapshot-widget.html"
+                                    }
+                                },
                                 {
                                     "Name": "Agent Assist",
                                     "Description": "",
