@@ -63,9 +63,7 @@ export class TwSuGamificationComponent extends TWidgetWrapper implements OnInit,
     /**
      * Constructor
      */
-    constructor(
-        private _http: HttpClient
-    ) {
+    constructor(private _http: HttpClient) {
         super();
     }
 
@@ -105,12 +103,17 @@ export class TwSuGamificationComponent extends TWidgetWrapper implements OnInit,
      * @method setupLeaderBoard
      */
     setupLeaderBoard(): void {
+        if (!this.data.Data.GamificationProxy) {
+            this.gamificationReqStatus = { msg: 'GamificationProxy missing in app config', error: true, loading: false };
+            return;
+        }
         this._http
-            .post<Record<'d', string>>(this.data.Data.LeaderBoardUrl, {})
+            .post<Record<'d', string>>(`${this.data.Data.GamificationProxy}/GetLeaderBoard`, {})
             .pipe(
                 map((x) => JSON.parse(x.d)),
                 takeUntil(this.unsubscribeAll)
-            ).subscribe(
+            )
+            .subscribe(
                 (leaders) => {
                     if (leaders && leaders.length) {
                         this.leaderboardTable.source = new MatTableDataSource(sortBy(leaders, 'Position'));

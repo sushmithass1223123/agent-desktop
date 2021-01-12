@@ -637,7 +637,7 @@ export class LoginComponent implements OnInit, OnDestroy {
             {
                 lanId: this.domainListEnabled ? `${selectedDomain}\\${lanId}` : lanId,
                 agentId: agentId,
-                deviceId: this.stationEnabled ? station : lanId.toLowerCase(),
+                deviceId: this.stationEnabled ? station : lanId.split(',')[0].toLowerCase(),
                 forceReload: force,
                 jsonData: JSON.stringify({
                     msLogin: this.msChecked,

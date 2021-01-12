@@ -59,23 +59,22 @@ export class TwcTextchatComponent extends TWContentWrapper implements OnInit, On
         //     });
 
         // subscribe to interaction events observable
-        this._tmacEventService.getConstructDisposeEvents(['TextChatIncomingEvent', 'InteractionClosedEvent'])
+        this._tmacEventService
+            .getConstructDisposeEvents(['TextChatIncomingEvent', 'InteractionClosedEvent'])
             .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
+            .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
 
         // subscribe to active interaction observable
-        this._interactionManagerService.interactions
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((interactions: InteractionRef[]) => {
-                // check if there are textchat interactions first
-                if (this.interactions.length > 0) {
-                    const textInteractions = interactions.filter(i => i.type === 'textchat');
-                    // filter and get the active textchat interaction if any
-                    textInteractions.forEach((interaction: InteractionRef) => {
-                        this.activeInteraction = interaction.isActive ? interaction.interactionId : this.activeInteraction;
-                    });
-                }
-            });
+        this._interactionManagerService.interactions.pipe(takeUntil(this.unsubscribeAll)).subscribe((interactions: InteractionRef[]) => {
+            // check if there are textchat interactions first
+            if (this.interactions.length > 0) {
+                const textInteractions = interactions.filter((i) => i.type === 'textchat');
+                // filter and get the active textchat interaction if any
+                textInteractions.forEach((interaction: InteractionRef) => {
+                    this.activeInteraction = interaction.isActive ? interaction.interactionId : this.activeInteraction;
+                });
+            }
+        });
     }
 
     /**
@@ -90,12 +89,11 @@ export class TwcTextchatComponent extends TWContentWrapper implements OnInit, On
      * To process TextChatIncomingEvent
      */
     private TextChatIncomingEvent = (evt: TextChatIncomingEvent) => {
-
         // get the content widgets
         const textchatWidgets = cloneDeep(this.data.Data.Widgets) || [];
 
         const staticWidgets = textchatWidgets.Static || [];
-        const dynamicWidgets = JSON.parse(evt.WidgetConfigData) || textchatWidgets.Dynamic || [];
+        const dynamicWidgets = textchatWidgets.Dynamic || [];
         const aotWidgets = textchatWidgets.AOT || [];
 
         // loop the widgets and add append interaction details
@@ -139,7 +137,7 @@ export class TwcTextchatComponent extends TWContentWrapper implements OnInit, On
                 unreadCount: 0
             }
         });
-    }
+    };
 
     /**
      * To process interaction closed event for voice
@@ -152,5 +150,5 @@ export class TwcTextchatComponent extends TWContentWrapper implements OnInit, On
                 isActive: true
             });
         }
-    }
+    };
 }

@@ -5,6 +5,7 @@ import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AGENT_DATA_MAP } from 'app/constants';
 import { IWidget } from 'app/interfaces';
+import { Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { IAgentData, IUIEvent, SDKClient } from 'tmac-sdk';
 
@@ -52,16 +53,18 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
      */
     interactionId: number;
 
-    constructor(
-        private sanitizer: DomSanitizer,
-        private _aotWidgetService: AOTWidgetService,
-        private _tmacEventService: TMACEventService
-    ) {
+    /**
+     * subscriptions
+     */
+    subscriptions: Partial<{ eventsById: Subscription; allEvents: Subscription }>;
+
+    constructor(private sanitizer: DomSanitizer, private _aotWidgetService: AOTWidgetService, private _tmacEventService: TMACEventService) {
         super();
     }
 
     // tslint:disable-next-line: completed-docs
     ngOnInit(): void {
+        this.subscriptions = {};
         // call the wrapper init method
         this.initWrapper(this.data);
 
@@ -139,7 +142,7 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
 
     /**
      * To sanitize the URL to load URL safely
-     * 
+     *
      * @param url Url to transform
      */
     transform(url: string): any {
@@ -156,7 +159,7 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
 
     /**
      * To send TMAC events to the iframe/popup window
-     * 
+     *
      * @param {any[]} events
      */
     private sendEventsToWindow(evts: any[]): void {
@@ -166,13 +169,16 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
         // check if the element is present
         if (element) {
             // send post message to the element
-            element.postMessage({
-                function: 'onTMACEvent',
-                callback: null,
-                data: evts,
-                source: 'tmac',
-                userObject: null
-            }, '*');
+            element.postMessage(
+                {
+                    function: 'onTMACEvent',
+                    callback: null,
+                    data: evts,
+                    source: 'tmac',
+                    userObject: null
+                },
+                '*'
+            );
         }
     }
 
@@ -180,33 +186,30 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
      * Iframe loaded event
      */
     frameLoaded = () => {
-        // check if this is not initial load
-        if (this.initialLoad) {
-            // set the loaded flag to true
+        // // check if this is not initial load
+        // if (this.initialLoad) {
+        //     // set the loaded flag to true
+        //     this.loaded = true;
+        //     // send all interaction events to the frame/window
+        //     if (this.interactionId) {
+        if (!this.subscriptions.eventsById && !this.subscriptions.allEvents) {
+            // subscribe to interaction events
+            this.subscriptions.eventsById = this._tmacEventService
+                .getInteractionEventsById(this.interactionId)
+                .pipe(takeUntil(this.unsubscribeAll))
+                .subscribe((evts) => this.sendEventsToWindow(evts));
+
+            // subscribe to all non interaction events
+            this.subscriptions.allEvents = this._tmacEventService
+                .getAllEvents()
+                .pipe(takeUntil(this.unsubscribeAll))
+                .subscribe((evts) => this.sendEventsToWindow(evts));
             this.loaded = true;
-            // send all interaction events to the frame/window
-            if (this.interactionId) {
-
-                // const events = this._tmacEventService.interactionEvents(this.interactionId);
-                // // loop and send all the interaction events to frame
-                // events?.forEach((item: any) => {
-                //     this.sendEventsToWindow(item);
-                // });
-
-                // subscribe to interaction events
-                this._tmacEventService.getInteractionEventsById(this.interactionId)
-                    .pipe(takeUntil(this.unsubscribeAll))
-                    .subscribe(evts => this.sendEventsToWindow(evts));
-
-                // subscribe to all non interaction events
-                this._tmacEventService.getAllEvents()
-                    .pipe(takeUntil(this.unsubscribeAll))
-                    .subscribe(evts => this.sendEventsToWindow(evts));
-            }
         }
-        else {
-            // set initial load to true
-            this.initialLoad = true;
-        }
-    }
+        // }
+        // } else {
+        //     // set initial load to true
+        //     this.initialLoad = true;
+        // }
+    };
 }

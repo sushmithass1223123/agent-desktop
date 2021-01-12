@@ -40,12 +40,17 @@ tw-video-controls {
                     height: 50%;
                 }
 
-                button {
+                .button-group {
                     position: absolute;
                     top: 10px;
                     left: 10px;
-                    width: 32px;
-                    height: 32px;
+                    width: 100%;
+                    display: flex;
+                    & > * {
+                        margin: 0 10px;
+                    }
+                    // width: 32px;
+                    // height: 32px;
                 }
 
                 .user {
