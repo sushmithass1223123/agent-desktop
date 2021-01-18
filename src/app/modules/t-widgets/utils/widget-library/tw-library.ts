@@ -28,6 +28,7 @@ import { TwSuAgentActivityComponent } from '@modules/t-widgets/tw-collections/tw
 import { TwSuAgentInteractionsComponent } from '@modules/t-widgets/tw-collections/tw-su-agent-interactions/tw-su-agent-interactions.component';
 import { TwSuGamificationComponent } from '@modules/t-widgets/tw-collections/tw-su-gamification/tw-su-gamification.component';
 import { TwUnknownComponent } from '@modules/t-widgets/tw-collections/tw-unknown/tw-unknown.component';
+import { TwUserLocationComponent } from '@modules/t-widgets/tw-collections/tw-user-location/tw-user-location.component';
 import { TwVideoControlsComponent } from '@modules/t-widgets/tw-collections/tw-video-controls/tw-video-controls.component';
 import { TwVoiceBotTranscriptsComponent } from '@modules/t-widgets/tw-collections/tw-voice-bot-transcripts/tw-voice-bot-transcripts.component';
 import { TwVoiceCannedResponsesComponent } from '@modules/t-widgets/tw-collections/tw-voice-canned-responses/tw-voice-canned-responses.component';
@@ -93,6 +94,7 @@ export class TWLibrary {
         'tw-pending-callbacks': TwPendingCallbacksComponent,
         'tw-gamification': TwGamificationComponent,
         'tw-entities': TwEntitiesComponent,
+        'tw-user-location': TwUserLocationComponent,
         'tw-email-template-preview': TwEmailTemplatePreviewComponent
     };
 

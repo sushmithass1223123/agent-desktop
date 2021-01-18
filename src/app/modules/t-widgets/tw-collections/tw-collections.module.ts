@@ -36,6 +36,7 @@ import { TwSuAgentActivityComponent } from './tw-su-agent-activity/tw-su-agent-a
 import { TwSuAgentInteractionsComponent } from './tw-su-agent-interactions/tw-su-agent-interactions.component';
 import { TwSuGamificationComponent } from './tw-su-gamification/tw-su-gamification.component';
 import { TwUnknownComponent } from './tw-unknown/tw-unknown.component';
+import { TwUserLocationComponent } from './tw-user-location/tw-user-location.component';
 import { TwVideoControlsComponent } from './tw-video-controls/tw-video-controls.component';
 import { TwVoiceBotTranscriptsComponent } from './tw-voice-bot-transcripts/tw-voice-bot-transcripts.component';
 import { TwVoiceCannedResponsesComponent } from './tw-voice-canned-responses/tw-voice-canned-responses.component';
@@ -92,7 +93,8 @@ const collectionComponents = [
     TwGamificationComponent,
     RaceCarTrackComponent,
     TwEntitiesComponent,
-    TwEmailTemplatePreviewComponent
+    TwEmailTemplatePreviewComponent,
+    TwUserLocationComponent
 ];
 
 /**

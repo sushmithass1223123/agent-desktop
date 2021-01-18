@@ -541,8 +541,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.conferenceType = evt.ConferenceType;
         // update the chatmode
         this.chatMode = evt.ChatMode;
-        // for testing direct calls
-        // this.chatMode = 'video';
+        // to not open video dialog when interaction is over
+        // && this.status !== 'connected'
         if (this.mediaChannels.includes(this.chatMode)) {
             this.escalateToAV(this.chatMode as any, true);
         }
