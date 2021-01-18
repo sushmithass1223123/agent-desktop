@@ -1976,6 +1976,29 @@
                                     }
                                 },
                                 {
+                                    "Name": "User location",
+                                    "Description": "",
+                                    "Key": "UserLocation",
+                                    "Type": "tw-user-location",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "location_on",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": ["float"],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {}
+                                },
+                                {
                                     "Name": "Agent Assist",
                                     "Description": "",
                                     "Key": "AgentAssist",

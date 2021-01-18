@@ -8,8 +8,8 @@ import { FuseSplashScreenService } from '@fuse/services/splash-screen.service';
 import { AppUiService } from '@services/app-ui.service';
 import { AppDataService } from 'app/services/app-data.service';
 import { set } from 'lodash';
-import { from, interval, merge, Observable, of, range, Subject, timer } from 'rxjs';
-import { delay, filter, map, switchMap, takeUntil, startWith, take, tap } from 'rxjs/operators';
+import { interval, Observable, Subject } from 'rxjs';
+import { filter, map, take, takeUntil, tap } from 'rxjs/operators';
 import { CommandResultEvent, IResponse, SDKClient, TUtils } from 'tmac-sdk';
 import { environment } from '../../../../environments/environment';
 
@@ -581,6 +581,8 @@ export class LoginComponent implements OnInit, OnDestroy {
                             this.domainList = result.response || [];
                         });
                     }
+                    this.connectionError.errored = false;
+                    this.connectionError.countdown = null;
                 } else {
                     throw new Error(`Invalid Response : ${JSON.stringify(dt)}`);
                 }

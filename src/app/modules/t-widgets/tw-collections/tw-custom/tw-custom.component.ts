@@ -7,7 +7,7 @@ import { AGENT_DATA_MAP } from 'app/constants';
 import { IWidget } from 'app/interfaces';
 import { Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { IAgentData, IUIEvent, SDKClient } from 'tmac-sdk';
+import { IAgentData } from 'tmac-sdk';
 
 /**
  * TwCustomComponent
