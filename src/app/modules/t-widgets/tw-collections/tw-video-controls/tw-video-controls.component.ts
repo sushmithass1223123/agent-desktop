@@ -612,7 +612,6 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                         id: TUtils.Generic.uuid()
                     })
                 });
-                console.log({ res });
             } catch (e) {
                 console.error(e);
             }

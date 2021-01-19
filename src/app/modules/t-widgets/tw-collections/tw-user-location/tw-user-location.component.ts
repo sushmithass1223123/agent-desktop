@@ -1,6 +1,7 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { TWidgetWrapper } from '@modules/t-widgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
+import { latLng, marker, tileLayer } from 'leaflet';
 
 @Component({
     selector: 'tw-user-location',
@@ -12,7 +13,9 @@ export class TwUserLocationComponent extends TWidgetWrapper implements OnInit, O
      * holds all the data related to this widget from the config
      */
     @Input() data: IWidget;
-    location: string;
+    // @ViewChild('map') mapRef : ElementRef<Leafl>;
+    location: any;
+    loadMap: boolean;
     error: string;
     constructor() {
         super();
@@ -35,8 +38,17 @@ export class TwUserLocationComponent extends TWidgetWrapper implements OnInit, O
             const location = JSON.parse(pLocationJson).pLocation || '';
             if (!location || location.includes('undefined')) {
                 this.error = 'Undefined location';
+                return;
             }
-            this.location = location;
+            const [lat, long] = location.split(',');
+            this.location = {
+                layers: [tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }), marker([lat, long])],
+                zoom: 15,
+                center: latLng(lat, long)
+            };
+            setTimeout(() => {
+                this.loadMap = true;
+            }, 0);
         } catch (e) {
             console.error(e);
             this.error = 'Something went wrong';
