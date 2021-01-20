@@ -1924,7 +1924,7 @@
                                                 "Description": "",
                                                 "Type": "tw-customer-journey",
                                                 "Config": {
-                                                    "Enabled": true,
+                                                    "Enabled": false,
                                                     "Static": false,
                                                     "Anchor": true,
                                                     "AOT": false,
@@ -1972,7 +1972,7 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "Url": "/assets/custom-snapshot-widget.html"
+                                        "Url": "http://127.0.0.1:5500/custom-snapshot/index.html"
                                     }
                                 },
                                 {
@@ -1991,7 +1991,7 @@
                                             "X": 2,
                                             "Y": 1
                                         },
-                                        "Actions": ["float"],
+                                        "Actions": ["float" ,"maximize"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false

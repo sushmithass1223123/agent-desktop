@@ -75,7 +75,7 @@ export class TwChatPanelComponent extends TWidgetWrapper implements OnInit, OnDe
         // call the wrapper init method
         this.initWrapper(this.data);
         // get the toolbar menu widgets
-        this.chatPanelWidgets = this.data.Data.Widgets || [];
+        this.chatPanelWidgets = (this.data.Data.Widgets || []).filter(w => w.Config.Enabled);
         // get the interaction details
         const interactionDetails = this.data.InteractionDetails;
         // loop through the widgets and pass the interaction details

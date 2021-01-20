@@ -6,7 +6,7 @@
 
 <tw-wrapper [data]="data">
   <ng-container *ngIf="location && !error; else noData">
-    <!-- <div class="w-100-p h-100-h" *ngIf="!location.includes('undefined')" leaflet [leafletOptions]="location"></div> -->
+    <div class="w-100-p h-100-p" *ngIf='location && loadMap' leaflet [leafletOptions]="location"> </div>
   </ng-container>
   <ng-template #noData>
     <div class="mt-20">

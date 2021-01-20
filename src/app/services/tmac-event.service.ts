@@ -873,6 +873,7 @@ export class TMACEventService {
         SDKClient.events.on('QuizEvent', this.QuizEvent);
         SDKClient.events.on('AgentReminderEvent', this.AgentReminderEvent);
         SDKClient.events.on('AgentForcedLogoffEvent', this.AgentForcedLogoffEvent);
+        SDKClient.events.on('InteractionLimitReachedEvent', this.AgentForcedLogoffEvent);
         SDKClient.events.on('TextChatTransferNotificationEvent', this.TextChatTransferNotificationEvent);
         SDKClient.events.on('TmacServerConnectionSuccess', this.TmacServerConnectionSuccess);
 
