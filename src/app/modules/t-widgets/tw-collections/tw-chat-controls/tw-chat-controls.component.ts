@@ -1065,6 +1065,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * @param {TextChatTransferSuccessEvent} evt
      */
     private TextChatTransferSuccessEvent = (evt: TextChatTransferSuccessEvent) => {
+        // Rahil close AV call here via opener 
         this.transferConfDialogRef?.close();
     };
 
@@ -1331,6 +1332,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         widget.Config.Actions = ['collapse', 'maximize'];
         // widget.Data.AVConn = this.avConn;
         widget.Data.DirectCall = direct;
+        widget.Data.ConferenceType = this.conferenceType;
         widget.Data.CustomerName = this.customerName;
         widget.Data.Direction = direction;
         widget.Data.AVEvent = avEvent;

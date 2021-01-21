@@ -203,9 +203,12 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         // create the AV channel connection
         this.createAVConnection(avEvent);
         // start call
-
-        if (this.data.Data.DirectCall) {
-            this.avConn?.directCall(TEnums.WrcCallTypes.Video);
+        if (this.data.Data.DirectCall && this.data.Data.ConferenceType === 'conf') {
+            // if (this.data.Data.ConferenceType === 'conf') {
+            this.avConn.join(TEnums.WrcCallTypes.Video, 'conference');
+            // } else {
+            //     this.avConn?.directCall(TEnums.WrcCallTypes.Video);
+            // }
             this.showUI = true;
         } else {
             this.avConn
@@ -231,6 +234,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         // call the wrapper destroy method
         this.destroyWrapper();
 
+        // this.endCall();
         this.avConn?.close();
         this.avConn?.events.off('onAVEvent', this.onAVEvent);
         SDKClient.events.off('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
