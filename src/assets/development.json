@@ -3260,7 +3260,7 @@
         },
         "SDK": {
             "Proxy": {
-                "Urls": ["https://34.126.121.49/tmacsdkproxy/tmacproxy.asmx"],
+                "Urls": ["https://idfcvpd.tetherfi.cloud/tmacsdkproxy/tmacproxy.asmx"],
                 "Type": "soap",
                 "Timeout": 30
             },

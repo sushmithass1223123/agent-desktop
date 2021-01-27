@@ -74,6 +74,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     @Input() data: IWidget;
 
     /**
+     * completedVideoCalls
+     */
+    completedCalls: string[] = [];
+    /**
      * Media Channels
      */
     mediaChannels = ['video', 'audio'];
@@ -343,6 +347,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // call the wrapper init method
         this.initWrapper(this.data);
 
+        this.completedCallList().setCallList();
+
         // set the interaction id from data
         this.interactionId = this.data.InteractionDetails?.InteractionID;
 
@@ -433,7 +439,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-
+        this.completedCallList().clearCallList();
         // this.deRegisterFromEvents();
     }
 
@@ -498,6 +504,32 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     // }
 
     /**
+     * Sets completed call list from session storage , to avoid making direct calls again because of refrsh
+     */
+    completedCallList() {
+        const setCallList = () => {
+            const callList = sessionStorage.getItem('completedCalls');
+            if (callList) {
+                this.completedCalls = JSON.parse(callList);
+            } else {
+                this.completedCalls = [];
+            }
+        };
+        const addCallId = (id: string) => {
+            const callList = sessionStorage.getItem('completedCalls');
+            this.completedCalls.push(id);
+            sessionStorage.setItem('completedCalls', JSON.stringify(this.completedCalls));
+            if (callList) {
+                this.completedCalls = JSON.parse(callList);
+            } else {
+                this.completedCalls = [];
+            }
+        };
+        const clearCallList = () => sessionStorage.removeItem('completedCalls');
+        return { setCallList, clearCallList, addCallId };
+    }
+
+    /**
      * To process TextChatRemoteUserConnectedEvent
      * @param evt TextChatRemoteUserConnectedEvent data
      */
@@ -542,8 +574,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // update the chatmode
         this.chatMode = evt.ChatMode;
         // to not open video dialog when interaction is over
-        // && this.status !== 'connected'
-        if (this.mediaChannels.includes(this.chatMode)) {
+        if (this.mediaChannels.includes(this.chatMode) && !this.completedCalls.includes(this.data.InteractionDetails.EventId)) {
             this.escalateToAV(this.chatMode as any, true);
         }
         // check for bot history
@@ -1065,7 +1096,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * @param {TextChatTransferSuccessEvent} evt
      */
     private TextChatTransferSuccessEvent = (evt: TextChatTransferSuccessEvent) => {
-        // Rahil close AV call here via opener 
+        // Rahil close AV call here via opener
         this.transferConfDialogRef?.close();
     };
 
@@ -1332,6 +1363,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         widget.Config.Actions = ['collapse', 'maximize'];
         // widget.Data.AVConn = this.avConn;
         widget.Data.DirectCall = direct;
+        widget.Data.EventId = this.data.InteractionDetails.EventId;
         widget.Data.ConferenceType = this.conferenceType;
         widget.Data.CustomerName = this.customerName;
         widget.Data.Direction = direction;
@@ -1614,6 +1646,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * To dispose call widget
      */
     public dsiposeCallWidget(): void {
+        this.completedCallList().addCallId(this.callWidget.Data.EventId);
         // dispose the call widget
         this.callWidget = null;
         // enable AV buttons
