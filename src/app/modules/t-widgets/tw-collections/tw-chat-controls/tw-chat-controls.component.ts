@@ -311,6 +311,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     savedComments: InteractionComment[] = [];
     /**
+     * Flag to allow screen share without prompting user for permission
+     */
+    allowCustomerScreenShare = true;
+    /**
      * Constructor
      * @param {FuseConfigService} _fuseConfigService
      * @param {InteractionManagerService} _interactionManagerService
@@ -847,6 +851,28 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // check if app message
         if (evt.IsAppMessage) {
+            try {
+                // handle snapshot ackknowledgement
+                const msg = JSON.parse(evt.Message);
+                let message = '';
+                let failed = false;
+                if (msg.type === 'webrtcTroubleshoot') {
+                    if (msg.status === 'accept') {
+                        message = 'Webrtc troubleshoot request accepted by customer';
+                    } else if (msg.status === 'ack') {
+                        message = 'Webrtc troubleshoot request received by customer';
+                    } else {
+                        message = 'Webrtc troubleshoot request rejected by customer';
+                        failed = true;
+                    }
+                } else if (msg.status === 'snapshotRequestAck') {
+                    message = 'Customer snapshot request received by the customer';
+                }
+                this._appUIService.showSnackbar(message, failed ? 'failure' : 'success');
+            } catch (e) {
+                console.error(e);
+            }
+
             // TODO:: handle app messages
             return;
         }
@@ -1137,6 +1163,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             //     return;
             // }
 
+            let serverMessage = false;
+
             if (this.status === 'disconnected') {
                 return;
             }
@@ -1162,6 +1190,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
                 // for template sent turn on freeze button
                 if (evt.EventName === 'TextChatMessageTemplateSentEvent') {
+                    serverMessage = !(evt as any).UiEvent;
                     // show freeze auto response button
                     if (this.callWidget) {
                         this.freezeAutoResponse(true);
@@ -1180,7 +1209,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     message,
                     type,
                     time: new Date(Date.parse(evt.CreatedTime.toString())) || new Date(),
-                    attachment
+                    attachment,
+                    serverMessage
                 });
 
                 // set ready to reply

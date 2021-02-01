@@ -283,24 +283,33 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
             case 'onIncoming':
                 // request param
                 const param = evt.data.param.charAt(0).toUpperCase() + evt.data.param.slice(1);
-                // get confirmation
-                const confirmDialogRef = this._appUIService.showCustomDialog(
-                    'confirm',
-                    param + ' call requested by customer, Do you want to accept it?'
-                );
-                confirmDialogRef.afterClosed().subscribe((resp) => {
+
+                const onConfirmDialogClose = (resp) => {
                     if (resp) {
                         // accept request
                         evt.data.response(true);
                         // show the UI
                         this.showUI = true;
                     } else {
-                        // reject request
-                        evt.data.response(false);
-                        // close the call widget
-                        this._aotWidgetService.destroyWidget(this.data.ID);
+                        if (param !== 'Screenshare') {
+                            // reject request
+                            evt.data.response(false);
+                            // close the call widget
+                            this._aotWidgetService.destroyWidget(this.data.ID);
+                        }
                     }
-                });
+                };
+
+                if (param === 'Screenshare' && this.widgetData.opener.allowCustomerScreenShare) {
+                    onConfirmDialogClose(true);
+                } else {
+                    // config incoming call
+                    const confirmDialogRef = this._appUIService.showCustomDialog(
+                        'confirm',
+                        param + ' call requested by customer, Do you want to accept it?'
+                    );
+                    confirmDialogRef.afterClosed().subscribe((resp) => onConfirmDialogClose(resp));
+                }
                 break;
             case 'onTrace':
                 TUtils.Logger.log(evt.data);
