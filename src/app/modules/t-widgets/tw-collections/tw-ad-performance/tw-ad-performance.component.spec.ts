@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TwAdPerformanceComponent } from './tw-ad-performance.component';
 
@@ -6,7 +6,7 @@ describe('TwAdPerformanceComponent', () => {
   let component: TwAdPerformanceComponent;
   let fixture: ComponentFixture<TwAdPerformanceComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ TwAdPerformanceComponent ]
     })

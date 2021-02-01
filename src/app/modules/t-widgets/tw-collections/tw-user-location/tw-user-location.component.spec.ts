@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TwUserLocationComponent } from './tw-user-location.component';
 
@@ -6,7 +6,7 @@ describe('TwUserLocationComponent', () => {
   let component: TwUserLocationComponent;
   let fixture: ComponentFixture<TwUserLocationComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ TwUserLocationComponent ]
     })

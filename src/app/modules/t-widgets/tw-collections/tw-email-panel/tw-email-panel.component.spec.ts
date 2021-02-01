@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TwEmailPanelComponent } from './tw-email-panel.component';
 
@@ -6,7 +6,7 @@ describe('TwEmailPanelComponent', () => {
   let component: TwEmailPanelComponent;
   let fixture: ComponentFixture<TwEmailPanelComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ TwEmailPanelComponent ]
     })

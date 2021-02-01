@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TwcNoInteractionComponent } from './twc-no-interaction.component';
 
@@ -6,7 +6,7 @@ describe('TwcNoInteractionComponent', () => {
   let component: TwcNoInteractionComponent;
   let fixture: ComponentFixture<TwcNoInteractionComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ TwcNoInteractionComponent ]
     })

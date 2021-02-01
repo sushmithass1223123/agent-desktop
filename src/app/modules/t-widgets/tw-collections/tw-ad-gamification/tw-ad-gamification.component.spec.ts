@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TwAdGamificationComponent } from './tw-ad-gamification.component';
 
@@ -6,7 +6,7 @@ describe('TwAdGamificationComponent', () => {
   let component: TwAdGamificationComponent;
   let fixture: ComponentFixture<TwAdGamificationComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ TwAdGamificationComponent ]
     })

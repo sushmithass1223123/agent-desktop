@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TwToolbarMenuComponent } from './tw-toolbar-menu.component';
 
@@ -6,7 +6,7 @@ describe('TwToolbarMenuComponent', () => {
   let component: TwToolbarMenuComponent;
   let fixture: ComponentFixture<TwToolbarMenuComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ TwToolbarMenuComponent ]
     })
