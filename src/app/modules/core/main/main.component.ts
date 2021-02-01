@@ -241,7 +241,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
      * To poll for TMAC events
      */
     private pollForEvent(): void {
-        this._appUIService.showSnackbar('Hello, welcome to TMAC', 'info');
+        this._appUIService.showSnackbar('Hello, Welcome to Agent Desktop', 'info');
 
         // set the loaded to true
         this.loaded = true;
