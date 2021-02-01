@@ -205,7 +205,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         // start call
         if (this.data.Data.DirectCall && this.data.Data.ConferenceType === 'conf') {
             // if (this.data.Data.ConferenceType === 'conf') {
-            this.avConn.join(TEnums.WrcCallTypes.Video, 'conference');
+            this.avConn.join(TEnums.WrcCallTypes.Video, { mode: 'conference' });
             // } else {
             //     this.avConn?.directCall(TEnums.WrcCallTypes.Video);
             // }
@@ -308,34 +308,42 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
             case 'onIncoming':
                 // request param
                 const param = evt.data.param.charAt(0).toUpperCase() + evt.data.param.slice(1);
-                // config incoming call
-                const confirmDialogRef = this._appUIService.showCustomDialog(
-                    'confirm',
-                    param + ' call requested by customer, Do you want to accept it?'
-                );
-                confirmDialogRef.afterClosed().subscribe((resp) => {
+
+                const onConfirmDialogClose = (resp) => {
                     if (resp) {
                         // accept request
                         evt.data.response(true);
                         // show the UI
                         this.showUI = true;
                     } else {
-                        // reject request
-                        evt.data.response(false);
-                        // close the call widget
-                        this._aotWidgetService.destroyWidget(this.data.ID);
+                        if (param !== 'Screenshare') {
+                            // reject request
+                            evt.data.response(false);
+                            // close the call widget
+                            this._aotWidgetService.destroyWidget(this.data.ID);
+                        }
                     }
-                });
+                };
+
+                if (param === 'Screenshare' && this.widgetData.opener.allowCustomerScreenShare) {
+                    onConfirmDialogClose(true);
+                } else {
+                    // config incoming call
+                    const confirmDialogRef = this._appUIService.showCustomDialog(
+                        'confirm',
+                        param + ' call requested by customer, Do you want to accept it?'
+                    );
+                    confirmDialogRef.afterClosed().subscribe((resp) => onConfirmDialogClose(resp));
+                }
                 break;
             case 'onTrace':
                 TUtils.Logger.log(evt.data);
                 break;
-            case 'onError': {
+            case 'onError':
                 this.status = `Error : ${evt.data?.error}`;
                 this._appUIService.showSnackbar(evt.data?.error || 'Something went wrong', 'failure');
                 TUtils.Logger.log('Exception in TwAudioControlsComponent.onAVEvent', evt.data);
                 break;
-            }
             case 'onAVStats':
                 this.status = evt.data;
                 break;
@@ -431,6 +439,8 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                 // close the widget
                 this.destroyWidget();
                 break;
+            case 'onUserLeft':
+                this.userList = this.userList.filter((u) => u.streamInfo.id !== evt.data?.userId);
             default:
             // console.log(`unhandled:: [${evt.event}]`, evt);
         }
@@ -602,6 +612,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
             });
         } else if (this.widgetData.chatConfig.Snapshot.Source === 'Remote') {
             try {
+                let matRef = this._appUIService.showSnackbar('Requesting customer for snapshot', 'loading');
                 const res = await SDKClient.sendActionMessage({
                     interactionId: this.interactionId as any,
                     message: JSON.stringify({
@@ -616,6 +627,8 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                         id: TUtils.Generic.uuid()
                     })
                 });
+                matRef.dismiss();
+                this._appUIService.showSnackbar('Snapshot request sent to customer', 'success');
             } catch (e) {
                 console.error(e);
             }

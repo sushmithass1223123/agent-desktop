@@ -194,6 +194,10 @@ export interface ChatTranscripts {
          */
         name: string;
     };
+    /**
+     * Message from server
+     */
+    serverMessage?: boolean;
 }
 
 export interface AppNotification {
