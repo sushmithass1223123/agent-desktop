@@ -279,7 +279,7 @@ export class AgentFeaturesService {
         // get geolocation
         navigator.geolocation.getCurrentPosition(
             // success
-            (location: Position) => {
+            (location: GeolocationPosition) => {
                 this._agentFeatureInfo.permissions.location = true;
                 // get location from browser and save the stream to reference
                 this._agentFeatureInfo.data.location = {
@@ -287,7 +287,7 @@ export class AgentFeaturesService {
                     longitude: location.coords.longitude
                 };
             },
-            (error: PositionError) => {
+            (error: GeolocationPositionError) => {
                 this._agentFeatureInfo.permissions.location = false;
                 // log the error to server for troubleshooting purpose
                 TUtils.Logger.log('Exception in getCurrentPosition', error);
