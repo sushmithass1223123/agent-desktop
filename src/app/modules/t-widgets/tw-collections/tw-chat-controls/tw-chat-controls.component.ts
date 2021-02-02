@@ -1,16 +1,4 @@
-import {
-    AfterViewInit,
-    Component,
-    ElementRef,
-    EventEmitter,
-    Input,
-    OnDestroy,
-    OnInit,
-    Output,
-    ViewChild,
-    ViewChildren,
-    ViewEncapsulation
-} from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -301,7 +289,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * Reply input children ref
      */
-    @ViewChildren('replyInput') replyInputField: any;
+    @ViewChild('replyInput') replyInputField: ElementRef<HTMLTextAreaElement>;
     /**
      * Reply form ref
      */
@@ -314,6 +302,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * Flag to allow screen share without prompting user for permission
      */
     allowCustomerScreenShare = true;
+
+    /**
+     * common button background
+     */
+    commonButtonBackground = '';
     /**
      * Constructor
      * @param {FuseConfigService} _fuseConfigService
@@ -362,6 +355,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: FuseConfig) => {
             this.fuseConfig = config;
+            this.commonButtonBackground =
+                config.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor ? config.layout.anchorWidget.bodyBackground : '';
         });
 
         this._interactionManagerService.interactions.pipe(takeUntil(this.unsubscribeAll)).subscribe((interactions: InteractionRef[]) => {
@@ -432,7 +427,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // play new chat sound
         this._appUIService.playAudio('new-chat', 0.5, false);
 
-        this.replyInput = this.replyInputField.first.nativeElement;
+        this.replyInput = this.replyInputField.nativeElement;
         this.readyToReply();
     }
 
@@ -1879,8 +1874,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * @param {any} evt
      */
     addEmoji(evt: any): void {
-        this.replyForm.value.message = `${this.replyInput.value}${evt.emoji.native}`;
-        this.replyInput.value = `${this.replyInput.value}${evt.emoji.native}`;
+        const inputVal = this.replyInput?.value || '';
+        const startSlice = inputVal.slice(0, this.replyInputField.nativeElement.selectionStart);
+        const endSlice = inputVal.slice(this.replyInputField.nativeElement.selectionStart, -1);
+        this.replyForm.value.message = `${startSlice}${evt.emoji.native}${endSlice}`;
+        this.replyInput.value = this.replyForm.value.message;
         // this.showEmojiOverlay = false;
         this.replyInput.focus();
     }

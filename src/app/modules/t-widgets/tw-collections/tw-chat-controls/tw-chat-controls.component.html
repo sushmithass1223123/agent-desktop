@@ -66,10 +66,9 @@
                         <mat-icon>sync_disabled</mat-icon>
                     </button>
 
-                    <button mat-mini-fab [color]="allowCustomerScreenShare ? 'default' : 'warn'" [ngClass]="
-                            (fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
-                                ? fuseConfig.layout.anchorWidget.bodyBackground
-                                : '') +
+                    <button mat-mini-fab *ngIf='data.Data.AskForScreenshareAllowed' [disabled]="status !== 'connected'"
+                        [color]="allowCustomerScreenShare ? 'default' : 'warn'" [ngClass]="
+                            commonButtonBackground +
                             ' ' +
                             (status === 'connected' ? 'mat-elevation-z2' : '')" matTooltip="Ask before screenshare"
                         (click)="allowCustomerScreenShare = !allowCustomerScreenShare">
@@ -77,9 +76,7 @@
                     </button>
 
                     <button mat-mini-fab color="default" [ngClass]="
-                            (fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
-                                ? fuseConfig.layout.anchorWidget.bodyBackground
-                                : '') +
+                            commonButtonBackground +
                             ' ' +
                             (status === 'connected' ? 'mat-elevation-z2' : '')
                         " matTooltip="Interaction Comment" (click)="saveInteractionComments()">
@@ -88,9 +85,7 @@
 
                     <button *ngIf="data.Data?.SignatureAllowed" [disabled]="status !== 'connected'" mat-mini-fab
                         color="default" [ngClass]="
-                            (fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
-                                ? fuseConfig.layout.anchorWidget.bodyBackground
-                                : '') +
+                            commonButtonBackground +
                             ' ' +
                             (status === 'connected' ? 'mat-elevation-z2' : '')
                         " matTooltip="Signature Request" #signBtn (click)="sendSignatureRequest(signBtn)">
@@ -100,9 +95,7 @@
                     <button
                         *ngIf="supervisorInit && (conferenceType === 'silent' || conferenceType === 'whisper' || conferenceType === 'conf')"
                         [disabled]="status !== 'connected' || this.botConnected" mat-mini-fab color="default" [ngClass]="
-                            (fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
-                                ? fuseConfig.layout.anchorWidget.bodyBackground
-                                : '') +
+                            commonButtonBackground +
                             ' ' +
                             (status === 'connected' ? 'mat-elevation-z2' : '')
                         " [matTooltip]="
@@ -114,9 +107,7 @@
                     <button
                         [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper' || this.botConnected"
                         *ngIf="selfServiceDestinations.length" mat-mini-fab color="default" [ngClass]="
-                            (fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
-                                ? fuseConfig.layout.anchorWidget.bodyBackground
-                                : '') +
+                            commonButtonBackground +
                             ' ' +
                             (status === 'connected' ? 'mat-elevation-z2' : '')
                         " matTooltip="Conference Bot" [matMenuTriggerFor]="botMenu">
@@ -133,9 +124,7 @@
                     <button *ngIf="data.Data?.Transfer.Allowed"
                         [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper' || this.botConnected"
                         mat-mini-fab color="default" [ngClass]="
-                            (fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
-                                ? fuseConfig.layout.anchorWidget.bodyBackground
-                                : '') +
+                            commonButtonBackground +
                             ' ' +
                             (status === 'connected' ? 'mat-elevation-z2' : '')
                         " matTooltip="Transfer" (click)="openTransferConferenceDialog('transfer')">
@@ -145,9 +134,7 @@
                     <button *ngIf="data.Data?.Conference.Allowed"
                         [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper' || this.botConnected"
                         mat-mini-fab color="default" [ngClass]="
-                            (fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
-                                ? fuseConfig.layout.anchorWidget.bodyBackground
-                                : '') +
+                            commonButtonBackground +
                             ' ' +
                             (status === 'connected' ? 'mat-elevation-z2' : '')
                         " matTooltip="Conference" (click)="openTransferConferenceDialog('conference')">
@@ -157,9 +144,7 @@
                     <button *ngIf="data.Data.AudioEscalateAllowed" [disabled]="
                             status !== 'connected' || disableAV || conferenceType === 'silent' || conferenceType === 'whisper' || this.botConnected
                         " mat-mini-fab color="default" [ngClass]="
-                            (fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
-                                ? fuseConfig.layout.anchorWidget.bodyBackground
-                                : '') +
+                            commonButtonBackground +
                             ' ' +
                             (status === 'connected' ? 'mat-elevation-z2' : '')
                         " matTooltip="Escalate to Audio" (click)="escalateToAV('audio')">
@@ -169,9 +154,7 @@
                     <button *ngIf="data.Data.VideoEscalateAllowed" [disabled]="
                             status !== 'connected' || disableAV || conferenceType === 'silent' || conferenceType === 'whisper' || this.botConnected
                         " mat-mini-fab color="default" [ngClass]="
-                            (fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
-                                ? fuseConfig.layout.anchorWidget.bodyBackground
-                                : '') +
+                            commonButtonBackground +
                             ' ' +
                             (status === 'connected' ? 'mat-elevation-z2' : '')
                         " matTooltip="Escalate to Video" (click)="escalateToAV('video')">
@@ -207,11 +190,10 @@
                                 'first-of-group': isFirstMessageOfGroup(message, i),
                                 'last-of-group': isLastMessageOfGroup(message, i)
                             }">
-                            <ng-container *ngIf="message.serverMessage">
-                                <div class="text-center mat-caption py-4 w-100-p">
-                                    {{ message.message }}
-                                </div>
-                            </ng-container>
+                            <div *ngIf="message.serverMessage"
+                                class="bg-secondary my-8 border-radius-4 text-center py-4 w-100-p font-size-12 font-weight-600">
+                                {{ message.message }}
+                            </div>
                             <ng-container *ngIf="!message.serverMessage">
                                 <div *ngIf="!message.divider" fxLayout="column" fxLayoutAlign="start start"
                                     class="bubble mat-elevation-z1 {{ message.position }} animate__animated animate__slideInUp animate__faster"
