@@ -509,7 +509,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
             this.avConn.unMute(false, true);
         } else {
             // mute the call
-            this.avConn.mute(true, true);
+            this.avConn.mute(false, true);
         }
         // set the reference varaible
         this.videoMuted = !this.videoMuted;
