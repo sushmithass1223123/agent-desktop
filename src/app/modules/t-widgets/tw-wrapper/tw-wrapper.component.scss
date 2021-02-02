@@ -159,6 +159,8 @@ tw-wrapper {
                 transition-property: padding;
                 transition-duration: 0.3s;
                 transition-timing-function: ease-in-out;
+                // fix for height of video AOT 
+                max-height: 100vh;
             }
 
             .card-header {

@@ -1812,6 +1812,7 @@
                                                     "VoiceNoteAllowed": false,
                                                     "AttachmentAllowed": true,
                                                     "ScreenShareAllowed": true,
+                                                    "AskForScreenshareAllowed": false,
                                                     "Snapshot": {
                                                         "Allowed": true,
                                                         "Source": "Remote"
