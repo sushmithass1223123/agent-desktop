@@ -1185,7 +1185,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
                 // for template sent turn on freeze button
                 if (evt.EventName === 'TextChatMessageTemplateSentEvent') {
-                    serverMessage = !(evt as any).UiEvent;
+                    serverMessage = !(evt as any).UIEvent;
                     // show freeze auto response button
                     if (this.callWidget) {
                         this.freezeAutoResponse(true);

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TwcNoWidgetsComponent } from './twc-no-widgets.component';
 
@@ -6,7 +6,7 @@ describe('TwcNoWidgetsComponent', () => {
   let component: TwcNoWidgetsComponent;
   let fixture: ComponentFixture<TwcNoWidgetsComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ TwcNoWidgetsComponent ]
     })

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TwVoiceCannedResponsesComponent } from './tw-voice-canned-responses.component';
 
@@ -6,7 +6,7 @@ describe('TwVoiceCannedResponsesComponent', () => {
   let component: TwVoiceCannedResponsesComponent;
   let fixture: ComponentFixture<TwVoiceCannedResponsesComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ TwVoiceCannedResponsesComponent ]
     })

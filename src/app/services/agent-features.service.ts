@@ -286,7 +286,7 @@ export class AgentFeaturesService {
                     longitude: location.coords.longitude
                 };
             },
-            (error: GeolocationPosition) => {
+            (error: GeolocationPositionError) => {
                 this._agentFeatureInfo.permissions.location = false;
                 // log the error to server for troubleshooting purpose
                 TUtils.Logger.log('Exception in getCurrentPosition', error);

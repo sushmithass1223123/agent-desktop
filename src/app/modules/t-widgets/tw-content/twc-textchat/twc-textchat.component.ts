@@ -93,7 +93,7 @@ export class TwcTextchatComponent extends TWContentWrapper implements OnInit, On
         const textchatWidgets = cloneDeep(this.data.Data.Widgets) || [];
 
         const staticWidgets = textchatWidgets.Static || [];
-        const dynamicWidgets = textchatWidgets.Dynamic || [];
+        const dynamicWidgets = JSON.parse(evt.WidgetConfigData) || textchatWidgets.Dynamic || [];
         const aotWidgets = textchatWidgets.AOT || [];
 
         // loop the widgets and add append interaction details

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TwRegisterCallbackComponent } from './tw-register-callback.component';
 
@@ -6,7 +6,7 @@ describe('TwRegisterCallbackComponent', () => {
   let component: TwRegisterCallbackComponent;
   let fixture: ComponentFixture<TwRegisterCallbackComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ TwRegisterCallbackComponent ]
     })

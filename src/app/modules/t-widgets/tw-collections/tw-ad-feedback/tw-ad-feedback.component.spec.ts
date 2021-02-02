@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TwAdFeedbackComponent } from './tw-ad-feedback.component';
 
@@ -6,7 +6,7 @@ describe('TwAdFeedbackComponent', () => {
   let component: TwAdFeedbackComponent;
   let fixture: ComponentFixture<TwAdFeedbackComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ TwAdFeedbackComponent ]
     })
