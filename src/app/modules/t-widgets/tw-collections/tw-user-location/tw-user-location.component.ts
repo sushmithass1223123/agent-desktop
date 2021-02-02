@@ -1,7 +1,7 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { TWidgetWrapper } from '@modules/t-widgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
-import { latLng, marker, tileLayer } from 'leaflet';
+import { icon, latLng, marker, tileLayer } from 'leaflet';
 
 @Component({
     selector: 'tw-user-location',
@@ -42,7 +42,18 @@ export class TwUserLocationComponent extends TWidgetWrapper implements OnInit, O
             }
             const [lat, long] = location.split(',');
             this.location = {
-                layers: [tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }), marker([lat, long])],
+                layers: [
+                    tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }),
+                    marker([lat, long]),
+                    {
+                        icon: icon({
+                            iconSize: [25, 41],
+                            iconAnchor: [13, 41],
+                            iconUrl: 'assets/leaflet/marker-icon.png',
+                            shadowUrl: 'assets/leaflet/marker-shadow.png'
+                        })
+                    }
+                ],
                 zoom: 15,
                 center: latLng(lat, long)
             };

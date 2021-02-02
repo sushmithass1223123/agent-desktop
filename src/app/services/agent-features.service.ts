@@ -16,7 +16,6 @@ declare const navigator: Navigator | any;
     providedIn: 'root'
 })
 export class AgentFeaturesService {
-
     /**
      * Processed
      * Need More Description
@@ -44,7 +43,7 @@ export class AgentFeaturesService {
              * Whether location acces is enabled
              */
             location: boolean;
-        },
+        };
         /**
          * Current features data
          */
@@ -52,12 +51,12 @@ export class AgentFeaturesService {
             /**
              * Camera stream
              */
-            cameraStream: MediaStream,
+            cameraStream: MediaStream;
             /**
              * Need more Description
              * Current display stream
              */
-            displayStream: MediaStream,
+            displayStream: MediaStream;
             /**
              * Current Location
              */
@@ -71,15 +70,15 @@ export class AgentFeaturesService {
                  */
                 longitude: number;
             };
-        }
+        };
     };
 
-    constructor(private _appUIService: AppUiService) { }
+    constructor(private _appUIService: AppUiService) {}
 
     /**
      * Need more Description
      * Event to take snapshot
-     * @param {any} evt 
+     * @param {any} evt
      */
     private AgentSnapShotEvent = async (evt: any) => {
         // init variables
@@ -117,11 +116,11 @@ export class AgentFeaturesService {
             screenvideo,
             snapshot
         });
-    }
+    };
 
     /**
      * To process AgentSettingsUpdatedEvent
-     * 
+     *
      * @param {AgentSettingsUpdatedEvent} evt
      */
     private AgentSettingsUpdatedEvent = (evt: AgentSettingsUpdatedEvent) => {
@@ -131,11 +130,11 @@ export class AgentFeaturesService {
             // set processed
             this._processed = true;
         }
-    }
+    };
 
     /**
      * Need more Description
-     * @param {string} type 
+     * @param {string} type
      */
     private async getUrlFromStream(type: string): Promise<string> {
         // media stream reference
@@ -144,8 +143,7 @@ export class AgentFeaturesService {
         // check the type
         if (type === 'screenshot') {
             stream = this._agentFeatureInfo.data.displayStream;
-        }
-        else if (type === 'snapshot') {
+        } else if (type === 'snapshot') {
             stream = this._agentFeatureInfo.data.cameraStream;
         }
 
@@ -232,7 +230,8 @@ export class AgentFeaturesService {
         }
 
         // get screen recording stream
-        navigator.mediaDevices.getDisplayMedia()
+        navigator.mediaDevices
+            .getDisplayMedia()
             .then((stream: any) => {
                 stream.getVideoTracks()[0].onended = () => {
                     this._agentFeatureInfo.permissions.display = false;
@@ -291,12 +290,13 @@ export class AgentFeaturesService {
                 this._agentFeatureInfo.permissions.location = false;
                 // log the error to server for troubleshooting purpose
                 TUtils.Logger.log('Exception in getCurrentPosition', error);
-            });
+            }
+        );
     }
 
     /**
      * To process agent features
-     * 
+     *
      * @param {AgentFeatures} agentFeatures
      */
     private processAgentFeatures(agentFeatures: AgentFeatures[]): void {
@@ -307,8 +307,7 @@ export class AgentFeaturesService {
                     // check if enabled, then capture camera
                     if (feature.IsEnabled) {
                         this.captureCameraStream();
-                    }
-                    else {
+                    } else {
                         this.stopCamera();
                     }
                     break;
@@ -316,8 +315,7 @@ export class AgentFeaturesService {
                     // check if enabled, then capture camera
                     if (feature.IsEnabled) {
                         this.captureDisplayStream();
-                    }
-                    else {
+                    } else {
                         this.stopScreenShare();
                     }
                     break;
