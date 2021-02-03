@@ -37,10 +37,12 @@ import { TwWallboardComponent } from '@modules/t-widgets/tw-collections/tw-wallb
 import { TwWorkCodesComponent } from '@modules/t-widgets/tw-collections/tw-work-codes/tw-work-codes.component';
 import { TwWorkbenchPanelComponent } from '@modules/t-widgets/tw-collections/tw-workbench-panel/tw-workbench-panel.component';
 import { TwcCustomComponent } from '@modules/t-widgets/tw-content/twc-custom/twc-custom.component';
+import { TwcDockerComponent } from '@modules/t-widgets/tw-content/twc-docker/twc-docker.component';
 import { TwcEmailComponent } from '@modules/t-widgets/tw-content/twc-email/twc-email.component';
 import { TwcHomeComponent } from '@modules/t-widgets/tw-content/twc-home/twc-home.component';
 import { TwcSupervisorComponent } from '@modules/t-widgets/tw-content/twc-supervisor/twc-supervisor.component';
 import { TwcTextchatComponent } from '@modules/t-widgets/tw-content/twc-textchat/twc-textchat.component';
+import { TwcUnknownComponent } from '@modules/t-widgets/tw-content/twc-unknown/twc-unknown.component';
 import { TwcVoiceComponent } from '@modules/t-widgets/tw-content/twc-voice/twc-voice.component';
 import { TwcWorkbenchComponent } from '@modules/t-widgets/tw-content/twc-workbench/twc-workbench.component';
 import { TWidget } from '@modules/t-widgets/utils/t-widget';
@@ -60,6 +62,7 @@ export class TWLibrary {
         'twc-custom': TwcCustomComponent,
         'twc-workbench': TwcWorkbenchComponent,
         'twc-email': TwcEmailComponent,
+        'twc-docker': TwcDockerComponent,
         'tw-sample': TwSampleComponent,
         'tw-custom': TwCustomComponent,
         'tw-wallboard': TwWallboardComponent,
@@ -110,6 +113,11 @@ export class TWLibrary {
         if (widget) {
             // retrun the widget
             return new TWidget(widget, data);
+        }
+        // check content unknown or collection unknown
+        if (type.startsWith('twc')) {
+            // if widget is not found return unknown widget
+            return new TWidget(TwcUnknownComponent, data);
         }
         // if widget is not found return unknown widget
         return new TWidget(TwUnknownComponent, data);
