@@ -91,26 +91,30 @@ export class AppUiService {
         hPos: MatSnackBarHorizontalPosition = 'center',
         duration: number = this._appConfig.AppConfigs.Notifications.AppAlertTimeout || 5000
     ): MatSnackBarRef<SnackbarComponent> {
-        const icons = {
-            info: 'info',
-            success: 'done',
-            warning: 'warning',
-            failure: 'error',
-            loading: 'loop'
-        };
-        const durationField = state === 'loading' ? {} : { duration };
-        this._matSnackBar.dismiss();
-        return this._matSnackBar.openFromComponent(SnackbarComponent, {
-            data: {
-                icon: icons[state],
-                loading: state === 'loading',
-                state,
-                message
-            },
-            verticalPosition: vPos,
-            horizontalPosition: hPos,
-            ...durationField
-        });
+        if (message) {
+            const icons = {
+                info: 'info',
+                success: 'done',
+                warning: 'warning',
+                failure: 'error',
+                loading: 'loop'
+            };
+            const durationField = state === 'loading' ? {} : { duration };
+            this._matSnackBar.dismiss();
+            return this._matSnackBar.openFromComponent(SnackbarComponent, {
+                data: {
+                    icon: icons[state],
+                    loading: state === 'loading',
+                    state,
+                    message
+                },
+                verticalPosition: vPos,
+                horizontalPosition: hPos,
+                ...durationField
+            });
+        } else {
+            console.error('Empty message passed for notification');
+        }
     }
 
     /**

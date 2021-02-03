@@ -14,7 +14,7 @@ import { ContentPageService } from '@services/content-page.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AgentSkillListData, ChatTranscripts, CustomSDKEvent, InteractionComment, InteractionRef, IWidget } from 'app/interfaces';
+import { AgentSkillListData, ChatTranscripts, CustomSDKEvent, InteractionComment, InteractionRef, IWidget, SnackbarStateTypes } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { map } from 'lodash';
 import * as moment from 'moment';
@@ -850,20 +850,26 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 // handle snapshot ackknowledgement
                 const msg = JSON.parse(evt.Message);
                 let message = '';
-                let failed = false;
+                let status: SnackbarStateTypes = 'success';
+                if (msg.clientReloaded) {
+                    this.escalateToAV(this.chatMode as any, true);
+                }
                 if (msg.type === 'webrtcTroubleshoot') {
-                    if (msg.status === 'accept') {
+                    if (msg.status === 'accepted') {
                         message = 'Webrtc troubleshoot request accepted by customer';
                     } else if (msg.status === 'ack') {
                         message = 'Webrtc troubleshoot request received by customer';
+                        status = 'loading';
                     } else {
                         message = 'Webrtc troubleshoot request rejected by customer';
-                        failed = true;
+                        status = 'failure';
                     }
                 } else if (msg.status === 'snapshotRequestAck') {
                     message = 'Customer snapshot request received by the customer';
                 }
-                this._appUIService.showSnackbar(message, failed ? 'failure' : 'success');
+                if (message) {
+                    this._appUIService.showSnackbar(message, status);
+                }
             } catch (e) {
                 console.error(e);
             }
