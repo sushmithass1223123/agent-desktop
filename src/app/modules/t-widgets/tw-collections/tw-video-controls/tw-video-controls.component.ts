@@ -8,7 +8,7 @@ import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { COMMON_ERR_MESSAGE } from 'app/constants';
+import { AV_ERRORS, COMMON_ERR_MESSAGE } from 'app/constants';
 import { IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { map } from 'lodash';
@@ -340,8 +340,12 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                 TUtils.Logger.log(evt.data);
                 break;
             case 'onError':
-                this.status = `Error : ${evt.data?.error}`;
-                this._appUIService.showSnackbar(evt.data?.error || 'Something went wrong', 'failure');
+                let error = evt.data?.error || 'Something went wrong';
+                if (evt.data?.code in AV_ERRORS) {
+                    error = AV_ERRORS[evt.data.code];
+                }
+                this.status = `Error : ${error}`;
+                this._appUIService.showSnackbar(error, 'failure');
                 TUtils.Logger.log('Exception in TwAudioControlsComponent.onAVEvent', evt.data);
                 break;
             case 'onAVStats':

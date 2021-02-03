@@ -13,8 +13,10 @@ tw-video-controls {
             .remote-video {
                 overflow: hidden;
                 position: relative;
+                // position: absolute;
                 min-width: 160px;
-                min-height: 120px;
+                // min-height: 120px;
+                min-height: 100%;
                 max-width: 100%;
                 max-height: 44vh;
                 border: 2px solid #ffffff;
@@ -37,7 +39,8 @@ tw-video-controls {
                 &.vd-3,
                 &.vd-4 {
                     width: 48%;
-                    height: 50%;
+                    // height: 50%;
+                    min-height: 48%;
                 }
 
                 .button-group {
