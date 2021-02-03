@@ -18,8 +18,9 @@ import { AgentSkillListData, ChatTranscripts, CustomSDKEvent, InteractionComment
 import { TwWidgetModel } from 'app/models';
 import { map } from 'lodash';
 import * as moment from 'moment';
-import { Subject, timer } from 'rxjs';
+import { from, Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
+import { delay } from 'rxjs/operators';
 import {
     AVChannel,
     AVControlMessageReceivedEvent,
@@ -851,9 +852,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 const msg = JSON.parse(evt.Message);
                 let message = '';
                 let status: SnackbarStateTypes = 'success';
-                if (msg.clientReloaded) {
-                    this.escalateToAV(this.chatMode as any, true);
-                }
+                // if (msg.clientReloaded) {
+                //     this.disposeCallWidget();
+                // }
                 if (msg.type === 'webrtcTroubleshoot') {
                     if (msg.status === 'accepted') {
                         message = 'Webrtc troubleshoot request accepted by customer';
@@ -864,11 +865,29 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         message = 'Webrtc troubleshoot request rejected by customer';
                         status = 'failure';
                     }
-                } else if (msg.status === 'snapshotRequestAck') {
-                    message = 'Customer snapshot request received by the customer';
-                }
-                if (message) {
-                    this._appUIService.showSnackbar(message, status);
+                    message && this._appUIService.showSnackbar(message, status);
+                } else if (msg.type.toLowerCase() === 'snapshot') {
+                    if (msg.status === 'snapshotRequestAck') {
+                        message = 'Retreiving snapshot';
+                        status = 'loading';
+                    } else if (msg.status === 'response') {
+                        message = 'Snapshot Received';
+                        status = 'success';
+                    } else {
+                        message = 'Unable to take snapshot';
+                        status = 'failure';
+                    }
+                    if (message) {
+                        const snapshotMatRef = this._appUIService.showSnackbar(message, status);
+                        if (status === 'loading') {
+                            from([0])
+                                .pipe(takeUntil(this.unsubscribeAll), delay(this.data.Data.Snapshot.RemoteResponseTimeout * 1000 || 10000))
+                                .subscribe(() => {
+                                    snapshotMatRef.dismiss();
+                                    console.error('Snapshot Response timed out');
+                                });
+                        }
+                    }
                 }
             } catch (e) {
                 console.error(e);
@@ -1676,7 +1695,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * To dispose call widget
      */
-    public dsiposeCallWidget(): void {
+    public disposeCallWidget(): void {
         this.completedCallList().addCallId(this.callWidget.Data.EventId);
         // dispose the call widget
         this.callWidget = null;

@@ -239,7 +239,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         this.avConn?.events.off('onAVEvent', this.onAVEvent);
         SDKClient.events.off('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
         SDKClient.events.off('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
-        this.widgetData.opener.dsiposeCallWidget();
+        this.widgetData.opener.disposeCallWidget();
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -445,6 +445,18 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                 break;
             case 'onUserLeft':
                 this.userList = this.userList.filter((u) => u.streamInfo.id !== evt.data?.userId);
+            case 'onReconnecting':
+                console.log('################################', evt);
+            case 'onReconnected':
+                console.log('******************************', evt);
+            case 'onStreamStatusChanged':
+                // 1 : connected
+                // 2  :disconnected
+                if (evt.data.status === 2) {
+                    
+                } else if (evt.data.status === 1) {
+                    
+                }
             default:
             // console.log(`unhandled:: [${evt.event}]`, evt);
         }
@@ -632,7 +644,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                     })
                 });
                 matRef.dismiss();
-                this._appUIService.showSnackbar('Snapshot request sent to customer', 'success');
+                // this._appUIService.showSnackbar('Snapshot request sent to customer', 'success');
             } catch (e) {
                 console.error(e);
             }

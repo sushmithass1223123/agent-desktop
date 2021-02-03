@@ -1815,7 +1815,8 @@
                                                     "AskForScreenshareAllowed": false,
                                                     "Snapshot": {
                                                         "Allowed": true,
-                                                        "Source": "Remote"
+                                                        "Source": "Remote",
+                                                        "RemoteResponseTimeout" : 10
                                                     },
                                                     "ShowUserLabel": false,
                                                     "ChatTemplate": {
@@ -3277,7 +3278,7 @@
             },
             "CustomSripts": [
                 "https://dice.tetherfi.cloud/tmaclibs/adapter.js",
-                "https://dice.tetherfi.cloud/tmaclibs/webclientapi-lib.min.js",
+                "https://dice.tetherfi.cloud/tmaclibs/webclientapi-lib.debug.js",
                 "https://dice.tetherfi.cloud/tmaclibs/collector.min.js"
             ]
         }
