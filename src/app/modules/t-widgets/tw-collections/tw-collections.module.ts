@@ -44,8 +44,7 @@ import { TwVoiceControlsComponent } from './tw-voice-controls/tw-voice-controls.
 import { TwVoicePanelComponent } from './tw-voice-panel/tw-voice-panel.component';
 import { TwWallboardComponent } from './tw-wallboard/tw-wallboard.component';
 import { TwWorkCodesComponent } from './tw-work-codes/tw-work-codes.component';
-import { TwWorkbenchPanelComponent } from './tw-workbench-panel/tw-workbench-panel.component';
-import { WorkbenchEmailComponent } from './tw-workbench-panel/workbench-email/workbench-email.component';
+import { TwWorkbenchPanelModule } from './tw-workbench-panel/tw-workbench-panel.module';
 
 /**
  * Collections components
@@ -85,8 +84,6 @@ const collectionComponents = [
     TwSuAgentInteractionsComponent,
     TwPieChartComponent,
     TwVoiceCannedResponsesComponent,
-    TwWorkbenchPanelComponent,
-    WorkbenchEmailComponent,
     TwEmailPanelComponent,
     TwEmailControlsComponent,
     TwPendingCallbacksComponent,
@@ -102,7 +99,7 @@ const collectionComponents = [
  */
 @NgModule({
     declarations: collectionComponents,
-    imports: [SharedModule, TwWrapperModule, TwChatControlsModule],
+    imports: [SharedModule, TwWrapperModule, TwChatControlsModule, TwWorkbenchPanelModule],
     exports: collectionComponents
 })
-export class TwCollectionsModule {}
+export class TwCollectionsModule { }

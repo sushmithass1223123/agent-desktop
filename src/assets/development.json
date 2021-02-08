@@ -1971,13 +1971,13 @@
                                                     "Snapshot": {
                                                         "Allowed": true,
                                                         "Source": "Remote",
-                                                        "RemoteResponseTimeout" : 10
+                                                        "RemoteResponseTimeout": 10
                                                     },
                                                     "ShowUserLabel": false,
                                                     "ChatTemplate": {
+                                                        "Allowed": true,
                                                         "Filter": "startswith",
-                                                        "FilterByTime": true,
-                                                        "UpdateThreshold": 0
+                                                        "FilterByTime": false
                                                     },
                                                     "InteractionConversion": {
                                                         "Allowed": true,
@@ -1997,7 +1997,11 @@
                                                         ]
                                                     },
                                                     "WebRTCUrl": "https://mx.tetherfi.cloud/testrtc/index.html?turnURI=turn%3Amx.tetherfi.cloud%3A3585&turnUsername=tetherfi&turnCredential=nuwan",
-                                                    "TroubleshootWebRtcForCustomer": true
+                                                    "TroubleshootWebRtcForCustomer": true,
+                                                    "ConversationApi": {
+                                                        "Post": "https://dice.tetherfi.cloud:25211/api/v1/",
+                                                        "Retrieval": "https://dice.tetherfi.cloud:25213/api/v1/"
+                                                    }
                                                 }
                                             },
                                             {
@@ -3179,25 +3183,36 @@
                                     },
                                     "Data": {
                                         "WorkbenchUrl": "https://dice.tetherfi.cloud:55005/api/workbench",
-                                        "EmailConfig": {
-                                            "Transfer": {
-                                                "Allowed": true,
-                                                "Agent": {
-                                                    "Allowed": true,
-                                                    "Blind": false,
-                                                    "Source": "agentId",
-                                                    "AllowedStates": []
-                                                },
-                                                "Skill": {
-                                                    "Allowed": true,
-                                                    "Blind": false,
-                                                    "Source": "skill",
-                                                    "ChannelPrefix": [
-                                                        "EM"
-                                                    ]
+                                        "Channels": [
+                                            {
+                                                "Type": "Email",
+                                                "Icon": "email",
+                                                "Config": {
+                                                    "Transfer": {
+                                                        "Allowed": true,
+                                                        "Agent": {
+                                                            "Allowed": true,
+                                                            "Blind": false,
+                                                            "Source": "agentId",
+                                                            "AllowedStates": []
+                                                        },
+                                                        "Skill": {
+                                                            "Allowed": true,
+                                                            "Blind": false,
+                                                            "Source": "skill",
+                                                            "ChannelPrefix": [
+                                                                "EM"
+                                                            ]
+                                                        }
+                                                    }
                                                 }
+                                            },
+                                            {
+                                                "Type": "Chat",
+                                                "Icon": "chat",
+                                                "Config": {}
                                             }
-                                        }
+                                        ]
                                     }
                                 }
                             ]
@@ -3593,6 +3608,7 @@
         "SDK": {
             "Proxy": {
                 "Urls": [
+                    "https://dice.tetherfi.cloud/TMACSDKProxy/TmacProxy.asmx",
                     "https://idfcvpd.tetherfi.cloud/tmacsdkproxy/tmacproxy.asmx"
                 ],
                 "Type": "soap",
