@@ -14,15 +14,28 @@ import { TWidgetWrapper } from '@modules/t-widgets/utils';
 import { AppUiService } from '@services/app-ui.service';
 import { COMMON_ERR_MESSAGE, DRAFT_REASONS, INBOX_REASONS, OUTBOX_REASONS, QUILL_EDITOR_CONFIG } from 'app/constants';
 import { AgentSkillListData, IWidget, ResData } from 'app/interfaces';
+import { formatJsonData } from 'app/utils';
 import { groupBy } from 'lodash';
 import * as moment from 'moment';
 import { Observable } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { SDKClient } from 'tmac-sdk';
-import { formatJsonData } from 'app/utils';
 
 type AvailableTabs = 'inbox' | 'sentitem' | 'queue' | 'draft';
-type EmailPullItem = { sessionId: string; routeId: string; conversationId: string };
+type EmailPullItem = {
+    /**
+     * Session ID
+     */
+    sessionId: string;
+    /**
+     * Route ID
+     */
+    routeId: string;
+    /**
+     * Conversation ID
+     */
+    conversationId: string
+};
 /**
  * Workbench Email
  */
@@ -38,34 +51,39 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
      * holds all the data related to this widget from the config
      */
     @Input() data: IWidget;
-
+    /**
+     * Outbox reasons
+     */
     OutboxReasons = OUTBOX_REASONS;
+    /**
+     * Draft reasons
+     */
     DraftReasons = DRAFT_REASONS;
+    /**
+     * Inbox reason
+     */
     InboxReasons = INBOX_REASONS;
-
+    /**
+     * Email bodies
+     */
     emailBodies: Record<string, any> = {};
-
     /**
      * Reply body for reply email in bulk
      */
     replyBody: string;
-
     /**
      * Email reply dialog ref
      */
     @ViewChild('replyDialog')
     ReplyEditor: TemplateRef<any>;
-
     /**
      * openeing email flag for loader display
      */
     openingEmail = false;
-
     /**
      * Reply editor Modal
      */
     replyEditorModal: MatDialogRef<any>;
-
     /**
      * Config for quill editor
      */
@@ -74,7 +92,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
      * To store the fuse config for theme
      */
     fuseConfig: FuseConfig;
-
     /**
      * Search key
      */
@@ -92,19 +109,17 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
          */
         selected: any;
     }> = {
-        error: false,
-        loading: false,
-        msg: '',
-        data: {
-            selected: false
-        }
-    };
-
+            error: false,
+            loading: false,
+            msg: '',
+            data: {
+                selected: false
+            }
+        };
     /**
      * Global search form control
      */
     globalSearchControl = new FormControl('');
-
     /**
      * Advanced search form group
      */
@@ -134,7 +149,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
         global: new FormControl(''),
         listOfMailboxes: new FormControl('singteldemo@tetherfi.com', [Validators.required])
     });
-
     /**
      * Tree Controls
      */
@@ -143,17 +157,14 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
      * Tree Data source
      */
     dataSource = new MatTreeNestedDataSource<any>();
-
     /**
      * Advanced search visibility
      */
     showAdvancedSearchForm = false;
-
     /**
      * Currently selected tab
      */
     currentTab: AvailableTabs = 'queue';
-
     /**
      * Search methods hash map
      */
@@ -311,6 +322,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
         }
     }
 
+    /**
+     * To do global search
+     */
     doGlobalSearch(): void {
         try {
             if (!this.data.Data.WorkbenchUrl) {
@@ -536,7 +550,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
             subject: searchFields.subject,
             content: searchFields.content
         });
-    };
+    }
 
     /**
      * Searched through inbox emails
@@ -607,7 +621,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                     })
                 }))
             );
-    };
+    }
 
     /**
      * Searches through draft emails
@@ -670,7 +684,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                     })
                 }))
             );
-    };
+    }
 
     /**
      * Advanced searches emails
@@ -734,7 +748,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                     })
                 }))
             );
-    };
+    }
 
     /**
      * Select emails
@@ -828,8 +842,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
      * @param {any} email
      */
     transferEmail(emails: any[]): void {
-        const agentConfig = this.data.Data.EmailConfig?.Transfer?.Agent || {};
-        const skillConfig = this.data.Data.EmailConfig?.Transfer?.Skill || {};
+        const config = this.data.Data.Channels.filter((f: any) => f.Type === 'Email')?.[0];
+        const agentConfig = config?.Transfer?.Agent || {};
+        const skillConfig = config?.Transfer?.Skill || {};
         const data: AgentSkillListData = {
             title: 'Email Transfer',
             type: 'transferEmail',

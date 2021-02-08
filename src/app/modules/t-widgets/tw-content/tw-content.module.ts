@@ -12,6 +12,7 @@ import { TwcTextchatComponent } from './twc-textchat/twc-textchat.component';
 import { TwcUnknownComponent } from './twc-unknown/twc-unknown.component';
 import { TwcVoiceComponent } from './twc-voice/twc-voice.component';
 import { TwcWorkbenchComponent } from './twc-workbench/twc-workbench.component';
+import { TwcDockerComponent } from './twc-docker/twc-docker.component';
 
 @NgModule({
     declarations: [
@@ -24,7 +25,8 @@ import { TwcWorkbenchComponent } from './twc-workbench/twc-workbench.component';
         TwcNoInteractionComponent,
         TwcTextchatComponent,
         TwcWorkbenchComponent,
-        TwcEmailComponent
+        TwcEmailComponent,
+        TwcDockerComponent
     ],
     imports: [SharedModule, TwTemplateModule, TwWrapperModule],
     exports: [TwcNoWidgetsComponent]

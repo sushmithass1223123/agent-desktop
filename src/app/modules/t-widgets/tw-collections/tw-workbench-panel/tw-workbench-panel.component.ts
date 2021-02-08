@@ -5,6 +5,9 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
 
+/**
+ * Workbench Panel Component
+ */
 @Component({
     selector: 'tw-workbench-panel', // make sure you set the selector starts with tw-<widget-name>
     templateUrl: './tw-workbench-panel.component.html',
@@ -23,6 +26,24 @@ export class TwWorkbenchPanelComponent extends TWidgetWrapper implements OnInit,
     fuseConfig: FuseConfig;
 
     /**
+     * Channel tabs
+     */
+    channels: {
+        /**
+         * Channel type
+         */
+        Type: string;
+        /**
+         * Channel icon
+         */
+        Icon: string;
+        /**
+         * Channel config
+         */
+        Config: any;
+    }[] = [];
+
+    /**
      * active class for the tab
      */
     tabActiveClass = '';
@@ -37,7 +58,6 @@ export class TwWorkbenchPanelComponent extends TWidgetWrapper implements OnInit,
      * @param {FuseConfigService} _fuseConfigService
      */
     constructor(
-        // @ [OPTIONAL]
         private _fuseConfigService: FuseConfigService
     ) {
         super();
@@ -54,9 +74,7 @@ export class TwWorkbenchPanelComponent extends TWidgetWrapper implements OnInit,
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the fuse config
-        // -----------------------------------------------------------
+
         this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
             this.fuseConfig = config;
 
@@ -74,6 +92,9 @@ export class TwWorkbenchPanelComponent extends TWidgetWrapper implements OnInit,
                     ? this.fuseConfig.layout.widget.contentBackground
                     : '';
         });
+
+        // set the channels
+        this.channels = this.data.Data.Channels;
     }
 
     /**

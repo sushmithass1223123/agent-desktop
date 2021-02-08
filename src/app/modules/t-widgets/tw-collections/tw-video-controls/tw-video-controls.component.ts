@@ -445,22 +445,24 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                 break;
             case 'onUserLeft':
                 this.userList = this.userList.filter((u) => u.streamInfo.id !== evt.data?.userId);
+                break;
             case 'onReconnecting':
-                console.log('################################', evt);
+                break;
             case 'onReconnected':
-                console.log('******************************', evt);
+                break;
             case 'onStreamStatusChanged':
                 // 1 : connected
                 // 2  :disconnected
                 if (evt.data.status === 2) {
-                    
+
                 } else if (evt.data.status === 1) {
-                    
+
                 }
+                break;
             default:
             // console.log(`unhandled:: [${evt.event}]`, evt);
         }
-    };
+    }
 
     /**
      * TextChatDisconnectedEvent Handler

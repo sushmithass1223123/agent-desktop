@@ -12,56 +12,63 @@
 >
     <div class="email-category mx-8 border-radius-20 h-100-p">
         <div fxLayout="column" fxLayoutAlign="space-between" class="h-100-p py-20">
-            <div class="top-menu" fxLayout="column">
+            <div class="tab-menu" fxLayout="column">
                 <button
-                    class="mb-12"
+                    class="mb-12 pb-8"
                     mat-button
                     matTooltip="Queue"
                     (click)="switchTab('queue')"
                     matTooltipPosition="right"
-                    [color]="currentTab === 'queue' && 'primary'"
+                    [ngClass]="{
+                        'mat-raised-button': currentTab === 'queue'
+                    }"
+                    [color]="currentTab === 'queue' && 'accent'"
                 >
                     <mat-icon>queue</mat-icon>
                     <div>Queued</div>
                 </button>
                 <button
-                    class="mb-12"
+                    class="mb-12 pb-8"
                     mat-button
                     (click)="switchTab('inbox')"
                     matTooltip="Inbox"
                     matTooltipPosition="right"
-                    [color]="currentTab === 'inbox' && 'primary'"
+                    [ngClass]="{
+                        'mat-raised-button': currentTab === 'inbox'
+                    }"
+                    [color]="currentTab === 'inbox' && 'accent'"
                 >
                     <mat-icon>mail</mat-icon>
                     <div>Inbox</div>
                 </button>
                 <button
-                    class="mb-12"
+                    class="mb-12 pb-8"
                     mat-button
                     (click)="switchTab('sentitem')"
                     matTooltip="Sent"
                     matTooltipPosition="right"
-                    [color]="currentTab === 'sentitem' && 'primary'"
+                    [ngClass]="{
+                        'mat-raised-button': currentTab === 'sentitem'
+                    }"
+                    [color]="currentTab === 'sentitem' && 'accent'"
                 >
                     <mat-icon>mark_email_read</mat-icon>
                     <div>Sent</div>
                 </button>
                 <button
-                    class="mb-12"
+                    class="mb-12 pb-8"
                     mat-button
                     matTooltip="Drafts"
                     (click)="switchTab('draft')"
                     matTooltipPosition="right"
-                    [color]="currentTab === 'draft' && 'primary'"
+                    [ngClass]="{
+                        'mat-raised-button': currentTab === 'draft'
+                    }"
+                    [color]="currentTab === 'draft' && 'accent'"
                 >
                     <mat-icon>drafts</mat-icon>
                     <div>Drafts</div>
                 </button>
-            </div>
-            <div class="bottom-menu">
-                <!-- <button mat-button>
-                    <mat-icon>chevron_left</mat-icon>
-                </button> -->
             </div>
         </div>
     </div>
