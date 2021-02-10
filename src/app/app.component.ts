@@ -1,9 +1,8 @@
 import { Platform } from '@angular/cdk/platform';
 import { DOCUMENT } from '@angular/common';
-import { Component, HostListener, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
-// import { ActivatedRoute } from '@angular/router';
 import { FuseNavigationService } from '@fuse/components/navigation/navigation.service';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
@@ -46,27 +45,6 @@ export class AppComponent implements OnInit, OnDestroy {
      */
     navigation: any;
     /**
-     * Need more description
-     * Config
-     */
-    config: any;
-
-    /**
-     * Production conofig path
-     */
-    prodConfigPath = 'assets/production.json';
-
-    /**
-     * Dev config path
-     */
-    devConfigPath = 'assets/development.json';
-
-    /**
-     * loading state
-     */
-    loaded = false;
-
-    /**
      * Custom icon list
      */
     customIconList = [
@@ -104,39 +82,6 @@ export class AppComponent implements OnInit, OnDestroy {
      * Unsubscribe all subject
      */
     private _unsubscribeAll: Subject<any>;
-
-    /**
-     * Disable opening console / refreshing
-     * @param {KeyboardEvent} event
-     */
-    @HostListener('document:keydown', ['$event'])
-    handleKeyboardEvent(event: KeyboardEvent): any {
-        if (!this.config) {
-            return;
-        }
-        //  Disables refresh (F5, ctrl + r, ctrl + F5)
-        if (this.config.AppConfigs.RefreshDisabled) {
-            if (
-                event.key.toUpperCase() === 'F5' ||
-                (event.key.toUpperCase() === 'R' && event.ctrlKey) ||
-                (event.key.toUpperCase() === 'F5' && event.ctrlKey)
-            ) {
-                event.preventDefault();
-                return false;
-            }
-        }
-        //  Disabled dev tools (F12, ctrl + shift + c, ctrl + shift + i)
-        if (this.config.AppConfigs.DevToolsDisabled) {
-            if (
-                event.key.toUpperCase() === 'F12' ||
-                (event.key.toUpperCase() === 'C' && event.ctrlKey && event.shiftKey) ||
-                (event.key.toUpperCase() === 'I' && event.ctrlKey && event.shiftKey)
-            ) {
-                event.preventDefault();
-                return false;
-            }
-        }
-    }
 
     /**
      * Constructor

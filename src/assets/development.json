@@ -1996,12 +1996,12 @@
                                                             "afterdisconnect"
                                                         ]
                                                     },
-                                                    "WebRTCUrl": "https://mx.tetherfi.cloud/testrtc/index.html?turnURI=turn%3Amx.tetherfi.cloud%3A3585&turnUsername=tetherfi&turnCredential=nuwan",
-                                                    "TroubleshootWebRtcForCustomer": true,
-                                                    "ConversationApi": {
-                                                        "Post": "https://dice.tetherfi.cloud:25211/api/v1/",
-                                                        "Retrieval": "https://dice.tetherfi.cloud:25213/api/v1/"
-                                                    }
+                                                    "WebRTCTest": {
+                                                        "Allowed": true,
+                                                        "Url": "https://mx.tetherfi.cloud/testrtc/index.html?turnURI=turn%3Amx.tetherfi.cloud%3A3585&turnUsername=tetherfi&turnCredential=nuwan",
+                                                        "Customer": true
+                                                    },
+                                                    "ConversationApiUrl": "https://dice.tetherfi.cloud:25213/api/v1/"
                                                 }
                                             },
                                             {
@@ -2121,33 +2121,6 @@
                             ],
                             "Dynamic": [
                                 {
-                                    "Name": "Custom Snapshot widget",
-                                    "Description": "",
-                                    "Key": "Custom Snapshot widget",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "Icon": "verified_user",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 2,
-                                            "Y": 1
-                                        },
-                                        "Actions": [
-                                            "float"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "Url": "http://127.0.0.1:5500/custom-snapshot/index.html"
-                                    }
-                                },
-                                {
                                     "Name": "User location",
                                     "Description": "",
                                     "Key": "UserLocation",
@@ -2209,34 +2182,6 @@
                                             "destroy"
                                         ],
                                         "ViewState": "restore"
-                                    }
-                                },
-                                {
-                                    "Name": "Account Information",
-                                    "Description": "",
-                                    "Key": "CustomerAccountInfo",
-                                    "Type": "tw-account-information",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "Icon": "",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 2,
-                                            "Y": 1
-                                        },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "IsAuthenticated": true
                                     }
                                 },
                                 {
@@ -3362,16 +3307,16 @@
                         "Widgets": {
                             "Static": [
                                 {
-                                    "Name": "Reminders",
+                                    "Name": "Test Page 1",
                                     "Description": "",
-                                    "Key": "AgentReminders",
+                                    "Key": "TestPage1",
                                     "Type": "tw-custom",
                                     "Config": {
                                         "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
-                                        "Icon": "event_note",
+                                        "Icon": "widgets",
                                         "Class": "",
                                         "Position": {
                                             "X": 2,
@@ -3388,7 +3333,277 @@
                                     "Data": {
                                         "AutoOpen": false,
                                         "OpenInNew": false,
-                                        "Url": "https://dice.tetherfi.cloud/agent-desktop/reminders/index.html?agentid=_agentId&tmacserver=TmacServer1"
+                                        "Url": "https://dice.tetherfi.cloud/tmac_client/test.html"
+                                    }
+                                },
+                                {
+                                    "Name": "Test Page 2",
+                                    "Description": "",
+                                    "Key": "TestPage2",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "widgets",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/tmac_client/test.html"
+                                    }
+                                },
+                                {
+                                    "Name": "Test Page3",
+                                    "Description": "",
+                                    "Key": "TestPage3",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "widgets",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/tmac_client/test.html"
+                                    }
+                                },
+                                {
+                                    "Name": "Test Page 4",
+                                    "Description": "",
+                                    "Key": "TestPage4",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "widgets",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/tmac_client/test.html"
+                                    }
+                                },
+                                {
+                                    "Name": "Test Page 5",
+                                    "Description": "",
+                                    "Key": "TestPage5",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "widgets",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/tmac_client/test.html"
+                                    }
+                                },
+                                {
+                                    "Name": "Test Page 6",
+                                    "Description": "",
+                                    "Key": "TestPage6",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "widgets",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/tmac_client/test.html"
+                                    }
+                                },
+                                {
+                                    "Name": "Test Page 7",
+                                    "Description": "",
+                                    "Key": "TestPage7",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "widgets",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/tmac_client/test.html"
+                                    }
+                                },
+                                {
+                                    "Name": "Test Page 8",
+                                    "Description": "",
+                                    "Key": "TestPage8",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "widgets",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/tmac_client/test.html"
+                                    }
+                                },
+                                {
+                                    "Name": "Test Page 9",
+                                    "Description": "",
+                                    "Key": "TestPage9",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "widgets",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/tmac_client/test.html"
+                                    }
+                                },
+                                {
+                                    "Name": "Test Page 10",
+                                    "Description": "",
+                                    "Key": "TestPage10",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "widgets",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/tmac_client/test.html"
                                     }
                                 }
                             ]
@@ -3513,7 +3728,7 @@
     },
     "AppConfigs": {
         "TitleName": "Agent Desktop",
-        "Theme": "theme-default-2",
+        "Theme": "theme-default",
         "Logos": {
             "Favicon": "",
             "Default": {
@@ -3608,8 +3823,8 @@
         "SDK": {
             "Proxy": {
                 "Urls": [
-                    "https://dice.tetherfi.cloud/TMACSDKProxy/TmacProxy.asmx",
-                    "https://idfcvpd.tetherfi.cloud/tmacsdkproxy/tmacproxy.asmx"
+                    "https://idfcvpd.tetherfi.cloud/TMACSDKProxy/tmacproxy.asmx",
+                    "https://dice.tetherfi.cloud/TMACSDKProxy/TmacProxy.asmx"
                 ],
                 "Type": "soap",
                 "Timeout": 30

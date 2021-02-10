@@ -630,7 +630,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
             });
         } else if (this.widgetData.chatConfig.Snapshot.Source === 'Remote') {
             try {
-                let matRef = this._appUIService.showSnackbar('Requesting customer for snapshot', 'loading');
+                const matRef = this._appUIService.showSnackbar('Requesting customer for snapshot', 'loading');
                 const res = await SDKClient.sendActionMessage({
                     interactionId: this.interactionId as any,
                     message: JSON.stringify({
@@ -691,8 +691,8 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     async showWebRTCStats(): Promise<void> {
         try {
-            if (this.data.Data.Config.WebRTCUrl) {
-                const { WebRTCUrl, TroubleshootWebRtcForCustomer } = this.data.Data.Config;
+            if (this.data.Data.Config.WebRTCTest.Allowed) {
+                const { Url, Customer } = this.data.Data.Config.WebRTCTest;
                 // create a call AOT widget
                 const widget = new TwWidgetModel('WebRTC Stats', 'tw-custom', 'event_note');
                 widget.Config.Anchor = false;
@@ -703,18 +703,18 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                 widget.Data = {
                     AutoOpen: false,
                     OpenInNew: false,
-                    Url: WebRTCUrl
+                    Url
                 };
 
                 this._aotWidgetService.addWidget(widget);
 
-                if (TroubleshootWebRtcForCustomer) {
+                if (Customer) {
                     await SDKClient.sendActionMessage({
                         interactionId: this.interactionId as any,
                         message: JSON.stringify({
                             source: 'agent',
                             options: {},
-                            data: { webRTCUrl: WebRTCUrl },
+                            data: { webRTCUrl: Url },
                             status: 'request',
                             type: 'webrtcTroubleshoot',
                             eventName: 'ActionMessage',
