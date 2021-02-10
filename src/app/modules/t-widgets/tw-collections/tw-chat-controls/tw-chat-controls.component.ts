@@ -305,16 +305,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * Conversation Api Urls
      */
-    conversationApi: {
-        /**
-         * Post Url
-         */
-        Post: string;
-        /**
-         * Retrieval Url
-         */
-        Retrieval: string;
-    };
+    ConversationApiUrl: string;
     /**
      * Text templates ref
      */
@@ -417,7 +408,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.supervisorInit = this.lineId === 'bargein';
 
         // set the conversation service urls
-        this.conversationApi = this.data.Data.ConversationApi || null;
+        this.ConversationApiUrl = this.data.Data.ConversationApiUrl;
 
         // listen to TMAC events
         // this.registerToEvents();
@@ -1687,12 +1678,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             return;
         }
         // show the progress bar
-        this._fuseProgressBarService.show();
+        // this._fuseProgressBarService.show();
         this.showAutoFreeze = false;
         SDKClient.freezeTextChatAutoResponse(this.interactionId.toString())
             .then((dt: IResponse) => {
                 // hide the progress bar
-                this._fuseProgressBarService.hide();
+                // this._fuseProgressBarService.hide();
                 // if failed
                 if (!dt.response || dt.response !== 1) {
                     this.showAutoFreeze = true;
@@ -1701,7 +1692,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             })
             .catch(() => {
                 // hide the progress bar
-                this._fuseProgressBarService.hide();
+                // this._fuseProgressBarService.hide();
                 this.showAutoFreeze = true;
                 this._appUIService.showSnackbar('Error in freezing auto response failed!', 'failure');
             });

@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { AfterContentInit, Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { AfterContentInit, Component, HostListener, Inject, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
@@ -46,6 +46,47 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
      * Unsubscribe all subject
      */
     private _unsubscribeAll: Subject<any>;
+
+    /**
+     * Disable opening console / refreshing
+     * @param {KeyboardEvent} event
+     */
+    @HostListener('document:keydown', ['$event'])
+    handleKeyboardEvent(event: KeyboardEvent): any {
+        if (!this.appConfig) {
+            return;
+        }
+        //  Disables refresh (F5, ctrl + r, ctrl + F5)
+        if (this.appConfig.AppConfigs.RefreshDisabled) {
+            if (
+                event.key.toUpperCase() === 'F5' ||
+                (event.key.toUpperCase() === 'R' && event.ctrlKey) ||
+                (event.key.toUpperCase() === 'F5' && event.ctrlKey)
+            ) {
+                event.preventDefault();
+                return false;
+            }
+        }
+        //  Disabled dev tools (F12, ctrl + shift + c, ctrl + shift + i)
+        if (this.appConfig.AppConfigs.DevToolsDisabled) {
+            if (
+                event.key.toUpperCase() === 'F12' ||
+                (event.key.toUpperCase() === 'C' && event.ctrlKey && event.shiftKey) ||
+                (event.key.toUpperCase() === 'I' && event.ctrlKey && event.shiftKey)
+            ) {
+                event.preventDefault();
+                return false;
+            }
+        }
+    }
+
+    /**
+     * Page before unload
+     */
+    @HostListener('window:beforeunload')
+    pageBeforeUnload(event: any): void {
+        event.preventDefault();
+    }
 
     /**
      * Constructor

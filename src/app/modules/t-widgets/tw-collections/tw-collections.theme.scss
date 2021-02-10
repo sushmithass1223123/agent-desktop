@@ -51,8 +51,8 @@
                         @if ($is-dark == true) {
                             background-color: map-get($background, hover);
                         } @else {
-                            background-color: map-get($accent, default);
-                            color: map-get($accent, default-contrast);
+                            background-color: map-get($primary, 700);
+                            color: mat-contrast($primary, 700);
                         }
                     }
 

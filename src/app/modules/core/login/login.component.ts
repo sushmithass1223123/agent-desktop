@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -246,10 +246,42 @@ export class LoginComponent implements OnInit, OnDestroy {
         errored: boolean;
         countdown?: Observable<number>;
     } = {
-        pollingInterval: 20,
-        retrying: false,
-        errored: false
-    };
+            pollingInterval: 20,
+            retrying: false,
+            errored: false
+        };
+    /**
+     * Disable opening console / refreshing
+     * @param {KeyboardEvent} event
+     */
+    @HostListener('document:keydown', ['$event'])
+    handleKeyboardEvent(event: KeyboardEvent): any {
+        if (!this.appConfig) {
+            return;
+        }
+        //  Disables refresh (F5, ctrl + r, ctrl + F5)
+        if (this.appConfig.AppConfigs.RefreshDisabled) {
+            if (
+                event.key.toUpperCase() === 'F5' ||
+                (event.key.toUpperCase() === 'R' && event.ctrlKey) ||
+                (event.key.toUpperCase() === 'F5' && event.ctrlKey)
+            ) {
+                event.preventDefault();
+                return false;
+            }
+        }
+        //  Disabled dev tools (F12, ctrl + shift + c, ctrl + shift + i)
+        if (this.appConfig.AppConfigs.DevToolsDisabled) {
+            if (
+                event.key.toUpperCase() === 'F12' ||
+                (event.key.toUpperCase() === 'C' && event.ctrlKey && event.shiftKey) ||
+                (event.key.toUpperCase() === 'I' && event.ctrlKey && event.shiftKey)
+            ) {
+                event.preventDefault();
+                return false;
+            }
+        }
+    }
 
     constructor(
         private _fuseConfigService: FuseConfigService,
@@ -719,8 +751,8 @@ export class LoginComponent implements OnInit, OnDestroy {
                         } else {
                             const queryParams = this.queryData?.state
                                 ? {
-                                      state: this.queryData.state
-                                  }
+                                    state: this.queryData.state
+                                }
                                 : {};
                             // we will route to main page
                             this._router.navigate([`main/${agentId}`], {
@@ -753,8 +785,8 @@ export class LoginComponent implements OnInit, OnDestroy {
                     this.errorMessage = response.ErrorDetails
                         ? response.ErrorDetails
                         : response.ResultMessage
-                        ? response.ResultMessage
-                        : 'Login failed, Unknown response from server';
+                            ? response.ResultMessage
+                            : 'Login failed, Unknown response from server';
                 }
             } else {
                 this.errorMessage = 'Login failed, Please contact the administrator';
