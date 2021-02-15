@@ -835,15 +835,17 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             this.isMSCall = true;
 
             // create a AV channel connection
-            const connection = new AVChannel(
-                SDKClient,
-                this.interactionId.toString(),
-                this.user.agentId,
-                '',
-                sessionId,
-                'voice',
-                this.appConfig.AppConfigs.AV || {}
-            );
+
+            let AV: any = {};
+            const domain = '';
+            if (this.appConfig.AppConfigs.AV) {
+                const avConf = JSON.stringify(this.appConfig.AppConfigs.AV);
+                avConf.replaceAll('${domainName}', domain);
+                AV = JSON.parse(avConf);
+            }
+
+            // create a AV channel connection
+            const connection = new AVChannel(SDKClient, this.interactionId.toString(), this.user.agentId, '', sessionId, 'voice', AV);
 
             if (!connection) {
                 TUtils.Logger.log(`Error in creating AVChannel for MS call: ${sessionId}`);

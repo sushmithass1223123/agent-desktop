@@ -1,3 +1,98 @@
+<ng-template #messageRef let-message="message" let-showName="showName" let-replyAble="replyAble">
+    <ng-container *ngIf="message">
+        <div
+            *ngIf="showName"
+            class="user-label font-size-16 text-bold mb-4"
+            [ngClass]="{
+                agent: !message.isAgent && message.who !== customerName
+            }"
+        >
+            {{ message.who }}
+        </div>
+        <div class="message">
+            <div *ngIf="message.repliedToMessage" class="p-8 my-4 border-radius-16 border-left" [ngClass]="commonButtonBackground">
+                <ng-container *ngTemplateOutlet="messageRef; context: { message: message.repliedToMessage }"> </ng-container>
+            </div>
+
+            <div *ngIf="replyAble" class="reply-to">
+                <button mat-icon-button (click)="replyingToMessage = message; focusReplyInput()">
+                    <mat-icon>reply</mat-icon>
+                </button>
+            </div>
+            <p class="m-0">
+                <ng-container *ngIf="!message.attachment?.src">
+                    <span [innerHTML]="message.message"></span>
+                    <span class="spacer"></span>
+                </ng-container>
+                <ng-container *ngIf="message.attachment?.src">
+                    <div fxLayout="column" fxLayoutAlign=" none" class="attachments">
+                        <!-- Images -->
+                        <div *ngIf="message.attachment.type === 'image'" (click)="previewMedia(message)">
+                            <img [src]="message.attachment.src" />
+                        </div>
+
+                        <!-- Videos -->
+                        <div *ngIf="message.attachment.type === 'video'">
+                            <div fxFill fxLayout fxLayoutAlign="center center" class="video-overlay">
+                                <button mat-stroked-button mat-icon-button class="mat-elevation-z6" (click)="previewMedia(message)">
+                                    <mat-icon>play_arrow</mat-icon>
+                                </button>
+                            </div>
+                            <video [src]="message.attachment.src"></video>
+                        </div>
+
+                        <!-- Audios -->
+                        <audio *ngIf="message.attachment.type === 'audio'" [src]="message.attachment.src" controls></audio>
+
+                        <!-- Files -->
+                        <div
+                            *ngIf="message.attachment.type === 'file' || message.attachment.type === 'others'"
+                            fxLayout="row"
+                            fxLayoutAlign=" center"
+                            class="file"
+                        >
+                            <div fxFlex="80" fxLayout="row" fxLayoutAlign=" center">
+                                <mat-icon class="file-icon">insert_drive_file</mat-icon>
+                                <span class="file-name">{{ message.attachment.name }}</span>
+                            </div>
+                            <div fxFlex="20">
+                                <a
+                                    mat-icon-button
+                                    mat-raised-button
+                                    class="download"
+                                    target="_blank"
+                                    [download]="message.attachment.name"
+                                    [href]="message.attachment.src"
+                                >
+                                    <mat-icon>arrow_downward</mat-icon>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- To show attachment captions -->
+                        <span *ngIf="message.message" class="mt-4"> {{ message.message }} </span>
+
+                        <!-- Spacer for better view -->
+                        <span
+                            *ngIf="message.attachment.type === 'file' || message.attachment.type === 'others' || message.attachment.type === 'audio'"
+                            class="spacer h-16"
+                        >
+                        </span>
+                        <span *ngIf="message.attachment.type === 'image' || message.attachment.type === 'video'" class="time-overlay"></span>
+                    </div>
+                </ng-container>
+            </p>
+        </div>
+        <div class="time" [ngClass]="message?.type" fxLayout="row" fxLayoutAlign="end center">
+            {{ message.time | date: 'shortTime' }}
+            <mat-icon class="s-12 ml-4" *ngIf="message.position === 'right' && message.status === 'init'"> access_time</mat-icon>
+            <mat-icon class="s-12 ml-4" *ngIf="message.position === 'right' && message.status === 'sent'">done </mat-icon>
+            <mat-icon class="s-12 ml-4" *ngIf="message.position === 'right' && message.status === 'failed'" color="warn">error_outline</mat-icon>
+            <mat-icon class="s-12 ml-4" *ngIf="message.position === 'right' && message.status === 'delivered'"> done_all</mat-icon>
+        </div>
+    </ng-container>
+</ng-template>
+
 <tw-wrapper [data]="data" (maximizeEvent)="onMaximized($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)">
     <div class="w-100-p h-100-p chat-controls">
         <div fxLayout="column" fxLayoutAlign=" none" class="w-100-p px-12 py-4 border-radius-20 interaction-details">
@@ -253,12 +348,15 @@
                             >
                                 {{ message.message }}
                             </div>
+
                             <ng-container *ngIf="!message.serverMessage">
                                 <div
                                     *ngIf="!message.divider"
                                     fxLayout="column"
                                     fxLayoutAlign="start start"
-                                    class="bubble mat-elevation-z1 {{ message.position }} animate__animated animate__slideInUp animate__faster"
+                                    class="bubble mat-elevation-z1 position-absolute {{
+                                        message.position
+                                    }} animate__animated animate__slideInUp animate__faster"
                                     [ngClass]="{ maximized: maximized }"
                                 >
                                     <!-- <div *ngIf="isFirstMessageOfGroup(message, i)" [ngClass]="!message.isAgent ? 'left-svg' : 'right-svg'">
@@ -272,103 +370,12 @@
                                     </svg>
                                 </div> -->
 
-                                    <div
-                                        *ngIf="isFirstMessageOfGroup(message, i)"
-                                        class="user-label font-size-16 text-bold mb-4"
-                                        [ngClass]="{
-                                            agent: !message.isAgent && message.who !== customerName
-                                        }"
-                                    >
-                                        {{ message.who }}
-                                    </div>
-                                    <div class="message">
-                                        <ng-container *ngIf="!message.attachment?.src">
-                                            <span [innerHTML]="message.message"></span>
-                                            <span class="spacer"></span>
-                                        </ng-container>
-                                        <ng-container *ngIf="message.attachment?.src">
-                                            <div fxLayout="column" fxLayoutAlign=" none" class="attachments">
-                                                <!-- Images -->
-                                                <div *ngIf="message.attachment.type === 'image'" (click)="previewMedia(message)">
-                                                    <img [src]="message.attachment.src" />
-                                                </div>
-
-                                                <!-- Videos -->
-                                                <div *ngIf="message.attachment.type === 'video'">
-                                                    <div fxFill fxLayout fxLayoutAlign="center center" class="video-overlay">
-                                                        <button
-                                                            mat-stroked-button
-                                                            mat-icon-button
-                                                            class="mat-elevation-z6"
-                                                            (click)="previewMedia(message)"
-                                                        >
-                                                            <mat-icon>play_arrow</mat-icon>
-                                                        </button>
-                                                    </div>
-                                                    <video [src]="message.attachment.src"></video>
-                                                </div>
-
-                                                <!-- Audios -->
-                                                <audio *ngIf="message.attachment.type === 'audio'" [src]="message.attachment.src" controls></audio>
-
-                                                <!-- Files -->
-                                                <div
-                                                    *ngIf="message.attachment.type === 'file' || message.attachment.type === 'others'"
-                                                    fxLayout="row"
-                                                    fxLayoutAlign=" center"
-                                                    class="file"
-                                                >
-                                                    <div fxFlex="80" fxLayout="row" fxLayoutAlign=" center">
-                                                        <mat-icon class="file-icon">insert_drive_file</mat-icon>
-                                                        <span class="file-name">{{ message.attachment.name }}</span>
-                                                    </div>
-                                                    <div fxFlex="20">
-                                                        <a
-                                                            mat-icon-button
-                                                            mat-raised-button
-                                                            class="download"
-                                                            target="_blank"
-                                                            [download]="message.attachment.name"
-                                                            [href]="message.attachment.src"
-                                                        >
-                                                            <mat-icon>arrow_downward</mat-icon>
-                                                        </a>
-                                                    </div>
-                                                </div>
-
-                                                <!-- To show attachment captions -->
-                                                <span *ngIf="message.message" class="mt-4"> {{ message.message }} </span>
-
-                                                <!-- Spacer for better view -->
-                                                <span
-                                                    *ngIf="
-                                                        message.attachment.type === 'file' ||
-                                                        message.attachment.type === 'others' ||
-                                                        message.attachment.type === 'audio'
-                                                    "
-                                                    class="spacer h-16"
-                                                >
-                                                </span>
-                                                <span
-                                                    *ngIf="message.attachment.type === 'image' || message.attachment.type === 'video'"
-                                                    class="time-overlay"
-                                                ></span>
-                                            </div>
-                                        </ng-container>
-                                    </div>
-                                    <div class="time" [ngClass]="message?.type" fxLayout="row" fxLayoutAlign="end center">
-                                        {{ message.time | date: 'shortTime' }}
-                                        <mat-icon class="s-12 ml-4" *ngIf="message.position === 'right' && message.status === 'init'">
-                                            access_time</mat-icon
-                                        >
-                                        <mat-icon class="s-12 ml-4" *ngIf="message.position === 'right' && message.status === 'sent'">done </mat-icon>
-                                        <mat-icon class="s-12 ml-4" *ngIf="message.position === 'right' && message.status === 'failed'" color="warn"
-                                            >error_outline</mat-icon
-                                        >
-                                        <mat-icon class="s-12 ml-4" *ngIf="message.position === 'right' && message.status === 'delivered'">
-                                            done_all</mat-icon
-                                        >
-                                    </div>
+                                    <ng-container
+                                        *ngTemplateOutlet="
+                                            messageRef;
+                                            context: { message: message, showName: isFirstMessageOfGroup(message, i), replyAble: true }
+                                        "
+                                    ></ng-container>
                                 </div>
                             </ng-container>
 
@@ -384,6 +391,19 @@
                 <div class="chat-footer" fxFlex="0 0 auto" fxLayout="column" *ngIf="conferenceType !== 'silent'">
                     <!-- REPLY FORM -->
                     <div class="reply-form" fxFlex="0 0 auto" fxLayout="column" fxLayoutAlign="center center">
+                        <button style="display: none" cdkOverlayOrigin #replyingMessageOverlay="cdkOverlayOrigin"></button>
+                        <div (click)="replyingToMessage = null" class="w-100-p p-4">
+                            <div *ngIf="replyingToMessage" fxLayout class="w-100-p p-4 border-radius-8 position-relative">
+                                <div fxFlex="100%" class="p-8 border-radius-16 border-left" [ngClass]="commonButtonBackground">
+                                    <ng-container *ngTemplateOutlet="messageRef; context: { message: replyingToMessage, showName: true }">
+                                    </ng-container>
+                                </div>
+                                <button mat-icon-button (click)="replyingToMessage = null">
+                                    <mat-icon> close</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+
                         <mat-chip-list *ngIf="textTemplates.filtered.length" class="w-100-p mx-16 mb-8">
                             <mat-chip class="cursor-pointer" *ngFor="let item of textTemplates.filtered" (click)="selectTemplate(item)">
                                 {{ item.Name }}

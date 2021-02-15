@@ -5,7 +5,7 @@ import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
-import { map } from 'lodash';
+import { map, set } from 'lodash';
 import { timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AVChannel, AVControlMessageReceivedEvent, AVEvent, IAgentData, SDKClient, TEnums, TextChatDisconnectedEvent, TUtils } from 'tmac-sdk';
@@ -227,6 +227,15 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
             TUtils.Logger.log('Error in AVChannel', 'Could not create AV channel instance!');
             return;
         }
+
+        let AV: any = {};
+        const domain = '';
+        if (this.appConfig.AppConfigs.AV) {
+            const avConf = JSON.stringify(this.appConfig.AppConfigs.AV);
+            avConf.replaceAll('${domainName}', domain);
+            AV = JSON.parse(avConf);
+        }
+
         // create a AV channel connection
         const connection = new AVChannel(
             SDKClient,
@@ -235,7 +244,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
             this.user.agentName,
             this.sessionID.split('|')[0],
             'chat',
-            this.appConfig.AppConfigs.AV || {}
+            AV
         );
 
         // check if the connection is created

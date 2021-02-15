@@ -253,6 +253,16 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     private createAVConnection(avEvent: AVControlMessageReceivedEvent): void {
         // create a AV channel connection
+
+        let AV: any = {};
+        const domain = '';
+        if (this.appConfig.AppConfigs.AV) {
+            const avConf = JSON.stringify(this.appConfig.AppConfigs.AV);
+            avConf.replaceAll('${domainName}', domain);
+            AV = JSON.parse(avConf);
+        }
+
+        // create a AV channel connection
         const connection = new AVChannel(
             SDKClient,
             this.interactionId.toString(),
@@ -260,7 +270,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
             this.user.agentName,
             this.sessionID.split('|')[0],
             'chat',
-            this.appConfig.AppConfigs.AV || {}
+            AV
         );
 
         // check if the connection is created
@@ -454,15 +464,13 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                 // 1 : connected
                 // 2  :disconnected
                 if (evt.data.status === 2) {
-
                 } else if (evt.data.status === 1) {
-
                 }
                 break;
             default:
             // console.log(`unhandled:: [${evt.event}]`, evt);
         }
-    }
+    };
 
     /**
      * TextChatDisconnectedEvent Handler
