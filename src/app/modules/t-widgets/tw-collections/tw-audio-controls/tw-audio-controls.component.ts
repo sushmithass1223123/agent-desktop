@@ -228,13 +228,15 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
             return;
         }
 
-        let AV: any = {};
-        const domain = '';
-        if (this.appConfig.AppConfigs.AV) {
-            const avConf = JSON.stringify(this.appConfig.AppConfigs.AV);
-            avConf.replaceAll('${domainName}', domain);
-            AV = JSON.parse(avConf);
-        }
+        // let AV: any = {};
+        // const domain = window.location.hostname || '';
+        // if (this.appConfig.AppConfigs.AV) {
+        //     const avConf = JSON.stringify(this.appConfig.AppConfigs.AV);
+        //     avConf.replaceAll('${domainName}', domain);
+        //     AV = JSON.parse(avConf);
+        // }
+
+        const AV: any = this.appConfig.AppConfigs.AV || {};
 
         // create a AV channel connection
         const connection = new AVChannel(

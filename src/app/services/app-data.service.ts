@@ -104,7 +104,11 @@ export class AppDataService {
 
             // set the config to service
             if (data) {
-                this.config = data;
+                let conf = JSON.stringify(data);
+                const domain = window.location.hostname || '';
+                conf.replaceAll('${domainName}', domain);
+                conf = JSON.parse(conf);
+                this.config = conf;
                 this.setAppConfig(data);
                 return data;
             }
