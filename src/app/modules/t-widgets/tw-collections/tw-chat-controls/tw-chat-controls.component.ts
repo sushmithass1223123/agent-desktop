@@ -338,6 +338,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     typingTimer: any;
 
     /**
+     * Message id of the message the user is responding to
+     */
+    replyingToMessage: ChatTranscripts | null;
+
+    /**
      * Constructor
      * @param {FuseConfigService} _fuseConfigService
      * @param {InteractionManagerService} _interactionManagerService
@@ -975,7 +980,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             message: data.message,
             type: data.attachment?.type || 'text',
             time: new Date(),
-            attachment: data.attachment
+            attachment: data.attachment,
+            repliedToMessage: this.chatTranscripts.find((transcript) => transcript.messageId === data.replyId)
         });
 
         let isActive = false;
@@ -1010,7 +1016,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
     /**
      * To process AVControlMessageReceivedEvent
-     * @param evt AVControlMessageReceivedEvent data
+     * @param {AVControlMessageReceivedEvent} evt AVControlMessageReceivedEvent data
      */
     private AVControlMessageReceivedEvent = (evt: AVControlMessageReceivedEvent) => {
         // check the interaction
@@ -1272,7 +1278,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * To focus the reply textbox
      */
-    private focusReplyInput(): void {
+    focusReplyInput(): void {
         setTimeout(() => {
             this.replyInput.focus();
         });
@@ -1311,7 +1317,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             message: inputMessage,
             time: moment(new Date()),
             type: attachment ? attachment.type : 'text',
-            attachment: { ...attachment }
+            attachment: { ...attachment },
+            repliedToMessage: this.chatTranscripts.find((transcript) => transcript.messageId === this.replyingToMessage?.messageId || '')
         };
 
         // Add the message to the chat
@@ -1332,7 +1339,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 messageId: messageId,
                 type: type,
                 message: inputMessage,
-                replyId: '',
+                replyId: this.replyingToMessage?.messageId || '',
                 templateId: template?.ID || '',
                 attachment
             };
@@ -1351,7 +1358,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 _attachmentSize: attachment.size
             });
         }
-
+        this.replyingToMessage = null;
         // Update the server
         SDKClient.sendTextChat({
             interactionId: this.interactionId.toString(),

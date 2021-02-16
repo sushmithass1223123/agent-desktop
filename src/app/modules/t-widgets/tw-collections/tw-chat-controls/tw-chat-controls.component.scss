@@ -84,6 +84,27 @@ tw-chat-controls {
 
                             .bubble {
                                 position: relative;
+                                overflow: hidden;
+                                .reply-to {
+                                    position: absolute;
+                                    width: 50px;
+                                    height: 100%;
+                                    right: -50px;
+                                    top: 0;
+                                    background: linear-gradient(to right, transparent, gray);
+                                    transition: right 0.1s;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    button {
+                                        transform: scale(0.8);
+                                    }
+                                }
+                                &:hover {
+                                    .reply-to {
+                                        right: 0;
+                                    }
+                                }
                                 display: flex;
                                 align-items: center;
                                 justify-content: center;

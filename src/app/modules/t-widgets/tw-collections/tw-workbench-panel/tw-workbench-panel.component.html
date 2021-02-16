@@ -46,8 +46,16 @@
                     </div>
                 </ng-template>
                 <ng-container [ngSwitch]="channel.Type | lowercase">
-                    <workbench-email [data]="data" *ngSwitchCase="'email'"></workbench-email>
-                    <workbench-chat [data]="data" *ngSwitchCase="'chat'"></workbench-chat>
+                    <workbench-email
+                        [data]="{ Data: data.Data?.General || {}, Config: data.Config }"
+                        [channelConf]="channel"
+                        *ngSwitchCase="'email'"
+                    ></workbench-email>
+                    <workbench-chat
+                        [data]="{ Data: data.Data?.General || {}, Config: data.Config }"
+                        [channelConf]="channel"
+                        *ngSwitchCase="'chat'"
+                    ></workbench-chat>
                 </ng-container>
             </mat-tab>
         </mat-tab-group>

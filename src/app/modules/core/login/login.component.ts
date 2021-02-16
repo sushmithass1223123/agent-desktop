@@ -7,7 +7,7 @@ import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseSplashScreenService } from '@fuse/services/splash-screen.service';
 import { AppUiService } from '@services/app-ui.service';
 import { AppDataService } from 'app/services/app-data.service';
-import { set } from 'lodash';
+import { set, merge } from 'lodash';
 import { interval, Observable, Subject } from 'rxjs';
 import { filter, map, take, takeUntil, tap } from 'rxjs/operators';
 import { CommandResultEvent, IResponse, SDKClient, TUtils } from 'tmac-sdk';
@@ -246,10 +246,16 @@ export class LoginComponent implements OnInit, OnDestroy {
         errored: boolean;
         countdown?: Observable<number>;
     } = {
-            pollingInterval: 20,
-            retrying: false,
-            errored: false
-        };
+        pollingInterval: 20,
+        retrying: false,
+        errored: false
+    };
+
+    /**
+     * Flag for showing otp input
+     */
+    showOtp = false;
+
     /**
      * Disable opening console / refreshing
      * @param {KeyboardEvent} event
@@ -345,7 +351,8 @@ export class LoginComponent implements OnInit, OnDestroy {
             lanId: ['', Validators.required],
             agentId: ['', Validators.required],
             password: ['', Validators.required],
-            station: ['', Validators.required]
+            station: ['', Validators.required],
+            otp: ['', Validators.required]
         });
         // this.autoLogin();
     }
@@ -666,6 +673,26 @@ export class LoginComponent implements OnInit, OnDestroy {
         const password = this.loginForm.get('password').value;
         const station = this.loginForm.get('station').value;
 
+        let customAuthData = null;
+        const otp = this.loginForm.get('otp')?.value || '';
+
+        if (otp) {
+            customAuthData = { otp };
+        }
+
+        const jsonData = merge(
+            {
+                msLogin: this.msChecked,
+                pbxLogin: this.pbxChecked,
+                customAuthData
+            },
+            this.queryData?.jsonData || {}
+        );
+
+        console.log({ jsonData });
+        if (!customAuthData?.otp) {
+            customAuthData = null;
+        }
         // call sdk and login
         SDKClient.login(
             {
@@ -673,12 +700,7 @@ export class LoginComponent implements OnInit, OnDestroy {
                 agentId: agentId,
                 deviceId: this.stationEnabled ? station : lanId.split(',')[0].toLowerCase(),
                 forceReload: force,
-                jsonData: JSON.stringify({
-                    msLogin: this.msChecked,
-                    pbxLogin: this.pbxChecked,
-                    customAuthData: null,
-                    ...(this.queryData?.jsonData || {})
-                }),
+                jsonData: JSON.stringify(jsonData),
                 password: password,
                 sessionKey: ''
             },
@@ -709,7 +731,14 @@ export class LoginComponent implements OnInit, OnDestroy {
             // check the response
             if (response) {
                 if (response.ResultCode > 0) {
-                    if (response.ResultCode === 3) {
+                    if (response.ResultCode === 4) {
+                        const customAuthType = JSON.parse(response.Data)?.customAuthType;
+                        if (customAuthType === 'otp') {
+                            this.showOtp = true;
+                            this.fuseSpashService.hide();
+                            return;
+                        }
+                    } else if (response.ResultCode === 3) {
                         // confirm force login
                         const confirmDialogRef = this._appUIService.showAppConfirmDialog('takeoverSession');
                         confirmDialogRef.afterClosed().subscribe((dialogResult) => {
@@ -751,8 +780,8 @@ export class LoginComponent implements OnInit, OnDestroy {
                         } else {
                             const queryParams = this.queryData?.state
                                 ? {
-                                    state: this.queryData.state
-                                }
+                                      state: this.queryData.state
+                                  }
                                 : {};
                             // we will route to main page
                             this._router.navigate([`main/${agentId}`], {
@@ -785,8 +814,8 @@ export class LoginComponent implements OnInit, OnDestroy {
                     this.errorMessage = response.ErrorDetails
                         ? response.ErrorDetails
                         : response.ResultMessage
-                            ? response.ResultMessage
-                            : 'Login failed, Unknown response from server';
+                        ? response.ResultMessage
+                        : 'Login failed, Unknown response from server';
                 }
             } else {
                 this.errorMessage = 'Login failed, Please contact the administrator';
