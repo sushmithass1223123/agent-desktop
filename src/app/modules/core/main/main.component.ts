@@ -83,9 +83,9 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
     /**
      * Page before unload
      */
-    @HostListener('window:beforeunload')
+    @HostListener('window:beforeunload', ['$event'])
     pageBeforeUnload(event: any): void {
-        event.preventDefault();
+        event?.preventDefault();
     }
 
     /**

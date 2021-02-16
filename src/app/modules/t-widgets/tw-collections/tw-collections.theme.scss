@@ -276,6 +276,58 @@
                 }
             }
         }
+
+        workbench-chat {
+            .search-input {
+                @if ($is-dark == true) {
+                    color: #fafafa;
+                    background-color: map-get($background, hover);
+                } @else {
+                    color: rgba(0, 0, 0, 0.87);
+                    background-color: #fafafa;
+                }
+            }
+
+            .chat-workbench {
+                @if ($is-dark == true) {
+                    background-color: map-get($background, hover);
+                }
+
+                .chat-list {
+                    @if ($is-dark == true) {
+                        background-color: #303030;
+                    } @else {
+                        background-color: #fafafa;
+                    }
+
+                    .tw-list-item {
+                        &:hover {
+                            background-color: map-get($background, hover);
+                        }
+                    }
+                }
+
+                .chat-open {
+                    @if ($is-dark == true) {
+                        background-color: #303030;
+                    } @else {
+                        background-color: #fafafa;
+                    }
+
+                    &__body {
+                        @if ($is-dark == true) {
+                            background-color: map-get($background, hover);
+                        }
+                    }
+                }
+
+                .chat-open {
+                    @if ($is-dark == true) {
+                        background-color: #303030;
+                    }
+                }
+            }
+        }
     }
 
     tw-email-controls {

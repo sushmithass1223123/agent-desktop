@@ -228,14 +228,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
             return;
         }
 
-        // let AV: any = {};
-        // const domain = window.location.hostname || '';
-        // if (this.appConfig.AppConfigs.AV) {
-        //     const avConf = JSON.stringify(this.appConfig.AppConfigs.AV);
-        //     avConf.replaceAll('${domainName}', domain);
-        //     AV = JSON.parse(avConf);
-        // }
-
+        // Set AV Config
         const AV: any = this.appConfig.AppConfigs.AV || {};
 
         // create a AV channel connection
