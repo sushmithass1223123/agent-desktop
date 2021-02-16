@@ -142,6 +142,10 @@ export interface TwChartConfig {
 
 export interface ChatTranscripts {
     /**
+     * Message that this message is a reply to
+     */
+    repliedToMessage?: ChatTranscripts;
+    /**
      * Sender
      */
     who?: string;

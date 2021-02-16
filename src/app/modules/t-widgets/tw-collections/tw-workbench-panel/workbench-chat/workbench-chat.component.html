@@ -1,1 +1,241 @@
-<p>workbench-chat works!</p>
+<div
+    fxLayout
+    fxLayoutAlign="space-evenly center"
+    class="chat-workbench w-100-p h-100-p"
+    [ngClass]="
+        fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+            ? fuseConfig.layout.anchorWidget.bodyBackground
+            : fuseConfig.layout.widget.customBackgroundColor === true
+            ? fuseConfig.layout.widget.bodyBackground
+            : ''
+    "
+>
+    <div fxFlex="28" class="chat-list mr-12 border-radius-20 px-8">
+        <div fxLayout fxLayoutAlign="center center" class="search-input mt-8 border-radius-20 position-relative">
+            <form class="w-100-p" (ngSubmit)="doGlobalSearch()">
+                <mat-form-field class="custom with-border form-field w-100-p" appearance="outline">
+                    <input class="login-input" matInput placeholder="Search" [formControl]="globalSearchControl" />
+                    <button *ngIf="!globalSearchControl.value; else clearBtn" mat-icon-button matSuffix disabled type="button">
+                        <mat-icon matSuffix>search</mat-icon>
+                    </button>
+                    <ng-template #clearBtn>
+                        <button
+                            type="button"
+                            mat-button
+                            color="accent"
+                            matSuffix
+                            mat-icon-button
+                            aria-label="Clear"
+                            [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
+                            (click)="globalSearchControl.reset()"
+                        >
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    </ng-template>
+                </mat-form-field>
+            </form>
+
+            <button mat-icon-button (click)="doAdvancedSearch()" matTooltip="Refresh">
+                <mat-icon>refresh</mat-icon>
+            </button>
+            <button
+                mat-icon-button
+                (click)="showAdvancedSearchForm = !showAdvancedSearchForm"
+                cdkOverlayOrigin
+                #advancedSearchMenu="cdkOverlayOrigin"
+                matTooltip="Advance Search"
+            >
+                <mat-icon>more_vert</mat-icon>
+                <ng-template
+                    cdkConnectedOverlay
+                    [cdkConnectedOverlayOrigin]="advancedSearchMenu"
+                    [cdkConnectedOverlayOpen]="showAdvancedSearchForm"
+                    cdkConnectedOverlayHasBackdrop
+                    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+                    (backdropClick)="showAdvancedSearchForm = false"
+                    [cdkConnectedOverlayPositions]="[{ originX: 'end', originY: 'bottom', overlayX: 'end', overlayY: 'top' }]"
+                >
+                    <div class="advanced-search-form mat-elevation-z2 border-radius-20">
+                        <p class="text-center text-bold">Advanced Search</p>
+                        <form
+                            [formGroup]="advancedSearchForm"
+                            class="px-12"
+                            (ngSubmit)="doAdvancedSearch()"
+                            novalidate
+                            fxLayout="row wrap"
+                            fxLayoutGap="2%"
+                        >
+                            <mat-form-field class="form-field custom with-border" fxFlex="100" appearance="outline">
+                                <input matInput formControlName="skills" type="text" placeholder="Skill" [readonly]="globalSearchControl.value" />
+                            </mat-form-field>
+
+                            <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
+                                <input
+                                    matInput
+                                    formControlName="fromDate"
+                                    [matDatepicker]="fromDatePicker"
+                                    placeholder="From Data"
+                                    [readonly]="globalSearchControl.value"
+                                />
+                                <mat-datepicker-toggle matSuffix [for]="fromDatePicker"></mat-datepicker-toggle>
+                                <mat-datepicker #fromDatePicker></mat-datepicker>
+                            </mat-form-field>
+                            <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
+                                <input
+                                    matInput
+                                    formControlName="fromTime"
+                                    type="time"
+                                    placeholder="From Time"
+                                    [readonly]="globalSearchControl.value"
+                                />
+                            </mat-form-field>
+
+                            <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
+                                <input
+                                    matInput
+                                    formControlName="toDate"
+                                    [matDatepicker]="toDatePicker"
+                                    placeholder="To Date"
+                                    [readonly]="globalSearchControl.value"
+                                />
+                                <mat-datepicker-toggle matSuffix [for]="toDatePicker"></mat-datepicker-toggle>
+                                <mat-datepicker #toDatePicker></mat-datepicker>
+                            </mat-form-field>
+
+                            <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
+                                <input matInput formControlName="toTime" type="time" placeholder="To Time" [readonly]="globalSearchControl.value" />
+                            </mat-form-field>
+
+                            <button mat-raised-button fxFlex="48" class="adv-search-btn h-40 mb-8 border-radius-20">Search</button>
+                            <button
+                                mat-raised-button
+                                fxFlex="48"
+                                class="adv-search-btn h-40 mb-8 border-radius-20"
+                                type="button"
+                                (click)="resetForm()"
+                            >
+                                Reset
+                            </button>
+                        </form>
+                    </div>
+                </ng-template>
+            </button>
+        </div>
+
+        <div class="chat-list-groups">
+            <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="tw-list-item border-radius-10 pb-16 chat-tree">
+                <mat-tree-node *matTreeNodeDef="let node" class="tw-list pb-8" matTreeNodeToggle>
+                    <li
+                        class="mat-tree-node tw-list-item selectable"
+                        [ngClass]="
+                            fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                                ? fuseConfig.layout.anchorWidget.contentBackground
+                                : fuseConfig.layout.widget.customBackgroundColor === true
+                                ? fuseConfig.layout.widget.contentBackground
+                                : ' ' + (selectedSkill === node.uiKey ? 'border-lg-success' : '')
+                        "
+                        mat-ripple
+                    >
+                        <div fxLayout fxLayoutAlign="space-between" (click)="selectSkill(node)" class="w-90-p pl-4">
+                            <div fxFlex="70">
+                                <div class="font-weight-600 my-4">{{ node.skillId || 'NA' }}</div>
+                                <div class="mat-caption">
+                                    <em> Waiting since {{ node.oldestSince | date: 'shortTime' }} </em>
+                                </div>
+                            </div>
+                            <div fxFlex="30">
+                                <p class="font-weight-600 text-right my-4">( {{ node.grandChildren.length }} chats)</p>
+                            </div>
+                        </div>
+                    </li>
+                </mat-tree-node>
+                <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild" [ngClass]="{ active: treeControl.isExpanded(node) }">
+                    <li
+                        matTreeNodeToggle
+                        class="mb-8 border-radius-20"
+                        [ngClass]="
+                            fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
+                                ? fuseConfig.layout.anchorWidget.bodyBackground
+                                : fuseConfig.layout.widget.customBackgroundColor === true
+                                ? fuseConfig.layout.widget.bodyBackground
+                                : ''
+                        "
+                    >
+                        <div class="mat-tree-node">
+                            <button mat-icon-button [attr.aria-label]="'Toggle ' + (node.name || 'NA')">
+                                <mat-icon [ngClass]="{ 'rotate-90-inverse': !treeControl.isExpanded(node) }"> arrow_drop_down_circle </mat-icon>
+                            </button>
+                            <span class="font-weight-700">
+                                {{ node.name || 'NA' }}
+                            </span>
+                        </div>
+                        <ul
+                            class="pb-16"
+                            [class.chat-tree-invisible]="!treeControl.isExpanded(node)"
+                            [ngClass]="{ 'no-scroll': node.children?.length && node.children[0].children?.length }"
+                        >
+                            <ng-container matTreeNodeOutlet></ng-container>
+                        </ul>
+                    </li>
+                </mat-nested-tree-node>
+            </mat-tree>
+        </div>
+    </div>
+
+    <div fxFlex="68" #chatsRef class="mr-12 border-radius-20 h-100-p py-16 custom-scroll-adjust">
+        <ng-template #chats let-chatList="children">
+            <mat-card [id]="card.uiKey" *ngFor="let card of chatList">
+                <mat-card-header class="p-8">
+                    <div mat-card-avatar class="avatar"></div>
+                    <mat-card-title>{{ card.customerName }}</mat-card-title>
+                    <mat-card-subtitle>
+                        <div class="mb-4 mt-12 mat-caption">
+                            <div class="mb-2">Channel : {{ card.channel }}</div>
+                            <div class="mb-2">Intent : {{ card.intent }}</div>
+                            <div>Created on : {{ card.addedTime | date: 'short' }}</div>
+                        </div>
+                    </mat-card-subtitle>
+                    <mat-card-subtitle> </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content class="p-8">
+                    <div fxLayout="row wrap" fxLayoutAlign="space-between center">
+                        <ng-container *ngFor="let data of card.display | keyvalue">
+                            <div fxFlex="40" class="mb-8 mat-caption" *ngIf="data.value">
+                                <span class="font-weight-700"> {{ data.key }} </span>
+                                :
+                                <span> {{ data.value }} </span>
+                            </div>
+                        </ng-container>
+                    </div>
+                </mat-card-content>
+                <mat-card-actions *ngIf="channelConf?.Config as conf">
+                    <div class="py-8 px-20" fxLayout fxLayoutAlign="end center" *ngIf="conf.AllowPull || conf.AllowPush">
+                        <button mat-raised-button class="border-radius-20 mb-12" (click)="pullChat(card)" *ngIf="conf.AllowPull">Pull</button>
+                        <button mat-raised-button class="border-radius-20 mb-12" (click)="pushChat(card)" *ngIf="conf.AllowPush">Push</button>
+                    </div>
+                </mat-card-actions>
+            </mat-card>
+        </ng-template>
+        <ng-template #heading let-children="children">
+            <div class="mb-16">
+                <div class="child-item" *ngFor="let item of children">
+                    <p class="font-weight-700 ml-12">
+                        {{ item.skillId }}
+                    </p>
+                    <div class="queued-chats w-95-p mx-auto">
+                        <ng-container *ngTemplateOutlet="chats; context: { children: item.grandChildren }"></ng-container>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+        <div class="item" *ngFor="let item of dataSource.data">
+            <div *ngIf="item.children" class="pb-16">
+                <p class="mat-title">
+                    {{ item.name }}
+                </p>
+                <ng-container *ngTemplateOutlet="heading; context: { children: item.children }"></ng-container>
+                <hr />
+            </div>
+        </div>
+    </div>
+</div>

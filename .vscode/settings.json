@@ -6,8 +6,11 @@
         "**/bower_components": true,
         "**/tmp": true,
         "**/dist": true
-    }
-    // "prettier.disableLanguages": [
-    //     "typescript"
-    // ]
+    },
+    "json.schemas": [
+        {
+            "fileMatch": ["/*.config.json"],
+            "url": "./devschema.json"
+        }
+    ]
 }

@@ -57,10 +57,7 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
     /**
      * @constructor
      */
-    constructor(
-        private _tmacEventService: TMACEventService,
-        private _appUIService: AppUiService
-    ) {
+    constructor(private _tmacEventService: TMACEventService, private _appUIService: AppUiService) {
         super();
         this.source = '';
     }
@@ -80,21 +77,20 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
             // add service level to column
             this.displayedColumns.push('ServiceLevel');
             // get the dashboard color codes for wallboard
-            SDKClient.getDashboardColorCodes()
-                .then(x => {
-                    this.dashboardColors = x.response.filter(n => n.DashboardName === 'TmacWallboard');
-                });
+            SDKClient.getDashboardColorCodes().then((x) => {
+                if (x.response) {
+                    this.dashboardColors = x.response.filter((n) => n.DashboardName === 'TmacWallboard');
+                }
+            });
         }
 
-        const eventName = this.source === 'supervisor' ?
-            'TeamWallboardRefreshEvent' :
-            'WallboardRefreshEvent';
+        const eventName = this.source === 'supervisor' ? 'TeamWallboardRefreshEvent' : 'WallboardRefreshEvent';
 
-        this._tmacEventService.getEvents([eventName])
+        this._tmacEventService
+            .getEvents([eventName])
             .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(evts => this.wallboardRefreshEvent(evts[0]));
+            .subscribe((evts) => this.wallboardRefreshEvent(evts[0]));
     }
-
 
     /**
      * Lifecycle Hooks
@@ -103,7 +99,6 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
         // call the wrapper destroy method
         this.destroyWrapper();
     }
-
 
     /**
      * Wallboard Refresh event handler
@@ -125,18 +120,20 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
         if (this.slEnabled) {
             this.dataSource.sortingDataAccessor = (item, property) => {
                 switch (property) {
-                    case 'ServiceLevel': return item.BCMSData.SLPercentage;
-                    default: return item[property];
+                    case 'ServiceLevel':
+                        return item.BCMSData.SLPercentage;
+                    default:
+                        return item[property];
                 }
             };
         }
         // add the sort
         this.dataSource.sort = this.sort;
-    }
+    };
 
     /**
      * To get SL bg color
-     * 
+     *
      * @param {Number} value
      */
     getSLBgColor(value: number): string {
@@ -151,7 +148,7 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
 
     /**
      * To get SL font color
-     * 
+     *
      * @param {Number} value
      */
     getSLFontColor(value: number): string {
