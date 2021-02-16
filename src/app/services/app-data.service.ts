@@ -191,15 +191,15 @@ export class AppDataService {
                 timeout: config.AppConfigs.SDK.Proxy.Timeout || 30000
             },
             signalRProxy: {
-                enabled: config.AppConfigs.SDK.SignalRProxy.enabled || true,
-                logging: config.AppConfigs.SDK.SignalRProxy.Logging || false,
+                enabled: config.AppConfigs.SDK.SignalRProxy.enabled ?? true,
+                logging: config.AppConfigs.SDK.SignalRProxy.Logging ?? false,
                 protocol: config.AppConfigs.SDK.SignalRProxy?.Protocol,
                 timeout: config.AppConfigs.SDK.SignalRProxy.Timeout || 30,
                 fallback: false
             },
             logging: {
-                enabled: config.AppConfigs.SDK.Logging.Enabled || false,
-                remote: config.AppConfigs.SDK.Logging.Remote || false,
+                enabled: config.AppConfigs.SDK.Logging.Enabled ?? false,
+                remote: config.AppConfigs.SDK.Logging.Remote ?? false,
                 remoteThreshold: config.AppConfigs.SDK.Logging.RemoteThreshold || 15
             },
             customScripts: [...config.AppConfigs.SDK.CustomSripts]
