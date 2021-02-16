@@ -305,7 +305,16 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * Conversation Api Urls
      */
-    ConversationApiUrl: string;
+    conversationService: {
+        /**
+         * Api url
+         */
+        Url: string;
+        /**
+         * Limit to fetch
+         */
+        Limit: number;
+    };
     /**
      * Text templates ref
      */
@@ -358,6 +367,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             data: [],
             filtered: []
         };
+        this.conversationService = {
+            Url: '',
+            Limit: 0
+        };
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -407,8 +420,15 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // check if this chat is init by supervisor
         this.supervisorInit = this.lineId === 'bargein';
 
-        // set the conversation service urls
-        this.ConversationApiUrl = this.data.Data.ConversationApiUrl;
+        // check if conversation api Url is configured
+        if (this.data.Data.ConversationService && this.data.Data.ConversationService.Url) {
+            // set the conversation service urls
+            this.conversationService.Url = this.data.Data.ConversationService.Url.endsWith('/') ?
+                this.data.Data.ConversationService.Url :
+                this.data.Data.ConversationService.Url + '/';
+            // set the conversation limit
+            this.conversationService.Limit = this.data.Data.ConversationService.Limit;
+        }
 
         // listen to TMAC events
         // this.registerToEvents();
@@ -583,46 +603,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             this.escalateToAV(this.chatMode as any, true);
         }
         // check for bot history
-        try {
-            // get all the bot history
-            const botHistory = JSON.parse(evt.ChatHistoryData);
-            // check the length of history data
-            if (botHistory.length > 0) {
-                botHistory.forEach((item: any, index: number, array: any[]) => {
-                    let message = '';
-                    let who = '';
-
-                    if (item.customer_input) {
-                        // customer message
-                        who = this.customerName;
-                        message = item.customer_input;
-                    } else if (item.reply) {
-                        // agent message
-                        who = 'Chatbot';
-                        message = item.reply;
-                    }
-
-                    // check the message and add message to the transcripts
-                    if (message) {
-                        this.chatTranscripts.push({
-                            who,
-                            isAgent: who === 'Chatbot',
-                            position: who === 'Chatbot' ? 'right' : 'left',
-                            messageId: TUtils.Generic.uuid(),
-                            message,
-                            time: item.timestamp
-                        });
-                    }
-
-                    // check if the last item then add divider
-                    if (array.length - 1 === index) {
-                        this.chatTranscripts.push({
-                            divider: true
-                        });
-                    }
-                });
-            }
-        } catch (error) { }
+        this.processBotHistory(evt.ChatHistoryData);
+        // check if conversation history is configured
+        if (this.conversationService.Url && evt.CIF) {
+            // check for conversation history
+            this.checkForConversationHistory(evt.CIF);
+        }
     }
 
     /**
@@ -1375,42 +1361,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     } else {
                         this.showAutoFreeze = true;
                     }
-
-                    // // check if conversation api is configured then save the conversation for history
-                    // if (this.conversationApi) {
-                    //     // prepare the request args
-                    //     const requestArgs = {
-                    //         from: 'user:' + this.user.agentId,
-                    //         content: JSON.stringify({
-                    //             v: 1,
-                    //             message_content: inputMessage,
-                    //             mid: messageId,
-                    //             parent_id: '', // TODO:: reply message id
-                    //             sid: '0',
-                    //             message_type: 'text/html',
-                    //             media: [], // TODO:: media
-                    //             created_at: Date.now(),
-                    //             conversation_type: 'plaintext'
-                    //         }),
-                    //         type: 'user-message',
-                    //         org: '',
-                    //         sid: [],
-                    //         to: [
-                    //             'user:<userId>'
-                    //         ],
-                    //         auth: ''
-                    //     };
-
-                    //     // save to conversation service
-                    //     TUtils.HttpClient.sendRequest(
-                    //         {
-                    //             url: this.conversationApi.Post + 'message/INH_0',
-                    //             method: 'POST',
-                    //             responseType: 'json',
-                    //             requestArgs
-                    //         }
-                    //     );
-                    // }
                 } else {
                     this._appUIService.showSnackbar('Message send failed!', 'failure');
                 }
@@ -1539,6 +1489,92 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // set typing to false
         this.userTyping = false;
         // TODO:: send done typing
+    }
+
+    /**
+     * To process bot history
+     * 
+     * @param {String} history
+     */
+    processBotHistory(history: string): void {
+        try {
+            // get all the bot history
+            const botHistory = JSON.parse(history);
+            // check the length of history data
+            if (botHistory.length > 0) {
+                botHistory.forEach((item: any, index: number, array: any[]) => {
+                    let message = '';
+                    let who = '';
+
+                    if (item.customer_input) {
+                        // customer message
+                        who = this.customerName;
+                        message = item.customer_input;
+                    } else if (item.reply) {
+                        // agent message
+                        who = 'Chatbot';
+                        message = item.reply;
+                    }
+
+                    // check the message and add message to the transcripts
+                    if (message) {
+                        this.chatTranscripts.push({
+                            who,
+                            isAgent: who === 'Chatbot',
+                            position: who === 'Chatbot' ? 'right' : 'left',
+                            messageId: TUtils.Generic.uuid(),
+                            message,
+                            time: item.timestamp
+                        });
+                    }
+
+                    // check if the last item then add divider
+                    if (array.length - 1 === index) {
+                        this.chatTranscripts.push({
+                            divider: true
+                        });
+                    }
+                });
+            }
+        } catch (error) { }
+    }
+
+    /**
+     * To check for conversation history and append to transcript
+     * 
+     * @param {String} cif 
+     */
+    private async checkForConversationHistory(cif: string): Promise<void> {
+        // get the customer id
+        const { response } = await TUtils.HttpClient.sendRequest({
+            url: this.conversationService.Url + `user-conversations-timeline/${cif}?fromTime=0&toTime=${this.startTime.getTime()}&limit=${this.conversationService.Limit}`,
+            method: 'GET',
+            responseType: 'json',
+            timeout: 20000
+        });
+        // validate the result
+        if (response && response.result && response.result.length) {
+            // loop and process
+            response.result.forEach((res: any, i: number) => {
+                // check and add the divider
+                if (i === 0) {
+                    this.chatTranscripts.unshift({
+                        divider: true
+                    });
+                }
+                // add message to the transcripts
+                this.chatTranscripts.unshift({
+                    who: res.sender_id === cif ? this.customerName : res.sender_id,
+                    isAgent: res.sender_id !== cif,
+                    position: res.sender_id === cif ? 'left' : 'right',
+                    messageId: res.mid,
+                    message: res.message_content,
+                    type: 'text',
+                    time: new Date(res.created_at),
+                    attachment: null
+                });
+            });
+        }
     }
 
     // -----------------------------------------------------------------------------------------------------
