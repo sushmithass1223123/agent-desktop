@@ -1856,7 +1856,10 @@
                                                         "Url": "https://mx.tetherfi.cloud/testrtc/index.html?turnURI=turn%3Amx.tetherfi.cloud%3A3585&turnUsername=tetherfi&turnCredential=nuwan",
                                                         "Customer": true
                                                     },
-                                                    "ConversationApiUrl": "https://dice.tetherfi.cloud:25213/api/v1/"
+                                                    "ConversationService": {
+                                                        "Url": "https://dice.tetherfi.cloud:25213/api/v1/",
+                                                        "Limit": 10
+                                                    }
                                                 }
                                             },
                                             {
@@ -3530,7 +3533,11 @@
         },
         "SDK": {
             "Proxy": {
-                "Urls": ["https://dice.tetherfi.cloud/TMACSDKProxyV5/TmacProxy.asmx", "https://idfcvpd.tetherfi.cloud/TMACSDKProxy/tmacproxy.asmx"],
+                "Urls": [
+                    "https://dice.tetherfi.cloud/TMACSDKProxy/TmacProxy.asmx",
+                    "https://localhost:55443/SDKTMACProxy/TmacProxy.asmx",
+                    "https://idfcvpd.tetherfi.cloud/TMACSDKProxy/tmacproxy.asmx"
+                ],
                 "Type": "soap",
                 "Timeout": 30
             },
