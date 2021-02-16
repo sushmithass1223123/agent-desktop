@@ -57,9 +57,7 @@ export class TwWorkbenchPanelComponent extends TWidgetWrapper implements OnInit,
      * Constructor
      * @param {FuseConfigService} _fuseConfigService
      */
-    constructor(
-        private _fuseConfigService: FuseConfigService
-    ) {
+    constructor(private _fuseConfigService: FuseConfigService) {
         super();
     }
 
@@ -79,16 +77,18 @@ export class TwWorkbenchPanelComponent extends TWidgetWrapper implements OnInit,
             this.fuseConfig = config;
 
             // set the active tab class
-            this.tabActiveClass = this.fuseConfig.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor
-                ? this.fuseConfig.layout.anchorWidget.bodyBackground
-                : this.fuseConfig.layout.widget.customBackgroundColor === true
+            this.tabActiveClass =
+                this.fuseConfig.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor
+                    ? this.fuseConfig.layout.anchorWidget.bodyBackground
+                    : this.fuseConfig.layout.widget.customBackgroundColor === true
                     ? this.fuseConfig.layout.widget.bodyBackground
                     : '';
 
             // set the inactive tab class
-            this.tabInactiveClass = this.fuseConfig.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor
-                ? this.fuseConfig.layout.anchorWidget.contentBackground
-                : this.fuseConfig.layout.widget.customBackgroundColor === true
+            this.tabInactiveClass =
+                this.fuseConfig.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor
+                    ? this.fuseConfig.layout.anchorWidget.contentBackground
+                    : this.fuseConfig.layout.widget.customBackgroundColor === true
                     ? this.fuseConfig.layout.widget.contentBackground
                     : '';
         });

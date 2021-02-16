@@ -140,7 +140,7 @@
                             <div fxFlex="70">
                                 <div class="font-weight-600 my-4">{{ node.skillId || 'NA' }}</div>
                                 <div class="mat-caption">
-                                    <em> Waiting since {{ node.oldestSince | date: 'short' }} </em>
+                                    <em> Waiting since {{ node.oldestSince | date: 'shortTime' }} </em>
                                 </div>
                             </div>
                             <div fxFlex="30">
@@ -189,9 +189,10 @@
                     <div mat-card-avatar class="avatar"></div>
                     <mat-card-title>{{ card.customerName }}</mat-card-title>
                     <mat-card-subtitle>
-                        <div class="mb-4 mt-12">
+                        <div class="mb-4 mt-12 mat-caption">
                             <div class="mb-2">Channel : {{ card.channel }}</div>
-                            <div>Intent : {{ card.intent }}</div>
+                            <div class="mb-2">Intent : {{ card.intent }}</div>
+                            <div>Created on : {{ card.addedTime | date: 'short' }}</div>
                         </div>
                     </mat-card-subtitle>
                     <mat-card-subtitle> </mat-card-subtitle>
@@ -207,10 +208,10 @@
                         </ng-container>
                     </div>
                 </mat-card-content>
-                <mat-card-actions>
-                    <div class="py-8 px-20" fxLayout fxLayoutAlign="end center">
-                        <button mat-raised-button class="border-radius-20 mb-12" (click)="pullChat(card)">Pull</button>
-                        <button mat-raised-button class="border-radius-20 mb-12" (click)="pushChat(card)">Push</button>
+                <mat-card-actions *ngIf="channelConf?.Config as conf">
+                    <div class="py-8 px-20" fxLayout fxLayoutAlign="end center" *ngIf="conf.AllowPull || conf.AllowPush">
+                        <button mat-raised-button class="border-radius-20 mb-12" (click)="pullChat(card)" *ngIf="conf.AllowPull">Pull</button>
+                        <button mat-raised-button class="border-radius-20 mb-12" (click)="pushChat(card)" *ngIf="conf.AllowPush">Push</button>
                     </div>
                 </mat-card-actions>
             </mat-card>

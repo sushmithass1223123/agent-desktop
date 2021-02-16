@@ -34,7 +34,7 @@ type EmailPullItem = {
     /**
      * Conversation ID
      */
-    conversationId: string
+    conversationId: string;
 };
 /**
  * Workbench Email
@@ -48,9 +48,14 @@ type EmailPullItem = {
 })
 export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     /**
-     * holds all the data related to this widget from the config
+     * holds all the data related to the parent tw workbecnh widget from the config
      */
     @Input() data: IWidget;
+    /**
+     * holds all the data related to this workbench tab
+     */
+    @Input() channelConf: any;
+
     /**
      * Outbox reasons
      */
@@ -109,13 +114,13 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
          */
         selected: any;
     }> = {
-            error: false,
-            loading: false,
-            msg: '',
-            data: {
-                selected: false
-            }
-        };
+        error: false,
+        loading: false,
+        msg: '',
+        data: {
+            selected: false
+        }
+    };
     /**
      * Global search form control
      */
@@ -216,7 +221,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
         });
 
         // const advancedSearchToggledFields = ['replied', 'closed', 'assigned'];
-
         this.doAdvancedSearch();
     }
 
@@ -550,7 +554,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
             subject: searchFields.subject,
             content: searchFields.content
         });
-    }
+    };
 
     /**
      * Searched through inbox emails
@@ -621,7 +625,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                     })
                 }))
             );
-    }
+    };
 
     /**
      * Searches through draft emails
@@ -684,7 +688,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                     })
                 }))
             );
-    }
+    };
 
     /**
      * Advanced searches emails
@@ -748,7 +752,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                     })
                 }))
             );
-    }
+    };
 
     /**
      * Select emails
@@ -842,7 +846,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
      * @param {any} email
      */
     transferEmail(emails: any[]): void {
-        const config = this.data.Data.Channels.filter((f: any) => f.Type === 'Email')?.[0];
+        // const config = this.data.Data.Channels.filter((f: any) => f.Type === 'Email')?.[0];
+        const config = this.channelConf?.Config || {};
         const agentConfig = config?.Transfer?.Agent || {};
         const skillConfig = config?.Transfer?.Skill || {};
         const data: AgentSkillListData = {

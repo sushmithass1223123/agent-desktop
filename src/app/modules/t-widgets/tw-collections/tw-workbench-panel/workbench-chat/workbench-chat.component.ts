@@ -84,9 +84,13 @@ const temp = {
 })
 export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit {
     /**
-     * holds all the data related to this widget from the config
+     * holds all the data related to the parent tw workbecnh widget from the config
      */
     @Input() data: IWidget;
+    /**
+     * holds all the data related to this workbench tab
+     */
+    @Input() channelConf: any;
 
     /**
      * Fetched Queued Chats observable
@@ -200,44 +204,45 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit {
             this.callStates.search = 'loading';
             this.http
                 .post<any[]>(this.data.Data.WorkbenchUrl + '/chat/queue/search', {
-                    skills: [searchFields.skills || ''],
+                    skills: searchFields.skills ? [searchFields.skills] : [],
                     agent: '',
-                    startDate: moment(startDate).format('YYYYMMDDHHmmss'),
-                    endDate: moment(endDate).format('YYYYMMDDHHmmss')
+                    startDate,
+                    endDate
                 })
-                .pipe(
-                    catchError(() => {
-                        this.callStates.search = 'error';
-                        return null;
-                    }),
-                    filter((res: any) => !!res && (res as any).status === 'SUCCESS')
-                )
-                .subscribe((res) => {
-                    this.queuedChats = res.result;
-                    if (res.result.length === 0) {
-                        this.queuedChats = Array(10).fill(temp);
+                .subscribe((res: any) => {
+                    if (!res || res.status !== 'SUCCESS') {
+                        this.appUiService.showSnackbar('Unable to complete advanced search', 'failure');
+                        return;
                     }
+                    this.queuedChats = res.result;
+                    // if (res.result.length === 0) {
+                    //     this.queuedChats = Array(10).fill(temp);
+                    // }
                     this.queuedChats = this.queuedChats.map((x, i) => ({
-                        ...x,
-                        ...formatJsonData(x, {
-                            name: ['data', 'pName'],
-                            intent: ['data', 'pIntent'],
-                            customerName: ['data', 'customerName'],
-                            'display.Skill': x.skillId,
-                            'display.Created By': ['data', 'customerName'],
-                            'display.Agent Id': '',
-                            'display.Sub-Channel': 'subChannel',
-                            'display.User Id': '',
-                            'display.Name': ['data', 'customerName'],
-                            'display.Gender': '',
-                            'display.Nationality': '',
-                            'display.Language': '',
-                            'display.Mobile No': ['data', 'mobile'],
-                            'display.Session ID': ['data', 'sessionID']
-                        }),
-                        uiKey: `ui_${i}`,
-                        channel: `${x.channel}_${i % 5}`,
-                        skillId: `${x.skillId}_${i}`
+                        ...formatJsonData(
+                            { ...x, data: JSON.parse(x.data) },
+                            {
+                                name: ['data', 'pName'],
+                                intent: ['data', 'pIntent'],
+                                customerName: ['data', 'customerName'],
+                                channel: 'channel',
+                                skillId: 'skillId',
+                                itemID: 'itemID',
+                                addedTime: 'addedTime',
+                                'display.Skill': 'skillId',
+                                'display.Created By': ['data', 'customerName'],
+                                'display.Sub-Channel': 'subChannel',
+                                'display.Name': ['data', 'customerName'],
+                                'display.Mobile No': ['data', 'mobile'],
+                                'display.Session ID': ['data', 'sessionID'],
+                                'display.Agent Id': '',
+                                'display.User Id': '',
+                                'display.Gender': '',
+                                'display.Nationality': '',
+                                'display.Language': ''
+                            }
+                        ),
+                        uiKey: `ui_${i}`
                     }));
                     const nodesByChannel = groupBy(this.queuedChats, 'channel');
                     this.dataSource.data = Object.keys(nodesByChannel).map((name) => {
@@ -248,7 +253,7 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit {
                                 const grandChildren = sortBy(nodesBySkillId[x.skillId], 'addedTime');
                                 return {
                                     ...x,
-                                    grandChildren: Array(10).fill(grandChildren[0]),
+                                    grandChildren: grandChildren,
                                     oldestSince: new Date(grandChildren[0].addedTime)
                                 };
                             })
