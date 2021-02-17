@@ -122,6 +122,8 @@
             </button>
         </div>
 
+        <p class="mt-20 mat-title text-center" *ngIf="!dataSource.data.length">No Queued Chats</p>
+
         <div class="chat-list-groups">
             <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="tw-list-item border-radius-10 pb-16 chat-tree">
                 <mat-tree-node *matTreeNodeDef="let node" class="tw-list pb-8" matTreeNodeToggle>
@@ -182,7 +184,7 @@
         </div>
     </div>
 
-    <div fxFlex="68" #chatsRef class="mr-12 border-radius-20 h-100-p py-16 custom-scroll-adjust">
+    <div fxFlex="68" #chatsRef class="mr-12 border-radius-20 h-100-p custom-scroll-adjust">
         <ng-template #chats let-chatList="children">
             <mat-card [id]="card.uiKey" *ngFor="let card of chatList">
                 <mat-card-header class="p-8">
@@ -209,13 +211,13 @@
                     </div>
                 </mat-card-content>
                 <mat-card-actions *ngIf="channelConf?.Config as conf">
-                    <div class="py-8 px-20" fxLayout fxLayoutAlign="end center" *ngIf="conf.AllowPull || conf.AllowPush">
-                        <button mat-raised-button class="border-radius-20 mb-12" (click)="pullChat(card)" *ngIf="conf.AllowPull">Pull</button>
+                    <div class="py-8 px-20" fxLayout fxLayoutAlign="end center" *ngIf="conf.PushAllowed || conf.PushAllowed">
+                        <button mat-raised-button class="border-radius-20 mb-12" (click)="pullChat(card)" *ngIf="conf.PushAllowed">Pull</button>
                         <button
                             mat-raised-button
                             class="border-radius-20 mb-12"
                             (click)="pushChat(card)"
-                            *ngIf="conf.AllowPush && this.user.agentProfile === 'S'"
+                            *ngIf="conf.PushAllowed && this.user.agentProfile === 'S'"
                         >
                             Push
                         </button>
@@ -235,13 +237,28 @@
                 </div>
             </div>
         </ng-template>
-        <div class="item" *ngFor="let item of dataSource.data">
-            <div *ngIf="item.children" class="pb-16">
-                <p class="mat-title">
-                    {{ item.name }}
-                </p>
-                <ng-container *ngTemplateOutlet="heading; context: { children: item.children }"></ng-container>
-                <hr />
+        <ng-container *ngIf="dataSource.data.length">
+            <div class="py-16">
+                <div class="item" *ngFor="let item of dataSource.data">
+                    <div *ngIf="item.children" class="pb-16">
+                        <p class="mat-title">
+                            {{ item.name }}
+                        </p>
+                        <ng-container *ngTemplateOutlet="heading; context: { children: item.children }"></ng-container>
+                        <div class="my-20 text-center" *ngIf="!item.children.length">No Chats queued</div>
+                        <hr />
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+
+        <div class="h-100-p w-100-p border-radius-20" fxLayout fxLayoutAlign="center center" *ngIf="!dataSource.data.length">
+            <div class="chat-list w-100-p" fxLayout fxLayoutAlign="center center">
+                <div class="w-30-p">
+                    <p class="mat-display-1">
+                        <no-data-available msg="No Queued Chats"></no-data-available>
+                    </p>
+                </div>
             </div>
         </div>
     </div>
