@@ -3540,6 +3540,7 @@
             "Proxy": {
                 "Urls": [
                     "https://dice.tetherfi.cloud/TMACSDKProxy/TmacProxy.asmx",
+                    "https://dice.tetherfi.cloud/TMACSDKProxyv5/TmacProxy.asmx",
                     "https://localhost:55443/SDKTMACProxy/TmacProxy.asmx",
                     "https://idfcvpd.tetherfi.cloud/TMACSDKProxy/tmacproxy.asmx"
                 ],
