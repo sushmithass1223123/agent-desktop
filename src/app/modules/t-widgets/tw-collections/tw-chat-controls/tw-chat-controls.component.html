@@ -14,8 +14,8 @@
                 <ng-container *ngTemplateOutlet="messageRef; context: { message: message.repliedToMessage, showName: true }"> </ng-container>
             </div>
 
-            <div *ngIf="replyAble" class="reply-to">
-                <button mat-icon-button (click)="setReplyingToMessage(message); focusReplyInput()">
+            <div *ngIf="replyAble" class="reply-to cursor-pointer" mat-ripple (click)="setReplyingToMessage(message); focusReplyInput()">
+                <button mat-icon-button>
                     <mat-icon>reply</mat-icon>
                 </button>
             </div>

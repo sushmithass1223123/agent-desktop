@@ -1330,11 +1330,13 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // check if reply feature/attachment is enabled or not social media
         if ((attachment || this.data.Data.ReplyOnChatAllowed) && !this.isSMM) {
             // if media proxy then remove the source
-            if (this.fileUploadUrl.MediaProxy && attachment) {
-                attachment.src = '';
-                attachment.uploader = 'MediaProxy';
-            } else {
-                attachment.uploader = 'TmacProxy';
+            if (attachment) {
+                if (this.fileUploadUrl.MediaProxy) {
+                    attachment.src = '';
+                    attachment.uploader = 'MediaProxy';
+                } else {
+                    attachment.uploader = 'TmacProxy';
+                }
             }
 
             // create the json to send
@@ -2189,8 +2191,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * Sets replying to message
      */
-    setReplyingToMessage(message : ChatTranscripts): void{
-        this.replyingToMessage = {...message , repliedToMessage : null ,time : null}
+    setReplyingToMessage(message: ChatTranscripts): void {
+        this.replyingToMessage = { ...message, repliedToMessage: null, time: null };
     }
-
 }
