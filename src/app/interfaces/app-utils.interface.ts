@@ -357,7 +357,7 @@ export interface AgentSkillListData {
     /**
      * Type of dialog
      */
-    type: 'makeCall' | 'transferCall' | 'conferenceCall' | 'transferChat' | 'conferenceChat' | 'transferEmail' | 'transferFax';
+    type: 'makeCall' | 'transferCall' | 'conferenceCall' | 'transferChat' | 'conferenceChat' | 'transferEmail' | 'transferFax' | 'pushChat';
     /**
      * Title of dialog
      */
