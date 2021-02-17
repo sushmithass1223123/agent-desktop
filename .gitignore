@@ -41,3 +41,4 @@ Thumbs.db
 # my stuff
 /src/assets/development.json
 .gitignore
+/dist

@@ -373,7 +373,7 @@
                                     <ng-container
                                         *ngTemplateOutlet="
                                             messageRef;
-                                            context: { message: message, showName: isFirstMessageOfGroup(message, i), replyAble: true }
+                                            context: { message: message, showName: isFirstMessageOfGroup(message, i), replyAble: data.Data.ReplyOnChatAllowed }
                                         "
                                     ></ng-container>
                                 </div>

@@ -211,7 +211,14 @@
                 <mat-card-actions *ngIf="channelConf?.Config as conf">
                     <div class="py-8 px-20" fxLayout fxLayoutAlign="end center" *ngIf="conf.AllowPull || conf.AllowPush">
                         <button mat-raised-button class="border-radius-20 mb-12" (click)="pullChat(card)" *ngIf="conf.AllowPull">Pull</button>
-                        <button mat-raised-button class="border-radius-20 mb-12" (click)="pushChat(card)" *ngIf="conf.AllowPush">Push</button>
+                        <button
+                            mat-raised-button
+                            class="border-radius-20 mb-12"
+                            (click)="pushChat(card)"
+                            *ngIf="conf.AllowPush && this.user.agentProfile === 'S'"
+                        >
+                            Push
+                        </button>
                     </div>
                 </mat-card-actions>
             </mat-card>
