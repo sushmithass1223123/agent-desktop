@@ -1,6 +1,12 @@
 @import 'src/app/scss/shared';
 
 snack-bar-container {
+    & > * {
+        &,
+        & > * {
+            height: 100%;
+        }
+    }
     &.mat-snack-bar-container {
         &.app-snackbar {
             color: #323232;

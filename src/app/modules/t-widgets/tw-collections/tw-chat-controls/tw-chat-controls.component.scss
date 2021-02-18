@@ -87,15 +87,18 @@ tw-chat-controls {
                                 overflow: hidden;
                                 .reply-to {
                                     position: absolute;
-                                    width: 50px;
+                                    width: 40px;
+                                    z-index: 2;
                                     height: 100%;
-                                    right: -50px;
+                                    z-index: 100;
+                                    right: -40px;
                                     top: 0;
-                                    background: linear-gradient(to right, transparent, gray);
+                                    background: linear-gradient(to right top, transparent 50%, gray);
                                     transition: right 0.1s;
                                     display: flex;
                                     align-items: center;
                                     justify-content: center;
+                                    max-height: 50px;
                                     button {
                                         transform: scale(0.8);
                                     }
