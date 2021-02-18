@@ -11,11 +11,11 @@
         </div>
         <div class="message">
             <div *ngIf="message.repliedToMessage" class="p-8 my-4 border-radius-16 border-left" [ngClass]="commonButtonBackground">
-                <ng-container *ngTemplateOutlet="messageRef; context: { message: message.repliedToMessage }"> </ng-container>
+                <ng-container *ngTemplateOutlet="messageRef; context: { message: message.repliedToMessage, showName: true }"> </ng-container>
             </div>
 
-            <div *ngIf="replyAble" class="reply-to">
-                <button mat-icon-button (click)="replyingToMessage = message; focusReplyInput()">
+            <div *ngIf="replyAble" class="reply-to cursor-pointer" mat-ripple (click)="setReplyingToMessage(message); focusReplyInput()">
+                <button mat-icon-button>
                     <mat-icon>reply</mat-icon>
                 </button>
             </div>
@@ -83,7 +83,7 @@
                 </ng-container>
             </p>
         </div>
-        <div class="time" [ngClass]="message?.type" fxLayout="row" fxLayoutAlign="end center">
+        <div class="time" *ngIf="message.time" [ngClass]="message?.type" fxLayout="row" fxLayoutAlign="end center">
             {{ message.time | date: 'shortTime' }}
             <mat-icon class="s-12 ml-4" *ngIf="message.position === 'right' && message.status === 'init'"> access_time</mat-icon>
             <mat-icon class="s-12 ml-4" *ngIf="message.position === 'right' && message.status === 'sent'">done </mat-icon>
@@ -373,7 +373,11 @@
                                     <ng-container
                                         *ngTemplateOutlet="
                                             messageRef;
-                                            context: { message: message, showName: isFirstMessageOfGroup(message, i), replyAble: data.Data.ReplyOnChatAllowed }
+                                            context: {
+                                                message: message,
+                                                showName: isFirstMessageOfGroup(message, i),
+                                                replyAble: data.Data.ReplyOnChatAllowed
+                                            }
                                         "
                                     ></ng-container>
                                 </div>

@@ -1821,7 +1821,7 @@
                                                     "VideoEscalateAllowed": true,
                                                     "SignatureAllowed": true,
                                                     "EmojiAllowed": true,
-                                                    "ReplyOnChatAllowed": false,
+                                                    "ReplyOnChatAllowed": true,
                                                     "VoiceNoteAllowed": false,
                                                     "AttachmentAllowed": true,
                                                     "ScreenShareAllowed": true,
@@ -1972,6 +1972,33 @@
                                 }
                             ],
                             "Dynamic": [
+                                {
+                                    "Name": "Custom Snapshot",
+                                    "Description": "",
+                                    "Key": "UserLocation",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "Icon": "location_on",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": ["float", "maximize"],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "OpenInNew": false,
+                                        "Url": "http://127.0.0.1:5500/custom-snapshot/index.html"
+                                    }
+                                },
                                 {
                                     "Name": "User location",
                                     "Description": "",
@@ -2913,8 +2940,10 @@
                                                 "Type": "Chat",
                                                 "Icon": "chat",
                                                 "Config": {
-                                                    "AllowPull": true,
-                                                    "AllowPush": true
+                                                    "PullAllowed": true,
+                                                    "AskPullConfirmation": true,
+                                                    "PushAllowed": true,
+                                                    "SearchPollingInterval": 5000
                                                 }
                                             }
                                         ]
@@ -3539,10 +3568,10 @@
         "SDK": {
             "Proxy": {
                 "Urls": [
-                    "https://dice.tetherfi.cloud/TMACSDKProxy/TmacProxy.asmx",
+                    "https://idfcvpd.tetherfi.cloud/TMACSDKProxy/tmacproxy.asmx",
                     "https://dice.tetherfi.cloud/TMACSDKProxyv5/TmacProxy.asmx",
-                    "https://localhost:55443/SDKTMACProxy/TmacProxy.asmx",
-                    "https://idfcvpd.tetherfi.cloud/TMACSDKProxy/tmacproxy.asmx"
+                    "https://dice.tetherfi.cloud/TMACSDKProxy/TmacProxy.asmx",
+                    "https://localhost:55443/SDKTMACProxy/TmacProxy.asmx"
                 ],
                 "Type": "soap",
                 "Timeout": 30

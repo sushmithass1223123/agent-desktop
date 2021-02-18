@@ -13,6 +13,7 @@ import { AgentSkillListData, IWidget } from 'app/interfaces';
 import { formatJsonData } from 'app/utils';
 import { groupBy, sortBy } from 'lodash';
 import * as moment from 'moment';
+import { Subscription, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { IAgentData, SDKClient } from 'tmac-sdk';
 
@@ -32,27 +33,27 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit {
      * holds all the data related to the parent tw workbecnh widget from the config
      */
     @Input() data: IWidget;
-
     /**
      * holds all the data related to this workbench tab
      */
     @Input() channelConf: any;
 
     /**
-     * Current user data
-     */
-    user: IAgentData;
-
-    /**
      * Fetched Queued Chats observable
      */
     queuedChats: any[];
-
     /**
      * Advanced search visibility
      */
     showAdvancedSearchForm = false;
-
+    /**
+     * Current user data
+     */
+    user: IAgentData;
+    /**
+     * Polling Subscription
+     */
+    polling$: Subscription;
     /**
      * Tree Controls
      */
@@ -66,15 +67,7 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit {
     /**
      * Advanced Search form control
      */
-    advancedSearchForm = new FormGroup({
-        skills: new FormControl(''),
-        agent: new FormControl(''),
-        fromTime: new FormControl(''),
-        fromDate: new FormControl(''),
-        toTime: new FormControl(''),
-        toDate: new FormControl('')
-    });
-
+    advancedSearchForm: FormGroup;
     /**
      * To store the fuse config for theme
      */
@@ -109,16 +102,19 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit {
         private http: HttpClient,
         private _fuseConfigService: FuseConfigService,
         private appUiService: AppUiService,
-        private matDialog: MatDialog) {
+        private matDialog: MatDialog
+    ) {
         super();
         const today = new Date();
         const yesterday = new Date();
         yesterday.setDate(today.getDate() - 1);
-        this.advancedSearchForm.patchValue({
-            fromDate: yesterday,
-            fromTime: `00:00`,
-            toDate: today,
-            toTime: `${'23'}:${'59'}`
+        this.advancedSearchForm = new FormGroup({
+            skills: new FormControl(''),
+            agent: new FormControl(''),
+            fromDate: new FormControl(yesterday),
+            fromTime: new FormControl(`00:00`),
+            toDate: new FormControl(today),
+            toTime: new FormControl(`${'23'}:${'59'}`)
         });
     }
 
@@ -130,7 +126,13 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit {
             this.fuseConfig = config;
         });
         this.user = SDKClient.getAgentData();
-        this.doAdvancedSearch();
+        this.polling$ = timer(0, this.channelConf.Config.SearchPollingInterval || 5000).subscribe(() => {
+            this.doAdvancedSearch();
+        });
+    }
+
+    ngOnDestroy(): void {
+        this.polling$.unsubscribe();
     }
 
     /**
@@ -270,7 +272,7 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit {
      * @param {any} node
      */
     pullChat(node: any): void {
-        try {
+        const pullFunc = () => {
             const { tmacServer, agentId } = this.user;
             const { channel, itemID: itemid } = node;
             this.appUiService.showSnackbar('Pulling Chat', 'loading');
@@ -288,6 +290,18 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit {
                     }
                     this.appUiService.showSnackbar('Unable to Pull chat', 'failure');
                 });
+        };
+        try {
+            if (this.channelConf.Config.AskPullConfirmation) {
+                const confirmDialogRef = this.appUiService.showAppConfirmDialog('generic', 'Pull Chat', 'Are you sure you want to pull this chat ?');
+                confirmDialogRef.afterClosed().subscribe((resp) => {
+                    if (resp) {
+                        pullFunc();
+                    }
+                });
+            } else {
+                pullFunc();
+            }
         } catch (e) {
             console.error(e);
             this.appUiService.showSnackbar('Chat Pull failed', 'failure');
@@ -357,7 +371,12 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit {
     /**
      * To open push dialog
      */
-    openPushDialog(): void {
+    openPushDialog(): void {}
 
+    /**
+     * resets form
+     */
+    resetForm(): void {
+        this.advancedSearchForm.reset();
     }
 }
