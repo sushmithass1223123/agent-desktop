@@ -292,77 +292,89 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
 
                 // get the files and upload
                 this.uploadingFiles.forEach(async (file) => {
-                    const formData = new FormData();
-                    formData.append('file', file.file);
-                    formData.append('interaction_id', TUtils.Generic.uuid());
-                    formData.append('organization_id', 'prod');
-                    formData.append('conv_id', this.sessionID);
-                    formData.append('uploaded_by', 'system');
-                    formData.append('other', '');
+                    try {
+                        const formData = new FormData();
+                        formData.append('file', file.file);
+                        formData.append('interaction_id', TUtils.Generic.uuid());
+                        formData.append('organization_id', 'prod');
+                        formData.append('conv_id', this.sessionID);
+                        formData.append('uploaded_by', 'system');
+                        formData.append('other', '');
 
-                    // upload the file
-                    const { response } = await TUtils.HttpClient.sendRequest({
-                        url: this.fileUploadUrl.SMM,
-                        method: 'POST',
-                        responseType: 'json',
-                        formData
-                    });
-
-                    // check if success
-                    if (response?.isSuccess) {
-                        const type = this.getAttachTypeByFileType(file.type);
-                        this.sendAttachments.emit({
-                            type,
-                            fileName: file.fileName,
-                            src: response.result.streamURL,
-                            size: response.result.size,
-                            interactionId: response.result.interaction_id
+                        // upload the file
+                        const { response } = await TUtils.HttpClient.sendRequest({
+                            url: this.fileUploadUrl.SMM,
+                            method: 'POST',
+                            responseType: 'json',
+                            formData
                         });
-                    }
-                    else {
+
+                        // check if success
+                        if (response?.isSuccess) {
+                            const type = this.getAttachTypeByFileType(file.type);
+                            this.sendAttachments.emit({
+                                type,
+                                fileName: file.fileName,
+                                src: response.result.streamURL,
+                                size: response.result.size,
+                                interactionId: response.result.interaction_id
+                            });
+                        }
+                        else {
+                            this._appUIService.showSnackbar('Failed to upload file', 'failure');
+                        }
+
+                        // remove the item from list
+                        this.uploadingFiles.pop();
+
+                        this._fuseProgressBarService.hide();
+                    } catch (error) {
                         this._appUIService.showSnackbar('Failed to upload file', 'failure');
+                        // hide the progress bar
+                        this._fuseProgressBarService.hide();
                     }
-
-                    // remove the item from list
-                    this.uploadingFiles.pop();
-
-                    this._fuseProgressBarService.hide();
                 });
             }
             // check if to upload to media proxy
             else if (this.fileUploadUrl.MediaProxy) {
                 this.uploadingFiles.forEach(async (file) => {
-                    const formData = new FormData();
-                    formData.append('file', file.file);
-                    formData.append('SessionId', this.sessionID);
-                    formData.append('other', '');
+                    try {
+                        const formData = new FormData();
+                        formData.append('file', file.file);
+                        formData.append('SessionId', this.sessionID);
+                        formData.append('other', '');
 
-                    // upload the file
-                    const { response } = await TUtils.HttpClient.sendRequest({
-                        url: this.fileUploadUrl.MediaProxy + '/api/FileUpload/Post/',
-                        method: 'POST',
-                        responseType: 'json',
-                        formData
-                    });
-
-                    // check the response from file server
-                    if (response?.statusCode === 'Created') {
-                        const type = this.getAttachTypeByFileType(file.type);
-                        this.sendAttachments.emit({
-                            type,
-                            fileName: file.fileName,
-                            src: response.url,
-                            size: file.size
+                        // upload the file
+                        const { response } = await TUtils.HttpClient.sendRequest({
+                            url: this.fileUploadUrl.MediaProxy + '/api/FileUpload/Post/',
+                            method: 'POST',
+                            responseType: 'json',
+                            formData
                         });
-                    }
-                    else {
+
+                        // check the response from file server
+                        if (response?.statusCode === 'Created') {
+                            const type = this.getAttachTypeByFileType(file.type);
+                            this.sendAttachments.emit({
+                                type,
+                                fileName: file.fileName,
+                                src: response.url,
+                                size: file.size
+                            });
+                        }
+                        else {
+                            this._appUIService.showSnackbar('Failed to upload file', 'failure');
+                        }
+
+                        // remove the item from list
+                        this.uploadingFiles.pop();
+
+                        this._fuseProgressBarService.hide();
+                    } catch (error) {
                         this._appUIService.showSnackbar('Failed to upload file', 'failure');
+                        // hide the progress bar
+                        this._fuseProgressBarService.hide();
                     }
-
-                    // remove the item from list
-                    this.uploadingFiles.pop();
-
-                    this._fuseProgressBarService.hide();
                 });
             }
             else {
@@ -400,9 +412,6 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
                 this._fuseProgressBarService.hide();
             }
         } catch (error) {
-            this._appUIService.showSnackbar('Failed to upload file', 'failure');
-            // hide the progress bar
-            this._fuseProgressBarService.hide();
         }
     }
 }

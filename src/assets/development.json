@@ -1821,7 +1821,7 @@
                                                     "VideoEscalateAllowed": true,
                                                     "SignatureAllowed": true,
                                                     "EmojiAllowed": true,
-                                                    "ReplyOnChatAllowed": false,
+                                                    "ReplyOnChatAllowed": true,
                                                     "VoiceNoteAllowed": false,
                                                     "AttachmentAllowed": true,
                                                     "ScreenShareAllowed": true,
@@ -1858,7 +1858,7 @@
                                                     },
                                                     "ConversationService": {
                                                         "Url": "https://dice.tetherfi.cloud:25213/api/v1/",
-                                                        "Limit": 10
+                                                        "Limit": 50
                                                     }
                                                 }
                                             },
@@ -3539,9 +3539,9 @@
         "SDK": {
             "Proxy": {
                 "Urls": [
-                    "https://dice.tetherfi.cloud/TMACSDKProxy/TmacProxy.asmx",
                     "https://dice.tetherfi.cloud/TMACSDKProxyv5/TmacProxy.asmx",
                     "https://localhost:55443/SDKTMACProxy/TmacProxy.asmx",
+                    "https://dice.tetherfi.cloud/TMACSDKProxy/TmacProxy.asmx",
                     "https://idfcvpd.tetherfi.cloud/TMACSDKProxy/tmacproxy.asmx"
                 ],
                 "Type": "soap",
