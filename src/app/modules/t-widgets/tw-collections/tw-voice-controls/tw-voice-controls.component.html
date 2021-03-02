@@ -207,6 +207,43 @@
                 <mat-icon>phonelink_ring</mat-icon>
             </button>
 
+            <button
+                *ngIf="data.Data?.DialpadAllowed && status !== 'disconnected'"
+                mat-flat-button
+                matTooltip="Dialpad"
+                (click)="openDialpad = !openDialpad"
+                cdkOverlayOrigin
+                #dialpadMenu="cdkOverlayOrigin"
+            >
+                <mat-icon>dialpad</mat-icon>
+
+                <ng-template
+                    cdkConnectedOverlay
+                    [cdkConnectedOverlayOrigin]="dialpadMenu"
+                    [cdkConnectedOverlayOpen]="openDialpad"
+                    cdkConnectedOverlayHasBackdrop
+                    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+                    (overlayOutsideClick)="openDialpad = false"
+                >
+                    <div class="dialpad-menu mat-elevation-z1 mt-4 p-8 border-radius-20" fxLayout="column">
+                        <div class="pl-8 pr-4 my-4 mx-4 border border-radius-20" fxLayout="row" fxLayoutAlign="space-between center">
+                            <div>
+                                {{ dialedNumbers }}
+                            </div>
+                            <button mat-button color="warn" mat-icon-button aria-label="Clear" (click)="dialedNumbers = ''">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                        </div>
+
+                        <div class="dialpad" fxLayout="row wrap" fxLayoutAlign="center ">
+                            <button *ngFor="let item of dialpadNumbers" mat-icon-button mat-stroked-button (click)="dialpadClick(item)">
+                                {{ item.key }}
+                            </button>
+                        </div>
+                    </div>
+                </ng-template>
+            </button>
+
             <button mat-flat-button matTooltip="Interaction Comment" (click)="saveInteractionComments()">
                 <mat-icon>comment</mat-icon>
             </button>

@@ -156,10 +156,11 @@ tw-wrapper {
                 padding: 6px;
                 height: 100%;
                 border-radius: 2rem;
-                transition-property: padding;
-                transition-duration: 0.3s;
-                transition-timing-function: ease-in-out;
-                // fix for height of video AOT 
+                // [ReviewCodeLine Feb 25, '21] to remove switch transition
+                // transition-property: padding;
+                // transition-duration: 0.3s;
+                // transition-timing-function: ease-in-out;
+                // fix for height of video AOT
                 max-height: 100vh;
             }
 
@@ -228,6 +229,48 @@ tw-wrapper {
         }
     }
 
+    .tw-flat {
+        .mat-card {
+            border-radius: 0px !important;
+            padding: 0px !important;
+            box-shadow: none !important;
+            border: 1px solid rgba(0, 0, 0, 0.12);
+
+            .card-wrapper {
+                border-radius: 0px !important;
+                padding: 0px !important;
+            }
+
+            .card-header {
+                height: 3rem !important;
+                border-radius: 0px !important;
+
+                .mat-icon-button {
+                    height: 30px !important;
+                    width: 30px !important;
+                }
+
+                .mat-icon {
+                    height: 20px !important;
+                    width: 20px !important;
+                    line-height: 20px !important;
+                    font-size: 20px !important;
+                    min-width: 20px !important;
+                    min-height: 20px !important;
+                }
+            }
+
+            .mat-card-avatar {
+                background: none !important;
+            }
+
+            .mat-card-content {
+                border-radius: 0px !important;
+                margin-top: 3px !important;
+            }
+        }
+    }
+
     .header-box {
         .mat-card {
             .card-header {
@@ -244,7 +287,7 @@ tw-wrapper {
         }
     }
 
-    .tw-static-widget {
+    .tw-static {
         .tw-static-card {
             box-shadow: none !important;
             background: inherit !important;

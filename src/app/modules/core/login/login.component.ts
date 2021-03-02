@@ -241,15 +241,27 @@ export class LoginComponent implements OnInit, OnDestroy {
      * To show connection error overlay
      */
     connectionError: {
+        /**
+         * Polling interval
+         */
         pollingInterval: number;
+        /**
+         * Reteying flag
+         */
         retrying: boolean;
+        /**
+         * Errored flag
+         */
         errored: boolean;
+        /**
+         * Countdown oveservable
+         */
         countdown?: Observable<number>;
     } = {
-        pollingInterval: 20,
-        retrying: false,
-        errored: false
-    };
+            pollingInterval: 20,
+            retrying: false,
+            errored: false
+        };
 
     /**
      * Flag for showing otp input
@@ -414,11 +426,10 @@ export class LoginComponent implements OnInit, OnDestroy {
      */
     async loadConfig(agentId?: string): Promise<void> {
         // load the config
-        await this._appDataService.getConfig(agentId).then((config) => {
-            this.appConfig = config;
-            this.configLoaded(config);
-            this.getData();
-        });
+        const config = await this._appDataService.getJsonConfig(agentId);
+        this.appConfig = config;
+        this.configLoaded(config);
+        this.getData();
         this.autoLogin();
     }
 
@@ -689,7 +700,6 @@ export class LoginComponent implements OnInit, OnDestroy {
             this.queryData?.jsonData || {}
         );
 
-        console.log({ jsonData });
         if (!customAuthData?.otp) {
             customAuthData = null;
         }
@@ -748,12 +758,12 @@ export class LoginComponent implements OnInit, OnDestroy {
                         });
                     } else {
                         // check the environment
-                        if (environment.production && response.OtherData.ItemTwo) {
+                        if (environment.production && this.appConfig?.ConfigMode === 'remote' && response.OtherData.ItemTwo) {
                             // assign the agent based config
                             this._appDataService.config = JSON.parse(response.OtherData.ItemTwo);
-                            TUtils.Logger.console('info', 'App config updated!');
+                            TUtils.Logger.console('debug', 'App config updated!');
                         } else {
-                            TUtils.Logger.console('info', 'Using developement/login config only!');
+                            TUtils.Logger.console('debug', 'Using developement/login config only!');
                         }
                         // get the agent ID
                         const agentId = response.Data.AgentID;
@@ -780,8 +790,8 @@ export class LoginComponent implements OnInit, OnDestroy {
                         } else {
                             const queryParams = this.queryData?.state
                                 ? {
-                                      state: this.queryData.state
-                                  }
+                                    state: this.queryData.state
+                                }
                                 : {};
                             // we will route to main page
                             this._router.navigate([`main/${agentId}`], {
@@ -814,8 +824,8 @@ export class LoginComponent implements OnInit, OnDestroy {
                     this.errorMessage = response.ErrorDetails
                         ? response.ErrorDetails
                         : response.ResultMessage
-                        ? response.ResultMessage
-                        : 'Login failed, Unknown response from server';
+                            ? response.ResultMessage
+                            : 'Login failed, Unknown response from server';
                 }
             } else {
                 this.errorMessage = 'Login failed, Please contact the administrator';
@@ -827,7 +837,7 @@ export class LoginComponent implements OnInit, OnDestroy {
             }
             this.fuseSpashService.hide();
         } catch (error) {
-            TUtils.Logger.log('Exception in login', error);
+            TUtils.Logger.error('Exception in login', error);
         }
     }
 

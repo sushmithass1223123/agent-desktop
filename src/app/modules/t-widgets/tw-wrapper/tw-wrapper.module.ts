@@ -4,6 +4,9 @@ import { TwCardHeaderComponent } from './tw-card-header/tw-card-header.component
 import { TwCardComponent } from './tw-card/tw-card.component';
 import { TwWrapperComponent } from './tw-wrapper.component';
 
+/**
+ * Tw Wrapper Module
+ */
 @NgModule({
     declarations: [
         TwCardComponent,

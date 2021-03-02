@@ -116,7 +116,7 @@ export interface IWidgetConfig {
     Header: boolean;
 }
 
-export type IAction = 'restore' | 'maximize' | 'collapse' | 'destroy' | 'float' | 'pin';
+export type IAction = 'restore' | 'maximize' | 'collapse' | 'destroy' | 'float' | 'pin' | 'refresh';
 
 export interface IWidgetPosition {
     /**

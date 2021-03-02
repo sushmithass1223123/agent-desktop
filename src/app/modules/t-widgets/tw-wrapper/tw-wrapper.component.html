@@ -10,9 +10,9 @@
     [cdkDragDisabled]="maximized || (!floating && !aot)"
     [cdkDragFreeDragPosition]="dragPosition"
     class="tw-card animate__animated animate__faster {{
-        data.Config.Class + ' ' + (data.Config.Static ? 'tw-static-widget' : '') + ' ' + (maximized ? 'animate__zoomIn' : '')
+        data.Config.Class + ' ' + (data.Config.Static ? 'tw-static' : '') + ' ' + (maximized ? 'animate__zoomIn' : '')
     }}"
-    [ngClass]="{ collapsed: collapsed, maximized: maximized, floating: floating, hidden: hidden, aot: aot }"
+    [ngClass]="{ collapsed: collapsed, maximized: maximized, floating: floating, hidden: hidden, aot: aot, 'tw-flat': fuseConfig.flatTheme }"
     [ngStyle]="{ 'width.px': data.Config.Position.W, 'height.px': data.Config.Position.H }"
 >
     <!-- We are writing a wrapper over material card -->
@@ -38,6 +38,7 @@
                 [fuseConfig]="fuseConfig"
                 *ngIf="data.Config.Header"
                 [widgetState]="{ maximized: maximized, floating: floating, collapsed: collapsed, aot: aot, pinned: pinned }"
+                (refresh)="refresh()"
                 (maximize)="maximize()"
                 (float)="float()"
                 (collapse)="collapse()"

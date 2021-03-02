@@ -1,7 +1,7 @@
 <div
     fxLayout
     fxLayoutAlign="space-evenly center"
-    class="email-workbench w-100-p h-100-p"
+    class="email-workbench w-100-p h-100-p py-8"
     [ngClass]="
         fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
             ? fuseConfig.layout.anchorWidget.bodyBackground
@@ -552,7 +552,7 @@
         </div>
     </div>
 
-    <div fxFlex="100" class="email-open mr-12 border-radius-20 custom-scroll-adjust">
+    <div fxFlex class="email-open mr-12 border-radius-20 custom-scroll-adjust">
         <ng-container *ngIf="emailSearchRes.data.selected as selectedEmail">
             <div *ngIf="selectedEmail" fxLayout fxLayoutAlign="end" fxLayoutGap="10px" class="my-20 w-95-p">
                 <button

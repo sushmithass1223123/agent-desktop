@@ -62,7 +62,7 @@ export class DashboardService {
 
         // check if we rece
         if (Object.keys(agentData).length === 0) {
-            TUtils.Logger.log('DashboardService.startService: Agent data is not available!');
+            TUtils.Logger.debug('DashboardService.startService: Agent data is not available!');
             return;
         }
 

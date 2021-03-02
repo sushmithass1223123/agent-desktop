@@ -215,10 +215,12 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
     private setTheme(): void {
         // apply the theme
         const themeName = this.appConfig.AppConfigs.Theme || '';
+        const flatTheme = this.appConfig.AppConfigs.FlatTheme ?? false;
         if (themeName) {
             const theme = ThemeSelector.getFuseConfigByTheme(themeName, false);
             this._fuseConfigService.config = {
-                ...theme
+                ...theme,
+                flatTheme
             };
         }
     }
@@ -241,7 +243,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
         // check the agent Id
         if (agentId) {
             if (route !== 'login') {
-                const config = await this._appDataService.getConfig(agentId);
+                const config = await this._appDataService.getJsonConfig(agentId);
                 this.appConfig = config;
                 this.setTheme();
             }

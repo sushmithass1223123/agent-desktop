@@ -73,7 +73,7 @@ export class AgentFeaturesService {
         };
     };
 
-    constructor(private _appUIService: AppUiService) {}
+    constructor(private _appUIService: AppUiService) { }
 
     /**
      * Need more Description
@@ -175,7 +175,7 @@ export class AgentFeaturesService {
                 };
             } catch (error) {
                 // log the error to server for troubleshooting purpose
-                TUtils.Logger.log('Exception in getUrlFromStream', error);
+                TUtils.Logger.error('Exception in getUrlFromStream', error);
                 reject(error);
             }
         });
@@ -215,7 +215,7 @@ export class AgentFeaturesService {
                     this.captureCameraStream();
                 }, 4000);
                 // log the error to server for troubleshooting purpose
-                TUtils.Logger.log('Exception in getUserMedia', error);
+                TUtils.Logger.error('Exception in getUserMedia', error);
             }
         );
     }
@@ -262,7 +262,7 @@ export class AgentFeaturesService {
                     this.captureDisplayStream();
                 }, 2000);
                 // log the error to server for troubleshooting purpose
-                TUtils.Logger.log('Exception in getDisplayMedia', error);
+                TUtils.Logger.error('Exception in getDisplayMedia', error);
             });
     }
 
@@ -289,7 +289,7 @@ export class AgentFeaturesService {
             (error: GeolocationPositionError) => {
                 this._agentFeatureInfo.permissions.location = false;
                 // log the error to server for troubleshooting purpose
-                TUtils.Logger.log('Exception in getCurrentPosition', error);
+                TUtils.Logger.error('Exception in getCurrentPosition', error);
             }
         );
     }
@@ -382,7 +382,7 @@ export class AgentFeaturesService {
 
         // check the list
         if (agentFeatures.length === 0) {
-            TUtils.Logger.log('AgentFeaturesService.subscribe: agent features are empty!');
+            TUtils.Logger.debug('AgentFeaturesService.subscribe: agent features are empty!');
             return;
         }
 

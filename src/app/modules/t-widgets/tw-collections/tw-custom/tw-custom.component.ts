@@ -1,5 +1,7 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { FuseConfigService } from '@fuse/services/config.service';
+import { FuseConfig } from '@fuse/types';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
@@ -23,6 +25,11 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
      * Holds all the data related to this widget from the config
      */
     @Input() data: IWidget;
+
+    /**
+     * Fuse Config
+     */
+    fuseConfig: FuseConfig;
 
     /**
      * Window pop widget
@@ -56,9 +63,23 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
     /**
      * subscriptions
      */
-    subscriptions: Partial<{ eventsById: Subscription; allEvents: Subscription }>;
+    subscriptions: Partial<{
+        /**
+         * Events by Id  
+         */
+        eventsById: Subscription;
+        /**
+         * All events
+         */
+        allEvents: Subscription
+    }>;
 
-    constructor(private sanitizer: DomSanitizer, private _aotWidgetService: AOTWidgetService, private _tmacEventService: TMACEventService) {
+    constructor(
+        private sanitizer: DomSanitizer,
+        private _aotWidgetService: AOTWidgetService,
+        private _tmacEventService: TMACEventService,
+        private _fuseConfigService: FuseConfigService
+    ) {
         super();
     }
 
@@ -67,6 +88,11 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
         this.subscriptions = {};
         // call the wrapper init method
         this.initWrapper(this.data);
+
+        // Subscribe to the config changes
+        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((fuseConfig: FuseConfig) => {
+            this.fuseConfig = fuseConfig;
+        });
 
         // check if the url is provided
         if (this.data.Data.Url) {
@@ -186,30 +212,42 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
      * Iframe loaded event
      */
     frameLoaded = () => {
-        // // check if this is not initial load
-        // if (this.initialLoad) {
-        //     // set the loaded flag to true
-        //     this.loaded = true;
-        //     // send all interaction events to the frame/window
-        //     if (this.interactionId) {
-        if (!this.subscriptions.eventsById && !this.subscriptions.allEvents) {
-            // subscribe to interaction events
-            this.subscriptions.eventsById = this._tmacEventService
-                .getInteractionEventsById(this.interactionId)
-                .pipe(takeUntil(this.unsubscribeAll))
-                .subscribe((evts) => this.sendEventsToWindow(evts));
+        // check if this is not initial load
+        if (this.initialLoad) {
+            if (!this.subscriptions.eventsById && !this.subscriptions.allEvents) {
+                // subscribe to interaction events
+                this.subscriptions.eventsById = this._tmacEventService
+                    .getInteractionEventsById(this.interactionId)
+                    .pipe(takeUntil(this.unsubscribeAll))
+                    .subscribe((evts) => this.sendEventsToWindow(evts));
 
-            // subscribe to all non interaction events
-            this.subscriptions.allEvents = this._tmacEventService
-                .getAllEvents()
-                .pipe(takeUntil(this.unsubscribeAll))
-                .subscribe((evts) => this.sendEventsToWindow(evts));
-            this.loaded = true;
+                // subscribe to all non interaction events
+                this.subscriptions.allEvents = this._tmacEventService
+                    .getAllEvents()
+                    .pipe(takeUntil(this.unsubscribeAll))
+                    .subscribe((evts) => this.sendEventsToWindow(evts));
+            }
+
+            // set loaded to true
+            setTimeout(() => {
+                this.loaded = true;
+            });
+        } else {
+            // set initial load to true
+            this.initialLoad = true;
         }
-        // }
-        // } else {
-        //     // set initial load to true
-        //     this.initialLoad = true;
-        // }
-    };
+    }
+
+    /**
+     * On refresh event
+     */
+    onRefreshEvent(): void {
+        const urlRef = this.url;
+        this.url = null;
+        this.initialLoad = false;
+        this.loaded = false;
+        setTimeout((x) => {
+            this.url = x;
+        }, 0, urlRef);
+    }
 }
