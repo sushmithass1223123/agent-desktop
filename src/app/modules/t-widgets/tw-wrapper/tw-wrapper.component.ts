@@ -25,6 +25,11 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
     /**
      * Maximise event emitter
      */
+    @Output() refreshEvent = new EventEmitter();
+
+    /**
+     * Maximise event emitter
+     */
     @Output() maximizeEvent = new EventEmitter();
 
     /**
@@ -139,6 +144,13 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
         // Unsubscribe from all subscriptions
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
+    }
+
+    /**
+     * Widget refresh callback
+     */
+    refresh(): void {
+        this.refreshEvent.emit();
     }
 
     /**

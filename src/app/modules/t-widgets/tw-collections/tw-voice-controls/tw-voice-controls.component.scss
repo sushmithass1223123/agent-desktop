@@ -44,7 +44,7 @@ tw-voice-controls {
 
             .call-controls {
                 button:not(.mat-button-disabled, .mat-warn) {
-                    background: $tw-primary;
+                    background: $tw-light;
                     color: $tw-dark;
                 }
 
@@ -72,6 +72,20 @@ tw-voice-controls {
                     }
                 }
             }
+        }
+    }
+}
+
+.dialpad-menu {
+    max-width: 225px;
+
+    .dialpad {
+        .mat-icon-button {
+            margin: 6px 8px;
+            width: 48px;
+            height: 48px;
+            line-height: 48px;
+            font-size: 18px;
         }
     }
 }

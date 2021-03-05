@@ -1,10 +1,9 @@
 <!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
 <!-- implement following events in your component to access widget wrapper action events -->
-<!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
 
 <!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
 
-<tw-wrapper [data]="data">
+<tw-wrapper [data]="data" (maximizeEvent)="onMaximizeEvent($event)" (collapseEvent)="onCollapseEvent($event)" (floatEvent)="onFloatEvent($event)">
     <!-- your code goes here -->
     <div fxFlex fxFill>
         <img src="assets/images/vectors/no-data-2.svg" class="w-100-p h-80-p box-shadow-3d" />

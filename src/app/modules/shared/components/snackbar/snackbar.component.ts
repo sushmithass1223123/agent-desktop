@@ -31,7 +31,11 @@ export class SnackbarComponent {
             /**
              * Loading flag
              */
-            loading: boolean
+            loading: boolean;
+            /**
+             * On click function
+             */
+            onClick?: () => void;
         }) { }
 
     /**
@@ -39,5 +43,15 @@ export class SnackbarComponent {
      */
     public close(): void {
         this._snackbar.dismiss();
+    }
+
+    /**
+     * On click of the snackbar
+     */
+    public onClick(): void {
+        if (typeof this.data.onClick === 'function') {
+            this._snackbar.dismiss();
+            this.data.onClick();
+        }
     }
 }

@@ -29,6 +29,10 @@
         <mat-icon [ngClass]="{ 'rotate-45': data.Config.Pinned }">push_pin</mat-icon>
     </button>
 
+    <button *ngIf="data.Config.Actions.includes('refresh')" mat-icon-button matTooltip="Refresh" (click)="refreshWidget()">
+        <mat-icon>refresh</mat-icon>
+    </button>
+
     <button
         *ngIf="data.Config.Actions.includes('maximize') && !widgetState.floating && !widgetState.maximized"
         mat-icon-button

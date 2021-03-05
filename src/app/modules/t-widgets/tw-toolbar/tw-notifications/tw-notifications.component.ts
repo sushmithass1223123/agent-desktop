@@ -82,7 +82,7 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
      */
     private AgentNotificaitonEvent = (evt: AgentNotificaitonEvent) => {
         // check if the interaction id is there then return
-        if (evt.InteractionID > 0) {
+        if (evt.InteractionID > 0 || !evt.Message) {
             return;
         }
 
@@ -105,7 +105,8 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
                 showAlert: type !== 'broadcast'
             });
         }
-    };
+    }
+
     /**
      * To convert link to a tag
      */

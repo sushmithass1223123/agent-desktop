@@ -1,5 +1,5 @@
 <div
-    class="avatar-content"
+    class="avatar-content mat-elevation-z1"
     [ngStyle]="{ 'background-color': circleColor }"
     [ngClass]="(classes ? classes : '') + ' ' + (circleColor ? circleColor : '')"
 >
@@ -11,6 +11,6 @@
     </div>
 
     <div *ngIf="showInitials" class="initials">
-        {{ getInitial(name) }}
+        {{ initials }}
     </div>
 </div>

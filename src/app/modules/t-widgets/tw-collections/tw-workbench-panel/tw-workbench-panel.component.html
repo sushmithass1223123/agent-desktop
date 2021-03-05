@@ -8,36 +8,6 @@
     <!-- your code goes here -->
     <div class="w-100-p h-100-p">
         <mat-tab-group class="w-100-p h-100-p" animationDuration="0ms">
-            <!-- <mat-tab label="Email" #emailTab>
-                <ng-template mat-tab-label>
-                    <div class="tab-header" [ngClass]="emailTab.isActive ? tabActiveClass : tabInactiveClass">
-                        <mat-icon>email</mat-icon>
-                        <span class="ml-4"> Email </span>
-                    </div>
-                </ng-template>
-                <workbench-email [data]="data"></workbench-email>
-            </mat-tab>
-
-            <mat-tab label="Voice" #voiceTab>
-                <ng-template mat-tab-label>
-                    <div class="tab-header" [ngClass]="voiceTab.isActive ? tabActiveClass : tabInactiveClass">
-                        <mat-icon>phone</mat-icon>
-                        <span class="ml-4"> Voice </span>
-                    </div>
-                </ng-template>
-                Voice
-            </mat-tab>
-
-            <mat-tab label="Chat" #chatTab>
-                <ng-template mat-tab-label>
-                    <div class="tab-header" [ngClass]="chatTab.isActive ? tabActiveClass : tabInactiveClass">
-                        <mat-icon>chat</mat-icon>
-                        <span class="ml-4">Chat</span>
-                    </div>
-                </ng-template>
-                Chat
-            </mat-tab> -->
-
             <mat-tab *ngFor="let channel of channels" [label]="channel.Type" #tab>
                 <ng-template mat-tab-label>
                     <div class="tab-header" [ngClass]="tab.isActive ? tabActiveClass : tabInactiveClass">

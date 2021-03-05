@@ -14,6 +14,9 @@ import { TwcVoiceComponent } from './twc-voice/twc-voice.component';
 import { TwcWorkbenchComponent } from './twc-workbench/twc-workbench.component';
 import { TwcDockerComponent } from './twc-docker/twc-docker.component';
 
+/**
+ * Tw Content Module
+ */
 @NgModule({
     declarations: [
         TwcUnknownComponent,

@@ -21,7 +21,6 @@ export class TwSampleComponent extends TWidgetWrapper implements OnInit, OnDestr
      */
     @Input() data: IWidget;
 
-    
     /**
      * --------------------------------------------------
      *  @ [OPTIONAL] to store the fuse config for theme
@@ -29,7 +28,7 @@ export class TwSampleComponent extends TWidgetWrapper implements OnInit, OnDestr
      */
     fuseConfig: FuseConfig;
 
-    
+
     /**
      * --------------------------------------------------
      *  @ [OPTIONAL] to store entire app config and get update
@@ -92,6 +91,33 @@ export class TwSampleComponent extends TWidgetWrapper implements OnInit, OnDestr
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * On refresh event
+     * 
+     * @param {Boolean} maximized
+     */
+    onMaximizeEvent(maximized: boolean): void {
+
+    }
+
+    /**
+     * On refresh event
+     * 
+     * @param {Boolean} collapsed
+     */
+    onCollapseEvent(collapsed: boolean): void {
+
+    }
+
+    /**
+     * On refresh event
+     * 
+     * @param {Boolean} float
+     */
+    onFloatEvent(float: boolean): void {
+
+    }
 }
 
 // for more info visit - https://angular.io/api/core

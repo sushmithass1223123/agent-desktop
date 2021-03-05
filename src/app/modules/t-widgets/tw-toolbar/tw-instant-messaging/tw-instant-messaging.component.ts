@@ -2,6 +2,7 @@ import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { AppUiService } from '@services/app-ui.service';
 import { TWidgetWrapper } from '@twidgets/utils';
+import { InstantMessagingService } from 'app/layout/components/instant-messaging/instant-messaging.service';
 import { AgentNotificaitonEvent, SDKClient } from 'tmac-sdk';
 /**
  * Instant messaging sidebar component
@@ -33,7 +34,8 @@ export class TwInstantMessagingComponent extends TWidgetWrapper implements OnIni
 
     constructor(
         private _fuseSidebarService: FuseSidebarService,
-        private _appUIService: AppUiService
+        private _appUIService: AppUiService,
+        private _instantMessagingService: InstantMessagingService
     ) {
         super();
     }
@@ -75,7 +77,14 @@ export class TwInstantMessagingComponent extends TWidgetWrapper implements OnIni
             this._appUIService.showSnackbar(`IM: ${evt.FromAgentName} <br /> ${evt.Message}`,
                 'close',
                 'top',
-                'right');
+                'right',
+                5000,
+                () => {
+                    this._fuseSidebarService.getSidebar('chatPanel').toggleOpen();
+                    setTimeout(() => {
+                        this._instantMessagingService.selectUser(evt.FromAgentId);
+                    });
+                });
             this._appUIService.playAudio(undefined, 0.5, false);
             this.unreadMessages += 1;
         }

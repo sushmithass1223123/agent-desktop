@@ -138,7 +138,7 @@ export class WidgetPreviewComponent implements OnInit {
                 }
             }, 1000, result);
         } catch (error) {
-            TUtils.Logger.log('Exception in getTemplateJson', error);
+            TUtils.Logger.console('error', 'Exception in getTemplateJson', error);
             this.routeToNotFound('Error in getting template');
         }
     }
