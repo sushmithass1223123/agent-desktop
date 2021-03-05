@@ -270,7 +270,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // check if the connection is created
         if (!connection) {
-            TUtils.Logger.log('Error in AVChannel', 'Could not create AV channel instance!');
+            TUtils.Logger.debug('Error in AVChannel: Could not create AV channel instance!');
             return null;
         }
 
@@ -342,7 +342,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                 }
                 break;
             case 'onTrace':
-                TUtils.Logger.log(evt.data);
+                TUtils.Logger.info('TwVideoControlsComponent.onAVEvent.onTrace' + evt.data);
                 break;
             case 'onError':
                 let error = evt.data?.error || 'Something went wrong';
@@ -351,7 +351,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                 }
                 this.status = `Error : ${error}`;
                 this._appUIService.showSnackbar(error, 'failure');
-                TUtils.Logger.log('Exception in TwAudioControlsComponent.onAVEvent', evt.data);
+                TUtils.Logger.error('TwVideoControlsComponent.onAVEvent.onError', evt.data);
                 break;
             case 'onAVStats':
                 this.status = evt.data;

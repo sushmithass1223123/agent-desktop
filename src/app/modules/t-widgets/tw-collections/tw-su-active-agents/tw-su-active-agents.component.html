@@ -176,7 +176,7 @@
                     <div fxLayout="row" fxLayoutAlign="end center" fxFlex="15" class="indicators">
                         <mat-icon *ngIf="item.UserProfileForAgent === 'S'" matTooltip="SUPERVISOR">supervised_user_circle</mat-icon>
                         <mat-icon *ngIf="item.IsMSAgent" matTooltip="Webphone">phonelink</mat-icon>
-                        <mat-icon [matTooltip]="item.ConnectionType.toUpperCase()">{{
+                        <mat-icon [matTooltip]="item.ConnectionType.toLowerCase() === 'websockets' ? 'SOCKET' : 'HTTP'">{{
                             item.ConnectionType.toLowerCase() === 'websockets' ? 'wifi_tethering' : 'wifi'
                         }}</mat-icon>
                     </div>

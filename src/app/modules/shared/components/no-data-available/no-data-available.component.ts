@@ -13,6 +13,7 @@ export class NoDataAvailableComponent implements OnInit {
      * Custom message
      */
     @Input() msg = 'No Data Available';
+
     constructor() { }
 
     /**

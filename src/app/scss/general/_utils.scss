@@ -176,6 +176,9 @@
 }
 
 .border-radius {
+    &-0 {
+        border-radius: 0px !important;
+    }
     &-10 {
         border-radius: 10px !important;
     }

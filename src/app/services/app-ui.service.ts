@@ -14,6 +14,7 @@ import {
     AppSnackBarArgs,
     CustomDialogOtherData,
     ReminderTaskDialogTypes,
+    SnackBarArgs,
     SnackbarStateTypes
 } from 'app/interfaces';
 import { map } from 'lodash';
@@ -70,7 +71,7 @@ export class AppUiService {
      * @param {MatDialog} _matDialog
      * @param {AppDataService} _appDataService
      */
-    constructor(private _matSnackBar: MatSnackBar, private _matDialog: MatDialog, private _appDataService: AppDataService) {}
+    constructor(private _matSnackBar: MatSnackBar, private _matDialog: MatDialog, private _appDataService: AppDataService) { }
 
     // -----------------------------------------------------------------------------------------------------
     // Snackbar methods
@@ -89,7 +90,8 @@ export class AppUiService {
         state: SnackbarStateTypes = 'success',
         vPos: MatSnackBarVerticalPosition = 'top',
         hPos: MatSnackBarHorizontalPosition = 'center',
-        duration: number = this._appConfig.AppConfigs.Notifications.AppAlertTimeout || 5000
+        duration: number = this._appConfig.AppConfigs.Notifications.AppAlertTimeout || 5000,
+        onClick?: () => void
     ): MatSnackBarRef<SnackbarComponent> {
         if (message) {
             const icons = {
@@ -106,7 +108,8 @@ export class AppUiService {
                     icon: icons[state],
                     loading: state === 'loading',
                     state,
-                    message
+                    message,
+                    onClick
                 },
                 verticalPosition: vPos,
                 horizontalPosition: hPos,
@@ -118,7 +121,43 @@ export class AppUiService {
     }
 
     /**
+     * To show snackbar
+     * 
+     * @param {SnackBarArgs} args
+     */
+    public showSnackbarAd(args: SnackBarArgs): MatSnackBarRef<SnackbarComponent> {
+        if (args.message) {
+            const icons = {
+                info: 'info',
+                success: 'done',
+                warning: 'warning',
+                failure: 'error',
+                loading: 'loop'
+            };
+            const durationField = args.state === 'loading' ? {} : { duration: args.duration };
+            this._matSnackBar.dismiss();
+            return this._matSnackBar.openFromComponent(SnackbarComponent, {
+                data: {
+                    icon: icons[args.state],
+                    loading: args.state === 'loading',
+                    state: args.state,
+                    message: args.message,
+                    onClick: args.onClick,
+                    onClose: args.onClose
+                },
+                verticalPosition: args.vPos,
+                horizontalPosition: args.hPos,
+                ...durationField
+            });
+        } else {
+            console.error('Empty message passed for notification');
+        }
+    }
+
+    /**
      * To show customized app snackbar
+     * 
+     * @param {AppSnackBarArgs} snackBarArgs
      */
     public showAppSnackbar(snackBarArgs: AppSnackBarArgs): MatSnackBarRef<AppSnackbarComponent> {
         const icons = {
@@ -347,7 +386,7 @@ export class AppUiService {
 
         // check whether to show an alert
         if (notification.showAlert) {
-            this.showSnackbar(notification.message, 'info');
+            this.showSnackbar(notification.message, 'info', 'top', 'center');
         }
 
         // Notify the observers

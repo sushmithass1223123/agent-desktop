@@ -231,8 +231,6 @@ export interface AppNotification {
     showAlert?: boolean;
 }
 
-export type SnackbarStateTypes = 'info' | 'loading' | 'warning' | 'success' | 'failure' | 'close';
-
 export type AppAlertDialogTypes = 'success' | 'info' | 'warning' | 'error';
 
 export interface AppAlertDialogData {
@@ -306,6 +304,39 @@ export interface AppConfirmDialogData {
      * Method to cancel
      */
     cancel: () => void;
+}
+
+export type SnackbarStateTypes = 'info' | 'loading' | 'warning' | 'success' | 'failure' | 'close';
+
+export interface SnackBarArgs {
+    /**
+     * Message to show in snackbar
+     */
+    message: string;
+    /**
+     * State of snackbar of SnackbarStateTypes, success by default
+     */
+    state?: SnackbarStateTypes;
+    /**
+     * Vertical Postion of snackbar of type MatSnackBarVerticalPosition, default 'top'
+     */
+    vPos?: MatSnackBarVerticalPosition;
+    /**
+     * Horizontal Postion of snackbar of type MatSnackBarVerticalPosition, default 'center'
+     */
+    hPos?: MatSnackBarHorizontalPosition;
+    /**
+     * Duration of snackbar, 5000 by default
+     */
+    duration?: number;
+    /**
+     * On click of snackbar
+     */
+    onClick?: () => void;
+    /**
+     * On close of snackbar
+     */
+    onClose?: () => void;
 }
 
 export interface AppSnackBarArgs {

@@ -399,7 +399,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                     .catch((error: string) => {
                         this._appUIService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
                         // log the error to server for troubleshooting purpose
-                        TUtils.Logger.log('Exception in performAgentAction.AgentSnapShotEvent', error);
+                        TUtils.Logger.error('Exception in performAgentAction.AgentSnapShotEvent', error);
                     });
                 break;
             case 'AllowSupervisorToLogout':

@@ -224,7 +224,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     private createAVConnection(avEvent: AVControlMessageReceivedEvent): void {
         if (!this.interactionId) {
-            TUtils.Logger.log('Error in AVChannel', 'Could not create AV channel instance!');
+            TUtils.Logger.debug('Error in AVChannel: Could not create AV channel instance!');
             return;
         }
 
@@ -244,7 +244,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // check if the connection is created
         if (!connection) {
-            TUtils.Logger.log('Error in AVChannel', 'Could not create AV channel instance!');
+            TUtils.Logger.debug('Error in AVChannel: Could not create AV channel instance!');
             return null;
         }
 
@@ -274,7 +274,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // forward the av messages to av channel
         this.avConn?.onMessage(evt.Message);
-    };
+    }
 
     /**
      * AVEvent Handler
@@ -316,10 +316,10 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
                 }
                 break;
             case 'onTrace':
-                TUtils.Logger.log(evt.data);
+                TUtils.Logger.info('TwAudioControlsComponent.onAVEvent.onTrace' + evt.data);
                 break;
             case 'onError':
-                TUtils.Logger.log('Exception in TwAudioControlsComponent.onAVEvent', evt.data);
+                TUtils.Logger.error('TwAudioControlsComponent.onAVEvent.onError', evt.data);
                 break;
             case 'onAVStats':
                 this.status = evt.data;

@@ -33,6 +33,11 @@ export class TwCardHeaderComponent implements OnInit, OnDestroy {
     @Input() widgetState: Record<string, boolean>;
 
     /**
+     * Refresh event emitter
+     */
+    @Output() refresh = new EventEmitter();
+
+    /**
      * Maximise event emitter
      */
     @Output() maximize = new EventEmitter();
@@ -86,6 +91,13 @@ export class TwCardHeaderComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
+    }
+
+    /**
+     * Refresh method
+     */
+    refreshWidget(): void {
+        this.refresh.emit();
     }
 
     /**
