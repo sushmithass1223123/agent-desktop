@@ -524,7 +524,9 @@ export class TMACEventService {
         SDKClient.updateAgentReminder({
             id,
             message: '',
-            status
+            status,
+            reminderDate: '',
+            reminderTime: ''
         });
     }
 

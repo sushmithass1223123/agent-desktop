@@ -1,30 +1,30 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewEncapsulation } from '@angular/core';
+import { TWContentWrapper } from '@modules/t-widgets/utils/widget-wrapper/twc-wrapper';
 import { AOTWidgetService } from '@services/aot-widget.service';
+import { ContentPageService } from '@services/content-page.service';
+import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TMACEventService } from '@services/tmac-event.service';
-import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { InteractionRef, InteractionWidgets, IWidget } from 'app/interfaces';
-import { ContentPageService } from 'app/services/content-page.service';
-import { InteractionManagerService } from 'app/services/interaction-manager.service';
 import { cloneDeep } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { IncomingEmailEvent, InteractionClosedEvent } from 'tmac-sdk';
+import { FaxReceivedEvent, InteractionClosedEvent } from 'tmac-sdk';
 
 /**
- * TwcEmailComponent
+ * Fax Content Component
  */
 @Component({
-    selector: 'twc-email',
-    templateUrl: './twc-email.component.html',
-    styleUrls: ['./twc-email.component.scss'],
+    selector: 'twc-fax',
+    templateUrl: './twc-fax.component.html',
+    styleUrls: ['./twc-fax.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDestroy {
+export class TwcFaxComponent extends TWContentWrapper implements OnInit {
     /**
      * Holds all the interaction related widgets and process on new interacion for interaction content page
      */
     interactions: InteractionWidgets[] = [];
     /**
-     * Currently active email interaction
+     * Currently active fax interaction
      */
     activeInteraction: number;
 
@@ -39,51 +39,41 @@ export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDes
     }
 
     /**
-     * OnInit
+     * On Init
      */
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
 
         // subscribe to interaction events observable
-        this._tmacEventService.getConstructDisposeEvents(['IncomingEmailEvent', 'InteractionClosedEvent'])
+        this._tmacEventService
+            .getConstructDisposeEvents(['FaxReceivedEvent', 'InteractionClosedEvent'])
             .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
+            .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
 
         // subscribe to active interaction observable
-        this._interactionManagerService.interactions
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((interactions: InteractionRef[]) => {
-                // check if there are email interactions first
-                if (this.interactions.length > 0) {
-                    const emailInteractions = interactions.filter((i) => i.type === 'email');
-                    // filter and get the active emailchat interaction if any
-                    emailInteractions.forEach((interaction: InteractionRef) => {
-                        this.activeInteraction = interaction.isActive ? interaction.interactionId : this.activeInteraction;
-                    });
-                }
-            });
+        this._interactionManagerService.interactions.pipe(takeUntil(this.unsubscribeAll)).subscribe((interactions: InteractionRef[]) => {
+            // check if there are fax interactions first
+            if (this.interactions.length > 0) {
+                const textInteractions = interactions.filter((i) => i.type === 'fax');
+                // filter and get the active fax interaction if any
+                textInteractions.forEach((interaction: InteractionRef) => {
+                    this.activeInteraction = interaction.isActive ? interaction.interactionId : this.activeInteraction;
+                });
+            }
+        });
     }
 
     /**
-     * OnDestroy
+     * To process FaxReceivedEvent
      */
-    ngOnDestroy(): void {
-        // call the wrapper destroy method
-        this.destroyWrapper();
-    }
-
-    /**
-     * To process IncomingEmailEvent
-     * @param {IncomingEmailEvent} evt
-     */
-    private IncomingEmailEvent = (evt: IncomingEmailEvent) => {
+    private FaxReceivedEvent = (evt: FaxReceivedEvent) => {
         // get the content widgets
-        const emailWidgets = cloneDeep(this.data.Data.Widgets) || [];
+        const faxWidgets = cloneDeep(this.data.Data.Widgets) || [];
 
-        const staticWidgets = emailWidgets.Static || [];
-        const dynamicWidgets = JSON.parse(evt.WidgetConfigData) || emailWidgets.Dynamic || [];
-        const aotWidgets = emailWidgets.AOT || [];
+        const staticWidgets = faxWidgets.Static || [];
+        const dynamicWidgets = JSON.parse(evt.WidgetConfigData) || faxWidgets.Dynamic || [];
+        const aotWidgets = faxWidgets.AOT || [];
 
         // loop the widgets and add append interaction details
         staticWidgets.forEach((widget: IWidget) => {
@@ -117,12 +107,11 @@ export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDes
         // add the construct event to the interaction manager
         this._interactionManagerService.addInteraction({
             interactionId: evt.InteractionID,
-            type: 'email',
+            type: 'fax',
             status: 'incoming',
             isActive: this.interactions.length === 1,
-            user: evt.From || 'Customer',
-            path: this.data.Data.Path,
-            otherData: evt
+            user: evt.FaxNumber || 'Customer',
+            path: this.data.Data.Path
         });
     }
 
@@ -131,11 +120,12 @@ export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDes
      */
     private InteractionClosedEvent = (evt: InteractionClosedEvent) => {
         this.interactions = this.interactions.filter((i: InteractionWidgets) => i.interactionId !== evt.InteractionID);
-        // if there are other item in the list auto select fist chat after closing current
+        // if there are other item in the list auto select fist fax after closing current
         if (this.interactions.length > 0) {
             this._interactionManagerService.updateInteraction(this.interactions[0].interactionId, {
                 isActive: true
             });
         }
     }
+
 }

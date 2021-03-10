@@ -12,6 +12,7 @@ import { TwAgentAssistComponent } from './tw-agent-assist/tw-agent-assist.compon
 import { TwAhtTcComponent } from './tw-aht-tc/tw-aht-tc.component';
 import { TwAmdocsBccComponent } from './tw-amdocs-bcc/tw-amdocs-bcc.component';
 import { TwAudioControlsComponent } from './tw-audio-controls/tw-audio-controls.component';
+import { TwCalendarModule } from './tw-calendar/tw-calendar.module';
 import { TwCannedResponsesComponent } from './tw-canned-responses/tw-canned-responses.component';
 import { TwChatControlsModule } from './tw-chat-controls/tw-chat-controls.module';
 import { TwChatPanelComponent } from './tw-chat-panel/tw-chat-panel.component';
@@ -23,6 +24,8 @@ import { TwEmailControlsComponent } from './tw-email-controls/tw-email-controls.
 import { TwEmailPanelComponent } from './tw-email-panel/tw-email-panel.component';
 import { TwEmailTemplatePreviewComponent } from './tw-email-template-preview/tw-email-template-preview.component';
 import { TwEntitiesComponent } from './tw-entities/tw-entities.component';
+import { TwFaxControlsComponent } from './tw-fax-controls/tw-fax-controls.component';
+import { TwFaxPanelComponent } from './tw-fax-panel/tw-fax-panel.component';
 import { RaceCarTrackComponent } from './tw-gamification/race-car-track/race-car-track.component';
 import { TwGamificationComponent } from './tw-gamification/tw-gamification.component';
 import { TwPanelComponent } from './tw-panel/tw-panel.component';
@@ -91,7 +94,9 @@ const collectionComponents = [
     RaceCarTrackComponent,
     TwEntitiesComponent,
     TwEmailTemplatePreviewComponent,
-    TwUserLocationComponent
+    TwUserLocationComponent,
+    TwFaxPanelComponent,
+    TwFaxControlsComponent
 ];
 
 /**
@@ -99,7 +104,7 @@ const collectionComponents = [
  */
 @NgModule({
     declarations: collectionComponents,
-    imports: [SharedModule, TwWrapperModule, TwChatControlsModule, TwWorkbenchPanelModule],
+    imports: [SharedModule, TwWrapperModule, TwChatControlsModule, TwWorkbenchPanelModule, TwCalendarModule],
     exports: collectionComponents
 })
 export class TwCollectionsModule { }

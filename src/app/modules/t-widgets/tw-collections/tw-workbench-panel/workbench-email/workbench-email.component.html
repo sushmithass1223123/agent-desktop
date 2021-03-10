@@ -73,7 +73,7 @@
         </div>
     </div>
 
-    <div fxFlex="30" class="email-list mr-12 border-radius-20">
+    <div fxFlex="30" class="email-list mr-8 border-radius-20">
         <div fxLayout fxLayoutAlign="center center" class="search-input mt-8 border-radius-20 position-relative">
             <form class="w-100-p" (ngSubmit)="doGlobalSearch()">
                 <mat-form-field class="custom with-border form-field w-100-p" appearance="outline">
@@ -470,7 +470,7 @@
             <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="tw-list-item border-radius-10 email-tree">
                 <mat-tree-node *matTreeNodeDef="let node" class="tw-list pb-8" matTreeNodeToggle>
                     <li
-                        class="mat-tree-node tw-list-item selectable"
+                        class="mat-tree-node tw-list-item border-radius-10 selectable"
                         [ngClass]="
                             fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
                                 ? fuseConfig.layout.anchorWidget.contentBackground
@@ -552,7 +552,7 @@
         </div>
     </div>
 
-    <div fxFlex class="email-open mr-12 border-radius-20 custom-scroll-adjust">
+    <div fxFlex class="email-open mr-8 border-radius-20 custom-scroll-adjust">
         <ng-container *ngIf="emailSearchRes.data.selected as selectedEmail">
             <div *ngIf="selectedEmail" fxLayout fxLayoutAlign="end" fxLayoutGap="10px" class="my-20 w-95-p">
                 <button

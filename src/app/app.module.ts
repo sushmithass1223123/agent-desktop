@@ -15,6 +15,9 @@ import { fuseConfig } from 'app/constants';
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 
+/**
+ * App modules
+ */
 @NgModule({
     declarations: [AppComponent],
     providers: [

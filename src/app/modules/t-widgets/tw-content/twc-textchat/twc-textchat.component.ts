@@ -10,7 +10,7 @@ import { takeUntil } from 'rxjs/operators';
 import { InteractionClosedEvent, TextChatIncomingEvent } from 'tmac-sdk';
 
 /***
- * TwcTextchatComponent
+ * Textchat Content Component
  */
 @Component({
     selector: 'twc-textchat',
@@ -44,19 +44,6 @@ export class TwcTextchatComponent extends TWContentWrapper implements OnInit, On
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-
-        // // subscribe to interaction events observable
-        // this._tmacEventService.constructDisposeEvents
-        //     .pipe(takeUntil(this.unsubscribeAll))
-        //     .subscribe((evt: any) => {
-        //         // filter the event name
-        //         if (evt.EventName === 'TextChatIncomingEvent') {
-        //             this.TextChatIncomingEvent(evt);
-        //         }
-        //         else if (evt.EventName === 'InteractionClosedEvent') {
-        //             this.InteractionClosedEvent(evt);
-        //         }
-        //     });
 
         // subscribe to interaction events observable
         this._tmacEventService
@@ -139,7 +126,7 @@ export class TwcTextchatComponent extends TWContentWrapper implements OnInit, On
                 unreadCount: 0
             }
         });
-    };
+    }
 
     /**
      * To process interaction closed event for voice
@@ -152,5 +139,5 @@ export class TwcTextchatComponent extends TWContentWrapper implements OnInit, On
                 isActive: true
             });
         }
-    };
+    }
 }

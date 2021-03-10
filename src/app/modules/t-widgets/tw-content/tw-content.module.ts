@@ -13,6 +13,7 @@ import { TwcUnknownComponent } from './twc-unknown/twc-unknown.component';
 import { TwcVoiceComponent } from './twc-voice/twc-voice.component';
 import { TwcWorkbenchComponent } from './twc-workbench/twc-workbench.component';
 import { TwcDockerComponent } from './twc-docker/twc-docker.component';
+import { TwcFaxComponent } from './twc-fax/twc-fax.component';
 
 /**
  * Tw Content Module
@@ -29,7 +30,8 @@ import { TwcDockerComponent } from './twc-docker/twc-docker.component';
         TwcTextchatComponent,
         TwcWorkbenchComponent,
         TwcEmailComponent,
-        TwcDockerComponent
+        TwcDockerComponent,
+        TwcFaxComponent
     ],
     imports: [SharedModule, TwTemplateModule, TwWrapperModule],
     exports: [TwcNoWidgetsComponent]

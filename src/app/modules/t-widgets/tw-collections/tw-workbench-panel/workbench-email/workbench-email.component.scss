@@ -1,14 +1,9 @@
-.advanced-search-form {
-    .mat-form-field-infix {
-        align-items: center;
-    }
-}
-
 workbench-email {
     .editor-container {
         border: none;
         margin-top: 30px;
     }
+
     .email-list {
         height: 100%;
         max-height: 100%;
@@ -28,9 +23,11 @@ workbench-email {
         padding: 0 !important;
         margin: 0;
     }
+
     .mat-form-field-infinix {
         padding: 2px 0px !important;
     }
+
     .email-open {
         height: 100%;
         box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
@@ -88,12 +85,14 @@ workbench-email {
         margin-bottom: 0;
         list-style-type: none;
     }
+
     .mat-nested-tree-node {
         & > li > ul:not(.no-scroll) {
             max-height: 500px;
             overflow: auto;
         }
     }
+
     mat-tree-node {
         cursor: pointer;
         padding-left: 0 !important;
@@ -130,5 +129,8 @@ workbench-email {
     }
     .form-field {
         margin-bottom: 8px;
+    }
+    .mat-form-field-infix {
+        align-items: center;
     }
 }

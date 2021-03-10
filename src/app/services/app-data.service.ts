@@ -203,20 +203,20 @@ export class AppDataService {
                     logging: config.AppConfigs.SDK.SignalRProxy.Logging ?? false,
                     protocol: config.AppConfigs.SDK.SignalRProxy?.Protocol,
                     timeout: config.AppConfigs.SDK.SignalRProxy.Timeout || 30,
-                    fallback: false
+                    fallback: config.AppConfigs.SDK.SignalRProxy.Fallback ?? true
                 },
                 logging: {
                     enabled: config.AppConfigs.SDK.Logging.Enabled ?? false,
                     level: {
-                        debug: config.AppConfigs.SDK.Logging.Level.Debug ?? false,
-                        info: config.AppConfigs.SDK.Logging.Level.Info ?? false,
-                        warn: config.AppConfigs.SDK.Logging.Level.Warn ?? false,
-                        error: config.AppConfigs.SDK.Logging.Level.Error ?? false
+                        debug: config.AppConfigs.SDK.Logging.Level?.Debug ?? false,
+                        info: config.AppConfigs.SDK.Logging.Level?.Info ?? false,
+                        warn: config.AppConfigs.SDK.Logging.Level?.Warn ?? false,
+                        error: config.AppConfigs.SDK.Logging.Level?.Error ?? false
                     },
                     remote: {
-                        enabled: config.AppConfigs.SDK.Logging.Remote.Enabled ?? false,
-                        timeout: config.AppConfigs.SDK.Logging.Remote.Timeout || 30,
-                        count: config.AppConfigs.SDK.Logging.Remote.Count || 10
+                        enabled: config.AppConfigs.SDK.Logging.Remote?.Enabled ?? false,
+                        timeout: config.AppConfigs.SDK.Logging.Remote?.Timeout || 30,
+                        count: config.AppConfigs.SDK.Logging.Remote?.Count || 10
                     },
                     sdkMethods: config.AppConfigs.SDK.Logging.SDKMethods ?? false,
                     sdkEvents: config.AppConfigs.SDK.Logging.SDKEvents ?? false
@@ -224,7 +224,7 @@ export class AppDataService {
                 customScripts: [...config.AppConfigs.SDK.CustomSripts]
             });
         } catch (error) {
-            TUtils.Logger.error('Exception in AppDataService.setJsonConfig', error);
+            TUtils.Logger.console('error', 'Exception in AppDataService.setJsonConfig', null, error);
         }
     }
 }
