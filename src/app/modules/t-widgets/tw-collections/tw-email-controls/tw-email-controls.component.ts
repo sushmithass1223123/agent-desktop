@@ -429,7 +429,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Forward Email
      */
-    forwardEmail(): void {}
+    forwardEmail(): void { }
 
     /**
      * Show reply email form
@@ -457,11 +457,10 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             To: From || '',
             Body: `
             ${preBody} 
-            ${
-                this.domSanitizer.bypassSecurityTrustHtml(Body || '')['changingThisBreaksApplicationSecurity'][
-                    'changingThisBreaksApplicationSecurity'
+            ${this.domSanitizer.bypassSecurityTrustHtml(Body || '')['changingThisBreaksApplicationSecurity'][
+                'changingThisBreaksApplicationSecurity'
                 ]
-            }`,
+                }`,
             Subject: `RE: ${Subject}`,
             Files: []
         };
@@ -612,6 +611,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                         btn.disabled = false;
                     });
             }
+            btn.disabled = true;
         });
     }
 
@@ -688,9 +688,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                         this._appUIService.showSnackbar('Error in saving interaction comment', 'failure');
                         evt.disabled = true;
                     });
-            } else {
-                evt.disabled = false;
             }
+            evt.disabled = false;
         });
     }
 

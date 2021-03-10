@@ -1,0 +1,30 @@
+<div fxLayout="row wrap" fxLayoutAlign="space-around center" class="px-4" mat-ripple *ngIf="mediaDeviceInfo | async as mediaDevices">
+    <button mat-icon-button (click)="showAvailableDevices()">
+        <mat-icon matTooltip="Available devices"> headset </mat-icon>
+    </button>
+</div>
+
+<ng-template #availableDevicesMenu [overlapTrigger]="false" class="custom">
+    <ng-container *ngIf="mediaDeviceInfo && mediaDeviceInfo | async as mediaDevices">
+        <div class="device-list" *ngFor="let device of mediaDevices">
+            <p class="mat-title">{{ device.type | titlecase }}</p>
+            <div *ngFor="let myDevice of device.devices" fxLayout fxLayoutAlign="space-between center" fxLayoutGap="8px" class="py-8 px-12">
+                <div class="w-30">
+                    <ng-container [ngSwitch]="device.type">
+                        <ng-container *ngSwitchCase="'audio'">
+                            <ng-container [ngSwitch]="myDevice.kind">
+                                <mat-icon *ngSwitchCase="'audioinput'"> mic </mat-icon>
+                                <mat-icon *ngSwitchCase="'audiooutput'"> speaker </mat-icon>
+                            </ng-container>
+                        </ng-container>
+                        <mat-icon *ngSwitchCase="'video'"> video_call </mat-icon>
+                    </ng-container>
+                </div>
+                <div class="px-12">
+                    {{ myDevice.label }}
+                </div>
+                <!-- <div class="w-30">Hello !!</div> -->
+            </div>
+        </div>
+    </ng-container>
+</ng-template>

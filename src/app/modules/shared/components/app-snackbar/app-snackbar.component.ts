@@ -8,9 +8,10 @@ import { MatSnackBar, MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
     encapsulation: ViewEncapsulation.None
 })
 export class AppSnackbarComponent implements OnInit {
-
-    constructor(private _snackbar: MatSnackBar, @Inject(MAT_SNACK_BAR_DATA) public data:
-        {
+    constructor(
+        private _snackbar: MatSnackBar,
+        @Inject(MAT_SNACK_BAR_DATA)
+        public data: {
             /**
              * Snackbar message
              */
@@ -19,15 +20,17 @@ export class AppSnackbarComponent implements OnInit {
              * Snackbar icon
              */
             icon: string;
-        }) {
-
-    }
+            /**
+             * functiontobe executed when clicked
+             */
+            onClick: (...args) => void;
+        }
+    ) {}
 
     /**
      * OnInit
      */
-    ngOnInit(): void {
-    }
+    ngOnInit(): void {}
 
     /**
      * To dismiss the snackbar
@@ -36,4 +39,10 @@ export class AppSnackbarComponent implements OnInit {
         this._snackbar.dismiss();
     }
 
+    onSnackbarClick(): void {
+        if (this.data.onClick) {
+            this.data.onClick();
+            this.dismiss();
+        }
+    }
 }

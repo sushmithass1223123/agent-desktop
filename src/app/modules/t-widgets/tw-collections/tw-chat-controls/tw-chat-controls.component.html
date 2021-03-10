@@ -160,6 +160,17 @@
             >
                 <div fxLayout="row" fxLayoutAlign="end none" class="chat-actions border-bottom">
                     <button
+                        *ngIf="data.Data.Whiteboard.Allowed"
+                        mat-mini-fab
+                        color="warn"
+                        [ngClass]="status === 'connected' ? 'mat-elevation-z2' : ''"
+                        matTooltip="Open Whiteboard"
+                        (click)="openWhiteboard()"
+                    >
+                        <mat-icon>create</mat-icon>
+                    </button>
+
+                    <button
                         *ngIf="showAutoFreeze"
                         [disabled]="status !== 'connected'"
                         mat-mini-fab

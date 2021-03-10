@@ -360,6 +360,10 @@ export interface AppSnackBarArgs {
      * Duration of snackbar, 5000 by default
      */
     duration?: number;
+    /**
+     * performs action when snackbar clicked
+     */
+    onClick?: (...args) => void
 }
 
 export interface CustomDialogData {

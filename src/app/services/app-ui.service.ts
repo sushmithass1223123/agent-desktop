@@ -23,6 +23,8 @@ import { takeUntil } from 'rxjs/operators';
 import { TUtils } from 'tmac-sdk';
 import { AppDataService } from './app-data.service';
 
+type UiChanActions = 'hold/select-chat';
+
 /**
  * App ui service
  * for communication across distant components
@@ -65,13 +67,21 @@ export class AppUiService {
         sounds: boolean;
     };
 
+    uiChannel$: Subject<{ type: UiChanActions; data?: any }>;
+
     /**
      * Constructor
      * @param {MatSnackBar} _matSnackBar
      * @param {MatDialog} _matDialog
      * @param {AppDataService} _appDataService
      */
-    constructor(private _matSnackBar: MatSnackBar, private _matDialog: MatDialog, private _appDataService: AppDataService) { }
+    constructor(private _matSnackBar: MatSnackBar, private _matDialog: MatDialog, private _appDataService: AppDataService) {
+        this.init();
+    }
+
+    private init(): void {
+        this.uiChannel$ = new Subject();
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // Snackbar methods
@@ -178,7 +188,8 @@ export class AppUiService {
         return this._matSnackBar.openFromComponent(AppSnackbarComponent, {
             data: {
                 message: snackBarArgs.message,
-                icon: icons[snackBarArgs.state || 'info']
+                icon: icons[snackBarArgs.state || 'info'],
+                onClick: snackBarArgs.onClick
             },
             verticalPosition: snackBarArgs.vPos || 'top',
             horizontalPosition: snackBarArgs.hPos || 'center',

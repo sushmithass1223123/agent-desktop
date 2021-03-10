@@ -712,7 +712,7 @@ export class LoginComponent implements OnInit, OnDestroy {
                 forceReload: force,
                 jsonData: JSON.stringify(jsonData),
                 password: password,
-                sessionKey: ''
+                sessionKey: '',
             },
             null
         )
