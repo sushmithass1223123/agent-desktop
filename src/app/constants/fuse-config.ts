@@ -17,7 +17,7 @@ export const fuseConfig: FuseConfig = {
         style: 'vertical-layout-1',
         width: 'fullwidth',
         navbar: {
-            customBackgroundColor: true,
+            customBackgroundColor: false,
             background: 'purple-700',
             folded: true,
             hidden: false,
@@ -25,23 +25,23 @@ export const fuseConfig: FuseConfig = {
             variant: ''
         },
         toolbar: {
-            customBackgroundColor: true,
+            customBackgroundColor: false,
             background: 'grey-200',
             hidden: false,
             position: 'below-fixed'
         },
         content: {
-            customBackgroundColor: true,
+            customBackgroundColor: false,
             background: 'grey-200'
         },
         anchorWidget: {
-            customBackgroundColor: true,
+            customBackgroundColor: false,
             bodyBackground: 'purple-A100',
             headerBackground: 'grey-100',
             contentBackground: 'grey-100'
         },
         widget: {
-            customBackgroundColor: true,
+            customBackgroundColor: false,
             bodyBackground: 'grey-A100',
             headerBackground: 'grey-100',
             contentBackground: 'grey-100'

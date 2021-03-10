@@ -4,6 +4,7 @@ import { TwActiveInteractionsComponent } from './tw-active-interactions/tw-activ
 import { TwAgentDetailsComponent } from './tw-agent-details/tw-agent-details.component';
 import { TwAuxCodesComponent } from './tw-aux-codes/tw-aux-codes.component';
 import { TwAuxTimerComponent } from './tw-aux-timer/tw-aux-timer.component';
+import { TwAvailableMediaDeviceComponent } from './tw-available-media-device/tw-available-media-device.component';
 import { TwBroadcastComponent } from './tw-broadcast/tw-broadcast.component';
 import { TwCreateInteractionComponent } from './tw-create-interaction/tw-create-interaction.component';
 import { TwInstantMessagingComponent } from './tw-instant-messaging/tw-instant-messaging.component';
@@ -24,15 +25,16 @@ const toolbarComponents = [
     TwInstantMessagingComponent,
     TwLogoutComponent,
     TwBroadcastComponent,
-    TwCreateInteractionComponent
+    TwCreateInteractionComponent,
+    TwAvailableMediaDeviceComponent
 ];
 
 /**
- * All components in Toolbar 
+ * All components in Toolbar
  */
 @NgModule({
     declarations: toolbarComponents,
     imports: [SharedModule],
     exports: toolbarComponents
 })
-export class TwToolbarModule { }
+export class TwToolbarModule {}

@@ -21,7 +21,7 @@ import { map } from 'lodash';
 import * as moment from 'moment';
 import { from, Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
-import { delay } from 'rxjs/operators';
+import { delay, filter } from 'rxjs/operators';
 import {
     AVChannel,
     AVControlMessageReceivedEvent,
@@ -389,6 +389,15 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // call the wrapper init method
         this.initWrapper(this.data);
 
+        this._appUIService.uiChannel$
+            .pipe(
+                takeUntil(this.unsubscribeAll),
+                filter((evt) => evt.type === 'hold/select-chat')
+            )
+            .subscribe((res) => {
+                this.selectInteraction(res.data);
+            });
+
         // set the interaction id from data
         this.interactionId = this.data.InteractionDetails?.InteractionID;
 
@@ -424,6 +433,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // check if this chat is init by supervisor
         this.supervisorInit = this.lineId === 'bargein';
+
+        if (this.data.InteractionDetails.IsAgentTransferedChat) {
+            this.loadPreviousAgentNotes();
+        }
 
         // check if conversation api Url is configured
         if (this.data.Data.ConversationService && this.data.Data.ConversationService.Url) {
@@ -467,6 +480,27 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         if (this.data.Data.ChatTemplate.Allowed) {
             // get text templates
             this.getTextTemplates();
+        }
+    }
+
+    /**
+     * loads interaction notes made by previous agent
+     */
+    async loadPreviousAgentNotes(): Promise<void> {
+        try {
+            const { SourceAgentID: agentId, SourceAgentInteractionId: interactionId, RecoveryData } = this.data.InteractionDetails;
+            const parsedRecoveryData = JSON.parse(RecoveryData.TextChatData);
+            const requestArgs = {
+                count: 20,
+                fromDate: '',
+                interactionId,
+                sessionId: parsedRecoveryData.sessionID,
+                toDate: '',
+                agentId
+            };
+            await SDKClient.getInteractionData(requestArgs);
+        } catch (e) {
+            console.error(e);
         }
     }
 
@@ -678,7 +712,14 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // if (evt.InteractionID !== this.interactionId) {
         //     return;
         // }
-
+        // SDKClient.getInteractionData({
+        //     count: 10,
+        //     fromDate: '',
+        //     interactionId: record.ID,
+        //     sessionId: record.SessionID,
+        //     toDate: '',
+        //     agentId: record.AgentID
+        // })
         // loop through the data
         evt.Transcript.forEach(
             (item: {
@@ -2206,5 +2247,23 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     setReplyingToMessage(message: ChatTranscripts): void {
         this.replyingToMessage = { ...message, repliedToMessage: null, time: null };
+    }
+
+    /**
+     * Opens a whiteboard session
+     */
+    openWhiteboard(): void {
+        const widget = new TwWidgetModel('Whiteboard', 'tw-custom', 'create');
+        widget.Config.Actions = ['collapse', 'destroy'];
+        widget.Config.ViewState = 'maximize';
+        widget.Config.Anchor = true;
+        widget.Config.Position.X = 3;
+        widget.Config.Position.Y = 4;
+        widget.Data = {
+            AutoOpen: false,
+            OpenInNew: false,
+            Url: this.data.Data.Whiteboard.Url
+        };
+        this._aotWidgetService.addWidget(widget);
     }
 }

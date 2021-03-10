@@ -545,13 +545,20 @@ export class TMACEventService {
 
     /**
      * To process HoldTimerEvent
-     *
      * @param {HoldTimerEvent} evt
      */
     private HoldTimerEvent = (evt: HoldTimerEvent) => {
+        const interaction = this._interactionEventArray.find(
+            (e) => e.InteractionID === evt.InteractionID && e.EventName === 'TextChatRemoteUserConnectedEvent'
+        );
+        const nameAndSessionId = `with ${interaction.Name ? interaction.Name + ' and ' : ''} session id ${interaction.JsonDataObj.sessionID}`;
+        const redirectToInteraction = () => {
+            this._appUIService.uiChannel$.next({ type: 'hold/select-chat', data: { interactionId: evt.InteractionID } });
+        };
         this._appUIService.showAppSnackbar({
-            message: `Interaction is on hold for ${evt.HoldTimeString}`,
-            state: evt.ColorCode
+            message: `Interaction ${interaction.InteractionID} ${nameAndSessionId} is on hold for ${evt.HoldTimeString}`,
+            state: evt.ColorCode,
+            onClick: redirectToInteraction
         });
     }
 

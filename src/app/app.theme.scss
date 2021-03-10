@@ -191,6 +191,7 @@ $theme: mat-light-theme($default-primary-palette, $default-accent-palette, $defa
 // Add ".theme-default/theme-default-2" class to the body to activate this theme.
 // Class name must start with "theme-" !!!
 body.theme-default,
+body.theme-default-3,
 body.theme-default-2 {
     // Create an Angular Material theme from the $theme map
     @include angular-material-theme($theme);
