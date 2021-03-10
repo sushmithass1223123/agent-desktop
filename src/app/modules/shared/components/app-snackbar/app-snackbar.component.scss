@@ -1,6 +1,9 @@
 @import 'src/app/scss/shared';
 
 snack-bar-container {
+    .cursor {
+        cursor: pointer;
+    }
     & > * {
         &,
         & > * {

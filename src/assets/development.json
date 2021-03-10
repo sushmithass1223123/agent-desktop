@@ -43,6 +43,12 @@
                     "Data": {
                         "Widgets": [
                             {
+                                "Name": "Available Media devices",
+                                "Description": "",
+                                "Type": "tw-available-media-device",
+                                "Config": { "Enabled": true }
+                            },
+                            {
                                 "Name": "Aux Timer",
                                 "Description": "",
                                 "Type": "tw-aux-timer",
@@ -1969,6 +1975,10 @@
                                                     "VoiceNoteAllowed": false,
                                                     "AttachmentAllowed": true,
                                                     "ScreenShareAllowed": true,
+                                                    "Whiteboard": {
+                                                        "Allowed" : true,
+                                                        "Url" : "http://dice.tetherfi.cloud:55080/Whiteboard/ui/index.html"
+                                                    },
                                                     "AskForScreenshareAllowed": false,
                                                     "Snapshot": {
                                                         "Allowed": true,
@@ -2096,7 +2106,7 @@
                                                 "Description": "",
                                                 "Type": "tw-customer-journey",
                                                 "Config": {
-                                                    "Enabled": false,
+                                                    "Enabled": true,
                                                     "Static": false,
                                                     "Anchor": true,
                                                     "AOT": false,
@@ -3796,7 +3806,7 @@
     },
     "AppConfigs": {
         "TitleName": "Agent Desktop",
-        "Theme": "theme-default",
+        "Theme": "theme-default-3",
         "Logos": {
             "Favicon": "",
             "Default": {
@@ -3845,7 +3855,7 @@
             "webRTCConfig": {
                 "iceServers": [
                     {
-                        "urls": "turn:${domainName}:3585",
+                        "urls": "turn:dice.tetherfi.cloud:3585",
                         "username": "tetherfi",
                         "credential": "nuwan"
                     }
@@ -3891,10 +3901,10 @@
         "SDK": {
             "Proxy": {
                 "Urls": [
-                    "https://dice.tetherfi.cloud/TMACSDKProxyv5/TmacProxy.asmx",
-                    "https://localhost:55443/SDKTMACProxy/TmacProxy.asmx",
-                    "https://idfcvpd.tetherfi.cloud/TMACSDKProxy/tmacproxy.asmx",
-                    "https://dice.tetherfi.cloud/TMACSDKProxy/TmacProxy.asmx"
+                    "https://dice.tetherfi.cloud/TMACSDKProxyV5/TmacProxy.asmx",
+                    "https://idfcvpd.tetherfi.cloud/tmacsdkproxy/tmacproxy.asmx",
+                    "https://dice.tetherfi.cloud/TMACSDKProxy/TmacProxy.asmx",
+                    "https://localhost:55443/SDKTMACProxy/TmacProxy.asmx"
                 ],
                 "Type": "soap",
                 "Timeout": 30

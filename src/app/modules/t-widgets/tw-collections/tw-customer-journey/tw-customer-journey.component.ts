@@ -491,7 +491,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     }
 
     /**
-     * fetches interaction data and assings to this.interactionNotesReq.data
+     * Fetches interaction data and assings to this.interactionNotesReq.data
      * @param {InteractionHistory} record
      */
     public async showInteractionData(record: InteractionHistory): Promise<void> {
@@ -515,7 +515,6 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             }),
             share()
         );
-        // });
     }
 
     /**

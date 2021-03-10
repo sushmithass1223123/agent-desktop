@@ -3,13 +3,15 @@ import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, 
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatDialog } from '@angular/material/dialog';
+import { FuseConfigService } from '@fuse/services/config.service';
+import { FuseConfig } from '@fuse/types';
 import { TwEmailTemplatePreviewComponent } from '@modules/t-widgets/tw-collections/tw-email-template-preview/tw-email-template-preview.component';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
 import { QUILL_EDITOR_CONFIG } from 'app/constants';
 import { CreateEmailInfo, TwWidgetModel } from 'app/models';
-import { merge } from 'rxjs';
-import { debounceTime, map } from 'rxjs/operators';
+import { merge, Observable } from 'rxjs';
+import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { EmailTemplate, SDKClient } from 'tmac-sdk';
 
 /**
@@ -33,7 +35,7 @@ export class CreateEmailComponent implements OnInit, OnDestroy {
     /**
      * Show toolbar flag
      */
-    showToolbar = false;
+    showToolbar = true;
 
     /**
      * Config for quill editor
@@ -92,13 +94,30 @@ export class CreateEmailComponent implements OnInit, OnDestroy {
      */
     @Input() emailInfo?: CreateEmailInfo;
 
-    constructor(private appUiService: AppUiService, private matDialog: MatDialog, private aotService: AOTWidgetService) {}
+    /**
+     * Background Color for toolbar
+     */
+    toolbarBg: Observable<string>;
+
+    constructor(private appUiService: AppUiService, private matDialog: MatDialog, private aotService: AOTWidgetService, private fuseConfig: FuseConfigService) { }
 
     /**
      * Lifecycle hook
      */
     ngOnInit(): void {
         this.suggestedUsers = this.allUsers;
+        this.toolbarBg = this.fuseConfig.config
+            .pipe(map((config: FuseConfig) => ({
+                content: config.layout.widget.customBackgroundColor === true
+                    ? config.layout.widget.contentBackground
+                    : '',
+                body: config.layout.widget.customBackgroundColor === true
+                    ? config.layout.widget.bodyBackground
+                    : ''
+            })))
+
+        this.toolbarBg.subscribe(console.log)
+
         this.emailCtrl.setValue({
             To: this.emailInfo?.To || '',
             CC: this.emailInfo?.CC || '',
@@ -180,7 +199,7 @@ export class CreateEmailComponent implements OnInit, OnDestroy {
      * test functionn for quill editor
      * @param {any} evt
      */
-    onContentChanged(evt: any): void {}
+    onContentChanged(evt: any): void { }
 
     /**
      * Attach files to email

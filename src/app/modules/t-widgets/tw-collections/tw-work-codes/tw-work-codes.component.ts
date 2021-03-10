@@ -1,7 +1,8 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatAutocomplete, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatDialog } from '@angular/material/dialog';
 import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
@@ -90,13 +91,13 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
      */
     interactionId: number;
 
+    @ViewChild('addWorkcodeModalRef')
+    addWorkcodeModalRef: TemplateRef<any>;
+
     /**
      * Constructor
      */
-    constructor(
-        private _appUiService: AppUiService,
-        private _tmacEventService: TMACEventService
-    ) {
+    constructor(private _appUiService: AppUiService, private _tmacEventService: TMACEventService, private matDialog: MatDialog) {
         super();
     }
 
@@ -173,7 +174,6 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
 
             this.loadWorkCodesReq.loading = false;
             this.loadWorkCodesReq.error = false;
-
         } catch (e) {
             this.loadWorkCodesReq.error = true;
             this.loadWorkCodesReq.loading = false;
@@ -184,16 +184,16 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     /**
      * TeamrWorkCodeDetailsEvent handler
      * @method TeamrWorkCodeDetailsEvent
-     * @param {CustomSDKEvent} evt 
+     * @param {CustomSDKEvent} evt
      */
     private TeamrWorkCodeDetailsEvent = (evt: CustomSDKEvent) => {
         this.selectedWorkCodes = orderBy(evt.Data, ['Count'], ['desc']);
-    }
+    };
 
     /**
      * WorkCodeAddedEvent Handler
      * @method WorkCodeAddedEvent
-     * @param {WorkCodeAddedEvent} evt 
+     * @param {WorkCodeAddedEvent} evt
      */
     private WorkCodeAddedEvent = (evt: WorkCodeAddedEvent) => {
         // check for interaction
@@ -212,18 +212,17 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
                 this.loadWorkCodesReq.data.listData = this.loadWorkCodesReq.data.listData.filter((x) => x.Code !== evt.Code);
             }
         }
-    }
+    };
 
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
 
-
     /**
      * Track by for avoiding rerender
      * @method trackByID
-     * @param {number} index 
-     * @param {any} item 
+     * @param {number} index
+     * @param {any} item
      */
     public trackByID(index: number, item: any): string {
         return item.Code;
@@ -231,9 +230,10 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
 
     /**
      * Initial Setup
-     * @method setup 
+     * @method setup
      */
     public setup(): void {
+        this.DataConf.ByGroup = true;
         if (this.DataConf.Source === 'interaction') {
             // assign the interaction id
             this.interactionId = this.data.InteractionDetails?.InteractionID;
@@ -242,18 +242,17 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
 
             // SDKClient.events.on('WorkCodeAddedEvent', this.WorkCodeAddedEvent);
 
-            this._tmacEventService.getEvents(['WorkCodeAddedEvent'])
+            this._tmacEventService
+                .getEvents(['WorkCodeAddedEvent'])
                 .pipe(takeUntil(this.unsubscribeAll))
-                .subscribe(evts => this.WorkCodeAddedEvent(evts[0]));
-
+                .subscribe((evts) => this.WorkCodeAddedEvent(evts[0]));
         } else if (this.DataConf.Source === 'supervisor') {
-
             // SDKClient.events.on('TeamrWorkCodeDetailsEvent', this.TeamrWorkCodeDetailsEvent);
 
-            this._tmacEventService.getEvents(['TeamrWorkCodeDetailsEvent'])
+            this._tmacEventService
+                .getEvents(['TeamrWorkCodeDetailsEvent'])
                 .pipe(takeUntil(this.unsubscribeAll))
-                .subscribe(evts => this.TeamrWorkCodeDetailsEvent(evts[0]));
-
+                .subscribe((evts) => this.TeamrWorkCodeDetailsEvent(evts[0]));
         } else {
             this.loadWorkCodesReq.error = true;
             this.loadWorkCodesReq.loading = false;
@@ -264,31 +263,29 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     /**
      * Set Work Code
      * @method setWorkCode
-     * @param {MatAutocompleteSelectedEvent} option 
+     * @param {MatAutocompleteSelectedEvent} option
      */
-    public setWorkCode(option: MatAutocompleteSelectedEvent): void {
+    public setWorkCode(option: WorkCode, group: string): void {
         this._appUiService.showSnackbar('Setting work code', 'loading');
         SDKClient.setCallWorkCode(
             {
-                code: option.option.value.Code,
+                code: option.Code,
                 interactionId: this.data.InteractionDetails.InteractionID
             },
             null
         )
             .then(() => {
-                this.selectedWorkCodes.push(option.option.value);
+                this.selectedWorkCodes.push(option);
                 if (this.DataConf.ByGroup) {
-                    if (!option.option.group.label) {
+                    if (!group) {
                         Object.keys(this.loadWorkCodesReq.data).forEach((k) => {
-                            this.loadWorkCodesReq.data[k] = this.loadWorkCodesReq.data[k].filter((x) => x.Code !== option.option.value.Code);
+                            this.loadWorkCodesReq.data[k] = this.loadWorkCodesReq.data[k].filter((x) => x.Code !== option.Code);
                         });
                     } else {
-                        this.loadWorkCodesReq.data[option.option.group.label] = this.loadWorkCodesReq.data[option.option.group.label].filter(
-                            (x) => x.Code !== option.option.value.Code
-                        );
+                        this.loadWorkCodesReq.data[group] = this.loadWorkCodesReq.data[group].filter((x) => x.Code !== option.Code);
                     }
                 } else {
-                    this.loadWorkCodesReq.data.listData = this.loadWorkCodesReq.data.listData.filter((x) => x.Code !== option.option.value.Code);
+                    this.loadWorkCodesReq.data.listData = this.loadWorkCodesReq.data.listData.filter((x) => x.Code !== option.Code);
                 }
                 this._appUiService.showSnackbar('Work code set successfully', 'success');
                 this.workCodeInput.nativeElement.value = '';
@@ -301,7 +298,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     /**
      * Remove Work Code
      * @method removeWorkCode
-     * @param {WorkCode} option 
+     * @param {WorkCode} option
      */
     public removeWorkCode(option: WorkCode): void {
         this._appUiService.showSnackbar('Removing work code', 'loading');
@@ -330,7 +327,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     /**
      * Filter Options
      * @method _filterOptions
-     * @param {String} name 
+     * @param {String} name
      */
     _filterOptions(name: string): Record<string, WorkCode[]> {
         let filteredData: any;
@@ -351,11 +348,17 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     /**
      * Get option value after merging
      * @method getOptionValue
-     * @param {any} x 
-     * @param {any} y 
+     * @param {any} x
+     * @param {any} y
      */
     getOptionValue(x: any, y: any): any {
         return { ...x, ...y };
+    }
+
+    openAddWorkCodeModal(): void {
+        this.matDialog.open(this.addWorkcodeModalRef, {
+            width: '50%'
+        });
     }
 }
 

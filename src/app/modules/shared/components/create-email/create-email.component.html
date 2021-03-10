@@ -84,7 +84,11 @@
                     [modules]="editorConfig.modules"
                     format="html"
                 >
-                    <div quill-editor-toolbar class="border-radius-20 mat-elevation-z2" [ngClass]="{ show: showToolbar }">
+                    <div
+                        quill-editor-toolbar
+                        class="border-radius-20 mat-elevation-z2"
+                        [ngClass]="showToolbar ? 'show ' + (toolbarBg | async).content : ''"
+                    >
                         <span class="ql-formats">
                             <select class="ql-font">
                                 <option selected></option>

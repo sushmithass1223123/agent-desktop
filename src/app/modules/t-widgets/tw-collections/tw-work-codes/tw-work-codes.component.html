@@ -3,42 +3,37 @@
 <!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
 <tw-wrapper [data]="data">
     <!-- your code goes here -->
-    <div *ngIf="!loadWorkCodesReq.loading && !loadWorkCodesReq.error" fxFlex fxFill fxLayout="row" fxLayoutAlign="center" class="p-4">
-        <mat-form-field *ngIf="DataConf.Source === 'interaction'" class="w-100-p" appearance="outline">
-            <mat-autocomplete class="w-100-p" #allWorkCodesRef (optionSelected)="setWorkCode($event)">
-                <ng-container *ngIf="DataConf.ByGroup">
-                    <mat-optgroup *ngFor="let group of filteredOptions | async | keyvalue" [label]="group.key">
-                        <mat-option *ngFor="let workCode of group.value" [value]="getOptionValue(workCode, { ParentName: group.key })">
-                            {{ workCode.Name }}
-                        </mat-option>
-                    </mat-optgroup>
-                </ng-container>
-                <ng-container *ngIf="!DataConf.ByGroup">
-                    <mat-option *ngFor="let workCode of (filteredOptions | async).listData" [value]="workCode">
-                        {{ workCode.Name }}
-                    </mat-option>
-                </ng-container>
-            </mat-autocomplete>
+    <div
+        *ngIf="!loadWorkCodesReq.loading && !loadWorkCodesReq.error"
+        fxFlex
+        fxFill
+        fxLayout="row"
+        fxLayoutAlign="center"
+        class="p-4 position-relative"
+    >
+        <ng-container *ngIf="DataConf.Source === 'interaction'">
             <mat-chip-list #selectedWorkCodesRef aria-label="WorkCodes">
                 <mat-chip *ngFor="let workCode of selectedWorkCodes" removable (removed)="removeWorkCode(workCode)" class="bg-secondary">
                     <mat-icon class="mat-icon-mirror mr-4">local_offer</mat-icon>
                     {{ workCode.Name }}
                     <mat-icon matChipRemove>cancel</mat-icon>
                 </mat-chip>
-                <input
-                    #workCodeInput
-                    placeholder="Select Workcodes..."
-                    [formControl]="workCodeCtrl"
-                    [matAutocomplete]="allWorkCodesRef"
-                    [matChipInputFor]="selectedWorkCodesRef"
-                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                />
             </mat-chip-list>
-        </mat-form-field>
-        <div
-            *ngIf="DataConf.Source === 'supervisor'"
-            class="w-100-p h-100-p p-12 custom-scroll-adjust"
-        >
+            <button
+                *ngIf="DataConf.Source === 'interaction'"
+                class="add-workcode"
+                mat-button
+                mat-raised-button
+                mat-icon-button
+                (click)="openAddWorkCodeModal()"
+            >
+                <mat-icon>add</mat-icon>
+            </button>
+        </ng-container>
+
+        <p *ngIf="!selectedWorkCodes.length" class="text-center mt-40">No work code selected</p>
+
+        <div *ngIf="DataConf.Source === 'supervisor'" class="w-100-p h-100-p p-12 custom-scroll-adjust">
             <mat-chip-list aria-label="WorkCodes">
                 <mat-chip
                     *ngFor="let workCode of selectedWorkCodes"
@@ -73,3 +68,27 @@
 
     <!-- your code goes here -->
 </tw-wrapper>
+
+<ng-template #addWorkcodeModalRef>
+    <p class="mat-title">Select Work Codes</p>
+    <mat-form-field class="w-100-p" appearance="outline">
+        <mat-chip-list #selectedWorkCodesRef aria-label="WorkCodes">
+            <mat-chip *ngFor="let workCode of selectedWorkCodes" removable (removed)="removeWorkCode(workCode)" class="bg-secondary">
+                <mat-icon class="mat-icon-mirror mr-4">local_offer</mat-icon>
+                {{ workCode.Name }}
+                <mat-icon matChipRemove>cancel</mat-icon>
+            </mat-chip>
+            <input #workCodeInput placeholder="Search Workcodes..." [formControl]="workCodeCtrl" [matChipInputFor]="selectedWorkCodesRef" />
+        </mat-chip-list>
+    </mat-form-field>
+
+    <ng-container *ngFor="let group of filteredOptions | async | keyvalue">
+        <p class="mat-title">{{ group.key }}</p>
+        <mat-chip-list aria-label="WorkCodes">
+            <mat-chip *ngFor="let workCode of group.value" class="bg-secondary" (click)="setWorkCode(workCode, group.key)">
+                <mat-icon class="mat-icon-mirror mr-4">local_offer</mat-icon>
+                {{ workCode.Name }}
+            </mat-chip>
+        </mat-chip-list>
+    </ng-container>
+</ng-template>

@@ -11,6 +11,41 @@ export class ThemeSelector {
     public static getFuseConfigByTheme(themeName: string, selector: boolean): any {
         let selectedTheme = null;
         switch (themeName) {
+            case 'theme-default-3' : {
+                selectedTheme = {
+                    layout: {
+                        navbar: {
+                            background: 'purple-700',
+                            customBackgroundColor: false,
+                        },
+                        toolbar: {
+                            customBackgroundColor: false,
+                            background: 'grey-200',
+                        },
+                        content: {
+                            customBackgroundColor: false,
+                            background: 'grey-200'
+                        },
+                        anchorWidget: {
+                            customBackgroundColor: false,
+                            bodyBackground: 'purple-A100',
+                            headerBackground: 'grey-100',
+                            contentBackground: 'grey-100'
+                        },
+                        widget: {
+                            customBackgroundColor: true,
+                            bodyBackground: 'grey-A100',
+                            headerBackground: 'grey-100',
+                            contentBackground: 'grey-100'
+                        },
+                        footer: {
+                            customBackgroundColor: false,
+                            background: 'grey-400',
+                        }
+                    }
+                };
+                break;
+            }
             case 'theme-default-2':
                 {
                     selectedTheme = {
