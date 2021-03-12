@@ -1,13 +1,13 @@
 {
     "name": "agent-desktop",
-    "version": "5.0.0302-b1",
+    "version": "5.0.0312-b2",
     "license": "",
     "scripts": {
         "ng": "ng",
         "start": "ng serve --open",
         "start:mem": "node --max_old_space_size=6144 ./node_modules/@angular/cli/bin/ng serve --open",
         "build": "ng build --baseHref=/agent-desktop/",
-        "build:prod": "ng build --prod --baseHref=/agent-desktop-v6/",
+        "build:prod": "ng build --prod --baseHref=/agent-desktop/",
         "build:prod:extra": "ng build --prod --baseHref=/agent-desktop/ --extra-webpack-config webpack.extra.js",
         "build:prod:mem": "node --max_old_space_size=6144 ./node_modules/@angular/cli/bin/ng build --prod",
         "build:serve": "serve dist -l 4200",

@@ -71,7 +71,7 @@ export class TwBroadcastComponent extends TWidgetWrapper implements OnInit, OnDe
         if (evt.Type === 'Broadcast' && evt.Message) {
             this.broadcastMessage = evt.Message;
         }
-    };
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
@@ -94,7 +94,7 @@ export class TwBroadcastComponent extends TWidgetWrapper implements OnInit, OnDe
                 try {
                     if (message) {
                         this.appUiService.showSnackbar('Sending Broadcast', 'loading');
-                        const res = await SDKClient.sendBroadCast({
+                        const res = await SDKClient.setBroadcastMessageForTeam({
                             message,
                             supervisorId: agentId,
                             teamIds: [teamId]

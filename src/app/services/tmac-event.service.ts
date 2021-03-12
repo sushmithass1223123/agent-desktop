@@ -733,9 +733,16 @@ export class TMACEventService {
 
             // check if the dialog is opened for this ID
             if (!ref) {
+                let message = item.Message;
+                if (item.Type === 'event') {
+                    const jsonMsg = JSON.parse(message);
+                    message = `<b>Title:</b> ${jsonMsg.Title}<br />,
+                                <b>Location:</b> ${jsonMsg.Meta.Location || 'NA'}<br />
+                                <b>Notes:</b> ${jsonMsg.Meta.Notes || 'NA'}<br />`;
+                }
                 const dialogRef = this._appUIService.showRemiderTaskModal(
                     'reminder',
-                    item.Message,
+                    message,
                     `Reminder @ ${item.RemindDate} ${item.RemindTime}`
                 );
 

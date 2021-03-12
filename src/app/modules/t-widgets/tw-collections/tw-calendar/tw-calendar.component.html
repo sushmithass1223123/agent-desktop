@@ -11,8 +11,8 @@
 
                     <!-- TOOLBAR -->
                     <div class="toolbar" fxLayout="row" fxLayoutAlign="start center">
-                        <button mat-icon-button aria-label="Search" matTooltip="Search">
-                            <mat-icon>search</mat-icon>
+                        <button mat-icon-button aria-label="Search" matTooltip="Reload" (click)="setEvents(true)">
+                            <mat-icon>refresh</mat-icon>
                         </button>
 
                         <button
@@ -77,7 +77,8 @@
             <!-- ADD EVENT BUTTON -->
             <button
                 mat-fab
-                class="add-event-button mat-accent"
+                class="add-event-button"
+                color="primary"
                 (click)="addEvent()"
                 aria-label="Add event"
                 [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
