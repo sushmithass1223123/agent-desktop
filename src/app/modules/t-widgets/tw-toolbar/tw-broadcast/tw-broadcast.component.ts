@@ -22,11 +22,6 @@ export class TwBroadcastComponent extends TWidgetWrapper implements OnInit, OnDe
      */
     broadcastMessage: string;
 
-    /**
-     * Is Agent a supervisor
-     */
-    isAgentSupervisor: boolean;
-
     constructor(private appUiService: AppUiService) {
         super();
     }
@@ -38,7 +33,6 @@ export class TwBroadcastComponent extends TWidgetWrapper implements OnInit, OnDe
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-        this.isAgentSupervisor = SDKClient.getAgentData().agentProfile === 'S';
         // register to event
         SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
     }
@@ -76,40 +70,4 @@ export class TwBroadcastComponent extends TWidgetWrapper implements OnInit, OnDe
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
-
-    /**
-     * Sends broadcast message to supervisor team
-     */
-    sendBroadcast(): void {
-        const { agentId, teamId } = SDKClient.getAgentData();
-        if (this.isAgentSupervisor) {
-            const dialogRef = this.appUiService.showCustomDialog(
-                'prompt',
-                'Write the message to be broadcasted below',
-                'Broadcast Message',
-                { minRows: 5 },
-                { minWidth: '30%' }
-            );
-            dialogRef.afterClosed().subscribe(async (message) => {
-                try {
-                    if (message) {
-                        this.appUiService.showSnackbar('Sending Broadcast', 'loading');
-                        const res = await SDKClient.setBroadcastMessageForTeam({
-                            message,
-                            supervisorId: agentId,
-                            teamIds: [teamId]
-                        });
-                        if (res.response.ResultCode >= 0) {
-                            this.appUiService.showSnackbar('Broadcast sent', 'success');
-                        } else {
-                            throw new Error('Something went wrong while sending broacast');
-                        }
-                    }
-                } catch (e) {
-                    this.appUiService.showSnackbar('Something went wrong while sending broacast', 'failure');
-                    console.error(e);
-                }
-            });
-        }
-    }
 }

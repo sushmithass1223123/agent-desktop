@@ -23,6 +23,7 @@ import { from, Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
 import { delay, filter } from 'rxjs/operators';
 import {
+    ActionMessageReceivedEvent,
     AVChannel,
     AVControlMessageReceivedEvent,
     IAgentData,
@@ -470,7 +471,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     'CannedResposeEvent',
                     'TextChatTransferSuccessEvent',
                     'TextChatTransferFailedEvent',
-                    'TextChatTransferRejectEvent'
+                    'TextChatTransferRejectEvent',
+                    'ActionMessageReceivedEvent'
                 ],
                 this.interactionId
             )
@@ -870,6 +872,72 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     }
 
     /**
+     * Handles ActionMessageReceivedEvent
+     */
+    private ActionMessageReceivedEvent(evt: ActionMessageReceivedEvent) {
+        try {
+            // handle snapshot ackknowledgement
+            const msg = JSON.parse(evt.Message);
+            let message = '';
+            let status: SnackbarStateTypes = 'success';
+            switch (msg.type.toLowerCase()) {
+                case 'webrtctroubleshoot':
+                    if (msg.status === 'accepted') {
+                        message = 'Webrtc troubleshoot request accepted by customer';
+                    } else if (msg.status === 'ack') {
+                        message = 'Webrtc troubleshoot request received by customer';
+                        status = 'loading';
+                    } else {
+                        message = 'Webrtc troubleshoot request rejected by customer';
+                        status = 'failure';
+                    }
+                    if (message) {
+                        this._appUIService.showSnackbar(message, status);
+                    }
+                    break;
+                case 'snapshot':
+                    if (msg.status === 'snapshotRequestAck') {
+                        message = 'Retreiving snapshot';
+                        status = 'loading';
+                    } else if (msg.status === 'response') {
+                        message = 'Snapshot Received';
+                        status = 'success';
+                    } else {
+                        message = 'Unable to take snapshot';
+                        status = 'failure';
+                    }
+                    if (message) {
+                        const snapshotMatRef = this._appUIService.showSnackbar(message, status);
+                        if (status === 'loading') {
+                            from([0])
+                                .pipe(takeUntil(this.unsubscribeAll), delay(this.data.Data.Snapshot.RemoteResponseTimeout * 1000 || 10000))
+                                .subscribe(() => {
+                                    snapshotMatRef.dismiss();
+                                    console.error('Snapshot Response timed out');
+                                });
+                        }
+                    }
+                    break;
+                case 'openwhiteboard':
+                    if (msg.status === 'ack') {
+                        this._appUIService.showSnackbar('Whiteboard request received by customer', 'info');
+                    } else if (msg.status === 'accepted') {
+                        this._appUIService.showSnackbar('Whiteboard request accepted by customer', 'success');
+                    } else {
+                        this._appUIService.showSnackbar('Whiteboard request rejected by customer', 'failure');
+                    }
+                    break;
+                default:
+                    console.log('Unknown App Message');
+            }
+        } catch (e) {
+            console.error(e);
+        }
+        // TODO:: handle app messages
+        return;
+    }
+
+    /**
      * To proccess both TextChatMessageReceivedEvent and TextChatAgentMessageReceivedEvent
      * @param evt TextChatMessageReceivedEvent | TextChatAgentMessageReceivedEvent data
      */
@@ -882,65 +950,19 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // check the user
         const user = (evt as TextChatAgentMessageReceivedEvent).AgentName || this.customerName;
 
-        // check if app message
+        // // check if app message
         if (evt.IsAppMessage) {
-            try {
-                // handle snapshot ackknowledgement
-                const msg = JSON.parse(evt.Message);
-                let message = '';
-                let status: SnackbarStateTypes = 'success';
-                switch (msg.type.toLowerCase()) {
-                    case 'clientreloaded':
-                        // this._aotWidgetService.destroyWidget(this.callWidget.ID)
-                        this.callWidget.destroy();
-                        this._appUIService.showSnackbar('Client has refreshed their browser', 'failure');
-                        break;
-                    case 'webrtctroubleshoot':
-                        if (msg.status === 'accepted') {
-                            message = 'Webrtc troubleshoot request accepted by customer';
-                        } else if (msg.status === 'ack') {
-                            message = 'Webrtc troubleshoot request received by customer';
-                            status = 'loading';
-                        } else {
-                            message = 'Webrtc troubleshoot request rejected by customer';
-                            status = 'failure';
-                        }
-                        if (message) {
-                            this._appUIService.showSnackbar(message, status);
-                        }
-                        break;
-                    case 'snapshot':
-                        if (msg.status === 'snapshotRequestAck') {
-                            message = 'Retreiving snapshot';
-                            status = 'loading';
-                        } else if (msg.status === 'response') {
-                            message = 'Snapshot Received';
-                            status = 'success';
-                        } else {
-                            message = 'Unable to take snapshot';
-                            status = 'failure';
-                        }
-                        if (message) {
-                            const snapshotMatRef = this._appUIService.showSnackbar(message, status);
-                            if (status === 'loading') {
-                                from([0])
-                                    .pipe(takeUntil(this.unsubscribeAll), delay(this.data.Data.Snapshot.RemoteResponseTimeout * 1000 || 10000))
-                                    .subscribe(() => {
-                                        snapshotMatRef.dismiss();
-                                        console.error('Snapshot Response timed out');
-                                    });
-                            }
-                        }
-                        break;
-                    default:
-                        console.log('Unknown App Message');
-                }
-            } catch (e) {
-                console.error(e);
+            const msg = JSON.parse(evt.Message);
+            let message = '';
+            let status: SnackbarStateTypes = 'success';
+            switch (msg.type.toLowerCase()) {
+                case 'clientreloaded':
+                    this.callWidget.destroy();
+                    this._appUIService.showSnackbar('Client has refreshed their browser', 'failure');
+                    break;
+                default:
+                    console.log('Unknown App Message');
             }
-
-            // TODO:: handle app messages
-            return;
         }
 
         // method variables
@@ -2252,18 +2274,47 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * Opens a whiteboard session
      */
-    openWhiteboard(): void {
-        const widget = new TwWidgetModel('Whiteboard', 'tw-custom', 'create');
-        widget.Config.Actions = ['collapse', 'destroy'];
-        widget.Config.ViewState = 'maximize';
-        widget.Config.Anchor = true;
-        widget.Config.Position.X = 3;
-        widget.Config.Position.Y = 4;
-        widget.Data = {
-            AutoOpen: false,
-            OpenInNew: false,
-            Url: this.data.Data.Whiteboard.Url
-        };
-        this._aotWidgetService.addWidget(widget);
+    async openWhiteboard(): Promise<void> {
+        if (!this.data.Data.Whiteboard?.Url) {
+            this._appUIService.showSnackbar('No Whiteboard Url provided in Config', 'failure');
+            return;
+        }
+        try {
+            const snackRef = this._appUIService.showSnackbar('Opening whiteboard', 'loading');
+            const res = await SDKClient.sendActionMessage({
+                interactionId: this.interactionId as any,
+                message: JSON.stringify({
+                    source: 'agent',
+                    options: {},
+                    data: {
+                        url: `${this.data.Data.Whiteboard.Url}?sessionid=${this.sessionID}`
+                    },
+                    status: 'request',
+                    type: 'openWhiteboard',
+                    eventName: 'ActionMessage',
+                    id: TUtils.Generic.uuid()
+                })
+            });
+            if (res.response?.ResultMessage === 'Success') {
+                const widget = new TwWidgetModel('Whiteboard', 'tw-custom', 'create');
+                widget.Config.Actions = ['collapse', 'destroy'];
+                widget.Config.ViewState = 'maximize';
+                widget.Config.Anchor = true;
+                widget.Config.Position.X = 3;
+                widget.Config.Position.Y = 4;
+                widget.Data = {
+                    AutoOpen: false,
+                    OpenInNew: false,
+                    Url: `${this.data.Data.Whiteboard.Url}?sessionid=${this.sessionID}`
+                };
+                this._aotWidgetService.addWidget(widget);
+                snackRef.dismiss();
+            } else {
+                throw new Error('Error occured while opening whiteboard');
+            }
+        } catch (e) {
+            console.error(e);
+            this._appUIService.showSnackbar('Error occured while opening whiteboard', 'failure');
+        }
     }
 }

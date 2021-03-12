@@ -670,8 +670,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                 map((res: any) => ({
                     ...res,
                     result: res.result.map((x: any, uiId) => {
-                        const addedTime = new Date(x.receivedDate);
-                        const time = x.receivedTime.split(':');
+                        const addedTime = new Date(x.currentStatusDate);
+                        const time = x.currentStatusTime.split(':');
                         addedTime.setHours(time[0]);
                         addedTime.setMinutes(time[1]);
                         return {

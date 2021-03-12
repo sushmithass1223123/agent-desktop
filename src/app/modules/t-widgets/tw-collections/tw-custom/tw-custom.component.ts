@@ -213,7 +213,7 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
      */
     frameLoaded = () => {
         // check if this is not initial load
-        if (this.initialLoad) {
+        // if (this.initialLoad) {
             if (!this.subscriptions.eventsById && !this.subscriptions.allEvents) {
                 // subscribe to interaction events
                 this.subscriptions.eventsById = this._tmacEventService
@@ -232,10 +232,10 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
             setTimeout(() => {
                 this.loaded = true;
             });
-        } else {
-            // set initial load to true
-            this.initialLoad = true;
-        }
+        // } else {
+        //     // set initial load to true
+        //     this.initialLoad = true;
+        // }
     }
 
     /**

@@ -14,7 +14,18 @@ import { InstantMessagingService } from 'app/layout/components/instant-messaging
 import { TwWidgetModel } from 'app/models';
 import { map, orderBy, random } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { AgentFeatures, AgentStatusChangeEvent, AgentTabCount, IAgentData, IAUXCodes, IResponse, SDKClient, SuAgentDataModel, SuAgentModel, TUtils } from 'tmac-sdk';
+import {
+    AgentFeatures,
+    AgentStatusChangeEvent,
+    AgentTabCount,
+    IAgentData,
+    IAUXCodes,
+    IResponse,
+    SDKClient,
+    SuAgentDataModel,
+    SuAgentModel,
+    TUtils
+} from 'tmac-sdk';
 
 /**
  * Active agents component widget
@@ -98,6 +109,11 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     ];
 
     /**
+     * Is Agent a supervisor
+     */
+    isAgentSupervisor: boolean;
+
+    /**
      * Constructor
      */
     constructor(
@@ -128,6 +144,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
+        this.isAgentSupervisor = SDKClient.getAgentData().agentProfile === 'S';
 
         this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
             this.fuseConfig = config;
@@ -144,9 +161,10 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         // SDKClient.events.on('SupervisorAgentListEvent', this.SupervisorAgentListEvent);
         // SDKClient.events.on('TeamAgentListDataEvent', this.TeamAgentListDataEvent);
 
-        this._tmacEventService.getEvents(['SupervisorAgentListEvent', 'TeamAgentListDataEvent'])
+        this._tmacEventService
+            .getEvents(['SupervisorAgentListEvent', 'TeamAgentListDataEvent'])
             .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
+            .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
 
         // get agent aux codes
         SDKClient.loadAUXCodes(false, null).then((result: IResponse) => {
@@ -177,7 +195,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     /**
      * SupervisorAgentListEvent handler
      * @method SupervisorAgentListEvent
-     * @param {CustomSDKEvent} evt 
+     * @param {CustomSDKEvent} evt
      */
     private SupervisorAgentListEvent = (evt: CustomSDKEvent) => {
         // filter for excpet me
@@ -194,12 +212,12 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             this.reload = false;
             this._appUIService.showSnackbar('Agent data is reloaded');
         }
-    }
+    };
 
     /**
      * TeamAgentListDataEvent Handler
      * @method TeamAgentListDataEvent
-     * @param {CustomSDKEvent} evt 
+     * @param {CustomSDKEvent} evt
      */
     private TeamAgentListDataEvent = (evt: CustomSDKEvent) => {
         if (this.agentList.length === 0) {
@@ -223,13 +241,13 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
 
         // sort agent list
         this.sortAgentList();
-    }
+    };
 
     /**
      * createActivityWidget
      * Need more description
-     * @method createActivityWidget 
-     * @param {any} item 
+     * @method createActivityWidget
+     * @param {any} item
      */
     private createActivityWidget(item: any): void {
         // create activity details widget
@@ -268,7 +286,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
 
     /**
      * To sort agent list
-     * 
+     *
      * @param {string} by
      */
     public sortAgentList(by?: string): void {
@@ -288,8 +306,8 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     /**
      * Track by for avoiding rerender
      * @method trackByID
-     * @param {number} index 
-     * @param {any} agent 
+     * @param {number} index
+     * @param {any} agent
      */
     public trackByID(index: number, agent: any): string {
         return agent.AgentLoginID;
@@ -298,7 +316,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     /**
      * Select an agent
      * @method selectAgent
-     * @param {any} agent 
+     * @param {any} agent
      */
     public selectAgent(agent: any): void {
         if (this.selectedAgent === agent.AgentLoginID) {
@@ -311,9 +329,9 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     /**
      * Check Feature
      * @method featureCheck
-     * @param {AgentFeatures} feature 
-     * @param {String} type 
-     * @param {String} subType 
+     * @param {AgentFeatures} feature
+     * @param {String} type
+     * @param {String} subType
      */
     public featureCheck(feature: AgentFeatures, type: string, subType: string): boolean {
         // if not allow supervisor or in map the item is not found return false
@@ -345,8 +363,8 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     /**
      * Perform Agent Action
      * @method performAgentAction
-     * @param {SuAgentDataModel} agent 
-     * @param {AgentFeatures} feature 
+     * @param {SuAgentDataModel} agent
+     * @param {AgentFeatures} feature
      */
     public performAgentAction(agent: SuAgentModel, feature: AgentFeatures): void {
         switch (feature.Feature) {
@@ -423,7 +441,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                             // check if the logout is success
                             if (dt.response && dt.response.ResultCode === 0) {
                                 // filter the logout agent
-                                this.filteredAgents = this.filteredAgents.filter(a => a.StationID !== agent.StationID);
+                                this.filteredAgents = this.filteredAgents.filter((a) => a.StationID !== agent.StationID);
                                 // route back to login page
                                 this._appUIService.showSnackbar('Logged out successfully', 'success');
                             } else {
@@ -447,7 +465,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     /**
      * Check for active interactions
      * @method checkForActiveInteraction
-     * @param {AgentTabCount[]} channelItems 
+     * @param {AgentTabCount[]} channelItems
      */
     public checkForActiveInteraction(channelItems: AgentTabCount[]): boolean {
         let isActive = false;
@@ -464,7 +482,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     /**
      * View interactions by agent
      * @method viewInteractions
-     * @param {SuAgentModel} item 
+     * @param {SuAgentModel} item
      */
     public viewInteractions(item: SuAgentModel): void {
         const widget = new TwWidgetModel('Interaction Details - ' + item.AgentName, 'tw-su-agent-interactions');
@@ -479,8 +497,8 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     /**
      * Change agent status
      * @method changeAgentStatus
-     * @param {SuAgentDataModel} agent 
-     * @param {IAUXCodes} item 
+     * @param {SuAgentDataModel} agent
+     * @param {IAUXCodes} item
      */
     public changeAgentStatus(agent: SuAgentModel, item: IAUXCodes): void {
         this._appUIService.showSnackbar('Please wait, changing status...', 'loading');
@@ -505,8 +523,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                         }
                         return agt;
                     });
-                }
-                else {
+                } else {
                     this._appUIService.showSnackbar('Status change failed!', 'failure');
                 }
             })
@@ -535,7 +552,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                 station: 42002,
                 phoneNumber: '6539284004'
             },
-            CallCenterQuiz: {},
+            CallCenterQuiz: {}
         };
 
         const JsonData: QuizEventJsonData = {
@@ -567,6 +584,42 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     public refreshList(): void {
         this.reload = true;
         this._dashboardService.reTriggerActiveAgents(this.user.agentId, this.user.teamId);
+    }
+
+    /**
+     * Sends broadcast message to supervisor team
+     */
+    sendBroadcast(): void {
+        const { agentId, teamId } = SDKClient.getAgentData();
+        if (this.isAgentSupervisor) {
+            const dialogRef = this._appUIService.showCustomDialog(
+                'prompt',
+                'Write the message to be broadcasted below',
+                'Broadcast Message',
+                { minRows: 5 },
+                { minWidth: '30%' }
+            );
+            dialogRef.afterClosed().subscribe(async (message) => {
+                try {
+                    if (message) {
+                        this._appUIService.showSnackbar('Sending Broadcast', 'loading');
+                        const res = await SDKClient.setBroadcastMessageForTeam({
+                            message,
+                            supervisorId: agentId,
+                            teamIds: [teamId]
+                        });
+                        if (res.response.ResultCode >= 0) {
+                            this._appUIService.showSnackbar('Broadcast sent', 'success');
+                        } else {
+                            throw new Error('Something went wrong while sending broacast');
+                        }
+                    }
+                } catch (e) {
+                    this._appUIService.showSnackbar('Something went wrong while sending broacast', 'failure');
+                    console.error(e);
+                }
+            });
+        }
     }
 }
 

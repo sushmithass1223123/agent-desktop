@@ -61,12 +61,10 @@
                 matTooltip="Reload Agent Data"
                 [disabled]="!filteredAgents.length || reload"
             >
-                <mat-icon
-                    [ngClass]="{
-                        'spin-o': reload
-                    }"
-                    >refresh</mat-icon
-                >
+                <mat-icon [ngClass]="{ 'spin-o': reload }">refresh</mat-icon>
+            </button>
+            <button *ngIf="isAgentSupervisor" mat-icon-button matTooltip="Send Broadcast To Team" (click)="sendBroadcast()">
+                <img class="box-shadow-3d" src="assets/images/vectors/broadcast.svg" width="48" height="48" />
             </button>
         </div>
         <p *ngIf="filteredAgents.length" class="m-0 text-center position-absolute left-0 right-0 bottom-0">
