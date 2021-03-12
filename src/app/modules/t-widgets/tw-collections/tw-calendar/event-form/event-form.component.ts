@@ -77,6 +77,10 @@ export class CalendarEventFormDialogComponent {
         }
         this.auxCodes = SDKClient.getAgentData().auxCodes;
         this.eventForm = this.createEventForm();
+        // check the status of event
+        // if (this.event.status.toLowerCase() === 'completed') {
+        //     this.eventForm.disable();
+        // }
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -96,6 +100,9 @@ export class CalendarEventFormDialogComponent {
      * @returns {FormGroup}
      */
     createEventForm(): FormGroup {
+        // change the type case
+        this.event.type = this.event.type.toLowerCase();
+
         return new FormGroup({
             title: new FormControl(this.event.title),
             type: new FormControl({ value: this.event.type, disabled: this.action === 'edit' }),

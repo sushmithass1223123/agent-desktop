@@ -219,14 +219,15 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
                 item.id = element.ID;
                 item.start = moment(element.RemindDate + ' ' + element.RemindTime, 'MM/DD/YYYY HH:mm').toDate();
                 item.end = moment(element.RemindDate + ' ' + element.RemindTime, 'MM/DD/YYYY HH:mm').toDate();
-                item.type = element.Type;
                 item.status = element.Status;
                 item.actions = this.actions;
                 item.meta = {
                     location: '',
                     notes: ''
                 };
-                const type = element.Type;
+
+                // get the type
+                const type = item.type = element.Type ? element.Type : 'text';
 
                 // check if this is a task
                 if (type.toLowerCase() === 'executetask') {
@@ -339,17 +340,17 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
 
                 formValue.end = formValue.start = reminderDateTime;
 
-                // validate the date
-                if (isBefore(formValue.start, new Date())) {
-                    this._appUIService.showSnackbar('Event date time should be greater than now!', 'failure');
-                    return;
-                }
-
                 switch (actionType) {
                     /**
                      * Save
                      */
                     case 'save':
+                        // validate the date
+                        if (isBefore(formValue.start, new Date())) {
+                            this._appUIService.showSnackbar('Event date time should be greater than now!', 'failure');
+                            return;
+                        }
+
                         this._appUIService.showSnackbar('Updating event, please wait', 'loading');
 
                         SDKClient.updateAgentReminder({

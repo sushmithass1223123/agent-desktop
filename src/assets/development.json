@@ -522,7 +522,7 @@
                                     "Name": "Reminders",
                                     "Description": "",
                                     "Key": "AgentReminders",
-                                    "Type": "tw-calendar",
+                                    "Type": "tw-custom",
                                     "Config": {
                                         "Enabled": true,
                                         "Static": false,
@@ -544,20 +544,9 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "TaskOptions": [
-                                            {
-                                                "Name": "Change Status",
-                                                "Value": "changestate"
-                                            },
-                                            {
-                                                "Name": "Make Call",
-                                                "Value": "makecall"
-                                            },
-                                            {
-                                                "Name": "Meeting",
-                                                "Value": "meeting"
-                                            }
-                                        ]
+                                        "AutoOpen": false,
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/agent-desktop/reminders/index.html?agentid=_agentId&tmacserver=TmacServer1"
                                     }
                                 }
                             ],

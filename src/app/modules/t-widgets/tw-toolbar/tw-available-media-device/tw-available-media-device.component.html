@@ -1,4 +1,4 @@
-<div fxLayout="row wrap" fxLayoutAlign="space-around center" class="px-4" mat-ripple *ngIf="mediaDeviceInfo | async as mediaDevices">
+<div fxLayout="row wrap" fxLayoutAlign="space-around center" class="px-4" *ngIf="mediaDeviceInfo | async as mediaDevices">
     <button mat-icon-button (click)="showAvailableDevices()">
         <mat-icon matTooltip="Available devices"> headset </mat-icon>
     </button>
