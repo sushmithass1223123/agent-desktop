@@ -4,7 +4,7 @@
     </button>
 </div>
 
-<ng-template #availableDevicesMenu [overlapTrigger]="false" class="custom">
+<ng-template #availableDevicesMenu class="custom">
     <ng-container *ngIf="mediaDeviceInfo && mediaDeviceInfo | async as mediaDevices">
         <div class="device-list" *ngFor="let device of mediaDevices">
             <p class="mat-title">{{ device.type | titlecase }}</p>

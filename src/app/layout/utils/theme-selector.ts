@@ -15,15 +15,15 @@ export class ThemeSelector {
                 selectedTheme = {
                     layout: {
                         navbar: {
-                            background: 'purple-700',
-                            customBackgroundColor: false,
+                            background: 'gray-50',
+                            customBackgroundColor: true,
                         },
                         toolbar: {
-                            customBackgroundColor: false,
+                            customBackgroundColor: true,
                             background: 'grey-200',
                         },
                         content: {
-                            customBackgroundColor: false,
+                            customBackgroundColor: true,
                             background: 'grey-200'
                         },
                         anchorWidget: {
