@@ -65,7 +65,7 @@ export class TwBroadcastComponent extends TWidgetWrapper implements OnInit, OnDe
         if (evt.Type === 'Broadcast' && evt.Message) {
             this.broadcastMessage = evt.Message;
         }
-    };
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods

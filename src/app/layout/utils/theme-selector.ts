@@ -15,7 +15,7 @@ export class ThemeSelector {
                 selectedTheme = {
                     layout: {
                         navbar: {
-                            background: 'gray-50',
+                            background: 'grey-50',
                             customBackgroundColor: true,
                         },
                         toolbar: {

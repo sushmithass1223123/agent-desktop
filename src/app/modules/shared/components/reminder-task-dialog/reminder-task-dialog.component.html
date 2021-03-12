@@ -635,16 +635,10 @@
         <p class="text-center mat-title m-0 my-4 line-height-28 message">{{ data.title }}</p>
     </div>
     <div mat-dialog-content fxLayout="column" fxLayoutAlign="center center" class="m-0">
-        <p class="text-center m-0 mb-4 line-height-28 mat-subheading-2 message">{{ data.message }}</p>
+        <p class="text-center m-0 mb-4 line-height-28 mat-subheading-2 message" [innerHTML]="data.message"></p>
 
         <div fxLayoutAlign="center center" class="p-12 pb-12">
-            <button
-                mat-raised-button
-                mat-icon-button
-                class="bg-success mr-12"
-                matTooltip="Accept"
-                (click)="data.accept()"
-            >
+            <button mat-raised-button mat-icon-button class="bg-success mr-12" matTooltip="Accept" (click)="data.accept()">
                 <mat-icon>done</mat-icon>
             </button>
 

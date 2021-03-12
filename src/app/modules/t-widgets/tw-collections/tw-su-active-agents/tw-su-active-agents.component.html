@@ -8,7 +8,7 @@
     <!-- your code goes here -->
     <div fxFill fxLayout="column" fxLayoutAlign=" none">
         <div class="w-100-p px-4 mb-8" fxLayout="row" fxLayoutAlign="center center">
-            <button mat-icon-button [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }" [matMenuTriggerFor]="sortMenu">
+            <button mat-icon-button [matMenuTriggerFor]="sortMenu">
                 <mat-icon>sort</mat-icon>
                 <mat-menu class="custom" #sortMenu="matMenu" xPosition="after">
                     <button mat-menu-item (click)="sortAgentList('AgentLoginID')">
@@ -54,17 +54,11 @@
                     </button>
                 </ng-template>
             </mat-form-field>
-            <button
-                mat-icon-button
-                [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
-                (click)="refreshList()"
-                matTooltip="Reload Agent Data"
-                [disabled]="!filteredAgents.length || reload"
-            >
+            <button mat-icon-button (click)="refreshList()" matTooltip="Reload Agent Data" [disabled]="!filteredAgents.length || reload">
                 <mat-icon [ngClass]="{ 'spin-o': reload }">refresh</mat-icon>
             </button>
             <button *ngIf="isAgentSupervisor" mat-icon-button matTooltip="Send Broadcast To Team" (click)="sendBroadcast()">
-                <img class="box-shadow-3d" src="assets/images/vectors/broadcast.svg" width="48" height="48" />
+                <mat-icon>announcement</mat-icon>
             </button>
         </div>
         <p *ngIf="filteredAgents.length" class="m-0 text-center position-absolute left-0 right-0 bottom-0">

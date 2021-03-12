@@ -10,6 +10,7 @@ import { TwAgentAssistComponent } from '@modules/t-widgets/tw-collections/tw-age
 import { TwAhtTcComponent } from '@modules/t-widgets/tw-collections/tw-aht-tc/tw-aht-tc.component';
 import { TwAmdocsBccComponent } from '@modules/t-widgets/tw-collections/tw-amdocs-bcc/tw-amdocs-bcc.component';
 import { TwAudioControlsComponent } from '@modules/t-widgets/tw-collections/tw-audio-controls/tw-audio-controls.component';
+import { TwCalendarComponent } from '@modules/t-widgets/tw-collections/tw-calendar/tw-calendar.component';
 import { TwCannedResponsesComponent } from '@modules/t-widgets/tw-collections/tw-canned-responses/tw-canned-responses.component';
 import { TwChatPanelComponent } from '@modules/t-widgets/tw-collections/tw-chat-panel/tw-chat-panel.component';
 import { TwCustomComponent } from '@modules/t-widgets/tw-collections/tw-custom/tw-custom.component';
@@ -18,6 +19,7 @@ import { TwEmailControlsComponent } from '@modules/t-widgets/tw-collections/tw-e
 import { TwEmailPanelComponent } from '@modules/t-widgets/tw-collections/tw-email-panel/tw-email-panel.component';
 import { TwEmailTemplatePreviewComponent } from '@modules/t-widgets/tw-collections/tw-email-template-preview/tw-email-template-preview.component';
 import { TwEntitiesComponent } from '@modules/t-widgets/tw-collections/tw-entities/tw-entities.component';
+import { TwFaxPanelComponent } from '@modules/t-widgets/tw-collections/tw-fax-panel/tw-fax-panel.component';
 import { TwGamificationComponent } from '@modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component';
 import { TwPendingCallbacksComponent } from '@modules/t-widgets/tw-collections/tw-pending-callbacks/tw-pending-callbacks.component';
 import { TwPieChartComponent } from '@modules/t-widgets/tw-collections/tw-pie-chart/tw-pie-chart.component';
@@ -39,6 +41,7 @@ import { TwWorkbenchPanelComponent } from '@modules/t-widgets/tw-collections/tw-
 import { TwcCustomComponent } from '@modules/t-widgets/tw-content/twc-custom/twc-custom.component';
 import { TwcDockerComponent } from '@modules/t-widgets/tw-content/twc-docker/twc-docker.component';
 import { TwcEmailComponent } from '@modules/t-widgets/tw-content/twc-email/twc-email.component';
+import { TwcFaxComponent } from '@modules/t-widgets/tw-content/twc-fax/twc-fax.component';
 import { TwcHomeComponent } from '@modules/t-widgets/tw-content/twc-home/twc-home.component';
 import { TwcSupervisorComponent } from '@modules/t-widgets/tw-content/twc-supervisor/twc-supervisor.component';
 import { TwcTextchatComponent } from '@modules/t-widgets/tw-content/twc-textchat/twc-textchat.component';
@@ -63,11 +66,15 @@ export class TWLibrary {
         'twc-workbench': TwcWorkbenchComponent,
         'twc-email': TwcEmailComponent,
         'twc-docker': TwcDockerComponent,
+        'twc-fax': TwcFaxComponent,
         'tw-sample': TwSampleComponent,
         'tw-custom': TwCustomComponent,
         'tw-wallboard': TwWallboardComponent,
         'tw-voice-panel': TwVoicePanelComponent,
         'tw-chat-panel': TwChatPanelComponent,
+        'tw-email-panel': TwEmailPanelComponent,
+        'tw-fax-panel': TwFaxPanelComponent,
+        'tw-workbench-panel': TwWorkbenchPanelComponent,
         'tw-ad-interaction-details': TwAdInteractionDetailsComponent,
         'tw-ad-callbacks': TwAdCallbacksComponent,
         'tw-su-active-agents': TwSuActiveAgentsComponent,
@@ -91,14 +98,13 @@ export class TWLibrary {
         'tw-su-agent-interactions': TwSuAgentInteractionsComponent,
         'tw-pie-chart': TwPieChartComponent,
         'tw-voice-canned-responses': TwVoiceCannedResponsesComponent,
-        'tw-workbench-panel': TwWorkbenchPanelComponent,
-        'tw-email-panel': TwEmailPanelComponent,
         'tw-email-controls': TwEmailControlsComponent,
         'tw-pending-callbacks': TwPendingCallbacksComponent,
         'tw-gamification': TwGamificationComponent,
         'tw-entities': TwEntitiesComponent,
         'tw-user-location': TwUserLocationComponent,
-        'tw-email-template-preview': TwEmailTemplatePreviewComponent
+        'tw-email-template-preview': TwEmailTemplatePreviewComponent,
+        'tw-calendar': TwCalendarComponent
     };
 
     /**

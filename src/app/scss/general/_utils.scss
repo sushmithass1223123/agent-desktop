@@ -190,6 +190,23 @@
     }
 }
 
+.tw-flat {
+    .border-radius {
+        &-0 {
+            border-radius: 0px !important;
+        }
+        &-10 {
+            border-radius: 0px !important;
+        }
+        &-20 {
+            border-radius: 0px !important;
+        }
+        &-30 {
+            border-radius: 0px !important;
+        }
+    }
+}
+
 .spacer {
     flex: 1 1 auto;
 }

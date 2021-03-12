@@ -363,7 +363,7 @@ export interface AppSnackBarArgs {
     /**
      * performs action when snackbar clicked
      */
-    onClick?: (...args) => void
+    onClick?: (...args) => void;
 }
 
 export interface CustomDialogData {
