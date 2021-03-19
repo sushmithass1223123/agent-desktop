@@ -289,6 +289,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
                 }
                 this._appUiService.showSnackbar('Work code set successfully', 'success');
                 this.workCodeInput.nativeElement.value = '';
+                this.workCodeCtrl.setValue('');
             })
             .catch(() => {
                 this._appUiService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');

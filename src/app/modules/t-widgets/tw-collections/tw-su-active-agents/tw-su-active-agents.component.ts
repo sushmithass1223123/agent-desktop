@@ -599,25 +599,39 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                 { minRows: 5 },
                 { minWidth: '30%' }
             );
-            dialogRef.afterClosed().subscribe(async (message) => {
-                try {
-                    if (message) {
-                        this._appUIService.showSnackbar('Sending Broadcast', 'loading');
-                        const res = await SDKClient.setBroadcastMessageForTeam({
-                            message,
-                            supervisorId: agentId,
-                            teamIds: [teamId]
-                        });
-                        if (res.response.ResultCode >= 0) {
-                            this._appUIService.showSnackbar('Broadcast sent', 'success');
-                        } else {
-                            throw new Error('Something went wrong while sending broacast');
+            let erroredSnackbarMessage = '';
+            dialogRef.afterClosed().subscribe({
+                next: async (message) => {
+                    try {
+                        if (message) {
+                            this._appUIService.showSnackbar('Sending Broadcast', 'loading');
+                            const res = await SDKClient.setBroadcastMessageForTeam({
+                                message,
+                                supervisorId: agentId,
+                                teamIds: [teamId]
+                            });
+                            res.response.forEach((teamRes) => {
+                                if (teamRes.ResultCode < 0) {
+                                    if (!erroredSnackbarMessage) {
+                                        erroredSnackbarMessage = `Broadcast message sending failed for `;
+                                    }
+                                    erroredSnackbarMessage += teamRes.ResultMessage;
+                                }
+                            });
+                            if (!erroredSnackbarMessage) {
+                                this._appUIService.showSnackbar('Broadcast sent', 'success');
+                            } else {
+                                throw new Error(erroredSnackbarMessage);
+                            }
+                        }
+                    } catch (e) {
+                        if (!erroredSnackbarMessage) {
+                            this._appUIService.showSnackbar('Something went wrong while sending broacast', 'failure');
+                            console.error(e);
                         }
                     }
-                } catch (e) {
-                    this._appUIService.showSnackbar('Something went wrong while sending broacast', 'failure');
-                    console.error(e);
-                }
+                },
+                error: console.error
             });
         }
     }

@@ -44,7 +44,7 @@
                     <mat-form-field appearance="outline" *ngSwitchCase="'meeting'">
                         <mat-label>Enter Meeting Link</mat-label>
                         <input matInput name="meetingLink" formControlName="taskData" />
-                        <button mat-icon-button matSuffix [cdkCopyToClipboard]="event.data.Data" (click)="copyAlert()" matTooltip="Copy">
+                        <button mat-icon-button matSuffix [cdkCopyToClipboard]="eventForm.get('taskData')?.value || ''" matTooltip="Copy">
                             <mat-icon>file_copy</mat-icon>
                         </button>
                     </mat-form-field>
@@ -99,7 +99,7 @@
             <div fxFlex="1 0 auto" fxLayout="column" fxLayout.gt-xs="row">
                 <mat-form-field appearance="outline" class="pr-sm-8" fxFlex="50">
                     <mat-label>Reminder date</mat-label>
-                    <input matInput [matDatepicker]="startDatePicker" name="start" formControlName="start" />
+                    <input matInput [matDatepicker]="startDatePicker" name="start" [min]="minDate" formControlName="start" />
                     <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
                     <mat-datepicker #startDatePicker></mat-datepicker>
                 </mat-form-field>
