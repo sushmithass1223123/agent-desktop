@@ -70,36 +70,38 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
     /**
      * Constructor
      */
-    constructor(
-        private _matDialog: MatDialog,
-        private _appUIService: AppUiService
-    ) {
+    constructor(private _matDialog: MatDialog, private _appUIService: AppUiService) {
         super();
 
         // Set the defaults
         this.view = 'month';
         this.viewDate = new Date();
         this.activeDayIsOpen = true;
-        this.selectedDay = { date: startOfDay(new Date()) };
+        // startOfDay(new Date()) removed this so that the initial value is a valid one
+        this.selectedDay = { date: new Date() };
         this.actions = [
             {
                 label: '<i class="material-icons s-16">edit</i>',
-                onClick: ({ event }: {
+                onClick: ({
+                    event
+                }: {
                     /**
                      * Calendar event
                      */
-                    event: CustomCalendarEvent
+                    event: CustomCalendarEvent;
                 }): void => {
                     this.editEvent('edit', event);
                 }
             },
             {
                 label: '<i class="material-icons s-16">delete</i>',
-                onClick: ({ event }: {
+                onClick: ({
+                    event
+                }: {
                     /**
                      * Calendar event
                      */
-                    event: CustomCalendarEvent
+                    event: CustomCalendarEvent;
                 }): void => {
                     this.deleteEvent(event);
                 }
@@ -132,7 +134,6 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
         // call the wrapper destroy method
         this.destroyWrapper();
     }
-
 
     /**
      * Before View Renderer
@@ -169,8 +170,7 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
         if (isSameMonth(date, this.viewDate)) {
             if ((isSameDay(this.viewDate, date) && this.activeDayIsOpen === true) || events.length === 0) {
                 this.activeDayIsOpen = false;
-            }
-            else {
+            } else {
                 this.activeDayIsOpen = true;
                 this.viewDate = date;
             }
@@ -227,23 +227,21 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
                 };
 
                 // get the type
-                const type = item.type = element.Type ? element.Type : 'text';
+                const type = (item.type = element.Type ? element.Type : 'text');
 
                 // check if this is a task
                 if (type.toLowerCase() === 'executetask') {
-                    const task = item.data = JSON.parse(element.Message);
+                    const task = (item.data = JSON.parse(element.Message));
                     item.title = this.generateTitle(task);
                     item.meta.notes = task.Comment;
-                }
-                else if (type.toLowerCase() === 'event') {
-                    const event = item.data = JSON.parse(element.Message);
+                } else if (type.toLowerCase() === 'event') {
+                    const event = (item.data = JSON.parse(element.Message));
                     item.title = event.Title;
                     item.color.primary = event.Color.Primary;
                     item.color.secondary = event.Color.Secondary;
                     item.meta.location = event.Meta.Location;
                     item.meta.notes = event.Meta.Notes;
-                }
-                else {
+                } else {
                     item.title = element.Message;
                 }
 
@@ -262,10 +260,7 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
             //     item.actions = this.actions;
             //     return new CalendarEventModel(item);
             // });
-
-        } catch (error) {
-
-        }
+        } catch (error) {}
     }
 
     /**
@@ -275,7 +270,7 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
      */
     deleteEvent(event: CustomCalendarEvent): void {
         this.confirmDialogRef = this._appUIService.showAppConfirmDialog('generic', 'Confirm Delete', 'Are you sure you want to delete?');
-        this.confirmDialogRef.afterClosed().subscribe(result => {
+        this.confirmDialogRef.afterClosed().subscribe((result) => {
             if (result) {
                 this._appUIService.showSnackbar('Deleting event, please wait', 'loading');
                 // delete the remider from server
@@ -286,14 +281,13 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
                     reminderTime: '',
                     status: 'delete'
                 })
-                    .then(x => {
+                    .then((x) => {
                         if (x.response > 0) {
                             this._appUIService.showSnackbar('Event deleted successfully');
                             const eventIndex = this.events.indexOf(event);
                             this.events.splice(eventIndex, 1);
                             this.refresh.next(true);
-                        }
-                        else {
+                        } else {
                             this._appUIService.showSnackbar('Deleting event failed', 'failure');
                         }
                     })
@@ -303,7 +297,6 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
             }
             this.confirmDialogRef = null;
         });
-
     }
 
     /**
@@ -324,66 +317,63 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
             }
         });
 
-        this.dialogRef.afterClosed()
-            .subscribe((response: any) => {
-                if (!response) {
-                    return;
-                }
-                const actionType: string = response[0];
-                const formData: FormGroup = response[1];
-                const formValue = formData.getRawValue();
+        this.dialogRef.afterClosed().subscribe((response: any) => {
+            if (!response) {
+                return;
+            }
+            const actionType: string = response[0];
+            const formData: FormGroup = response[1];
+            const formValue = formData.getRawValue();
 
-                const reminderDateTime: any = new Date(formValue.start);
-                reminderDateTime.setHours(formValue.startTime.split(':')[0]);
-                reminderDateTime.setMinutes(formValue.startTime.split(':')[1]);
-                reminderDateTime.setSeconds(0);
+            const reminderDateTime: any = new Date(formValue.start);
+            reminderDateTime.setHours(formValue.startTime.split(':')[0]);
+            reminderDateTime.setMinutes(formValue.startTime.split(':')[1]);
+            reminderDateTime.setSeconds(0);
 
-                formValue.end = formValue.start = reminderDateTime;
+            formValue.end = formValue.start = reminderDateTime;
 
-                switch (actionType) {
-                    /**
-                     * Save
-                     */
-                    case 'save':
-                        // validate the date
-                        if (isBefore(formValue.start, new Date())) {
-                            this._appUIService.showSnackbar('Event date time should be greater than now!', 'failure');
-                            return;
-                        }
+            switch (actionType) {
+                /**
+                 * Save
+                 */
+                case 'save':
+                    // validate the date
+                    if (isBefore(formValue.start, new Date())) {
+                        this._appUIService.showSnackbar('Event date time should be greater than now!', 'failure');
+                        return;
+                    }
 
-                        this._appUIService.showSnackbar('Updating event, please wait', 'loading');
+                    this._appUIService.showSnackbar('Updating event, please wait', 'loading');
 
-                        SDKClient.updateAgentReminder({
-                            id: event.id.toString(),
-                            message: this.formatMessage(formValue).message,
-                            reminderDate: format(reminderDateTime, 'yyyyMMdd'),
-                            reminderTime: format(reminderDateTime, 'HHmmss'),
-                            status: 'new'
+                    SDKClient.updateAgentReminder({
+                        id: event.id.toString(),
+                        message: this.formatMessage(formValue).message,
+                        reminderDate: format(reminderDateTime, 'yyyyMMdd'),
+                        reminderTime: format(reminderDateTime, 'HHmmss'),
+                        status: 'new'
+                    })
+                        .then((x) => {
+                            if (x.response > 0) {
+                                this._appUIService.showSnackbar('Event updated successfully');
+                                this.events[eventIndex] = Object.assign(this.events[eventIndex], formValue);
+                                this.refresh.next(true);
+                            } else {
+                                this._appUIService.showSnackbar('Updating event failed', 'failure');
+                            }
                         })
-                            .then(x => {
-                                if (x.response > 0) {
-                                    this._appUIService.showSnackbar('Event updated successfully');
-                                    this.events[eventIndex] = Object.assign(this.events[eventIndex], formValue);
-                                    this.refresh.next(true);
-                                }
-                                else {
-                                    this._appUIService.showSnackbar('Updating event failed', 'failure');
-                                }
-                            })
-                            .catch(() => {
-                                this._appUIService.showSnackbar('Error in updating event', 'failure');
-                            });
-                        break;
-                    /**
-                     * Delete
-                     */
-                    case 'delete':
+                        .catch(() => {
+                            this._appUIService.showSnackbar('Error in updating event', 'failure');
+                        });
+                    break;
+                /**
+                 * Delete
+                 */
+                case 'delete':
+                    this.deleteEvent(event);
 
-                        this.deleteEvent(event);
-
-                        break;
-                }
-            });
+                    break;
+            }
+        });
     }
 
     /**
@@ -401,8 +391,7 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
             formValue.data = json;
             formValue.title = this.generateTitle(json);
             message = JSON.stringify(json);
-        }
-        else if (formValue.type === 'event') {
+        } else if (formValue.type === 'event') {
             message = JSON.stringify({
                 Title: formValue.title,
                 Color: {
@@ -426,19 +415,16 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
      */
     generateTitle(task: any): string {
         let title = '';
-        // check the action 
+        // check the action
         if (task.Action === 'changestate') {
             const value = task.Data.split(',')[1];
-            const auxCodes = SDKClient.getAgentData().auxCodes.filter(f => f.Value.toString() === value)?.[0];
+            const auxCodes = SDKClient.getAgentData().auxCodes.filter((f) => f.Value.toString() === value)?.[0];
             title = `Task: Change Status to ${auxCodes?.Name || task.Data}`;
-        }
-        else if (task.Action === 'makecall') {
+        } else if (task.Action === 'makecall') {
             title = `Task: Make call to ${task.Data}`;
-        }
-        else if (task.Action === 'meeting') {
+        } else if (task.Action === 'meeting') {
             title = `Task: Meeting ${task.Data ? ' - ' + task.Data : ''}`;
-        }
-        else {
+        } else {
             title = `Task: ${task.Action} - ${task.Data}`;
         }
         return title;
@@ -456,51 +442,48 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
                 data: this.data.Data
             }
         });
-        this.dialogRef.afterClosed()
-            .subscribe((response: FormGroup) => {
-                if (!response) {
-                    return;
-                }
+        this.dialogRef.afterClosed().subscribe((response: FormGroup) => {
+            if (!response) {
+                return;
+            }
 
-                let newEvent = response.getRawValue();
-                newEvent.actions = this.actions;
+            let newEvent = response.getRawValue();
+            newEvent.actions = this.actions;
 
-                const reminderDateTime: any = new Date(newEvent.start);
-                reminderDateTime.setHours(newEvent.startTime.split(':')[0]);
-                reminderDateTime.setMinutes(newEvent.startTime.split(':')[1]);
-                reminderDateTime.setSeconds(0);
+            const reminderDateTime: any = new Date(newEvent.start);
+            reminderDateTime.setHours(newEvent.startTime.split(':')[0]);
+            reminderDateTime.setMinutes(newEvent.startTime.split(':')[1]);
+            reminderDateTime.setSeconds(0);
 
-                newEvent.end = newEvent.start = reminderDateTime;
+            newEvent.end = newEvent.start = reminderDateTime;
 
-                this._appUIService.showSnackbar('Adding event, please wait', 'loading');
+            this._appUIService.showSnackbar('Adding event, please wait', 'loading');
 
-                // format the message and newEvent
-                const formatted = this.formatMessage(newEvent);
+            // format the message and newEvent
+            const formatted = this.formatMessage(newEvent);
 
-                // update the new event as well
-                newEvent = formatted.formValue;
+            // update the new event as well
+            newEvent = formatted.formValue;
 
-                SDKClient.createAgentReminderTask({
-                    message: formatted.message,
-                    reminderDate: format(reminderDateTime, 'yyyyMMdd'),
-                    reminderTime: format(reminderDateTime, 'HHmmss'),
-                    type: newEvent.type
+            SDKClient.createAgentReminderTask({
+                message: formatted.message,
+                reminderDate: format(reminderDateTime, 'yyyyMMdd'),
+                reminderTime: format(reminderDateTime, 'HHmmss'),
+                type: newEvent.type
+            })
+                .then((x) => {
+                    if (x.response > 0) {
+                        this._appUIService.showSnackbar('Event added successfully');
+
+                        this.events.push(newEvent);
+                        this.refresh.next(true);
+                    } else {
+                        this._appUIService.showSnackbar('Adding event failed', 'failure');
+                    }
                 })
-                    .then(x => {
-                        if (x.response > 0) {
-                            this._appUIService.showSnackbar('Event added successfully');
-
-                            this.events.push(newEvent);
-                            this.refresh.next(true);
-                        }
-                        else {
-                            this._appUIService.showSnackbar('Addding event failed', 'failure');
-                        }
-                    })
-                    .catch(() => {
-                        this._appUIService.showSnackbar('Error in adding event', 'failure');
-                    });
-            });
+                .catch(() => {
+                    this._appUIService.showSnackbar('Error in adding event', 'failure');
+                });
+        });
     }
-
 }

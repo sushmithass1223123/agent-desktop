@@ -1,5 +1,5 @@
-import { Component, Inject, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, Inject, OnInit, ViewEncapsulation } from '@angular/core';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatColors } from '@fuse/mat-colors';
 import { AppUiService } from '@services/app-ui.service';
@@ -17,8 +17,7 @@ import { CalendarEventModel } from '../calendar.model';
     styleUrls: ['./event-form.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-
-export class CalendarEventFormDialogComponent {
+export class CalendarEventFormDialogComponent implements OnInit {
     /**
      * Widget data
      */
@@ -49,6 +48,11 @@ export class CalendarEventFormDialogComponent {
     auxCodes: IAUXCodes[];
 
     /**
+     * mininimu date for task / event
+     */
+    minDate = new Date();
+
+    /**
      * Constructor
      *
      * @param {MatDialogRef<CalendarEventFormDialogComponent>} matDialogRef
@@ -67,8 +71,7 @@ export class CalendarEventFormDialogComponent {
 
         if (this.action === 'edit') {
             this.dialogTitle = 'Edit Event/Task';
-        }
-        else {
+        } else {
             this.dialogTitle = 'New Event/Task';
             this.event = new CalendarEventModel({
                 start: _data.date,
@@ -83,6 +86,21 @@ export class CalendarEventFormDialogComponent {
         // }
     }
 
+    /**
+     * Lifecycle Method
+     */
+    ngOnInit(): void {
+        this.eventForm.controls.type.valueChanges.subscribe((type) => {
+            const titleControl = this.eventForm.get('title');
+            if (type === 'executetask') {
+                titleControl.clearValidators();
+            } else {
+                titleControl.setValidators([Validators.required]);
+            }
+            titleControl.updateValueAndValidity();
+        });
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
@@ -95,8 +113,24 @@ export class CalendarEventFormDialogComponent {
     }
 
     /**
+     * Validates Time of the form
+     */
+    validateTime(control: AbstractControl): ValidationErrors {
+        if (this.eventForm && control.value) {
+            const enteredDate = new Date(this.eventForm.get('start').value);
+            const [hours, mins] = control.value.split(':');
+            enteredDate.setHours(hours);
+            enteredDate.setMinutes(mins);
+            if (enteredDate.getTime() < Date.now()) {
+                return { invalid: true };
+            }
+            return {};
+        }
+        return { invalid: true };
+    }
+
+    /**
      * Create the event form
-     *
      * @returns {FormGroup}
      */
     createEventForm(): FormGroup {
@@ -104,16 +138,18 @@ export class CalendarEventFormDialogComponent {
         this.event.type = this.event.type.toLowerCase();
 
         return new FormGroup({
-            title: new FormControl(this.event.title),
+            title: new FormControl(this.event.title, [Validators.required]),
             type: new FormControl({ value: this.event.type, disabled: this.action === 'edit' }),
-            start: new FormControl(this.event.start),
             taskType: new FormControl({ value: this.event.type === 'executetask' ? this.event.data.Action : '', disabled: this.action === 'edit' }),
-            taskData: new FormControl(this.event.type === 'executetask' ?
-                this.event.data.Action === 'changestatus' ?
-                    this.event.data.Data.split(',')[0] :
-                    this.event.data.Data :
-                ''),
-            startTime: new FormControl(format(this.event.start, 'HH:mm')),
+            taskData: new FormControl(
+                this.event.type === 'executetask'
+                    ? this.event.data.Action === 'changestatus'
+                        ? this.event.data.Data.split(',')[0]
+                        : this.event.data.Data
+                    : ''
+            ),
+            start: new FormControl(this.event.start),
+            startTime: new FormControl(format(this.event.start, 'HH:mm'), [(control) => this.validateTime(control)]),
             end: new FormControl(this.event.start),
             endTime: new FormControl(format(this.event.start, 'HH:mm')),
             allDay: new FormControl(this.event.allDay),
@@ -121,11 +157,10 @@ export class CalendarEventFormDialogComponent {
                 primary: new FormControl({ value: this.event.color.primary, disabled: this.event.type === '' || this.event.type === 'text' }),
                 secondary: new FormControl({ value: this.event.color.secondary, disabled: this.event.type === '' || this.event.type === 'text' })
             }),
-            meta:
-                this._formBuilder.group({
-                    location: new FormControl({ value: this.event.meta.location, disabled: this.event.type === '' || this.event.type === 'text' }),
-                    notes: new FormControl({ value: this.event.meta.notes, disabled: this.event.type === '' || this.event.type === 'text' })
-                })
+            meta: this._formBuilder.group({
+                location: new FormControl({ value: this.event.meta.location, disabled: this.event.type === '' || this.event.type === 'text' }),
+                notes: new FormControl({ value: this.event.meta.notes, disabled: this.event.type === '' || this.event.type === 'text' })
+            })
         });
     }
 }

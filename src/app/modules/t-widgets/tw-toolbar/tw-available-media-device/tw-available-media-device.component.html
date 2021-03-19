@@ -1,30 +1,37 @@
-<div fxLayout="row wrap" fxLayoutAlign="space-around center" class="px-4" *ngIf="mediaDeviceInfo | async as mediaDevices">
+<div fxLayout="row wrap" fxLayoutAlign="space-around center" class="px-4">
     <button mat-icon-button (click)="showAvailableDevices()">
         <mat-icon matTooltip="Available devices"> headset </mat-icon>
     </button>
 </div>
 
 <ng-template #availableDevicesMenu class="custom">
-    <ng-container *ngIf="mediaDeviceInfo && mediaDeviceInfo | async as mediaDevices">
-        <div class="device-list" *ngFor="let device of mediaDevices">
-            <p class="mat-title">{{ device.type | titlecase }}</p>
-            <div *ngFor="let myDevice of device.devices" fxLayout fxLayoutAlign="space-between center" fxLayoutGap="8px" class="py-8 px-12">
-                <div class="w-30">
-                    <ng-container [ngSwitch]="device.type">
-                        <ng-container *ngSwitchCase="'audio'">
-                            <ng-container [ngSwitch]="myDevice.kind">
-                                <mat-icon *ngSwitchCase="'audioinput'"> mic </mat-icon>
-                                <mat-icon *ngSwitchCase="'audiooutput'"> speaker </mat-icon>
-                            </ng-container>
-                        </ng-container>
-                        <mat-icon *ngSwitchCase="'video'"> video_call </mat-icon>
-                    </ng-container>
-                </div>
-                <div class="px-12">
-                    {{ myDevice.label }}
-                </div>
-                <!-- <div class="w-30">Hello !!</div> -->
+    <p class="mat-title">Select Media device</p>
+    <div *ngIf="stream" class="mb-8" fxLayout fxLayoutAlign="center center">
+        <video autoplay [srcObject]="stream" #videoStream></video>
+    </div>
+    <div
+        *ngIf="!mediaDeviceInfo.error && !mediaDeviceInfo.loading && mediaDeviceInfo.devices as mediaDevices"
+        fxLayout
+        fxLayoutGap="1%"
+        class="w-100-p"
+        [formGroup]="mediaSelectFormGroup"
+    >
+        <div fxFlex="30%" fxLayout *ngFor="let device of mediaDevices | keyvalue" class="py-8 px-12">
+            <div fxFlex="10%" class="mr-3" [ngSwitch]="device.key">
+                <mat-icon *ngSwitchCase="'mic'"> mic </mat-icon>
+                <mat-icon *ngSwitchCase="'speaker'"> speaker </mat-icon>
+                <mat-icon *ngSwitchCase="'video'"> video_call </mat-icon>
             </div>
+            <mat-form-field fxFlex="100%">
+                <mat-select [placeholder]="'Select ' + device.key" [formControlName]="device.key">
+                    <mat-option *ngFor="let myDevice of device.value" [value]="myDevice.deviceId">
+                        {{ myDevice.label }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
         </div>
-    </ng-container>
+    </div>
+    <div class="text-center mt-20 mat-title" *ngIf="mediaDeviceInfo.error || mediaDeviceInfo.loading">
+        {{ mediaDeviceInfo.error || mediaDeviceInfo.loading }}
+    </div>
 </ng-template>
