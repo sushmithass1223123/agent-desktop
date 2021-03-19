@@ -386,6 +386,67 @@
                                 </p>
                             </div>
                         </div>
+                        <div *ngIf="dynamicListTable.enabled" [hidden]="activeSwitcher !== 'dynamicList'">
+                            <div>
+                                <!-- <mat-form-field class="custom form-field w-100-p" appearance="outline">
+                                <input class="login-input" matInput placeholder="Search" [(ngModel)]="searchTerm" (input)="filterAgents()" />
+                                <button
+                                    *ngIf="!searchTerm; else clearBtn"
+                                    mat-icon-button
+                                    matSuffix
+                                    [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
+                                    disabled
+                                >
+                                    <mat-icon matSuffix>search</mat-icon>
+                                </button>
+                                <ng-template #clearBtn>
+                                    <button
+                                        mat-button
+                                        color="primary"
+                                        matSuffix
+                                        mat-icon-button
+                                        aria-label="Clear"
+                                        [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
+                                        (click)="searchTerm = ''; filterAgents()"
+                                    >
+                                        <mat-icon>close</mat-icon>
+                                    </button>
+                                </ng-template>
+                            </mat-form-field> -->
+                            </div>
+                            <div class="w-100-p h-100-p custom-scroll-adjust">
+                                <mat-table
+                                    class="h-100-p"
+                                    matSort
+                                    matSortDisableClear
+                                    [dataSource]="dynamicListTable.tableData.source"
+                                    matSortActive="Name"
+                                    matSortDirection="asc"
+                                >
+                                    <ng-container
+                                        *ngFor="let disCol of dynamicListTable.tableData.columns; let colIndex = index"
+                                        matColumnDef="{{ disCol }}"
+                                    >
+                                        <mat-header-cell *matHeaderCellDef>{{ disCol }}</mat-header-cell>
+                                        <mat-cell *matCellDef="let element"> {{ element[disCol] }} </mat-cell>
+                                    </ng-container>
+
+                                    <mat-header-row *matHeaderRowDef="dynamicListTable.tableData.columns"></mat-header-row>
+                                    <mat-row
+                                        *matRowDef="let row; columns: dynamicListTable.tableData.columns"
+                                        (click)="selectDynamic(row)"
+                                        class="selectable"
+                                        [ngClass]="{ selected: !!dynamicListTable.tableData.selection.isSelected(row) }"
+                                    ></mat-row>
+                                </mat-table>
+                                <p *ngIf="!loading && dynamicListTable.tableData.source.data.length === 0" class="text-center m-0 mat-title">
+                                    No Data Available
+                                </p>
+                                <p *ngIf="loading && dynamicListTable.tableData.source.data.length === 0" class="text-center m-0 mat-title">
+                                    Loading Data, Please Wait...
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

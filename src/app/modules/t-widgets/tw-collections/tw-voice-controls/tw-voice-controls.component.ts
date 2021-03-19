@@ -951,10 +951,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         // swtich the av events
         switch (evt.event) {
             case 'onTrace':
-                TUtils.Logger.info('TwVoiceControlsComponent.onAVEvent.onTrace' + evt.data);
+                TUtils.Logger.info('TwVoiceControlsComponent.onAVEvent.onTrace: ' + evt.data);
                 break;
             case 'onError':
-                TUtils.Logger.error('TwVoiceControlsComponent.onAVEvent.onError', evt.data);
+                TUtils.Logger.error('TwVoiceControlsComponent.onAVEvent.onError', evt.data.code + '-' + evt.data.error);
                 break;
             case 'onConnected':
                 break;

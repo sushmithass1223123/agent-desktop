@@ -41,6 +41,18 @@ instant-messaging {
                 transition: opacity 300ms ease-in-out;
             }
         }
+
+        .fab-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            > div {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+        }
     }
 
     .content {

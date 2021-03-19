@@ -7,8 +7,20 @@
 // Import app theme styles
 @import 'app/app.theme';
 
-html {
-    font-family: 'Montserrat', 'Muli', 'Helvetica Neue', 'Arial', sans-serif;
+body {
+    font-family: 'Arial', sans-serif;
+
+    &.wf-muli {
+        font-family: 'Muli';
+    }
+
+    &.wf-montserrat {
+        font-family: 'Montserrat';
+    }
+
+    &.wf-source-sans-pro {
+        font-family: 'Source Sans Pro';
+    }
 }
 
 ::-webkit-scrollbar {

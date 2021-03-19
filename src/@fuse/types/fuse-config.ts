@@ -1,5 +1,6 @@
 export interface FuseConfig {
     colorTheme: string;
+    webFont: string;
     flatTheme: boolean;
     customScrollbars: boolean;
     layout: {

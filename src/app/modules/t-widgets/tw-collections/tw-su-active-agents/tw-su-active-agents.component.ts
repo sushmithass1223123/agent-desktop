@@ -608,11 +608,11 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                             supervisorId: agentId,
                             teamIds: [teamId]
                         });
-                        if (res.response.ResultCode >= 0) {
-                            this._appUIService.showSnackbar('Broadcast sent', 'success');
-                        } else {
-                            throw new Error('Something went wrong while sending broacast');
-                        }
+                        // if (res.response.ResultCode >= 0) {
+                        //     this._appUIService.showSnackbar('Broadcast sent', 'success');
+                        // } else {
+                        //     throw new Error('Something went wrong while sending broacast');
+                        // }
                     }
                 } catch (e) {
                     this._appUIService.showSnackbar('Something went wrong while sending broacast', 'failure');

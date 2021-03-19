@@ -30,7 +30,7 @@
 
                 <div class="button-group">
                     <button
-                        *ngIf="this.widgetData.chatConfig.Snapshot.Allowed"
+                        *ngIf="widgetData.chatConfig?.Snapshot?.Allowed"
                         mat-flat-button
                         mat-icon-button
                         [disabled]="!connected"
@@ -41,7 +41,7 @@
                     </button>
 
                     <button
-                        *ngIf="data.Data.Config.WebRTCTest.Allowed"
+                        *ngIf="widgetData.chatConfig?.WebRTCTest?.Allowed"
                         mat-flat-button
                         mat-icon-button
                         [disabled]="!connected"
@@ -96,10 +96,10 @@
                 </button>
 
                 <button
-                    *ngIf="this.widgetData.chatConfig.ScreenShareAllowed"
+                    *ngIf="widgetData.chatConfig?.ScreenShareAllowed"
                     mat-flat-button
                     mat-icon-button
-                    [disabled]="!connected || this.remoteScreenSharing"
+                    [disabled]="!connected || remoteScreenSharing"
                     [matTooltip]="screenSharing ? 'Stop Share' : 'Start Share'"
                     (click)="shareScreen()"
                     [ngClass]="{ 'bg-alt-danger': screenSharing }"

@@ -70,10 +70,10 @@
                     <mat-icon> mic_off </mat-icon>
                 </button>
                 <button
-                    *ngIf="this.widgetData.chatConfig.ScreenShareAllowed"
+                    *ngIf="widgetData.chatConfig?.ScreenShareAllowed"
                     mat-flat-button
                     mat-icon-button
-                    [disabled]="!connected || this.remoteScreenSharing"
+                    [disabled]="!connected || remoteScreenSharing"
                     [matTooltip]="screenSharing ? 'Stop Share' : 'Start Share'"
                     [ngClass]="{ 'bg-alt-danger': screenSharing }"
                     (click)="shareScreen()"

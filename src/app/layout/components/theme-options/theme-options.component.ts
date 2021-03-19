@@ -69,6 +69,7 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
         // noinspection TypeScriptValidateTypes
         this.form = this._formBuilder.group({
             colorTheme: new FormControl(),
+            webFont: new FormControl(),
             flatTheme: new FormControl(),
             customScrollbars: new FormControl(),
             layout: this._formBuilder.group({

@@ -116,7 +116,7 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
             // add the query param
             const reg = new RegExp(Object.keys(mapObj).join('|'), 'gi');
             url = url.replace(reg, (matched: any) => {
-                return mapObj[matched];
+                return mapObj[matched] || matched;
             });
 
             // check 'Open In New' widget
@@ -149,6 +149,13 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
 
             // set show to true
             this.show = true;
+
+            // check if auto refresh is enabled
+            if (this.data.Data.AutoRefresh && Number(this.data.Data.AutoRefresh) > 0) {
+                setInterval(() => {
+                    this.onRefreshEvent();
+                }, Number(this.data.Data.AutoRefresh) * 1000);
+            }
         }
 
         // register to TMAC events
@@ -214,24 +221,24 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
     frameLoaded = () => {
         // check if this is not initial load
         // if (this.initialLoad) {
-            if (!this.subscriptions.eventsById && !this.subscriptions.allEvents) {
-                // subscribe to interaction events
-                this.subscriptions.eventsById = this._tmacEventService
-                    .getInteractionEventsById(this.interactionId)
-                    .pipe(takeUntil(this.unsubscribeAll))
-                    .subscribe((evts) => this.sendEventsToWindow(evts));
+        if (!this.subscriptions.eventsById && !this.subscriptions.allEvents) {
+            // subscribe to interaction events
+            this.subscriptions.eventsById = this._tmacEventService
+                .getInteractionEventsById(this.interactionId)
+                .pipe(takeUntil(this.unsubscribeAll))
+                .subscribe((evts) => this.sendEventsToWindow(evts));
 
-                // subscribe to all non interaction events
-                this.subscriptions.allEvents = this._tmacEventService
-                    .getAllEvents()
-                    .pipe(takeUntil(this.unsubscribeAll))
-                    .subscribe((evts) => this.sendEventsToWindow(evts));
-            }
+            // subscribe to all non interaction events
+            this.subscriptions.allEvents = this._tmacEventService
+                .getAllEvents()
+                .pipe(takeUntil(this.unsubscribeAll))
+                .subscribe((evts) => this.sendEventsToWindow(evts));
+        }
 
-            // set loaded to true
-            setTimeout(() => {
-                this.loaded = true;
-            });
+        // set loaded to true
+        setTimeout(() => {
+            this.loaded = true;
+        });
         // } else {
         //     // set initial load to true
         //     this.initialLoad = true;

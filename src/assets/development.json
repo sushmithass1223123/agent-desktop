@@ -255,19 +255,6 @@
                 ],
                 "Bottom": [
                     {
-                        "Name": "Calendar",
-                        "Description": "",
-                        "Type": "twn-docker",
-                        "Config": {
-                            "Enabled": true,
-                            "Icon": "today"
-                        },
-                        "Data": {
-                            "Path": "/calendar",
-                            "Active": false
-                        }
-                    },
-                    {
                         "Name": "TMeet",
                         "Description": "",
                         "Type": "twn-custom",
@@ -401,7 +388,7 @@
                                     },
                                     "Data": {
                                         "Source": "dashboard",
-                                        "SLEnabled": true
+                                        "SLEnabled": false
                                     }
                                 }
                             ],
@@ -519,16 +506,16 @@
                                     "Data": {}
                                 },
                                 {
-                                    "Name": "Reminders",
+                                    "Name": "Calendar",
                                     "Description": "",
-                                    "Key": "AgentReminders",
-                                    "Type": "tw-custom",
+                                    "Key": "Calendar",
+                                    "Type": "tw-calendar",
                                     "Config": {
                                         "Enabled": true,
                                         "Static": false,
                                         "Anchor": false,
                                         "AOT": false,
-                                        "Icon": "event_note",
+                                        "Icon": "today",
                                         "Class": "",
                                         "Position": {
                                             "X": 2,
@@ -536,17 +523,27 @@
                                         },
                                         "Actions": [
                                             "maximize",
-                                            "float",
-                                            "refresh"
+                                            "float"
                                         ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "AutoOpen": false,
-                                        "OpenInNew": false,
-                                        "Url": "https://dice.tetherfi.cloud/agent-desktop/reminders/index.html?agentid=_agentId&tmacserver=TmacServer1"
+                                        "TaskOptions": [
+                                            {
+                                                "Name": "Change Status",
+                                                "Value": "changestate"
+                                            },
+                                            {
+                                                "Name": "Make Call",
+                                                "Value": "makecall"
+                                            },
+                                            {
+                                                "Name": "Meeting",
+                                                "Value": "meeting"
+                                            }
+                                        ]
                                     }
                                 }
                             ],
@@ -2342,6 +2339,37 @@
                             ],
                             "AOT": [
                                 {
+                                    "Name": "Agent Assist",
+                                    "Description": "",
+                                    "Key": "AgentAssist",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "Icon": "verified_user",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "W": 450,
+                                            "H": 800
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true
+                                    },
+                                    "Data": {
+                                        "AutoOpen": false,
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=agentassisttest&ucid=UCID&interactionid=InteractionID"
+                                    }
+                                },
+                                {
                                     "Name": "Reminders",
                                     "Description": "",
                                     "Key": "AgentReminders",
@@ -3219,67 +3247,6 @@
                     }
                 },
                 {
-                    "Name": "Calendar",
-                    "Description": "",
-                    "Type": "twc-docker",
-                    "Config": {
-                        "Enabled": true,
-                        "Class": "",
-                        "Position": {
-                            "X": 1,
-                            "Y": 1
-                        },
-                        "Actions": [],
-                        "Pinned": false,
-                        "Header": true
-                    },
-                    "Data": {
-                        "Path": "/calendar",
-                        "Widgets": {
-                            "Static": [
-                                {
-                                    "Name": "Calendar",
-                                    "Description": "",
-                                    "Key": "Calendar",
-                                    "Type": "tw-calendar",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "Icon": "today",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 3,
-                                            "Y": 3
-                                        },
-                                        "Actions": [],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "TaskOptions": [
-                                            {
-                                                "Name": "Change Status",
-                                                "Value": "changestate"
-                                            },
-                                            {
-                                                "Name": "Make Call",
-                                                "Value": "makecall"
-                                            },
-                                            {
-                                                "Name": "Meeting",
-                                                "Value": "meeting"
-                                            }
-                                        ]
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                },
-                {
                     "Name": "TMeet",
                     "Description": "",
                     "Type": "twc-custom",
@@ -3320,7 +3287,8 @@
                     "Data": {
                         "Path": "/dashboard",
                         "Url": "https://dice.tetherfi.cloud/CustomerJourneyDashBoard/",
-                        "Unload": true
+                        "Unload": true,
+                        "AutoRefresh": 0
                     }
                 },
                 {
@@ -3453,7 +3421,8 @@
                                     "Data": {
                                         "AutoOpen": false,
                                         "OpenInNew": false,
-                                        "Url": "https://dice.tetherfi.cloud/tmac_client/test.html"
+                                        "Url": "https://dice.tetherfi.cloud/tmac_client/test.html",
+                                        "AutoRefresh": 0
                                     }
                                 },
                                 {
@@ -3849,6 +3818,7 @@
     "AppConfigs": {
         "TitleName": "Agent Desktop",
         "Theme": "theme-default-3",
+        "Font": "wf-muli",
         "Logos": {
             "Favicon": "",
             "Default": {
@@ -3974,7 +3944,7 @@
             },
             "CustomSripts": [
                 "https://dice.tetherfi.cloud/tmaclibs/adapter.js",
-                "https://dice.tetherfi.cloud/tmaclibs/webclientapi-lib.debug.js",
+                "https://dice.tetherfi.cloud/tmaclibs/livechat_video.min.js",
                 "https://dice.tetherfi.cloud/tmaclibs/collector.min.js"
             ]
         }
