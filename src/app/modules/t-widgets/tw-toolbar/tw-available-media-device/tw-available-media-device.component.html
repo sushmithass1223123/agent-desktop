@@ -12,6 +12,7 @@
     <div
         *ngIf="!mediaDeviceInfo.error && !mediaDeviceInfo.loading && mediaDeviceInfo.devices as mediaDevices"
         fxLayout
+        fxLayoutAlign="center center"
         fxLayoutGap="1%"
         class="w-100-p"
         [formGroup]="mediaSelectFormGroup"
@@ -22,7 +23,7 @@
                 <mat-icon *ngSwitchCase="'speaker'"> speaker </mat-icon>
                 <mat-icon *ngSwitchCase="'video'"> video_call </mat-icon>
             </div>
-            <mat-form-field fxFlex="100%">
+            <mat-form-field fxFlex="100%" appearance="outline">
                 <mat-select [placeholder]="'Select ' + device.key" [formControlName]="device.key">
                     <mat-option *ngFor="let myDevice of device.value" [value]="myDevice.deviceId">
                         {{ myDevice.label }}

@@ -253,7 +253,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         this.comments = '';
 
         // check if dynamic list is there, then add it
-        if (data.otherData.dynamicList) {
+        if (data?.otherData?.dynamicList) {
             this.switcherList.push(data.otherData.dynamicList);
             this.dynamicListTable = {
                 enabled: true,

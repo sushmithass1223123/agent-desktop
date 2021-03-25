@@ -27,6 +27,7 @@ import {
     AVChannel,
     AVControlMessageReceivedEvent,
     IAgentData,
+    InteractionDataEvent,
     IResponse,
     SDKClient,
     SSDestination,
@@ -444,10 +445,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // check if this chat is init by supervisor
         this.supervisorInit = this.lineId === 'bargein';
 
-        if (this.data.InteractionDetails.IsAgentTransferedChat) {
-            this.loadPreviousAgentNotes();
-        }
-
         // check if conversation api Url is configured
         if (this.data.Data.ConversationService && this.data.Data.ConversationService.Url) {
             // set the conversation service urls
@@ -481,7 +478,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     'TextChatTransferSuccessEvent',
                     'TextChatTransferFailedEvent',
                     'TextChatTransferRejectEvent',
-                    'ActionMessageReceivedEvent'
+                    'ActionMessageReceivedEvent',
+                    'InteractionDataEvent'
                 ],
                 this.interactionId
             )
@@ -508,27 +506,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 icon: 'gesture',
                 type: 'signatureRequest'
             });
-        }
-    }
-
-    /**
-     * loads interaction notes made by previous agent
-     */
-    async loadPreviousAgentNotes(): Promise<void> {
-        try {
-            const { SourceAgentID: agentId, SourceAgentInteractionId: interactionId, RecoveryData } = this.data.InteractionDetails;
-            const parsedRecoveryData = JSON.parse(RecoveryData.TextChatData);
-            const requestArgs = {
-                count: 20,
-                fromDate: '',
-                interactionId,
-                sessionId: parsedRecoveryData.sessionID,
-                toDate: '',
-                agentId
-            };
-            await SDKClient.getInteractionData(requestArgs);
-        } catch (e) {
-            console.error(e);
         }
     }
 
@@ -965,6 +942,27 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     }
 
     /**
+     * To handle InteractionDataEvent
+     */
+    private InteractionDataEvent(evt: InteractionDataEvent): void {
+        // check the channel 
+        if (evt.Channel !== 'TextChat') {
+            return;
+        }
+        // check if interaction comments available
+        if (evt.InteractionComments && evt.InteractionComments.length > 0) {
+            evt.InteractionComments.forEach(c => {
+                const dt = JSON.parse(c);
+                this.savedComments.push({
+                    Message: dt.Comment,
+                    Time: dt.Time,
+                    User: dt.User
+                });
+            });
+        }
+    }
+
+    /**
      * To proccess both TextChatMessageReceivedEvent and TextChatAgentMessageReceivedEvent
      * @param evt TextChatMessageReceivedEvent | TextChatAgentMessageReceivedEvent data
      */
@@ -980,8 +978,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // // check if app message
         if (evt.IsAppMessage) {
             const msg = JSON.parse(evt.Message);
-            let message = '';
-            let status: SnackbarStateTypes = 'success';
             switch (msg.type.toLowerCase()) {
                 case 'clientreloaded':
                     this.callWidget.destroy();
@@ -2008,8 +2004,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // check the saved comments
         this.savedComments.forEach((item) => {
             message += `
-                 <div>${item.Message.replace(/(?:\r\n|\r|\n)/g, '<br>')}</div>
-                 <span class="time secondary-text">${item.Time}</span>
+                 <div class="text-primary mat-title m-0">${item.Message.replace(/(?:\r\n|\r|\n)/g, '<br>')}</div>
+                 <span class="time secondary-text">${item.User}</span>,
+                 <span class="time secondary-text">${new Date(item.Time).toLocaleString()}</span>
                  <br /><br />
                  `;
         });
@@ -2028,7 +2025,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                             // add comments to the reference
                             this.savedComments.push({
                                 Message: resp1,
-                                Time: new Date().toLocaleTimeString(),
+                                Time: new Date(),
                                 User: SDKClient.getAgentData().agentName
                             });
                             // alert user
