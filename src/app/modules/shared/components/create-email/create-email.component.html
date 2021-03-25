@@ -18,7 +18,7 @@
                 />
                 <small (click)="showCcBcc = !showCcBcc"> CC / BCC </small>
             </div>
-            <small *ngIf="emailCtrl.controls.To.errors"> {{ emailCtrl.controls.To.errors | json }} </small>
+            <small *ngIf="emailCtrl.controls.To.errors" class="twd-text-red-600"> To Email Address required </small>
 
             <ng-container *ngIf="showCcBcc">
                 <div fxLayout fxLayoutAlign="space-between" fxLayoutGap="8px" class="my-4">
@@ -87,7 +87,7 @@
                     <div
                         quill-editor-toolbar
                         class="border-radius-20 mat-elevation-z2"
-                        [ngClass]="showToolbar ? 'show ' + (toolbarBg | async).content : ''"
+                        [ngClass]="showToolbar ? 'show ' + (customFuseColor$ | async)?.content : ''"
                     >
                         <span class="ql-formats">
                             <select class="ql-font">

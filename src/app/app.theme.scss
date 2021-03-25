@@ -209,6 +209,8 @@ body.theme-default-2 {
         warn: $default-warn-palette
     );
 
+    @include tailwind-core-theme($palettes);
+
     @include fuse-color-classes($palettes);
 }
 
@@ -238,6 +240,10 @@ body.theme-teal-red {
         accent: $teal-red-accent-palette,
         warn: $teal-red-warn-palette
     );
+
+    --twd-primary: $mat-teal;
+    --twd-accent: $mat-red;
+    --twd-warn: $mat-red;
 
     @include fuse-color-classes($palettes);
 }
@@ -273,6 +279,10 @@ body.theme-default-dark {
         warn: $dark-theme-warn-palette
     );
 
+    --twd-primary: $tetherfi-primary;
+    --twd-accent: $tetherfi-grey;
+    --twd-warn: $mat-grey;
+
     @include fuse-color-classes($palettes);
 }
 
@@ -303,6 +313,10 @@ body.theme-blue-grey-dark {
         warn: $blue-grey-dark-warn-palette
     );
 
+    --twd-primary: $mat-blue-grey;
+    --twd-accent: $mat-grey;
+    --twd-warn: $mat-red;
+
     @include fuse-color-classes($palettes);
 }
 
@@ -332,6 +346,10 @@ body.theme-pink-grey-dark {
         accent: $pink-grey-dark-accent-palette,
         warn: $pink-grey-dark-warn-palette
     );
+
+    --twd-primary: $mat-pink;
+    --twd-accent: $mat-grey;
+    --twd-warn: $mat-red;
 
     @include fuse-color-classes($palettes);
 }

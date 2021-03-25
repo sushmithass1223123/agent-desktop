@@ -1,10 +1,11 @@
 import { Component, EventEmitter, HostBinding, Input, OnDestroy, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
+import { FuseFacadeService } from '@services/fuse-facade.service';
 import { IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { Subject } from 'rxjs/internal/Subject';
-import { takeUntil } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
 
 /**
  * TW Wrapper component
@@ -92,10 +93,18 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
     _unsubscribeAll: Subject<any>;
 
     /**
+     * Fuse custom background colors
+     */
+    customFuseColor = {
+        anchor$: this.fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
+        widget$: this.fuseFacadeService.widgetBgClasses$
+    };
+
+    /**
      * Constructor
      * @param {FuseConfigService} _fuseConfigService
      */
-    constructor(private _fuseConfigService: FuseConfigService) {
+    constructor(private _fuseConfigService: FuseConfigService, private fuseFacadeService: FuseFacadeService) {
         this._unsubscribeAll = new Subject();
     }
 

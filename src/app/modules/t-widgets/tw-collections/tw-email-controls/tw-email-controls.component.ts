@@ -373,6 +373,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                         btn.disabled = false;
                         this._appUIService.showSnackbar('Close interaction failed!', 'failure');
                     });
+            } else {
+                btn.disabled = false;
             }
         });
     }
@@ -429,7 +431,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Forward Email
      */
-    forwardEmail(): void { }
+    forwardEmail(): void {}
 
     /**
      * Show reply email form
@@ -457,10 +459,11 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             To: From || '',
             Body: `
             ${preBody} 
-            ${this.domSanitizer.bypassSecurityTrustHtml(Body || '')['changingThisBreaksApplicationSecurity'][
-                'changingThisBreaksApplicationSecurity'
+            ${
+                this.domSanitizer.bypassSecurityTrustHtml(Body || '')['changingThisBreaksApplicationSecurity'][
+                    'changingThisBreaksApplicationSecurity'
                 ]
-                }`,
+            }`,
             Subject: `RE: ${Subject}`,
             Files: []
         };
@@ -610,8 +613,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                         this._appUIService.showSnackbar('Something went wrong', 'failure');
                         btn.disabled = false;
                     });
+            } else {
+                btn.disabled = false;
             }
-            btn.disabled = true;
         });
     }
 
