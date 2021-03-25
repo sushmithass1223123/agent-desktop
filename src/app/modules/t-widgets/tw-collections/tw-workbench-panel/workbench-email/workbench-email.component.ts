@@ -809,7 +809,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
     switchTab(tab: AvailableTabs): void {
         this.currentTab = tab;
         this.selectedMails = [];
-
+        this.emailSearchRes.data.selected = false;
         // this.advancedSearchForm.reset();
         this.resetForm();
         this.doAdvancedSearch();

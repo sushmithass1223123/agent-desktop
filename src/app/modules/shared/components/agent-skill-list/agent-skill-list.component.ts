@@ -4,13 +4,11 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { fuseAnimations } from '@fuse/animations';
-import { FuseConfigService } from '@fuse/services/config.service';
-import { FuseConfig } from '@fuse/types';
 import { AppUiService } from '@services/app-ui.service';
+import { FuseFacadeService } from '@services/fuse-facade.service';
 import { AgentSkillListData } from 'app/interfaces';
 import { orderBy } from 'lodash';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { AgentModel, CommandResultEvent, FavouriteSkill, IResponse, IResponseData, QueueStatusEvent, SDKClient } from 'tmac-sdk';
 import { SharedWrapperComponent } from '../shared-wrapper/shared-wrapper.component';
 
@@ -28,7 +26,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
     /**
      * Fuse theme config
      */
-    fuseConfig: FuseConfig;
+    // fuseConfig: FuseConfig;
     /**
      * To unsubscribe from subscription subject
      */
@@ -183,6 +181,11 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
     isConsult: boolean;
 
     /**
+     * Fuse custom background colors
+     */
+    customFuseColor$ = this.fuseFacadeService.anchorOrWidgetBgClasses$;
+
+    /**
      * Wrapper component Ref
      */
     @ViewChild(SharedWrapperComponent) wrapperComponent: SharedWrapperComponent;
@@ -192,7 +195,8 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
      */
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: AgentSkillListData,
-        private _fuseConfigService: FuseConfigService,
+        // private _fuseConfigService: FuseConfigService,
+        private fuseFacadeService: FuseFacadeService,
         private _appUIService: AppUiService
     ) {
         this.agentListTable = {
@@ -279,9 +283,9 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 break;
         }
 
-        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.fuseConfig = config;
-        });
+        // this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+        //     this.fuseConfig = config;
+        // });
 
         // get wallboard skills
         SDKClient.getTmacWallboardSkills().then((dt) => {

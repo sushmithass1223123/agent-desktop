@@ -2,7 +2,13 @@ import { set } from 'lodash';
 
 type Generic = string | number;
 
-export const formatJsonData = (data: Record<Generic, any>, formatConfig: Record<Generic, Generic | Generic[]>) => {
+/**
+ * Return json in a format specfied in formatConfig
+ * @param {Record<Generic, any>} data
+ * @param {Record<Generic, Generic | Generic[]>} formatConfig
+ * @returns {Record<Generic, Generic | Generic[]>}
+ */
+export const formatJsonData = <T = Record<Generic, Generic | Generic[]>>(data: Record<Generic, any>, formatConfig: T): T => {
     return Object.keys(formatConfig).reduce((acc, cur) => {
         if (typeof formatConfig[cur] === 'string') {
             set(acc, cur, data[formatConfig[cur] as string]);
@@ -18,5 +24,5 @@ export const formatJsonData = (data: Record<Generic, any>, formatConfig: Record<
             set(acc, cur, value);
         }
         return acc;
-    }, {});
+    }, {}) as any;
 };

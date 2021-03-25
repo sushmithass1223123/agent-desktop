@@ -7,8 +7,16 @@
 // Import app theme styles
 @import 'app/app.theme';
 
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
 html {
     font-family: 'Montserrat', 'Muli', 'Helvetica Neue', 'Arial', sans-serif;
+}
+
+img {
+    border: none;
 }
 
 ::-webkit-scrollbar {
@@ -24,15 +32,6 @@ html {
     overflow: auto;
     &-adjust {
         overflow: auto;
-        // overflow: hidden;
-        // max-width: calc(100% - 8px);
-        // margin-right: 8px;
-        // &:hover {
-        //     overflow-x: auto;
-        //     overflow-y: scroll;
-        //     // margin-right: 0px;
-        //     max-width: 100%;
-        // }
     }
 }
 
