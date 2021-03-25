@@ -467,3 +467,18 @@ export interface InteractionComment {
      */
     Time: string | Date;
 }
+
+export type FuseBgConf = {
+    /**
+     * Body color class of fuse config
+     */
+    body$: string;
+    /**
+     * Content color class of fuse config
+     */
+    content$: string;
+    /**
+     * Header color class of fuse config
+     */
+    header$: string;
+};

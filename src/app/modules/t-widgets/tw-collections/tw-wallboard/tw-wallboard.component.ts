@@ -1,11 +1,11 @@
-import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { takeUntil } from 'rxjs/operators';
-import { WallboardRefreshEvent, DashboardColorCodeModel, SDKClient } from 'tmac-sdk';
+import { DashboardColorCodeModel, SDKClient, WallboardRefreshEvent } from 'tmac-sdk';
 
 /**
  * Wallboard componet
@@ -15,7 +15,8 @@ import { WallboardRefreshEvent, DashboardColorCodeModel, SDKClient } from 'tmac-
     selector: 'tw-wallboard',
     templateUrl: './tw-wallboard.component.html',
     styleUrls: ['./tw-wallboard.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     /**
@@ -85,7 +86,6 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
         }
 
         const eventName = this.source === 'supervisor' ? 'TeamWallboardRefreshEvent' : 'WallboardRefreshEvent';
-
         this._tmacEventService
             .getEvents([eventName])
             .pipe(takeUntil(this.unsubscribeAll))
@@ -148,7 +148,6 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
 
     /**
      * To get SL font color
-     *
      * @param {Number} value
      */
     getSLFontColor(value: number): string {
@@ -159,5 +158,23 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
             return filterData.FontColor;
         }
         return '';
+    }
+
+    /**
+     * sets up the demo for interaction history
+     */
+    getInteractionHistoryDemo(): Array<{ type: 'chat' | 'voice'; date: Date; name: string; icon: string; steps: Array<any> }> {
+        const getExtendate = (x) => {
+            const date = new Date();
+            date.setDate(18 + x);
+            return date;
+        };
+        return new Array(20).fill(1).map((x) => ({
+            date: getExtendate(x),
+            icon: '',
+            type: x % 2 ? 'chat' : 'voice',
+            name: 'John Wick',
+            steps: []
+        }));
     }
 }

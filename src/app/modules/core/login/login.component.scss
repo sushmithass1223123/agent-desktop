@@ -25,7 +25,8 @@ login {
                 position: absolute;
                 top: 0;
                 left: 0;
-                background-color: rgba(#732b90, 0.8);
+                @apply twd-bg-primary-600;
+                opacity: 0.7;
                 height: 100%;
                 width: 140%;
                 z-index: -1;

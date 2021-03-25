@@ -466,7 +466,7 @@
             </button>
         </div>
 
-        <div class="email-list-groups">
+        <div *ngIf="!emailSearchRes.error" class="email-list-groups">
             <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="tw-list-item border-radius-10 email-tree">
                 <mat-tree-node *matTreeNodeDef="let node" class="tw-list pb-8" matTreeNodeToggle>
                     <li
@@ -486,7 +486,6 @@
                             <div fxFlex="70">
                                 <p class="font-weight-600 my-4">{{ node.From || 'NA' }}</p>
                                 <p class="my-4">Subject: {{ node.Subject || 'NA' }}</p>
-                                <!-- <div [innerHtml]="node.body" class="my-4 text-truncate"></div> -->
                             </div>
                             <div fxFlex="30">
                                 <span> {{ node.addedTime | date: 'mediumDate' }} </span>
@@ -538,21 +537,19 @@
             </span>
         </div>
 
+        <div *ngIf="!emailSearchRes.loading && emailSearchRes.error" class="h-80-p" fxLayout fxLayoutAlign="center center">
+            <div fxFlex="40">
+                <no-data-available [msg]="emailSearchRes.msg"></no-data-available>
+                <button class="mx-auto w-80-p mt-20 d-block" mat-raised-button color="primary" (click)="doAdvancedSearch()">Retry</button>
+            </div>
+        </div>
+
         <div *ngIf="emailSearchRes.loading" class="loader">
             <mat-spinner></mat-spinner>
         </div>
     </div>
 
     <div fxFlex class="email-open mr-8 border-radius-20 custom-scroll-adjust position-relative">
-        <div *ngIf="!emailSearchRes.loading && emailSearchRes.error" fxLayout fxLayoutAlign="center center" class="position-absolute loader">
-            <div fxFlex="100">
-                <p class="text-center">
-                    {{ emailSearchRes.msg }}
-                </p>
-                <button class="mx-auto d-block" mat-raised-button color="primary" (click)="doAdvancedSearch()">Retry</button>
-            </div>
-        </div>
-
         <ng-container *ngIf="!emailSearchRes.loading && !emailSearchRes.error && emailSearchRes.data.selected as selectedEmail">
             <div *ngIf="selectedEmail" fxLayout fxLayoutAlign="end" fxLayoutGap="10px" class="my-20 w-95-p">
                 <button
@@ -633,7 +630,7 @@
             </div>
         </ng-container>
 
-        <div *ngIf="!emailSearchRes.data.selected && !emailSearchRes.error" fxLayout="column" fxLayoutAlign="center center" class="w-100-p h-100-p">
+        <div *ngIf="!emailSearchRes.data.selected" fxLayout="column" fxLayoutAlign="center center" class="w-100-p h-100-p">
             <mat-icon class="s-128 mb-16 select-message-icon hint-text"> email </mat-icon>
             <span class="hint-mail-text">
                 <span>Select an email to read</span>
@@ -643,8 +640,6 @@
 </div>
 
 <ng-template #replyDialog>
-    <!-- (onEditorCreated)="setFocus($event)" -->
-    <!-- [(ngModel)]="replyBody" -->
     <quill-editor
         class="email-editor"
         classes="editor-container"

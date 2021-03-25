@@ -21,6 +21,8 @@
 @import 'src/app/modules/t-widgets/tw-wrapper/tw-wrapper.theme';
 @import 'src/app/modules/t-widgets/tw-collections/tw-collections.theme';
 
+@import 'themes/tailwind.theme';
+
 // Define a mixin for easier access
 @mixin app-core-theme($theme) {
     $is-dark: map-get($theme, is-dark);

@@ -1,13 +1,13 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { FuseConfigService } from '@fuse/services/config.service';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
+import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { map } from 'lodash';
 import { timer } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
 import { AgentAVMessageEvent, AVChannel, AVControlMessageReceivedEvent, AVEvent, IAgentData, SDKClient, TEnums, TextChatDisconnectedEvent, TUtils } from 'tmac-sdk';
 import { TwChatControlsComponent } from '../tw-chat-controls/tw-chat-controls.component';
 
@@ -29,7 +29,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Fuse config
      */
-    fuseConfig: any;
+    // fuseConfig: any;
     /**
      * App config
      */
@@ -123,13 +123,22 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
     remoateScreenshareRef: any;
 
     /**
+     * Fuse custom background colors
+     */
+    customFuseColor = {
+        anchor$: this.fusefacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
+        widget$: this.fusefacadeService.widgetBgClasses$
+    };
+
+    /**
      * Constructor
      */
     constructor(
-        private _fuseConfigService: FuseConfigService,
+        // private _fuseConfigService: FuseConfigService,
         private _appDataService: AppDataService,
         private _aotWidgetService: AOTWidgetService,
-        private _appUIService: AppUiService
+        private _appUIService: AppUiService,
+        private fusefacadeService: FuseFacadeService
     ) {
         super();
     }
@@ -146,9 +155,9 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.fuseConfig = config;
-        });
+        // this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+        //     this.fuseConfig = config;
+        // });
 
         this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
             this.appConfig = config;

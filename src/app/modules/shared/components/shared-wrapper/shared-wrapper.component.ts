@@ -1,9 +1,7 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatButton } from '@angular/material/button';
-import { FuseConfigService } from '@fuse/services/config.service';
-import { FuseConfig } from '@fuse/types';
+import { FuseFacadeService } from '@services/fuse-facade.service';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 
 /**
  * Shared wrapper component
@@ -35,25 +33,28 @@ export class SharedWrapperComponent implements OnInit, OnDestroy {
     /**
      *  To store the fuse config for theme
      */
-    fuseConfig: FuseConfig;
+    // fuseConfig: FuseConfig;
     /**
      * To unsubscribe from subscription subject
      */
     unsubscribeAll = new Subject();
 
+    /**
+     * Fuse custom background colors
+     */
+    customFuseColor = this.fuseFacadeService.anchorOrWidgetBgClasses$;
     constructor(
-        private _fuseConfigService: FuseConfigService
-    ) { }
+        // private _fuseConfigService: FuseConfigService,
+        private fuseFacadeService: FuseFacadeService
+    ) {}
 
     /**
      * OnInit
      */
     ngOnInit(): void {
-        this._fuseConfigService.config
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((config: any) => {
-                this.fuseConfig = config;
-            });
+        // this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+        //     this.fuseConfig = config;
+        // });
     }
 
     /**
