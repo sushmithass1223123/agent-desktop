@@ -5,6 +5,7 @@ import { environment } from 'environments/environment';
 import { merge } from 'lodash';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { IResponse, SDKClient, TEnums, TUtils } from 'tmac-sdk';
+const pj = require('../../../package.json');
 
 /**
  * Service to inject the data for widget from App config json
@@ -29,11 +30,16 @@ export class AppDataService {
      * App Config Json subject
      */
     private _appConfigSubject: BehaviorSubject<any>;
+    /**
+     * App version
+     */
+    private _appVersion: string;
 
     constructor(@Inject(DOCUMENT) private document: any, private _titleService: Title) {
         // Set the config from the default config
         this._configSubject = new BehaviorSubject(new Object());
         this._appConfigSubject = new BehaviorSubject(new Object());
+        this._appVersion = pj.version;
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -82,44 +88,6 @@ export class AppDataService {
     }
 
     // -----------------------------------------------------------------------------------------------------
-
-    /**
-     * To get config for the app
-     *
-     * @param {string} agentId
-     */
-    async getJsonConfig(agentId?: string): Promise<any> {
-        let data = null;
-        try {
-            // check the environment and load config
-            if (environment.production) {
-                // get the config from server for production
-                data = await this.getProductionConfig(agentId);
-                TUtils.Logger.console('info', 'Production config loaded');
-            } else {
-                // get the config from local for development
-                data = await this.getDevelopmentConfig();
-                TUtils.Logger.console('info', 'Development config loaded', data);
-            }
-
-            // set the config to service
-            if (data) {
-                let conf = JSON.stringify(data);
-                const domain = window.location.hostname || '';
-                conf.replaceAll('${domainName}', domain);
-                conf = JSON.parse(conf);
-                this.config = conf;
-                this.setJsonConfig(data);
-                return {
-                    ...data,
-                    ConfigMode: this._appConfigSubject.getValue().ConfigMode
-                };
-            }
-        } catch (error) {
-            TUtils.Logger.error('Exception in AppDataService.getJsonConfig', error);
-        }
-        return null;
-    }
 
     /**
      * To get production config
@@ -226,5 +194,52 @@ export class AppDataService {
         } catch (error) {
             TUtils.Logger.console('error', 'Exception in AppDataService.setJsonConfig', null, error);
         }
+    }
+
+    /**
+     * To get config for the app
+     *
+     * @param {string} agentId
+     */
+    async getJsonConfig(agentId?: string): Promise<any> {
+        let data = null;
+        try {
+            // check the environment and load config
+            if (environment.production) {
+                // get the config from server for production
+                data = await this.getProductionConfig(agentId);
+                TUtils.Logger.console('info', 'Production config loaded');
+            } else {
+                // get the config from local for development
+                data = await this.getDevelopmentConfig();
+                TUtils.Logger.console('info', 'Development config loaded', data);
+            }
+
+            // set the config to service
+            if (data) {
+                let conf = JSON.stringify(data);
+                const domain = window.location.hostname || '';
+                conf.replaceAll('${domainName}', domain);
+                conf = JSON.parse(conf);
+                this.config = conf;
+                this.setJsonConfig(data);
+                return {
+                    ...data,
+                    ConfigMode: this._appConfigSubject.getValue().ConfigMode
+                };
+            }
+        } catch (error) {
+            TUtils.Logger.error('Exception in AppDataService.getJsonConfig', error);
+        }
+        return null;
+    }
+
+    /**
+     * To get app version
+     * 
+     * @returns {String} app version
+     */
+    getAppVersion(): string {
+        return this._appVersion;
     }
 }

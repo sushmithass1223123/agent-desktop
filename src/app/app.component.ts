@@ -8,6 +8,7 @@ import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { FuseConfig } from '@fuse/types';
 import { TranslateService } from '@ngx-translate/core';
+import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { locale as navigationEnglish } from 'app/navigation/i18n/en';
 import { locale as navigationTurkish } from 'app/navigation/i18n/tr';
@@ -107,7 +108,8 @@ export class AppComponent implements OnInit, OnDestroy {
         private _translateService: TranslateService,
         private _appUIService: AppUiService,
         private _matIconRegistry: MatIconRegistry,
-        private _domSanitizer: DomSanitizer
+        private _domSanitizer: DomSanitizer,
+        private _appDataService: AppDataService
     ) // private route: ActivatedRoute
     {
         // Get default navigation
@@ -250,6 +252,9 @@ export class AppComponent implements OnInit, OnDestroy {
             // set a global variable to access SDK client on development mode
             window.SDKClient = SDKClient;
         }
+
+        // log the app version
+        console.log(`App Version: ${this._appDataService.getAppVersion()}`);
     }
 
     /**

@@ -3913,8 +3913,8 @@
         "SDK": {
             "Proxy": {
                 "Urls": [
-                    "https://dice.tetherfi.cloud/TMACSDKProxyv6/TmacProxy.asmx",
                     "https://localhost:55443/SDKTMACProxy/TmacProxy.asmx",
+                    "https://dice.tetherfi.cloud/TMACSDKProxyv6/TmacProxy.asmx",
                     "https://idfcvpd.tetherfi.cloud/TMACSDKProxy/tmacproxy.asmx",
                     "https://dice.tetherfi.cloud/TMACSDKProxy/TmacProxy.asmx"
                 ],

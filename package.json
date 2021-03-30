@@ -1,9 +1,9 @@
 {
     "name": "agent-desktop",
-    "version": "5.0.0325-b2",
+    "version": "5.0.0330-b1",
     "license": "",
     "scripts": {
-        "ng": "ng",
+        "ng": "nx",
         "start": "ng serve --open",
         "start:mem": "node --max_old_space_size=6144 ./node_modules/@angular/cli/bin/ng serve --open",
         "build": "ng build --baseHref=/agent-desktop/",
@@ -15,7 +15,8 @@
         "lint": "ng lint",
         "docs": "compodoc -p tsconfig.base.json -s",
         "e2e": "ng e2e",
-        "bundle-report": "webpack-bundle-analyzer dist/agent-desktop/stats.json"
+        "bundle-report": "webpack-bundle-analyzer dist/agent-desktop/stats.json",
+        "postinstall": "node ./decorate-angular-cli.js"
     },
     "private": true,
     "dependencies": {
@@ -34,6 +35,7 @@
         "@angular/service-worker": "11.1.1",
         "@asymmetrik/ngx-leaflet": "8.1.0",
         "@ctrl/ngx-emoji-mart": "4.0.2",
+        "@ngneat/tailwind": "6.0.3",
         "@ngx-translate/core": "13.0.0",
         "angular-calendar": "0.28.22",
         "animate.css": "4.1.0",
@@ -60,11 +62,13 @@
         "zone.js": "0.10.3"
     },
     "devDependencies": {
+        "@angular-builders/custom-webpack": "11.1.1",
         "@angular-devkit/build-angular": "0.1101.2",
         "@angular/cli": "11.1.2",
         "@angular/compiler-cli": "11.1.1",
         "@angular/language-service": "11.1.1",
         "@compodoc/compodoc": "1.1.11",
+        "@nrwl/workspace": "11.5.2",
         "@types/jasmine": "3.5.2",
         "@types/jasminewd2": "2.0.8",
         "@types/leaflet": "1.5.17",
@@ -79,8 +83,10 @@
         "karma-coverage-istanbul-reporter": "3.0.3",
         "karma-jasmine": "3.3.1",
         "karma-jasmine-html-reporter": "1.5.4",
+        "postcss-ng-tailwind-in-components": "0.0.4",
         "protractor": "7.0.0",
         "serve": "11.3.2",
+        "tailwindcss": "2.0.4",
         "ts-node": "8.3.0",
         "tslint": "6.1.2",
         "typescript": "4.1.3",
