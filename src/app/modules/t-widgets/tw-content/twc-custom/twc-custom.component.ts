@@ -36,13 +36,17 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
      */
     url: any;
     /**
-     * flag to unload the page
+     * Flag to unload the page
      */
     unload: boolean;
     /**
-     * subscriptions
+     * Subscriptions
      */
     eventSubscriptions: Subscription;
+    /**
+     * Auto refresh interval
+     */
+    autoRefreshInterval: any;
 
     /**
      * Constructor
@@ -137,6 +141,14 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
 
                 // load the iframe URL
                 this.url = this.transform(url);
+
+                // check if auto refresh is enabled
+                if (this.data.Data.AutoRefresh && Number(this.data.Data.AutoRefresh) > 0) {
+                    this.autoRefreshInterval = setInterval(() => {
+                        // if the page is not active then cle
+                        this.onRefreshEvent();
+                    }, Number(this.data.Data.AutoRefresh) * 1000);
+                }
             }
         }
     }
@@ -151,6 +163,10 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
                 this.loaded = false;
                 this.url = null;
                 this.initialLoad = false;
+                // check if interval has started then clear
+                if (this.autoRefreshInterval) {
+                    clearInterval(this.autoRefreshInterval);
+                }
             }
         }
     }

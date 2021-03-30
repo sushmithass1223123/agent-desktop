@@ -67,7 +67,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         {
             key: 'skillList',
             label: 'Skill List',
-            textLabel: 'Skill'
+            textLabel: 'Skill/VDN'
         }
     ];
     /**
@@ -100,6 +100,32 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
      * Skill list table ref
      */
     skillListTable: {
+        /**
+         *  Mat table data
+         */
+        tableData: {
+            /**
+             * Data source
+             */
+            source: MatTableDataSource<any>;
+            /**
+             * Table columns
+             */
+            columns: string[];
+            /**
+             * Selection model
+             */
+            selection: SelectionModel<any>;
+        };
+    };
+    /**
+     * Dynamic list table ref
+     */
+    dynamicListTable: {
+        /**
+         * Flag to check dynamic table is enabled
+         */
+        enabled: boolean;
         /**
          *  Mat table data
          */
@@ -215,10 +241,33 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 source: new MatTableDataSource([])
             }
         };
+
+        this.dynamicListTable = {
+            enabled: false,
+            tableData: {
+                columns: [],
+                selection: null,
+                source: null
+            }
+        };
+
         this.selectedItem = '';
         this.loading = true;
         this.showComments = false;
         this.comments = '';
+
+        // check if dynamic list is there, then add it
+        if (data?.otherData?.dynamicList) {
+            this.switcherList.push(data.otherData.dynamicList);
+            this.dynamicListTable = {
+                enabled: true,
+                tableData: {
+                    columns: data.otherData.dynamicList.columns,
+                    selection: new SelectionModel<any>(false, []),
+                    source: new MatTableDataSource(data.otherData.dynamicList.data)
+                }
+            };
+        }
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -323,7 +372,10 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
      * To check blind button is allowed
      */
     private checkForBlind(): void {
-        if (this.activeSwitcher === 'agentList') {
+        if (this.activeSwitcher === 'dynamicList') {
+            this.blindAllowed = this.data?.otherData.dynamicList.blindAllowed;
+        }
+        else if (this.activeSwitcher === 'agentList') {
             this.blindAllowed = this.data?.agent.blind;
         } else {
             this.blindAllowed = this.data?.skill.blind;
@@ -633,19 +685,22 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         // assign active switcher
         this.activeSwitcher = item.key;
 
-        // check the key
-        if (item.key === 'agentList') {
-            this.mainLabel = 'Agent ID';
-        } else {
-            this.mainLabel = 'Skill/VDN';
-        }
+        // get the main label dynamically
+        this.mainLabel = this.switcherList.filter(f => f.key === item.key)?.[0].textLabel || '';
 
         // check for blind
         this.checkForBlind();
+
         // clear the selection
         this.selectedItem = '';
+
         // clear all filter
         this.clearAllFilter();
+
+        // check for comments, if dynamicList
+        if (this.activeSwitcher === 'dynamicList') {
+            this.showComments = this.data.otherData.dynamicList.showComments;
+        }
     }
 
     /**
@@ -687,7 +742,10 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
     clearSelected(): void {
         this.selectedItem = '';
         // clear grid selection if any
-        if (this.activeSwitcher === 'agentList') {
+        if (this.activeSwitcher === 'dynamicList') {
+            this.dynamicListTable.tableData.selection.clear();
+        }
+        else if (this.activeSwitcher === 'agentList') {
             this.agentListTable.tableData.selection.clear();
         } else {
             this.skillListTable.tableData.selection.clear();
@@ -867,6 +925,21 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
     }
 
     /**
+     * To process dynamic selected from list
+     */
+    selectDynamic(row: any): void {
+        // select the row in grid
+        this.dynamicListTable.tableData.selection.select(row);
+        // assign the selected item
+        this.selectedItem = row[this.data.otherData.dynamicList.selection];
+        // assign the selected row
+        this.selectedRow = {
+            type: this.data.otherData.dynamicList.type || 'dynamic',
+            row: row
+        };
+    }
+
+    /**
      * To check for number only
      * @param event Input event
      */
@@ -884,8 +957,15 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
      * @param consult
      */
     executeAction(consult: boolean): void {
-        const type = this.data?.type || '';
         this.isConsult = consult;
+        // check if the selected tab is dynamic, then close the dynamicList widget should handle the action
+        if (this.selectedRow.type.includes('dynamic')) {
+            this.close();
+            return;
+        }
+
+        // check the type if not dynamic list selection
+        const type = this.data?.type || '';
         switch (type) {
             case 'makeCall':
                 this.makeCall();

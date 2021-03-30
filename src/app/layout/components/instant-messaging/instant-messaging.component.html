@@ -15,7 +15,8 @@
                 [matTooltip]="selectedContact.name"
                 classes="w-44 h-44 border-radius-100 mx-8"
                 *ngIf="!selectedContact.avatar"
-            ></avatar>
+            >
+            </avatar>
             <div fxLayout fxLayoutAlign="start center">
                 <h3 class="text-truncate">{{ selectedContact.name }}</h3>
                 <span class="secondary-text ml-4"> | {{ selectedContact.status }} </span>
@@ -23,13 +24,45 @@
         </div>
     </ng-container>
 
-    <button mat-icon-button class="toggle-sidebar-folded mr-8" (click)="toggleSidebarOpen(); resetChat()" fxHide fxShow.gt-md>
-        <mat-icon class="secondary-text s-20">close</mat-icon>
-    </button>
+    <div fxLayout>
+        <div *ngIf="selectedContact" class="fab-container">
+            <button mat-icon-button cdkOverlayOrigin #actionList="cdkOverlayOrigin" (click)="openActions = !openActions" matTooltip="More Actions">
+                <mat-icon [@fabTogglerAlt]="{ value: openActions ? 'active' : 'inactive' }"> expand_more </mat-icon>
+            </button>
 
-    <button mat-icon-button class="toggle-sidebar-open mr-8" (click)="toggleSidebarOpen(); resetChat()" fxHide.gt-md>
-        <mat-icon class="secondary-text">close</mat-icon>
-    </button>
+            <!-- This template displays the overlay content and is connected to the button -->
+            <ng-template
+                cdkConnectedOverlay
+                [cdkConnectedOverlayOrigin]="actionList"
+                [cdkConnectedOverlayOpen]="openActions"
+                cdkConnectedOverlayHasBackdrop
+                cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+                (overlayOutsideClick)="openActions = false"
+            >
+                <div fxLayout="column" fxLayoutGap="10px" class="mt-12 create-interaction-buttons" [@widgetStagger]="actions.length">
+                    <button
+                        mat-mini-fab
+                        color="secondary"
+                        *ngFor="let action of actions"
+                        class="fab-secondary"
+                        [matTooltip]="action.label"
+                        (click)="makeCall(action.type)"
+                        [disabled]="callWidget"
+                    >
+                        <mat-icon>{{ action.icon }}</mat-icon>
+                    </button>
+                </div>
+            </ng-template>
+        </div>
+
+        <button mat-icon-button class="toggle-sidebar-folded mr-8" (click)="toggleSidebarOpen(); resetChat()" fxHide fxShow.gt-md>
+            <mat-icon class="secondary-text s-20">close</mat-icon>
+        </button>
+
+        <button mat-icon-button class="toggle-sidebar-open mr-8" (click)="toggleSidebarOpen(); resetChat()" fxHide.gt-md>
+            <mat-icon class="secondary-text">close</mat-icon>
+        </button>
+    </div>
 </div>
 
 <div class="content">

@@ -101,7 +101,7 @@ export class TwAvailableMediaDeviceComponent implements OnInit {
             this.startVideo({ audio: true, video: true });
             this.matDialog
                 .open(this.availableDevicesMenu, {
-                    width: '40%'
+                    width: '50%'
                 })
                 .afterClosed()
                 .subscribe(() => {

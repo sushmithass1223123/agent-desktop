@@ -1,13 +1,16 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
+import { widgetFabAnimations } from '@modules/shared/animations/widget-fab.animation';
+import { AOTWidgetService } from '@services/aot-widget.service';
 import { DashboardService } from '@services/dashboard.service';
 import { TMACEventService } from '@services/tmac-event.service';
-import { CustomSDKEvent } from 'app/interfaces';
+import { CustomSDKEvent, IWidget } from 'app/interfaces';
+import { TwWidgetModel } from 'app/models';
 import { groupBy, sortBy } from 'lodash';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AgentNotificaitonEvent, IAgentData, SDKClient, SuAgentModel } from 'tmac-sdk';
+import { AgentAVMessageEvent, AgentNotificaitonEvent, AVControlMessageReceivedEvent, IAgentData, SDKClient, SuAgentModel, TUtils } from 'tmac-sdk';
 import { InstantMessagingService } from './instant-messaging.service';
 
 /**
@@ -69,7 +72,8 @@ interface Chat {
     selector: 'instant-messaging',
     templateUrl: './instant-messaging.component.html',
     styleUrls: ['./instant-messaging.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    animations: widgetFabAnimations
 })
 export class InstantMessagingComponent implements OnInit, OnDestroy {
     /**
@@ -104,6 +108,7 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
      * user
      */
     user: IAgentData;
+
     /**
      * Data loading flag
      */
@@ -133,6 +138,30 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
     private _unsubscribeAll: Subject<any>;
 
     /**
+     * To open actions
+     */
+    openActions: boolean;
+
+    /**
+     * Action buttons
+     */
+    actions = [{
+        label: 'Voice Call',
+        icon: 'call',
+        type: 'audio'
+    },
+    {
+        label: 'Video Call',
+        icon: 'video_call',
+        type: 'video'
+    }];
+
+    /**
+     * AV call widget ref
+     */
+    callWidget: IWidget;
+
+    /**
      * Constructor
      *
      * @param {FuseSidebarService} _fuseSidebarService
@@ -141,7 +170,8 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
         private _fuseSidebarService: FuseSidebarService,
         private _tmacEventService: TMACEventService,
         private _dashboardService: DashboardService,
-        private _instantMessagingService: InstantMessagingService
+        private _instantMessagingService: InstantMessagingService,
+        private _aotWidgetService: AOTWidgetService
     ) {
         // Set the defaults
         this.selectedContact = null;
@@ -184,7 +214,7 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
         // SDKClient.events.on('TeamAgentListEvent', this.TeamAgentListEvent);
         // SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
 
-        this._tmacEventService.getEvents(['TeamAgentListEvent', 'AgentNotificaitonEvent', 'SupervisorAgentListEvent'])
+        this._tmacEventService.getEvents(['TeamAgentListEvent', 'AgentNotificaitonEvent', 'SupervisorAgentListEvent', 'AgentAVMessageEvent'])
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
 
@@ -409,6 +439,24 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
     }
 
     /**
+     * To process AgentAVMessageEvent
+     * 
+     * @param evt 
+     */
+    AgentAVMessageEvent = (evt: AgentAVMessageEvent): void => {
+        // check the type of message
+        if (evt.Type === 'requestav') {
+            // check the type
+            const type = JSON.parse(evt.Message).param;
+            this.openCallWidget(type, 'in', evt);
+        }
+        // else {
+        //     // send to the widget through data
+        //     this.callWidget.Data.OnMessage(evt.Message);
+        // }
+    }
+
+    /**
      * TeamAgentListEvent Handler
      * @param {CustomSDKEvent} evt 
      */
@@ -460,5 +508,76 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
      */
     trackByID(index: number, contact: any): string {
         return contact.ID;
+    }
+
+    /**
+     * To make a call to selected agent
+     * 
+     * @param { 'audio' | 'video' } type 
+     */
+    makeCall(type: 'audio' | 'video'): void {
+        this.openCallWidget(type, 'out', null);
+        this.openActions = false;
+        this.toggleSidebarOpen();
+        this.resetChat();
+    }
+
+    /**
+     * To open voice or video call widget
+     * @param {'audio' | 'video'} param Type of call
+     * @param {'in' | 'out'} direction Direction of the call
+     * @param {AVControlMessageReceivedEvent} avEvent [OPTIONAL] For incoming requestav to process AVControlMessageReceivedEvent
+     */
+    private openCallWidget(param: 'audio' | 'video', direction: 'in' | 'out', avEvent?: AgentAVMessageEvent): void {
+        // if the widget is created then ignore
+        if (this.callWidget) {
+            return;
+        }
+
+        // get the widget type
+        const widgetMode = {
+            title: param === 'audio' ? 'Audio Call' : 'Video Call',
+            type: param === 'audio' ? 'tw-audio-controls' : 'tw-video-controls',
+            icon: param === 'audio' ? 'phone' : 'duo'
+        };
+        // create a call AOT widget
+        const widget = new TwWidgetModel(widgetMode.title, widgetMode.type, widgetMode.icon);
+        widget.Config.Anchor = true;
+        widget.Config.Position.W = param === 'audio' ? 600 : 800;
+        widget.Config.Position.H = param === 'audio' ? 275 : 550;
+        widget.Config.Actions = ['collapse', 'maximize'];
+        widget.Data.DirectCall = false;
+        widget.Data.ConferenceType = '';
+        widget.Data.CustomerName = avEvent?.FromAgentName || this.selectedContact.name;
+        widget.Data.Direction = direction;
+        widget.Data.AVEvent = avEvent;
+        widget.Data.Config = {};
+        widget.Data.Opener = this;
+        widget.Data.InteractionID = 0;
+        widget.Data.SessionID = TUtils.Generic.uuid();
+        widget.Data.AgentID = avEvent?.FromAgentId || this.selectedContact.id;
+        widget.Data.TmacServer = avEvent?.FromTmacServer || this.selectedContact.tmacServer;
+        widget.Data.SendMessage = (jsonMessage: any) => {
+            SDKClient.sendAgentAVMessage({
+                jsonData: '',
+                message: JSON.stringify(jsonMessage),
+                toAgentId: widget.Data.AgentID,
+                toTmacServer: widget.Data.TmacServer,
+                type: jsonMessage.type
+            });
+        };
+
+        // open call widget
+        this._aotWidgetService.addWidget(widget);
+        // assign to the local variable
+        this.callWidget = widget;
+    }
+
+    /**
+     * To dispose call widget
+     */
+    public disposeCallWidget(): void {
+        // dispose the call widget
+        this.callWidget = null;
     }
 }

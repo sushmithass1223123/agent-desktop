@@ -23,6 +23,7 @@ import {
     SDKClient,
     TCMDirectAgentNotifyTimeoutEvent,
     TextChatTransferNotificationEvent,
+    TmacServerConnectionAborted,
     TmacServerConnectionSuccess,
     TUtils
 } from 'tmac-sdk';
@@ -123,7 +124,7 @@ export class TMACEventService {
         private _appUIService: AppUiService,
         private _aotWidgetService: AOTWidgetService,
         private _router: Router
-    ) {}
+    ) { }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Accessors
@@ -150,7 +151,7 @@ export class TMACEventService {
         } else {
             this.processNonInteractionEvents(evt);
         }
-    };
+    }
 
     /**
      * To process interaction events
@@ -514,7 +515,7 @@ export class TMACEventService {
         } catch (error) {
             TUtils.Logger.error('Exception in AgentNotificaitonEvent', error);
         }
-    };
+    }
 
     /**
      * Remider action executed method to update agent reminder
@@ -541,7 +542,7 @@ export class TMACEventService {
             state: evt.ColorCode,
             duration: 10000
         });
-    };
+    }
 
     /**
      * To process HoldTimerEvent
@@ -560,7 +561,7 @@ export class TMACEventService {
             state: evt.ColorCode,
             onClick: redirectToInteraction
         });
-    };
+    }
 
     /**
      * To process Quiz Event
@@ -595,7 +596,7 @@ export class TMACEventService {
         widget.Data.Url = url.toString();
 
         this._aotWidgetService.addWidget(widget);
-    };
+    }
 
     /**
      * Tp process GenericInteractionEvent
@@ -642,7 +643,7 @@ export class TMACEventService {
         } else {
             this.promptTCMWQDACRequest(evt);
         }
-    };
+    }
 
     /**
      * To process TCM WQ DAC request
@@ -719,7 +720,7 @@ export class TMACEventService {
         this._remiderTaskDialog.tcmWQVoice = null;
         // close the generic interaction in server
         SDKClient.closeInteraction(evt.InteractionID.toString());
-    };
+    }
 
     /**
      * To process AgentReminderEvent
@@ -765,7 +766,7 @@ export class TMACEventService {
                 });
             }
         });
-    };
+    }
 
     /**
      * To process AgentForcedLogoffEvent
@@ -805,7 +806,7 @@ export class TMACEventService {
             // }
         });
         this._appUIService.showSnackbar(description);
-    };
+    }
 
     /**
      * To process TextChatTransferNotificationEvent
@@ -831,7 +832,7 @@ export class TMACEventService {
             .subscribe((resp1) => {
                 evt.Response(resp1);
             });
-    };
+    }
 
     /**
      * To process TmacServerConnectionSuccess
@@ -842,7 +843,18 @@ export class TMACEventService {
         this._appUIService.showAppSnackbar({
             message: `New TMAC server [(${evt.ResultMessage})] connection established`
         });
-    };
+    }
+
+    /**
+     * To process TmacServerConnectionAborted
+     *
+     * @param {TmacServerConnectionAborted} evt
+     */
+    private TmacServerConnectionAborted = (evt: TmacServerConnectionAborted) => {
+        // we will route to login page
+        this._router.navigate(['login'], {});
+        this._appUIService.showSnackbar('TMAC Server connection closed, Please relogin!');
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Public Methods
@@ -892,6 +904,7 @@ export class TMACEventService {
         SDKClient.events.on('InteractionLimitReachedEvent', this.AgentForcedLogoffEvent);
         SDKClient.events.on('TextChatTransferNotificationEvent', this.TextChatTransferNotificationEvent);
         SDKClient.events.on('TmacServerConnectionSuccess', this.TmacServerConnectionSuccess);
+        SDKClient.events.on('TmacServerConnectionAborted', this.TmacServerConnectionAborted);
 
         // subscribe to InteractionManagerService
         this._interactionManagerService.subscribe();
@@ -914,6 +927,7 @@ export class TMACEventService {
         SDKClient.events.off('AgentForcedLogoffEvent', this.AgentForcedLogoffEvent);
         SDKClient.events.off('TextChatTransferNotificationEvent', this.TextChatTransferNotificationEvent);
         SDKClient.events.off('TmacServerConnectionSuccess', this.TmacServerConnectionSuccess);
+        SDKClient.events.off('TmacServerConnectionAborted', this.TmacServerConnectionAborted);
 
         // unsubscribe from all subscriptions
         this._unsubscribeAll.next();

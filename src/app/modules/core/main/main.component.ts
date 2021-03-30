@@ -215,12 +215,14 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
     private setTheme(): void {
         // apply the theme
         const themeName = this.appConfig.AppConfigs.Theme || '';
+        const webFont = this.appConfig.AppConfigs.Font || 'wf-muli';
         const flatTheme = this.appConfig.AppConfigs.FlatTheme ?? false;
         if (themeName) {
             const theme = ThemeSelector.getFuseConfigByTheme(themeName, false);
             this._fuseConfigService.config = {
                 ...theme,
-                flatTheme
+                flatTheme,
+                webFont
             };
         }
     }

@@ -31,6 +31,7 @@ import {
     CallTransferLineDisconnectEvent,
     CallTransferRemoteConnectedEvent,
     IAgentData,
+    InteractionDataEvent,
     IResponse,
     IVRDataEvent,
     MediaServerEvent,
@@ -354,7 +355,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     'MediaServerEvent',
                     'VoiceCannedResponseEvent',
                     'CallerIntentEvent',
-                    'IVRDataEvent'
+                    'IVRDataEvent',
+                    'InteractionDataEvent'
                 ],
                 this.interactionId
             )
@@ -465,7 +467,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 isMSCall: this.isMSCall
             }
         });
-    };
+    }
 
     /**
      * CallDisconnectedEvent handler
@@ -502,7 +504,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // close all confirm dialogs
         this.dialogRef?.close();
-    };
+    }
 
     /**
      * CallHoldEvent Handler
@@ -523,7 +525,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // hide the progress bar
         this._fuseProgressBarService.hide();
-    };
+    }
 
     /**
      * CallHoldReconnectEvent handler
@@ -545,7 +547,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // hide the progress bar
         this._fuseProgressBarService.hide();
-    };
+    }
 
     /**
      * CallTransferInitiatedEvent handler
@@ -568,7 +570,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         if (!this.tempCallRef?.isConsult && this.tempCallRef?.source === 'agent') {
             this.confirmCallFn(true, null);
         }
-    };
+    }
 
     /**
      * CallTransferRemoteConnectedEvent Handler
@@ -593,7 +595,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 tempCallRef: this.tempCallRef
             }
         });
-    };
+    }
 
     /**
      * CallTransferLineDisconnectEvent handler
@@ -613,7 +615,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 tempCallRef: this.tempCallRef
             }
         });
-    };
+    }
 
     /**
      * CallConferenceInitiatedEvent Handler
@@ -631,7 +633,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             status: 'init',
             type: 'conference'
         };
-    };
+    }
 
     /**
      * CallConferenceRemoteConnectedEvent Handler
@@ -654,7 +656,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         if (this.isMSCall && !this.tempCallRef?.isConsult) {
             this.confirmCallFn(true, null);
         }
-    };
+    }
 
     /**
      * CallConferenceLineDisconnectEvent Handler
@@ -691,7 +693,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 status: 'connected'
             });
         }
-    };
+    }
 
     /**
      * CallConferenceCompletedEvent Handler
@@ -733,7 +735,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // set the temp call reference to null
         this.tempCallRef = null;
-    };
+    }
 
     /**
      * MediaServerEvent Handler
@@ -854,7 +856,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         //     SAudioPlayer: this.audioPlayer,
         //     Item: evt.Item
         // });
-    };
+    }
 
     /**
      * CallerIntentEvent Handler
@@ -868,7 +870,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // assign the intent name
         this.intent = evt.IntentName;
-    };
+    }
 
     /**
      * IVRDataEvent Handler
@@ -881,6 +883,27 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         // }
 
         this.last4IVR = [evt.LastMenu_4, evt.LastMenu_3, evt.LastMenu_2, evt.LastMenu];
+    }
+
+    /**
+     * To handle InteractionDataEvent
+     */
+    private InteractionDataEvent(evt: InteractionDataEvent): void {
+        // check the channel 
+        if (evt.Channel !== 'Voice') {
+            return;
+        }
+        // check if interaction comments available
+        if (evt.InteractionComments && evt.InteractionComments.length > 0) {
+            evt.InteractionComments.forEach(c => {
+                const dt = JSON.parse(c);
+                this.savedComments.push({
+                    Message: dt.Comment,
+                    Time: dt.Time,
+                    User: dt.User
+                });
+            });
+        }
     }
 
     /**
@@ -951,10 +974,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         // swtich the av events
         switch (evt.event) {
             case 'onTrace':
-                TUtils.Logger.info('TwVoiceControlsComponent.onAVEvent.onTrace' + evt.data);
+                TUtils.Logger.info('TwVoiceControlsComponent.onAVEvent.onTrace: ' + evt.data);
                 break;
             case 'onError':
-                TUtils.Logger.error('TwVoiceControlsComponent.onAVEvent.onError', evt.data);
+                TUtils.Logger.error('TwVoiceControlsComponent.onAVEvent.onError', evt.data.code + '-' + evt.data.error);
                 break;
             case 'onConnected':
                 break;
@@ -993,7 +1016,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             default:
             // console.log(`unhandled:: [${evt.event}]`, evt);
         }
-    };
+    }
 
     /**
      * Process AV event
@@ -1359,8 +1382,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         // check the saved comments
         this.savedComments.forEach((item) => {
             message += `
-                 <div>${item.Message}</div>
-                 <span class="time secondary-text">${item.Time}</span>
+                 <div class="text-primary mat-title m-0">${item.Message.replace(/(?:\r\n|\r|\n)/g, '<br>')}</div>
+                 <span class="time secondary-text">${item.User}</span>,
+                 <span class="time secondary-text">${new Date(item.Time).toLocaleString()}</span>
                  <br /><br />
                  `;
         });

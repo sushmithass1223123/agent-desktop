@@ -6,7 +6,9 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { FuseNavigationService } from '@fuse/components/navigation/navigation.service';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { FuseConfig } from '@fuse/types';
 import { TranslateService } from '@ngx-translate/core';
+import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { locale as navigationEnglish } from 'app/navigation/i18n/en';
 import { locale as navigationTurkish } from 'app/navigation/i18n/tr';
@@ -38,7 +40,7 @@ export class AppComponent implements OnInit, OnDestroy {
     /**
      * fuse Config data
      */
-    fuseConfig: any;
+    fuseConfig: FuseConfig;
     /**
      * Need more Description
      * Navigation
@@ -106,7 +108,8 @@ export class AppComponent implements OnInit, OnDestroy {
         private _translateService: TranslateService,
         private _appUIService: AppUiService,
         private _matIconRegistry: MatIconRegistry,
-        private _domSanitizer: DomSanitizer
+        private _domSanitizer: DomSanitizer,
+        private _appDataService: AppDataService
     ) // private route: ActivatedRoute
     {
         // Get default navigation
@@ -223,14 +226,35 @@ export class AppComponent implements OnInit, OnDestroy {
                 }
             }
 
+            // add the updated theme color
             this.document.body.classList.add(this.fuseConfig.colorTheme);
+
+            // Web font - Use normal for loop for IE11 compatibility
+            // tslint:disable-next-line: prefer-for-of
+            for (let i = 0; i < this.document.body.classList.length; i++) {
+                const className = this.document.body.classList[i];
+
+                if (className.startsWith('wf-')) {
+                    this.document.body.classList.remove(className);
+                }
+            }
+
+            // check if webFont is provided
+            if (this.fuseConfig.webFont) {
+                // add the update web font
+                this.document.body.classList.add(this.fuseConfig.webFont);
+            }
         });
+
 
         // check the environment and set window variable
         if (!environment.production) {
             // set a global variable to access SDK client on development mode
             window.SDKClient = SDKClient;
         }
+
+        // log the app version
+        console.log(`App Version: ${this._appDataService.getAppVersion()}`);
     }
 
     /**

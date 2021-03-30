@@ -9,6 +9,7 @@ import { AgentSkillListComponent, CreateEmailComponent } from '@modules/shared/c
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
+import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE, DRAFT_REASONS, EMAIL_DRAFT_SAVE_INTERVAL, INBOX_REASONS, OUTBOX_REASONS } from 'app/constants';
 import { AgentSkillListData, InteractionComment, InteractionRef, IWidget, ResData } from 'app/interfaces';
@@ -16,7 +17,7 @@ import { CreateEmailInfo } from 'app/models';
 import { interval, Observable, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
 import { distinctUntilChanged, filter, map, mergeAll } from 'rxjs/operators';
-import { IAgentData, IResponse, SDKClient } from 'tmac-sdk';
+import { IAgentData, InteractionDataEvent, IResponse, SDKClient } from 'tmac-sdk';
 
 /**
  * Email controls component
@@ -72,8 +73,19 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         msg: ''
     };
 
+    /**
+     * Outbox reasons
+     */
     OutboxReasons = OUTBOX_REASONS;
+
+    /**
+     * Draft reasons
+     */
     DraftReasons = DRAFT_REASONS;
+
+    /**
+     * Inbox reasons
+     */
     InboxReasons = INBOX_REASONS;
 
     /**
@@ -85,10 +97,12 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Maximise event
      */
     @Output() maximizeEvent = new EventEmitter();
+
     /**
      * Float event
      */
     @Output() floatEvent = new EventEmitter();
+
     /**
      * Collapse event
      */
@@ -98,31 +112,38 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Maximized flag
      */
     maximized: boolean;
+
     /**
      * Interaction list
      */
     // interactionList: Observable<InteractionRef[]>;
     interactionList: InteractionRef[];
+
     /**
      * Current interaction
      */
     currentInteraction: any = {};
+
     /**
      * Email body responses
      */
     emailBodies: Record<string, any> = {};
+
     /**
      * Current intreaction id
      */
     interactionId: number;
+
     /**
      * User info
      */
     user: IAgentData;
+
     /**
      * Email intent
      */
     intent: string;
+
     /**
      * Customer sentiment
      */
@@ -132,6 +153,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Reply info for create email component
      */
     replyInfo?: CreateEmailInfo;
+
     /**
      * Saved interaction comments
      */
@@ -152,6 +174,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     draftPolling: Subscription;
 
+    /**
+     * Viewing email ref
+     */
     viewingEmail: 'original' | 'replied' = 'replied';
 
     constructor(
@@ -161,7 +186,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         private domSanitizer: DomSanitizer,
         private _fuseProgressBarService: FuseProgressBarService,
         private _appUIService: AppUiService,
-        private matDialog: MatDialog
+        private matDialog: MatDialog,
+        private _tmacEventService: TMACEventService
     ) {
         super();
     }
@@ -270,6 +296,16 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // play new email sound
         this._appUIService.playAudio('new-email', 0.5, false);
+
+        this._tmacEventService
+            .getInteractionEvents(
+                [
+                    'InteractionDataEvent'
+                ],
+                this.interactionId
+            )
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
     }
 
     /**
@@ -284,6 +320,30 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     // @ Private methods
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * To handle InteractionDataEvent
+     */
+    private InteractionDataEvent(evt: InteractionDataEvent): void {
+        // check the channel 
+        if (evt.Channel !== 'Voice') {
+            return;
+        }
+        // check if interaction comments available
+        if (evt.InteractionComments && evt.InteractionComments.length > 0) {
+            evt.InteractionComments.forEach(c => {
+                const dt = JSON.parse(c);
+                this.savedComments.push({
+                    Message: dt.Comment,
+                    Time: dt.Time,
+                    User: dt.User
+                });
+            });
+        }
+    }
+
+    /**
+     * To switch email view
+     */
     switchEmailView(): void {
         let requestedSession: string | null = null;
         if (this.viewingEmail === 'original') {
@@ -740,8 +800,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         // check the saved comments
         this.savedComments.forEach((item) => {
             message += `
-                 <div>${item.Message.replace(/(?:\r\n|\r|\n)/g, '<br>')}</div>
-                 <span class="time secondary-text">${item.Time}</span>
+                 <div class="text-primary mat-title m-0">${item.Message.replace(/(?:\r\n|\r|\n)/g, '<br>')}</div>
+                 <span class="time secondary-text">${item.User}</span>,
+                 <span class="time secondary-text">${new Date(item.Time).toLocaleString()}</span>
                  <br /><br />
                  `;
         });

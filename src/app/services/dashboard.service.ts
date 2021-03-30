@@ -308,7 +308,7 @@ export class DashboardService {
             this._adDuration = duration;
         }
         // if connected, then trigger
-        if (this._signalRInstance.isConnected()) {
+        if (this._signalRInstance?.isConnected()) {
             this._signalRInstance.hub.invoke('GetAgentData', this._signalRInstance.hub.connection.id, agentId, start, duration);
         }
     }
@@ -328,7 +328,7 @@ export class DashboardService {
             this._sdDuration = duration;
         }
         // if connected, then trigger
-        if (this._signalRInstance.isConnected()) {
+        if (this._signalRInstance?.isConnected()) {
             this._signalRInstance.hub.invoke('GetActiveAgentList', this._signalRInstance.hub.connection.id, agentId, teamId, start, duration);
         }
     }
@@ -342,7 +342,7 @@ export class DashboardService {
     public reTriggerActiveAgents(agentId: string, teamId: string): void {
         TUtils.Logger.console('info', `DashboardService.reTriggerActiveAgents`);
         // if connected, then trigger
-        if (this._signalRInstance.isConnected()) {
+        if (this._signalRInstance?.isConnected()) {
             // stop first 
             this._signalRInstance.hub.invoke('GetActiveAgentList', this._signalRInstance.hub.connection.id, agentId, teamId, false, 0);
             // then start in next event loop
@@ -360,7 +360,7 @@ export class DashboardService {
      */
     public triggerAgentInteractions(agentId: string, start: boolean): void {
         TUtils.Logger.console('info', `DashboardService.triggerAgentInteractions: agentId=${agentId}, start=${start}`);
-        if (this._signalRInstance.isConnected()) {
+        if (this._signalRInstance?.isConnected()) {
             this._signalRInstance.hub.invoke('GetActiveInteractionList', this._signalRInstance.hub.connection.id, agentId, start);
         }
     }
@@ -373,7 +373,7 @@ export class DashboardService {
      */
     public triggerTeamAgentList(agentId: string, start: boolean): void {
         TUtils.Logger.console('info', `DashboardService.triggerTeamAgentList: agentId=${agentId}, start=${start}`);
-        if (this._signalRInstance.isConnected()) {
+        if (this._signalRInstance?.isConnected()) {
             this._signalRInstance.hub.invoke('GetTeamAgentList', this._signalRInstance.hub.connection.id, agentId, start);
         }
     }

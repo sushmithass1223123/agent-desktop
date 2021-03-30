@@ -159,17 +159,44 @@
                 "
             >
                 <div fxLayout="row" fxLayoutAlign="end none" class="chat-actions border-bottom">
-                    <button
-                        *ngIf="data.Data.Whiteboard?.Allowed"
-                        [disabled]="status !== 'connected'"
-                        color="default"
-                        mat-mini-fab
-                        [ngClass]="status === 'connected' ? 'mat-elevation-z2' : ''"
-                        matTooltip="Open Whiteboard"
-                        (click)="openWhiteboard()"
-                    >
-                        <mat-icon>create</mat-icon>
-                    </button>
+                    <div class="fab-container" *ngIf="moreActions.length">
+                        <button
+                            mat-icon-button
+                            [disabled]="status !== 'connected'"
+                            [ngClass]="commonButtonBackground + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
+                            cdkOverlayOrigin
+                            #actionList="cdkOverlayOrigin"
+                            (click)="openMoreActions = !openMoreActions"
+                            matTooltip="More Actions"
+                        >
+                            <mat-icon [@fabToggler]="{ value: openMoreActions ? 'active' : 'inactive' }"> add </mat-icon>
+                        </button>
+
+                        <!-- This template displays the overlay content and is connected to the button -->
+                        <ng-template
+                            cdkConnectedOverlay
+                            [cdkConnectedOverlayOrigin]="actionList"
+                            [cdkConnectedOverlayOpen]="openMoreActions"
+                            cdkConnectedOverlayHasBackdrop
+                            cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+                            (overlayOutsideClick)="openMoreActions = false"
+                        >
+                            <div fxLayout="column" fxLayoutGap="10px" class="mt-12 create-interaction-buttons" [@widgetStagger]="moreActions.length">
+                                <button
+                                    mat-mini-fab
+                                    color="secondary"
+                                    *ngFor="let action of moreActions"
+                                    class="fab-secondary"
+                                    [matTooltip]="action.label"
+                                    #actionBtn
+                                    (click)="executeAction(action, actionBtn)"
+                                    [disabled]="status !== 'connected'"
+                                >
+                                    <mat-icon>{{ action.icon }}</mat-icon>
+                                </button>
+                            </div>
+                        </ng-template>
+                    </div>
 
                     <button
                         *ngIf="showAutoFreeze"
@@ -193,6 +220,18 @@
                         <mat-icon>comment</mat-icon>
                     </button>
 
+                    <!-- <button
+                        *ngIf="data.Data.Whiteboard?.Allowed"
+                        [disabled]="status !== 'connected'"
+                        color="default"
+                        mat-mini-fab
+                        [ngClass]="commonButtonBackground + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
+                        matTooltip="Open Whiteboard"
+                        (click)="openWhiteboard()"
+                    >
+                        <mat-icon>create</mat-icon>
+                    </button>
+
                     <button
                         *ngIf="data.Data?.SignatureAllowed"
                         [disabled]="status !== 'connected'"
@@ -204,7 +243,7 @@
                         (click)="sendSignatureRequest(signBtn)"
                     >
                         <mat-icon>gesture</mat-icon>
-                    </button>
+                    </button> -->
 
                     <button
                         *ngIf="supervisorInit && (conferenceType === 'silent' || conferenceType === 'whisper' || conferenceType === 'conf')"
@@ -221,7 +260,7 @@
                         <mat-icon>play_for_work</mat-icon>
                     </button>
 
-                    <button
+                    <!-- <button
                         [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper' || this.botConnected"
                         *ngIf="selfServiceDestinations.length"
                         mat-mini-fab
@@ -237,7 +276,7 @@
                         <button mat-menu-item *ngFor="let item of selfServiceDestinations" (click)="conferenceWithBot(item.Value)">
                             <span>{{ item.Name }}</span>
                         </button>
-                    </mat-menu>
+                    </mat-menu> -->
 
                     <button
                         *ngIf="data.Data?.Transfer.Allowed"
