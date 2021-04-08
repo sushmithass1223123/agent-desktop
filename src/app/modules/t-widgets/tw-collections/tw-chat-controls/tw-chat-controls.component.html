@@ -211,9 +211,11 @@
                     </button>
 
                     <button
+                        *ngIf="data.Data?.InteractionCommentAllowed"
                         mat-mini-fab
                         color="default"
                         [ngClass]="commonButtonBackground + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
+                        [disabled]="status !== 'connected'"
                         matTooltip="Interaction Comment"
                         (click)="saveInteractionComments()"
                     >
