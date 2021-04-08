@@ -1974,6 +1974,7 @@
                                                     "VoiceNoteAllowed": false,
                                                     "AttachmentAllowed": true,
                                                     "ScreenShareAllowed": true,
+                                                    "InteractionCommentAllowed": true,
                                                     "Whiteboard": {
                                                         "Allowed": true,
                                                         "Url": "http://dice.tetherfi.cloud:55080/Whiteboard/ui/index.html"
@@ -3913,6 +3914,7 @@
         "SDK": {
             "Proxy": {
                 "Urls": [
+                    "https://dice.tetherfi.cloud/TMACSDKProxyV5/TmacProxy.asmx",
                     "https://localhost:55443/SDKTMACProxy/TmacProxy.asmx",
                     "https://dice.tetherfi.cloud/TMACSDKProxyv6/TmacProxy.asmx",
                     "https://idfcvpd.tetherfi.cloud/TMACSDKProxy/tmacproxy.asmx",

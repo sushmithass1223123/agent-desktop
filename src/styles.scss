@@ -10,6 +10,7 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+// @import '@tmac/notebook/styles/default.scss';
 
 body {
     font-family: 'Arial', sans-serif;
@@ -25,6 +26,10 @@ body {
     &.wf-source-sans-pro {
         font-family: 'Source Sans Pro';
     }
+}
+
+img {
+    border: none;
 }
 
 img {

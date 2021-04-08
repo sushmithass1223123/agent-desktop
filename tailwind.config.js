@@ -1,5 +1,6 @@
+const aHues = [100, 200, 400, 700];
 const generateColors = (color) => {
-    return new Array(10)
+    let pallete = new Array(10)
         .fill(1)
         .map((_, i) => i)
         .reduce((acc, i) => {
@@ -7,26 +8,91 @@ const generateColors = (color) => {
             acc[`contrast-${i * 100 || 50}`] = `var(${color}-contrast-${i * 100 || 50})`;
             return acc;
         }, {});
+    aHues.forEach((hue) => {
+        pallete[`A${hue}`] = `var(${color}-A${hue})`;
+    });
+    return pallete;
 };
 module.exports = {
     prefix: 'twd-',
     purge: {
-        content: ['./src/**/*.{html,ts}', './libs/**/*.{html,ts}']
+        content: ['./apps/**/*.{html,ts}', './libs/**/*.{html,ts}']
     },
-    darkMode: 'class', // or 'media' or 'class'
+    darkMode: 'media', // or 'media' or 'class'
     theme: {
+        fontSize: {
+            xs: '12px',
+            sm: '14px',
+            base: '16px',
+            lg: '18px',
+            xl: '20px',
+            '2xl': '24px',
+            '3xl': '30px',
+            '4xl': '36px',
+            '5xl': '48px',
+            '6xl': '60px',
+            '7xl': '72px'
+        },
+        spacing: {
+            px: '1px',
+            0: '0',
+            0.5: '2px',
+            1: '4px',
+            1.5: '6px',
+            2: '8px',
+            2.5: '10px',
+            3: '12px',
+            3.5: '14px',
+            4: '16px',
+            5: '20px',
+            6: '24px',
+            7: '28px',
+            8: '32px',
+            9: '36px',
+            10: '40px',
+            11: '44px',
+            12: '48px',
+            14: '56px',
+            16: '64px',
+            20: '80px',
+            24: '96px',
+            28: '112px',
+            32: '128px',
+            36: '144px',
+            40: '160px',
+            44: '176px',
+            48: '192px',
+            52: '208px',
+            56: '224px',
+            60: '240px',
+            64: '256px',
+            72: '288px',
+            80: '320px',
+            96: '384px'
+        },
         extend: {
             colors: {
                 primary: generateColors('--twd-primary'),
                 accent: generateColors('--twd-accent'),
-                warn: generateColors('--twd-warn'),
+                warn: generateColors('--twd-warn')
             },
             maxHeight: {
                 0: '0',
                 '1/4': '25%',
                 '1/2': '50%',
                 '3/4': '75%',
+                '11/12': '91.66%',
                 full: '100%'
+            },
+            lineHeight: {
+                3: '12px',
+                4: '16px',
+                5: '20px',
+                6: '24px',
+                7: '28px',
+                8: '32px',
+                9: '36px',
+                10: '40px'
             }
         }
     },
