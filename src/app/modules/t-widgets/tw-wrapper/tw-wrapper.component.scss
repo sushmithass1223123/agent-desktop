@@ -71,7 +71,7 @@ tw-wrapper {
             &.aot {
                 height: 5.2rem !important;
                 .card-wrapper {
-                    padding: 6px !important;
+                    padding: 5px !important;
                 }
             }
 
@@ -153,7 +153,7 @@ tw-wrapper {
             word-break: break-word;
 
             .card-wrapper {
-                padding: 6px;
+                padding: 5px;
                 height: 100%;
                 border-radius: 2rem;
                 // [ReviewCodeLine Feb 25, '21] to remove switch transition
@@ -196,8 +196,7 @@ tw-wrapper {
             .mat-card-content {
                 flex: 1;
                 border-radius: 2rem;
-                // padding: 6px;
-                margin-top: 6px;
+                margin-top: 5px;
                 margin-bottom: 0;
                 overflow: hidden;
                 min-width: 100%;

@@ -126,8 +126,8 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
      * Fuse custom background colors
      */
     customFuseColor = {
-        anchor$: this.fusefacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
-        widget$: this.fusefacadeService.widgetBgClasses$
+        anchor$: this._fusefacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
+        widget$: this._fusefacadeService.widgetBgClasses$
     };
 
     /**
@@ -138,7 +138,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         private _appDataService: AppDataService,
         private _aotWidgetService: AOTWidgetService,
         private _appUIService: AppUiService,
-        private fusefacadeService: FuseFacadeService
+        private _fusefacadeService: FuseFacadeService
     ) {
         super();
     }
@@ -417,6 +417,9 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
                 // close the widget
                 this.destroyWidget();
                 break;
+            case 'onUserLeft':
+                this.userList = this.userList.filter((u) => u.streamInfo.id !== evt.data?.userId);
+                break;
             default:
             // console.log(`unhandled:: [${evt.event}]`, evt);
         }
@@ -530,7 +533,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
     public endCall(): void {
         // end the call
         // if there is only customer then endCall else dropCall
-        if (this.userList.length > 1) {
+        if (this.userList.filter(u => u.streamInfo.type !== 'screenshare').length > 1) {
             this.avConn?.dropCall('');
         } else {
             this.avConn?.endCall(TEnums.WrcCallTypes.Audio, '');

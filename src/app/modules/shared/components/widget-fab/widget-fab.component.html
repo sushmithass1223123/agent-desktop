@@ -6,7 +6,13 @@
     <div [@widgetStagger]="buttons.length">
         <!-- and here -->
         <ng-container *ngFor="let btn of buttons">
-            <button mat-mini-fab color="secondary" *ngIf="btn.Config.Enabled" class="fab-secondary" (click)="openAOTWidget(btn)">
+            <button
+                mat-mini-fab
+                color="secondary"
+                *ngIf="btn.Config.Enabled && !btn.Config.Hidden"
+                class="fab-secondary"
+                (click)="openAOTWidget(btn)"
+            >
                 <mat-icon [matTooltip]="btn.Name || 'Widget'">{{ btn.Config.Icon || 'widget' }}</mat-icon>
             </button>
         </ng-container>

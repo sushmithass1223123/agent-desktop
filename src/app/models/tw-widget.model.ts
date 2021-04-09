@@ -48,9 +48,11 @@ export class TwWidgetModel {
         this.Type = type || '';
         this.Config = {
             Enabled: true,
+            Hidden: false,
             Static: false,
             Anchor: false,
             AOT: false,
+            AutoOpen: false,
             Icon: icon || 'widgets',
             Class: '',
             Position: {

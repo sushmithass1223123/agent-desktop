@@ -296,6 +296,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // play new email sound
         this._appUIService.playAudio('new-email', 0.5, false);
+        this._appUIService.showDesktopAlert('Incoming Email', `You have a new incoming email from ${this.data.InteractionDetails.From}`, false);
 
         this._tmacEventService
             .getInteractionEvents(
@@ -491,7 +492,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Forward Email
      */
-    forwardEmail(): void {}
+    forwardEmail(): void { }
 
     /**
      * Show reply email form
@@ -519,11 +520,10 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             To: From || '',
             Body: `
             ${preBody} 
-            ${
-                this.domSanitizer.bypassSecurityTrustHtml(Body || '')['changingThisBreaksApplicationSecurity'][
-                    'changingThisBreaksApplicationSecurity'
+            ${this.domSanitizer.bypassSecurityTrustHtml(Body || '')['changingThisBreaksApplicationSecurity'][
+                'changingThisBreaksApplicationSecurity'
                 ]
-            }`,
+                }`,
             Subject: `RE: ${Subject}`,
             Files: []
         };

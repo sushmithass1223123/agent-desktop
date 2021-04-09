@@ -712,7 +712,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
     public endCall(): void {
         // end the call
         // if there is only customer then endCall else dropCall
-        if (this.userList.length > 1) {
+        if (this.userList.filter(u => u.streamInfo.type !== 'screenshare').length > 1) {
             this.avConn.dropCall('');
         } else {
             this.avConn.endCall(TEnums.WrcCallTypes.Audio, '');

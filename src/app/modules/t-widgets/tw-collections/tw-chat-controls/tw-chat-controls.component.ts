@@ -523,6 +523,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // play new chat sound
         this._appUIService.playAudio('new-chat', 0.5, false);
+        this._appUIService.showDesktopAlert('Incoming Chat', 'You have a new incoming chat', false);
 
         this.replyInput = this.replyInputField.nativeElement;
         this.readyToReply();
@@ -1071,6 +1072,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             attachment: data.attachment,
             repliedToMessage: this.replyingToMessage
         });
+
+        // to show message alert
+        this._appUIService.showDesktopAlert('New Message', `Message from ${this.customerName}`, true, 'message');
 
         let isActive = false;
         // check if the interaction is active, else count unread
