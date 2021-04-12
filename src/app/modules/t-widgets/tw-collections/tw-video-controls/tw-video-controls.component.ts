@@ -221,8 +221,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
             this.avConn.join(TEnums.WrcCallTypes.Video, { mode: 'conference' });
             // show UI
             this.showUI = true;
-        }
-        else if (this.data.Data.Direction === 'out') {
+        } else if (this.data.Data.Direction === 'out') {
             this.avConn
                 ?.startCall(TEnums.WrcCallTypes.Video, null)
                 .then((dt: any) => {
@@ -472,7 +471,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
             default:
             // console.log(`unhandled:: [${evt.event}]`, evt);
         }
-    }
+    };
 
     /**
      * AVControlMessageReceivedEvent Handler
@@ -487,7 +486,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // forward the av messages to av channel
         this.avConn?.onMessage(evt.Message);
-    }
+    };
 
     /**
      * AgentAVMessageEvent Handler
@@ -497,7 +496,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
     private AgentAVMessageEvent = (evt: AgentAVMessageEvent) => {
         // forward the av messages to av channel
         this.avConn?.onMessage(evt.Message);
-    }
+    };
 
     /**
      * TextChatDisconnectedEvent Handler
@@ -511,7 +510,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         }
         // close the widget
         this.destroyWidget();
-    }
+    };
 
     /**
      * Widget Cleanup
@@ -697,9 +696,11 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         if (this.hold) {
             // un hold the call
             this.avConn.unHold();
+            this.widgetData.opener.unHoldInteraction();
         } else {
             // hold the call
             this.avConn.hold();
+            this.widgetData.opener.holdInteraction();
         }
         // set the reference varaible
         this.hold = !this.hold;
@@ -712,7 +713,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
     public endCall(): void {
         // end the call
         // if there is only customer then endCall else dropCall
-        if (this.userList.length > 1) {
+        if (this.userList.filter(u => u.streamInfo.type !== 'screenshare').length > 1) {
             this.avConn.dropCall('');
         } else {
             this.avConn.endCall(TEnums.WrcCallTypes.Audio, '');

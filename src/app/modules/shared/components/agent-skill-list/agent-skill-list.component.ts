@@ -1,5 +1,6 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { Component, Inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -9,6 +10,7 @@ import { FuseFacadeService } from '@services/fuse-facade.service';
 import { AgentSkillListData } from 'app/interfaces';
 import { orderBy } from 'lodash';
 import { Subject } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 import { AgentModel, CommandResultEvent, FavouriteSkill, IResponse, IResponseData, QueueStatusEvent, SDKClient } from 'tmac-sdk';
 import { SharedWrapperComponent } from '../shared-wrapper/shared-wrapper.component';
 
@@ -77,7 +79,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         /**
          * Current agent list ref
          */
-        agentList: any[];
+        agentList: AgentModel[];
         /**
          * Mat table data
          */
@@ -170,6 +172,10 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
      */
     allSkills: any;
     /**
+     * List of all favourite skills
+     */
+    allFavouriteSkills: FavouriteSkill[];
+    /**
      * Selected skill for agent list filter
      */
     selectedSkill: any;
@@ -210,6 +216,11 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
      * Fuse custom background colors
      */
     customFuseColor$ = this.fuseFacadeService.anchorOrWidgetBgClasses$;
+
+    /**
+     * Search Key for agent / skill list
+     */
+    searchKey = new FormControl('');
 
     /**
      * Wrapper component Ref
@@ -282,6 +293,33 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         this.activeSwitcher = this.data?.agent.allowed ? 'agentList' : this.data?.skill.allowed ? 'skillList' : '';
         this.showSwitcher = this.data?.agent.allowed && this.data?.skill.allowed;
         this.interactionId = this.data?.interactionId || 0;
+
+        // detect changes in search key
+        this.searchKey.valueChanges
+            .pipe(
+                // Debounce time for input value for optimised search
+                debounceTime(500)
+            )
+            .subscribe((key: string) => {
+                // make everything lowercase to avoid case sensitivity
+                key = key.toLowerCase();
+                // check which filter should be applied based on this.activeSwitcher
+                if (this.activeSwitcher === 'agentList') {
+                    // filter agent list
+                    this.filterAgentList(key);
+                } else if (this.activeSwitcher === 'skillList') {
+                    // check if key not empty to apply the filter
+                    if (key) {
+                        // for skill only apply searchkey filter
+                        this.skillListTable.tableData.source.data = this.allFavouriteSkills.filter((x) =>
+                            // stringify and lowercase for .includes string search
+                            JSON.stringify(x).toLowerCase().includes(key.toLowerCase())
+                        );
+                    } else {
+                        this.skillListTable.tableData.source.data = this.allFavouriteSkills;
+                    }
+                }
+            });
 
         const type = this.data?.type || '';
         switch (type) {
@@ -374,8 +412,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
     private checkForBlind(): void {
         if (this.activeSwitcher === 'dynamicList') {
             this.blindAllowed = this.data?.otherData.dynamicList.blindAllowed;
-        }
-        else if (this.activeSwitcher === 'agentList') {
+        } else if (this.activeSwitcher === 'agentList') {
             this.blindAllowed = this.data?.agent.blind;
         } else {
             this.blindAllowed = this.data?.skill.blind;
@@ -682,11 +719,12 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
          */
         key: string;
     }): void {
+        this.searchKey.setValue('');
         // assign active switcher
         this.activeSwitcher = item.key;
 
         // get the main label dynamically
-        this.mainLabel = this.switcherList.filter(f => f.key === item.key)?.[0].textLabel || '';
+        this.mainLabel = this.switcherList.filter((f) => f.key === item.key)?.[0].textLabel || '';
 
         // check for blind
         this.checkForBlind();
@@ -707,11 +745,32 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
      * To filter agent list based on selected skill
      *
      */
-    filterAgentList(): void {
-        if (this.agentListTable.agentList.length > 0 && this.selectedSkill) {
-            let list = this.agentListTable.agentList;
-            list = list.filter((d) => d.AgentVoiceSkillsAsString?.includes(this.selectedSkill));
-            this.agentListTable.tableData.source.data = list;
+    filterAgentList(key?: string): void {
+        if (this.agentListTable.agentList.length > 0) {
+            // check if skill is selscted to apply the selected skill filter
+            if (this.selectedSkill) {
+                let list = this.agentListTable.agentList;
+                // apply both skill and search key filter
+                list = list.filter((d) => {
+                    // stringify to check if the searchkey string exists
+                    const stringified = JSON.stringify(d).toLowerCase();
+                    // check and return the condition for selected skill filetr  with search key
+                    return d.AgentVoiceSkillsAsString?.includes(this.selectedSkill) && stringified.includes(key || '');
+                });
+                this.agentListTable.tableData.source.data = list;
+            } else {
+                let list = this.agentListTable.agentList;
+                if (key) {
+                    // since no skill selected , just apply the search key filter
+                    list = list.filter((d) => {
+                        // stringify to check if the searchkey string exists
+                        const stringified = JSON.stringify(d).toLowerCase();
+                        // check and return the condition for selected skill filetr  with search key
+                        return stringified.includes(key);
+                    });
+                }
+                this.agentListTable.tableData.source.data = list;
+            }
         }
     }
 
@@ -744,8 +803,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         // clear grid selection if any
         if (this.activeSwitcher === 'dynamicList') {
             this.dynamicListTable.tableData.selection.clear();
-        }
-        else if (this.activeSwitcher === 'agentList') {
+        } else if (this.activeSwitcher === 'agentList') {
             this.agentListTable.tableData.selection.clear();
         } else {
             this.skillListTable.tableData.selection.clear();
@@ -809,6 +867,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                             list = [...list, ...filtered];
                         });
                     }
+                    this.allFavouriteSkills = list;
                     this.skillListTable.tableData.source.data = list;
                     this.skillListTable.tableData.source.sort = this.sort;
                 }

@@ -6,6 +6,10 @@
 
     login {
         #login {
+            @if ($is-dark == false) {
+                @apply twd-bg-primary-700;
+            }
+
             #login-intro {
                 color: white;
             }

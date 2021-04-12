@@ -37,7 +37,8 @@ import {
     MediaServerEvent,
     SDKClient,
     TEnums,
-    TUtils
+    TUtils,
+    UUIDataEvent
 } from 'tmac-sdk';
 
 /**
@@ -118,6 +119,27 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      * Last 4 IVR menu ref
      */
     last4IVR = [];
+    /**
+     * IVR menus
+     */
+    ivrMenus: {
+        /**
+         * Menu text
+         */
+        Text: string;
+        /**
+         * Menu type
+         */
+        Type: string;
+        /**
+         * Menu value
+         */
+        Value: string;
+        /**
+         * Menu icon
+         */
+        Icon: string;
+    }[] = [];
     /**
      * Interaction status
      */
@@ -256,6 +278,14 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      * Dialed number ref
      */
     dialedNumbers = '';
+    /**
+     * IVR langauge
+     */
+    language = '';
+    /**
+     * Common button bg
+     */
+    commonButtonBackground = '';
 
     constructor(
         private _fuseConfigService: FuseConfigService,
@@ -288,6 +318,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         // subscribe to fuse
         this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
             this.fuseConfig = config;
+            this.commonButtonBackground =
+                config.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor ? config.layout.anchorWidget.bodyBackground : '';
         });
 
         // subscribe to app data config
@@ -324,11 +356,16 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
                 // assign the last 4 IVR, if default is configured
                 this.last4IVR = this.data.Data.IVR?.DefaultMenu || [];
+                this._appUIService.showDesktopAlert('Incoming Call', `You have a new incoming call from ${interactionDetails.PhoneNumber}`, false);
             } else {
                 // set direction
                 this.direction = 'Out';
                 // set status
                 this.status = 'outgoing';
+            }
+            // assign the IVR menus if enabled
+            if (this.data.Data.IVR?.Transfer?.Allowed) {
+                this.ivrMenus = this.data.Data.IVR?.Transfer?.Menu || [];
             }
         } else {
             console.warn('Interaction details are not available for voice');
@@ -336,8 +373,6 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         }
 
         // listen to TMAC events
-        // this.registerToEvents();
-
         this._tmacEventService
             .getInteractionEvents(
                 [
@@ -356,7 +391,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     'VoiceCannedResponseEvent',
                     'CallerIntentEvent',
                     'IVRDataEvent',
-                    'InteractionDataEvent'
+                    'InteractionDataEvent',
+                    'UUIDataEvent'
                 ],
                 this.interactionId
             )
@@ -381,60 +417,6 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     // -----------------------------------------------------------------------------------------------------
     // @ Private methods
     // -----------------------------------------------------------------------------------------------------
-
-    // /**
-    //  * Register to SDK events
-    //  * @method registerToEvents
-    //  */
-    // private registerToEvents(): void {
-    //     // get the event from event bag to make sure no events are missed
-    //     const eventBag = this._tmacEventService.interactionEvents(this.interactionId);
-
-    //     // process the events if any
-    //     eventBag.forEach((evt: IUIEvent) => {
-    //         this[evt.EventName]?.(evt);
-    //     });
-
-    //     // register to tmac events
-    //     SDKClient.events.on('CallConnectedEvent', this.CallConnectedEvent);
-    //     SDKClient.events.on('CallDisconnectedEvent', this.CallDisconnectedEvent);
-    //     SDKClient.events.on('CallHoldEvent', this.CallHoldEvent);
-    //     SDKClient.events.on('CallHoldReconnectEvent', this.CallHoldReconnectEvent);
-    //     SDKClient.events.on('CallTransferInitiatedEvent', this.CallTransferInitiatedEvent);
-    //     SDKClient.events.on('CallTransferLineDisconnectEvent', this.CallTransferLineDisconnectEvent);
-    //     SDKClient.events.on('CallTransferRemoteConnectedEvent', this.CallTransferRemoteConnectedEvent);
-    //     SDKClient.events.on('CallConferenceInitiatedEvent', this.CallConferenceInitiatedEvent);
-    //     SDKClient.events.on('CallConferenceCompletedEvent', this.CallConferenceCompletedEvent);
-    //     SDKClient.events.on('CallConferenceLineDisconnectEvent', this.CallConferenceLineDisconnectEvent);
-    //     SDKClient.events.on('CallConferenceRemoteConnectedEvent', this.CallConferenceRemoteConnectedEvent);
-    //     SDKClient.events.on('MediaServerEvent', this.MediaServerEvent);
-    //     SDKClient.events.on('VoiceCannedResponseEvent', this.VoiceCannedResponseEvent);
-    //     SDKClient.events.on('CallerIntentEvent', this.CallerIntentEvent);
-    //     SDKClient.events.on('IVRDataEvent', this.IVRDataEvent);
-    // }
-
-    // /**
-    //  * Clear event listeners
-    //  * @method deRegisterFromEvents
-    //  */
-    // private deRegisterFromEvents(): void {
-    //     // deregister from tmac events
-    //     SDKClient.events.off('CallConnectedEvent', this.CallConnectedEvent);
-    //     SDKClient.events.off('CallDisconnectedEvent', this.CallDisconnectedEvent);
-    //     SDKClient.events.off('CallHoldEvent', this.CallHoldEvent);
-    //     SDKClient.events.off('CallHoldReconnectEvent', this.CallHoldReconnectEvent);
-    //     SDKClient.events.off('CallTransferInitiatedEvent', this.CallTransferInitiatedEvent);
-    //     SDKClient.events.off('CallTransferLineDisconnectEvent', this.CallTransferLineDisconnectEvent);
-    //     SDKClient.events.off('CallTransferRemoteConnectedEvent', this.CallTransferRemoteConnectedEvent);
-    //     SDKClient.events.off('CallConferenceInitiatedEvent', this.CallConferenceInitiatedEvent);
-    //     SDKClient.events.off('CallConferenceCompletedEvent', this.CallConferenceCompletedEvent);
-    //     SDKClient.events.off('CallConferenceLineDisconnectEvent', this.CallConferenceLineDisconnectEvent);
-    //     SDKClient.events.off('CallConferenceRemoteConnectedEvent', this.CallConferenceRemoteConnectedEvent);
-    //     SDKClient.events.off('MediaServerEvent', this.MediaServerEvent);
-    //     SDKClient.events.off('VoiceCannedResponseEvent', this.VoiceCannedResponseEvent);
-    //     SDKClient.events.off('CallerIntentEvent', this.CallerIntentEvent);
-    //     SDKClient.events.off('IVRDataEvent', this.IVRDataEvent);
-    // }
 
     /**
      * CallConnectedEvent handler
@@ -887,6 +869,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
     /**
      * To handle InteractionDataEvent
+     * 
+     * @param {InteractionDataEvent} evt 
      */
     private InteractionDataEvent(evt: InteractionDataEvent): void {
         // check the channel 
@@ -903,6 +887,55 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     User: dt.User
                 });
             });
+        }
+    }
+
+    /**
+     * To handle UUIDataEvent
+     * 
+     * @param {UUIDataEvent} evt 
+     */
+    private UUIDataEvent(evt: UUIDataEvent): void {
+        // check if language is provided
+        if (evt.Language) {
+            // check for english
+            if (['1', 'e'].includes(evt.Language.toLowerCase())) {
+                this.language = 'English';
+            }
+            else {
+                this.language = 'Mandarin';
+            }
+        }
+
+        const authType = evt.AuthType;
+        // let verificationIcon = 'error';
+        // let verificationIconType = 'danger';
+        let verificationText = 'N/A';
+        let verificationType = 'N/A';
+
+        // check for auth type
+        if (authType) {
+            const isIdentified = authType.IsIdentified;
+            const isVerified = authType.IsVerified;
+            verificationType = authType.VerificationType;
+
+            // verificationIcon = isVerified ? 'verified_user' : 'error';
+            // verificationIconType = isVerified ? 'success' : 'danger';
+
+            if (isVerified && isIdentified) {
+                verificationText = 'Verified | Identified';
+            }
+            else if (!isVerified && isIdentified) {
+                verificationText = 'Not Verified | Identified';
+            }
+            else if (!isVerified && !isIdentified) {
+                verificationText = 'Not Verified | Not identified';
+            }
+
+            // if verified, then hide all not verifed menus from Ivr transfer
+            if (isVerified) {
+                this.ivrMenus = this.ivrMenus.filter(i => i.Type === 'nv');
+            }
         }
     }
 
@@ -1665,6 +1698,32 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 .catch(() => {
                     this._appUIService.showSnackbar('Error in sending DTMF', 'failure');
                 });
+        }
+    }
+
+    /**
+     * To transfer call to IVR
+     * 
+     * @param {String} type 
+     */
+    async transferToIVR(type: string): Promise<void> {
+        try {
+            const { response } = await SDKClient.transferToIVR({
+                interactionId: this.interactionId.toString(),
+                languageId: this.language,
+                type
+            });
+
+            // check the response 
+            if (response.ResultCode === 0) {
+                this._appUIService.showSnackbar('Transferred to IVR successfully');
+            }
+            else {
+                this._appUIService.showSnackbar(response.ResultMessage, 'failure');
+            }
+        } catch (error) {
+            console.error(error);
+            this._appUIService.showSnackbar('Error in transfer to IVR', 'failure');
         }
     }
 }

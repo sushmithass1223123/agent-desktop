@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { IWidget } from 'app/interfaces';
+import { TwWidgetModel } from 'app/models';
+import { merge } from 'lodash';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { TUtils } from 'tmac-sdk';
@@ -64,16 +66,20 @@ export class AOTWidgetService {
      * @param {IWidget[]} widgets
      */
     public processAOTWidgets(widgets: IWidget[]): void {
-        // check if widgets are there, if so load it
-        widgets.forEach((widget: IWidget) => {
-            if (widget.Data?.AutoOpen) {
-                setTimeout(() => {
-                    this.addWidget(widget);
-                    // set auto open to false so that when config is updated it wont open again
-                    widget.Data.AutoOpen = false;
-                }, 3000);
-            }
-        });
+        // validate
+        if (widgets && widgets.length) {
+            // check if widgets are there, if so load it
+            widgets.forEach((widget: IWidget) => {
+                // check if auto open
+                if (widget.Config.AutoOpen) {
+                    setTimeout(() => {
+                        this.addWidget(widget);
+                        // set auto open to false so that when config is updated it wont open again
+                        widget.Config.AutoOpen = false;
+                    }, 3000);
+                }
+            });
+        }
     }
 
     /**
@@ -86,6 +92,10 @@ export class AOTWidgetService {
         if (!widget) {
             return;
         }
+
+        // prepare widget data, use TwWidgetModel to make sure that newly added config is added
+        // with default value inorder to stop app from breaking
+        widget = merge({}, new TwWidgetModel(widget.Name, widget.Type), widget);
 
         // set AOT true
         widget.Config.AOT = true;

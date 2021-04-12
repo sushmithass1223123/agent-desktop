@@ -1,6 +1,8 @@
 import { AfterContentInit, Component, ComponentFactoryResolver, Input, ViewChild } from '@angular/core';
 import { TWidget, TWLibrary } from '@twidgets/utils';
 import { IWidget } from 'app/interfaces';
+import { TwWidgetModel } from 'app/models';
+import { merge } from 'lodash';
 import { TwTemplateDirective } from './tw-template.directive';
 
 /**
@@ -80,8 +82,9 @@ export class TwTemplateComponent implements AfterContentInit {
         // add the component to the view
         const componentRef = viewContainerRef.createComponent(componentFactory);
 
-        // add the data params
-        componentRef.instance.data = widgetModel;
+        // prepare widget data, use TwWidgetModel to make sure that newly added config is added
+        // with default value inorder to stop app from breaking
+        componentRef.instance.data = merge({}, new TwWidgetModel(widgetModel.Name, widgetModel.Type), widgetModel);
     }
 
 }

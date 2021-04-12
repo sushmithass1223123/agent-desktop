@@ -5,3 +5,9 @@
         border-bottom: none;
     }
 }
+
+.available-media-dialog {
+    .mat-dialog-container {
+        padding: 0;
+    }
+}

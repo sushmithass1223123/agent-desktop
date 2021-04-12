@@ -37,6 +37,11 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
     @ViewChild('addContactForm') addContactFormDialog: TemplateRef<any>;
 
     /**
+     * TCM Proxy Url
+     */
+    tcmProxyUrl: string;
+
+    /**
      * Data Config
      */
     dataConfig: {
@@ -167,8 +172,9 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-
-        this.dataConfig = this.data.Data;
+        // assign the proxy url
+        const url = this.data.Data.TCMProxyUrl;
+        this.tcmProxyUrl = url.endsWith('/') ? url : url + '/';
         this.fetchCampaigns();
 
         this.interactionId = this.data.InteractionDetails?.InteractionID;
@@ -267,8 +273,8 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
      * @method fetchCampaigns
      */
     fetchCampaigns(): void {
-        if (this.dataConfig.GetCampaignsUrl) {
-            this.http.get<ResCampaign[]>(this.dataConfig.GetCampaignsUrl).subscribe(
+        if (this.tcmProxyUrl) {
+            this.http.get<ResCampaign[]>(`${this.tcmProxyUrl}/Campaign/GetCampaigns`).subscribe(
                 (res) => {
                     this.getCampaignsReq = {
                         data: res,
@@ -290,7 +296,7 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
             this.getCampaignsReq = {
                 error: true,
                 loading: false,
-                msg: 'GetCampaignsUrl not found'
+                msg: 'TCMProxyUrl not found'
             };
         }
     }
@@ -341,30 +347,39 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
             phoneNumber: contact.Phone,
             retryCount: this.selectedCampaign.retryCount
         };
-        this.http.post(this.dataConfig.CreateContactCampaignUrl, reqPacket).subscribe(
-            () => {
-                this.addCampaingReq = {
-                    error: false,
-                    loading: false,
-                    msg: ''
-                };
-                this.matDialog.closeAll();
-                this._appUiService.showSnackbar('Added contact successfully', 'success');
-                this.addContactFormGroup.reset();
-                // check if the AOT widget
-                if (this.data.Config.AOT) {
-                    this._aotWidgetService.destroyWidget(this.data.ID);
+        if (this.tcmProxyUrl) {
+            this.http.post(`${this.tcmProxyUrl}/Contact/CreateCampaignContact`, reqPacket).subscribe(
+                () => {
+                    this.addCampaingReq = {
+                        error: false,
+                        loading: false,
+                        msg: ''
+                    };
+                    this.matDialog.closeAll();
+                    this._appUiService.showSnackbar('Added contact successfully', 'success');
+                    this.addContactFormGroup.reset();
+                    // check if the AOT widget
+                    if (this.data.Config.AOT) {
+                        this._aotWidgetService.destroyWidget(this.data.ID);
+                    }
+                },
+                () => {
+                    this.addCampaingReq = {
+                        error: true,
+                        loading: false,
+                        msg: COMMON_ERR_MESSAGE
+                    };
+                    this._appUiService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
                 }
-            },
-            () => {
-                this.addCampaingReq = {
-                    error: true,
-                    loading: false,
-                    msg: COMMON_ERR_MESSAGE
-                };
-                this._appUiService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
-            }
-        );
+            );
+        }
+        else {
+            this.getCampaignsReq = {
+                error: true,
+                loading: false,
+                msg: 'TCMProxyUrl not found'
+            };
+        }
     }
 
     /**

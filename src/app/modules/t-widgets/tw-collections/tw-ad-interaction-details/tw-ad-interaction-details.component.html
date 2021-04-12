@@ -31,6 +31,7 @@
             <ng-container matColumnDef="Direction">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Direction</mat-header-cell>
                 <mat-cell *matCellDef="let element">
+                    {{ element.Direction | uppercase }}
                     <mat-icon class="channel-icon" color="accent">
                         {{ element.Direction === 'In' ? 'south' : 'north' }}
                     </mat-icon>

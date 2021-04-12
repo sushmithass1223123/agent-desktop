@@ -8,7 +8,17 @@ import { IWidget } from 'app/interfaces';
 import { map } from 'lodash';
 import { timer } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
-import { AgentAVMessageEvent, AVChannel, AVControlMessageReceivedEvent, AVEvent, IAgentData, SDKClient, TEnums, TextChatDisconnectedEvent, TUtils } from 'tmac-sdk';
+import {
+    AgentAVMessageEvent,
+    AVChannel,
+    AVControlMessageReceivedEvent,
+    AVEvent,
+    IAgentData,
+    SDKClient,
+    TEnums,
+    TextChatDisconnectedEvent,
+    TUtils
+} from 'tmac-sdk';
 import { TwChatControlsComponent } from '../tw-chat-controls/tw-chat-controls.component';
 
 /**
@@ -126,8 +136,8 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
      * Fuse custom background colors
      */
     customFuseColor = {
-        anchor$: this.fusefacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
-        widget$: this.fusefacadeService.widgetBgClasses$
+        anchor$: this._fusefacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
+        widget$: this._fusefacadeService.widgetBgClasses$
     };
 
     /**
@@ -138,7 +148,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         private _appDataService: AppDataService,
         private _aotWidgetService: AOTWidgetService,
         private _appUIService: AppUiService,
-        private fusefacadeService: FuseFacadeService
+        private _fusefacadeService: FuseFacadeService
     ) {
         super();
     }
@@ -193,8 +203,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
             this.avConn.join(TEnums.WrcCallTypes.Audio, { mode: 'conference' });
             // show UI
             this.showUI = true;
-        }
-        else if (this.data.Data.Direction === 'out') {
+        } else if (this.data.Data.Direction === 'out') {
             this.avConn
                 ?.startCall(TEnums.WrcCallTypes.Audio, null)
                 .then((dt: any) => {
@@ -277,7 +286,6 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
             connection.onMessage(avEvent.Message);
         }
     }
-
 
     /**
      * AVEvent Handler
@@ -417,10 +425,13 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
                 // close the widget
                 this.destroyWidget();
                 break;
+            case 'onUserLeft':
+                this.userList = this.userList.filter((u) => u.streamInfo.id !== evt.data?.userId);
+                break;
             default:
             // console.log(`unhandled:: [${evt.event}]`, evt);
         }
-    }
+    };
 
     /**
      * AVControlMessageReceivedEvent Handler
@@ -435,7 +446,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // forward the av messages to av channel
         this.avConn?.onMessage(evt.Message);
-    }
+    };
 
     /**
      * AgentAVMessageEvent Handler
@@ -445,7 +456,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
     private AgentAVMessageEvent = (evt: AgentAVMessageEvent) => {
         // forward the av messages to av channel
         this.avConn?.onMessage(evt.Message);
-    }
+    };
 
     /**
      * TextChatDisconnectedEvent Handler
@@ -459,7 +470,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         }
         // close the widget
         this.destroyWidget();
-    }
+    };
 
     /**
      * Widget Cleanup
@@ -500,9 +511,11 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         if (this.hold) {
             // un hold the call
             this.avConn.unHold();
+            this.widgetData.opener.unHoldInteraction();
         } else {
             // hold the call
             this.avConn.hold();
+            this.widgetData.opener.holdInteraction();
         }
         // set the reference varaible
         this.hold = !this.hold;
@@ -530,7 +543,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
     public endCall(): void {
         // end the call
         // if there is only customer then endCall else dropCall
-        if (this.userList.length > 1) {
+        if (this.userList.filter(u => u.streamInfo.type !== 'screenshare').length > 1) {
             this.avConn?.dropCall('');
         } else {
             this.avConn?.endCall(TEnums.WrcCallTypes.Audio, '');
