@@ -472,13 +472,13 @@ export type FuseBgConf = {
     /**
      * Body color class of fuse config
      */
-    body$: string;
+    body: string;
     /**
      * Content color class of fuse config
      */
-    content$: string;
+    content: string;
     /**
      * Header color class of fuse config
      */
-    header$: string;
+    header: string;
 };

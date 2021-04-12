@@ -2018,6 +2018,7 @@
                                                     "AttachmentAllowed": true,
                                                     "ScreenShareAllowed": true,
                                                     "InteractionCommentAllowed": true,
+                                                    "HoldInteractionAllowed" : true,
                                                     "Whiteboard": {
                                                         "Allowed": true,
                                                         "Url": "http://dice.tetherfi.cloud:55080/Whiteboard/ui/index.html"
