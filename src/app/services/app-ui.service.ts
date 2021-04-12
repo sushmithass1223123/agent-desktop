@@ -66,8 +66,23 @@ export class AppUiService {
          */
         sounds: boolean;
     };
-
-    uiChannel$: Subject<{ type: UiChanActions; data?: any }>;
+    /**
+     * Notification reference
+     */
+    private _notificationRef: Notification;
+    /**
+     * UI channel subject 
+     */
+    uiChannel$: Subject<{
+        /**
+         * UI channel actions
+         */
+        type: UiChanActions;
+        /**
+         * Data
+         */
+        data?: any
+    }>;
 
     /**
      * Constructor
@@ -79,6 +94,9 @@ export class AppUiService {
         this.init();
     }
 
+    /**
+     * Init method
+     */
     private init(): void {
         this.uiChannel$ = new Subject();
     }
@@ -324,7 +342,7 @@ export class AppUiService {
         // clear if any interval
         clearInterval(this._audioInterval);
         // start dial tone
-        this._audio = new Audio(`assets/sounds/${type}.mp3`);
+        this._audio = new Audio(`assets/sounds/${type || 'default'}.mp3`);
         // set the volume
         this._audio.volume = volume;
         // play once
@@ -438,6 +456,54 @@ export class AppUiService {
         this._notificationSettings = settings;
     }
 
+    /**
+     * To show browser notfication
+     */
+    public showDesktopAlert(title: string, message: string, sound: boolean, soundType?: string): void {
+        // get the config
+        const config = this._appConfig.AppConfigs.Notifications;
+
+        // check if notification is enabled
+        if (!this._notificationSettings.desktopAlert || document.hasFocus()) {
+            return;
+        }
+
+        // check if any existing notification
+        if (this._notificationRef) {
+            this._notificationRef.close();
+        }
+
+        // recheck if the notification permission is granted
+        if (Notification.permission !== 'granted') {
+            Notification.requestPermission();
+        }
+        else {
+            this._notificationRef = new Notification(title, {
+                icon: 'assets/images/logos/desktop-alert.png',
+                body: message,
+                requireInteraction: true,
+                silent: true
+            });
+
+            // check if sound needed
+            if (this._notificationSettings.sounds && sound) {
+                this.playAudio(soundType, 0.5, false);
+            }
+
+            // check the timeout
+            if (config.DesktopAlertTimeout && config.DesktopAlertTimeout > 1000) {
+                setTimeout((x) => {
+                    x.close();
+                }, config.DesktopAlertTimeout, this._notificationRef);
+            }
+
+            // on click of notification
+            this._notificationRef.onclick = () => {
+                window.focus();
+            };
+        }
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // Subscription methods
     // -----------------------------------------------------------------------------------------------------
@@ -455,6 +521,36 @@ export class AppUiService {
         // get the config and check for AOT widgets
         this._appDataService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
             this._appConfig = config;
+
+            // set the notification settings from server
+            this._notificationSettings = {
+                desktopAlert: config.AppConfigs?.Notifications?.DesktopAlerts,
+                sounds: config.AppConfigs?.Notifications?.Sounds
+            };
+
+            // check for desktop notification and permission is granted
+            if (config.AppConfigs?.Notifications?.DesktopAlerts) {
+                if (typeof Notification !== 'function') {
+                    this.showSnackbar('Notification is not supported by the browser!', 'warning', 'top', 'center');
+                    return;
+                }
+                // check if the notification permission is granted
+                if (Notification.permission !== 'granted') {
+                    // check if the permission is denied
+                    if (Notification.permission === 'denied') {
+                        this.showSnackbar(
+                            'Notification is enabled but permission is denied! Please go to browser settings and allow to receive notifications for this site.',
+                            'failure',
+                            'top',
+                            'center',
+                            10000);
+                    }
+                    else {
+                        this.showSnackbar('Please grand permission for notifications', 'info', 'top', 'center');
+                    }
+                    Notification.requestPermission();
+                }
+            }
         });
     }
 

@@ -4,7 +4,7 @@ import { FuseConfig } from '@fuse/types';
 import { FuseBgConf } from 'app/interfaces';
 import { formatJsonData } from 'app/utils';
 import { Observable } from 'rxjs';
-import { map, publish, refCount } from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
 
 /**
  * A Facade service for fuse config
@@ -24,8 +24,7 @@ export class FuseFacadeService {
             const { contentBackground: content, headerBackground: header, bodyBackground: body } = conf.layout.anchorWidget;
             return { content, header, body };
         }),
-        publish(),
-        refCount()
+        shareReplay()
     );
 
     /**
@@ -39,8 +38,7 @@ export class FuseFacadeService {
             const { contentBackground: content, headerBackground: header, bodyBackground: body } = conf.layout.widget;
             return { content, header, body };
         }),
-        publish(),
-        refCount()
+        shareReplay()
     );
 
     /**
@@ -65,8 +63,7 @@ export class FuseFacadeService {
                 return { content, header, body };
             }
         }),
-        publish(),
-        refCount()
+        shareReplay()
     );
 
     /**
@@ -91,8 +88,7 @@ export class FuseFacadeService {
                 return { content, header, body };
             }
         }),
-        publish(),
-        refCount()
+        shareReplay()
     );
 
     constructor(private fuseConfig: FuseConfigService) {}

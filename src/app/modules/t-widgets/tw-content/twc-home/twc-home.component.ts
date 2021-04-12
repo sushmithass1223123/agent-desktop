@@ -2,6 +2,7 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@an
 import { FormControl } from '@angular/forms';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
+import { AOTWidgetService } from '@services/aot-widget.service';
 import { DashboardService } from '@services/dashboard.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
@@ -98,7 +99,8 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
         public contentPageService: ContentPageService,
         private _dashboardService: DashboardService,
         private fuseConfService: FuseConfigService,
-        private _tmacEventService: TMACEventService
+        private _tmacEventService: TMACEventService,
+        private _aotWidgetService: AOTWidgetService
     ) {
         super(hostElement, contentPageService);
     }
@@ -133,6 +135,9 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
         this.staticWidgets = homeWidgets.Static || [];
         this.dynamicWidgets = homeWidgets.Dynamic || [];
         this.aotWidgets = homeWidgets.AOT || [];
+
+        // process aot widgets
+        this._aotWidgetService.processAOTWidgets(this.aotWidgets);
 
         // subscribe to dashboard service
         this._dashboardService.connectionState.pipe(takeUntil(this.unsubscribeAll)).subscribe((state: string) => {

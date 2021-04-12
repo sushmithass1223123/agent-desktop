@@ -50,9 +50,9 @@ export class TwAvailableMediaDeviceComponent implements OnInit {
          */
         loading: string;
     } = {
-        error: '',
-        loading: ''
-    };
+            error: '',
+            loading: ''
+        };
 
     /**
      * Audio / Video streams
@@ -74,7 +74,7 @@ export class TwAvailableMediaDeviceComponent implements OnInit {
     @ViewChild('videoStream')
     videoStream: ElementRef<HTMLMediaElement>;
 
-    constructor(private matDialog: MatDialog) {}
+    constructor(private matDialog: MatDialog) { }
 
     /**
      * Lifecycle hook
@@ -101,13 +101,15 @@ export class TwAvailableMediaDeviceComponent implements OnInit {
             this.startVideo({ audio: true, video: true });
             this.matDialog
                 .open(this.availableDevicesMenu, {
-                    width: '50%'
+                    width: '50%',
+                    panelClass: 'available-media-dialog'
                 })
                 .afterClosed()
                 .subscribe(() => {
-                    this.stream.getTracks().forEach((track) => {
-                        track.stop();
-                    });
+                    this.stream.getTracks()
+                        .forEach(track => {
+                            track.stop();
+                        });
                 });
         } catch (e) {
             console.error(e);

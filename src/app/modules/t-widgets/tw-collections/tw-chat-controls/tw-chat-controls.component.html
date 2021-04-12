@@ -222,6 +222,25 @@
                         <mat-icon>comment</mat-icon>
                     </button>
 
+                    <ng-container
+                        *ngIf="
+                            !callWidget &&
+                            data.Data?.HoldInteractionAllowed &&
+                            (interactionOnHold.onHold ? unHoldInteraction : holdInteraction) as holdUnhold
+                        "
+                    >
+                        <button
+                            mat-mini-fab
+                            color="default"
+                            [ngClass]="commonButtonBackground + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
+                            [disabled]="status !== 'connected' || interactionOnHold.loading"
+                            [matTooltip]="interactionOnHold.buttonTooltip"
+                            (click)="holdUnhold()"
+                        >
+                            <mat-icon> {{ interactionOnHold.icon }} </mat-icon>
+                        </button>
+                    </ng-container>
+
                     <!-- <button
                         *ngIf="data.Data.Whiteboard?.Allowed"
                         [disabled]="status !== 'connected'"

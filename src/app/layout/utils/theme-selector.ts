@@ -11,41 +11,6 @@ export class ThemeSelector {
     public static getFuseConfigByTheme(themeName: string, selector: boolean): any {
         let selectedTheme = null;
         switch (themeName) {
-            case 'theme-default-3' : {
-                selectedTheme = {
-                    layout: {
-                        navbar: {
-                            background: 'grey-50',
-                            customBackgroundColor: true,
-                        },
-                        toolbar: {
-                            customBackgroundColor: true,
-                            background: 'grey-200',
-                        },
-                        content: {
-                            customBackgroundColor: true,
-                            background: 'grey-200'
-                        },
-                        anchorWidget: {
-                            customBackgroundColor: true,
-                            bodyBackground: 'grey-300',
-                            headerBackground: 'grey-100',
-                            contentBackground: 'grey-100'
-                        },
-                        widget: {
-                            customBackgroundColor: true,
-                            bodyBackground: 'grey-A100',
-                            headerBackground: 'grey-100',
-                            contentBackground: 'grey-100'
-                        },
-                        footer: {
-                            customBackgroundColor: false,
-                            background: 'grey-400',
-                        }
-                    }
-                };
-                break;
-            }
             case 'theme-default-2':
                 {
                     selectedTheme = {
@@ -76,6 +41,42 @@ export class ThemeSelector {
                             },
                             footer: {
                                 customBackgroundColor: true,
+                                background: 'grey-400',
+                            }
+                        }
+                    };
+                    break;
+                }
+            case 'theme-default-3':
+                {
+                    selectedTheme = {
+                        layout: {
+                            navbar: {
+                                background: 'grey-50',
+                                customBackgroundColor: true,
+                            },
+                            toolbar: {
+                                customBackgroundColor: true,
+                                background: 'grey-200',
+                            },
+                            content: {
+                                customBackgroundColor: true,
+                                background: 'grey-200'
+                            },
+                            anchorWidget: {
+                                customBackgroundColor: true,
+                                bodyBackground: 'grey-300',
+                                headerBackground: 'grey-100',
+                                contentBackground: 'grey-100'
+                            },
+                            widget: {
+                                customBackgroundColor: true,
+                                bodyBackground: 'grey-A100',
+                                headerBackground: 'grey-100',
+                                contentBackground: 'grey-100'
+                            },
+                            footer: {
+                                customBackgroundColor: false,
                                 background: 'grey-400',
                             }
                         }

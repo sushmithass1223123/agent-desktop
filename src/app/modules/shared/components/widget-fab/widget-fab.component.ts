@@ -2,6 +2,8 @@ import { Component, OnInit, ViewEncapsulation, Input } from '@angular/core';
 import { widgetFabAnimations } from '@modules/shared/animations/widget-fab.animation';
 import { IWidget } from 'app/interfaces';
 import { AOTWidgetService } from '@services/aot-widget.service';
+import { merge } from 'lodash';
+import { TwWidgetModel } from 'app/models';
 
 /**
  * Widget Fab menu
@@ -28,13 +30,13 @@ export class WidgetFabComponent implements OnInit {
      */
     fabTogglerState = 'inactive';
 
-    constructor(private _aotWidgetService: AOTWidgetService) {}
+    constructor(private _aotWidgetService: AOTWidgetService) { }
 
     /**
      * Lifecycle hook
      * @method
      */
-    ngOnInit(): void {}
+    ngOnInit(): void { }
 
     /**
      * on toggle , show items

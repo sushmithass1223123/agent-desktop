@@ -71,7 +71,7 @@
                                 class="switch-item"
                                 *ngFor="let item of switcherList"
                                 [ngClass]="activeSwitcher === item.key && fuseBgs?.body"
-                                (click)="switchTab(item)"
+                                (click)="switchTab(item); searchRef.focus()"
                             >
                                 {{ item.label }}
                             </div>
@@ -79,106 +79,33 @@
                         <div fxLayout="column">
                             <div [hidden]="activeSwitcher !== 'agentList'">
                                 <div fxLayout="row" fxLayoutAlign=" center">
-                                    <!-- <mat-form-field class="custom form-field w-100-p" appearance="outline">
-                                <input class="login-input" matInput placeholder="Search" [(ngModel)]="searchTerm" (input)="filterAgents()" />
-                                <button
-                                    *ngIf="!searchTerm; else clearBtn"
-                                    mat-icon-button
-                                    matSuffix
-                                    [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
-                                    disabled
-                                >
-                                    <mat-icon matSuffix>search</mat-icon>
-                                </button>
-                                <ng-template #clearBtn>
-                                    <button
-                                        mat-button
-                                        color="primary"
-                                        matSuffix
-                                        mat-icon-button
-                                        aria-label="Clear"
-                                        [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
-                                        (click)="searchTerm = ''; filterAgents()"
-                                    >
-                                        <mat-icon>close</mat-icon>
-                                    </button>
-                                </ng-template>
-                            </mat-form-field> -->
-
-                                    <!-- <div>
-                                    <button
-                                        mat-icon-button
-                                        (click)="openSearch = !openSearch"
-                                        type="button"
-                                        cdkOverlayOrigin
-                                        #trigger="cdkOverlayOrigin"
-                                        class="mr-4"
-                                    >
-                                        <mat-icon>filter_alt</mat-icon>
-                                    </button>
-                                </div> -->
-
-                                    <!-- <ng-template
-                                cdkConnectedOverlay
-                                [cdkConnectedOverlayOrigin]="trigger"
-                                [cdkConnectedOverlayOpen]="openSearch"
-                                cdkConnectedOverlayHasBackdrop
-                                cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-                                (overlayOutsideClick)="openSearch = !openSearch"
-                            >
-                                <div
-                                    class="advanced-search-form mat-elevation-z2 position-absolute border-radius-20 animate__animated animate__fadeInDown animate__faster"
-                                >
-                                    <p class="text-center text-bold">Advanced Search</p>
-                                    <form [formGroup]="advancedSearchForm" class="px-12" novalidate fxLayout="row wrap" fxLayoutAlign="space-evenly">
-                                        <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                            <input matInput formControlName="email" type="text" placeholder="Email" />
-                                        </mat-form-field>
-                                        <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                            <input matInput formControlName="queue" type="text" placeholder="Queue" />
-                                        </mat-form-field>
-    
-                                        <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                            <input matInput formControlName="fromDate" [matDatepicker]="fromDatePicker" placeholder="From Data" />
-                                            <mat-datepicker-toggle matSuffix [for]="fromDatePicker"></mat-datepicker-toggle>
-                                            <mat-datepicker #fromDatePicker></mat-datepicker>
-                                        </mat-form-field>
-                                        <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                            <input matInput formControlName="fromTime" type="time" placeholder="From Time" />
-                                        </mat-form-field>
-    
-                                        <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                            <input matInput formControlName="toDate" [matDatepicker]="toDatePicker" placeholder="To Date" />
-                                            <mat-datepicker-toggle matSuffix [for]="toDatePicker"></mat-datepicker-toggle>
-                                            <mat-datepicker #toDatePicker></mat-datepicker>
-                                        </mat-form-field>
-    
-                                        <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                            <input matInput formControlName="toTime" type="time" placeholder="To Time" />
-                                        </mat-form-field>
-    
-                                        <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                            <input matInput formControlName="subject" type="text" placeholder="Subject" />
-                                        </mat-form-field>
-                                        <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                            <input matInput formControlName="content" type="text" placeholder="Content" />
-                                        </mat-form-field>
-                                        <button mat-raised-button class="adv-search-btn w-100-p h-40 mb-8 border-radius-20" matTooltip="Search">
-                                            Search
-                                        </button>
-                                    </form>
-                                </div>
-                            </ng-template> -->
-
-                                    <div fxFlex>
+                                    <div #skillSelectDropdown class="twd-flex-1">
                                         <mat-form-field class="form-field custom with-bg w-100-p" appearance="outline">
-                                            <mat-select placeholder="Select Skill..." [(ngModel)]="selectedSkill">
+                                            <mat-select #skillSelectRef placeholder="Select Skill..." [(ngModel)]="selectedSkill">
                                                 <mat-option (click)="clearSkillFilter()">None</mat-option>
                                                 <mat-option *ngFor="let item of allSkills" [value]="item.SkillID" (click)="filterAgentList()">{{
                                                     item.SkillName
                                                 }}</mat-option>
                                             </mat-select>
                                         </mat-form-field>
+                                    </div>
+
+                                    <!-- skill select dropdown when clicked , select dropdown input form field shown -->
+                                    <div #skillSelectButton class="ml-8 twd-hidden">
+                                        <button
+                                            mat-raised-button
+                                            mat-icon-button
+                                            matTooltip="Select Skill"
+                                            (click)="
+                                                searchKeyText.classList.replace('twd-flex-1', 'twd-hidden');
+                                                skillSelectDropdown.classList.replace('twd-hidden', 'twd-flex-1');
+                                                searchKeyButton.classList.toggle('twd-hidden');
+                                                skillSelectButton.classList.toggle('twd-hidden');
+                                                skillSelectRef.focus()
+                                            "
+                                        >
+                                            <mat-icon>school</mat-icon>
+                                        </button>
                                     </div>
 
                                     <div class="ml-8">
@@ -191,6 +118,31 @@
                                         <button mat-raised-button mat-icon-button matTooltip="Reload Agent List" (click)="loadAgentList(true)">
                                             <mat-icon>refresh</mat-icon>
                                         </button>
+                                    </div>
+
+                                    <!-- search key button hidden by defaullt , when clicked , searchKey input form field shown -->
+                                    <div #searchKeyButton class="ml-8">
+                                        <button
+                                            mat-raised-button
+                                            mat-icon-button
+                                            matTooltip="Search"
+                                            (click)="
+                                                skillSelectDropdown.classList.replace('twd-flex-1', 'twd-hidden');
+                                                searchKeyText.classList.replace('twd-hidden', 'twd-flex-1');
+                                                searchKeyButton.classList.toggle('twd-hidden');
+                                                skillSelectButton.classList.toggle('twd-hidden');
+                                                searchRef.focus()
+                                            "
+                                        >
+                                            <mat-icon>search</mat-icon>
+                                        </button>
+                                    </div>
+
+                                    <!-- Search form field with form control searchKey -->
+                                    <div #searchKeyText class="ml-8 twd-hidden">
+                                        <mat-form-field class="form-field custom with-bg w-100-p" appearance="outline">
+                                            <input matInput #searchRef [formControl]="searchKey" placeholder="Search" />
+                                        </mat-form-field>
                                     </div>
                                 </div>
                                 <div class="w-100-p h-100-p custom-scroll-adjust">
@@ -265,32 +217,11 @@
                                 </div>
                             </div>
                             <div [hidden]="activeSwitcher !== 'skillList'">
-                                <div>
-                                    <!-- <mat-form-field class="custom form-field w-100-p" appearance="outline">
-                                <input class="login-input" matInput placeholder="Search" [(ngModel)]="searchTerm" (input)="filterAgents()" />
-                                <button
-                                    *ngIf="!searchTerm; else clearBtn"
-                                    mat-icon-button
-                                    matSuffix
-                                    [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
-                                    disabled
-                                >
-                                    <mat-icon matSuffix>search</mat-icon>
-                                </button>
-                                <ng-template #clearBtn>
-                                    <button
-                                        mat-button
-                                        color="primary"
-                                        matSuffix
-                                        mat-icon-button
-                                        aria-label="Clear"
-                                        [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
-                                        (click)="searchTerm = ''; filterAgents()"
-                                    >
-                                        <mat-icon>close</mat-icon>
-                                    </button>
-                                </ng-template>
-                            </mat-form-field> -->
+                                <!-- Search form field with form control searchKey -->
+                                <div class="ml-8 twd-w-full">
+                                    <mat-form-field class="form-field custom with-bg w-100-p" appearance="outline">
+                                        <input matInput [formControl]="searchKey" placeholder="Search" />
+                                    </mat-form-field>
                                 </div>
                                 <div class="w-100-p h-100-p custom-scroll-adjust">
                                     <mat-table
@@ -362,33 +293,6 @@
                             </div>
                         </div>
                         <div *ngIf="dynamicListTable.enabled" [hidden]="activeSwitcher !== 'dynamicList'">
-                            <div>
-                                <!-- <mat-form-field class="custom form-field w-100-p" appearance="outline">
-                                <input class="login-input" matInput placeholder="Search" [(ngModel)]="searchTerm" (input)="filterAgents()" />
-                                <button
-                                    *ngIf="!searchTerm; else clearBtn"
-                                    mat-icon-button
-                                    matSuffix
-                                    [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
-                                    disabled
-                                >
-                                    <mat-icon matSuffix>search</mat-icon>
-                                </button>
-                                <ng-template #clearBtn>
-                                    <button
-                                        mat-button
-                                        color="primary"
-                                        matSuffix
-                                        mat-icon-button
-                                        aria-label="Clear"
-                                        [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
-                                        (click)="searchTerm = ''; filterAgents()"
-                                    >
-                                        <mat-icon>close</mat-icon>
-                                    </button>
-                                </ng-template>
-                            </mat-form-field> -->
-                            </div>
                             <div class="w-100-p h-100-p custom-scroll-adjust">
                                 <mat-table
                                     class="h-100-p"
