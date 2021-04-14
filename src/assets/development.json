@@ -1193,16 +1193,20 @@
                                                             "Allowed": true,
                                                             "Blind": false,
                                                             "Source": {
-                                                                "Use" : "agentId",
-                                                                "Display" : "agentName",
-                                                                "FreeTextAllowed" : true
+                                                                "Use": "agentId",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": true
                                                             },
                                                             "AllowedStates": []
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
                                                             "Blind": false,
-                                                            "Source": "skill",
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": true
+                                                            },
                                                             "ChannelPrefix": [
                                                                 "VO"
                                                             ]
@@ -1213,13 +1217,21 @@
                                                         "Agent": {
                                                             "Allowed": true,
                                                             "Blind": false,
-                                                            "Source": "station",
+                                                            "Source": {
+                                                                "Use": "agentId",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": true
+                                                            },
                                                             "AllowedStates": []
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
                                                             "Blind": false,
-                                                            "Source": "skill",
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": true
+                                                            },
                                                             "ChannelPrefix": [
                                                                 "VO"
                                                             ]
@@ -1983,16 +1995,20 @@
                                                             "Allowed": true,
                                                             "Blind": false,
                                                             "Source": {
-                                                                "Use" : "agentId",
-                                                                "Display" : "agentName",
-                                                                "FreeTextAllowed" : true
+                                                                "Use": "agentId",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": false
                                                             },
                                                             "AllowedStates": []
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
                                                             "Blind": false,
-                                                            "Source": "skill",
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": false
+                                                            },
                                                             "ChannelPrefix": [
                                                                 "CH"
                                                             ]
@@ -2003,14 +2019,22 @@
                                                         "Agent": {
                                                             "Allowed": true,
                                                             "Blind": false,
-                                                            "Source": "agentId",
-                                                            "DisplayedSource" : "agentId",
+                                                            "Source": {
+                                                                "Use": "agentId",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": false
+                                                            },
+                                                            "DisplayedSource": "agentId",
                                                             "AllowedStates": []
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
                                                             "Blind": false,
-                                                            "Source": "skill",
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": false
+                                                            },
                                                             "ChannelPrefix": [
                                                                 "CH"
                                                             ]
@@ -2790,13 +2814,21 @@
                                                         "Agent": {
                                                             "Allowed": true,
                                                             "Blind": false,
-                                                            "Source": "agentId",
+                                                            "Source": {
+                                                                "Use": "agentId",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": false
+                                                            },
                                                             "AllowedStates": []
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
                                                             "Blind": false,
-                                                            "Source": "skill",
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": true
+                                                            },
                                                             "ChannelPrefix": [
                                                                 "EM"
                                                             ]
@@ -3325,13 +3357,21 @@
                                                         "Agent": {
                                                             "Allowed": true,
                                                             "Blind": false,
-                                                            "Source": "agentId",
+                                                            "Source": {
+                                                                "Use": "agentId",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": false
+                                                            },
                                                             "AllowedStates": []
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
                                                             "Blind": false,
-                                                            "Source": "skill",
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": true
+                                                            },
                                                             "ChannelPrefix": [
                                                                 "EM"
                                                             ]
