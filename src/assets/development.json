@@ -1192,7 +1192,11 @@
                                                         "Agent": {
                                                             "Allowed": true,
                                                             "Blind": false,
-                                                            "Source": "station",
+                                                            "Source": {
+                                                                "Use" : "agentId",
+                                                                "Display" : "agentName",
+                                                                "FreeTextAllowed" : true
+                                                            },
                                                             "AllowedStates": []
                                                         },
                                                         "Skill": {
@@ -1978,7 +1982,11 @@
                                                         "Agent": {
                                                             "Allowed": true,
                                                             "Blind": false,
-                                                            "Source": "agentId",
+                                                            "Source": {
+                                                                "Use" : "agentId",
+                                                                "Display" : "agentName",
+                                                                "FreeTextAllowed" : true
+                                                            },
                                                             "AllowedStates": []
                                                         },
                                                         "Skill": {
@@ -1996,6 +2004,7 @@
                                                             "Allowed": true,
                                                             "Blind": false,
                                                             "Source": "agentId",
+                                                            "DisplayedSource" : "agentId",
                                                             "AllowedStates": []
                                                         },
                                                         "Skill": {

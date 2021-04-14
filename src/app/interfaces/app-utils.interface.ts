@@ -388,6 +388,32 @@ export interface CustomDialogOtherData {
     minRows?: number;
 }
 
+export type AgentSkillListAgentSources = 'station' | 'agentId';
+export type AgentSkillListSkillSources = 'skill' | 'vdn';
+export type AgentSkillListSourceObject<
+    /**
+     * Type of Use Key. Default: any
+     */
+    T = any,
+    /**
+     * Type of Display Key. Default : any
+     */
+    K = any
+> = {
+    /**
+     * This agent source is forwarded to any api calls / value assigning
+     */
+    Use: T;
+    /**
+     * This agent source is displayed
+     */
+    Display: K;
+    /**
+     * Allow freetext to redirect user to specified source's use key
+     */
+    FreeTextAllowed: boolean;
+};
+
 export interface AgentSkillListData {
     /**
      * Type of dialog
@@ -412,7 +438,7 @@ export interface AgentSkillListData {
         /**
          * Source to select
          */
-        source: 'station' | 'agentId';
+        source: AgentSkillListAgentSources | AgentSkillListSourceObject<AgentSkillListAgentSources, AgentSkillListAgentSources | 'agentName'>;
         /**
          * Allowed states to do action
          */
@@ -427,13 +453,13 @@ export interface AgentSkillListData {
          */
         allowed: boolean;
         /**
-         * BlindD allowed flag
+         * Blind allowed flag
          */
         blind: boolean;
         /**
          * Source to select
          */
-        source: 'skill' | 'vdn';
+        source: AgentSkillListSkillSources | AgentSkillListSourceObject<AgentSkillListSkillSources, AgentSkillListSkillSources>;
         /**
          * Channel prefix to filter skill list
          */
