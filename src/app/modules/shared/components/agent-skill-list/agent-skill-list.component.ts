@@ -7,7 +7,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { fuseAnimations } from '@fuse/animations';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
-import { AgentSkillListData } from 'app/interfaces';
+import { AgentSkillListData, AgentSkillListSourceObject } from 'app/interfaces';
 import { orderBy } from 'lodash';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
@@ -151,6 +151,10 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
      */
     selectedItem: string;
     /**
+     * Selected items's display Name
+     */
+    selectedItemDisplayName = '';
+    /**
      * Selected mat table row
      */
     selectedRow: {
@@ -228,6 +232,11 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
     @ViewChild(SharedWrapperComponent) wrapperComponent: SharedWrapperComponent;
 
     /**
+     * Free text agent Key
+     */
+    freeTextAgentKey = { allowed: false, enabled: false, value: '' };
+
+    /**
      * Constructor
      */
     constructor(
@@ -294,47 +303,33 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         this.showSwitcher = this.data?.agent.allowed && this.data?.skill.allowed;
         this.interactionId = this.data?.interactionId || 0;
 
-        // detect changes in search key
-        this.searchKey.valueChanges
-            .pipe(
-                // Debounce time for input value for optimised search
-                debounceTime(500)
-            )
-            .subscribe((key: string) => {
-                // make everything lowercase to avoid case sensitivity
-                key = key.toLowerCase();
-                // check which filter should be applied based on this.activeSwitcher
-                if (this.activeSwitcher === 'agentList') {
-                    // filter agent list
-                    this.filterAgentList(key);
-                } else if (this.activeSwitcher === 'skillList') {
-                    // check if key not empty to apply the filter
-                    if (key) {
-                        // for skill only apply searchkey filter
-                        this.skillListTable.tableData.source.data = this.allFavouriteSkills.filter((x) =>
-                            // stringify and lowercase for .includes string search
-                            JSON.stringify(x).toLowerCase().includes(key.toLowerCase())
-                        );
-                    } else {
-                        this.skillListTable.tableData.source.data = this.allFavouriteSkills;
-                    }
-                }
-            });
-
+        this.setupSearchInputListener();
         const type = this.data?.type || '';
         switch (type) {
             case 'makeCall':
                 this.icon = 'add_ic_call';
                 this.actionTooltip = 'Call';
+                /**
+                 * Config to allow free text
+                 */
+                this.freeTextAgentKey.allowed = (this.data?.agent.source as AgentSkillListSourceObject).FreeTextAllowed;
                 break;
             case 'transferCall':
                 this.icon = 'phone_forwarded';
                 this.showComments = true;
                 this.actionTooltip = 'Consult';
+                /**
+                 * Config to allow free text
+                 */
+                this.freeTextAgentKey.allowed = (this.data?.agent.source as AgentSkillListSourceObject).FreeTextAllowed;
                 break;
             case 'conferenceCall':
                 this.icon = 'group_add';
                 this.actionTooltip = 'Consult';
+                /**
+                 * Config to allow free text
+                 */
+                this.freeTextAgentKey.allowed = (this.data?.agent.source as AgentSkillListSourceObject).FreeTextAllowed;
                 break;
             case 'transferChat':
                 this.disableInput = true;
@@ -406,6 +401,39 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
     // -----------------------------------------------------------------------------------------------------
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * Sets up listening to Search input
+     */
+    private setupSearchInputListener(): void {
+        // detect changes in search key
+        this.searchKey.valueChanges
+            .pipe(
+                // Debounce time for input value for optimised search
+                debounceTime(500)
+            )
+            .subscribe((key: string) => {
+                // make everything lowercase to avoid case sensitivity
+                key = key.toLowerCase();
+                // check which filter should be applied based on this.activeSwitcher
+                if (this.activeSwitcher === 'agentList') {
+                    // filter agent list
+                    this.filterAgentList(key);
+                } else if (this.activeSwitcher === 'skillList') {
+                    // check if key not empty to apply the filter
+                    if (key) {
+                        // for skill only apply searchkey filter
+                        this.skillListTable.tableData.source.data = this.allFavouriteSkills.filter((x) =>
+                            // stringify and lowercase for .includes string search
+                            JSON.stringify(x).toLowerCase().includes(key.toLowerCase())
+                        );
+                    } else {
+                        this.skillListTable.tableData.source.data = this.allFavouriteSkills;
+                    }
+                }
+            });
+    }
+
     /**
      * To check blind button is allowed
      */
@@ -427,7 +455,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
 
         SDKClient.makeCall({
             interactionId: this.interactionId.toString(),
-            number: this.selectedItem,
+            number: this.freeTextAgentKey.enabled ? this.freeTextAgentKey.value : this.selectedItem,
             source: '',
             sourceId: ''
         })
@@ -465,14 +493,14 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 result = await SDKClient.transferBlind({
                     comment: this.comments,
                     interactionId: this.interactionId.toString(),
-                    number: this.selectedItem
+                    number: this.freeTextAgentKey.enabled ? this.freeTextAgentKey.value : this.selectedItem
                 });
             } else {
                 // for consult call and PBX blind use the same method
                 result = await SDKClient.transferCall({
                     comment: this.comments,
                     interactionId: this.interactionId.toString(),
-                    number: this.selectedItem
+                    number: this.freeTextAgentKey.enabled ? this.freeTextAgentKey.value : this.selectedItem
                 });
             }
 
@@ -517,7 +545,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 result = await SDKClient.conferenceCall({
                     comment: this.comments,
                     interactionId: this.interactionId.toString(),
-                    number: this.selectedItem
+                    number: this.freeTextAgentKey.enabled ? this.freeTextAgentKey.value : this.selectedItem
                 });
             }
             // for blind
@@ -525,7 +553,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 result = await SDKClient.conferenceBlind({
                     comment: this.comments,
                     interactionId: this.interactionId.toString(),
-                    number: this.selectedItem
+                    number: this.freeTextAgentKey.enabled ? this.freeTextAgentKey.value : this.selectedItem
                 });
             }
 
@@ -572,7 +600,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                         type: this.data.otherData.type,
                         mode: this.data.otherData.mode
                     }),
-                    toAgentId: this.selectedItem,
+                    toAgentId: this.freeTextAgentKey.enabled ? this.freeTextAgentKey.value : this.selectedItem,
                     toTmacServer: this.selectedRow.row.TmacServer
                 })
                     .then((dt) => {
@@ -597,7 +625,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                     interactionId: this.interactionId.toString(),
                     lineId: this.data.otherData.lineId,
                     sessionId: this.data.otherData.sessionId,
-                    toAgentId: this.selectedItem,
+                    toAgentId: this.freeTextAgentKey.enabled ? this.freeTextAgentKey.value : this.selectedItem,
                     toTmacServer: this.selectedRow.row.TmacServer
                 })
                     .then((dt) => {
@@ -624,7 +652,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 chatMode: this.data.otherData.mode,
                 interactionId: this.interactionId.toString(),
                 isBlind: true,
-                skillId: this.selectedItem
+                skillId: this.freeTextAgentKey.enabled ? this.freeTextAgentKey.value : this.selectedItem
             })
                 .then((dt) => {
                     this.loading = false;
@@ -658,7 +686,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 SDKClient.transferEmailToAgent({
                     routeId: RouteId,
                     sessionId: SessionId,
-                    toAgentId: this.selectedItem
+                    toAgentId: this.freeTextAgentKey.enabled ? this.freeTextAgentKey.value : this.selectedItem
                 })
                     .then((res) => {
                         this.loading = false;
@@ -682,7 +710,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 SDKClient.transferEmailToSkill({
                     routeId: RouteId,
                     sessionId: SessionId,
-                    skillId: this.selectedItem
+                    skillId: this.freeTextAgentKey.enabled ? this.freeTextAgentKey.value : this.selectedItem
                 })
                     .then((res) => {
                         this.loading = false;
@@ -723,6 +751,9 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         // assign active switcher
         this.activeSwitcher = item.key;
 
+        // enable free text if skill tab is selected
+        this.freeTextAgentKey.enabled = true;
+
         // get the main label dynamically
         this.mainLabel = this.switcherList.filter((f) => f.key === item.key)?.[0].textLabel || '';
 
@@ -742,10 +773,10 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * To filter agent list based on selected skill
-     *
+     * Filters agent list based on selected skill and optional search key
+     * @param {String} searchKey
      */
-    filterAgentList(key?: string): void {
+    filterAgentList(searchKey?: string): void {
         if (this.agentListTable.agentList.length > 0) {
             // check if skill is selscted to apply the selected skill filter
             if (this.selectedSkill) {
@@ -755,18 +786,18 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                     // stringify to check if the searchkey string exists
                     const stringified = JSON.stringify(d).toLowerCase();
                     // check and return the condition for selected skill filetr  with search key
-                    return d.AgentVoiceSkillsAsString?.includes(this.selectedSkill) && stringified.includes(key || '');
+                    return d.AgentVoiceSkillsAsString?.includes(this.selectedSkill) && stringified.includes(searchKey || '');
                 });
                 this.agentListTable.tableData.source.data = list;
             } else {
                 let list = this.agentListTable.agentList;
-                if (key) {
+                if (searchKey) {
                     // since no skill selected , just apply the search key filter
                     list = list.filter((d) => {
                         // stringify to check if the searchkey string exists
                         const stringified = JSON.stringify(d).toLowerCase();
                         // check and return the condition for selected skill filetr  with search key
-                        return stringified.includes(key);
+                        return stringified.includes(searchKey);
                     });
                 }
                 this.agentListTable.tableData.source.data = list;
@@ -800,6 +831,8 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
      */
     clearSelected(): void {
         this.selectedItem = '';
+        this.selectedItemDisplayName = '';
+        this.freeTextAgentKey.value = '';
         // clear grid selection if any
         if (this.activeSwitcher === 'dynamicList') {
             this.dynamicListTable.tableData.selection.clear();
@@ -911,18 +944,30 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 if (allowedStates.length === 0 || (allowedStates.length > 0 && allowedStates.includes(state))) {
                     // select the row in grid
                     this.agentListTable.tableData.selection.select(row);
-                    // assign the selected item
-                    this.selectedItem = source === 'agentId' ? row.LoginID : row.StationID;
+                    if (typeof source === 'object') {
+                        // assign the selected item
+                        this.selectedItem = source.Use === 'agentId' ? row.LoginID : row.StationID;
+                        const nameAliasMap = {
+                            agentName: '${FirstName} ${LastName}',
+                            station: '${StationID}',
+                            agentId: '${LoginID}'
+                        };
+                        const nameToBeDisplayed = (nameAliasMap[source.Display || 'agentName'] || source.Display).replaceAll('${', '${row.');
+                        // tslint:disable-next-line: no-eval
+                        this.selectedItemDisplayName = eval('`' + nameToBeDisplayed + '`');
+                    } else {
+                        // assign the selected item
+                        this.selectedItem = source === 'agentId' ? row.LoginID : row.StationID;
+                        this.selectedItemDisplayName = this.selectedItem;
+                    }
                     // assign the selected row
-                    this.selectedRow = {
-                        type: 'agent',
-                        row: row
-                    };
+                    this.selectedRow = { type: 'agent', row };
                 } else {
                     this._appUIService.showSnackbar(`Agent ${row.AgentName} is not in valid state`, 'failure');
                 }
             })
-            .catch(() => {
+            .catch((e) => {
+                console.error(e);
                 this._appUIService.showSnackbar(`Error in getting agent ${row.AgentName} current state`, 'failure');
                 row.CurrentAgentStatus = currentStatus;
                 this.loading = false;
@@ -960,13 +1005,22 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                     row.CIQ = dt.response.Skill.CallsInQueue.toString();
                     // select the row in grid
                     this.skillListTable.tableData.selection.select(row);
-                    // assign the selected item
-                    this.selectedItem = source === 'skill' ? row.ID : row.VDN;
+                    if (typeof source === 'object') {
+                        // assign the selected item
+                        this.selectedItem = source.Use === 'skill' ? row.ID : row.VDN;
+                        const nameAliasMap = {
+                            skill: '${ID}',
+                            vdn: '${VDN}'
+                        };
+                        const nameToBeDisplayed: string = nameAliasMap[source.Display || 'skill'] || source.Display.replaceAll('${', '${row.');
+                        // tslint:disable-next-line: no-eval
+                        this.selectedItemDisplayName = eval('`' + nameToBeDisplayed + '`');
+                    } else {
+                        // assign the selected item
+                        this.selectedItem = source === 'skill' ? row.ID : row.VDN;
+                    }
                     // assign the selected row
-                    this.selectedRow = {
-                        type: 'skill',
-                        row: row
-                    };
+                    this.selectedRow = { type: 'skill', row };
                 } else {
                     this._appUIService.showSnackbar(`Failed to get skill ${row.ID} status`, 'failure');
                     row.Staff = 'NA';
@@ -1012,13 +1066,12 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
 
     /**
      * To do action based on type
-     *
      * @param consult
      */
     executeAction(consult: boolean): void {
         this.isConsult = consult;
         // check if the selected tab is dynamic, then close the dynamicList widget should handle the action
-        if (this.selectedRow.type.includes('dynamic')) {
+        if (!this.freeTextAgentKey.enabled && this.selectedRow.type.includes('dynamic')) {
             this.close();
             return;
         }
