@@ -1193,16 +1193,20 @@
                                                             "Allowed": true,
                                                             "Blind": false,
                                                             "Source": {
-                                                                "Use" : "agentId",
-                                                                "Display" : "agentName",
-                                                                "FreeTextAllowed" : true
+                                                                "Use": "agentId",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": true
                                                             },
                                                             "AllowedStates": []
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
                                                             "Blind": false,
-                                                            "Source": "skill",
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": true
+                                                            },
                                                             "ChannelPrefix": [
                                                                 "VO"
                                                             ]
@@ -1213,13 +1217,21 @@
                                                         "Agent": {
                                                             "Allowed": true,
                                                             "Blind": false,
-                                                            "Source": "station",
+                                                            "Source": {
+                                                                "Use": "agentId",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": true
+                                                            },
                                                             "AllowedStates": []
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
                                                             "Blind": false,
-                                                            "Source": "skill",
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": true
+                                                            },
                                                             "ChannelPrefix": [
                                                                 "VO"
                                                             ]
@@ -1983,16 +1995,20 @@
                                                             "Allowed": true,
                                                             "Blind": false,
                                                             "Source": {
-                                                                "Use" : "agentId",
-                                                                "Display" : "agentName",
-                                                                "FreeTextAllowed" : true
+                                                                "Use": "agentId",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": false
                                                             },
                                                             "AllowedStates": []
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
                                                             "Blind": false,
-                                                            "Source": "skill",
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": false
+                                                            },
                                                             "ChannelPrefix": [
                                                                 "CH"
                                                             ]
@@ -2003,14 +2019,22 @@
                                                         "Agent": {
                                                             "Allowed": true,
                                                             "Blind": false,
-                                                            "Source": "agentId",
-                                                            "DisplayedSource" : "agentId",
+                                                            "Source": {
+                                                                "Use": "agentId",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": false
+                                                            },
+                                                            "DisplayedSource": "agentId",
                                                             "AllowedStates": []
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
                                                             "Blind": false,
-                                                            "Source": "skill",
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": false
+                                                            },
                                                             "ChannelPrefix": [
                                                                 "CH"
                                                             ]
@@ -2027,7 +2051,7 @@
                                                     "AttachmentAllowed": true,
                                                     "ScreenShareAllowed": true,
                                                     "InteractionCommentAllowed": true,
-                                                    "HoldInteractionAllowed" : true,
+                                                    "HoldInteractionAllowed": true,
                                                     "Whiteboard": {
                                                         "Allowed": true,
                                                         "Url": "http://dice.tetherfi.cloud:55080/Whiteboard/ui/index.html"
@@ -2790,13 +2814,21 @@
                                                         "Agent": {
                                                             "Allowed": true,
                                                             "Blind": false,
-                                                            "Source": "agentId",
+                                                            "Source": {
+                                                                "Use": "agentId",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": false
+                                                            },
                                                             "AllowedStates": []
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
                                                             "Blind": false,
-                                                            "Source": "skill",
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": true
+                                                            },
                                                             "ChannelPrefix": [
                                                                 "EM"
                                                             ]
@@ -3307,7 +3339,9 @@
                                             "Y": 3
                                         },
                                         "Actions": [],
-                                        "ViewState": "restore"
+                                        "ViewState": "restore",
+                                        "Header": false,
+                                        "Pinned": false
                                     },
                                     "Data": {
                                         "General": {
@@ -3323,13 +3357,21 @@
                                                         "Agent": {
                                                             "Allowed": true,
                                                             "Blind": false,
-                                                            "Source": "agentId",
+                                                            "Source": {
+                                                                "Use": "agentId",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": false
+                                                            },
                                                             "AllowedStates": []
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
                                                             "Blind": false,
-                                                            "Source": "skill",
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": true
+                                                            },
                                                             "ChannelPrefix": [
                                                                 "EM"
                                                             ]
@@ -3862,6 +3904,53 @@
                         "OpenInNew": false,
                         "Url": "https://tmac.tetherfilabs.com/tcie-web-appv8?id=_agentId"
                     }
+                },
+                {
+                    "Name": "TCIS",
+                    "Description": "",
+                    "Key": "TCIS",
+                    "Type": "tw-tcis-integration",
+                    "Config": {
+                        "Enabled": false,
+                        "Hidden": false,
+                        "Static": false,
+                        "Anchor": false,
+                        "AOT": false,
+                        "AutoOpen": false,
+                        "Icon": "",
+                        "Class": "",
+                        "Position": {
+                            "X": 0,
+                            "Y": 1,
+                            "W": 325,
+                            "H": 325
+                        },
+                        "Actions": [
+                            "collapse",
+                            "destroy"
+                        ],
+                        "ViewState": "restore",
+                        "Header": true,
+                        "Pinned": false
+                    },
+                    "Data": {
+                        "Urls": [],
+                        "Hub": "AgentPopUpHub",
+                        "Actions": [
+                            {
+                                "EventName": "CallDisconnectedEvent",
+                                "Parameters": [
+                                    "TMACEvent.IncomingCallEvent.PhoneNumber",
+                                    "TMACEvent.IncomingCallEvent.UCID",
+                                    "TMACEvent.CCLDataEvent.CIF",
+                                    "AgentData.AgentID",
+                                    "AgentData.DeviceID"
+                                ],
+                                "Method": "RunCustomApplication",
+                                "ExeName": "AgentPopUp"
+                            }
+                        ]
+                    }
                 }
             ]
         }
@@ -3909,7 +3998,7 @@
         "Notifications": {
             "Sounds": true,
             "SoundLevel": 1,
-            "DesktopAlerts": false,
+            "DesktopAlerts": true,
             "DesktopAlertTimeout": 5000,
             "AppAlertTimeout": 5000
         },
@@ -3963,8 +4052,6 @@
         "SDK": {
             "Proxy": {
                 "Urls": [
-                    "https://dice.tetherfi.cloud/TMACSDKProxyV5/TmacProxy.asmx",
-                    "https://localhost:55443/SDKTMACProxy/TmacProxy.asmx",
                     "https://dice.tetherfi.cloud/TMACSDKProxyv6/TmacProxy.asmx",
                     "https://localhost:55443/SDKTMACProxy/TmacProxy.asmx",
                     "https://idfcvpd.tetherfi.cloud/TMACSDKProxy/tmacproxy.asmx",

@@ -10,17 +10,21 @@ Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app w
 
 Run `npm install` to install all the dependancy packages
 
-Create a branch out of existing branch `develop` to make start developement preferably `feature/<any-feature-name>`.
+Create a branch out of existing branch `develop` to make start developement preferably `feature/<feature-name> or dev/<your-name>`.
 
 ```
 # To checkout develop
 git checkout b develop
 
 # To create new branch
-git checkout -b feature/<your-feature>
+For feature branch: git checkout -b feature/<your-feature>
+or 
+For developer branch: git checkout -b dev/<your-name>
 ```
 
-To create a collection widget Run `ng g c modules/t-widgets/tw-collections/tw-<widget-name> --selector=tw-<widget-name> --viewEncapsulation=None`.
+To create a collection widget Run `ng generate @schematics/angular:component --name=tw-<widget-name> --project=agent-desktop --path=src/app/modules/t-widgets/tw-collections --style=scss --selector=tw-<widget-name> --skipImport --viewEncapsulation=None`.
+
+Or install NX Console extension in code to generate the component under @schematics/angular:component.
 
 All the the collection widgets created to be added under `modules/t-widgets/utils/widget-library/tw-library` with the widget type defined in config.
 

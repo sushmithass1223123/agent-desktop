@@ -29,6 +29,8 @@ import { TwSuActiveAgentsComponent } from '@modules/t-widgets/tw-collections/tw-
 import { TwSuAgentActivityComponent } from '@modules/t-widgets/tw-collections/tw-su-agent-activity/tw-su-agent-activity.component';
 import { TwSuAgentInteractionsComponent } from '@modules/t-widgets/tw-collections/tw-su-agent-interactions/tw-su-agent-interactions.component';
 import { TwSuGamificationComponent } from '@modules/t-widgets/tw-collections/tw-su-gamification/tw-su-gamification.component';
+import { TwTcisIntegrationComponent } from '@modules/t-widgets/tw-collections/tw-tcis-integration/tw-tcis-integration.component';
+import { TwTrsIntegrationComponent } from '@modules/t-widgets/tw-collections/tw-trs-integration/tw-trs-integration.component';
 import { TwUnknownComponent } from '@modules/t-widgets/tw-collections/tw-unknown/tw-unknown.component';
 import { TwUserLocationComponent } from '@modules/t-widgets/tw-collections/tw-user-location/tw-user-location.component';
 import { TwVideoControlsComponent } from '@modules/t-widgets/tw-collections/tw-video-controls/tw-video-controls.component';
@@ -104,7 +106,9 @@ export class TWLibrary {
         'tw-entities': TwEntitiesComponent,
         'tw-user-location': TwUserLocationComponent,
         'tw-email-template-preview': TwEmailTemplatePreviewComponent,
-        'tw-calendar': TwCalendarComponent
+        'tw-calendar': TwCalendarComponent,
+        'tw-tcis-integration': TwTcisIntegrationComponent,
+        'tw-trs-integration': TwTrsIntegrationComponent
     };
 
     /**

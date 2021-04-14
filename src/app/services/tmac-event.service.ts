@@ -53,17 +53,17 @@ export class TMACEventService {
      */
     private _interactionEventArray: any[];
     /**
+     * Interaction event subject
+     */
+    private _interactionEventSub: Subject<any[]>;
+    /**
      * TMAC events story array
      */
-    private _tmacEventArray: any[];
+    private _nonInteractionEventArray: any[];
     /**
      * Non interaction event subject
      */
     private _nonInteractionEventSub: Subject<any[]>;
-    /**
-     * Interaction event subject
-     */
-    private _interactionEventSub: Subject<any[]>;
     /**
      * Construct and Dispose TMAC event subject
      */
@@ -185,7 +185,7 @@ export class TMACEventService {
     private processNonInteractionEvents(evt: IUIEvent): void {
         let updated = false;
         // check event is already there, then update
-        this._tmacEventArray = lodashMap(this._tmacEventArray, (tEvent: IUIEvent) => {
+        this._nonInteractionEventArray = lodashMap(this._nonInteractionEventArray, (tEvent: IUIEvent) => {
             if (tEvent.EventName === evt.EventName) {
                 tEvent = evt;
                 updated = true;
@@ -195,7 +195,7 @@ export class TMACEventService {
 
         // if not updated then add
         if (!updated) {
-            this._tmacEventArray.push(evt);
+            this._nonInteractionEventArray.push(evt);
         }
 
         // notify the subscribers
@@ -870,7 +870,7 @@ export class TMACEventService {
         this._unsubscribeAll = new Subject();
         this._constructDisposeEventSubject = new BehaviorSubject({});
         this._interactionEventArray = new Array();
-        this._tmacEventArray = new Array();
+        this._nonInteractionEventArray = new Array();
         this._nonInteractionEventSub = new Subject();
         this._interactionEventSub = new Subject();
         this._remiderTaskDialog = {
@@ -943,7 +943,7 @@ export class TMACEventService {
         this._nonInteractionEventSub.complete();
 
         this._interactionEventArray = new Array();
-        this._tmacEventArray = new Array();
+        this._nonInteractionEventArray = new Array();
 
         this._remiderTaskDialog = {
             makeCall: null,
@@ -981,7 +981,7 @@ export class TMACEventService {
      */
     public getEvents<T = any>(eventNames: string[]): Observable<T[]> {
         // get the event based on interaction Id
-        const events = this._tmacEventArray.filter((i: IUIEvent) => eventNames.includes(i.EventName));
+        const events = this._nonInteractionEventArray.filter((i: IUIEvent) => eventNames.includes(i.EventName));
 
         // create a new temp subject
         const tempSub = new Subject<any[]>();
@@ -993,7 +993,7 @@ export class TMACEventService {
             });
         }
 
-        // return all interaction events for that interaction id and event names
+        // return all non interaction events for provided event names
         return merge(tempSub, this._nonInteractionEventSub).pipe(
             map((evts) => evts?.filter((evt) => evt && eventNames.includes(evt.EventName))),
             filter((evts) => evts.length > 0)
@@ -1007,7 +1007,7 @@ export class TMACEventService {
      */
     public getAllEvents<T = any>(): Observable<T[]> {
         // get the event based on interaction Id
-        const events = this._tmacEventArray;
+        const events = this._nonInteractionEventArray;
         // create a new temp subject
         const tempSub = new Subject<any[]>();
 
@@ -1018,12 +1018,12 @@ export class TMACEventService {
             });
         }
 
-        // return all interaction events for that interaction id
+        // return all non interaction events
         return merge(tempSub, this._nonInteractionEventSub).pipe(filter((evts) => evts.length > 0));
     }
 
     /**
-     * To get interaction TMAC event with event name
+     * To get interaction TMAC event by event names and interaction id
      *
      * @param {String[]} eventNames Names of the event
      * @param {Number} interactionId InteractionId to filter
@@ -1045,6 +1045,32 @@ export class TMACEventService {
         // return all interaction events for that interaction id and event names
         return merge(tempSub, this._interactionEventSub).pipe(
             map((evts) => evts?.filter((evt) => evt && evt.InteractionID === interactionId && eventNames.includes(evt.EventName))),
+            filter((evts) => evts.length > 0)
+        );
+    }
+
+    /**
+     * To get interaction TMAC event with event names
+     *
+     * @param {String[]} eventNames Names of the event
+     */
+    public getInteractionEventsByName<T = any>(eventNames: string[]): Observable<T[]> {
+        // get the event based on interaction Id
+        const events = this._interactionEventArray.filter((i: IUIEvent) => eventNames.includes(i.EventName));
+
+        // create a new temp subject
+        const tempSub = new Subject<any[]>();
+
+        // check if anything exist, then send
+        if (events.length) {
+            setTimeout(() => {
+                tempSub.next(events);
+            });
+        }
+
+        // return all interaction events for that interaction id and event names
+        return merge(tempSub, this._interactionEventSub).pipe(
+            map((evts) => evts?.filter((evt) => evt && eventNames.includes(evt.EventName))),
             filter((evts) => evts.length > 0)
         );
     }

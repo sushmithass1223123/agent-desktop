@@ -9,7 +9,6 @@ import { AGENT_DATA_MAP } from 'app/constants';
 import { IWidget } from 'app/interfaces';
 import { Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { IAgentData } from 'tmac-sdk';
 
 /**
  * TwCustomComponent
@@ -47,10 +46,6 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
      * Custome frame URL
      */
     url: any;
-    /**
-     * Agent data
-     */
-    agentData: IAgentData;
     /**
      * Flag to show the UI or not
      */

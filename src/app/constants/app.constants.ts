@@ -79,7 +79,7 @@ export const PENDING_CALL_STATUSES = ['Open', 'QueueConnected'];
 /**
  * Agent Data map
  */
-export const AGENT_DATA_MAP = () => {
+export const AGENT_DATA_MAP = (type?: 'UpperCase' | 'LowerCase') => {
     try {
         // get the agent data
         const agentData = SDKClient.getAgentData();
@@ -87,10 +87,25 @@ export const AGENT_DATA_MAP = () => {
         const keys = Object.keys(agentData);
         // create a map object
         const mapObj = new Object();
-        // loop through keys and create the map
-        keys.forEach((item) => {
-            mapObj[`_${item}`] = agentData[item];
-        });
+        // check the type
+        if (type === 'UpperCase') {
+            // loop through keys and create the map
+            keys.forEach((item) => {
+                mapObj[item.toUpperCase()] = agentData[item];
+            });
+        }
+        else if (type === 'LowerCase') {
+            // loop through keys and create the map
+            keys.forEach((item) => {
+                mapObj[item.toLowerCase()] = agentData[item];
+            });
+        }
+        else {
+            // loop through keys and create the map
+            keys.forEach((item) => {
+                mapObj[`_${item}`] = agentData[item];
+            });
+        }
         // return the map
         return mapObj;
     } catch (error) {
