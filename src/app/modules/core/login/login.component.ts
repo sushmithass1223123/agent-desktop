@@ -209,6 +209,10 @@ export class LoginComponent implements OnInit, OnDestroy {
      */
     version = 'NA';
     /**
+     * UI version
+     */
+    uiVersion = 'NA';
+    /**
      * Self video stream
      */
     selfVideo: MediaStream;
@@ -335,6 +339,8 @@ export class LoginComponent implements OnInit, OnDestroy {
 
         // set loading flag
         this.loading = true;
+
+        this.uiVersion = _appDataService.getAppVersion();
 
         // subscribe to _activatedRoute for loging agent id
         this._activatedRoute.paramMap.subscribe((paramMap) => {

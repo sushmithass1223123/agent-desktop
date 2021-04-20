@@ -108,7 +108,7 @@ export class TwcVoiceComponent extends TWContentWrapper implements OnInit, OnDes
         const voiceWidgets = cloneDeep(this.data.Data.Widgets) || [];
 
         const staticWidgets = voiceWidgets.Static || [];
-        const dynamicWidgets = JSON.parse(evt.WidgetConfigData) || voiceWidgets.Dynamic || [];
+        const dynamicWidgets = (evt.WidgetConfigData && JSON.parse(evt.WidgetConfigData)) || voiceWidgets.Dynamic || [];
         const aotWidgets = voiceWidgets.AOT || [];
 
         // loop the widgets and add append interaction details

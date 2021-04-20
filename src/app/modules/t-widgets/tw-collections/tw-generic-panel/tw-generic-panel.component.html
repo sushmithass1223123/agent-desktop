@@ -1,9 +1,9 @@
 <tw-wrapper [data]="data">
-    <div fxFlex fxFill fxLayout="column" class="tw-chat-panel">
+    <div fxFlex fxFill fxLayout="column" class="tw-generic-panel">
         <ng-container *ngFor="let widget of widgets">
-            <tw-chat-controls
+            <tw-generic-controls
                 [data]="widget"
-                *ngIf="widget.Type === 'tw-chat-controls'"
+                *ngIf="widget.Type === 'tw-generic-controls'"
                 [ngClass]="
                     widget.Type +
                     ' ' +
@@ -17,7 +17,7 @@
                 (collapseEvent)="onCollapsed($event, widget.Type)"
                 (floatEvent)="onFloating($event, widget.Type)"
             >
-            </tw-chat-controls>
+            </tw-generic-controls>
 
             <tw-customer-details
                 [data]="widget"

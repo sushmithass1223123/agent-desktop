@@ -22,7 +22,6 @@
     },
     "Main": {
         "Toolbar": {
-            "Height": 50,
             "Widgets": [
                 {
                     "Name": "Interaction indicators",
@@ -43,26 +42,18 @@
                     "Data": {
                         "Widgets": [
                             {
-                                "Name": "Available Media devices",
+                                "Name": "Broadcast Message",
                                 "Description": "",
-                                "Type": "tw-available-media-device",
-                                "Config": {
-                                    "Enabled": true
-                                }
-                            },
-                            {
-                                "Name": "Aux Timer",
-                                "Description": "",
-                                "Type": "tw-aux-timer",
+                                "Type": "tw-broadcast",
                                 "Config": {
                                     "Enabled": true
                                 },
                                 "Data": {}
                             },
                             {
-                                "Name": "Broadcast Message",
+                                "Name": "Aux Timer",
                                 "Description": "",
-                                "Type": "tw-broadcast",
+                                "Type": "tw-aux-timer",
                                 "Config": {
                                     "Enabled": true
                                 },
@@ -123,6 +114,14 @@
                                     "Enabled": true
                                 },
                                 "Data": {}
+                            },
+                            {
+                                "Name": "Available Media devices",
+                                "Description": "",
+                                "Type": "tw-available-media-device",
+                                "Config": {
+                                    "Enabled": true
+                                }
                             },
                             {
                                 "Name": "Create Interaction",
@@ -236,6 +235,19 @@
                         },
                         "Data": {
                             "Path": "/email",
+                            "Active": false
+                        }
+                    },
+                    {
+                        "Name": "Generic",
+                        "Description": "",
+                        "Type": "twn-generic",
+                        "Config": {
+                            "Enabled": true,
+                            "Icon": "widgets"
+                        },
+                        "Data": {
+                            "Path": "/generic",
                             "Active": false
                         }
                     },
@@ -570,7 +582,7 @@
                                         "Hidden": false,
                                         "Static": false,
                                         "Anchor": false,
-                                        "AOT": false,
+                                        "AOT": true,
                                         "AutoOpen": false,
                                         "Icon": "event_note",
                                         "Class": "",
@@ -591,39 +603,6 @@
                                     "Data": {
                                         "OpenInNew": false,
                                         "Url": "https://mx.tetherfi.cloud/testrtc/index.html?turnURI=turn%3Amx.tetherfi.cloud%3A3585&turnUsername=tetherfi&turnCredential=nuwan"
-                                    }
-                                },
-                                {
-                                    "Name": "CRM-Zoho",
-                                    "Description": "",
-                                    "Key": "CRMZoho",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": true,
-                                        "AOT": true,
-                                        "AutoOpen": false,
-                                        "Icon": "storage",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 1,
-                                            "W": 800,
-                                            "H": 700
-                                        },
-                                        "Actions": [
-                                            "minimize",
-                                            "destroy"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": true,
-                                        "Url": "https://projects.zoho.com/portal/ilink#todomilestones/736040000007428009/customview/"
                                     }
                                 },
                                 {
@@ -669,39 +648,6 @@
                                     }
                                 },
                                 {
-                                    "Name": "TRS",
-                                    "Description": "",
-                                    "Key": "TRS",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": true,
-                                        "AOT": true,
-                                        "AutoOpen": false,
-                                        "Icon": "dvr",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 1,
-                                            "W": 325,
-                                            "H": 740
-                                        },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": false,
-                                        "Url": "https://tmac.tetherfilabs.com/tcie-web-appv8/?id=_agentId"
-                                    }
-                                },
-                                {
                                     "Name": "Gamification Leaderboard",
                                     "Description": "",
                                     "Key": "Gamification",
@@ -711,7 +657,7 @@
                                         "Hidden": false,
                                         "Static": false,
                                         "Anchor": false,
-                                        "AOT": false,
+                                        "AOT": true,
                                         "AutoOpen": false,
                                         "Icon": "extension",
                                         "Class": "",
@@ -732,33 +678,6 @@
                                     "Data": {
                                         "GamificationProxy": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx",
                                         "TVirtualStoreUrl": "https://dice.tetherfi.cloud/TVirtualStore"
-                                    }
-                                },
-                                {
-                                    "Name": "Singtel-Contact Us",
-                                    "Description": "",
-                                    "Key": "SingtelContactUs",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "contact_support",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 1
-                                        },
-                                        "Actions": [],
-                                        "ViewState": "restore",
-                                        "Header": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": true,
-                                        "Url": "https://www.singtel.com/contact-us"
                                     }
                                 }
                             ]
@@ -1395,7 +1314,7 @@
                                     },
                                     "Data": {
                                         "Confidence": 0.5,
-                                        "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=_intent&ucid=_ucid",
+                                        "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=${intent}&ucid=${ucid}",
                                         "Title": "Agent Assist",
                                         "Icon": "assistant",
                                         "Width": 450,
@@ -1553,6 +1472,34 @@
                                         "Pinned": false
                                     },
                                     "Data": {}
+                                },
+                                {
+                                    "Name": "Speech Transcripts",
+                                    "Description": "",
+                                    "Key": "SpeechTranscript",
+                                    "Type": "tw-voice-bot-transcripts",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {}
                                 }
                             ],
                             "AOT": [
@@ -1586,7 +1533,7 @@
                                     },
                                     "Data": {
                                         "OpenInNew": false,
-                                        "Url": "https://dice.tetherfi.cloud/TVoiceBio/?agentid=_agentId"
+                                        "Url": "https://dice.tetherfi.cloud/TVoiceBio/?agentid=${AgentData.agentId}"
                                     }
                                 },
                                 {
@@ -1641,7 +1588,7 @@
                                         "Hidden": false,
                                         "Static": false,
                                         "Anchor": false,
-                                        "AOT": false,
+                                        "AOT": true,
                                         "AutoOpen": false,
                                         "Icon": "pending_actions",
                                         "Class": "",
@@ -1661,72 +1608,6 @@
                                     },
                                     "Data": {
                                         "TCMProxyUrl": "https://dice.tetherfi.cloud/TCM_Proxy"
-                                    }
-                                },
-                                {
-                                    "Name": "TAS",
-                                    "Description": "",
-                                    "Key": "AgentScript",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": true,
-                                        "AOT": true,
-                                        "AutoOpen": false,
-                                        "Icon": "integration_instructions",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 1,
-                                            "W": 1000,
-                                            "H": 700
-                                        },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": false,
-                                        "Url": "https://dice.tetherfi.cloud/TAS/Survey/Index?intentname=DiceIntent2&inSimulation=false&agentid=50020&customerid=12&ucid=Test&flowType=Test&campId=Test&station=42002&phoneNumber=6539284004"
-                                    }
-                                },
-                                {
-                                    "Name": "STPedia",
-                                    "Description": "",
-                                    "Key": "STPedia",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": true,
-                                        "AOT": true,
-                                        "AutoOpen": false,
-                                        "Icon": "school",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 1,
-                                            "W": 1000,
-                                            "H": 700
-                                        },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": false,
-                                        "Url": "https://www.tetherfi.com/frequently-asked-questions/"
                                     }
                                 },
                                 {
@@ -1758,165 +1639,6 @@
                                         "Pinned": false
                                     },
                                     "Data": {}
-                                },
-                                {
-                                    "Name": "Line Test",
-                                    "Description": "",
-                                    "Key": "SingtelLineTest",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": true,
-                                        "AOT": true,
-                                        "AutoOpen": false,
-                                        "Icon": "router",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 1,
-                                            "W": 900,
-                                            "H": 400
-                                        },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": false,
-                                        "Url": "https://dice.tetherfi.cloud/cdn/web/linetest/"
-                                    }
-                                },
-                                {
-                                    "Name": "CRM-Zoho",
-                                    "Description": "",
-                                    "Key": "CRMZoho",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": true,
-                                        "AOT": true,
-                                        "AutoOpen": false,
-                                        "Icon": "storage",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 1,
-                                            "W": 800,
-                                            "H": 700
-                                        },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": true,
-                                        "Url": "https://projects.zoho.com/portal/ilink#todomilestones/736040000007428009/customview/"
-                                    }
-                                },
-                                {
-                                    "Name": "CRM-Singtel",
-                                    "Description": "",
-                                    "Key": "CRMSingtel",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": true,
-                                        "AOT": true,
-                                        "AutoOpen": false,
-                                        "Icon": "folder_shared",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 1,
-                                            "W": 800,
-                                            "H": 700
-                                        },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": true,
-                                        "Url": "https://singtel.bitrix24.com"
-                                    }
-                                },
-                                {
-                                    "Name": "CxInfo",
-                                    "Description": "",
-                                    "Key": "CxInfo",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": true,
-                                        "AOT": true,
-                                        "AutoOpen": false,
-                                        "Icon": "contacts",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 1,
-                                            "W": 450,
-                                            "H": 800
-                                        },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": false,
-                                        "Url": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=userdata"
-                                    }
-                                },
-                                {
-                                    "Name": "Singtel-Contact Us",
-                                    "Description": "",
-                                    "Key": "SingtelContactUs",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "contact_support",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 1
-                                        },
-                                        "Actions": [],
-                                        "ViewState": "restore",
-                                        "Header": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": true,
-                                        "Url": "https://www.singtel.com/contact-us"
-                                    }
                                 }
                             ]
                         }
@@ -2217,37 +1939,6 @@
                             ],
                             "Dynamic": [
                                 {
-                                    "Name": "Custom Snapshot",
-                                    "Description": "",
-                                    "Key": "UserLocation",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "location_on",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 2,
-                                            "Y": 1
-                                        },
-                                        "Actions": [
-                                            "float",
-                                            "maximize"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": false,
-                                        "Url": "http://127.0.0.1:5501/custom-snapshot/index.html"
-                                    }
-                                },
-                                {
                                     "Name": "User location",
                                     "Description": "",
                                     "Key": "UserLocation",
@@ -2302,7 +1993,7 @@
                                     },
                                     "Data": {
                                         "Confidence": 0.5,
-                                        "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=_intent&ucid=_ucid",
+                                        "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=${intent}&ucid=${ucid}",
                                         "Title": "Agent Assist",
                                         "Icon": "assistant",
                                         "Width": 450,
@@ -2463,40 +2154,7 @@
                                     },
                                     "Data": {
                                         "OpenInNew": false,
-                                        "Url": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=agentassisttest&ucid=UCID&interactionid=InteractionID"
-                                    }
-                                },
-                                {
-                                    "Name": "Reminders",
-                                    "Description": "",
-                                    "Key": "AgentReminders",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": true,
-                                        "AOT": true,
-                                        "AutoOpen": false,
-                                        "Icon": "event_note",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 1,
-                                            "W": 700,
-                                            "H": 600
-                                        },
-                                        "Actions": [
-                                            "minimize",
-                                            "destroy"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": false,
-                                        "Url": "https://dice.tetherfi.cloud/agent-desktop/reminders/index.html?agentid=_agentId&tmacserver=TmacServer1"
+                                        "Url": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=agentassisttest&ucid=${Interaction.UCID}&interactionid=${Interaction.InteractionID}"
                                     }
                                 },
                                 {
@@ -2539,204 +2197,6 @@
                                                 "DefaultValue": "6596975347"
                                             }
                                         }
-                                    }
-                                },
-                                {
-                                    "Name": "TAS",
-                                    "Description": "",
-                                    "Key": "AgentScript",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": true,
-                                        "AOT": true,
-                                        "AutoOpen": false,
-                                        "Icon": "integration_instructions",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 1,
-                                            "W": 1000,
-                                            "H": 700
-                                        },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": false,
-                                        "Url": "https://dice.tetherfi.cloud/TAS/Survey/Index?intentname=DiceIntent2&inSimulation=false&agentid=50020&customerid=12&ucid=Test&flowType=Test&campId=Test&station=42002&phoneNumber=6539284004#"
-                                    }
-                                },
-                                {
-                                    "Name": "STPedia",
-                                    "Description": "",
-                                    "Key": "STPedia",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": true,
-                                        "AOT": true,
-                                        "AutoOpen": false,
-                                        "Icon": "school",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 1,
-                                            "W": 1000,
-                                            "H": 700
-                                        },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": false,
-                                        "Url": "https://www.tetherfi.com/frequently-asked-questions/"
-                                    }
-                                },
-                                {
-                                    "Name": "Line Test",
-                                    "Description": "",
-                                    "Key": "SingtelLineTest",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": true,
-                                        "AOT": true,
-                                        "AutoOpen": false,
-                                        "Icon": "router",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 1,
-                                            "W": 900,
-                                            "H": 400
-                                        },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": false,
-                                        "Url": "https://dice.tetherfi.cloud/cdn/web/linetest/"
-                                    }
-                                },
-                                {
-                                    "Name": "CRM-Zoho",
-                                    "Description": "",
-                                    "Key": "CRMZoho",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": true,
-                                        "AOT": true,
-                                        "AutoOpen": false,
-                                        "Icon": "storage",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 1,
-                                            "W": 1000,
-                                            "H": 700
-                                        },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": true,
-                                        "Url": "https://projects.zoho.com/portal/ilink#todomilestones/736040000007428009/customview/"
-                                    }
-                                },
-                                {
-                                    "Name": "CRM-Singtel",
-                                    "Description": "",
-                                    "Key": "CRMSingtel",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": true,
-                                        "AOT": true,
-                                        "AutoOpen": false,
-                                        "Icon": "folder_shared",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 1,
-                                            "W": 1000,
-                                            "H": 700
-                                        },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": true,
-                                        "Url": "https://singtel.bitrix24.com"
-                                    }
-                                },
-                                {
-                                    "Name": "CxInfo",
-                                    "Description": "",
-                                    "Key": "CxInfo",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": true,
-                                        "AOT": true,
-                                        "AutoOpen": false,
-                                        "Icon": "contacts",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 1,
-                                            "W": 450,
-                                            "H": 800
-                                        },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": false,
-                                        "Url": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=userdata"
                                     }
                                 }
                             ]
@@ -2901,7 +2361,7 @@
                                     },
                                     "Data": {
                                         "Confidence": 0.5,
-                                        "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=_intent&ucid=_ucid",
+                                        "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=${intent}&ucid=${ucid}",
                                         "Title": "Agent Assist",
                                         "Icon": "assistant",
                                         "Width": 450,
@@ -3102,206 +2562,354 @@
                                             }
                                         }
                                     }
-                                },
-                                {
-                                    "Name": "TAS",
-                                    "Description": "",
-                                    "Key": "AgentScript",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": true,
-                                        "AOT": true,
-                                        "AutoOpen": false,
-                                        "Icon": "integration_instructions",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 1,
-                                            "W": 1000,
-                                            "H": 700
-                                        },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": false,
-                                        "Url": "https://dice.tetherfi.cloud/TAS/Survey/Index?intentname=DiceIntent2&inSimulation=false&agentid=50020&customerid=12&ucid=Test&flowType=Test&campId=Test&station=42002&phoneNumber=6539284004#"
-                                    }
-                                },
-                                {
-                                    "Name": "STPedia",
-                                    "Description": "",
-                                    "Key": "STPedia",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": true,
-                                        "AOT": true,
-                                        "AutoOpen": false,
-                                        "Icon": "school",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 1,
-                                            "W": 1000,
-                                            "H": 700
-                                        },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": false,
-                                        "Url": "https://www.tetherfi.com/frequently-asked-questions/"
-                                    }
-                                },
-                                {
-                                    "Name": "Line Test",
-                                    "Description": "",
-                                    "Key": "SingtelLineTest",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": true,
-                                        "AOT": true,
-                                        "AutoOpen": false,
-                                        "Icon": "router",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 1,
-                                            "W": 900,
-                                            "H": 400
-                                        },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": false,
-                                        "Url": "https://dice.tetherfi.cloud/cdn/web/linetest/"
-                                    }
-                                },
-                                {
-                                    "Name": "CRM-Zoho",
-                                    "Description": "",
-                                    "Key": "CRMZoho",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": true,
-                                        "AOT": true,
-                                        "AutoOpen": false,
-                                        "Icon": "storage",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 1,
-                                            "W": 1000,
-                                            "H": 700
-                                        },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": true,
-                                        "Url": "https://projects.zoho.com/portal/ilink#todomilestones/736040000007428009/customview/"
-                                    }
-                                },
-                                {
-                                    "Name": "CRM-Singtel",
-                                    "Description": "",
-                                    "Key": "CRMSingtel",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": true,
-                                        "AOT": true,
-                                        "AutoOpen": false,
-                                        "Icon": "folder_shared",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 1,
-                                            "W": 1000,
-                                            "H": 700
-                                        },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": true,
-                                        "Url": "https://singtel.bitrix24.com"
-                                    }
-                                },
-                                {
-                                    "Name": "CxInfo",
-                                    "Description": "",
-                                    "Key": "CxInfo",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": true,
-                                        "AOT": true,
-                                        "AutoOpen": false,
-                                        "Icon": "contacts",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 0,
-                                            "Y": 1,
-                                            "W": 450,
-                                            "H": 800
-                                        },
-                                        "Actions": [
-                                            "collapse",
-                                            "destroy"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": false,
-                                        "Url": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=userdata"
-                                    }
                                 }
                             ]
+                        }
+                    }
+                },
+                {
+                    "Name": "Voice",
+                    "Description": "",
+                    "Type": "twc-generic",
+                    "Config": {
+                        "Enabled": true,
+                        "Class": "",
+                        "Position": {
+                            "X": 1,
+                            "Y": 1
+                        }
+                    },
+                    "Data": {
+                        "Path": "/generic",
+                        "Widgets": {
+                            "Static": [
+                                {
+                                    "Name": "Generic-Panel",
+                                    "Description": "",
+                                    "Type": "tw-generic-panel",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": true,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 3
+                                        },
+                                        "Actions": [],
+                                        "ViewState": "restore",
+                                        "Header": false
+                                    },
+                                    "Data": {
+                                        "Widgets": [
+                                            {
+                                                "Name": "Generic Controls",
+                                                "Description": "",
+                                                "Type": "tw-generic-controls",
+                                                "Config": {
+                                                    "Enabled": true,
+                                                    "Hidden": false,
+                                                    "Static": false,
+                                                    "Anchor": true,
+                                                    "AOT": false,
+                                                    "AutoOpen": false,
+                                                    "Icon": "widgets",
+                                                    "Class": "",
+                                                    "Position": {
+                                                        "X": 2,
+                                                        "Y": 1
+                                                    },
+                                                    "Actions": [
+                                                        "collapse"
+                                                    ],
+                                                    "ViewState": "restore",
+                                                    "Header": true,
+                                                    "Pinned": false
+                                                },
+                                                "Data": {}
+                                            },
+                                            {
+                                                "Name": "Customer Details",
+                                                "Description": "",
+                                                "Type": "tw-customer-details",
+                                                "Config": {
+                                                    "Enabled": true,
+                                                    "Hidden": false,
+                                                    "Static": false,
+                                                    "Anchor": true,
+                                                    "AOT": false,
+                                                    "AutoOpen": false,
+                                                    "Icon": "person",
+                                                    "Class": "",
+                                                    "Position": {
+                                                        "X": 2,
+                                                        "Y": 1
+                                                    },
+                                                    "Actions": [
+                                                        "maximize",
+                                                        "collapse"
+                                                    ],
+                                                    "ViewState": "restore",
+                                                    "Header": true,
+                                                    "Pinned": false
+                                                },
+                                                "Data": {
+                                                    "CustomerInfo": [
+                                                        {
+                                                            "Title": "Type",
+                                                            "ValueSource": "GenericInteractionEvent.Item.Type",
+                                                            "Unit": "",
+                                                            "DefaultValue": "NA"
+                                                        },
+                                                        {
+                                                            "Title": "Skill",
+                                                            "ValueSource": "GenericInteractionEvent.Item.Skill",
+                                                            "Unit": "",
+                                                            "DefaultValue": "NA"
+                                                        },
+                                                        {
+                                                            "Title": "Identifier",
+                                                            "ValueSource": "GenericInteractionEvent.Item.CustomerIdentifier",
+                                                            "Unit": "",
+                                                            "DefaultValue": "NA"
+                                                        },
+                                                        {
+                                                            "Title": "Intent",
+                                                            "ValueSource": "GenericInteractionEvent.Item.Intent",
+                                                            "Unit": "",
+                                                            "DefaultValue": "NA"
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                "Name": "Customer Journey",
+                                                "Description": "",
+                                                "Type": "tw-customer-journey",
+                                                "Config": {
+                                                    "Enabled": true,
+                                                    "Hidden": false,
+                                                    "Static": false,
+                                                    "Anchor": true,
+                                                    "AOT": false,
+                                                    "AutoOpen": false,
+                                                    "Icon": "storage",
+                                                    "Class": "",
+                                                    "Position": {
+                                                        "X": 2,
+                                                        "Y": 1
+                                                    },
+                                                    "Actions": [
+                                                        "maximize",
+                                                        "collapse"
+                                                    ],
+                                                    "ViewState": "restore",
+                                                    "Header": true,
+                                                    "Pinned": false
+                                                },
+                                                "Data": {
+                                                    "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
+                                                    "NoOfRecords": 20,
+                                                    "SentimentDashboardUrl": "https://dice.tetherfi.cloud/SentimentDashboard"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "Dynamic": [
+                                {
+                                    "Name": "Agent Assist",
+                                    "Description": "",
+                                    "Key": "AgentAssist",
+                                    "Type": "tw-agent-assist",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "verified_user",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "Confidence": 0.5,
+                                        "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=${intent}&ucid=${ucid}",
+                                        "Title": "Agent Assist",
+                                        "Icon": "assistant",
+                                        "Width": 450,
+                                        "Height": 800,
+                                        "Actions": [
+                                            "collapse",
+                                            "maximize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore"
+                                    }
+                                },
+                                {
+                                    "Name": "Account Information",
+                                    "Description": "",
+                                    "Key": "CustomerAccountInfo",
+                                    "Type": "tw-account-information",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "IsAuthenticated": true
+                                    }
+                                },
+                                {
+                                    "Name": "AMDOC-BCC",
+                                    "Description": "",
+                                    "Key": "AmdocBCC",
+                                    "Type": "tw-amdocs-bcc",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {}
+                                },
+                                {
+                                    "Name": "Customer Sentiment",
+                                    "Description": "feedback",
+                                    "Key": "CustomerSentiment",
+                                    "Type": "tw-customer-sentiment",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "sentiment_satisfied_alt",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {}
+                                },
+                                {
+                                    "Name": "Work Codes",
+                                    "Description": "",
+                                    "Key": "WorkCodes",
+                                    "Type": "tw-work-codes",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "Source": "interaction",
+                                        "ByTeam": false,
+                                        "ByGroup": false
+                                    }
+                                },
+                                {
+                                    "Name": "Speech Transcripts",
+                                    "Description": "",
+                                    "Key": "SpeechTranscript",
+                                    "Type": "tw-voice-bot-transcripts",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {}
+                                }
+                            ],
+                            "AOT": []
                         }
                     }
                 },
@@ -3412,7 +3020,7 @@
                     },
                     "Data": {
                         "Path": "/tmeet",
-                        "Url": "https://dice.tetherfi.cloud/t-meet/",
+                        "Url": "https://dice.tetherfi.cloud/t-meet/?agentId=${AgentData.agentId}",
                         "Unload": false
                     }
                 },
@@ -3457,7 +3065,7 @@
                     },
                     "Data": {
                         "Path": "/sentimentdashboard",
-                        "Url": "https://dice.tetherfi.cloud/SentimentDashboard/?agentid=_agentId",
+                        "Url": "https://dice.tetherfi.cloud/SentimentDashboard/?agentid=${AgentData.agentId}",
                         "Unload": true
                     }
                 },
@@ -3540,6 +3148,7 @@
                     },
                     "Data": {
                         "Path": "/docker",
+                        "Unload": false,
                         "Widgets": {
                             "Static": [
                                 {
@@ -3557,8 +3166,8 @@
                                         "Icon": "widgets",
                                         "Class": "",
                                         "Position": {
-                                            "X": 2,
-                                            "Y": 1
+                                            "X": 3,
+                                            "Y": 3
                                         },
                                         "Actions": [
                                             "maximize",
@@ -3573,301 +3182,12 @@
                                         "Url": "https://dice.tetherfi.cloud/tmac_client/test.html",
                                         "AutoRefresh": 0
                                     }
-                                },
-                                {
-                                    "Name": "Test Page 2",
-                                    "Description": "",
-                                    "Key": "TestPage2",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "widgets",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 1,
-                                            "Y": 1
-                                        },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": false,
-                                        "Url": "https://dice.tetherfi.cloud/tmac_client/test.html"
-                                    }
-                                },
-                                {
-                                    "Name": "Test Page3",
-                                    "Description": "",
-                                    "Key": "TestPage3",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "widgets",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 1,
-                                            "Y": 1
-                                        },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": false,
-                                        "Url": "https://dice.tetherfi.cloud/tmac_client/test.html"
-                                    }
-                                },
-                                {
-                                    "Name": "Test Page 4",
-                                    "Description": "",
-                                    "Key": "TestPage4",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "widgets",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 2,
-                                            "Y": 1
-                                        },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": false,
-                                        "Url": "https://dice.tetherfi.cloud/tmac_client/test.html"
-                                    }
-                                },
-                                {
-                                    "Name": "Test Page 5",
-                                    "Description": "",
-                                    "Key": "TestPage5",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "widgets",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 2,
-                                            "Y": 2
-                                        },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": false,
-                                        "Url": "https://dice.tetherfi.cloud/tmac_client/test.html"
-                                    }
-                                },
-                                {
-                                    "Name": "Test Page 6",
-                                    "Description": "",
-                                    "Key": "TestPage6",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "widgets",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 2,
-                                            "Y": 1
-                                        },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": false,
-                                        "Url": "https://dice.tetherfi.cloud/tmac_client/test.html"
-                                    }
-                                },
-                                {
-                                    "Name": "Test Page 7",
-                                    "Description": "",
-                                    "Key": "TestPage7",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "widgets",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 2,
-                                            "Y": 1
-                                        },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": false,
-                                        "Url": "https://dice.tetherfi.cloud/tmac_client/test.html"
-                                    }
-                                },
-                                {
-                                    "Name": "Test Page 8",
-                                    "Description": "",
-                                    "Key": "TestPage8",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "widgets",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 2,
-                                            "Y": 1
-                                        },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": false,
-                                        "Url": "https://dice.tetherfi.cloud/tmac_client/test.html"
-                                    }
-                                },
-                                {
-                                    "Name": "Test Page 9",
-                                    "Description": "",
-                                    "Key": "TestPage9",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "widgets",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 1,
-                                            "Y": 1
-                                        },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": false,
-                                        "Url": "https://dice.tetherfi.cloud/tmac_client/test.html"
-                                    }
-                                },
-                                {
-                                    "Name": "Test Page 10",
-                                    "Description": "",
-                                    "Key": "TestPage10",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "widgets",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 1,
-                                            "Y": 1
-                                        },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": false,
-                                        "Url": "https://dice.tetherfi.cloud/tmac_client/test.html"
-                                    }
                                 }
                             ]
                         }
                     }
                 }
-            ],
-            "Urls": {
-                "DashboardServerUrls": [
-                    "https://dice.tetherfi.cloud:443/SignalRDashboardSup"
-                ],
-                "FileServerUrl": {
-                    "SMM": "https://dice.tetherfi.cloud:13019/upload",
-                    "MediaProxy": "https://dice.tetherfi.cloud/ApiFileUploadDownLoad"
-                },
-                "TCMClient": "https://dice.tetherfi.cloud/TCM_Client/CampaignManager.asmx"
-            }
+            ]
         },
         "AOT": {
             "Widgets": [
@@ -3902,7 +3222,7 @@
                     },
                     "Data": {
                         "OpenInNew": false,
-                        "Url": "https://tmac.tetherfilabs.com/tcie-web-appv8?id=_agentId"
+                        "Url": "https://tmac.tetherfilabs.com/tcie-web-appv8?id=${AgentData.agentId}"
                     }
                 },
                 {
@@ -3911,12 +3231,12 @@
                     "Key": "TCIS",
                     "Type": "tw-tcis-integration",
                     "Config": {
-                        "Enabled": false,
-                        "Hidden": false,
+                        "Enabled": true,
+                        "Hidden": true,
                         "Static": false,
                         "Anchor": false,
-                        "AOT": false,
-                        "AutoOpen": false,
+                        "AOT": true,
+                        "AutoOpen": true,
                         "Icon": "",
                         "Class": "",
                         "Position": {
@@ -3944,7 +3264,9 @@
                                     "TMACEvent.IncomingCallEvent.UCID",
                                     "TMACEvent.CCLDataEvent.CIF",
                                     "AgentData.AgentID",
-                                    "AgentData.DeviceID"
+                                    "AgentData.DeviceID",
+                                    "https://meet.google.com/kps-shpr-neu?phoneNumber=${TMACEvent.IncomingCallEvent.PhoneNumber}&agentId=${AgentData.AgentID}",
+                                    "Rahil"
                                 ],
                                 "Method": "RunCustomApplication",
                                 "ExeName": "AgentPopUp"
@@ -3953,6 +3275,16 @@
                     }
                 }
             ]
+        },
+        "Urls": {
+            "DashboardServerUrls": [
+                "https://dice.tetherfi.cloud:443/SignalRDashboardSup"
+            ],
+            "FileServerUrl": {
+                "SMM": "https://dice.tetherfi.cloud:13019/upload",
+                "MediaProxy": "https://dice.tetherfi.cloud/ApiFileUploadDownLoad"
+            },
+            "TCMClient": "https://dice.tetherfi.cloud/TCM_Client/CampaignManager.asmx"
         }
     },
     "AppConfigs": {
@@ -4052,18 +3384,17 @@
         "SDK": {
             "Proxy": {
                 "Urls": [
-                    "https://dice.tetherfi.cloud/TMACSDKProxyv6/TmacProxy.asmx",
                     "https://localhost:55443/SDKTMACProxy/TmacProxy.asmx",
-                    "https://idfcvpd.tetherfi.cloud/TMACSDKProxy/tmacproxy.asmx",
-                    "https://dice.tetherfi.cloud/TMACSDKProxy/TmacProxy.asmx"
+                    "https://dice.tetherfi.cloud/TMACSDKProxyv5/TmacProxy.asmx"
                 ],
                 "Type": "soap",
                 "Timeout": 30
             },
             "SignalRProxy": {
-                "Logging": false,
+                "Logging": true,
                 "Protocol": "webSockets",
-                "Timeout": 10
+                "Timeout": 10,
+                "Fallback": false
             },
             "Logging": {
                 "Enabled": true,

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
@@ -8,6 +8,7 @@ import { AgentSkillListComponent } from '@modules/shared/components';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
+import { ContentPageService } from '@services/content-page.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
@@ -50,7 +51,7 @@ import {
     styleUrls: ['./tw-voice-controls.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, OnDestroy, AfterViewInit {
     /**
      * Daat from App config
      */
@@ -295,7 +296,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         private _tmacEventService: TMACEventService,
         private _appUIService: AppUiService,
         private _aotWidgetService: AOTWidgetService,
-        private _matDialog: MatDialog
+        private _matDialog: MatDialog,
+        private _contentPageService: ContentPageService
     ) {
         super();
     }
@@ -398,6 +400,20 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             )
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
+    }
+
+    /**
+     * Lifecycle hook
+     * @method
+     */
+    ngAfterViewInit(): void {
+        // check if the current page is textchat page
+        if (this._interactionManagerService.getInteractionCount().active <= 1 &&
+            this._contentPageService.getCurrentMode() !== this.data.Data.Path) {
+            setTimeout(() => {
+                this._contentPageService.mode = this.data.Data.Path;
+            }, 500);
+        }
     }
 
     /**

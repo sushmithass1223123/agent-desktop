@@ -18,11 +18,11 @@ git checkout b develop
 
 # To create new branch
 For feature branch: git checkout -b feature/<your-feature>
-or 
+or
 For developer branch: git checkout -b dev/<your-name>
 ```
 
-To create a collection widget Run `ng generate @schematics/angular:component --name=tw-<widget-name> --project=agent-desktop --path=src/app/modules/t-widgets/tw-collections --style=scss --selector=tw-<widget-name> --skipImport --viewEncapsulation=None`.
+To create a collection widget Run `ng generate @schematics/angular:component --name=tw-<widget-name> --project=agent-desktop --path=src/app/modules/t-widgets/tw-collections --style=scss --selector=tw-<widget-name> --viewEncapsulation=None`.
 
 Or install NX Console extension in code to generate the component under @schematics/angular:component.
 
@@ -35,12 +35,12 @@ TMAC SDK can accessed using `SDKClient` variable which is a property under `tmac
 Once the developement is completed please commit to your branch and raise a merge-request to the `develop` branch.
 
 ```
-# To add and commit with message: 
+# To add and commit with message:
 git commit -am "<your-commit-message>"
 
 or [preferably below]
 
-# If you want to add more change logs then 
+# If you want to add more change logs then
 git add
 git commit
 
@@ -72,4 +72,3 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
-

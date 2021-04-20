@@ -1,0 +1,39 @@
+@import 'src/@fuse/scss/fuse';
+
+tw-generic-panel {
+    display: grid;
+    .tw-generic-panel {
+        max-height: calc(100vh - 86px);
+        gap: 8px;
+        .tw-generic-controls,
+        .tw-customer-details,
+        .tw-customer-journey {
+            flex: 1;
+            height: 32.5%;
+            transition: all 0.6s ease-in-out;
+            &.maximized {
+                flex: 0;
+                &.collapsed {
+                    flex: 0;
+                }
+            }
+            &.collapsed {
+                flex: 0;
+            }
+            &.floating {
+                flex: 1;
+                &.collapsed {
+                    flex: inherit;
+                }
+            }
+        }
+
+        .tw-generic-controls {
+            flex: 0;
+        }
+
+        @include media-breakpoint('gt-md') {
+            max-height: calc(100vh - 95px);
+        }
+    }
+}

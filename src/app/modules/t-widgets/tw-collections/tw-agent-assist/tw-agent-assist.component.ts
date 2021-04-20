@@ -2,13 +2,17 @@ import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
+import { setStringVars } from '@tmac/operators';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { orderBy } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { AgentAssistDataEvent, CallerIntentEvent, GenericEvent, IUIEvent, SDKClient, TextChatRemoteUserConnectedEvent } from 'tmac-sdk';
+import { AgentAssistDataEvent, CallerIntentEvent, GenericEvent, TextChatRemoteUserConnectedEvent } from 'tmac-sdk';
 
+/**
+ * Agent Assist Component
+ */
 @Component({
     selector: 'tw-agent-assist',
     templateUrl: './tw-agent-assist.component.html',
@@ -93,20 +97,6 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         // assign the UCID
         this.ucid = this.data?.InteractionDetails?.UCID || '';
 
-        // // get the event from event bag to make sure no events are missed
-        // const eventBag = this._tmacEventService.interactionEvents(this.interactionId);
-
-        // // process the events if any
-        // eventBag.forEach((evt: IUIEvent) => {
-        //     this[evt.EventName]?.(evt);
-        // });
-
-        // // register to the event
-        // SDKClient.events.on('OnNLPDataEvent', this.OnNLPDataEvent);
-        // SDKClient.events.on('CallerIntentEvent', this.CallerIntentEvent);
-        // SDKClient.events.on('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
-        // SDKClient.events.on('AgentAssistDataEvent', this.AgentAssistDataEvent);
-
         // TODO:: To implement interaction based AOT
         // SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
 
@@ -127,15 +117,6 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-
-        // de-register from the event
-        // SDKClient.events.off('OnNLPDataEvent', this.OnNLPDataEvent);
-        // SDKClient.events.off('CallerIntentEvent', this.CallerIntentEvent);
-        // SDKClient.events.off('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
-        // SDKClient.events.off('AgentAssistDataEvent', this.AgentAssistDataEvent);
-
-        // TODO:: To implement interaction based AOT
-        // SDKClient.events.off('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -344,15 +325,12 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
 
             // get the map object
             const mapObj = {
-                _intent: intent,
-                _ucid: ucid
+                intent: intent,
+                ucid: ucid
             };
 
-            // check the regex and replace the item in the url
-            const reg = new RegExp(Object.keys(mapObj).join('|'), 'gi');
-            url = url.replace(reg, (matched: any) => {
-                return mapObj[matched];
-            });
+            // form the url
+            url = setStringVars(url, mapObj);
         }
 
         // get assist widget config
@@ -370,7 +348,6 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         widget.Config.Position.H = height;
         widget.Config.Actions = actions;
         widget.Config.ViewState = viewState;
-
         widget.Data.Url = url;
 
         // if mandatory, pop a confiration and destroy

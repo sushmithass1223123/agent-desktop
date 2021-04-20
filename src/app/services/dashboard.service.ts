@@ -260,7 +260,7 @@ export class DashboardService {
 
         this._appDataService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
             // check whether the Urls are provided in config
-            this._serviceUrls = config.Main.Content.Urls?.DashboardServerUrls || [];
+            this._serviceUrls = config.Main.Urls?.DashboardServerUrls || [];
             // if urls are there then start service
             if (this._serviceUrls.length > 0 && !this._serviceStarted) {
                 this.startService();

@@ -1,25 +1,24 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
+import { TWidgetWrapper } from '@modules/t-widgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 
 /**
- * Voice panel component
+ * Generic Panel Component
  */
 @Component({
-    selector: 'tw-voice-panel',
-    templateUrl: './tw-voice-panel.component.html',
-    styleUrls: ['./tw-voice-panel.component.scss'],
+    selector: 'tw-generic-panel',
+    templateUrl: './tw-generic-panel.component.html',
+    styleUrls: ['./tw-generic-panel.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class TwVoicePanelComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-
+export class TwGenericPanelComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     /**
      * App config json data
      */
-    @Input() data: any;
+    @Input() data: IWidget;
 
     /**
-     * Voice panel Widget list
+     * Gentic panel Widget list
      */
     widgets = [];
 
@@ -28,7 +27,7 @@ export class TwVoicePanelComponent extends TWidgetWrapper implements OnInit, OnD
      */
     maximized = [
         {
-            'tw-voice-controls': false,
+            'tw-generic-controls': false,
             'tw-customer-details': false,
             'tw-customer-journey': false,
         }
@@ -39,7 +38,7 @@ export class TwVoicePanelComponent extends TWidgetWrapper implements OnInit, OnD
      */
     collapsed = [
         {
-            'tw-voice-controls': false,
+            'tw-generic-controls': false,
             'tw-customer-details': false,
             'tw-customer-journey': false,
         }
@@ -50,7 +49,7 @@ export class TwVoicePanelComponent extends TWidgetWrapper implements OnInit, OnD
      */
     floating = [
         {
-            'tw-voice-controls': false,
+            'tw-generic-controls': false,
             'tw-customer-details': false,
             'tw-customer-journey': false,
         }
@@ -59,10 +58,6 @@ export class TwVoicePanelComponent extends TWidgetWrapper implements OnInit, OnD
     constructor() {
         super();
     }
-
-    // -----------------------------------------------------------------------------------------------------
-    // @ Lifecycle hooks
-    // -----------------------------------------------------------------------------------------------------
 
     /**
      * Lifecycle hook

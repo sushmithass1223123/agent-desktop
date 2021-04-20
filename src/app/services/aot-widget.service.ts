@@ -89,7 +89,7 @@ export class AOTWidgetService {
     public addWidget(widget: IWidget): void {
 
         // check if the widget is null
-        if (!widget) {
+        if (!widget || !widget.Config.Enabled) {
             return;
         }
 

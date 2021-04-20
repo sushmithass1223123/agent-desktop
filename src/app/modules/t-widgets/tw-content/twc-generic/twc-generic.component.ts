@@ -7,24 +7,25 @@ import { TMACEventService } from '@services/tmac-event.service';
 import { InteractionRef, InteractionWidgets, IWidget } from 'app/interfaces';
 import { cloneDeep } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { FaxReceivedEvent, InteractionClosedEvent } from 'tmac-sdk';
+import { GenericInteractionEvent, InteractionClosedEvent } from 'tmac-sdk';
 
 /**
- * Fax Content Component
+ * Generic Content Component
  */
 @Component({
-    selector: 'twc-fax',
-    templateUrl: './twc-fax.component.html',
-    styleUrls: ['./twc-fax.component.scss'],
+    selector: 'twc-generic',
+    templateUrl: './twc-generic.component.html',
+    styleUrls: ['./twc-generic.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class TwcFaxComponent extends TWContentWrapper implements OnInit {
+export class TwcGenericComponent extends TWContentWrapper implements OnInit {
     /**
      * Holds all the interaction related widgets and process on new interacion for interaction content page
      */
     interactions: InteractionWidgets[] = [];
+
     /**
-     * Currently active fax interaction
+     * Currently active generic interaction
      */
     activeInteraction: number;
 
@@ -47,16 +48,16 @@ export class TwcFaxComponent extends TWContentWrapper implements OnInit {
 
         // subscribe to interaction events observable
         this._tmacEventService
-            .getConstructDisposeEvents(['FaxReceivedEvent', 'InteractionClosedEvent'])
+            .getConstructDisposeEvents(['GenericInteractionEvent', 'InteractionClosedEvent'])
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
 
         // subscribe to active interaction observable
         this._interactionManagerService.interactions.pipe(takeUntil(this.unsubscribeAll)).subscribe((interactions: InteractionRef[]) => {
-            // check if there are fax interactions first
+            // check if there are generic interactions first
             if (this.interactions.length > 0) {
-                const textInteractions = interactions.filter((i) => i.type === 'fax');
-                // filter and get the active fax interaction if any
+                const textInteractions = interactions.filter((i) => i.type === 'generic');
+                // filter and get the active generic interaction if any
                 textInteractions.forEach((interaction: InteractionRef) => {
                     this.activeInteraction = interaction.isActive ? interaction.interactionId : this.activeInteraction;
                 });
@@ -65,15 +66,15 @@ export class TwcFaxComponent extends TWContentWrapper implements OnInit {
     }
 
     /**
-     * To process FaxReceivedEvent
+     * To process GenericInteractionEvent
      */
-    private FaxReceivedEvent(evt: FaxReceivedEvent): void {
+    private GenericInteractionEvent(evt: GenericInteractionEvent): void {
         // get the content widgets
-        const faxWidgets = cloneDeep(this.data.Data.Widgets) || [];
+        const genericWidgets = cloneDeep(this.data.Data.Widgets) || [];
 
-        const staticWidgets = faxWidgets.Static || [];
-        const dynamicWidgets = (evt.WidgetConfigData && JSON.parse(evt.WidgetConfigData)) || faxWidgets.Dynamic || [];
-        const aotWidgets = faxWidgets.AOT || [];
+        const staticWidgets = genericWidgets.Static || [];
+        const dynamicWidgets = (evt.WidgetConfigData && JSON.parse(evt.WidgetConfigData)) || genericWidgets.Dynamic || [];
+        const aotWidgets = genericWidgets.AOT || [];
 
         // loop the widgets and add append interaction details
         staticWidgets.forEach((widget: IWidget) => {
@@ -107,25 +108,55 @@ export class TwcFaxComponent extends TWContentWrapper implements OnInit {
         // add the construct event to the interaction manager
         this._interactionManagerService.addInteraction({
             interactionId: evt.InteractionID,
-            type: 'fax',
+            type: 'generic',
             status: 'incoming',
             isActive: this.interactions.length === 1,
-            user: evt.FaxNumber || 'Customer',
+            user: evt.Item.CustomerIdentifier || 'Customer',
             path: this.data.Data.Path
         });
     }
 
     /**
-     * To process interaction closed event for voice
+     * To process InteractionClosedEvent
      */
     private InteractionClosedEvent(evt: InteractionClosedEvent): void {
         this.interactions = this.interactions.filter((i: InteractionWidgets) => i.interactionId !== evt.InteractionID);
-        // if there are other item in the list auto select fist fax after closing current
+        // if there are other item in the list auto select fist generic after closing current
         if (this.interactions.length > 0) {
             this._interactionManagerService.updateInteraction(this.interactions[0].interactionId, {
                 isActive: true
             });
         }
     }
+
+    /**
+     * To parse the json string
+     * 
+     * @param {String} str 
+     */
+    private jsonParser(str: string): any {
+        return JSON.parse(str);
+    }
+
+    /**
+     * Some function
+     */
+    someFunction(): void {
+        const sampleJson = {
+            a: 1,
+            b: 2,
+            c: 3
+        };
+
+        const GenericEvent = {
+            Item: {
+                Data: JSON.stringify(sampleJson)
+            }
+        };
+
+        const str = 'jsonParser(GenericEvent.Item.Data).b';
+    }
+
+
 
 }

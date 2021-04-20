@@ -3,12 +3,14 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
 import { AOTWidgetService } from '@services/aot-widget.service';
+import { AppDataService } from '@services/app-data.service';
 import { TMACEventService } from '@services/tmac-event.service';
+import { getStringVars, setStringVars } from '@tmac/operators';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AGENT_DATA_MAP } from 'app/constants';
-import { IWidget } from 'app/interfaces';
+import { IPostMessage, IWidget } from 'app/interfaces';
 import { Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { SDKClient } from 'tmac-sdk';
 
 /**
  * TwCustomComponent
@@ -34,10 +36,6 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
      * Window pop widget
      */
     oinWidget: any;
-    /**
-     * Initial loaded flag
-     */
-    initialLoad: boolean;
     /**
      * Url loaded flag
      */
@@ -73,7 +71,8 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
         private sanitizer: DomSanitizer,
         private _aotWidgetService: AOTWidgetService,
         private _tmacEventService: TMACEventService,
-        private _fuseConfigService: FuseConfigService
+        private _fuseConfigService: FuseConfigService,
+        private _appDataService: AppDataService
     ) {
         super();
     }
@@ -84,35 +83,75 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
         // call the wrapper init method
         this.initWrapper(this.data);
 
+        // check if this is opened in an interaction
+        if (this.data.InteractionDetails) {
+            this.interactionId = this.data.InteractionDetails.InteractionID;
+        }
+
         // Subscribe to the config changes
-        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((fuseConfig: FuseConfig) => {
-            this.fuseConfig = fuseConfig;
-        });
+        this._fuseConfigService.config
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((fuseConfig: FuseConfig) => {
+                this.fuseConfig = fuseConfig;
+            });
+
+        // register to post message subject
+        this._appDataService.postMessage
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((data: IPostMessage) => {
+                // check if the function is to get TMAC events
+                if (data.function?.toLowerCase() === 'gettmacevents') {
+                    let events = [];
+                    // check if in interaction
+                    if (this.interactionId) {
+                        // get interaction events
+                        events = this._tmacEventService.interactionEvents(this.interactionId);
+                    }
+                    // get non interaction events
+                    events = [
+                        ...events,
+                        ...this._tmacEventService.nonInteractionEvents()
+                    ];
+                    // send event to the frame/opener
+                    this.sendEventsToWindow(events);
+                }
+            });
 
         // check if the url is provided
         if (this.data.Data.Url) {
             // get the url
             let url = this.data.Data.Url;
 
-            // get the agent data map
-            let mapObj = AGENT_DATA_MAP();
+            const stringVals = getStringVars(url);
+            let setJson = {};
 
-            // check if interaction details are there
-            if (this.data.InteractionDetails) {
-                this.interactionId = this.data.InteractionDetails.InteractionID;
-                mapObj = { ...mapObj, ...this.data.InteractionDetails };
+            if (stringVals && stringVals.length) {
+                stringVals.forEach(val => {
+                    // get the path by taking string between ()
+                    const path = val.substring(
+                        val.lastIndexOf('${') + 2,
+                        val.lastIndexOf('}')
+                    );
+                    const splitPath = path.split('.');
+                    if (splitPath[0].toLowerCase() === 'agentdata') {
+                        setJson = {
+                            ...setJson,
+                            AgentData: SDKClient.getAgentData()
+                        };
+                    }
+                    else if (this.data.InteractionDetails && splitPath[0].toLowerCase() === 'interaction') {
+                        setJson = {
+                            ...setJson,
+                            Interaction: this.data.InteractionDetails
+                        };
+                    }
+                });
+
+                // check if json has data
+                if (Object.keys(setJson).length) {
+                    url = setStringVars(url, setJson);
+                }
             }
-
-            // check if extra map data sent with in an interaction
-            if (this.data.Data.MapObject) {
-                mapObj = { ...mapObj, ...this.data.Data.MapObject };
-            }
-
-            // add the query param
-            const reg = new RegExp(Object.keys(mapObj).join('|'), 'gi');
-            url = url.replace(reg, (matched: any) => {
-                return mapObj[matched] || matched;
-            });
 
             // check 'Open In New' widget
             if (this.data.Data.OpenInNew) {
@@ -152,9 +191,6 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                 }, Number(this.data.Data.AutoRefresh) * 1000);
             }
         }
-
-        // register to TMAC events
-        // SDKClient.events.on('onTMACEvent', this.onTMACEvent);
     }
 
     /**
@@ -163,9 +199,6 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-
-        // de register from TMAC events
-        // SDKClient.events.off('onTMACEvent', this.onTMACEvent);
     }
 
     /**
@@ -177,13 +210,6 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
         return this.sanitizer.bypassSecurityTrustResourceUrl(url);
     }
 
-    // /**
-    //  * TMAC event listener function
-    //  * @param evt TMAC event
-    //  */
-    // private onTMACEvent = (evt: IUIEvent) => {
-    //     this.sendEventsToWindow([evt]);
-    // }
 
     /**
      * To send TMAC events to the iframe/popup window
@@ -191,7 +217,7 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
      * @param {any[]} events
      */
     private sendEventsToWindow(evts: any[]): void {
-        const iframe = document.getElementById('frame_' + this.data.ID);
+        const iframe = document.getElementById('tw_frame_' + this.data.ID);
         // get the element
         const element = this.oinWidget ? this.oinWidget : iframe ? (iframe as HTMLIFrameElement).contentWindow : null;
         // check if the element is present
@@ -213,16 +239,15 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
     /**
      * Iframe loaded event
      */
-    frameLoaded = () => {
-        // check if this is not initial load
-        // if (this.initialLoad) {
+    frameLoaded = (evt: any) => {
         if (!this.subscriptions.eventsById && !this.subscriptions.allEvents) {
             // subscribe to interaction events
-            this.subscriptions.eventsById = this._tmacEventService
-                .getInteractionEventsById(this.interactionId)
-                .pipe(takeUntil(this.unsubscribeAll))
-                .subscribe((evts) => this.sendEventsToWindow(evts));
-
+            if (this.interactionId) {
+                this.subscriptions.eventsById = this._tmacEventService
+                    .getInteractionEventsById(this.interactionId)
+                    .pipe(takeUntil(this.unsubscribeAll))
+                    .subscribe((evts) => this.sendEventsToWindow(evts));
+            }
             // subscribe to all non interaction events
             this.subscriptions.allEvents = this._tmacEventService
                 .getAllEvents()
@@ -230,14 +255,13 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                 .subscribe((evts) => this.sendEventsToWindow(evts));
         }
 
-        // set loaded to true
-        setTimeout(() => {
-            this.loaded = true;
-        });
-        // } else {
-        //     // set initial load to true
-        //     this.initialLoad = true;
-        // }
+        // check if id is there to make sure loaded completely
+        if (evt.currentTarget.id) {
+            // set loaded to true
+            setTimeout(() => {
+                this.loaded = true;
+            });
+        }
     }
 
     /**
@@ -246,7 +270,6 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
     onRefreshEvent(): void {
         const urlRef = this.url;
         this.url = null;
-        this.initialLoad = false;
         this.loaded = false;
         setTimeout((x) => {
             this.url = x;

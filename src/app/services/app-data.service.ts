@@ -3,9 +3,9 @@ import { Inject, Injectable } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { environment } from 'environments/environment';
 import { merge } from 'lodash';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { IResponse, SDKClient, TEnums, TUtils } from 'tmac-sdk';
-const pj = require('../../../package.json');
+import { version } from '../../../package.json';
 
 /**
  * Service to inject the data for widget from App config json
@@ -34,12 +34,18 @@ export class AppDataService {
      * App version
      */
     private _appVersion: string;
+    /**
+     * Need more Description
+     */
+    private _postMessageSubject: Subject<any>;
 
     constructor(@Inject(DOCUMENT) private document: any, private _titleService: Title) {
         // Set the config from the default config
         this._configSubject = new BehaviorSubject(new Object());
         this._appConfigSubject = new BehaviorSubject(new Object());
-        this._appVersion = pj.version;
+        this._postMessageSubject = new BehaviorSubject(new Object());
+        this._appVersion = version;
+        this.registerToPostMessage();
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -88,6 +94,15 @@ export class AppDataService {
     }
 
     // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * Get PostMessages
+     */
+    get postMessage(): any | Observable<any> {
+        return this._postMessageSubject.asObservable();
+    }
+
+    // -----------------------------------------------------------------------------------------------------    
 
     /**
      * To get production config
@@ -193,6 +208,39 @@ export class AppDataService {
             });
         } catch (error) {
             TUtils.Logger.console('error', 'Exception in AppDataService.setJsonConfig', null, error);
+        }
+    }
+
+    /**
+     * To register to post message
+     */
+    private registerToPostMessage(): void {
+        try {
+            window.addEventListener('message', (evt: any) => {
+                // if event data is null then return
+                if (!evt.data) {
+                    return;
+                }
+
+                let data: any = {};
+                if (typeof evt.data === 'string') {
+                    try {
+                        data = JSON.parse(evt.data);
+                    } catch (error) {
+                        data = {};
+                    }
+                } else if (typeof evt.data === 'object') {
+                    data = evt.data;
+                }
+
+                // check if destination is tmac
+                if (data.destination?.toLowerCase() === 'tmac') {
+                    // notify the observers
+                    this._postMessageSubject.next(data);
+                }
+            }, false);
+        } catch (error) {
+            TUtils.Logger.console('error', 'Exception in registerToPostMessage', null, error);
         }
     }
 

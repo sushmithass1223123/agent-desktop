@@ -85,7 +85,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     fileUploadUrl$ = this._appDataService.config.pipe(
         takeUntil(this.unsubscribeAll),
         map((conf: any) => {
-            return conf.Main.Content.Urls?.FileServerUrl?.MediaProxy;
+            return conf.Main.Urls?.FileServerUrl?.MediaProxy;
         })
     );
 
