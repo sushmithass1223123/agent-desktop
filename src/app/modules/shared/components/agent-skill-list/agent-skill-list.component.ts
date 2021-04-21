@@ -7,6 +7,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { fuseAnimations } from '@fuse/animations';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
+import setStringVars from '@tmac/operators/setStringVars';
 import { AgentSkillListData, AgentSkillListSourceObject } from 'app/interfaces';
 import { orderBy } from 'lodash';
 import { Subject } from 'rxjs';
@@ -388,6 +389,20 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
 
         // check for blind
         this.checkForBlind();
+
+        this.setNewColumns();
+    }
+
+    /**
+     * Sets new columns for the table based on configs 
+     */
+    setNewColumns(): void {
+        if (this.data.agent.columns) {
+            this.agentListTable.tableData.columns = this.data.agent.columns;
+        }
+        if (this.data.skill.columns) {
+            this.skillListTable.tableData.columns = this.data.skill.columns;
+        }
     }
 
     /**
@@ -952,9 +967,8 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                             station: '${StationID}',
                             agentId: '${LoginID}'
                         };
-                        const nameToBeDisplayed = (nameAliasMap[source.Display || 'agentName'] || source.Display).replaceAll('${', '${row.');
-                        // tslint:disable-next-line: no-eval
-                        this.selectedItemDisplayName = eval('`' + nameToBeDisplayed + '`');
+                        const nameToBeDisplayed = nameAliasMap[source.Display || 'agentName'] || source.Display;
+                        this.selectedItemDisplayName = setStringVars(nameToBeDisplayed, row);
                     } else {
                         // assign the selected item
                         this.selectedItem = source === 'agentId' ? row.LoginID : row.StationID;
@@ -1013,8 +1027,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                             vdn: '${VDN}'
                         };
                         const nameToBeDisplayed: string = nameAliasMap[source.Display || 'skill'] || source.Display.replaceAll('${', '${row.');
-                        // tslint:disable-next-line: no-eval
-                        this.selectedItemDisplayName = eval('`' + nameToBeDisplayed + '`');
+                        this.selectedItemDisplayName = setStringVars(nameToBeDisplayed, row);
                     } else {
                         // assign the selected item
                         this.selectedItem = source === 'skill' ? row.ID : row.VDN;

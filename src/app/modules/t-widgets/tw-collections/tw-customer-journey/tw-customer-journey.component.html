@@ -233,35 +233,20 @@
                 ></mat-row>
             </mat-table>
 
-            <!-- *ngIf="customerJourneyTable.tableData.source.data.length > 5" -->
-            <!-- (backdropClick)="showAdvancedSearchOverlay = false" -->
             <div fxLayout fxLayoutAlign="space-between">
-                <button
-                    cdkOverlayOrigin
-                    #advancedSearchOverlay="cdkOverlayOrigin"
-                    (click)="showAdvancedSearchOverlay = !showAdvancedSearchOverlay"
-                    mat-button
-                    color="primary"
-                >
-                    <mat-icon>search</mat-icon>
+                <button (click)="advancedSearchModal.open()" mat-button color="primary">
                     Search
+                    <mat-icon>search</mat-icon>
                 </button>
-                <ng-template
-                    cdkConnectedOverlay
-                    [cdkConnectedOverlayOrigin]="advancedSearchOverlay"
-                    [cdkConnectedOverlayOpen]="showAdvancedSearchOverlay"
-                    cdkConnectedOverlayHasBackdrop
-                    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-                    (overlayOutsideClick)="showAdvancedSearchOverlay = false; searchForm.reset()"
-                >
-                    <div class="mat-elevation-z1 w-50-p border-radius-20 p-12" [ngClass]="fuseBg.body">
+                <ng-template #advancedSearchFormRef>
+                    <div class="mat-elevation-z1 twd-rounded-2xl twd-p-5" [ngClass]="fuseBg.body">
                         <form
                             fxLayout="row wrap"
                             fxLayoutAlign="space-between"
                             fxLayoutGap="20px"
-                            [class]="fuseBg.content + ' p-12 border-radius-20'"
+                            [class]="fuseBg.content + ' twd-p-5 twd-rounded-2xl'"
                             [formGroup]="searchForm"
-                            (ngSubmit)="doAdvancedSearch(); showAdvancedSearchOverlay = false"
+                            (ngSubmit)="doAdvancedSearch(); advancedSearchModal.close()"
                             novalidate
                         >
                             <mat-form-field fxFlex="45">
@@ -301,7 +286,7 @@
 
                             <mat-form-field fxFlex="45">
                                 <mat-label>Interaction Date</mat-label>
-                                <mat-date-range-input [rangePicker]="interactionDatePicker">
+                                <mat-date-range-input #dateRangePicker [rangePicker]="interactionDatePicker">
                                     <input matStartDate placeholder="Start date" formControlName="InteractionDateStart" />
                                     <input matEndDate placeholder="End date" formControlName="InteractionDateEnd" />
                                 </mat-date-range-input>

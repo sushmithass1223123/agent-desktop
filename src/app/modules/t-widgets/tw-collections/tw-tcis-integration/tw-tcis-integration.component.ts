@@ -3,9 +3,10 @@ import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AGENT_DATA_MAP } from 'app/constants';
 import { IWidget } from 'app/interfaces';
+import { formatJsonData } from 'app/utils';
 import { get, join } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { IUIEvent, SignalRWrapper, TUtils } from 'tmac-sdk';
+import { IUIEvent, SDKClient, SignalRWrapper, TUtils } from 'tmac-sdk';
 
 /**
  * TCIS Integration Component
@@ -32,9 +33,7 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
      */
     private _signalrWrapper: SignalRWrapper;
 
-    constructor(
-        private _tmacEventService: TMACEventService
-    ) {
+    constructor(private _tmacEventService: TMACEventService) {
         super();
     }
 
@@ -49,62 +48,75 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
         this.WidgetData = this.data.Data;
 
         // listen to tmac events
-        this._tmacEventService.getInteractionEventsByName([
-            'IncomingCallEvent',
-            'OutgoingCallEvent',
-            'CallConnectedEvent',
-            'CallerIntentEvent',
-            'UUIDataEvent',
-            'CCLDataEvent',
-            'CallDisconnectedEvent',
-            'TextChatIncomingEvent',
-            'TextChatRemoteUserConnectedEvent',
-            'TextChatDisconnectedEvent',
-            'InteractionClosedEvent'
-        ])
+        this._tmacEventService
+            .getInteractionEventsByName([
+                'IncomingCallEvent',
+                'OutgoingCallEvent',
+                'CallConnectedEvent',
+                'CallerIntentEvent',
+                'UUIDataEvent',
+                'CCLDataEvent',
+                'CallDisconnectedEvent',
+                'TextChatIncomingEvent',
+                'TextChatRemoteUserConnectedEvent',
+                'TextChatDisconnectedEvent',
+                'InteractionClosedEvent'
+            ])
             .pipe(takeUntil(this.unsubscribeAll))
             // .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
-            .subscribe(evts => evts.forEach((evt: IUIEvent) => {
-                // get the action based on event name
-                const action = this.WidgetData.Actions.filter(a => a.EventName === evt.EventName)?.[0];
-                // if no action return
-                if (!action) {
-                    return;
-                }
-                // check if any action to be executed on this event
-                if (action.EventName === evt.EventName) {
-                    let actionParam = '';
-                    if (action.Parameters && action.Parameters.length) {
-                        action.Parameters.forEach(param => {
-                            const splitParam = param.split('.');
-                            // check if the value to be taken from TMAC event
-                            if (splitParam[0].toLowerCase() === 'tmacevent') { // TMACEvent.EventName.{...Property}
-                                // get value from TMAC event
-                                const getValue = this.FindInTMACEvent(splitParam, evt);
-                                if (getValue) {
-                                    actionParam += getValue + ',';
-                                }
-                            }
-                            else if (splitParam[0].toLowerCase() === 'agentdata') { // AgentData.{...Property}
-                                // get value from agent data
-                                const regValue = this.FindInAgentData(splitParam);
-                                if (regValue) {
-                                    actionParam += regValue + ',';
-                                }
-                            }
-                            else {
-                                actionParam += param + ',';
-                            }
-                        });
+            .subscribe((evts) =>
+                evts.forEach((evt: IUIEvent) => {
+                    // get the action based on event name
+                    const action = this.WidgetData.Actions.filter((a) => a.EventName === evt.EventName)?.[0];
+                    // if no action return
+                    if (!action) {
+                        return;
                     }
+                    // check if any action to be executed on this event
+                    if (action.EventName === evt.EventName) {
+                        let actionParam = '';
+                        if (action.Parameters && action.Parameters.length) {
+                            const AgentData = AGENT_DATA_MAP('LowerCase');
+                            const paramMap = action.Parameters.reduce((acc, curr) => {
+                                acc[curr.replaceAll('.', '_')] = curr.split('.');
+                                return acc;
+                            }, {});
+                            console.log({ paramMap, AgentData: SDKClient.getAgentData(), TMACEvent: evt });
+                            const vals = formatJsonData({ AgentData: SDKClient.getAgentData(), TMACEvent: evt }, paramMap);
+                            console.log({ vals });
+                            const args = Object.values(vals).join(',');
+                            console.log('#######################################', { args });
+                            action.Parameters.forEach((param) => {
+                                const splitParam = param.split('.');
+                                // check if the value to be taken from TMAC event
+                                if (splitParam[0].toLowerCase() === 'tmacevent') {
+                                    // TMACEvent.EventName.{...Property}
+                                    // get value from TMAC event
+                                    const getValue = this.FindInTMACEvent(splitParam, evt);
+                                    if (getValue) {
+                                        actionParam += getValue + ',';
+                                    }
+                                } else if (splitParam[0].toLowerCase() === 'agentdata') {
+                                    // AgentData.{...Property}
+                                    // get value from agent data
+                                    const regValue = this.FindInAgentData(splitParam);
+                                    if (regValue) {
+                                        actionParam += regValue + ',';
+                                    }
+                                } else {
+                                    actionParam += param + ',';
+                                }
+                            });
+                        }
 
-                    // clear the trailing comma
-                    actionParam = actionParam.replace(/(^,)|(,$)/g, '');
+                        // clear the trailing comma
+                        actionParam = actionParam.replace(/(^,)|(,$)/g, '');
 
-                    // execute action
-                    this.executeAction(action.Method, action.ExeName, actionParam);
-                }
-            }));
+                        // execute action
+                        // this.executeAction(action.Method, action.ExeName, actionParam);
+                    }
+                })
+            );
 
         // check if Urls provided
         if (this.WidgetData.Urls.length) {
@@ -121,9 +133,9 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
 
     /**
      * To find value from TMAC events based on object map
-     * 
-     * @param {string[]} splitParam 
-     * @param {IUIEvent} evt 
+     *
+     * @param {string[]} splitParam
+     * @param {IUIEvent} evt
      */
     private FindInTMACEvent(splitParam: string[], evt: IUIEvent): string {
         let getValue = '';
@@ -145,8 +157,8 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
 
     /**
      * To find value from Agent Data
-     * 
-     * @param splitParam 
+     *
+     * @param splitParam
      */
     private FindInAgentData(splitParam: string[]): string {
         // get the agent data map
@@ -169,8 +181,7 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
     /**
      * To register hub events
      */
-    private registerHubEvents(): void {
-    }
+    private registerHubEvents(): void {}
 
     /**
      * Method to execute action to invoke the server
@@ -185,8 +196,7 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
         // check if connection exists
         if (this._signalrWrapper?.isConnected()) {
             this._signalrWrapper.hub.invoke(exeName, method, params, false);
-        }
-        else {
+        } else {
             TUtils.Logger.warn('TCIS: Signalr Connection to the server is not available');
         }
     }
@@ -223,4 +233,3 @@ interface ITCISWidgetData {
         ExeName: string;
     }[];
 }
-

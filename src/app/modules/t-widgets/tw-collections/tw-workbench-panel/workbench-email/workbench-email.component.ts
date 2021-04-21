@@ -124,7 +124,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
     /**
      * Global search form control
      */
-    globalSearchControl = new FormControl('');
+    globalSearchControl = new FormControl();
     /**
      * Advanced search form group
      */
@@ -857,13 +857,15 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                 allowed: agentConfig.Allowed,
                 allowedStates: agentConfig.AllowedStates,
                 blind: agentConfig.Blind,
-                source: agentConfig.Source
+                source: agentConfig.Source,
+                columns: agentConfig.Columns
             },
             skill: {
                 allowed: skillConfig.Allowed,
                 blind: false,
                 channelPrfix: skillConfig.ChannelPrefix,
-                source: skillConfig.Source
+                source: skillConfig.Source,
+                columns: skillConfig.Columns
             }
         };
         this.matDialog.open(AgentSkillListComponent, {

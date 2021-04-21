@@ -8,7 +8,6 @@ import { orderBy, sortBy } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 import { AgentChannelDataList, AgentStateDurationList, SDKClient, TeamIntentDataList, WallboardRefreshEvent } from 'tmac-sdk';
 
-
 /**
  * Colors for chart
  */
@@ -82,15 +81,12 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
         if (this.data.Data.Source === 'tw-su-status' || this.data.Data.Source === 'tw-aux-status-chart') {
             // SDKClient.events.on('TeamActiveStatusDetailsEvent', this.TeamActiveStatusDetailsEvent);
             this.registerToEvent('TeamActiveStatusDetailsEvent');
-
         } else if (this.data.Data.Source === 'tw-su-calls-in-queue') {
             // SDKClient.events.on('TeamWallboardRefreshEvent', this.TeamWallboardRefreshEvent);
             this.registerToEvent('TeamWallboardRefreshEvent');
-
         } else if (this.data.Data.Source === 'tw-su-intent-list') {
             // SDKClient.events.on('TeamIntentListEvent', this.TeamIntentListEvent);
             this.registerToEvent('TeamIntentListEvent');
-
         } else if (this.data.Data.Source === 'tw-ad-total-interactions') {
             if (this.data.Data.Role === 'supervisor' && SDKClient.getAgentData().agentProfile === 'S') {
                 // SDKClient.events.on('TeamChannelListEvent', this.TeamChannelListEvent);
@@ -107,13 +103,14 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
 
     /**
      * To register to event
-     * 
+     *
      * @param {String} eventName
      */
     registerToEvent(eventName: string): void {
-        this._tmacEventService.getEvents([eventName])
+        this._tmacEventService
+            .getEvents([eventName])
             .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(evts => this[eventName](evts[0]));
+            .subscribe((evts) => this[eventName](evts[0]));
     }
 
     /**
@@ -136,7 +133,7 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
 
     /**
      * TeamActiveStatusDetailsEvent handler
-     * @param {CustomSDKEvent} evt 
+     * @param {CustomSDKEvent} evt
      * @method
      */
     private TeamActiveStatusDetailsEvent = (evt: CustomSDKEvent) => {
@@ -157,11 +154,11 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
             label: d
         }));
         this.chart.labels = labels;
-    }
+    };
 
     /**
-     * WallboardRefreshEvent handler 
-     * @param {WallboardRefreshEvent} evt 
+     * WallboardRefreshEvent handler
+     * @param {WallboardRefreshEvent} evt
      * @method
      */
     private TeamWallboardRefreshEvent = (evt: WallboardRefreshEvent) => {
@@ -180,11 +177,11 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
             return { data: datasets[d], label: d };
         });
         this.chart.labels = labels;
-    }
+    };
 
     /**
-     * TeamIntentListEvent handler 
-     * @param {CustomSDKEvent} evt 
+     * TeamIntentListEvent handler
+     * @param {CustomSDKEvent} evt
      * @method
      */
     private TeamIntentListEvent = (evt: CustomSDKEvent) => {
@@ -197,13 +194,20 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
             labels.push(c.Intent || 'Unknown');
         });
 
-        const allDatasets = this.chart;
+        const allDatasets = {
+            datasets: [],
+            labels: []
+        };
 
         allDatasets.datasets = Object.keys(datasets).map((d) => ({
             data: datasets[d],
             label: d
         }));
         allDatasets.labels = labels;
+
+        this.chart.datasets = allDatasets.datasets.map((x) => ({ ...x, data: x.data.slice(0, 5) }));
+        this.chart.labels = allDatasets.labels.slice(0, 5);
+
         this.wrapperComponent.maximizeEvent
             .asObservable()
             .pipe(takeUntil(this.unsubscribeAll))
@@ -216,12 +220,11 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
                     this.chart.labels = allDatasets.labels.slice(0, 5);
                 }
             });
-    }
-
+    };
 
     /**
-     * AgentChannelDetailsEvent handler 
-     * @param {CustomSDKEvent} evt 
+     * AgentChannelDetailsEvent handler
+     * @param {CustomSDKEvent} evt
      * @method
      */
     private AgentChannelDetailsEvent = (evt: CustomSDKEvent): void => {
@@ -241,12 +244,11 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
             label: d
         }));
         this.chart.labels = labels;
-    }
-
+    };
 
     /**
-     * TeamChannelListEvent handler 
-     * @param {CustomSDKEvent} evt 
+     * TeamChannelListEvent handler
+     * @param {CustomSDKEvent} evt
      * @method
      */
     private TeamChannelListEvent = (evt: CustomSDKEvent) => {
@@ -266,11 +268,11 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
                 return !!sum;
             });
         this.chart.labels = labels;
-    }
+    };
 
     /**
-     * TeamActiveChannelListEvent handler 
-     * @param {CustomSDKEvent} evt 
+     * TeamActiveChannelListEvent handler
+     * @param {CustomSDKEvent} evt
      * @method
      */
     private TeamActiveChannelListEvent = (evt: CustomSDKEvent) => {
@@ -288,7 +290,7 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
             label: d
         }));
         this.chart.labels = labels;
-    }
+    };
 
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods

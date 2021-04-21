@@ -403,3 +403,8 @@ tw-customer-journey {
         }
     }
 }
+
+.customer-journey-advanced-form .mat-dialog-container {
+    @apply twd-p-0;
+    @apply twd-rounded-2xl;
+}

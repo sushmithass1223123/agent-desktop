@@ -870,13 +870,15 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 allowed: agentConfig.Allowed,
                 allowedStates: agentConfig.AllowedStates,
                 blind: agentConfig.Blind,
-                source: agentConfig.Source
+                source: agentConfig.Source,
+                columns: agentConfig.Columns
             },
             skill: {
                 allowed: skillConfig.Allowed,
                 blind: false,
                 channelPrfix: skillConfig.ChannelPrefix,
-                source: skillConfig.Source
+                source: skillConfig.Source,
+                columns: skillConfig.Columns
             }
         };
         this.matDialog.open(AgentSkillListComponent, {

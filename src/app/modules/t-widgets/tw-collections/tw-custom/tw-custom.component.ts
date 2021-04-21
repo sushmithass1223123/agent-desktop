@@ -58,13 +58,13 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
      */
     subscriptions: Partial<{
         /**
-         * Events by Id  
+         * Events by Id
          */
         eventsById: Subscription;
         /**
          * All events
          */
-        allEvents: Subscription
+        allEvents: Subscription;
     }>;
 
     constructor(
@@ -271,8 +271,12 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
         const urlRef = this.url;
         this.url = null;
         this.loaded = false;
-        setTimeout((x) => {
-            this.url = x;
-        }, 0, urlRef);
+        setTimeout(
+            (x) => {
+                this.url = x;
+            },
+            0,
+            urlRef
+        );
     }
 }

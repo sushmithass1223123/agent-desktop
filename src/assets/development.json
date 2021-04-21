@@ -1113,7 +1113,7 @@
                                                             "Blind": false,
                                                             "Source": {
                                                                 "Use": "agentId",
-                                                                "Display": "agentName",
+                                                                "Display": "${[\"LastName\"]} , ${[\"FirstName\"]}",
                                                                 "FreeTextAllowed": true
                                                             },
                                                             "AllowedStates": []
@@ -1721,7 +1721,8 @@
                                                                 "Display": "agentName",
                                                                 "FreeTextAllowed": false
                                                             },
-                                                            "AllowedStates": []
+                                                            "AllowedStates": [],
+                                                            "Columns" :  ["FirstName", "LastName" , "AgentID", "CurrentAgentStatus"]
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
@@ -1733,7 +1734,8 @@
                                                             },
                                                             "ChannelPrefix": [
                                                                 "CH"
-                                                            ]
+                                                            ],
+                                                            "Columns" : ["Name", "VDN", "ID", "Stf", "Avl", "CIQ"]
                                                         }
                                                     },
                                                     "Conference": {
@@ -3263,10 +3265,10 @@
                                     "TMACEvent.IncomingCallEvent.PhoneNumber",
                                     "TMACEvent.IncomingCallEvent.UCID",
                                     "TMACEvent.CCLDataEvent.CIF",
-                                    "AgentData.AgentID",
-                                    "AgentData.DeviceID",
+                                    "AgentData.agentId",
+                                    "AgentData.deviceId",
                                     "https://meet.google.com/kps-shpr-neu?phoneNumber=${TMACEvent.IncomingCallEvent.PhoneNumber}&agentId=${AgentData.AgentID}",
-                                    "Rahil"
+                                    "rawtext"
                                 ],
                                 "Method": "RunCustomApplication",
                                 "ExeName": "AgentPopUp"
@@ -3330,7 +3332,7 @@
         "Notifications": {
             "Sounds": true,
             "SoundLevel": 1,
-            "DesktopAlerts": true,
+            "DesktopAlerts": false,
             "DesktopAlertTimeout": 5000,
             "AppAlertTimeout": 5000
         },

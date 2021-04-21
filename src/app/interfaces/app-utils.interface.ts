@@ -443,6 +443,10 @@ export interface AgentSkillListData {
          * Allowed states to do action
          */
         allowedStates: string[];
+        /**
+         * Allowed Columns
+         */
+        columns?: string[];
     };
     /**
      * Skill settings
@@ -464,6 +468,10 @@ export interface AgentSkillListData {
          * Channel prefix to filter skill list
          */
         channelPrfix: string[];
+        /**
+         * Allowed Columns
+         */
+        columns?: string[];
     };
     /**
      * Interaction Id
