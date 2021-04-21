@@ -1,12 +1,11 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TMACEventService } from '@services/tmac-event.service';
+import { getStringVars } from '@tmac/operators';
+import { IUIEvent, SDKClient, SignalRWrapper, TUtils } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AGENT_DATA_MAP } from 'app/constants';
 import { IWidget } from 'app/interfaces';
-import { formatJsonData } from 'app/utils';
-import { get, join } from 'lodash';
+import { get } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { IUIEvent, SDKClient, SignalRWrapper, TUtils } from 'tmac-sdk';
 
 /**
  * TCIS Integration Component
@@ -66,54 +65,26 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
             // .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
             .subscribe((evts) =>
                 evts.forEach((evt: IUIEvent) => {
+                    // check if recovery event, then return
+                    if (evt.RecoveryEvent) {
+                        return;
+                    }
+
                     // get the action based on event name
                     const action = this.WidgetData.Actions.filter((a) => a.EventName === evt.EventName)?.[0];
                     // if no action return
                     if (!action) {
                         return;
                     }
+
+                    let args = '';
                     // check if any action to be executed on this event
                     if (action.EventName === evt.EventName) {
-                        let actionParam = '';
                         if (action.Parameters && action.Parameters.length) {
-                            const AgentData = AGENT_DATA_MAP('LowerCase');
-                            const paramMap = action.Parameters.reduce((acc, curr) => {
-                                acc[curr.replaceAll('.', '_')] = curr.split('.');
-                                return acc;
-                            }, {});
-                            console.log({ paramMap, AgentData: SDKClient.getAgentData(), TMACEvent: evt });
-                            const vals = formatJsonData({ AgentData: SDKClient.getAgentData(), TMACEvent: evt }, paramMap);
-                            console.log({ vals });
-                            const args = Object.values(vals).join(',');
-                            console.log('#######################################', { args });
-                            action.Parameters.forEach((param) => {
-                                const splitParam = param.split('.');
-                                // check if the value to be taken from TMAC event
-                                if (splitParam[0].toLowerCase() === 'tmacevent') {
-                                    // TMACEvent.EventName.{...Property}
-                                    // get value from TMAC event
-                                    const getValue = this.FindInTMACEvent(splitParam, evt);
-                                    if (getValue) {
-                                        actionParam += getValue + ',';
-                                    }
-                                } else if (splitParam[0].toLowerCase() === 'agentdata') {
-                                    // AgentData.{...Property}
-                                    // get value from agent data
-                                    const regValue = this.FindInAgentData(splitParam);
-                                    if (regValue) {
-                                        actionParam += regValue + ',';
-                                    }
-                                } else {
-                                    actionParam += param + ',';
-                                }
-                            });
+                            args = this.reduceParams(action.Parameters, evt);
                         }
-
-                        // clear the trailing comma
-                        actionParam = actionParam.replace(/(^,)|(,$)/g, '');
-
                         // execute action
-                        // this.executeAction(action.Method, action.ExeName, actionParam);
+                        this.executeAction(action.Method, action.ExeName, (args || ',').slice(1));
                     }
                 })
             );
@@ -132,42 +103,48 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
     }
 
     /**
-     * To find value from TMAC events based on object map
-     *
-     * @param {string[]} splitParam
-     * @param {IUIEvent} evt
+     * Reduces parameters
+     * 
+     * @param {String[]} params 
+     * @param {IUIEvent} evt 
      */
-    private FindInTMACEvent(splitParam: string[], evt: IUIEvent): string {
-        let getValue = '';
-        // shift the first item out i.e., keyword TMACEvent
-        splitParam.shift();
-        // get all the interaction events and process the events and form params for action
-        this._tmacEventService.interactionEvents(evt.InteractionID).forEach((ev: IUIEvent) => {
-            if (splitParam[0] === ev.EventName) {
-                // shift the first item out i.e., EventName
-                splitParam.shift();
-                // map the property and get the value from event property
-                const valueMap = join(splitParam, '.');
-                // map the property and get the value from event property=
-                getValue = get(ev, valueMap, '');
-            }
-        });
-        return getValue;
-    }
-
-    /**
-     * To find value from Agent Data
-     *
-     * @param splitParam
-     */
-    private FindInAgentData(splitParam: string[]): string {
-        // get the agent data map
-        const mapObj = AGENT_DATA_MAP('LowerCase');
-        // add the query param
-        const reg = new RegExp(Object.keys(mapObj).join('|'), 'gi');
-        return splitParam[1].replace(reg, (matched: string) => {
-            return mapObj[matched.toLowerCase()] || '';
-        });
+    private reduceParams(params: string[], evt: IUIEvent): string {
+        try {
+            const AgentData = SDKClient.getAgentData();
+            return params.reduce((acc, curr) => {
+                const [prefix, tmacEvtName] = curr.split('.');
+                let TMACEvent = this._tmacEventService
+                    .interactionEvents(evt.InteractionID)
+                    .reverse()
+                    .find((e) => e.EventName === tmacEvtName);
+                if (TMACEvent?.EventName) {
+                    TMACEvent = {
+                        [TMACEvent.EventName]: TMACEvent
+                    };
+                }
+                if (prefix === 'AgentData') {
+                    const val = get({ AgentData }, curr, '');
+                    acc += `,${val}`;
+                } else if (prefix === 'TMACEvent') {
+                    const val = get({ TMACEvent }, curr, '');
+                    acc += `,${val}`;
+                } else {
+                    const newParams = getStringVars(curr);
+                    if (newParams) {
+                        const newParamVals = this.reduceParams(newParams.map((p) => p.replaceAll('${', '').replaceAll('}', '')), evt)?.slice(1)?.split(',');
+                        acc += `,${newParams.reduce((subAcc, subCurr, i) => {
+                            return subAcc.replaceAll(subCurr, newParamVals[i]);
+                        }, curr)}`;
+                    }
+                    else {
+                        acc += `,${curr}`;
+                    }
+                }
+                return acc;
+            }, '');
+        } catch (error) {
+            TUtils.Logger.error('Exception in TwTcisIntegrationComponent.reduceParams', error);
+        }
     }
 
     /**
@@ -181,7 +158,7 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
     /**
      * To register hub events
      */
-    private registerHubEvents(): void {}
+    private registerHubEvents(): void { }
 
     /**
      * Method to execute action to invoke the server

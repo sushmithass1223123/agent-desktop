@@ -5,7 +5,7 @@ import { GAMIFICATION_METRIC_LABELS } from 'app/constants';
 import { ResData } from 'app/interfaces';
 import { interval, Subscription } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
-import { SDKClient } from 'tmac-sdk';
+import { SDKClient } from '@tmac/sdk';
 
 /**
  * Performance chart data

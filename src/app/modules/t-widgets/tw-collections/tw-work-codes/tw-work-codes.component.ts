@@ -11,7 +11,7 @@ import { CustomSDKEvent, IWidget, ResData } from 'app/interfaces';
 import { groupBy, orderBy, uniqBy } from 'lodash';
 import { Observable } from 'rxjs';
 import { map, startWith, takeUntil } from 'rxjs/operators';
-import { SDKClient, WorkCode, WorkCodeAddedEvent } from 'tmac-sdk';
+import { SDKClient, WorkCode, WorkCodeAddedEvent } from '@tmac/sdk';
 
 /**
  * Work codes Component

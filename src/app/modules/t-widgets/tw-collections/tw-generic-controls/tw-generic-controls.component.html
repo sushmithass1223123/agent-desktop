@@ -1,0 +1,24 @@
+<tw-wrapper [data]="data">
+    <div fxLayout="row" fxLayoutAlign="space-between none" class="mt-4 p-12">
+        <div fxLayout="row" fxLayoutAlign=" center">
+            <mat-icon>assignment</mat-icon>
+            <div>{{ displayData.type }}</div>
+        </div>
+        <div fxLayout="row" fxLayoutAlign=" center">
+            <mat-icon>grading</mat-icon>
+            <div>{{ displayData.intent }}</div>
+        </div>
+        <div fxLayout="row" fxLayoutAlign=" center">
+            <button
+                mat-raised-button
+                class="border-radius-20"
+                color="warn"
+                #closeBtn
+                (click)="confirmCloseInteraction(closeBtn)"
+                matTooltip="Close Interaction"
+            >
+                Close
+            </button>
+        </div>
+    </div>
+</tw-wrapper>

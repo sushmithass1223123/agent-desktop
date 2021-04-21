@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AgentFeatures, AgentSettingsUpdatedEvent, SDKClient, TUtils } from 'tmac-sdk';
+import { AgentFeatures, AgentSettingsUpdatedEvent, SDKClient, TUtils } from '@tmac/sdk';
 import { AppUiService } from './app-ui.service';
 
 /**

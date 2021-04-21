@@ -9,6 +9,7 @@
 
         <tw-template
             [fxFlex.gt-md]="staticWidgets.length > 0 ? 66 : 100"
+            [ngClass]="{ 'static-less': staticWidgets.length === 0 }"
             class="dynamic-widget-grid"
             *ngIf="dynamicWidgets.length > 0"
             [widgets]="dynamicWidgets"
@@ -51,6 +52,6 @@
             </ng-container>
         </ng-template>
     </div>
-    
+
     <twc-no-widgets class="twc-card" *ngIf="staticWidgets.length === 0 && dynamicWidgets.length === 0" type="supervisor"></twc-no-widgets>
 </div>

@@ -15,7 +15,7 @@ import { groupBy, sortBy } from 'lodash';
 import * as moment from 'moment';
 import { Subscription, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { IAgentData, SDKClient } from 'tmac-sdk';
+import { IAgentData, SDKClient } from '@tmac/sdk';
 
 type ApiCalls = 'search' | 'pull' | 'push';
 type CallStates = 'loading' | 'error' | 'initial' | 'completed';

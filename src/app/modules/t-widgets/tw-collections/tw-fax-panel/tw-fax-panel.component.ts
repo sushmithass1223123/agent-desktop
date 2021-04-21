@@ -23,7 +23,7 @@ export class TwFaxPanelComponent extends TWidgetWrapper implements OnInit, OnDes
     /**
      * Holds all the fax panel widgets
      */
-    faxPanelWidgets = [];
+    widgets = [];
     /**
      * Maxmized referenece for widgets
      */
@@ -67,12 +67,10 @@ export class TwFaxPanelComponent extends TWidgetWrapper implements OnInit, OnDes
         // call the wrapper init method
         this.initWrapper(this.data);
         // get the toolbar menu widgets
-        this.faxPanelWidgets = this.data.Data.Widgets || [];
-        // get the interaction details
-        const interactionDetails = this.data.InteractionDetails;
+        this.widgets = (this.data.Data.Widgets).filter((w: IWidget) => w.Config.Enabled);
         // loop through the widgets and pass the interaction details
-        this.faxPanelWidgets.forEach((widget: IWidget) => {
-            widget.InteractionDetails = interactionDetails;
+        this.widgets.forEach((widget: IWidget) => {
+            widget.InteractionDetails = this.data.InteractionDetails;
             widget.Data.Path = this.data.Data.Path;
         });
     }

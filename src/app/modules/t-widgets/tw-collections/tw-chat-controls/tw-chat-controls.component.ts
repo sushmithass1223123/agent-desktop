@@ -48,7 +48,7 @@ import {
     TextChatUserMessageWaitTimerEvent,
     TextTemplate,
     TUtils
-} from 'tmac-sdk';
+} from '@tmac/sdk';
 
 const holdState = { onHold: true, buttonTooltip: 'Unhold', icon: 'play_arrow', loading: false };
 const unHoldState = { onHold: false, buttonTooltip: 'Hold', icon: 'pause', loading: false };
@@ -445,7 +445,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.startTime = new Date(Date.parse(this.data.InteractionDetails.CreatedTime)) || new Date();
 
         // get the file upload Url
-        this.fileUploadUrl = this.appConfig.Main.Content.Urls?.FileServerUrl || null;
+        this.fileUploadUrl = this.appConfig.Main.Urls?.FileServerUrl || null;
 
         // update the line Id
         this.lineId = this.data.InteractionDetails?.RecoveryData?.lineid || '';

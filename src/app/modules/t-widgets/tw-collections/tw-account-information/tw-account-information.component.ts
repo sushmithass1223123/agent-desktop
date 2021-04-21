@@ -3,7 +3,7 @@ import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-b
 import { AppUiService } from '@services/app-ui.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
-import { GenericEvent, SDKClient } from 'tmac-sdk';
+import { GenericEvent, SDKClient } from '@tmac/sdk';
 
 @Component({
     selector: 'tw-account-information',

@@ -28,6 +28,8 @@ import { TwFaxControlsComponent } from './tw-fax-controls/tw-fax-controls.compon
 import { TwFaxPanelComponent } from './tw-fax-panel/tw-fax-panel.component';
 import { RaceCarTrackComponent } from './tw-gamification/race-car-track/race-car-track.component';
 import { TwGamificationComponent } from './tw-gamification/tw-gamification.component';
+import { TwGenericControlsComponent } from './tw-generic-controls/tw-generic-controls.component';
+import { TwGenericPanelComponent } from './tw-generic-panel/tw-generic-panel.component';
 import { TwPanelComponent } from './tw-panel/tw-panel.component';
 import { TwPendingCallbacksComponent } from './tw-pending-callbacks/tw-pending-callbacks.component';
 import { TwPieChartComponent } from './tw-pie-chart/tw-pie-chart.component';
@@ -96,7 +98,9 @@ const collectionComponents = [
     TwEmailTemplatePreviewComponent,
     TwUserLocationComponent,
     TwFaxPanelComponent,
-    TwFaxControlsComponent
+    TwFaxControlsComponent,
+    TwGenericPanelComponent,
+    TwGenericControlsComponent
 ];
 
 /**

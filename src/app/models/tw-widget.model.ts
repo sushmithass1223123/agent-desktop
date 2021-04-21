@@ -1,5 +1,5 @@
 import { IWidgetConfig } from 'app/interfaces';
-import { TUtils } from 'tmac-sdk';
+import { TUtils } from '@tmac/sdk';
 /**
  * Widget model
  */

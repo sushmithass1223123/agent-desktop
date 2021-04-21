@@ -20,12 +20,12 @@
         <iframe
             *ngIf="url; else noURL"
             [src]="url"
-            [id]="'frame_' + data.ID"
+            [id]="'tw_frame_' + data.ID"
             class="frame"
             [ngClass]="{ 'border-radius-0': fuseConfig.flatTheme }"
             frameborder="0"
             seamless="seamless"
-            (load)="frameLoaded()"
+            (load)="frameLoaded($event)"
             allow="geolocation; microphone; camera;"
         ></iframe>
 

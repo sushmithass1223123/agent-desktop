@@ -399,20 +399,20 @@ export type AgentSkillListSourceObject<
      * Type of Display Key. Default : any
      */
     K = any
-> = {
-    /**
-     * This agent source is forwarded to any api calls / value assigning
-     */
-    Use: T;
-    /**
-     * This agent source is displayed
-     */
-    Display: K;
-    /**
-     * Allow freetext to redirect user to specified source's use key
-     */
-    FreeTextAllowed: boolean;
-};
+    > = {
+        /**
+         * This agent source is forwarded to any api calls / value assigning
+         */
+        Use: T;
+        /**
+         * This agent source is displayed
+         */
+        Display: K;
+        /**
+         * Allow freetext to redirect user to specified source's use key
+         */
+        FreeTextAllowed: boolean;
+    };
 
 export interface AgentSkillListData {
     /**
@@ -516,3 +516,31 @@ export type FuseBgConf = {
      */
     header: string;
 };
+
+
+export interface IPostMessage {
+    /**
+     * Function to call
+     */
+    function: string;
+    /**
+     * Callback function to be invoked 
+     */
+    callback: string;
+    /**
+     * Data to send
+     */
+    data: any;
+    /**
+     * Source name of the app
+     */
+    source: string;
+    /**
+     * Destination which should be tmac
+     */
+    destination: string;
+    /**
+     * User object
+     */
+    userObject: any;
+}

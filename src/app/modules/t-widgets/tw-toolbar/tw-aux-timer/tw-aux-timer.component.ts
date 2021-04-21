@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, Input, ViewEncapsulation } from '@angular/core';
 import { TWidgetWrapper } from '@twidgets/utils';
 import { Subscription, timer } from 'rxjs';
-import { SDKClient, AgentStatusChangeEvent } from 'tmac-sdk';
+import { SDKClient, AgentStatusChangeEvent } from '@tmac/sdk';
 import { takeUntil } from 'rxjs/operators';
 
 /**

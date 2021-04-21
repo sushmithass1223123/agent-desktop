@@ -7,7 +7,7 @@ import { TMACEventService } from '@services/tmac-event.service';
 import { InteractionRef, InteractionWidgets, IWidget } from 'app/interfaces';
 import { cloneDeep } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { FaxReceivedEvent, InteractionClosedEvent } from 'tmac-sdk';
+import { FaxReceivedEvent, InteractionClosedEvent } from '@tmac/sdk';
 
 /**
  * Fax Content Component
@@ -67,12 +67,12 @@ export class TwcFaxComponent extends TWContentWrapper implements OnInit {
     /**
      * To process FaxReceivedEvent
      */
-    private FaxReceivedEvent = (evt: FaxReceivedEvent) => {
+    private FaxReceivedEvent(evt: FaxReceivedEvent): void {
         // get the content widgets
         const faxWidgets = cloneDeep(this.data.Data.Widgets) || [];
 
         const staticWidgets = faxWidgets.Static || [];
-        const dynamicWidgets = JSON.parse(evt.WidgetConfigData) || faxWidgets.Dynamic || [];
+        const dynamicWidgets = (evt.WidgetConfigData && JSON.parse(evt.WidgetConfigData)) || faxWidgets.Dynamic || [];
         const aotWidgets = faxWidgets.AOT || [];
 
         // loop the widgets and add append interaction details
@@ -118,7 +118,7 @@ export class TwcFaxComponent extends TWContentWrapper implements OnInit {
     /**
      * To process interaction closed event for voice
      */
-    private InteractionClosedEvent = (evt: InteractionClosedEvent) => {
+    private InteractionClosedEvent(evt: InteractionClosedEvent): void {
         this.interactions = this.interactions.filter((i: InteractionWidgets) => i.interactionId !== evt.InteractionID);
         // if there are other item in the list auto select fist fax after closing current
         if (this.interactions.length > 0) {

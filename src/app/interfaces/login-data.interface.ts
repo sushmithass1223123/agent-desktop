@@ -1,4 +1,4 @@
-import { IAgentData, IConfig, IConnection } from 'tmac-sdk';
+import { IAgentData, IConfig, IConnection } from '@tmac/sdk';
 
 /**
  * Need more description

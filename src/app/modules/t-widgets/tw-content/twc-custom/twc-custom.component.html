@@ -1,17 +1,3 @@
-<!-- <mat-card class="animate__animated animate__fadeIn animate__faster" [ngStyle]="{ 'width.px': screenWidth, 'height.px': screenHeight }">
-    <div fxFlex fxFill fxLayout="row" fxLayoutAlign="center center">
-        <div class="spinner" *ngIf="!loaded">
-            <mat-spinner></mat-spinner>
-        </div>
-
-        <div fxFlex fxFill fxLayout="row" fxLayoutAlign="center center" *ngIf="!url">
-            <span class="mat-display-1 mb-0"> Custom URL not found! </span>
-        </div>
-
-        <iframe *ngIf="url" [src]="url" class="frame" frameborder="0" seamless="seamless" allow="geolocation; microphone; camera;"></iframe>
-    </div>
-</mat-card> -->
-
 <tw-wrapper [data]="widgetData" (refreshEvent)="onRefreshEvent()">
     <div fxFlex fxFill fxLayout="row" fxLayoutAlign="center center" class="position-relative">
         <div
@@ -31,14 +17,14 @@
         <iframe
             *ngIf="url; else noURL"
             [src]="url"
-            [id]="'frame_' + data.ID"
+            [id]="'twc_frame_' + data.ID"
             class="frame"
             [ngClass]="{
                 'border-radius-0': fuseConfig.flatTheme
             }"
             frameborder="0"
             seamless="seamless"
-            (load)="frameLoaded()"
+            (load)="frameLoaded($event)"
             allow="geolocation; microphone; camera;"
         ></iframe>
 

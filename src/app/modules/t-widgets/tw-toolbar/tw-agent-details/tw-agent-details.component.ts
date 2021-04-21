@@ -2,7 +2,7 @@ import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { AppUiService } from '@services/app-ui.service';
 import { TWidgetWrapper } from '@twidgets/utils';
-import { AgentSettingsUpdatedEvent, AgentStatusChangeEvent, AUXCodeUpdateEvent, IAgentData, IAUXCodes, IResponse, SDKClient } from 'tmac-sdk';
+import { AgentSettingsUpdatedEvent, AgentStatusChangeEvent, AUXCodeUpdateEvent, IAgentData, IAUXCodes, IResponse, SDKClient } from '@tmac/sdk';
 /**
  * Agent Details component
  */

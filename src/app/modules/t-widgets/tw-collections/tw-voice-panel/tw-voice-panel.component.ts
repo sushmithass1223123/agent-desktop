@@ -1,9 +1,6 @@
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation, AfterViewInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
-import { AppDataService } from '@services/app-data.service';
-import { ContentPageService } from '@services/content-page.service';
-import { InteractionManagerService } from '@services/interaction-manager.service';
 
 /**
  * Voice panel component
@@ -14,7 +11,7 @@ import { InteractionManagerService } from '@services/interaction-manager.service
     styleUrls: ['./tw-voice-panel.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class TwVoicePanelComponent extends TWidgetWrapper implements OnInit, OnDestroy, AfterViewInit {
+export class TwVoicePanelComponent extends TWidgetWrapper implements OnInit, OnDestroy {
 
     /**
      * App config json data
@@ -24,7 +21,7 @@ export class TwVoicePanelComponent extends TWidgetWrapper implements OnInit, OnD
     /**
      * Voice panel Widget list
      */
-    voicePanelWidgets = [];
+    widgets = [];
 
     /**
      * Default values for maximize state
@@ -59,10 +56,7 @@ export class TwVoicePanelComponent extends TWidgetWrapper implements OnInit, OnD
         }
     ];
 
-    constructor(
-        private _contentPageService: ContentPageService,
-        private _interactionManagerService: InteractionManagerService
-    ) {
+    constructor() {
         super();
     }
 
@@ -78,27 +72,12 @@ export class TwVoicePanelComponent extends TWidgetWrapper implements OnInit, OnD
         // call the wrapper init method
         this.initWrapper(this.data);
         // get the toolbar menu widgets
-        this.voicePanelWidgets = this.data.Data.Widgets || [];
-        // get the interaction details
-        const interactionDetails = this.data.InteractionDetails;
+        this.widgets = (this.data.Data.Widgets).filter((w: IWidget) => w.Config.Enabled);
         // loop through the widgets and pass the interaction details
-        this.voicePanelWidgets.forEach((widget: IWidget) => {
-            widget.InteractionDetails = interactionDetails;
+        this.widgets.forEach((widget: IWidget) => {
+            widget.InteractionDetails = this.data.InteractionDetails;
+            widget.Data.Path = this.data.Data.Path;
         });
-    }
-
-    /**
-     * Lifecycle hook
-     * @method
-     */
-    ngAfterViewInit(): void {
-        // check if the current page is textchat page
-        if (this._interactionManagerService.getInteractionCount().active <= 1 &&
-            this._contentPageService.getCurrentMode() !== this.data.Path) {
-            setTimeout(() => {
-                this._contentPageService.mode = this.data.Data.Path;
-            }, 500);
-        }
     }
 
     /**

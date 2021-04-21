@@ -8,7 +8,7 @@ import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CustomSDKEvent } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
-import { InteractionData, SDKClient } from 'tmac-sdk';
+import { InteractionData, SDKClient } from '@tmac/sdk';
 
 /**
  * Agent Interactions details Table widget

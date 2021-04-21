@@ -4,7 +4,7 @@ import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { groupBy } from 'lodash';
-import { AgentInteractionTemplate, CallDisconnectedEvent, IResponse, SDKClient, TUtils } from 'tmac-sdk';
+import { AgentInteractionTemplate, CallDisconnectedEvent, IResponse, SDKClient, TUtils } from '@tmac/sdk';
 
 /**
  * TwVoiceCannedResponsesComponent

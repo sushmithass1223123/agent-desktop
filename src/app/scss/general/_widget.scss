@@ -109,6 +109,8 @@ body.fit-to-screen {
     grid-auto-rows: minmax(273px, 1fr);
     margin-bottom: 16px;
     max-width: calc(100vw - 20px);
+    overflow: auto;
+    padding-bottom: 1px;
 
     @include media-breakpoint('gt-xs') {
         max-width: calc(100vw - 112px);
@@ -121,6 +123,13 @@ body.fit-to-screen {
     @include media-breakpoint('gt-md') {
         margin-bottom: 0;
         grid-template-columns: repeat(auto-fit, minmax(calc(100% / 5), 1fr));
+    }
+
+    &.static-less {
+        @include media-breakpoint('gt-md') {
+            margin-bottom: 0;
+            grid-template-columns: repeat(auto-fit, minmax(calc(100% / 7), 1fr));
+        }
     }
 }
 

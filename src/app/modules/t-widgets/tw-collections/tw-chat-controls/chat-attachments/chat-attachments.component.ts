@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { AppUiService } from '@services/app-ui.service';
-import { FileSaveData, SDKClient, TUtils } from 'tmac-sdk';
+import { FileSaveData, SDKClient, TUtils } from '@tmac/sdk';
 
 /**
  * Chat attachment module

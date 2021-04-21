@@ -313,7 +313,8 @@
                             color="default"
                             [disabled]="(status !== 'connected' && status !== 'hold') || interactionOnHold.loading"
                             [ngClass]="
-                                (status !== 'disconnected' && (interactionOnHold.onHold ? 'bg-success' : 'bg-warning')) +
+                                ((status === 'connected' || status === 'hold' || status === 'unhold') &&
+                                    (interactionOnHold.onHold ? 'bg-success' : 'bg-warning')) +
                                 ' ' +
                                 (status === 'connected' ? 'mat-elevation-z2' : '')
                             "

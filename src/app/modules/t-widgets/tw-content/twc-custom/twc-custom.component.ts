@@ -2,12 +2,15 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@an
 import { DomSanitizer } from '@angular/platform-browser';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
+import { AppDataService } from '@services/app-data.service';
 import { TMACEventService } from '@services/tmac-event.service';
+import { getStringVars, setStringVars } from '@tmac/operators';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
-import { AGENT_DATA_MAP } from 'app/constants';
+import { IPostMessage } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
 import { Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { SDKClient } from '@tmac/sdk';
 
 /**
  * Custom content component
@@ -27,10 +30,6 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
      * Frame loaded flag
      */
     loaded = false;
-    /**
-     * Initial loaded flag
-     */
-    initialLoad: boolean;
     /**
      * Url to load the frame
      */
@@ -59,7 +58,8 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
         public contentPageService: ContentPageService,
         private _sanitizer: DomSanitizer,
         private _tmacEventService: TMACEventService,
-        private _fuseConfigService: FuseConfigService
+        private _fuseConfigService: FuseConfigService,
+        private _appDataService: AppDataService
     ) {
         super(hostElement, contentPageService);
     }
@@ -70,10 +70,24 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-        // Subscribe to the config changes
-        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((fuseConfig: FuseConfig) => {
-            this.fuseConfig = fuseConfig;
-        });
+
+        // subscribe to the config changes
+        this._fuseConfigService.config
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((fuseConfig: FuseConfig) => {
+                this.fuseConfig = fuseConfig;
+            });
+
+        // register to post message subject
+        this._appDataService.postMessage
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((data: IPostMessage) => {
+                // check if the function is to get TMAC events
+                if (data.function?.toLowerCase() === 'gettmacevents') {
+                    this.sendEventsToWindow(this._tmacEventService.nonInteractionEvents());
+                }
+            });
+
         this.eventSubscriptions = null;
         this.unload = this.data.Data.Unload || false;
     }
@@ -84,6 +98,7 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+        this.eventSubscriptions = null;
     }
 
     /**
@@ -91,8 +106,8 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
      *
      * @param {any[]} events
      */
-    private sendEventsToWindow(evts: any[]): void {
-        const iframe = document.getElementById('frame_' + this.data.ID);
+    private sendEventsToWindow(evts: any): void {
+        const iframe = document.getElementById('twc_frame_' + this.data.ID);
         // get the element
         const element = iframe ? (iframe as HTMLIFrameElement).contentWindow : null;
         // check if the element is present
@@ -130,14 +145,30 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
                 // get the url
                 let url = this.data.Data.Url;
 
-                // get the agent data map
-                const mapObj = AGENT_DATA_MAP();
+                const stringVals = getStringVars(url);
+                let setJson = {};
 
-                // add the query param
-                const reg = new RegExp(Object.keys(mapObj).join('|'), 'gi');
-                url = url.replace(reg, (matched: any) => {
-                    return mapObj[matched];
-                });
+                if (stringVals && stringVals.length) {
+                    stringVals.forEach(val => {
+                        // get the path by taking string between ()
+                        const path = val.substring(
+                            val.lastIndexOf('${') + 2,
+                            val.lastIndexOf('}')
+                        );
+                        const splitPath = path.split('.');
+                        if (splitPath[0].toLowerCase() === 'agentdata') {
+                            setJson = {
+                                ...setJson,
+                                AgentData: SDKClient.getAgentData()
+                            };
+                        }
+                    });
+
+                    // check if json has data
+                    if (Object.keys(setJson).length) {
+                        url = setStringVars(url, setJson);
+                    }
+                }
 
                 // load the iframe URL
                 this.url = this.transform(url);
@@ -162,7 +193,6 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
             if (this.unload) {
                 this.loaded = false;
                 this.url = null;
-                this.initialLoad = false;
                 // check if interval has started then clear
                 if (this.autoRefreshInterval) {
                     clearInterval(this.autoRefreshInterval);
@@ -174,23 +204,21 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
     /**
      * Iframe loaded event
      */
-    frameLoaded = () => {
-        // check if this is not initial load
-        if (this.initialLoad) {
-            // set the loaded flag to true
+    frameLoaded = (evt: any) => {
+        if (!this.eventSubscriptions) {
+            // subscribe to all non interaction events
+            this.eventSubscriptions = this._tmacEventService
+                .getAllEvents()
+                .pipe(takeUntil(this.unsubscribeAll))
+                .subscribe((evts) => this.sendEventsToWindow(evts));
+        }
+
+        // check if id is there to make sure loaded completely
+        if (evt.currentTarget.id) {
+            // set loaded to true
             setTimeout(() => {
                 this.loaded = true;
             });
-            if (!this.eventSubscriptions) {
-                // subscribe to all non interaction events
-                this.eventSubscriptions = this._tmacEventService
-                    .getAllEvents()
-                    .pipe(takeUntil(this.unsubscribeAll))
-                    .subscribe((evts) => this.sendEventsToWindow(evts));
-            }
-        } else {
-            // set initial load to true
-            this.initialLoad = true;
         }
     }
 
@@ -200,7 +228,6 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
     onRefreshEvent(): void {
         const urlRef = this.url;
         this.url = null;
-        this.initialLoad = false;
         this.loaded = false;
         setTimeout((x) => {
             this.url = x;

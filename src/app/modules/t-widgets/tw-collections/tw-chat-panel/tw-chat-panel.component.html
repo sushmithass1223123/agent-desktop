@@ -1,6 +1,6 @@
 <tw-wrapper [data]="data">
     <div fxFlex fxFill fxLayout="column" class="tw-chat-panel">
-        <ng-container *ngFor="let widget of chatPanelWidgets">
+        <ng-container *ngFor="let widget of widgets">
             <tw-chat-controls
                 [data]="widget"
                 *ngIf="widget.Type === 'tw-chat-controls'"

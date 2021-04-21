@@ -15,7 +15,7 @@ import { locale as navigationTurkish } from 'app/navigation/i18n/tr';
 import { navigation } from 'app/navigation/navigation';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient } from 'tmac-sdk';
+import { SDKClient } from '@tmac/sdk';
 import { environment } from '../environments/environment';
 
 // declare global

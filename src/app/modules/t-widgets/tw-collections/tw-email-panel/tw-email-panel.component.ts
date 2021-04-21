@@ -2,6 +2,9 @@ import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 
+/**
+ * Email Panel Component
+ */
 @Component({
     selector: 'tw-email-panel',
     templateUrl: './tw-email-panel.component.html',
@@ -17,7 +20,7 @@ export class TwEmailPanelComponent extends TWidgetWrapper implements OnInit, OnD
     /**
      * Holds all the email panel widgets
      */
-    emailPanelWidgets = [];
+    widgets = [];
     /**
      * Maxmized referenece for widgets
      */
@@ -61,12 +64,10 @@ export class TwEmailPanelComponent extends TWidgetWrapper implements OnInit, OnD
         // call the wrapper init method
         this.initWrapper(this.data);
         // get the toolbar menu widgets
-        this.emailPanelWidgets = this.data.Data.Widgets || [];
-        // get the interaction details
-        const interactionDetails = this.data.InteractionDetails;
+        this.widgets = (this.data.Data.Widgets).filter((w: IWidget) => w.Config.Enabled);
         // loop through the widgets and pass the interaction details
-        this.emailPanelWidgets.forEach((widget: IWidget) => {
-            widget.InteractionDetails = interactionDetails;
+        this.widgets.forEach((widget: IWidget) => {
+            widget.InteractionDetails = this.data.InteractionDetails;
             widget.Data.Path = this.data.Data.Path;
         });
     }
