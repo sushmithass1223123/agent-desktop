@@ -1,6 +1,7 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -17,7 +18,7 @@ import { sortBy } from 'lodash';
 import * as moment from 'moment';
 import { from, Observable, of } from 'rxjs';
 import { catchError, map, share, takeUntil, tap } from 'rxjs/operators';
-import { IGetInteractionHistory, InteractionAction, InteractionHistory, InteractionHistoryReadyEvent, IUIEvent, SDKClient } from 'tmac-sdk';
+import { IGetInteractionHistory, InteractionAction, InteractionHistory, InteractionHistoryReadyEvent, SDKClient } from 'tmac-sdk';
 
 type Mode = 'Session History' | 'Notes' | 'Actions' | 'Transcript' | null;
 
@@ -68,11 +69,6 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         Agent: new FormControl(''),
         Intent: new FormControl('')
     });
-
-    // interactionNotesForm = new FormGroup({
-    //     fromDate: new FormControl(''),
-    //     toDate: new FormControl('')
-    // });
 
     interactionNotesReq: ResData<Observable<string[]>> = {
         error: false,
@@ -158,12 +154,48 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     maximized: boolean;
     interactionDateCols = ['InteractionDateStart', 'InteractionDateEnd'];
 
+    /**
+     * Ng-template ref for advanced search form
+     */
+    @ViewChild('advancedSearchFormRef') set advancedSearchRef(content: any) {
+        this.advancedSearchModal.ref = content;
+    }
+
+    /**
+     * Advanced search modal Ui related configs
+     */
+    advancedSearchModal = {
+        ref: null,
+        open: () => {
+            if (this.advancedSearchModal.ref) {
+                this.advancedSearchModal.openedRef = this.matDialog.open(this.advancedSearchModal.ref, {
+                    width: '50%',
+                    panelClass: 'customer-journey-advanced-form'
+                });
+            }
+        },
+        openedRef: null,
+        close: () => {
+            this.advancedSearchModal.openedRef?.close();
+        }
+    };
+
+    /**
+     *
+     * @param _fuseConfigService
+     * @param _tmacEventService
+     * @param sanitizer
+     * @param _appUIService
+     * @param _appDataService
+     * @param matDialog
+     */
     constructor(
         private _fuseConfigService: FuseConfigService,
         private _tmacEventService: TMACEventService,
         private sanitizer: DomSanitizer,
         private _appUIService: AppUiService,
-        private _appDataService: AppDataService
+        private _appDataService: AppDataService,
+        private matDialog: MatDialog
     ) {
         super();
         this.customerJourneyTable = {
@@ -358,6 +390,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      * Gets interaction history and sets to table
      */
     private getInteractionHistory(lastId?: string): void {
+        // // Interaction History Dummy data
         // SDKClient.getInteractionHistory(
         //     lastId ? { ...this.historyParams, lastId, phone: '96975347' } : { ...this.historyParams, phone: '96975347' },
         //     null
@@ -562,4 +595,9 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         this.customerJourneyTable.tableData.selection.clear();
         this.interactionTranscripts = JSON.stringify(this.interactionTranscripts);
     }
+
+    /**
+     * Opens advanced search form inside a modal window
+     */
+    openAdvancedSearchModal(): void {}
 }

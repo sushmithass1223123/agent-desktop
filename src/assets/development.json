@@ -1194,7 +1194,7 @@
                                                             "Blind": false,
                                                             "Source": {
                                                                 "Use": "agentId",
-                                                                "Display": "agentName",
+                                                                "Display": "${[\"LastName\"]} , ${[\"FirstName\"]}",
                                                                 "FreeTextAllowed": true
                                                             },
                                                             "AllowedStates": []
@@ -1999,7 +1999,8 @@
                                                                 "Display": "agentName",
                                                                 "FreeTextAllowed": false
                                                             },
-                                                            "AllowedStates": []
+                                                            "AllowedStates": [],
+                                                            "Columns" :  ["FirstName", "LastName" , "AgentID", "CurrentAgentStatus"]
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
@@ -2011,7 +2012,8 @@
                                                             },
                                                             "ChannelPrefix": [
                                                                 "CH"
-                                                            ]
+                                                            ],
+                                                            "Columns" : ["Name", "VDN", "ID", "Stf", "Avl", "CIQ"]
                                                         }
                                                     },
                                                     "Conference": {
@@ -3902,7 +3904,7 @@
                     },
                     "Data": {
                         "OpenInNew": false,
-                        "Url": "https://tmac.tetherfilabs.com/tcie-web-appv8?id=_agentId"
+                        "Url": "https://tmac.tetherfilabs.com/tcie-web-appv8?id=${AgentData.AgentId}"
                     }
                 },
                 {
@@ -3911,12 +3913,12 @@
                     "Key": "TCIS",
                     "Type": "tw-tcis-integration",
                     "Config": {
-                        "Enabled": false,
-                        "Hidden": false,
+                        "Enabled": true,
+                        "Hidden": true,
                         "Static": false,
                         "Anchor": false,
-                        "AOT": false,
-                        "AutoOpen": false,
+                        "AOT": true,
+                        "AutoOpen": true,
                         "Icon": "",
                         "Class": "",
                         "Position": {
@@ -3943,8 +3945,8 @@
                                     "TMACEvent.IncomingCallEvent.PhoneNumber",
                                     "TMACEvent.IncomingCallEvent.UCID",
                                     "TMACEvent.CCLDataEvent.CIF",
-                                    "AgentData.AgentID",
-                                    "AgentData.DeviceID"
+                                    "AgentData.agentId",
+                                    "AgentData.deviceId"
                                 ],
                                 "Method": "RunCustomApplication",
                                 "ExeName": "AgentPopUp"
@@ -3998,7 +4000,7 @@
         "Notifications": {
             "Sounds": true,
             "SoundLevel": 1,
-            "DesktopAlerts": true,
+            "DesktopAlerts": false,
             "DesktopAlertTimeout": 5000,
             "AppAlertTimeout": 5000
         },
@@ -4052,6 +4054,8 @@
         "SDK": {
             "Proxy": {
                 "Urls": [
+                    "https://dice.tetherfi.cloud/TMACSDKProxyV5/TmacProxy.asmx",
+                    "https://localhost:55443/SDKTMACProxy/TmacProxy.asmx",
                     "https://dice.tetherfi.cloud/TMACSDKProxyv6/TmacProxy.asmx",
                     "https://localhost:55443/SDKTMACProxy/TmacProxy.asmx",
                     "https://idfcvpd.tetherfi.cloud/TMACSDKProxy/tmacproxy.asmx",

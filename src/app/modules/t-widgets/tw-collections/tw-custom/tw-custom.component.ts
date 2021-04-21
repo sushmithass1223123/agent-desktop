@@ -9,6 +9,10 @@ import { AGENT_DATA_MAP } from 'app/constants';
 import { IWidget } from 'app/interfaces';
 import { Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { getStringVars, setStringVars } from '@tmac/operators';
+import { IUIEvent, SDKClient } from 'tmac-sdk';
+import { get, join } from 'lodash';
+import { formatJsonData } from 'app/utils';
 
 /**
  * TwCustomComponent
@@ -60,13 +64,13 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
      */
     subscriptions: Partial<{
         /**
-         * Events by Id  
+         * Events by Id
          */
         eventsById: Subscription;
         /**
          * All events
          */
-        allEvents: Subscription
+        allEvents: Subscription;
     }>;
 
     constructor(
@@ -94,25 +98,60 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
             // get the url
             let url = this.data.Data.Url;
 
-            // get the agent data map
-            let mapObj = AGENT_DATA_MAP();
+            // // get the agent data map
+            // let mapObj = AGENT_DATA_MAP();
 
-            // check if interaction details are there
-            if (this.data.InteractionDetails) {
-                this.interactionId = this.data.InteractionDetails.InteractionID;
-                mapObj = { ...mapObj, ...this.data.InteractionDetails };
-            }
+            // // check if interaction details are there
+            // if (this.data.InteractionDetails) {
+            //     this.interactionId = this.data.InteractionDetails.InteractionID;
+            //     mapObj = { ...mapObj, ...this.data.InteractionDetails };
+            // }
 
-            // check if extra map data sent with in an interaction
-            if (this.data.Data.MapObject) {
-                mapObj = { ...mapObj, ...this.data.Data.MapObject };
-            }
+            // // check if extra map data sent with in an interaction
+            // if (this.data.Data.MapObject) {
+            //     mapObj = { ...mapObj, ...this.data.Data.MapObject };
+            // }
 
-            // add the query param
-            const reg = new RegExp(Object.keys(mapObj).join('|'), 'gi');
-            url = url.replace(reg, (matched: any) => {
-                return mapObj[matched] || matched;
-            });
+            // // add the query param
+            // const reg = new RegExp(Object.keys(mapObj).join('|'), 'gi');
+            // url = url.replace(reg, (matched: any) => {
+            //     return mapObj[matched] || matched;
+            // });
+
+            // const AgentData = AGENT_DATA_MAP('LowerCase');
+            const setJson = setStringVars(url, { AgentData: SDKClient.getAgentData() });
+
+            // const setJson = {};
+
+            // if (stringVals && stringVals.length) {
+            //     stringVals.forEach((val) => {
+            //         // get the path by taking string between ()
+            //         const path = val.substring(val.lastIndexOf('${') + 2, val.lastIndexOf('}'));
+            //         const splitPath = path.split('.');
+
+            //         const vals = formatJsonData(
+            //             {
+            //                 AgentData: this.FindInAgentData(splitPath) ?? '',
+            //                 TmacEvent: this.data.InteractionDetails
+            //             },
+            //             splitPath.reduce((acc, curr) => {
+            //                 acc[curr] = curr.split('.');
+            //                 return acc;
+            //             }, {})
+            //         );
+
+            //         if (splitPath[0].toLowerCase() === 'agentdata') {
+            //             setJson[path] = this.FindInAgentData(splitPath) ?? '';
+            //         } else if (this.data.InteractionDetails && splitPath[0].toLowerCase() === 'tmacevent') {
+            //             setJson[path] = this.FindInTMACEvent(splitPath, this.data.InteractionDetails) ?? '';
+            //         }
+            //     });
+
+            //     // check if json has data
+            //     if (Object.keys(setJson).length) {
+            //         url = setStringVars(url, setJson);
+            //     }
+            // }
 
             // check 'Open In New' widget
             if (this.data.Data.OpenInNew) {
@@ -152,9 +191,6 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                 }, Number(this.data.Data.AutoRefresh) * 1000);
             }
         }
-
-        // register to TMAC events
-        // SDKClient.events.on('onTMACEvent', this.onTMACEvent);
     }
 
     /**
@@ -163,9 +199,45 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+    }
 
-        // de register from TMAC events
-        // SDKClient.events.off('onTMACEvent', this.onTMACEvent);
+    /**
+     * To find value from TMAC events based on object map
+     *
+     * @param {string[]} splitParam
+     * @param {IUIEvent} evt
+     */
+    private FindInTMACEvent(splitParam: string[], evt: IUIEvent): string {
+        let getValue = '';
+        // shift the first item out i.e., keyword TMACEvent
+        splitParam.shift();
+        // get all the interaction events and process the events and form params for action
+        this._tmacEventService.interactionEvents(evt.InteractionID).forEach((ev: IUIEvent) => {
+            if (splitParam[0] === ev.EventName) {
+                // shift the first item out i.e., EventName
+                splitParam.shift();
+                // map the property and get the value from event property
+                const valueMap = join(splitParam, '.');
+                // map the property and get the value from event property=
+                getValue = get(ev, valueMap, '');
+            }
+        });
+        return getValue;
+    }
+
+    /**
+     * To find value from Agent Data
+     *
+     * @param splitParam
+     */
+    private FindInAgentData(splitParam: string[]): any {
+        // get the agent data map
+        const mapObj = AGENT_DATA_MAP('LowerCase');
+        // add the query param
+        const reg = new RegExp(Object.keys(mapObj).join('|'), 'gi');
+        return splitParam[1].replace(reg, (matched: string) => {
+            return mapObj[matched.toLowerCase()] || '';
+        });
     }
 
     /**
@@ -238,7 +310,7 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
         //     // set initial load to true
         //     this.initialLoad = true;
         // }
-    }
+    };
 
     /**
      * On refresh event
@@ -248,8 +320,12 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
         this.url = null;
         this.initialLoad = false;
         this.loaded = false;
-        setTimeout((x) => {
-            this.url = x;
-        }, 0, urlRef);
+        setTimeout(
+            (x) => {
+                this.url = x;
+            },
+            0,
+            urlRef
+        );
     }
 }
