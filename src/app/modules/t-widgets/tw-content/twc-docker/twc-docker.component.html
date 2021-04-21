@@ -1,4 +1,4 @@
-<div class="tw-widget-container custom-scroll" [ngStyle]="{ 'width.px': screenWidth, 'height.px': screenHeight }">
+<div class="tw-widget-container custom-scroll" [ngStyle]="{ 'width.px': screenWidth, 'height.px': screenHeight }" *ngIf="loaded">
     <div fxFill fxFlex fxLayout="row wrap" fxLayoutAlign=" none" *ngIf="dockerWidgets?.length">
         <tw-template class="widget-grid" [widgets]="dockerWidgets"></tw-template>
     </div>

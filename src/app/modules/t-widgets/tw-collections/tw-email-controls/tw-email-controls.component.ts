@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -8,6 +8,7 @@ import { FuseConfig } from '@fuse/types';
 import { AgentSkillListComponent, CreateEmailComponent } from '@modules/shared/components';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
+import { ContentPageService } from '@services/content-page.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
@@ -17,7 +18,7 @@ import { CreateEmailInfo } from 'app/models';
 import { interval, Observable, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
 import { distinctUntilChanged, filter, map, mergeAll } from 'rxjs/operators';
-import { IAgentData, InteractionDataEvent, IResponse, SDKClient } from 'tmac-sdk';
+import { IAgentData, InteractionDataEvent, IResponse, SDKClient } from '@tmac/sdk';
 
 /**
  * Email controls component
@@ -28,7 +29,7 @@ import { IAgentData, InteractionDataEvent, IResponse, SDKClient } from 'tmac-sdk
     styleUrls: ['./tw-email-controls.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, AfterViewInit, OnDestroy {
     /**
      * data from widget
      */
@@ -187,7 +188,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         private _fuseProgressBarService: FuseProgressBarService,
         private _appUIService: AppUiService,
         private matDialog: MatDialog,
-        private _tmacEventService: TMACEventService
+        private _tmacEventService: TMACEventService,
+        private _contentPageService: ContentPageService
     ) {
         super();
     }
@@ -307,6 +309,20 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             )
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
+    }
+
+    /**
+     * Lifecycle hook
+     * @method
+     */
+    ngAfterViewInit(): void {
+        // check if the current page is textchat page
+        if (this._interactionManagerService.getInteractionCount().active <= 1 &&
+            this._contentPageService.getCurrentMode() !== this.data.Data.Path) {
+            setTimeout(() => {
+                this._contentPageService.mode = this.data.Data.Path;
+            }, 500);
+        }
     }
 
     /**

@@ -4,7 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatColors } from '@fuse/mat-colors';
 import { AppUiService } from '@services/app-ui.service';
 import { format } from 'date-fns';
-import { IAUXCodes, SDKClient } from 'tmac-sdk';
+import { IAUXCodes, SDKClient } from '@tmac/sdk';
 import { CustomCalendarEvent } from '../calendar.interface';
 import { CalendarEventModel } from '../calendar.model';
 

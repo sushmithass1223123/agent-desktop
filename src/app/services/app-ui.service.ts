@@ -20,7 +20,7 @@ import {
 import { map } from 'lodash';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { TUtils } from 'tmac-sdk';
+import { TUtils } from '@tmac/sdk';
 import { AppDataService } from './app-data.service';
 
 type UiChanActions = 'hold/select-chat';

@@ -1,6 +1,6 @@
 <tw-wrapper [data]="data">
     <div fxFlex fxFill fxLayout="column" class="tw-email-panel">
-        <ng-container *ngFor="let widget of emailPanelWidgets">
+        <ng-container *ngFor="let widget of widgets">
             <tw-email-controls
                 [data]="widget"
                 *ngIf="widget.Type === 'tw-email-controls'"

@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { takeUntil } from 'rxjs/operators';
-import { DashboardColorCodeModel, SDKClient, WallboardRefreshEvent } from 'tmac-sdk';
+import { DashboardColorCodeModel, SDKClient, WallboardRefreshEvent } from '@tmac/sdk';
 
 /**
  * Wallboard componet
@@ -15,8 +15,7 @@ import { DashboardColorCodeModel, SDKClient, WallboardRefreshEvent } from 'tmac-
     selector: 'tw-wallboard',
     templateUrl: './tw-wallboard.component.html',
     styleUrls: ['./tw-wallboard.component.scss'],
-    encapsulation: ViewEncapsulation.None,
-    changeDetection: ChangeDetectionStrategy.OnPush
+    encapsulation: ViewEncapsulation.None
 })
 export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     /**

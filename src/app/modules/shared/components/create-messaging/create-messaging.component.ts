@@ -7,7 +7,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { sortBy } from 'lodash';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
-import { IResponse, SDKClient } from 'tmac-sdk';
+import { IResponse, SDKClient } from '@tmac/sdk';
 import { SharedWrapperComponent } from '../shared-wrapper/shared-wrapper.component';
 
 /**

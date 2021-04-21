@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AgentStateDurationList, IAgentData, SDKClient, SignalRWrapper, TUtils } from 'tmac-sdk';
+import { AgentStateDurationList, IAgentData, SDKClient, SignalRWrapper, TUtils } from '@tmac/sdk';
 import { AppDataService } from './app-data.service';
 import { TMACEventService } from './tmac-event.service';
 
@@ -260,7 +260,7 @@ export class DashboardService {
 
         this._appDataService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
             // check whether the Urls are provided in config
-            this._serviceUrls = config.Main.Content.Urls?.DashboardServerUrls || [];
+            this._serviceUrls = config.Main.Urls?.DashboardServerUrls || [];
             // if urls are there then start service
             if (this._serviceUrls.length > 0 && !this._serviceStarted) {
                 this.startService();

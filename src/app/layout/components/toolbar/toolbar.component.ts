@@ -6,7 +6,7 @@ import { IWidget } from 'app/interfaces';
 import { AppDataService } from 'app/services/app-data.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient } from 'tmac-sdk';
+import { SDKClient } from '@tmac/sdk';
 
 /**
  * Toolbar component

@@ -16,6 +16,14 @@ export class TwcDockerComponent extends TWContentWrapper implements OnInit, OnDe
      * To hold static widgets
      */
     dockerWidgets = [];
+    /**
+     * Loaded flag
+     */
+    loaded: boolean;
+    /**
+     * Flag to unload the page
+     */
+    unload: boolean;
 
     constructor(
         public hostElement: ElementRef,
@@ -34,6 +42,9 @@ export class TwcDockerComponent extends TWContentWrapper implements OnInit, OnDe
         // get the docker content widgets
         this.dockerWidgets = this.data.Data.Widgets.Static || [];
 
+        // to unload the page
+        this.unload = this.data.Data.Unload || false;
+
     }
 
     /**
@@ -41,5 +52,25 @@ export class TwcDockerComponent extends TWContentWrapper implements OnInit, OnDe
      */
     ngOnDestroy(): void {
         this.destroyWrapper();
+    }
+
+    /**
+     * On page active callback
+     */
+    onActive = () => {
+        if (!this.loaded) {
+            this.loaded = true;
+        }
+    }
+
+    /**
+     * On page inactive callback
+     */
+    onInactive = () => {
+        if (this.loaded && this.pageActive) {
+            if (this.unload) {
+                this.loaded = false;
+            }
+        }
     }
 }

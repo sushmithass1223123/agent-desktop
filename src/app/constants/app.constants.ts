@@ -1,6 +1,5 @@
-import { Color } from 'ng2-charts';
-import { SDKClient, TUtils } from 'tmac-sdk';
 import { AppAlertDialogTypes, AppConfirmDialogTypes, ReminderTaskDialogTypes } from 'app/interfaces';
+import { Color } from 'ng2-charts';
 
 /**
  * Chart colors
@@ -75,44 +74,6 @@ export const FAILED_CALL_STATUSES = ['DacNotificationFailed'];
  * Pending callback statuses
  */
 export const PENDING_CALL_STATUSES = ['Open', 'QueueConnected'];
-
-/**
- * Agent Data map
- */
-export const AGENT_DATA_MAP = (type?: 'UpperCase' | 'LowerCase') => {
-    try {
-        // get the agent data
-        const agentData = SDKClient.getAgentData();
-        // get the keys
-        const keys = Object.keys(agentData);
-        // create a map object
-        const mapObj = new Object();
-        // check the type
-        if (type === 'UpperCase') {
-            // loop through keys and create the map
-            keys.forEach((item) => {
-                mapObj[item.toUpperCase()] = agentData[item];
-            });
-        }
-        else if (type === 'LowerCase') {
-            // loop through keys and create the map
-            keys.forEach((item) => {
-                mapObj[item.toLowerCase()] = agentData[item];
-            });
-        }
-        else {
-            // loop through keys and create the map
-            keys.forEach((item) => {
-                mapObj[`_${item}`] = agentData[item];
-            });
-        }
-        // return the map
-        return mapObj;
-    } catch (error) {
-        TUtils.Logger.log('Exception in AGENT_DATA_MAP', error);
-    }
-    return new Object();
-};
 
 /**
  * Alert dialog constants

@@ -11,7 +11,7 @@ import { QUILL_EDITOR_CONFIG } from 'app/constants';
 import { CreateEmailInfo, TwWidgetModel } from 'app/models';
 import { merge } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
-import { EmailTemplate, SDKClient } from 'tmac-sdk';
+import { EmailTemplate, SDKClient } from '@tmac/sdk';
 
 /**
  * Email creation component view only

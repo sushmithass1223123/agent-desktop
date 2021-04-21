@@ -8,7 +8,7 @@ import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { ContentPageService } from 'app/services/content-page.service';
 import { Observable } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
-import { IAgentData, SDKClient } from 'tmac-sdk';
+import { IAgentData, SDKClient } from '@tmac/sdk';
 
 /**
  * Supervisor content widget

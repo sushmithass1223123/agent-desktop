@@ -4,7 +4,7 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { ResData } from 'app/interfaces';
 import { interval, Subscription } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
-import { SDKClient } from 'tmac-sdk';
+import { SDKClient } from '@tmac/sdk';
 
 /**
  * Agent dashboard gamification widget

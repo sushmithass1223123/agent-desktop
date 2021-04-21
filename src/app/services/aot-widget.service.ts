@@ -4,7 +4,7 @@ import { TwWidgetModel } from 'app/models';
 import { merge } from 'lodash';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { TUtils } from 'tmac-sdk';
+import { TUtils } from '@tmac/sdk';
 import { AppDataService } from './app-data.service';
 
 /**
@@ -89,7 +89,7 @@ export class AOTWidgetService {
     public addWidget(widget: IWidget): void {
 
         // check if the widget is null
-        if (!widget) {
+        if (!widget || !widget.Config.Enabled) {
             return;
         }
 

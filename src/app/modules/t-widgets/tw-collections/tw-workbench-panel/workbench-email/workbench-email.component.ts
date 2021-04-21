@@ -19,7 +19,7 @@ import { groupBy } from 'lodash';
 import * as moment from 'moment';
 import { Observable } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
-import { SDKClient } from 'tmac-sdk';
+import { SDKClient } from '@tmac/sdk';
 
 type AvailableTabs = 'inbox' | 'sentitem' | 'queue' | 'draft';
 type EmailPullItem = {

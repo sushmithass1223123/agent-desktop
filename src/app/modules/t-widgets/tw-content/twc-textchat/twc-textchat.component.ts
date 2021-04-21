@@ -7,7 +7,7 @@ import { ContentPageService } from 'app/services/content-page.service';
 import { InteractionManagerService } from 'app/services/interaction-manager.service';
 import { cloneDeep } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { InteractionClosedEvent, TextChatIncomingEvent } from 'tmac-sdk';
+import { InteractionClosedEvent, TextChatIncomingEvent } from '@tmac/sdk';
 
 /***
  * Textchat Content Component
@@ -80,7 +80,7 @@ export class TwcTextchatComponent extends TWContentWrapper implements OnInit, On
         const textchatWidgets = cloneDeep(this.data.Data.Widgets) || [];
 
         const staticWidgets = textchatWidgets.Static || [];
-        const dynamicWidgets = JSON.parse(evt.WidgetConfigData) || textchatWidgets.Dynamic || [];
+        const dynamicWidgets = (evt.WidgetConfigData && JSON.parse(evt.WidgetConfigData)) || textchatWidgets.Dynamic || [];
         // TEST
         // const dynamicWidgets = textchatWidgets.Dynamic || [];
         const aotWidgets = textchatWidgets.AOT || [];

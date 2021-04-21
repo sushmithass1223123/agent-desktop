@@ -10,7 +10,7 @@ import { TwWidgetModel } from 'app/models';
 import { groupBy, sortBy } from 'lodash';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AgentAVMessageEvent, AgentNotificaitonEvent, AVControlMessageReceivedEvent, IAgentData, SDKClient, SuAgentModel, TUtils } from 'tmac-sdk';
+import { AgentAVMessageEvent, AgentNotificaitonEvent, AVControlMessageReceivedEvent, IAgentData, SDKClient, SuAgentModel, TUtils } from '@tmac/sdk';
 import { InstantMessagingService } from './instant-messaging.service';
 
 /**

@@ -5,7 +5,7 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { sortBy, uniqBy } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { CallerIntentEvent, IResponse, IUIEvent, SDKClient, WorkCodeAddedEvent } from 'tmac-sdk';
+import { CallerIntentEvent, IResponse, IUIEvent, SDKClient, WorkCodeAddedEvent } from '@tmac/sdk';
 
 /**
  * TW canned Responses

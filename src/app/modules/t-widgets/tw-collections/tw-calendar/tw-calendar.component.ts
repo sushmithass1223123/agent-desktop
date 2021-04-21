@@ -10,7 +10,7 @@ import { IWidget } from 'app/interfaces';
 import { format, isBefore, isSameDay, isSameMonth, startOfDay } from 'date-fns';
 import * as moment from 'moment';
 import { Subject } from 'rxjs';
-import { AgentReminder, SDKClient } from 'tmac-sdk';
+import { AgentReminder, SDKClient } from '@tmac/sdk';
 import { CustomCalendarEvent, CustomEventAction } from './calendar.interface';
 import { CalendarEventModel } from './calendar.model';
 import { CalendarEventFormDialogComponent } from './event-form/event-form.component';

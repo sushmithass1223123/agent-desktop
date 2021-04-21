@@ -3,7 +3,7 @@ import { InteractionRef, InteractionCount } from 'app/interfaces';
 import { map } from 'lodash';
 import { Observable } from 'rxjs';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
-import { SDKClient, TUtils } from 'tmac-sdk';
+import { SDKClient, TUtils } from '@tmac/sdk';
 
 /**
  * Need more Description

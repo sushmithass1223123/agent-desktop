@@ -26,7 +26,7 @@ import {
     TmacServerConnectionAborted,
     TmacServerConnectionSuccess,
     TUtils
-} from 'tmac-sdk';
+} from '@tmac/sdk';
 import { AOTWidgetService } from './aot-widget.service';
 import { AppDataService } from './app-data.service';
 import { AppUiService } from './app-ui.service';
@@ -603,10 +603,14 @@ export class TMACEventService {
      * @param {GenericInteractionEvent} evt
      */
     private GenericInteractionEvent = (evt: GenericInteractionEvent) => {
+        // check the type for TCMVoiceWQ
+        if (evt.Item.Type.toLowerCase() !== 'tcmvoicewq') {
+            return;
+        }
         const { PhoneNumber } = evt.Item;
         const { agentId, deviceId } = SDKClient.getAgentData();
         // inform TCM proxy about the assignment
-        const tcmClientUrl = this.appConfig.Main.Content.Urls.TCMClient || '';
+        const tcmClientUrl = this.appConfig.Main.Urls.TCMClient || '';
         // only notify that callback request is assigned if it was assigned the first time and not if the UI is reloaded or re-login
         if (!evt.RecoveryEvent) {
             if (tcmClientUrl) {
@@ -959,15 +963,25 @@ export class TMACEventService {
     }
 
     /**
-     * To get all the received events for an interaction.
-     * Sometimes interaction events may be received by SDK before
-     * app is finishing up with components creation.
+     * To get all the existing interaction events.
      *
      * @param interactionId ID of the interaction
      */
     public interactionEvents(interactionId: number): any[] {
         // get the events based on interaction Id
         const events = this._interactionEventArray.filter((i) => i.InteractionID === interactionId);
+        if (events.length > 0) {
+            return events;
+        }
+        return [];
+    }
+
+    /**
+     * To get all the existing non interaction events.
+     */
+    public nonInteractionEvents(): any[] {
+        // get the events based on interaction Id
+        const events = this._nonInteractionEventArray;
         if (events.length > 0) {
             return events;
         }

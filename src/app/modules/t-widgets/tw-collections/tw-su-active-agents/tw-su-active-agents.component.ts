@@ -25,7 +25,7 @@ import {
     SuAgentDataModel,
     SuAgentModel,
     TUtils
-} from 'tmac-sdk';
+} from '@tmac/sdk';
 
 /**
  * Active agents component widget
