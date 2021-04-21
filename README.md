@@ -30,7 +30,7 @@ All the the collection widgets created to be added under `modules/t-widgets/util
 
 Please refer to `tw-sample` component under `modules/t-widgets/tw-collections/` to create a widget.
 
-TMAC SDK can accessed using `SDKClient` variable which is a property under `tmac-sdk` package. All the event names and interfaces are also available.
+TMAC SDK can accessed using `SDKClient` variable which is a property under `@tmac/sdk` package. All the event names and interfaces are also available.
 
 Once the developement is completed please commit to your branch and raise a merge-request to the `develop` branch.
 

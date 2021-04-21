@@ -5,7 +5,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { takeUntil } from 'rxjs/operators';
-import { DashboardColorCodeModel, SDKClient, WallboardRefreshEvent } from 'tmac-sdk';
+import { DashboardColorCodeModel, SDKClient, WallboardRefreshEvent } from '@tmac/sdk';
 
 /**
  * Wallboard componet

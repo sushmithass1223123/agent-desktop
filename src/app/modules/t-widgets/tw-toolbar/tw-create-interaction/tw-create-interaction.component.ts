@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { widgetFabAnimations } from '@modules/shared/animations/widget-fab.animation';
 import { AgentSkillListComponent, CreateMessagingComponent } from '@modules/shared/components';
 import { IWidget } from 'app/interfaces';
-import { IAUXCodes, SDKClient } from 'tmac-sdk';
+import { IAUXCodes, SDKClient } from '@tmac/sdk';
 
 /**
  * Create interaction

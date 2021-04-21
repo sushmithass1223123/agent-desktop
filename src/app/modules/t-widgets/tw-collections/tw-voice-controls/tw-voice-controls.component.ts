@@ -40,7 +40,7 @@ import {
     TEnums,
     TUtils,
     UUIDataEvent
-} from 'tmac-sdk';
+} from '@tmac/sdk';
 
 /**
  * Voice Controls Component

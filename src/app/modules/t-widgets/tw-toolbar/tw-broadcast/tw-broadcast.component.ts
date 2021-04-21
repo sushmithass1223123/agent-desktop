@@ -1,7 +1,7 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { AppUiService } from '@services/app-ui.service';
 import { TWidgetWrapper } from '@twidgets/utils';
-import { AgentNotificaitonEvent, SDKClient } from 'tmac-sdk';
+import { AgentNotificaitonEvent, SDKClient } from '@tmac/sdk';
 /**
  * Broadcat component
  */

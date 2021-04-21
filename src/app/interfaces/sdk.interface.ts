@@ -1,4 +1,4 @@
-// import { AgentChannelDataModel } from 'tmac-sdk';
+// import { AgentChannelDataModel } from '@tmac/sdk';
 
 export interface QuizEvent {
     ACK: any;

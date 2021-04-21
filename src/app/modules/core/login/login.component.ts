@@ -10,7 +10,7 @@ import { AppDataService } from 'app/services/app-data.service';
 import { set, merge } from 'lodash';
 import { interval, Observable, Subject } from 'rxjs';
 import { filter, map, take, takeUntil, tap } from 'rxjs/operators';
-import { CommandResultEvent, IResponse, SDKClient, TUtils } from 'tmac-sdk';
+import { CommandResultEvent, IResponse, SDKClient, TUtils } from '@tmac/sdk';
 import { environment } from '../../../../environments/environment';
 
 /**

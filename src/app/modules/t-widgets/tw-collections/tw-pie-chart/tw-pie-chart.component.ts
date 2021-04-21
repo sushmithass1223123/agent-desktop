@@ -1,12 +1,12 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { TwWrapperComponent } from '@modules/t-widgets/tw-wrapper/tw-wrapper.component';
 import { TMACEventService } from '@services/tmac-event.service';
+import { SDKClient, WallboardRefreshEvent } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CHART_COLORS } from 'app/constants';
 import { CustomSDKEvent, IWidget, TwChartConfig } from 'app/interfaces';
 import { orderBy, sortBy } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { AgentChannelDataList, AgentStateDurationList, SDKClient, TeamIntentDataList, WallboardRefreshEvent } from 'tmac-sdk';
 
 /**
  * Colors for chart
@@ -117,12 +117,6 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
      * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
      */
     ngOnDestroy(): void {
-        // SDKClient.events.off('TeamActiveStatusDetailsEvent', this.TeamActiveStatusDetailsEvent);
-        // SDKClient.events.off('TeamWallboardRefreshEvent', this.TeamWallboardRefreshEvent);
-        // SDKClient.events.off('TeamIntentListEvent', this.TeamIntentListEvent);
-        // SDKClient.events.off('TeamChannelListEvent', this.TeamChannelListEvent);
-        // SDKClient.events.off('AgentChannelDetailsEvent', this.AgentChannelDetailsEvent);
-        // SDKClient.events.off('TeamActiveChannelListEvent', this.TeamActiveChannelListEvent);
         // call the wrapper destroy method
         this.destroyWrapper();
     }
@@ -205,8 +199,10 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
         }));
         allDatasets.labels = labels;
 
-        this.chart.datasets = allDatasets.datasets.map((x) => ({ ...x, data: x.data.slice(0, 5) }));
-        this.chart.labels = allDatasets.labels.slice(0, 5);
+        if (!this.wrapperComponent.maximized) {
+            this.chart.datasets = allDatasets.datasets.map((x) => ({ ...x, data: x.data.slice(0, 5) }));
+            this.chart.labels = allDatasets.labels.slice(0, 5);
+        }
 
         this.wrapperComponent.maximizeEvent
             .asObservable()

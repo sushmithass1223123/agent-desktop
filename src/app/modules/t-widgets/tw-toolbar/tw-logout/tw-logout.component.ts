@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { AppUiService } from '@services/app-ui.service';
 import { TWidgetWrapper } from '@twidgets/utils';
-import { IAUXCodes, IResponse, SDKClient } from 'tmac-sdk';
+import { IAUXCodes, IResponse, SDKClient } from '@tmac/sdk';
 
 /**
  * Logout button component

@@ -4,7 +4,7 @@ import { Title } from '@angular/platform-browser';
 import { environment } from 'environments/environment';
 import { merge } from 'lodash';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { IResponse, SDKClient, TEnums, TUtils } from 'tmac-sdk';
+import { IResponse, SDKClient, TEnums, TUtils } from '@tmac/sdk';
 import { version } from '../../../package.json';
 
 /**

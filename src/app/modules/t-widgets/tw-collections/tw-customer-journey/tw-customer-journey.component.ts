@@ -18,7 +18,7 @@ import { sortBy } from 'lodash';
 import * as moment from 'moment';
 import { from, Observable, of } from 'rxjs';
 import { catchError, map, share, takeUntil, tap } from 'rxjs/operators';
-import { IGetInteractionHistory, InteractionAction, InteractionHistory, InteractionHistoryReadyEvent, SDKClient } from 'tmac-sdk';
+import { IGetInteractionHistory, InteractionAction, InteractionHistory, InteractionHistoryReadyEvent, SDKClient } from '@tmac/sdk';
 
 type Mode = 'Session History' | 'Notes' | 'Actions' | 'Transcript' | null;
 

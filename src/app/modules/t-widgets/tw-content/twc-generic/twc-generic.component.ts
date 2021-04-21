@@ -7,7 +7,7 @@ import { TMACEventService } from '@services/tmac-event.service';
 import { InteractionRef, InteractionWidgets, IWidget } from 'app/interfaces';
 import { cloneDeep } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { GenericInteractionEvent, InteractionClosedEvent } from 'tmac-sdk';
+import { GenericInteractionEvent, InteractionClosedEvent } from '@tmac/sdk';
 
 /**
  * Generic Content Component

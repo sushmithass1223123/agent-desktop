@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
-import { IResponse, TUtils } from 'tmac-sdk';
+import { IResponse, TUtils } from '@tmac/sdk';
 import { TwWidgetModel } from 'app/models';
 
 /**

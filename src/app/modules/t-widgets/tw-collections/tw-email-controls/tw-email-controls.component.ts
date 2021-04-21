@@ -18,7 +18,7 @@ import { CreateEmailInfo } from 'app/models';
 import { interval, Observable, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
 import { distinctUntilChanged, filter, map, mergeAll } from 'rxjs/operators';
-import { IAgentData, InteractionDataEvent, IResponse, SDKClient } from 'tmac-sdk';
+import { IAgentData, InteractionDataEvent, IResponse, SDKClient } from '@tmac/sdk';
 
 /**
  * Email controls component

@@ -6,7 +6,7 @@ import { CHART_COLORS, CUSTOMER_SENTIMENT_PLOT_RECORDS } from 'app/constants';
 import { TwChartConfig, IWidget } from 'app/interfaces';
 import * as Chart from 'chart.js';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient, GenericEvent } from 'tmac-sdk';
+import { SDKClient, GenericEvent } from '@tmac/sdk';
 
 /**
  * Neutral image

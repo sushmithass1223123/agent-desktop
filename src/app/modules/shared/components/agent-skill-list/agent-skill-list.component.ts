@@ -12,7 +12,7 @@ import { AgentSkillListData, AgentSkillListSourceObject } from 'app/interfaces';
 import { orderBy } from 'lodash';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
-import { AgentModel, CommandResultEvent, FavouriteSkill, IResponse, IResponseData, QueueStatusEvent, SDKClient } from 'tmac-sdk';
+import { AgentModel, CommandResultEvent, FavouriteSkill, IResponse, IResponseData, QueueStatusEvent, SDKClient } from '@tmac/sdk';
 import { SharedWrapperComponent } from '../shared-wrapper/shared-wrapper.component';
 
 /**

@@ -5,7 +5,7 @@ import { get, join } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 import {
     IUIEvent
-} from 'tmac-sdk';
+} from '@tmac/sdk';
 
 /**
  * Custommer details widget

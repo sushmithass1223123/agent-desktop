@@ -3,7 +3,7 @@ import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-b
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils';
 import { IWidget } from 'app/interfaces';
-import { AgentStatusChangeEvent, IAgentData, IAUXCodes, IResponse, SDKClient } from 'tmac-sdk';
+import { AgentStatusChangeEvent, IAgentData, IAUXCodes, IResponse, SDKClient } from '@tmac/sdk';
 
 @Component({
     selector: 'tw-aux-codes',

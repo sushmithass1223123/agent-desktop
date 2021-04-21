@@ -5,7 +5,7 @@ import { TWidgetWrapper } from '@twidgets/utils';
 import { AppNotification } from 'app/interfaces';
 import { orderBy } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { AgentNotificaitonEvent, SDKClient } from 'tmac-sdk';
+import { AgentNotificaitonEvent, SDKClient } from '@tmac/sdk';
 
 /**
  * Notfications Component

@@ -9,7 +9,7 @@ import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { IWidget, ReqCampaignContact, ResCampaign, ResData } from 'app/interfaces';
 import { AppUiService } from 'app/services/app-ui.service';
 import * as moment from 'moment';
-import { SDKClient, IUIEvent, CCLDataEvent, TextChatRemoteUserConnectedEvent } from 'tmac-sdk';
+import { SDKClient, IUIEvent, CCLDataEvent, TextChatRemoteUserConnectedEvent } from '@tmac/sdk';
 import { join } from 'lodash';
 import { get } from 'lodash';
 import { fuseAnimations } from '@fuse/animations';

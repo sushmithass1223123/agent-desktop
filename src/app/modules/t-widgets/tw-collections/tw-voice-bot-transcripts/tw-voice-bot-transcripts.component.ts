@@ -6,7 +6,7 @@ import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { ChatTranscripts } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
-import { IAgentData, IUIEvent, SDKClient, VoiceBotTranscriptEvent } from 'tmac-sdk';
+import { IAgentData, IUIEvent, SDKClient, VoiceBotTranscriptEvent } from '@tmac/sdk';
 
 @Component({
     selector: 'tw-voice-bot-transcripts',

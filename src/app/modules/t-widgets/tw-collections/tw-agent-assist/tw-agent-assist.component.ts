@@ -8,7 +8,7 @@ import { IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { orderBy } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { AgentAssistDataEvent, CallerIntentEvent, GenericEvent, TextChatRemoteUserConnectedEvent } from 'tmac-sdk';
+import { AgentAssistDataEvent, CallerIntentEvent, GenericEvent, TextChatRemoteUserConnectedEvent } from '@tmac/sdk';
 
 /**
  * Agent Assist Component

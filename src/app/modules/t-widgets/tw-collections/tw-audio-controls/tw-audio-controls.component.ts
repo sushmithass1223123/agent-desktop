@@ -18,7 +18,7 @@ import {
     TEnums,
     TextChatDisconnectedEvent,
     TUtils
-} from 'tmac-sdk';
+} from '@tmac/sdk';
 import { TwChatControlsComponent } from '../tw-chat-controls/tw-chat-controls.component';
 
 /**

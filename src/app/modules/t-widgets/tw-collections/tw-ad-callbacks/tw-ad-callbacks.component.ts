@@ -7,7 +7,7 @@ import { CustomSDKEvent, ResData } from 'app/interfaces';
 import { sortBy } from 'lodash';
 import * as moment from 'moment';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient } from 'tmac-sdk';
+import { SDKClient } from '@tmac/sdk';
 
 /**
  * Agent Callbacks Widget

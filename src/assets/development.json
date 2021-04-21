@@ -1722,7 +1722,12 @@
                                                                 "FreeTextAllowed": false
                                                             },
                                                             "AllowedStates": [],
-                                                            "Columns" :  ["FirstName", "LastName" , "AgentID", "CurrentAgentStatus"]
+                                                            "Columns": [
+                                                                "FirstName",
+                                                                "LastName",
+                                                                "AgentID",
+                                                                "CurrentAgentStatus"
+                                                            ]
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
@@ -1735,7 +1740,14 @@
                                                             "ChannelPrefix": [
                                                                 "CH"
                                                             ],
-                                                            "Columns" : ["Name", "VDN", "ID", "Stf", "Avl", "CIQ"]
+                                                            "Columns": [
+                                                                "Name",
+                                                                "VDN",
+                                                                "ID",
+                                                                "Stf",
+                                                                "Avl",
+                                                                "CIQ"
+                                                            ]
                                                         }
                                                     },
                                                     "Conference": {
@@ -3260,14 +3272,13 @@
                         "Hub": "AgentPopUpHub",
                         "Actions": [
                             {
-                                "EventName": "CallDisconnectedEvent",
+                                "EventName": "TextChatDisconnectedEvent",
                                 "Parameters": [
-                                    "TMACEvent.IncomingCallEvent.PhoneNumber",
-                                    "TMACEvent.IncomingCallEvent.UCID",
-                                    "TMACEvent.CCLDataEvent.CIF",
+                                    "TMACEvent.TextChatIncomingEvent.UCID",
+                                    "TMACEvent.TextChatRemoteUserConnectedEvent.Intent",
                                     "AgentData.agentId",
                                     "AgentData.deviceId",
-                                    "https://meet.google.com/kps-shpr-neu?phoneNumber=${TMACEvent.IncomingCallEvent.PhoneNumber}&agentId=${AgentData.AgentID}",
+                                    "https://meet.google.com/kps-shpr-neu?phoneNumber=${TMACEvent.TextChatIncomingEvent.PhoneNumber}&agentId=${AgentData.agentId}",
                                     "rawtext"
                                 ],
                                 "Method": "RunCustomApplication",
@@ -3386,8 +3397,8 @@
         "SDK": {
             "Proxy": {
                 "Urls": [
-                    "https://localhost:55443/SDKTMACProxy/TmacProxy.asmx",
-                    "https://dice.tetherfi.cloud/TMACSDKProxyv5/TmacProxy.asmx"
+                    "https://dice.tetherfi.cloud/TMACSDKProxyv5/TmacProxy.asmx",
+                    "https://localhost:55443/SDKTMACProxy/TmacProxy.asmx"
                 ],
                 "Type": "soap",
                 "Timeout": 30

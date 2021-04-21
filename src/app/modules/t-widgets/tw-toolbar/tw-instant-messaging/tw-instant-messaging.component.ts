@@ -3,7 +3,7 @@ import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { AppUiService } from '@services/app-ui.service';
 import { TWidgetWrapper } from '@twidgets/utils';
 import { InstantMessagingService } from 'app/layout/components/instant-messaging/instant-messaging.service';
-import { AgentNotificaitonEvent, SDKClient } from 'tmac-sdk';
+import { AgentNotificaitonEvent, SDKClient } from '@tmac/sdk';
 /**
  * Instant messaging sidebar component
  */

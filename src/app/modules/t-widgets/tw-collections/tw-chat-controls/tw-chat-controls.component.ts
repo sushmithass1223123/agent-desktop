@@ -48,7 +48,7 @@ import {
     TextChatUserMessageWaitTimerEvent,
     TextTemplate,
     TUtils
-} from 'tmac-sdk';
+} from '@tmac/sdk';
 
 const holdState = { onHold: true, buttonTooltip: 'Unhold', icon: 'play_arrow', loading: false };
 const unHoldState = { onHold: false, buttonTooltip: 'Hold', icon: 'pause', loading: false };

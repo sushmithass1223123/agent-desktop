@@ -1,7 +1,7 @@
 import { HostBinding, Directive } from '@angular/core';
 import { Subject } from 'rxjs';
 import { IWidget } from 'app/interfaces';
-import { TUtils } from 'tmac-sdk';
+import { TUtils } from '@tmac/sdk';
 
 /**
  * T Widget Wrapper directive

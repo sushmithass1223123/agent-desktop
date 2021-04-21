@@ -3,7 +3,7 @@ import { ContentPageService } from '@services/content-page.service';
 import { IWidget } from 'app/interfaces';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { TUtils } from 'tmac-sdk';
+import { TUtils } from '@tmac/sdk';
 
 /**
  * TW content wrapper directive

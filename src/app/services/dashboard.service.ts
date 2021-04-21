@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AgentStateDurationList, IAgentData, SDKClient, SignalRWrapper, TUtils } from 'tmac-sdk';
+import { AgentStateDurationList, IAgentData, SDKClient, SignalRWrapper, TUtils } from '@tmac/sdk';
 import { AppDataService } from './app-data.service';
 import { TMACEventService } from './tmac-event.service';
 

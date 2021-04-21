@@ -7,7 +7,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { ContentPageService } from '@services/content-page.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { IWidget } from 'app/interfaces';
-import { IResponse, SDKClient } from 'tmac-sdk';
+import { IResponse, SDKClient } from '@tmac/sdk';
 
 /**
  * Generic Controls Components

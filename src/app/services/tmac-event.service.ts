@@ -26,7 +26,7 @@ import {
     TmacServerConnectionAborted,
     TmacServerConnectionSuccess,
     TUtils
-} from 'tmac-sdk';
+} from '@tmac/sdk';
 import { AOTWidgetService } from './aot-widget.service';
 import { AppDataService } from './app-data.service';
 import { AppUiService } from './app-ui.service';

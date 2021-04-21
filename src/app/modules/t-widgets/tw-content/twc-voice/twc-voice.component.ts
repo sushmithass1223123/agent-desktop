@@ -7,7 +7,7 @@ import { InteractionRef, InteractionWidgets, IWidget } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
 import { cloneDeep } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { IncomingCallEvent, InteractionClosedEvent, OutgoingCallEvent } from 'tmac-sdk';
+import { IncomingCallEvent, InteractionClosedEvent, OutgoingCallEvent } from '@tmac/sdk';
 
 /**
  * Voice content component

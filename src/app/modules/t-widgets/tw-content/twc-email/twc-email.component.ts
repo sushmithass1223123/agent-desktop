@@ -7,7 +7,7 @@ import { ContentPageService } from 'app/services/content-page.service';
 import { InteractionManagerService } from 'app/services/interaction-manager.service';
 import { cloneDeep } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { IncomingEmailEvent, InteractionClosedEvent } from 'tmac-sdk';
+import { IncomingEmailEvent, InteractionClosedEvent } from '@tmac/sdk';
 
 /**
  * TwcEmailComponent
