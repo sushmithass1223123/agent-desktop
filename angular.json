@@ -55,7 +55,8 @@
                             "dom-set",
                             "rxjs",
                             "@mattlewis92/dom-autoscroller",
-                            "chartjs-plugin-piechart-outlabels"
+                            "chartjs-plugin-piechart-outlabels",
+                            "@tmac/operators"
                         ],
                         "customWebpackConfig": {
                             "path": "webpack.config.js"

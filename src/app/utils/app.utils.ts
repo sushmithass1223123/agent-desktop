@@ -14,13 +14,13 @@ export const formatJsonData = <T = Record<Generic, Generic | Generic[]>>(data: R
             set(acc, cur, data[formatConfig[cur] as string]);
         } else if (Array.isArray(formatConfig[cur])) {
             const value = (formatConfig[cur] as Generic[]).reduce((subAcc, subCur) => {
-                if (!Object.keys(subAcc).length) {
+                if (!subAcc) {
                     subAcc = data[subCur];
                 } else {
-                    subAcc = subAcc[subCur];
+                    subAcc = subAcc ? subAcc[subCur] : null;
                 }
                 return subAcc;
-            }, {});
+            }, null);
             set(acc, cur, value);
         }
         return acc;

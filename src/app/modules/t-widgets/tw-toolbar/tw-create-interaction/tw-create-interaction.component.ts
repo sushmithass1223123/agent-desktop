@@ -93,11 +93,13 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
                             allowed: true,
                             blind: false,
                             source: data.Data.Source,
-                            allowedStates: data.Data.AllowedState
+                            allowedStates: data.Data.AllowedState,
+                            columns: data.Data.Columns
                         },
                         skill: {
                             allowed: false,
-                            blind: false
+                            blind: false,
+                            columns: data.Data.Columns
                         }
                     },
                     panelClass: 'agent-skill-dialog',
