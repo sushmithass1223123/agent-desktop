@@ -88,8 +88,8 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
         this.chart.type = this.widgetData.ChartType || 'pie';
 
         let eventName = '';
-        switch (this.widgetData.Source) {
-            case 'aux-status':
+        switch (this.widgetData.Source.toLowerCase()) {
+            case 'auxstatus':
                 if (this.widgetData.Role === 'agent') {
                     eventName = 'AgentStatusDetailsEvent';
                 }
@@ -98,15 +98,15 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
                 }
                 break;
 
-            case 'calls-in-queue':
+            case 'ciq':
                 eventName = 'TeamWallboardRefreshEvent';
                 break;
 
-            case 'intent-list':
+            case 'intentlist':
                 eventName = 'TeamIntentListEvent';
                 break;
 
-            case 'total-interactions':
+            case 'totalinteractions':
                 if (this.widgetData.Role === 'agent') {
                     eventName = 'AgentChannelListEvent';
                 }
@@ -115,7 +115,7 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
                 }
                 break;
 
-            case 'active-channels':
+            case 'activechannels':
                 eventName = 'TeamActiveChannelListEvent';
                 break;
         }
@@ -145,6 +145,54 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
     // -----------------------------------------------------------------------------------------------------
 
     /**
+     * To reduce config data limit of restore view
+     * 
+     * @param datasets 
+     * @param labels 
+     */
+    private showData(datasets: { [x: string]: any; }, labels: any[]): void {
+        const limit = this.widgetData.Limit;
+
+        if (!limit) {
+            this.chart.datasets = Object.keys(datasets).map((d) => ({
+                data: datasets[d],
+                label: d
+            }));
+            this.chart.labels = labels;
+            return;
+        }
+
+        const allDataSets = {
+            datasets: [],
+            labels: []
+        };
+
+        allDataSets.datasets = Object.keys(datasets).map((d) => ({
+            data: datasets[d],
+            label: d
+        }));
+        allDataSets.labels = labels;
+
+        if (!this.wrapperComponent.maximized) {
+            this.chart.datasets = allDataSets.datasets.map((x) => ({ ...x, data: x.data.slice(0, limit) }));
+            this.chart.labels = allDataSets.labels.slice(0, limit);
+        }
+
+        this.wrapperComponent.maximizeEvent
+            .asObservable()
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((maximized) => {
+                if (maximized) {
+                    this.chart.datasets = allDataSets.datasets;
+                    this.chart.labels = allDataSets.labels;
+                } else {
+                    this.chart.datasets = allDataSets.datasets.map((x) => ({ ...x, data: x.data.slice(0, limit) }));
+                    this.chart.labels = allDataSets.labels.slice(0, limit);
+                }
+            });
+    }
+
+    /**
      * AgentStatusDetailsEvent handler
      * @param {CustomSDKEvent} evt
      * @method
@@ -159,11 +207,8 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
                 datasets.Duration.push(c.Duration);
                 labels.push(`${c.State} - [${duration.hours}:${duration.minutes}:${duration.seconds}]`);
             });
-        this.chart.datasets = Object.keys(datasets).map((d) => ({
-            data: datasets[d],
-            label: d
-        }));
-        this.chart.labels = labels;
+
+        this.showData(datasets, labels);
     }
 
     /**
@@ -181,11 +226,14 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
                 datasets.Duration.push(c.Duration);
                 labels.push(`${c.State} - [${duration.hours}:${duration.minutes}:${duration.seconds}]`);
             });
-        this.chart.datasets = Object.keys(datasets).map((d) => ({
-            data: datasets[d],
-            label: d
-        }));
-        this.chart.labels = labels;
+
+        // this.chart.datasets = Object.keys(datasets).map((d) => ({
+        //     data: datasets[d],
+        //     label: d
+        // }));
+        // this.chart.labels = labels;
+
+        this.showData(datasets, labels);
     }
 
     /**
@@ -202,13 +250,23 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
                 datasets['Calls In Queue'].push(c.CallsInQueue);
                 labels.push(c.SkillName);
             });
-        this.chart.datasets = Object.keys(datasets).map((d) => {
+
+        // this.chart.datasets = Object.keys(datasets).map((d) => {
+        //     if (datasets[d].every((x: number) => x === 0)) {
+        //         datasets[d] = [];
+        //     }
+        //     return { data: datasets[d], label: d };
+        // });
+        // this.chart.labels = labels;
+
+        datasets['Calls In Queue'] = Object.keys(datasets).map((d) => {
             if (datasets[d].every((x: number) => x === 0)) {
                 datasets[d] = [];
             }
-            return { data: datasets[d], label: d };
-        });
-        this.chart.labels = labels;
+            return datasets[d];
+        })[0] || [];
+
+        this.showData(datasets, labels);
     }
 
     /**
@@ -226,34 +284,7 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
             labels.push(c.Intent || 'Unknown');
         });
 
-        const allDatasets = {
-            datasets: [],
-            labels: []
-        };
-
-        allDatasets.datasets = Object.keys(datasets).map((d) => ({
-            data: datasets[d],
-            label: d
-        }));
-        allDatasets.labels = labels;
-
-        if (!this.wrapperComponent.maximized) {
-            this.chart.datasets = allDatasets.datasets.map((x) => ({ ...x, data: x.data.slice(0, 5) }));
-            this.chart.labels = allDatasets.labels.slice(0, 5);
-        }
-
-        this.wrapperComponent.maximizeEvent
-            .asObservable()
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((maximized) => {
-                if (maximized) {
-                    this.chart.datasets = allDatasets.datasets;
-                    this.chart.labels = allDatasets.labels;
-                } else {
-                    this.chart.datasets = allDatasets.datasets.map((x) => ({ ...x, data: x.data.slice(0, 5) }));
-                    this.chart.labels = allDatasets.labels.slice(0, 5);
-                }
-            });
+        this.showData(datasets, labels);
     }
 
     /**
@@ -269,19 +300,17 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
         const datasets = { Count: [] };
         const labels = [];
         sortBy(evt.Data.Channels, 'Total').forEach((c) => {
-            // if (c.AverageActiveTime + c.AverageHoldTime > 0) {
-            //     datasets.Duration.push(c.AverageActiveTime + c.AverageHoldTime);
-            // }
-
             datasets.Count.push(c.Total);
             labels.push(`${c.Channel}`);
-
         });
-        this.chart.datasets = Object.keys(datasets).map((d) => ({
-            data: datasets[d],
-            label: d
-        }));
-        this.chart.labels = labels;
+
+        // this.chart.datasets = Object.keys(datasets).map((d) => ({
+        //     data: datasets[d],
+        //     label: d
+        // }));
+        // this.chart.labels = labels;
+
+        this.showData(datasets, labels);
     }
 
     /**
@@ -290,26 +319,33 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
      * @method
      */
     private TeamChannelListEvent(evt: CustomSDKEvent): void {
-        const datasets = { Count: [], Duration: [] };
+        const datasets = { Count: [] };
         const labels = [];
-        evt.Data.Channels.forEach((c: any) => {
-            // if (c.AverageActiveTime + c.AverageHoldTime > 0) {
-            //     datasets.Duration.push(c.AverageActiveTime + c.AverageHoldTime);
-            // }
 
+        evt.Data.Channels.forEach((c: any) => {
             datasets.Count.push(c.Total);
             labels.push(`${c.Channel}`);
         });
-        this.chart.datasets = Object.keys(datasets)
-            .map((d) => ({
-                data: datasets[d],
-                label: d
-            }))
+
+        // this.chart.datasets = Object.keys(datasets)
+        //     .map((d) => ({
+        //         data: datasets[d],
+        //         label: d
+        //     }))
+        //     .filter((x) => {
+        //         const sum = x.data && x.data.length ? x.data.reduce((a, b) => a + b) : null;
+        //         return !!sum;
+        //     });
+        // this.chart.labels = labels;
+
+        datasets.Count = Object.keys(datasets)
+            .map(d => datasets[d])
             .filter((x) => {
-                const sum = x.data && x.data.length ? x.data.reduce((a, b) => a + b) : null;
+                const sum = x && x.length ? x.reduce((a: number, b: number) => a + b) : null;
                 return !!sum;
-            });
-        this.chart.labels = labels;
+            })[0] || [];
+
+        this.showData(datasets, labels);
     }
 
     /**
@@ -327,11 +363,13 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
                 labels.push(c.Channel);
             });
 
-        this.chart.datasets = Object.keys(datasets).map((d) => ({
-            data: datasets[d],
-            label: d
-        }));
-        this.chart.labels = labels;
+        // this.chart.datasets = Object.keys(datasets).map((d) => ({
+        //     data: datasets[d],
+        //     label: d
+        // }));
+        // this.chart.labels = labels;
+
+        this.showData(datasets, labels);
     }
 }
 
@@ -348,5 +386,9 @@ interface WidgetData {
      * To get data based on agent profile
      */
     Role: 'agent' | 'supervisor';
+    /**
+     * To limit no of data to be shown on restore view
+     */
+    Limit: number;
 }
 

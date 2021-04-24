@@ -64,10 +64,12 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
      * Selected Workcodes
      */
     selectedWorkCodes: any[] = [];
+
     /**
      * Separator Keys
      */
     separatorKeysCodes: number[] = [ENTER, COMMA];
+
     /**
      * Work Code Form Control
      */
@@ -221,25 +223,25 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
      */
     public setup(): void {
         this.widgetData.ByGroup = true;
-        let eventName = '';
+        let subscription: Observable<any[]>;
 
         if (this.widgetData.Role === 'interaction') {
             // assign the interaction id
             this.interactionId = this.data.InteractionDetails?.InteractionID;
             this.loadWorkCodesReq.loading = true;
             this.getAllWorkCodes();
-            eventName = 'WorkCodeAddedEvent';
+            subscription = this._tmacEventService.getInteractionEvents(['WorkCodeAddedEvent'], this.interactionId);
         } else if (this.widgetData.Role === 'supervisor') {
-            eventName = 'TeamrWorkCodeDetailsEvent';
+            subscription = this._tmacEventService.getEvents(['TeamrWorkCodeDetailsEvent']);
         } else {
             this.loadWorkCodesReq.error = true;
             this.loadWorkCodesReq.loading = false;
             this.loadWorkCodesReq.msg = 'Role not provided / Role Source';
         }
 
-        if (eventName) {
-            this._tmacEventService
-                .getEvents([eventName])
+        // if subscription is not null then subscribe to it
+        if (subscription) {
+            subscription
                 .pipe(takeUntil(this.unsubscribeAll))
                 .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
         }

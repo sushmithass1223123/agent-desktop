@@ -435,9 +435,10 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "Source": "total-interactions",
+                                        "Source": "totalinteractions",
                                         "ChartType": "pie",
-                                        "Role": "agent"
+                                        "Role": "agent",
+                                        "Limit": 0
                                     }
                                 },
                                 {
@@ -498,9 +499,10 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "Source": "aux-status",
+                                        "Source": "auxstatus",
                                         "ChartType": "pie",
-                                        "Role": "agent"
+                                        "Role": "agent",
+                                        "Limit": 10
                                     }
                                 },
                                 {
@@ -760,9 +762,10 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "Source": "total-interactions",
-                                        "ChartType": "pie",
-                                        "Role": "supervisor"
+                                        "Source": "totalinteractions",
+                                        "ChartType": "doughnut",
+                                        "Role": "supervisor",
+                                        "Limit": 0
                                     }
                                 },
                                 {
@@ -821,9 +824,10 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "Source": "calls-in-queue",
+                                        "Source": "ciq",
                                         "ChartType": "doughnut",
-                                        "Role": "supervisor"
+                                        "Role": "supervisor",
+                                        "Limit": 0
                                     }
                                 },
                                 {
@@ -853,9 +857,10 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "Source": "intent-list",
+                                        "Source": "intentlist",
                                         "ChartType": "pie",
-                                        "Role": "supervisor"
+                                        "Role": "supervisor",
+                                        "Limit": 5
                                     }
                                 },
                                 {
@@ -914,9 +919,10 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "Source": "active-channels",
+                                        "Source": "activechannels",
                                         "ChartType": "doughnut",
-                                        "Role": "supervisor"
+                                        "Role": "supervisor",
+                                        "Limit": 0
                                     }
                                 },
                                 {
@@ -946,9 +952,10 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "Source": "aux-status",
-                                        "ChartType": "doughnut",
-                                        "Role": "supervisor"
+                                        "Source": "auxstatus",
+                                        "ChartType": "pie",
+                                        "Role": "supervisor",
+                                        "Limit": 10
                                     }
                                 },
                                 {
