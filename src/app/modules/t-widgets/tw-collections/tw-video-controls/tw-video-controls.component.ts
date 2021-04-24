@@ -1,18 +1,11 @@
 import { Component, ElementRef, Input, OnDestroy, OnInit, QueryList, ViewChildren, ViewEncapsulation } from '@angular/core';
 import { fuseAnimations } from '@fuse/animations';
-import { FuseConfigService } from '@fuse/services/config.service';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
 // import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { AppUiService } from '@services/app-ui.service';
+import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TMACEventService } from '@services/tmac-event.service';
-import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AV_ERRORS, COMMON_ERR_MESSAGE } from 'app/constants';
-import { IWidget } from 'app/interfaces';
-import { TwWidgetModel } from 'app/models';
-import { map } from 'lodash';
-import { timer } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import {
     AgentAVMessageEvent,
     AVChannel,
@@ -25,6 +18,13 @@ import {
     TextChatDisconnectedEvent,
     TUtils
 } from '@tmac/sdk';
+import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
+import { AV_ERRORS, COMMON_ERR_MESSAGE } from 'app/constants';
+import { IWidget } from 'app/interfaces';
+import { TwWidgetModel } from 'app/models';
+import { map } from 'lodash';
+import { timer } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
 import { TwChatControlsComponent } from '../tw-chat-controls/tw-chat-controls.component';
 
 /**
@@ -46,7 +46,15 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Fuse Config
      */
-    fuseConfig: any;
+    // fuseConfig: any;
+
+    /**
+     * Fuse custom config
+     */
+    customFuse = {
+        anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
+        widget$: this._fuseFacadeService.widgetBgClasses$
+    };
 
     /**
      * App Config
@@ -163,7 +171,8 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
      * Constructor
      */
     constructor(
-        private _fuseConfigService: FuseConfigService,
+        // private _fuseConfigService: FuseConfigService,
+        private _fuseFacadeService: FuseFacadeService,
         private _appDataService: AppDataService,
         private _aotWidgetService: AOTWidgetService,
         private _appUIService: AppUiService,
@@ -184,9 +193,9 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.fuseConfig = config;
-        });
+        // this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+        //     this.fuseConfig = config;
+        // });
 
         this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
             this.appConfig = config;

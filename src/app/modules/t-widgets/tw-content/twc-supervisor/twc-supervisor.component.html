@@ -40,9 +40,14 @@
             (backdropClick)="showDashboardDataSpanOverlay = false"
             [cdkConnectedOverlayPositions]="[{ originX: 'start', originY: 'center', overlayX: 'end', overlayY: 'center', offsetX: -10 }]"
         >
-            <ng-container *ngIf="fuseBg | async as fuseBackground">
-                <div [class]="fuseBackground.body + ' border-radius-20 p-8 mat-elevation-z1'">
-                    <mat-form-field appearance="fill" [class]="fuseBackground.content + ' border-radius-20 p-12'">
+            <ng-container
+                *ngIf="{
+                    anchor: customFuse.anchor$ | async,
+                    widget: customFuse.widget$ | async
+                } as customFuse"
+            >
+                <div [class]="(customFuse.anchor?.body || customFuse.widget?.body) + ' border-radius-20 p-8 mat-elevation-z1'">
+                    <mat-form-field appearance="fill" [class]="(customFuse.anchor?.content || customFuse.widget?.content) + ' border-radius-20 p-12'">
                         <mat-label>Choose from date</mat-label>
                         <input matInput [max]="maxDate" [matDatepicker]="picker" [formControl]="dashboardDataFromDate.formControl" />
                         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>

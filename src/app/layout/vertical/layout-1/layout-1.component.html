@@ -1,177 +1,154 @@
-<!-- SIDE PANEL -->
-<ng-container *ngIf="fuseConfig.layout.sidepanel.position === 'left'">
-    <!-- PANEL CONTENT -->
-    <!-- CHAT PANEL -->
-    <fuse-sidebar
-        name="chatPanel"
-        position="left"
-        class="chat-panel left-chat-panel"
-        [invisibleOverlay]="true"
-        [folded]="true"
-        [foldedWidth]="0"
-        [foldedAutoTriggerOnHover]="false"
-    >
-        <instant-messaging></instant-messaging>
-    </fuse-sidebar>
-    <!-- / CHAT PANEL -->
-</ng-container>
-<!-- / SIDE PANEL -->
-
-<div id="main" class="main" [ngClass]="fuseConfig.layout.navbar.customBackgroundColor === true ? fuseConfig.layout.navbar.background : ''">
-    <!-- TOOLBAR: Above -->
-    <ng-container *ngIf="fuseConfig.layout.toolbar.position === 'above'">
-        <ng-container *ngTemplateOutlet="toolbar"></ng-container>
+<ng-container *ngIf="customFuse$ | async as customFuse">
+    <!-- SIDE PANEL -->
+    <ng-container *ngIf="customFuse.sidepanel.position === 'left'">
+        <!-- PANEL CONTENT -->
+        <!-- CHAT PANEL -->
+        <fuse-sidebar
+            name="chatPanel"
+            position="left"
+            class="chat-panel left-chat-panel"
+            [invisibleOverlay]="true"
+            [folded]="true"
+            [foldedWidth]="0"
+            [foldedAutoTriggerOnHover]="false"
+        >
+            <instant-messaging></instant-messaging>
+        </fuse-sidebar>
+        <!-- / CHAT PANEL -->
     </ng-container>
-    <!-- / TOOLBAR: Above -->
+    <!-- / SIDE PANEL -->
 
-    <div id="container-1" class="container">
-        <!-- NAVBAR: Left -->
-        <ng-container *ngIf="fuseConfig.layout.navbar.position === 'left'">
-            <ng-container *ngTemplateOutlet="leftNavbar"></ng-container>
+    <div id="main" class="main" [ngClass]="customFuse.navbar.background">
+        <!-- TOOLBAR: Above -->
+        <ng-container *ngIf="customFuse.toolbar.position === 'above'">
+            <ng-container *ngTemplateOutlet="toolbar"></ng-container>
         </ng-container>
-        <!-- / NAVBAR: Left -->
+        <!-- / TOOLBAR: Above -->
 
-        <div id="container-2" class="container">
-            <!-- TOOLBAR: Below fixed -->
-            <ng-container *ngIf="fuseConfig.layout.toolbar.position === 'below-fixed'">
-                <ng-container *ngTemplateOutlet="toolbar"></ng-container>
+        <div id="container-1" class="container">
+            <!-- NAVBAR: Left -->
+            <ng-container *ngIf="customFuse.navbar.position === 'left'">
+                <ng-container *ngTemplateOutlet="leftNavbar"></ng-container>
             </ng-container>
-            <!-- / TOOLBAR: Below fixed -->
+            <!-- / NAVBAR: Left -->
 
-            <div id="container-3" class="container custom-scroll">
-                <!-- TOOLBAR: Below static -->
-                <ng-container *ngIf="fuseConfig.layout.toolbar.position === 'below-static'">
+            <div id="container-2" class="container">
+                <!-- TOOLBAR: Below fixed -->
+                <ng-container *ngIf="customFuse.toolbar.position === 'below-fixed'">
                     <ng-container *ngTemplateOutlet="toolbar"></ng-container>
                 </ng-container>
-                <!-- / TOOLBAR: Below static -->
+                <!-- / TOOLBAR: Below fixed -->
 
-                <!-- CONTENT -->
-                <content
-                    [ngClass]="
-                        (fuseConfig.layout.content.customBackgroundColor === true ? fuseConfig.layout.content.background : '') +
-                        ' ' +
-                        ('navbar-' + fuseConfig.layout.navbar.position)
-                    "
-                >
-                </content>
-                <!-- / CONTENT -->
+                <div id="container-3" class="container custom-scroll">
+                    <!-- TOOLBAR: Below static -->
+                    <ng-container *ngIf="customFuse.toolbar.position === 'below-static'">
+                        <ng-container *ngTemplateOutlet="toolbar"></ng-container>
+                    </ng-container>
+                    <!-- / TOOLBAR: Below static -->
 
-                <!-- FOOTER: Below static -->
-                <ng-container *ngIf="fuseConfig.layout.footer.position === 'below-static'">
-                    <ng-container *ngTemplateOutlet="footer"> </ng-container>
+                    <!-- CONTENT -->
+                    <content [ngClass]="customFuse.content.class"> </content>
+                    <!-- / CONTENT -->
+
+                    <!-- FOOTER: Below static -->
+                    <ng-container *ngIf="customFuse.footer.position === 'below-static'">
+                        <ng-container *ngTemplateOutlet="footer"> </ng-container>
+                    </ng-container>
+                    <!-- / FOOTER: Below static -->
+                </div>
+
+                <!-- FOOTER: Below fixed -->
+                <ng-container *ngIf="customFuse.footer.position === 'below-fixed'">
+                    <ng-container *ngTemplateOutlet="footer"></ng-container>
                 </ng-container>
-                <!-- / FOOTER: Below static -->
+                <!-- / FOOTER: Below fixed -->
             </div>
 
-            <!-- FOOTER: Below fixed -->
-            <ng-container *ngIf="fuseConfig.layout.footer.position === 'below-fixed'">
-                <ng-container *ngTemplateOutlet="footer"></ng-container>
+            <!-- NAVBAR: Right -->
+            <ng-container *ngIf="customFuse.navbar.position === 'right'">
+                <ng-container *ngTemplateOutlet="rightNavbar"></ng-container>
             </ng-container>
-            <!-- / FOOTER: Below fixed -->
+            <!-- / NAVBAR: Right -->
         </div>
 
-        <!-- NAVBAR: Right -->
-        <ng-container *ngIf="fuseConfig.layout.navbar.position === 'right'">
-            <ng-container *ngTemplateOutlet="rightNavbar"></ng-container>
+        <!-- FOOTER: Above -->
+        <ng-container *ngIf="customFuse.footer.position === 'above'">
+            <ng-container *ngTemplateOutlet="footer"></ng-container>
         </ng-container>
-        <!-- / NAVBAR: Right -->
+        <!-- FOOTER: Above -->
     </div>
 
-    <!-- FOOTER: Above -->
-    <ng-container *ngIf="fuseConfig.layout.footer.position === 'above'">
-        <ng-container *ngTemplateOutlet="footer"></ng-container>
+    <!-- SIDE PANEL -->
+    <ng-container *ngIf="customFuse.sidepanel.position === 'right'">
+        <!-- PANEL CONTENT -->
+
+        <!-- CHAT PANEL -->
+        <fuse-sidebar
+            name="chatPanel"
+            position="right"
+            class="instant-messaging right-instant-messaging"
+            [invisibleOverlay]="true"
+            [foldedWidth]="0"
+            [foldedAutoTriggerOnHover]="false"
+        >
+            <instant-messaging></instant-messaging>
+        </fuse-sidebar>
+        <!-- / CHAT PANEL -->
     </ng-container>
-    <!-- FOOTER: Above -->
-</div>
+    <!-- / SIDE PANEL -->
 
-<!-- SIDE PANEL -->
-<ng-container *ngIf="fuseConfig.layout.sidepanel.position === 'right'">
-    <!-- PANEL CONTENT -->
-
-    <!-- CHAT PANEL -->
-    <fuse-sidebar
-        name="chatPanel"
-        position="right"
-        class="instant-messaging right-instant-messaging"
-        [invisibleOverlay]="true"
-        [foldedWidth]="0"
-        [foldedAutoTriggerOnHover]="false"
-    >
-        <instant-messaging></instant-messaging>
+    <!-- QUICK PANEL -->
+    <fuse-sidebar name="quickPanel" position="right" class="quick-panel">
+        <quick-panel></quick-panel>
     </fuse-sidebar>
-    <!-- / CHAT PANEL -->
+    <!-- / QUICK PANEL -->
+
+    <!-- ----------------------------------------------------------------------------------------------------- -->
+    <!-- @ PARTIALS                                                                                            -->
+    <!-- ----------------------------------------------------------------------------------------------------- -->
+
+    <!-- TOOLBAR -->
+    <ng-template #toolbar>
+        <toolbar *ngIf="!customFuse.toolbar.hidden" [ngClass]="customFuse.toolbar.class"> </toolbar>
+    </ng-template>
+    <!-- / TOOLBAR -->
+
+    <!-- FOOTER -->
+    <ng-template #footer>
+        <footer *ngIf="!customFuse.footer.hidden" [ngClass]="customFuse.footer.class"></footer>
+    </ng-template>
+    <!-- / FOOTER -->
+
+    <!-- LEFT NAVBAR -->
+    <ng-template #leftNavbar>
+        <fuse-sidebar
+            name="navbar"
+            class="navbar-fuse-sidebar mat-elevation-z0"
+            [folded]="customFuse.navbar.folded"
+            foldedWidth="72"
+            [invisibleOverlay]="true"
+            lockedOpen="gt-xs"
+            *ngIf="!customFuse.navbar.hidden"
+        >
+            <navbar class="left-navbar"></navbar>
+        </fuse-sidebar>
+    </ng-template>
+    <!-- / LEFT NAVBAR -->
+
+    <!-- RIGHT NAVBAR -->
+    <ng-template #rightNavbar>
+        <fuse-sidebar
+            name="navbar"
+            position="right"
+            class="navbar-fuse-sidebar mat-elevation-z0"
+            [folded]="customFuse.navbar.folded"
+            foldedWidth="72"
+            [invisibleOverlay]="true"
+            lockedOpen="gt-xs"
+            *ngIf="!customFuse.navbar.hidden"
+        >
+            <navbar class="right-navbar"></navbar>
+        </fuse-sidebar>
+    </ng-template>
+    <!-- / RIGHT NAVBAR -->
 </ng-container>
-<!-- / SIDE PANEL -->
-
-<!-- QUICK PANEL -->
-<fuse-sidebar name="quickPanel" position="right" class="quick-panel">
-    <quick-panel></quick-panel>
-</fuse-sidebar>
-<!-- / QUICK PANEL -->
-
-<!-- ----------------------------------------------------------------------------------------------------- -->
-<!-- @ PARTIALS                                                                                            -->
-<!-- ----------------------------------------------------------------------------------------------------- -->
-
-<!-- TOOLBAR -->
-<ng-template #toolbar>
-    <toolbar
-        *ngIf="!fuseConfig.layout.toolbar.hidden"
-        [ngClass]="
-            'navbar-' +
-            fuseConfig.layout.navbar.position +
-            ' ' +
-            (fuseConfig.layout.toolbar.customBackgroundColor === true
-                ? fuseConfig.layout.toolbar.position + ' ' + fuseConfig.layout.toolbar.background
-                : fuseConfig.layout.toolbar.position)
-        "
-    >
-    </toolbar>
-</ng-template>
-<!-- / TOOLBAR -->
-
-<!-- FOOTER -->
-<ng-template #footer>
-    <footer
-        *ngIf="!fuseConfig.layout.footer.hidden"
-        [ngClass]="
-            fuseConfig.layout.footer.customBackgroundColor === true
-                ? fuseConfig.layout.footer.position + ' ' + fuseConfig.layout.footer.background
-                : fuseConfig.layout.footer.position
-        "
-    ></footer>
-</ng-template>
-<!-- / FOOTER -->
-
-<!-- LEFT NAVBAR -->
-<ng-template #leftNavbar>
-    <fuse-sidebar
-        name="navbar"
-        class="navbar-fuse-sidebar mat-elevation-z0"
-        [folded]="fuseConfig.layout.navbar.folded"
-        foldedWidth="72"
-        [invisibleOverlay]="true"
-        lockedOpen="gt-xs"
-        *ngIf="!fuseConfig.layout.navbar.hidden"
-    >
-        <navbar class="left-navbar"></navbar>
-    </fuse-sidebar>
-</ng-template>
-<!-- / LEFT NAVBAR -->
-
-<!-- RIGHT NAVBAR -->
-<ng-template #rightNavbar>
-    <fuse-sidebar
-        name="navbar"
-        position="right"
-        class="navbar-fuse-sidebar mat-elevation-z0"
-        [folded]="fuseConfig.layout.navbar.folded"
-        foldedWidth="72"
-        [invisibleOverlay]="true"
-        lockedOpen="gt-xs"
-        *ngIf="!fuseConfig.layout.navbar.hidden"
-    >
-        <navbar class="right-navbar"></navbar>
-    </fuse-sidebar>
-</ng-template>
-<!-- / RIGHT NAVBAR -->

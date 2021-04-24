@@ -1,5 +1,4 @@
 import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
-import { FuseConfig } from '@fuse/types';
 import { IWidget } from 'app/interfaces';
 
 /**
@@ -16,16 +15,6 @@ export class TwFaxControlsComponent implements OnInit {
      * data from widget
      */
     @Input() data: IWidget;
-
-    /**
-     * appConfig
-     */
-    appConfig: any;
-
-    /**
-     * Fuse config
-     */
-    fuseConfig: FuseConfig;
 
     constructor() { }
 

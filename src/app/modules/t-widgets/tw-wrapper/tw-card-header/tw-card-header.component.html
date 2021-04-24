@@ -1,18 +1,5 @@
 <!-- We are using material card header -->
-<mat-card-header
-    class="card-header"
-    [ngClass]="
-        (fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
-            ? fuseConfig.layout.anchorWidget.headerBackground
-            : fuseConfig.layout.widget.customBackgroundColor === true
-            ? fuseConfig.layout.widget.headerBackground
-            : '') +
-        ' ' +
-        (widgetState.floating ? 'floating' : '') +
-        ' ' +
-        (widgetState.aot ? 'aot' : '')
-    "
->
+<mat-card-header class="card-header" [ngClass]="headerColor + ' ' + (widgetState.floating ? 'floating' : '') + ' ' + (widgetState.aot ? 'aot' : '')">
     <!-- We add a material icon from config of default a widget icon -->
     <div mat-card-avatar>
         <mat-icon>{{ data.Config.Icon || 'widgets' }}</mat-icon>

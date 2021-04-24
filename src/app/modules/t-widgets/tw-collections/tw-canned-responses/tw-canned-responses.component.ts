@@ -1,11 +1,11 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
 import { TMACEventService } from '@services/tmac-event.service';
+import { CallerIntentEvent, IResponse, SDKClient, WorkCodeAddedEvent } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { sortBy, uniqBy } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { CallerIntentEvent, IResponse, IUIEvent, SDKClient, WorkCodeAddedEvent } from '@tmac/sdk';
 
 /**
  * TW canned Responses
@@ -96,18 +96,6 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
                 this.loading = false;
             });
 
-        // // get the event from event bag to make sure no events are missed
-        // const eventBag = this._tmacEventService.interactionEvents(this.interactionId);
-
-        // // process the events if any
-        // eventBag.forEach((evt: IUIEvent) => {
-        //     this[evt.EventName]?.(evt);
-        // });
-
-        // SDKClient.events.on('OnNLPDataEvent', this.OnNLPDataEvent);
-        // SDKClient.events.on('CallerIntentEvent', this.CallerIntentEvent);
-        // SDKClient.events.on('WorkCodeAddedEvent', this.WorkCodeAddedEvent);
-
         this._tmacEventService.getInteractionEvents([
             'OnNLPDataEvent',
             'CallerIntentEvent',
@@ -123,10 +111,6 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-
-        // SDKClient.events.off('OnNLPDataEvent', this.OnNLPDataEvent);
-        // SDKClient.events.on('CallerIntentEvent', this.CallerIntentEvent);
-        // SDKClient.events.off('CallerIntentEvent', this.CallerIntentEvent);
     }
 
     // -----------------------------------------------------------------------------------------------------

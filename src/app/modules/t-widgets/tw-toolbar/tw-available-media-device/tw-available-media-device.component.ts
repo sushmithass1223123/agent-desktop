@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -24,7 +24,8 @@ type AvailableDevices = {
 @Component({
     selector: 'tw-available-media-device',
     templateUrl: './tw-available-media-device.component.html',
-    styleUrls: ['./tw-available-media-device.component.scss']
+    styleUrls: ['./tw-available-media-device.component.scss'],
+    encapsulation: ViewEncapsulation.None
 })
 export class TwAvailableMediaDeviceComponent implements OnInit {
     /**

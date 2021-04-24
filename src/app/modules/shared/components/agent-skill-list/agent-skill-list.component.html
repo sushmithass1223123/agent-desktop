@@ -1,8 +1,8 @@
 <shared-wrapper [icon]="icon" [title]="title" [loading]="loading">
     <div mat-dialog-content class="h-100-p">
-        <ng-container *ngIf="customFuseColor$ | async as fuseBgs">
+        <ng-container *ngIf="customFuse$ | async as customFuse">
             <div fxFlex fxFill fxLayout="column">
-                <div class="w-100-p px-16 pt-0 pb-12 border-radius-20" fxLayout="row" [ngClass]="fuseBgs?.content">
+                <div class="w-100-p px-16 pt-0 pb-12 border-radius-20" fxLayout="row" [ngClass]="customFuse?.content">
                     <div fxFlex fxLayout="column">
                         <div fxLayout>
                             <!-- <p fxFlex="20" fxLayoutAlign=" center" class="px-8">{{ mainLabel }}</p> -->
@@ -88,14 +88,14 @@
                         </button>
                     </div>
                 </div>
-                <div fxFlex class="w-100-p py-8 px-16 border-radius-20 grid-layout custom-scroll-adjust" [ngClass]="fuseBgs?.content">
+                <div fxFlex class="w-100-p py-8 px-16 border-radius-20 grid-layout custom-scroll-adjust" [ngClass]="customFuse?.content">
                     <div fxLayout="column">
                         <div fxLayout class="switcher" *ngIf="showSwitcher">
                             <div
                                 fxFlex
                                 class="switch-item"
                                 *ngFor="let item of switcherList"
-                                [ngClass]="activeSwitcher === item.key && fuseBgs?.body"
+                                [ngClass]="activeSwitcher === item.key && customFuse?.body"
                                 (click)="switchTab(item); searchRef.focus()"
                             >
                                 {{ item.label }}

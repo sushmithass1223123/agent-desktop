@@ -3,7 +3,7 @@
         <div
             class="spinner"
             [ngClass]="{
-                'border-radius-0': fuseConfig.flatTheme
+                'border-radius-0': (customFuse$ | async).flatTheme
             }"
             *ngIf="!loaded"
         >
@@ -20,7 +20,7 @@
             [id]="'twc_frame_' + data.ID"
             class="frame"
             [ngClass]="{
-                'border-radius-0': fuseConfig.flatTheme
+                'border-radius-0': (customFuse$ | async).flatTheme
             }"
             frameborder="0"
             seamless="seamless"

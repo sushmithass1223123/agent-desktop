@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, Input } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 
 /**
  * Simple Projection component used to wrap widgets
@@ -10,16 +10,6 @@ import { Component, OnInit, ViewEncapsulation, Input } from '@angular/core';
     encapsulation: ViewEncapsulation.None
 })
 export class TwCardComponent implements OnInit {
-
-    /**
-     * Data from App json
-     */
-    @Input() data: any;
-
-    /**
-     * Fuse Config data
-     */
-    @Input() fuseConfig: any;
 
     constructor() { }
 

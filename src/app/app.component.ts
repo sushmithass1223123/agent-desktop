@@ -4,18 +4,18 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { FuseNavigationService } from '@fuse/components/navigation/navigation.service';
-import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { FuseConfig } from '@fuse/types';
 import { TranslateService } from '@ngx-translate/core';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
+import { FuseFacadeService } from '@services/fuse-facade.service';
+import { SDKClient } from '@tmac/sdk';
 import { locale as navigationEnglish } from 'app/navigation/i18n/en';
 import { locale as navigationTurkish } from 'app/navigation/i18n/tr';
 import { navigation } from 'app/navigation/navigation';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient } from '@tmac/sdk';
 import { environment } from '../environments/environment';
 
 // declare global
@@ -40,7 +40,8 @@ export class AppComponent implements OnInit, OnDestroy {
     /**
      * fuse Config data
      */
-    fuseConfig: FuseConfig;
+    // fuseConfig: FuseConfig;
+
     /**
      * Need more Description
      * Navigation
@@ -89,7 +90,7 @@ export class AppComponent implements OnInit, OnDestroy {
      * Constructor
      *
      * @param {DOCUMENT} document
-     * @param {FuseConfigService} _fuseConfigService
+     * @param {FuseFacadeService} _fuseFacadeService
      * @param {FuseNavigationService} _fuseNavigationService
      * @param {FuseSidebarService} _fuseSidebarService
      * @param {FuseTranslationLoaderService} _fuseTranslationLoaderService
@@ -101,7 +102,8 @@ export class AppComponent implements OnInit, OnDestroy {
      */
     constructor(
         @Inject(DOCUMENT) private document: any,
-        private _fuseConfigService: FuseConfigService,
+        // private _fuseConfigService: FuseConfigService,
+        private _fuseFacadeService: FuseFacadeService,
         private _fuseNavigationService: FuseNavigationService,
         private _fuseTranslationLoaderService: FuseTranslationLoaderService,
         private _platform: Platform,
@@ -205,46 +207,87 @@ export class AppComponent implements OnInit, OnDestroy {
         // subscribe to app ui service
         this._appUIService.subscribe();
 
+        // Subscribe to custom fuse config changes
+        this._fuseFacadeService.getConfig()
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((config: FuseConfig) => {
+                // Boxed
+                if (config.layout.width === 'boxed') {
+                    this.document.body.classList.add('boxed');
+                } else {
+                    this.document.body.classList.remove('boxed');
+                }
+
+                // Color theme - Use normal for loop for IE11 compatibility
+                // tslint:disable-next-line: prefer-for-of
+                for (let i = 0; i < this.document.body.classList.length; i++) {
+                    const className = this.document.body.classList[i];
+
+                    if (className.startsWith('theme-')) {
+                        this.document.body.classList.remove(className);
+                    }
+                }
+
+                // add the updated theme color
+                this.document.body.classList.add(config.colorTheme);
+
+                // Web font - Use normal for loop for IE11 compatibility
+                // tslint:disable-next-line: prefer-for-of
+                for (let i = 0; i < this.document.body.classList.length; i++) {
+                    const className = this.document.body.classList[i];
+
+                    if (className.startsWith('wf-')) {
+                        this.document.body.classList.remove(className);
+                    }
+                }
+
+                // check if webFont is provided
+                if (config.webFont) {
+                    // add the update web font
+                    this.document.body.classList.add(config.webFont);
+                }
+            });
+
         // Subscribe to config changes
-        this._fuseConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
-            this.fuseConfig = config;
+        // this._fuseConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
+        //     this.fuseConfig = config;
 
-            // Boxed
-            if (this.fuseConfig.layout.width === 'boxed') {
-                this.document.body.classList.add('boxed');
-            } else {
-                this.document.body.classList.remove('boxed');
-            }
+        //     // Boxed
+        //     if (this.fuseConfig.layout.width === 'boxed') {
+        //         this.document.body.classList.add('boxed');
+        //     } else {
+        //         this.document.body.classList.remove('boxed');
+        //     }
 
-            // Color theme - Use normal for loop for IE11 compatibility
-            // tslint:disable-next-line: prefer-for-of
-            for (let i = 0; i < this.document.body.classList.length; i++) {
-                const className = this.document.body.classList[i];
+        //     // Color theme - Use normal for loop for IE11 compatibility
+        //     // tslint:disable-next-line: prefer-for-of
+        //     for (let i = 0; i < this.document.body.classList.length; i++) {
+        //         const className = this.document.body.classList[i];
 
-                if (className.startsWith('theme-')) {
-                    this.document.body.classList.remove(className);
-                }
-            }
+        //         if (className.startsWith('theme-')) {
+        //             this.document.body.classList.remove(className);
+        //         }
+        //     }
 
-            // add the updated theme color
-            this.document.body.classList.add(this.fuseConfig.colorTheme);
+        //     // add the updated theme color
+        //     this.document.body.classList.add(this.fuseConfig.colorTheme);
 
-            // Web font - Use normal for loop for IE11 compatibility
-            // tslint:disable-next-line: prefer-for-of
-            for (let i = 0; i < this.document.body.classList.length; i++) {
-                const className = this.document.body.classList[i];
+        //     // Web font - Use normal for loop for IE11 compatibility
+        //     // tslint:disable-next-line: prefer-for-of
+        //     for (let i = 0; i < this.document.body.classList.length; i++) {
+        //         const className = this.document.body.classList[i];
 
-                if (className.startsWith('wf-')) {
-                    this.document.body.classList.remove(className);
-                }
-            }
+        //         if (className.startsWith('wf-')) {
+        //             this.document.body.classList.remove(className);
+        //         }
+        //     }
 
-            // check if webFont is provided
-            if (this.fuseConfig.webFont) {
-                // add the update web font
-                this.document.body.classList.add(this.fuseConfig.webFont);
-            }
-        });
+        //     // check if webFont is provided
+        //     if (this.fuseConfig.webFont) {
+        //         // add the update web font
+        //         this.document.body.classList.add(this.fuseConfig.webFont);
+        //     }
+        // });
 
 
         // check the environment and set window variable

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
+import { AgentStateDurationList, IAgentData, SDKClient, SignalRWrapper, TUtils } from '@tmac/sdk';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AgentStateDurationList, IAgentData, SDKClient, SignalRWrapper, TUtils } from '@tmac/sdk';
 import { AppDataService } from './app-data.service';
 import { TMACEventService } from './tmac-event.service';
 
@@ -37,10 +37,6 @@ export class DashboardService {
      * Service started flag
      */
     private _serviceStarted: boolean;
-    /**
-     * Agent dashboard duration
-     */
-    private _adDuration: number;
     /**
      * Supervisor dashboard duration
      */
@@ -104,7 +100,7 @@ export class DashboardService {
             signalR.hub.on('onChannelList', (channelList: any) => {
 
                 const eventData = {
-                    EventName: 'AgentChannelDetailsEvent',
+                    EventName: 'AgentChannelListEvent',
                     Data: channelList
                 };
 
@@ -303,10 +299,7 @@ export class DashboardService {
      */
     public triggerAgentData(agentId: string, start: boolean, duration: number): void {
         TUtils.Logger.console('info', `DashboardService.triggerAgentData: start=${start}, duration=${duration}`);
-        // if start, store the duration
-        if (start) {
-            this._adDuration = duration;
-        }
+
         // if connected, then trigger
         if (this._signalRInstance?.isConnected()) {
             this._signalRInstance.hub.invoke('GetAgentData', this._signalRInstance.hub.connection.id, agentId, start, duration);

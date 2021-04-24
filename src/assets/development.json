@@ -376,6 +376,7 @@
                     },
                     "Data": {
                         "Path": "/home",
+                        "Duration": 100,
                         "Widgets": {
                             "Static": [
                                 {
@@ -401,7 +402,7 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "Source": "dashboard",
+                                        "Role": "agent",
                                         "SLEnabled": false
                                     }
                                 }
@@ -434,8 +435,9 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "Source": "tw-ad-total-interactions",
-                                        "Role": "dashboard"
+                                        "Source": "total-interactions",
+                                        "ChartType": "pie",
+                                        "Role": "agent"
                                     }
                                 },
                                 {
@@ -450,7 +452,7 @@
                                         "Anchor": false,
                                         "AOT": false,
                                         "AutoOpen": false,
-                                        "Icon": "phone",
+                                        "Icon": "",
                                         "Class": "",
                                         "Position": {
                                             "X": 2,
@@ -465,7 +467,8 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "Source": "dashboard"
+                                        "Type": "grid",
+                                        "Role": "agent"
                                     }
                                 },
                                 {
@@ -495,8 +498,9 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "Source": "tw-aux-status-chart",
-                                        "ChartType": "pie"
+                                        "Source": "aux-status",
+                                        "ChartType": "pie",
+                                        "Role": "agent"
                                     }
                                 },
                                 {
@@ -698,6 +702,7 @@
                     },
                     "Data": {
                         "Path": "/supervisor",
+                        "Duration": 100,
                         "Widgets": {
                             "Static": [
                                 {
@@ -755,7 +760,8 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "Source": "tw-ad-total-interactions",
+                                        "Source": "total-interactions",
+                                        "ChartType": "pie",
                                         "Role": "supervisor"
                                     }
                                 },
@@ -786,7 +792,8 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "Source": "supervisor"
+                                        "Type": "chart",
+                                        "Role": "supervisor"
                                     }
                                 },
                                 {
@@ -814,8 +821,9 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "Source": "tw-su-calls-in-queue",
-                                        "ChartType": "doughnut"
+                                        "Source": "calls-in-queue",
+                                        "ChartType": "doughnut",
+                                        "Role": "supervisor"
                                     }
                                 },
                                 {
@@ -845,7 +853,9 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "Source": "tw-su-intent-list"
+                                        "Source": "intent-list",
+                                        "ChartType": "pie",
+                                        "Role": "supervisor"
                                     }
                                 },
                                 {
@@ -873,7 +883,7 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "Source": "supervisor",
+                                        "Role": "supervisor",
                                         "SLEnabled": false
                                     }
                                 },
@@ -904,8 +914,9 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "Source": "tw-su-channels",
-                                        "ChartType": "doughnut"
+                                        "Source": "active-channels",
+                                        "ChartType": "doughnut",
+                                        "Role": "supervisor"
                                     }
                                 },
                                 {
@@ -935,8 +946,9 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "Source": "tw-su-status",
-                                        "ChartType": "doughnut"
+                                        "Source": "aux-status",
+                                        "ChartType": "doughnut",
+                                        "Role": "supervisor"
                                     }
                                 },
                                 {
@@ -964,8 +976,9 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "Source": "supervisor",
-                                        "ByTeam": true
+                                        "Role": "supervisor",
+                                        "ByTeam": true,
+                                        "ByGroup": false
                                     }
                                 }
                             ],
@@ -1440,7 +1453,7 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "Source": "interaction",
+                                        "Role": "interaction",
                                         "ByTeam": false,
                                         "ByGroup": false
                                     }
@@ -2103,7 +2116,7 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "Source": "interaction",
+                                        "Role": "interaction",
                                         "ByTeam": false,
                                         "ByGroup": true
                                     }
@@ -2500,7 +2513,7 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "Source": "interaction",
+                                        "Role": "interaction",
                                         "ByTeam": false,
                                         "ByGroup": true
                                     }
@@ -2889,7 +2902,7 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "Source": "interaction",
+                                        "Role": "interaction",
                                         "ByTeam": false,
                                         "ByGroup": false
                                     }
@@ -3178,7 +3191,39 @@
                                         "AOT": false,
                                         "AutoOpen": false,
                                         "Icon": "widgets",
-                                        "Class": "",
+                                        "Class": "mx-cover",
+                                        "Position": {
+                                            "X": 3,
+                                            "Y": 3
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/tmac_client/test.html",
+                                        "AutoRefresh": 0
+                                    }
+                                },
+                                {
+                                    "Name": "Test Page 2",
+                                    "Description": "",
+                                    "Key": "TestPage2",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "widgets",
+                                        "Class": "mx-cover",
                                         "Position": {
                                             "X": 3,
                                             "Y": 3
@@ -3343,7 +3388,7 @@
         "Notifications": {
             "Sounds": true,
             "SoundLevel": 1,
-            "DesktopAlerts": false,
+            "DesktopAlerts": true,
             "DesktopAlertTimeout": 5000,
             "AppAlertTimeout": 5000
         },

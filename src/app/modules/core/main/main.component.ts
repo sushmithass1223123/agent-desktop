@@ -3,19 +3,18 @@ import { AfterContentInit, Component, HostListener, Inject, OnDestroy, OnInit } 
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
-import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseSplashScreenService } from '@fuse/services/splash-screen.service';
-import { FuseConfig } from '@fuse/types';
 import { AgentFeaturesService } from '@services/agent-features.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
+import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TMACEventService } from '@services/tmac-event.service';
+import { SDKClient } from '@tmac/sdk';
 import { AUX_STATUSES } from 'app/constants';
 import { ThemeSelector } from 'app/layout/utils/theme-selector';
 import { environment } from 'environments/environment';
 import { Subject } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
-import { SDKClient } from '@tmac/sdk';
 
 /**
  * MainComponent
@@ -29,7 +28,11 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
     /**
      * Fuse config
      */
-    fuseConfig: FuseConfig;
+    // fuseConfig: FuseConfig;
+    /**
+     * Fuse custom config
+     */
+    customFuse$ = this._fuseFacadeService.getConfig({ layoutStyle: 'layout.style' });
     /**
      * App config
      */
@@ -92,7 +95,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
      * Constructor
      *
      * @param {DOCUMENT} document
-     * @param {FuseConfigService} _fuseConfigService
+     * @param {FuseFacadeService} _fuseFacadeService
      * @param {AppDataService} _appDataService
      * @param {FuseSidebarService} _fuseSidebarService
      * @param {Router} _router
@@ -103,7 +106,8 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
      */
     constructor(
         @Inject(DOCUMENT) private document: any,
-        private _fuseConfigService: FuseConfigService,
+        // private _fuseConfigService: FuseConfigService,
+        private _fuseFacadeService: FuseFacadeService,
         private _appDataService: AppDataService,
         private _fuseSidebarService: FuseSidebarService,
         private _router: Router,
@@ -141,17 +145,19 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
         this._tmacEventsService.subscribe();
 
         // subscribe to config changes
-        this._fuseConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
-            this.fuseConfig = config;
-        });
+        // this._fuseConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
+        //     this.fuseConfig = config;
+        // });
 
         // subscribe to app changes
-        this._appDataService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
-            if (Object.keys(config).length) {
-                this.appConfig = config;
-                this.setTheme();
-            }
-        });
+        this._appDataService.config
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((config: any) => {
+                if (Object.keys(config).length) {
+                    this.appConfig = config;
+                    this.setTheme();
+                }
+            });
 
         this.autoStatusChange();
     }
@@ -219,7 +225,14 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
         const flatTheme = this.appConfig.AppConfigs.FlatTheme ?? false;
         if (themeName) {
             const theme = ThemeSelector.getFuseConfigByTheme(themeName, false);
-            this._fuseConfigService.config = {
+
+            // this._fuseConfigService.config = {
+            //     ...theme,
+            //     flatTheme,
+            //     webFont
+            // };
+
+            this._fuseFacadeService.setConfig = {
                 ...theme,
                 flatTheme,
                 webFont

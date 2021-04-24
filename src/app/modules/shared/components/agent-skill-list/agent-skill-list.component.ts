@@ -220,7 +220,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
     /**
      * Fuse custom background colors
      */
-    customFuseColor$ = this.fuseFacadeService.anchorOrWidgetBgClasses$;
+    customFuse$ = this.fuseFacadeService.anchorOrWidgetBgClasses$;
 
     /**
      * Search Key for agent / skill list

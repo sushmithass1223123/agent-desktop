@@ -1,14 +1,14 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
 import { DashboardService } from '@services/dashboard.service';
+import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TMACEventService } from '@services/tmac-event.service';
+import { IAgentData, SDKClient } from '@tmac/sdk';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { ContentPageService } from 'app/services/content-page.service';
 import { Observable } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
-import { IAgentData, SDKClient } from '@tmac/sdk';
 
 /**
  * Supervisor content widget
@@ -72,16 +72,24 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
     /**
      * fuse background
      */
-    fuseBg: Observable<{
-        /**
-         * fuse background for content
-         */
-        content: string;
-        /**
-         * fuse background for body
-         */
-        body: string;
-    }>;
+    // customFuse: Observable<{
+    //     /**
+    //      * fuse background for content
+    //      */
+    //     content: string;
+    //     /**
+    //      * fuse background for body
+    //      */
+    //     body: string;
+    // }>;
+
+    /**
+     * Fuse custom config
+     */
+    customFuse = {
+        anchor$: this._fuseFacadeService.anchorBgClasses$,
+        widget$: this._fuseFacadeService.widgetBgClasses$
+    };
 
     /**
      * Max date for dashboard data
@@ -97,7 +105,8 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
         public hostElement: ElementRef,
         public contentPageService: ContentPageService,
         private _dashboardService: DashboardService,
-        private fuseConfService: FuseConfigService,
+        // private fuseConfService: FuseConfigService,
+        private _fuseFacadeService: FuseFacadeService,
         private _tmacEventService: TMACEventService
     ) {
         super(hostElement, contentPageService);
@@ -115,11 +124,11 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
         this.maxDate = new Date();
         this.maxDate.setDate(this.maxDate.getDate() - 1);
 
-        this.fuseBg = this.fuseConfService.config.pipe(
-            takeUntil(this.unsubscribeAll),
-            filter((config: FuseConfig) => config.layout.anchorWidget.customBackgroundColor),
-            map((config: FuseConfig) => ({ content: config.layout.widget.contentBackground, body: config.layout.widget.bodyBackground }))
-        );
+        // this.customFuse = this.fuseConfService.config.pipe(
+        //     takeUntil(this.unsubscribeAll),
+        //     filter((config: FuseConfig) => config.layout.anchorWidget.customBackgroundColor),
+        //     map((config: FuseConfig) => ({ content: config.layout.widget.contentBackground, body: config.layout.widget.bodyBackground }))
+        // );
 
         const initialDate = new Date();
         initialDate.setDate(initialDate.getDate() - Math.round(this.duration / 24));

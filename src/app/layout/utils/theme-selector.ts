@@ -13,6 +13,43 @@ export class ThemeSelector {
         switch (themeName) {
             case 'theme-default-2':
                 {
+                    themeName = 'theme-default';
+                    selectedTheme = {
+                        layout: {
+                            navbar: {
+                                background: 'purple-700',
+                                customBackgroundColor: true,
+                            },
+                            toolbar: {
+                                customBackgroundColor: true,
+                                background: 'grey-200',
+                            },
+                            content: {
+                                customBackgroundColor: true,
+                                background: 'grey-200'
+                            },
+                            anchorWidget: {
+                                customBackgroundColor: true,
+                                bodyBackground: 'purple-A100',
+                                headerBackground: 'grey-100',
+                                contentBackground: 'grey-100'
+                            },
+                            widget: {
+                                customBackgroundColor: true,
+                                bodyBackground: 'grey-A100',
+                                headerBackground: 'grey-100',
+                                contentBackground: 'grey-100'
+                            },
+                            footer: {
+                                customBackgroundColor: true,
+                                background: 'grey-400',
+                            }
+                        }
+                    };
+                    break;
+                }
+            case 'theme-default-3':
+                {
                     selectedTheme = {
                         layout: {
                             navbar: {
@@ -41,42 +78,6 @@ export class ThemeSelector {
                             },
                             footer: {
                                 customBackgroundColor: true,
-                                background: 'grey-400',
-                            }
-                        }
-                    };
-                    break;
-                }
-            case 'theme-default-3':
-                {
-                    selectedTheme = {
-                        layout: {
-                            navbar: {
-                                background: 'grey-50',
-                                customBackgroundColor: true,
-                            },
-                            toolbar: {
-                                customBackgroundColor: true,
-                                background: 'grey-200',
-                            },
-                            content: {
-                                customBackgroundColor: true,
-                                background: 'grey-200'
-                            },
-                            anchorWidget: {
-                                customBackgroundColor: true,
-                                bodyBackground: 'grey-300',
-                                headerBackground: 'grey-100',
-                                contentBackground: 'grey-100'
-                            },
-                            widget: {
-                                customBackgroundColor: true,
-                                bodyBackground: 'grey-A100',
-                                headerBackground: 'grey-100',
-                                contentBackground: 'grey-100'
-                            },
-                            footer: {
-                                customBackgroundColor: false,
                                 background: 'grey-400',
                             }
                         }
@@ -229,11 +230,10 @@ export class ThemeSelector {
                 }
             default:
                 {
-                    themeName = 'theme-default';
                     selectedTheme = {
                         layout: {
                             navbar: {
-                                background: 'purple-700',
+                                background: 'grey-50',
                                 customBackgroundColor: true,
                             },
                             toolbar: {
@@ -246,7 +246,7 @@ export class ThemeSelector {
                             },
                             anchorWidget: {
                                 customBackgroundColor: true,
-                                bodyBackground: 'purple-A100',
+                                bodyBackground: 'grey-300',
                                 headerBackground: 'grey-100',
                                 contentBackground: 'grey-100'
                             },
@@ -257,7 +257,7 @@ export class ThemeSelector {
                                 contentBackground: 'grey-100'
                             },
                             footer: {
-                                customBackgroundColor: true,
+                                customBackgroundColor: false,
                                 background: 'grey-400',
                             }
                         }

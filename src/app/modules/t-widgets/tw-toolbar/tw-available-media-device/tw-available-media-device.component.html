@@ -5,24 +5,23 @@
 </div>
 
 <ng-template #availableDevicesMenu class="custom">
-    <div fxLayout="row" fxLayoutAlign="space-between center">
-        <p class="mat-title">Select Media device</p>
+    <div fxLayout="row" fxLayoutAlign="space-between center" class="px-12 py-4">
+        <p class="mat-title m-0">Available Media Devices</p>
         <button mat-icon-button tabindex="-1" mat-dialog-close>
             <mat-icon>close</mat-icon>
         </button>
     </div>
     <div *ngIf="stream" class="mb-8" fxLayout fxLayoutAlign="center center">
-        <video class="w-100-p" autoplay [srcObject]="stream" #videoStream></video>
+        <video class="w-100-p h-100-p" autoplay [srcObject]="stream" #videoStream></video>
     </div>
     <div
         *ngIf="!mediaDeviceInfo.error && !mediaDeviceInfo.loading && mediaDeviceInfo.devices as mediaDevices"
         fxLayout
-        fxLayoutAlign="center center"
-        fxLayoutGap="1%"
-        class="w-100-p"
+        fxLayoutAlign="space-between center"
+        class="w-100-p px-8"
         [formGroup]="mediaSelectFormGroup"
     >
-        <div fxFlex="30%" fxLayout *ngFor="let device of mediaDevices | keyvalue" class="py-8 px-12">
+        <div fxFlex="33%" fxLayout *ngFor="let device of mediaDevices | keyvalue" class="p-4">
             <div fxFlex="10%" class="mr-3" [ngSwitch]="device.key">
                 <mat-icon *ngSwitchCase="'mic'"> mic </mat-icon>
                 <mat-icon *ngSwitchCase="'speaker'"> speaker </mat-icon>
