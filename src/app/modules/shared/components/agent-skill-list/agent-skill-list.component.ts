@@ -860,13 +860,16 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
 
     /**
      * To load agent list
-     *
      * @param {boolean} reload
      */
     loadAgentList(reload: boolean): void {
         this.loading = true;
         // get agent list
-        SDKClient.getAgentListStaffed()
+        SDKClient.getAgentListStaffed({
+            agentId: true,
+            byTeam: true,
+            type: ''
+        })
             .then((dt) => {
                 this.loading = false;
                 // check if data found
@@ -896,9 +899,13 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
      */
     loadSkillList(): void {
         this.loading = true;
+        const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+        const res = [{ "__type": "DataModel.FavouriteSkill", "ID": "49033", "Name": "CH_DiceChatSkill2", "OperatingHours": [], "VDN": "49033" }, { "__type": "DataModel.FavouriteSkill", "ID": "49037", "Name": "CH_DiceChatSkill3", "OperatingHours": [], "VDN": "49037" }, { "__type": "DataModel.FavouriteSkill", "ID": "49044", "Name": "EM_DiceEmailSkill1", "OperatingHours": [], "VDN": "49044" }, { "__type": "DataModel.FavouriteSkill", "ID": "49020", "Name": "VO_DiceNewPromo", "OperatingHours": [], "VDN": "49020" }, { "__type": "DataModel.FavouriteSkill", "ID": "49032", "Name": "VO_DiceSkill1", "OperatingHours": [{ "Day": "Fri", "EndTime": { "Ticks": 863400000000, "Days": 0, "Hours": 13, "Milliseconds": 0, "Minutes": 35, "Seconds": 30, "TotalDays": 0.99930555555555556, "TotalHours": 23.983333333333331, "TotalMilliseconds": 86340000, "TotalMinutes": 1439, "TotalSeconds": 86340 }, "StartTime": { "Ticks": 0, "Days": 0, "Hours": 0, "Milliseconds": 0, "Minutes": 0, "Seconds": 0, "TotalDays": 0, "TotalHours": 0, "TotalMilliseconds": 0, "TotalMinutes": 0, "TotalSeconds": 0 } }], "VDN": "49032" }]
         // get agent list
         SDKClient.getFavouriteSkills()
-            .then((dt) => {
+            // mock promise
+            // new Promise((resolve) => resolve({ response: res }))
+            .then((dt: IResponse) => {
                 this.loading = false;
                 // check if data found
                 if (dt.response.length > 0) {
@@ -914,8 +921,32 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                             });
                             list = [...list, ...filtered];
                         });
+                    } else {
+                        list = dt.response;
                     }
-                    this.allFavouriteSkills = list;
+                    const today = new Date();
+                    this.allFavouriteSkills = list.filter(skill => {
+                        let available = false;
+                        skill.OperatingHours.forEach((opHours) => {
+                            if (weekdays.indexOf(opHours.Day) === today.getDay()) {
+                                const startTime = new Date();
+                                startTime.setHours(opHours.StartTime.Hours)
+                                startTime.setMinutes(opHours.StartTime.Minutes)
+                                startTime.setSeconds(opHours.StartTime.Seconds)
+                                const endTime = new Date();
+                                endTime.setHours(opHours.EndTime.Hours)
+                                endTime.setMinutes(opHours.EndTime.Minutes)
+                                endTime.setSeconds(opHours.EndTime.Seconds)
+                                if (startTime.getTime() <= today.getTime()) {
+                                    if (endTime.getTime() >= today.getTime()) {
+                                        available = true;
+                                        return
+                                    }
+                                }
+                            }
+                        });
+                        return available || !skill.OperatingHours.length
+                    });
                     this.skillListTable.tableData.source.data = list;
                     this.skillListTable.tableData.source.sort = this.sort;
                 }

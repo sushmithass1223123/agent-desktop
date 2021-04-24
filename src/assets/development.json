@@ -1757,9 +1757,7 @@
                                                                 "Display": "skill",
                                                                 "FreeTextAllowed": false
                                                             },
-                                                            "ChannelPrefix": [
-                                                                "CH"
-                                                            ],
+                                                            "ChannelPrefix": [],
                                                             "Columns": [
                                                                 "Name",
                                                                 "VDN",
