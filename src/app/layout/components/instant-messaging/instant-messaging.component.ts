@@ -197,7 +197,7 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
             .subscribe((opened) => {
                 // check to get team list
                 if (opened) {
-                    this._dashboardService.triggerTeamAgentList(this.user.agentId, true);
+                    this._dashboardService.triggerTeamAgentList({ agentId: this.user.agentId, teamId: this.user.teamId }, true);
                     this.loading = true;
                     setTimeout(() => {
                         if (this.loading) {
@@ -206,7 +206,7 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
                     }, 10000);
                 }
                 else {
-                    this._dashboardService.triggerTeamAgentList(this.user.agentId, false);
+                    this._dashboardService.triggerTeamAgentList({ agentId: this.user.agentId, teamId: this.user.teamId }, false);
                     this.selectedContact = null;
                 }
             });
