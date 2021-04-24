@@ -1738,7 +1738,6 @@
                                                                 "FreeTextAllowed": false
                                                             },
                                                             "ChannelPrefix": [
-                                                                "CH"
                                                             ],
                                                             "Columns": [
                                                                 "Name",
@@ -3291,6 +3290,7 @@
         },
         "Urls": {
             "DashboardServerUrls": [
+                "https://dice.tetherfi.cloud:443/SignalRDashboard2",
                 "https://dice.tetherfi.cloud:443/SignalRDashboardSup"
             ],
             "FileServerUrl": {
@@ -3397,6 +3397,7 @@
         "SDK": {
             "Proxy": {
                 "Urls": [
+                    "https://dice.tetherfi.cloud/Dev_TMACSDKProxy/TmacProxy.asmx",
                     "https://dice.tetherfi.cloud/TMACSDKProxyv5/TmacProxy.asmx",
                     "https://localhost:55443/SDKTMACProxy/TmacProxy.asmx"
                 ],

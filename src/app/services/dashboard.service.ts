@@ -371,10 +371,15 @@ export class DashboardService {
      * @param {String} agentId
      * @param {Boolean} start
      */
-    public triggerTeamAgentList(agentId: string, start: boolean): void {
-        TUtils.Logger.console('info', `DashboardService.triggerTeamAgentList: agentId=${agentId}, start=${start}`);
+    public triggerTeamAgentList(params: { agentId: string, teamId: string }, start: boolean): void {
+        const paramString = Object.entries(params).reduce((acc, curr) => {
+            const [key, val] = curr;
+            acc += ` ${key}=${val || ''},`
+            return acc;
+        }, '')
+        TUtils.Logger.console('info', `DashboardService.triggerTeamAgentList:${paramString} start=${start}`);
         if (this._signalRInstance?.isConnected()) {
-            this._signalRInstance.hub.invoke('GetTeamAgentList', this._signalRInstance.hub.connection.id, agentId, start);
+            this._signalRInstance.hub.invoke('GetTeamAgentList', this._signalRInstance.hub.connection.id, params.agentId, start, (params.teamId || ''));
         }
     }
 }
