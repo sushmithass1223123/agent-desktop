@@ -611,7 +611,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             // check for conversation history
             this.checkForConversationHistory(evt.CIF);
         }
-    };
+    }
 
     /**
      * To process TextChatSelfServiceDestinationEvent
@@ -624,7 +624,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // }
 
         this.selfServiceDestinations = evt.Destinations || [];
-    };
+    }
 
     /**
      * To process TextChatAgentConnectedEvent
@@ -664,7 +664,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         if (evt.IsBotAgent) {
             this.botConnected = true;
         }
-    };
+    }
 
     /**
      * To process TextChatTranscriptForTransferEvent
@@ -753,7 +753,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 }
             }
         );
-    };
+    }
 
     /**
      * To process TextChatMessageSentEvent
@@ -761,7 +761,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     private TextChatMessageSentEvent = (evt: TextChatMessageSentEvent) => {
         this.messageSentEvent(evt);
-    };
+    }
 
     /**
      * To process TextChatMessageTemplateSentEvent
@@ -770,7 +770,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     private TextChatMessageTemplateSentEvent = (evt: TextChatMessageTemplateSentEvent) => {
         this.messageSentEvent(evt);
-    };
+    }
 
     /**
      * To process TextChatUserMessageWaitTimerEvent
@@ -802,7 +802,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             // hide freeze auto response button
             this.showAutoFreeze = false;
         }
-    };
+    }
 
     /**
      * To process TextChatTypingStateChangedEvent
@@ -814,7 +814,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // if (evt.InteractionID !== this.interactionId) {
         //     return;
         // }
-    };
+    }
 
     /**
      * To process TextChatMessageReceivedEvent
@@ -822,7 +822,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     private TextChatMessageReceivedEvent = (evt: TextChatMessageReceivedEvent) => {
         this.chatMessageReceived(evt);
-    };
+    }
 
     /**
      * To process TextChatAgentMessageReceivedEvent
@@ -830,7 +830,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     private TextChatAgentMessageReceivedEvent = (evt: TextChatAgentMessageReceivedEvent) => {
         this.chatMessageReceived(evt);
-    };
+    }
 
     /**
      * To handles ActionMessageReceivedEvent
@@ -897,7 +897,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
         // TODO:: handle app messages
         return;
-    };
+    }
 
     /**
      * To handle InteractionDataEvent
@@ -1060,7 +1060,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // TODO:: show chrome notification if needed
         //        hide freeze auto response button
-    };
+    }
 
     /**
      * To process AVControlMessageReceivedEvent
@@ -1082,7 +1082,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // forward the av messages to av channel
         this.avConn?.onMessage(evt.Message);
-    };
+    }
 
     /**
      * To process TextChatDisconnectedEvent
@@ -1149,7 +1149,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // change the mode to upload to preview the taken image
         this.attachPreviewMode = '';
-    };
+    }
 
     /**
      * To process TextChatAgentDisconnectedEvent
@@ -1179,7 +1179,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // Reset the reply form
         this.replyForm?.reset();
-    };
+    }
 
     /**
      * To process custom CannedResposeEvent
@@ -1194,7 +1194,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // send the selected template
         this.sendMessage(evt.Data.Template);
-    };
+    }
 
     /**
      * To process custom TextChatTransferSuccessEvent
@@ -1204,7 +1204,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     private TextChatTransferSuccessEvent = (evt: TextChatTransferSuccessEvent) => {
         // Rahil close AV call here via opener
         this.transferConfDialogRef?.close();
-    };
+    }
 
     /**
      * To process custom TextChatTransferFailedEvent
@@ -1214,7 +1214,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     private TextChatTransferFailedEvent = (evt: TextChatTransferFailedEvent) => {
         this.transferConfDialogRef?.close();
         this._appUIService.showSnackbar(`${evt.ResultMessage}`, 'failure');
-    };
+    }
 
     /**
      * To process custom TextChatTransferRejectEvent
@@ -1228,7 +1228,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             }`,
             'failure'
         );
-    };
+    }
 
     /**
      * To process both TextChatMessageSentEvent and TextChatMessageTemplateSentEvent
@@ -2374,7 +2374,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             this.interactionOnHold.loading = false;
             this._fuseProgressBarService.hide();
         }
-    };
+    }
 
     /**
      * Unholds interaction
@@ -2400,5 +2400,5 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             this.interactionOnHold.loading = false;
             this._fuseProgressBarService.hide();
         }
-    };
+    }
 }

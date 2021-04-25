@@ -1,6 +1,5 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { FuseConfig } from '@fuse/types';
 import { AppDataService } from '@services/app-data.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TMACEventService } from '@services/tmac-event.service';
@@ -11,7 +10,6 @@ import { IPostMessage } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
 import { Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient } from '@tmac/sdk';
 
 /**
  * Custom content component
