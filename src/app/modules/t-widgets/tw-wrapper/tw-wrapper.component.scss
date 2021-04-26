@@ -40,8 +40,11 @@ tw-wrapper {
             z-index: 100000;
 
             @include media-breakpoint('gt-md') {
-                width: 66.66%;
-                height: 100%;
+                // width: 66.66%;
+                // height: 100%;
+
+                width: 66.3%;
+                height: 99.3%;
             }
 
             & .cover,

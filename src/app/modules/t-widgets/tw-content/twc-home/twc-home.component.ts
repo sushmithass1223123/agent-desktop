@@ -209,10 +209,10 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
                 }
             }, 10000);
             // start getting data
-            this._dashboardService.triggerAgentData(this.agentData.agentId, true, this.duration);
+            this._dashboardService.triggerAgentData(true, this.duration);
         } else {
             // stop getting data
-            this._dashboardService.triggerAgentData(this.agentData.agentId, false, 0);
+            this._dashboardService.triggerAgentData(false, 0);
         }
     }
 

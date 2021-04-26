@@ -1,9 +1,10 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { AppUiService } from '@services/app-ui.service';
-import { TWidgetWrapper } from '@twidgets/utils';
-import { InstantMessagingService } from 'app/layout/components/instant-messaging/instant-messaging.service';
 import { AgentNotificaitonEvent, SDKClient } from '@tmac/sdk';
+import { TWidgetWrapper } from '@twidgets/utils';
+import { IWidget } from 'app/interfaces';
+import { InstantMessagingService } from 'app/layout/components/instant-messaging/instant-messaging.service';
 /**
  * Instant messaging sidebar component
  */
@@ -17,7 +18,7 @@ export class TwInstantMessagingComponent extends TWidgetWrapper implements OnIni
     /**
      * App config data for widget
      */
-    @Input() data: any;
+    @Input() data: IWidget;
 
     /**
      * Opened Flag
@@ -46,6 +47,9 @@ export class TwInstantMessagingComponent extends TWidgetWrapper implements OnIni
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
+
+        // send the widget config
+        this._instantMessagingService.shareConfig(this.data.Data);
 
         // register to event
         SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);

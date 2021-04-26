@@ -104,7 +104,9 @@
                                 "Config": {
                                     "Enabled": true
                                 },
-                                "Data": {}
+                                "Data": {
+                                    "TeamFilter": true
+                                }
                             },
                             {
                                 "Name": "Notification",
@@ -705,6 +707,7 @@
                     "Data": {
                         "Path": "/supervisor",
                         "Duration": 100,
+                        "AgentHierarchy": true,
                         "Widgets": {
                             "Static": [
                                 {
@@ -3341,6 +3344,7 @@
         },
         "Urls": {
             "DashboardServerUrls": [
+                "https://dice.tetherfi.cloud/SignalRDashboard2",
                 "https://dice.tetherfi.cloud:443/SignalRDashboardSup"
             ],
             "FileServerUrl": {
@@ -3447,6 +3451,7 @@
         "SDK": {
             "Proxy": {
                 "Urls": [
+                    "https://dice.tetherfi.cloud/Dev_TMACSDKProxy/TmacProxy.asmx",
                     "https://dice.tetherfi.cloud/TMACSDKProxyv5/TmacProxy.asmx",
                     "https://localhost:55443/SDKTMACProxy/TmacProxy.asmx"
                 ],
@@ -3457,7 +3462,7 @@
                 "Logging": true,
                 "Protocol": "webSockets",
                 "Timeout": 10,
-                "Fallback": false
+                "Fallback": true
             },
             "Logging": {
                 "Enabled": true,

@@ -155,10 +155,6 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         this.sortBy = this.data.Data.SortBy ?? 'AgentName';
         this.sortType = this.data.Data.SortType ?? 'asc';
 
-        // listen to agent list event
-        // SDKClient.events.on('SupervisorAgentListEvent', this.SupervisorAgentListEvent);
-        // SDKClient.events.on('TeamAgentListDataEvent', this.TeamAgentListDataEvent);
-
         this._tmacEventService
             .getEvents(['SupervisorAgentListEvent', 'TeamAgentListDataEvent'])
             .pipe(takeUntil(this.unsubscribeAll))
@@ -180,10 +176,6 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-
-        // listen off agent list event
-        // SDKClient.events.off('SupervisorAgentListEvent', this.SupervisorAgentListEvent);
-        // SDKClient.events.off('TeamAgentListDataEvent', this.TeamAgentListDataEvent);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -210,7 +202,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             this.reload = false;
             this._appUIService.showSnackbar('Agent data is reloaded');
         }
-    };
+    }
 
     /**
      * TeamAgentListDataEvent Handler
@@ -239,7 +231,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
 
         // sort agent list
         this.sortAgentList();
-    };
+    }
 
     /**
      * createActivityWidget
@@ -581,7 +573,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
      */
     public refreshList(): void {
         this.reload = true;
-        this._dashboardService.reTriggerActiveAgents(this.user.agentId, this.user.teamId);
+        this._dashboardService.reTriggerActiveAgents();
     }
 
     /**

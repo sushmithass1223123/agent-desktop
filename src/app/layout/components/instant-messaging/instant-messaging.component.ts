@@ -162,6 +162,16 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
     callWidget: IWidget;
 
     /**
+     * Config for instant messaging
+     */
+    config: {
+        /**
+         * Team filter flag
+         */
+        TeamFilter: boolean;
+    };
+
+    /**
      * Constructor
      *
      * @param {FuseSidebarService} _fuseSidebarService
@@ -197,7 +207,7 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
             .subscribe((opened) => {
                 // check to get team list
                 if (opened) {
-                    this._dashboardService.triggerTeamAgentList({ agentId: this.user.agentId, teamId: this.user.teamId }, true);
+                    this._dashboardService.triggerTeamAgentList(true, this.config.TeamFilter ?? false);
                     this.loading = true;
                     setTimeout(() => {
                         if (this.loading) {
@@ -206,15 +216,18 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
                     }, 10000);
                 }
                 else {
-                    this._dashboardService.triggerTeamAgentList({ agentId: this.user.agentId, teamId: this.user.teamId }, false);
+                    this._dashboardService.triggerTeamAgentList(false, this.config.TeamFilter ?? false);
                     this.selectedContact = null;
                 }
             });
 
-        // SDKClient.events.on('TeamAgentListEvent', this.TeamAgentListEvent);
-        // SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
-
-        this._tmacEventService.getEvents(['TeamAgentListEvent', 'AgentNotificaitonEvent', 'SupervisorAgentListEvent', 'AgentAVMessageEvent'])
+        this._tmacEventService.getEvents(
+            [
+                'TeamAgentListEvent',
+                'AgentNotificaitonEvent',
+                'SupervisorAgentListEvent',
+                'AgentAVMessageEvent'
+            ])
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
 
@@ -232,7 +245,11 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
                 }
             });
 
-
+        this._instantMessagingService.getConfig
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((x: any) => {
+                this.config = x;
+            });
     }
 
     /**
@@ -242,9 +259,6 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
         // Unsubscribe from all subscriptions
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
-
-        // SDKClient.events.off('TeamAgentListEvent', this.TeamAgentListEvent);
-        // SDKClient.events.off('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -464,7 +478,9 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
         if (this.loading) {
             this.loading = false;
         }
+
         const agents = groupBy(this.contacts, 'id');
+
         this.contacts = sortBy(evt.Data, 'AgentName').map((x) => ({
             avatar: x.ProfilePicture,
             id: x.AgentLoginID,
@@ -487,6 +503,7 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
             // filter out local agent
             evt.Data = evt.Data.filter((d: SuAgentModel) => d.AgentLoginID !== SDKClient.getAgentData().agentId);
         }
+
         // add to the list
         this.contacts = sortBy(evt.Data, 'AgentName').map((x) => ({
             avatar: x.ProfilePicture,

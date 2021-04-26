@@ -41,6 +41,14 @@ export class DashboardService {
      * Supervisor dashboard duration
      */
     private _sdDuration: number;
+    /**
+     * Agent data
+     */
+    private _agentData: IAgentData;
+    /**
+     * Agent hierarchy flag
+     */
+    private _agentHierarchy: boolean;
 
     constructor(
         private _appDataService: AppDataService,
@@ -53,11 +61,8 @@ export class DashboardService {
     private startService(): void {
         TUtils.Logger.console('info', 'DashboardService.startService');
 
-        // get agent data
-        const agentData: IAgentData = SDKClient.getAgentData();
-
         // check if we rece
-        if (Object.keys(agentData).length === 0) {
+        if (Object.keys(this._agentData).length === 0) {
             TUtils.Logger.debug('DashboardService.startService: Agent data is not available!');
             return;
         }
@@ -67,7 +72,7 @@ export class DashboardService {
             this._serviceUrls,
             'webSockets',
             'TmacDataServer',
-            { agentId: agentData.agentId, stationId: '', tmacServer: '', isTmac: false },
+            { agentId: this._agentData.agentId, stationId: '', tmacServer: '', isTmac: false },
             'TmacDataServerHub',
             false,
             10
@@ -130,7 +135,7 @@ export class DashboardService {
             // ----- Supervisor -----
 
             // check for the profile
-            if (agentData.agentProfile === 'S') {
+            if (this._agentData.agentProfile === 'S') {
                 signalR.hub.on('onAgentList', (agentList: any) => {
 
                     const eventData = {
@@ -251,17 +256,22 @@ export class DashboardService {
 
         TUtils.Logger.console('info', 'DashboardService.subscribe');
 
+        // get agent data
+        this._agentData = SDKClient.getAgentData();
+
         this._unsubscribeAll = new Subject();
         this._dashboardServiceSubject = new BehaviorSubject('');
 
-        this._appDataService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
-            // check whether the Urls are provided in config
-            this._serviceUrls = config.Main.Urls?.DashboardServerUrls || [];
-            // if urls are there then start service
-            if (this._serviceUrls.length > 0 && !this._serviceStarted) {
-                this.startService();
-            }
-        });
+        this._appDataService.config
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((config: any) => {
+                // check whether the Urls are provided in config
+                this._serviceUrls = config.Main.Urls?.DashboardServerUrls || [];
+                // if urls are there then start service
+                if (this._serviceUrls.length > 0 && !this._serviceStarted) {
+                    this.startService();
+                }
+            });
 
         // set the flag
         this._subscribed = true;
@@ -288,59 +298,86 @@ export class DashboardService {
 
         this._subscribed = false;
         this._serviceStarted = false;
+        this._agentHierarchy = false;
+        this._agentData = null;
     }
 
     /**
      * Trigger Agent Data
      * 
-     * @param {String} agentId
      * @param {Boolean} start
      * @param {number} duration
      */
-    public triggerAgentData(agentId: string, start: boolean, duration: number): void {
+    public triggerAgentData(start: boolean, duration: number): void {
         TUtils.Logger.console('info', `DashboardService.triggerAgentData: start=${start}, duration=${duration}`);
 
         // if connected, then trigger
         if (this._signalRInstance?.isConnected()) {
-            this._signalRInstance.hub.invoke('GetAgentData', this._signalRInstance.hub.connection.id, agentId, start, duration);
+            this._signalRInstance.hub.invoke(
+                'GetAgentData',
+                this._signalRInstance.hub.connection.id,
+                this._agentData.agentId,
+                start,
+                duration);
         }
     }
 
     /**
      * Trigger Active agents
      * 
-     * @param {String} agentId
-     * @param {String} teamId
      * @param {Boolean} start
+     * @param {Boolean} hierarchy
      * @param {Number} duration
      */
-    public triggerActiveAgents(agentId: string, teamId: string, start: boolean, duration: number): void {
-        TUtils.Logger.console('info', `DashboardService.triggerActiveAgents: start=${start}, duration=${duration}`);
+    public triggerActiveAgents(start: boolean, hierarchy: boolean, duration: number): void {
+        TUtils.Logger.console('info', `DashboardService.triggerActiveAgents: start=${start}, hierarchy=${hierarchy}, duration=${duration}`);
+
+        // assign the hierarchy
+        this._agentHierarchy = hierarchy;
+
         // if start, store the duration
         if (start) {
             this._sdDuration = duration;
         }
+
         // if connected, then trigger
         if (this._signalRInstance?.isConnected()) {
-            this._signalRInstance.hub.invoke('GetActiveAgentList', this._signalRInstance.hub.connection.id, agentId, teamId, start, duration);
+            this._signalRInstance.hub.invoke(
+                'GetActiveAgentList',
+                this._signalRInstance.hub.connection.id,
+                this._agentData.agentId,
+                hierarchy ? this._agentData.teamId : '',
+                start,
+                duration);
         }
     }
 
     /**
      * Re-trigger Active agents
-     * 
-     * @param {String} agentId
-     * @param {String} teamId
      */
-    public reTriggerActiveAgents(agentId: string, teamId: string): void {
-        TUtils.Logger.console('info', `DashboardService.reTriggerActiveAgents`);
+    public reTriggerActiveAgents(): void {
+        TUtils.Logger.console('info', `DashboardService.reTriggerActiveAgents: hierarchy=${this._agentHierarchy}`);
+
         // if connected, then trigger
         if (this._signalRInstance?.isConnected()) {
             // stop first 
-            this._signalRInstance.hub.invoke('GetActiveAgentList', this._signalRInstance.hub.connection.id, agentId, teamId, false, 0);
+            this._signalRInstance.hub.invoke(
+                'GetActiveAgentList',
+                this._signalRInstance.hub.connection.id,
+                this._agentData.agentId,
+                this._agentHierarchy ? this._agentData.teamId : '',
+                false,
+                0);
+
             // then start in next event loop
             setTimeout(() => {
-                this._signalRInstance.hub.invoke('GetActiveAgentList', this._signalRInstance.hub.connection.id, agentId, teamId, true, this._sdDuration);
+                this._signalRInstance.hub.invoke(
+                    'GetActiveAgentList',
+                    this._signalRInstance.hub.connection.id,
+                    this._agentData.agentId,
+                    this._agentHierarchy ? this._agentData.teamId : '',
+                    true,
+                    this._sdDuration);
             });
         }
     }
@@ -353,26 +390,32 @@ export class DashboardService {
      */
     public triggerAgentInteractions(agentId: string, start: boolean): void {
         TUtils.Logger.console('info', `DashboardService.triggerAgentInteractions: agentId=${agentId}, start=${start}`);
+
         if (this._signalRInstance?.isConnected()) {
-            this._signalRInstance.hub.invoke('GetActiveInteractionList', this._signalRInstance.hub.connection.id, agentId, start);
+            this._signalRInstance.hub.invoke(
+                'GetActiveInteractionList',
+                this._signalRInstance.hub.connection.id,
+                agentId,
+                start);
         }
     }
 
     /**
      * Trigger agent team list for IM list
      * 
-     * @param {String} agentId
      * @param {Boolean} start
+     * @param {Boolean} teamFilter
      */
-    public triggerTeamAgentList(params: { agentId: string, teamId: string }, start: boolean): void {
-        const paramString = Object.entries(params).reduce((acc, curr) => {
-            const [key, val] = curr;
-            acc += ` ${key}=${val || ''},`
-            return acc;
-        }, '')
-        TUtils.Logger.console('info', `DashboardService.triggerTeamAgentList:${paramString} start=${start}`);
+    public triggerTeamAgentList(start: boolean, teamFilter: boolean): void {
+        TUtils.Logger.console('info', `DashboardService.triggerTeamAgentList: start=${start}, teamFilter=${teamFilter}`);
+
         if (this._signalRInstance?.isConnected()) {
-            this._signalRInstance.hub.invoke('GetTeamAgentList', this._signalRInstance.hub.connection.id, params.agentId, start, (params.teamId || ''));
+            this._signalRInstance.hub.invoke(
+                'GetTeamAgentList',
+                this._signalRInstance.hub.connection.id,
+                this._agentData.agentId,
+                start,
+                teamFilter ? this._agentData.teamId : '');
         }
     }
 }
