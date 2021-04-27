@@ -216,10 +216,10 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
             }, 10000);
 
             // start getting data
-            this._dashboardService.triggerActiveAgents(true, hierarchy, this.widgetDataConfig.Duration);
+            this._dashboardService.triggerActiveAgents(this.agentData.agentId, this.agentData.teamId, true, hierarchy, this.widgetDataConfig.Duration);
         } else {
             // stop getting data
-            this._dashboardService.triggerActiveAgents(false, hierarchy, 0);
+            this._dashboardService.triggerActiveAgents(this.agentData.agentId, this.agentData.teamId, false, hierarchy, 0);
         }
     }
 

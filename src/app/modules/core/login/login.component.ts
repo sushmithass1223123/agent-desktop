@@ -503,7 +503,8 @@ export class LoginComponent implements OnInit, OnDestroy {
                     title: '404',
                     description: 'Unable to load the config, please contact the administrator.',
                     login: false
-                }
+                },
+                queryParamsHandling: 'preserve'
             });
         }
     }
@@ -806,7 +807,8 @@ export class LoginComponent implements OnInit, OnDestroy {
                                 state: {
                                     routeFrom: 'login',
                                     agentId
-                                }
+                                },
+                                queryParamsHandling: 'preserve'
                             });
                         }
 

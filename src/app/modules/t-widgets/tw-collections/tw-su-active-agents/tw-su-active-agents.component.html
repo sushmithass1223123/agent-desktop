@@ -61,7 +61,7 @@
                         </button>
                     </ng-template>
                 </mat-form-field>
-                <button mat-icon-button (click)="refreshList()" matTooltip="Reload Agent Data" [disabled]="!filteredAgents.length || reload">
+                <button mat-icon-button (click)="refreshList()" matTooltip="Reload Agent Data" [disabled]="reload">
                     <mat-icon [ngClass]="{ 'spin-o': reload }">refresh</mat-icon>
                 </button>
                 <button *ngIf="isAgentSupervisor" mat-icon-button matTooltip="Send Broadcast To Team" (click)="sendBroadcast()">

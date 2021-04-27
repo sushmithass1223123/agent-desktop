@@ -5,12 +5,12 @@ import { widgetFabAnimations } from '@modules/shared/animations/widget-fab.anima
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { DashboardService } from '@services/dashboard.service';
 import { TMACEventService } from '@services/tmac-event.service';
+import { AgentAVMessageEvent, AgentNotificaitonEvent, AVControlMessageReceivedEvent, IAgentData, SDKClient, SuAgentModel, TUtils } from '@tmac/sdk';
 import { CustomSDKEvent, IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
-import { groupBy, sortBy } from 'lodash';
+import { groupBy, sortBy, uniqBy } from 'lodash';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AgentAVMessageEvent, AgentNotificaitonEvent, AVControlMessageReceivedEvent, IAgentData, SDKClient, SuAgentModel, TUtils } from '@tmac/sdk';
 import { InstantMessagingService } from './instant-messaging.service';
 
 /**
@@ -207,7 +207,7 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
             .subscribe((opened) => {
                 // check to get team list
                 if (opened) {
-                    this._dashboardService.triggerTeamAgentList(true, this.config.TeamFilter ?? false);
+                    this._dashboardService.triggerTeamAgentList(this.user.agentId, this.user.teamId, true, this.config.TeamFilter ?? false);
                     this.loading = true;
                     setTimeout(() => {
                         if (this.loading) {
@@ -216,7 +216,7 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
                     }, 10000);
                 }
                 else {
-                    this._dashboardService.triggerTeamAgentList(false, this.config.TeamFilter ?? false);
+                    this._dashboardService.triggerTeamAgentList(this.user.agentId, this.user.teamId, false, this.config.TeamFilter ?? false);
                     this.selectedContact = null;
                 }
             });
@@ -479,9 +479,12 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
             this.loading = false;
         }
 
-        const agents = groupBy(this.contacts, 'id');
-
-        this.contacts = sortBy(evt.Data, 'AgentName').map((x) => ({
+        // get current contact list
+        const curContacts = this.contacts;
+        // group agents by id
+        const agents = groupBy(curContacts, 'id');
+        // create new contact list
+        const newContacts = sortBy(evt.Data, 'AgentName').map((x) => ({
             avatar: x.ProfilePicture,
             id: x.AgentLoginID,
             mood: '',
@@ -491,19 +494,21 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
             unread: agents[x.AgentLoginID] ? agents[x.AgentLoginID][0].unread : 0,
             tmacServer: x.TmacServer
         }));
+
+        // create contact list merging both items
+        this.contacts = uniqBy(curContacts.concat(newContacts), 'id');
     }
 
     /**
      * To process SupervisorAgentListEvent
      */
     SupervisorAgentListEvent = (evt: CustomSDKEvent): void => {
-        const agents = groupBy(this.contacts, 'id');
-
         if (evt.Data.length) {
             // filter out local agent
             evt.Data = evt.Data.filter((d: SuAgentModel) => d.AgentLoginID !== SDKClient.getAgentData().agentId);
         }
 
+        const agents = groupBy(this.contacts, 'id');
         // add to the list
         this.contacts = sortBy(evt.Data, 'AgentName').map((x) => ({
             avatar: x.ProfilePicture,

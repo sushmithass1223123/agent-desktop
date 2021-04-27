@@ -573,7 +573,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
      */
     public refreshList(): void {
         this.reload = true;
-        this._dashboardService.reTriggerActiveAgents();
+        this._dashboardService.reTriggerActiveAgents(this.user.agentId, this.user.teamId);
     }
 
     /**

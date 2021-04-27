@@ -292,7 +292,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
     private routeToLogin(): void {
         const route = `login${this.agentId ? '/' + this.agentId : ''}`;
         // we will route to login page
-        this._router.navigate([`${route}`]);
+        this._router.navigate([`${route}`], { queryParamsHandling: 'preserve' });
     }
 
     /**

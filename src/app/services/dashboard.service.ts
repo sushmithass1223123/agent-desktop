@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AgentStateDurationList, IAgentData, SDKClient, SignalRWrapper, TUtils } from '@tmac/sdk';
+import { AgentStateDurationList, SDKClient, SignalRWrapper, TUtils } from '@tmac/sdk';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AppDataService } from './app-data.service';
@@ -42,10 +42,6 @@ export class DashboardService {
      */
     private _sdDuration: number;
     /**
-     * Agent data
-     */
-    private _agentData: IAgentData;
-    /**
      * Agent hierarchy flag
      */
     private _agentHierarchy: boolean;
@@ -61,8 +57,11 @@ export class DashboardService {
     private startService(): void {
         TUtils.Logger.console('info', 'DashboardService.startService');
 
+        // get agent data
+        const agentData = SDKClient.getAgentData();
+
         // check if we rece
-        if (Object.keys(this._agentData).length === 0) {
+        if (Object.keys(agentData).length === 0) {
             TUtils.Logger.debug('DashboardService.startService: Agent data is not available!');
             return;
         }
@@ -72,7 +71,7 @@ export class DashboardService {
             this._serviceUrls,
             'webSockets',
             'TmacDataServer',
-            { agentId: this._agentData.agentId, stationId: '', tmacServer: '', isTmac: false },
+            { agentId: agentData.agentId, stationId: '', tmacServer: '', isTmac: false },
             'TmacDataServerHub',
             false,
             10
@@ -135,7 +134,7 @@ export class DashboardService {
             // ----- Supervisor -----
 
             // check for the profile
-            if (this._agentData.agentProfile === 'S') {
+            if (agentData.agentProfile === 'S') {
                 signalR.hub.on('onAgentList', (agentList: any) => {
 
                     const eventData = {
@@ -256,9 +255,6 @@ export class DashboardService {
 
         TUtils.Logger.console('info', 'DashboardService.subscribe');
 
-        // get agent data
-        this._agentData = SDKClient.getAgentData();
-
         this._unsubscribeAll = new Subject();
         this._dashboardServiceSubject = new BehaviorSubject('');
 
@@ -299,16 +295,16 @@ export class DashboardService {
         this._subscribed = false;
         this._serviceStarted = false;
         this._agentHierarchy = false;
-        this._agentData = null;
     }
 
     /**
      * Trigger Agent Data
      * 
+     * @param {String} agentId
      * @param {Boolean} start
      * @param {number} duration
      */
-    public triggerAgentData(start: boolean, duration: number): void {
+    public triggerAgentData(agentId: string, start: boolean, duration: number): void {
         TUtils.Logger.console('info', `DashboardService.triggerAgentData: start=${start}, duration=${duration}`);
 
         // if connected, then trigger
@@ -316,7 +312,7 @@ export class DashboardService {
             this._signalRInstance.hub.invoke(
                 'GetAgentData',
                 this._signalRInstance.hub.connection.id,
-                this._agentData.agentId,
+                agentId,
                 start,
                 duration);
         }
@@ -325,11 +321,13 @@ export class DashboardService {
     /**
      * Trigger Active agents
      * 
+     * @param {String} agentId
+     * @param {String} teamId
      * @param {Boolean} start
      * @param {Boolean} hierarchy
      * @param {Number} duration
      */
-    public triggerActiveAgents(start: boolean, hierarchy: boolean, duration: number): void {
+    public triggerActiveAgents(agentId: string, teamId: string, start: boolean, hierarchy: boolean, duration: number): void {
         TUtils.Logger.console('info', `DashboardService.triggerActiveAgents: start=${start}, hierarchy=${hierarchy}, duration=${duration}`);
 
         // assign the hierarchy
@@ -345,8 +343,8 @@ export class DashboardService {
             this._signalRInstance.hub.invoke(
                 'GetActiveAgentList',
                 this._signalRInstance.hub.connection.id,
-                this._agentData.agentId,
-                hierarchy ? this._agentData.teamId : '',
+                agentId,
+                hierarchy ? teamId : '',
                 start,
                 duration);
         }
@@ -354,8 +352,11 @@ export class DashboardService {
 
     /**
      * Re-trigger Active agents
+     * 
+     * @param {String} agentId 
+     * @param {String} teamId 
      */
-    public reTriggerActiveAgents(): void {
+    public reTriggerActiveAgents(agentId: string, teamId: string): void {
         TUtils.Logger.console('info', `DashboardService.reTriggerActiveAgents: hierarchy=${this._agentHierarchy}`);
 
         // if connected, then trigger
@@ -364,8 +365,8 @@ export class DashboardService {
             this._signalRInstance.hub.invoke(
                 'GetActiveAgentList',
                 this._signalRInstance.hub.connection.id,
-                this._agentData.agentId,
-                this._agentHierarchy ? this._agentData.teamId : '',
+                agentId,
+                this._agentHierarchy ? teamId : '',
                 false,
                 0);
 
@@ -374,8 +375,8 @@ export class DashboardService {
                 this._signalRInstance.hub.invoke(
                     'GetActiveAgentList',
                     this._signalRInstance.hub.connection.id,
-                    this._agentData.agentId,
-                    this._agentHierarchy ? this._agentData.teamId : '',
+                    agentId,
+                    this._agentHierarchy ? teamId : '',
                     true,
                     this._sdDuration);
             });
@@ -403,19 +404,21 @@ export class DashboardService {
     /**
      * Trigger agent team list for IM list
      * 
+     * @param {String} agentId 
+     * @param {String} teamId
      * @param {Boolean} start
      * @param {Boolean} teamFilter
      */
-    public triggerTeamAgentList(start: boolean, teamFilter: boolean): void {
+    public triggerTeamAgentList(agentId: string, teamId: string, start: boolean, teamFilter: boolean): void {
         TUtils.Logger.console('info', `DashboardService.triggerTeamAgentList: start=${start}, teamFilter=${teamFilter}`);
 
         if (this._signalRInstance?.isConnected()) {
             this._signalRInstance.hub.invoke(
                 'GetTeamAgentList',
                 this._signalRInstance.hub.connection.id,
-                this._agentData.agentId,
+                agentId,
                 start,
-                teamFilter ? this._agentData.teamId : '');
+                teamFilter ? teamId : '');
         }
     }
 }
