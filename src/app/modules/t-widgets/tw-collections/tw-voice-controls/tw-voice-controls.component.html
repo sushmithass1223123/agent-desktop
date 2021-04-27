@@ -4,294 +4,288 @@
     (collapseEvent)="collapseEvent.emit($event)"
     (floatEvent)="floatEvent.emit($event)"
 >
-    <div fxLayout="column" class="w-100-p h-100-p voice-controls">
-        <div fxFlex fxLayout="row" fxLayoutAlign=" none" class="h-75-p">
-            <div fxLayout="column" fxLayoutAlign=" center" class="w-60 h-100-p py-8 mt-8 interactions custom-scroll-adjust">
-                <avatar
-                    *ngFor="let item of interactionList"
-                    name="{{ item.user }}"
-                    [ngClass]="
-                        item.status +
-                        (item.interactionId === interactionId ? ' active' : '') +
-                        (item.status === 'incoming' ? ' animate__animated animate__flash animate__infinite animate__slow' : '')
-                    "
-                    matTooltip="{{ item.user }}"
-                    matTooltipPosition="after"
-                    (click)="selectInteraction(item)"
-                    [circleColor]="
-                        fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
-                            ? fuseConfig.layout.anchorWidget.contentBackground
-                            : fuseConfig.layout.widget.customBackgroundColor === true
-                            ? fuseConfig.layout.widget.contentBackground
-                            : ''
-                    "
-                ></avatar>
-            </div>
-            <div
-                fxFlex
-                fxLayout="column"
-                fxLayoutAlign=" none"
-                class="w-100-p px-12 py-8 border-radius-20 interaction-details"
-                [ngClass]="
-                    fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
-                        ? fuseConfig.layout.anchorWidget.contentBackground
-                        : fuseConfig.layout.widget.customBackgroundColor === true
-                        ? fuseConfig.layout.widget.contentBackground
-                        : ''
-                "
-            >
-                <div fxFlex fxLayout="column" fxLayoutAlign="start none">
-                    <div fxLayout="row" fxLayoutAlign="space-between none">
-                        <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>alarm_on</mat-icon> {{ startTime }}</div>
-                        <div fxLayout="row" fxLayoutAlign=" center">
-                            <mat-icon *ngIf="!callLines.length">construction</mat-icon>
-                            <mat-icon *ngIf="callLines.length" [matMenuTriggerFor]="sessionsMenu" class="cursor-pointer">construction</mat-icon>
-                            {{ sessionID + '|' + interactionId }}
-                            <mat-menu #sessionsMenu="matMenu" [overlapTrigger]="false" class="agent-info-menu custom">
-                                <div *ngFor="let item of callLines" mat-menu-item fxLayout fxLayoutAlign=" center">
-                                    <mat-icon>construction</mat-icon>
-                                    <span>{{ item }}</span>
-                                </div>
-                            </mat-menu>
-                        </div>
-                    </div>
-                    <div fxLayout="row" fxLayoutAlign="space-between none" class="mt-4">
-                        <div fxLayout="row" fxLayoutAlign=" center">
-                            <mat-icon>timer</mat-icon>
-                            <div>
-                                {{ (duration | date: 'HH:mm:ss':'UTC') || '00:00:00' }}
-                            </div>
-                        </div>
-                        <div fxLayout="row" fxLayoutAlign=" center">
-                            <mat-icon>directions</mat-icon> <span class="text-bold">{{ direction }}</span>
-                        </div>
-                        <div fxLayout="row" fxLayoutAlign=" center">
-                            <mat-icon>grading</mat-icon> <span class="text-bold">{{ intent }}</span>
-                        </div>
-                    </div>
-                    <div fxFlex *ngIf="audioPlayer" fxLayout="row" fxLayoutAlign=" center" class="w-100-p">
-                        <button
-                            *ngIf="audioPlayer._adpState === 'paused'"
-                            mat-icon-button
-                            class="mr-4 bg-success custom-btn"
-                            matTooltip="Play"
-                            (click)="playerAction(1)"
-                        >
-                            <mat-icon>play_circle_outline</mat-icon>
-                        </button>
-                        <button
-                            *ngIf="audioPlayer._adpState === 'playing'"
-                            mat-icon-button
-                            class="mr-4 bg-warning custom-btn"
-                            matTooltip="Pause"
-                            (click)="playerAction(2)"
-                        >
-                            <mat-icon>pause_circle_outline</mat-icon>
-                        </button>
-                        <button mat-icon-button class="mr-4 bg-danger custom-btn" matTooltip="Stop" (click)="playerAction(3)">
-                            <mat-icon>stop</mat-icon>
-                        </button>
-                        <marquee direction="left">Currently playing '{{ audioPlayer.fileName }}'</marquee>
-                    </div>
+    <ng-container
+        *ngIf="{
+            anchor: (customFuse.anchor$ | async),
+            widget: (customFuse.widget$ | async)
+        } as customFuse"
+    >
+        <div fxLayout="column" class="w-100-p h-100-p voice-controls">
+            <div fxFlex fxLayout="row" fxLayoutAlign=" none" class="h-75-p">
+                <div fxLayout="column" fxLayoutAlign=" center" class="w-60 h-100-p py-8 mt-8 interactions custom-scroll-adjust">
+                    <avatar
+                        *ngFor="let item of interactionList"
+                        name="{{ item.user }}"
+                        [ngClass]="
+                            item.status +
+                            (item.interactionId === interactionId ? ' active' : '') +
+                            (item.status === 'incoming' ? ' animate__animated animate__flash animate__infinite animate__slow' : '')
+                        "
+                        matTooltip="{{ item.user }}"
+                        matTooltipPosition="after"
+                        (click)="selectInteraction(item)"
+                        [circleColor]="customFuse.anchor?.content || customFuse.widget?.content"
+                    ></avatar>
                 </div>
                 <div
-                    *ngIf="data.Data.IVR?.MenuEnabled"
-                    fxLayout="row"
+                    fxFlex
+                    fxLayout="column"
                     fxLayoutAlign=" none"
-                    class="mt-8 px-12 border-radius-30 position-relative ivr-history"
+                    class="w-100-p px-12 py-8 border-radius-20 interaction-details"
+                    [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                 >
-                    <div class="ivr-label">IVR History</div>
-                    <ul class="breadcrumbs">
-                        <li>
-                            <span>{{ last4IVR[0] || 'NA' }}</span>
-                        </li>
-                        <li>
-                            <span>{{ last4IVR[1] || 'NA' }}</span>
-                        </li>
-                        <li>
-                            <span>{{ last4IVR[2] || 'NA' }}</span>
-                        </li>
-                        <li>
-                            <span>{{ last4IVR[3] || 'NA' }}</span>
-                        </li>
-                    </ul>
-                </div>
-                <div fxLayout="row wrap" fxLayoutAlign=" none" class="call-controls mt-4">
-                    <button
-                        *ngIf="status !== 'disconnected'"
-                        mat-mini-fab
-                        class="success mat-elevation-z2"
-                        [disabled]="status !== 'incoming'"
-                        #answerBtn
-                        matTooltip="Answer"
-                        (click)="answerCall(answerBtn)"
-                    >
-                        <mat-icon>call</mat-icon>
-                    </button>
-
-                    <button
-                        *ngIf="status !== 'disconnected'"
-                        mat-mini-fab
-                        color="warn"
-                        class="mat-elevation-z2"
-                        [disabled]="status !== 'connected' && status !== 'outgoing'"
-                        #disconnectBtn
-                        matTooltip="Disconnect"
-                        (click)="confirmDisconnectCall(disconnectBtn)"
-                    >
-                        <mat-icon>call_end</mat-icon>
-                    </button>
-
-                    <button
-                        *ngIf="status !== 'hold' && status !== 'disconnected'"
-                        mat-mini-fab
-                        class="warning mat-elevation-z2"
-                        [disabled]="status !== 'connected' || callLines.length > 1"
-                        #holdBtn
-                        matTooltip="Hold"
-                        (click)="holdCall(holdBtn)"
-                    >
-                        <mat-icon>phone_paused</mat-icon>
-                    </button>
-
-                    <button
-                        *ngIf="status === 'hold'"
-                        mat-mini-fab
-                        class="success mat-elevation-z2"
-                        #unHoldBtn
-                        matTooltip="Unhold"
-                        [disabled]="tempCallRef"
-                        (click)="unHoldCall(unHoldBtn)"
-                    >
-                        <mat-icon>phone_in_talk</mat-icon>
-                    </button>
-
-                    <button
-                        *ngIf="isMSCall && status !== 'disconnected'"
-                        mat-mini-fab
-                        color="default"
-                        class="mat-elevation-z2"
-                        [ngClass]="commonButtonBackground"
-                        [disabled]="status !== 'connected'"
-                        [matTooltip]="muted ? 'Un Mute' : 'Mute'"
-                        (click)="muteUnMuteCall()"
-                        [ngClass]="{ 'mat-warn': muted }"
-                    >
-                        <mat-icon> mic_off </mat-icon>
-                    </button>
-
-                    <button
-                        *ngIf="data.Data?.Transfer.Allowed && status !== 'disconnected'"
-                        mat-mini-fab
-                        color="default"
-                        class="mat-elevation-z2"
-                        [ngClass]="commonButtonBackground"
-                        [disabled]="status !== 'connected'"
-                        matTooltip="Transfer"
-                        (click)="openTransferConferenceDialog('transfer')"
-                    >
-                        <mat-icon>phone_forwarded</mat-icon>
-                    </button>
-
-                    <button
-                        *ngIf="data.Data?.Conference.Allowed && status !== 'disconnected'"
-                        mat-mini-fab
-                        color="default"
-                        class="mat-elevation-z2"
-                        [ngClass]="commonButtonBackground"
-                        [disabled]="status !== 'connected'"
-                        matTooltip="Conference"
-                        (click)="openTransferConferenceDialog('conference')"
-                    >
-                        <mat-icon>group</mat-icon>
-                    </button>
-
-                    <button
-                        *ngIf="ivrMenus.length && status !== 'disconnected'"
-                        mat-mini-fab
-                        color="default"
-                        class="mat-elevation-z2"
-                        [ngClass]="commonButtonBackground"
-                        [disabled]="status !== 'connected'"
-                        matTooltip="IVR Transfer"
-                        [matMenuTriggerFor]="ivrMenu"
-                    >
-                        <mat-icon>phonelink_ring</mat-icon>
-
-                        <mat-menu class="custom" #ivrMenu="matMenu" xPosition="before">
-                            <button mat-menu-item *ngFor="let item of ivrMenus" (click)="transferToIVR(item.Type)">
-                                <mat-icon>{{ item.Icon }}</mat-icon>
-                                <span>{{ item.Text }}</span>
-                            </button>
-                        </mat-menu>
-                    </button>
-
-                    <button
-                        *ngIf="data.Data?.DialpadAllowed && status !== 'disconnected'"
-                        mat-mini-fab
-                        color="default"
-                        class="mat-elevation-z2"
-                        [ngClass]="commonButtonBackground"
-                        matTooltip="Dialpad"
-                        (click)="openDialpad = !openDialpad"
-                        cdkOverlayOrigin
-                        #dialpadMenu="cdkOverlayOrigin"
-                    >
-                        <mat-icon>dialpad</mat-icon>
-
-                        <ng-template
-                            cdkConnectedOverlay
-                            [cdkConnectedOverlayOrigin]="dialpadMenu"
-                            [cdkConnectedOverlayOpen]="openDialpad"
-                            cdkConnectedOverlayHasBackdrop
-                            cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-                            (overlayOutsideClick)="openDialpad = false"
-                        >
-                            <div class="dialpad-menu mat-elevation-z1 mt-4 p-8 border-radius-20" fxLayout="column">
-                                <div class="pl-8 pr-4 my-4 mx-4 border border-radius-20" fxLayout="row" fxLayoutAlign="space-between center">
-                                    <div>
-                                        {{ dialedNumbers }}
+                    <div fxFlex fxLayout="column" fxLayoutAlign="start none">
+                        <div fxLayout="row" fxLayoutAlign="space-between none">
+                            <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>alarm_on</mat-icon> {{ startTime }}</div>
+                            <div fxLayout="row" fxLayoutAlign=" center">
+                                <mat-icon *ngIf="!callLines.length">construction</mat-icon>
+                                <mat-icon *ngIf="callLines.length" [matMenuTriggerFor]="sessionsMenu" class="cursor-pointer">construction</mat-icon>
+                                {{ sessionID + '|' + interactionId }}
+                                <mat-menu #sessionsMenu="matMenu" [overlapTrigger]="false" class="agent-info-menu custom">
+                                    <div *ngFor="let item of callLines" mat-menu-item fxLayout fxLayoutAlign=" center">
+                                        <mat-icon>construction</mat-icon>
+                                        <span>{{ item }}</span>
                                     </div>
-                                    <button mat-button color="warn" mat-icon-button aria-label="Clear" (click)="dialedNumbers = ''">
-                                        <mat-icon>close</mat-icon>
-                                    </button>
-                                </div>
-
-                                <div class="dialpad" fxLayout="row wrap" fxLayoutAlign="center ">
-                                    <button *ngFor="let item of dialpadNumbers" mat-icon-button mat-stroked-button (click)="dialpadClick(item)">
-                                        {{ item.key }}
-                                    </button>
+                                </mat-menu>
+                            </div>
+                        </div>
+                        <div fxLayout="row" fxLayoutAlign="space-between none" class="mt-4">
+                            <div fxLayout="row" fxLayoutAlign=" center">
+                                <mat-icon>timer</mat-icon>
+                                <div>
+                                    {{ (duration | date: 'HH:mm:ss':'UTC') || '00:00:00' }}
                                 </div>
                             </div>
-                        </ng-template>
-                    </button>
-
-                    <button
-                        mat-mini-fab
-                        color="default"
-                        class="mat-elevation-z2"
-                        [ngClass]="commonButtonBackground"
-                        matTooltip="Interaction Comment"
-                        (click)="saveInteractionComments()"
+                            <div fxLayout="row" fxLayoutAlign=" center">
+                                <mat-icon>directions</mat-icon> <span class="text-bold">{{ direction }}</span>
+                            </div>
+                            <div fxLayout="row" fxLayoutAlign=" center">
+                                <mat-icon>grading</mat-icon> <span class="text-bold">{{ intent }}</span>
+                            </div>
+                        </div>
+                        <div fxFlex *ngIf="audioPlayer" fxLayout="row" fxLayoutAlign=" center" class="w-100-p">
+                            <button
+                                *ngIf="audioPlayer._adpState === 'paused'"
+                                mat-icon-button
+                                class="mr-4 bg-success custom-btn"
+                                matTooltip="Play"
+                                (click)="playerAction(1)"
+                            >
+                                <mat-icon>play_circle_outline</mat-icon>
+                            </button>
+                            <button
+                                *ngIf="audioPlayer._adpState === 'playing'"
+                                mat-icon-button
+                                class="mr-4 bg-warning custom-btn"
+                                matTooltip="Pause"
+                                (click)="playerAction(2)"
+                            >
+                                <mat-icon>pause_circle_outline</mat-icon>
+                            </button>
+                            <button mat-icon-button class="mr-4 bg-danger custom-btn" matTooltip="Stop" (click)="playerAction(3)">
+                                <mat-icon>stop</mat-icon>
+                            </button>
+                            <marquee direction="left">Currently playing '{{ audioPlayer.fileName }}'</marquee>
+                        </div>
+                    </div>
+                    <div
+                        *ngIf="data.Data.IVR?.MenuEnabled"
+                        fxLayout="row"
+                        fxLayoutAlign=" none"
+                        class="mt-8 px-12 border-radius-30 position-relative ivr-history"
                     >
-                        <mat-icon>comment</mat-icon>
-                    </button>
+                        <div class="ivr-label">IVR History</div>
+                        <ul class="breadcrumbs">
+                            <li>
+                                <span>{{ last4IVR[0] || 'NA' }}</span>
+                            </li>
+                            <li>
+                                <span>{{ last4IVR[1] || 'NA' }}</span>
+                            </li>
+                            <li>
+                                <span>{{ last4IVR[2] || 'NA' }}</span>
+                            </li>
+                            <li>
+                                <span>{{ last4IVR[3] || 'NA' }}</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div fxLayout="row wrap" fxLayoutAlign=" none" class="call-controls mt-4">
+                        <button
+                            *ngIf="status !== 'disconnected'"
+                            mat-mini-fab
+                            class="success mat-elevation-z2"
+                            [disabled]="status !== 'incoming'"
+                            #answerBtn
+                            matTooltip="Answer"
+                            (click)="answerCall(answerBtn)"
+                        >
+                            <mat-icon>call</mat-icon>
+                        </button>
 
-                    <button
-                        *ngIf="status === 'disconnected'"
-                        mat-raised-button
-                        class="border-radius-20"
-                        color="warn"
-                        #closeBtn
-                        (click)="confirmCloseInteraction(closeBtn)"
-                        matTooltip="Close Interaction"
-                    >
-                        Close
-                    </button>
+                        <button
+                            *ngIf="status !== 'disconnected'"
+                            mat-mini-fab
+                            color="warn"
+                            class="mat-elevation-z2"
+                            [disabled]="status !== 'connected' && status !== 'outgoing'"
+                            #disconnectBtn
+                            matTooltip="Disconnect"
+                            (click)="confirmDisconnectCall(disconnectBtn)"
+                        >
+                            <mat-icon>call_end</mat-icon>
+                        </button>
 
-                    <br />
+                        <button
+                            *ngIf="status !== 'hold' && status !== 'disconnected'"
+                            mat-mini-fab
+                            class="warning mat-elevation-z2"
+                            [disabled]="status !== 'connected' || callLines.length > 1"
+                            #holdBtn
+                            matTooltip="Hold"
+                            (click)="holdCall(holdBtn)"
+                        >
+                            <mat-icon>phone_paused</mat-icon>
+                        </button>
 
-                    <!-- <button
+                        <button
+                            *ngIf="status === 'hold'"
+                            mat-mini-fab
+                            class="success mat-elevation-z2"
+                            #unHoldBtn
+                            matTooltip="Unhold"
+                            [disabled]="tempCallRef"
+                            (click)="unHoldCall(unHoldBtn)"
+                        >
+                            <mat-icon>phone_in_talk</mat-icon>
+                        </button>
+
+                        <button
+                            *ngIf="isMSCall && status !== 'disconnected'"
+                            mat-mini-fab
+                            color="default"
+                            class="mat-elevation-z2"
+                            [ngClass]="customFuse.anchor?.body"
+                            [disabled]="status !== 'connected'"
+                            [matTooltip]="muted ? 'Un Mute' : 'Mute'"
+                            (click)="muteUnMuteCall()"
+                            [ngClass]="{ 'mat-warn': muted }"
+                        >
+                            <mat-icon> mic_off </mat-icon>
+                        </button>
+
+                        <button
+                            *ngIf="data.Data?.Transfer.Allowed && status !== 'disconnected'"
+                            mat-mini-fab
+                            color="default"
+                            class="mat-elevation-z2"
+                            [ngClass]="customFuse.anchor?.body"
+                            [disabled]="status !== 'connected'"
+                            matTooltip="Transfer"
+                            (click)="openTransferConferenceDialog('transfer')"
+                        >
+                            <mat-icon>phone_forwarded</mat-icon>
+                        </button>
+
+                        <button
+                            *ngIf="data.Data?.Conference.Allowed && status !== 'disconnected'"
+                            mat-mini-fab
+                            color="default"
+                            class="mat-elevation-z2"
+                            [ngClass]="customFuse.anchor?.body"
+                            [disabled]="status !== 'connected'"
+                            matTooltip="Conference"
+                            (click)="openTransferConferenceDialog('conference')"
+                        >
+                            <mat-icon>group</mat-icon>
+                        </button>
+
+                        <button
+                            *ngIf="ivrMenus.length && status !== 'disconnected'"
+                            mat-mini-fab
+                            color="default"
+                            class="mat-elevation-z2"
+                            [ngClass]="customFuse.anchor?.body"
+                            [disabled]="status !== 'connected'"
+                            matTooltip="IVR Transfer"
+                            [matMenuTriggerFor]="ivrMenu"
+                        >
+                            <mat-icon>phonelink_ring</mat-icon>
+
+                            <mat-menu class="custom" #ivrMenu="matMenu" xPosition="before">
+                                <button mat-menu-item *ngFor="let item of ivrMenus" (click)="transferToIVR(item.Type)">
+                                    <mat-icon>{{ item.Icon }}</mat-icon>
+                                    <span>{{ item.Text }}</span>
+                                </button>
+                            </mat-menu>
+                        </button>
+
+                        <button
+                            *ngIf="data.Data?.DialpadAllowed && status !== 'disconnected'"
+                            mat-mini-fab
+                            color="default"
+                            class="mat-elevation-z2"
+                            [ngClass]="customFuse.anchor?.body"
+                            matTooltip="Dialpad"
+                            (click)="openDialpad = !openDialpad"
+                            cdkOverlayOrigin
+                            #dialpadMenu="cdkOverlayOrigin"
+                        >
+                            <mat-icon>dialpad</mat-icon>
+
+                            <ng-template
+                                cdkConnectedOverlay
+                                [cdkConnectedOverlayOrigin]="dialpadMenu"
+                                [cdkConnectedOverlayOpen]="openDialpad"
+                                cdkConnectedOverlayHasBackdrop
+                                cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+                                (overlayOutsideClick)="openDialpad = false"
+                            >
+                                <div class="dialpad-menu mat-elevation-z1 mt-4 p-8 border-radius-20" fxLayout="column">
+                                    <div class="pl-8 pr-4 my-4 mx-4 border border-radius-20" fxLayout="row" fxLayoutAlign="space-between center">
+                                        <div>
+                                            {{ dialedNumbers }}
+                                        </div>
+                                        <button mat-button color="warn" mat-icon-button aria-label="Clear" (click)="dialedNumbers = ''">
+                                            <mat-icon>close</mat-icon>
+                                        </button>
+                                    </div>
+
+                                    <div class="dialpad" fxLayout="row wrap" fxLayoutAlign="center ">
+                                        <button *ngFor="let item of dialpadNumbers" mat-icon-button mat-stroked-button (click)="dialpadClick(item)">
+                                            {{ item.key }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </button>
+
+                        <button
+                            mat-mini-fab
+                            color="default"
+                            class="mat-elevation-z2"
+                            [ngClass]="customFuse.anchor?.body"
+                            matTooltip="Interaction Comment"
+                            (click)="saveInteractionComments()"
+                        >
+                            <mat-icon>comment</mat-icon>
+                        </button>
+
+                        <button
+                            *ngIf="status === 'disconnected'"
+                            mat-raised-button
+                            class="border-radius-20"
+                            color="warn"
+                            #closeBtn
+                            (click)="confirmCloseInteraction(closeBtn)"
+                            matTooltip="Close Interaction"
+                        >
+                            Close
+                        </button>
+
+                        <br />
+
+                        <!-- <button
                         *ngIf="(isMSCall && tempCallRef?.status === 'connected') || tempCallRef?.status === 'hold'"
                         mat-mini-fab
                         color="default"
@@ -304,36 +298,37 @@
                         <mat-icon>phone_paused</mat-icon>
                     </button> -->
 
-                    <button
-                        *ngIf="tempCallRef?.isConsult && tempCallRef?.status === 'connected'"
-                        mat-raised-button
-                        class="border-radius-20"
-                        color="primary"
-                        #confirmBtn
-                        (click)="confirmCallFn(true, confirmBtn)"
-                        matTooltip="Confirm"
-                    >
-                        Confirm
-                    </button>
+                        <button
+                            *ngIf="tempCallRef?.isConsult && tempCallRef?.status === 'connected'"
+                            mat-raised-button
+                            class="border-radius-20"
+                            color="primary"
+                            #confirmBtn
+                            (click)="confirmCallFn(true, confirmBtn)"
+                            matTooltip="Confirm"
+                        >
+                            Confirm
+                        </button>
 
-                    <button
-                        *ngIf="tempCallRef?.isConsult && tempCallRef?.status === 'connected'"
-                        mat-raised-button
-                        class="border-radius-20"
-                        color="warn"
-                        #cancelBtn
-                        (click)="confirmCallFn(false, cancelBtn)"
-                        matTooltip="Cancel"
-                    >
-                        Cancel
-                    </button>
+                        <button
+                            *ngIf="tempCallRef?.isConsult && tempCallRef?.status === 'connected'"
+                            mat-raised-button
+                            class="border-radius-20"
+                            color="warn"
+                            #cancelBtn
+                            (click)="confirmCallFn(false, cancelBtn)"
+                            matTooltip="Cancel"
+                        >
+                            Cancel
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- For web phone -->
-    <div hidden>
-        <audio *ngFor="let item of msAudioStreams" autoplay playsinline="true" [srcObject]="item.stream" id="{{ item.stream.id }}"></audio>
-    </div>
+        <!-- For web phone -->
+        <div hidden>
+            <audio *ngFor="let item of msAudioStreams" autoplay playsinline="true" [srcObject]="item.stream" id="{{ item.stream.id }}"></audio>
+        </div>
+    </ng-container>
 </tw-wrapper>

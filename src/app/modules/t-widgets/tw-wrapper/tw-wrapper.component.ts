@@ -1,11 +1,10 @@
 import { Component, EventEmitter, HostBinding, Input, OnDestroy, OnInit, Output, ViewEncapsulation } from '@angular/core';
-import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseConfig } from '@fuse/types';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { Subject } from 'rxjs/internal/Subject';
-import { filter, takeUntil } from 'rxjs/operators';
+import { filter } from 'rxjs/operators';
 
 /**
  * TW Wrapper component
@@ -51,7 +50,7 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
     /**
      * Fuse Config
      */
-    fuseConfig: FuseConfig;
+    // fuseConfig: FuseConfig;
 
     /**
      * Drag Position
@@ -93,18 +92,21 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
     _unsubscribeAll: Subject<any>;
 
     /**
-     * Fuse custom background colors
+     * Fuse custom config
      */
-    customFuseColor = {
-        anchor$: this.fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
-        widget$: this.fuseFacadeService.widgetBgClasses$
+    customFuse = {
+        anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
+        widget$: this._fuseFacadeService.widgetBgClasses$,
+        config$: this._fuseFacadeService.getConfig({ flatTheme: 'flatTheme' })
     };
 
     /**
      * Constructor
-     * @param {FuseConfigService} _fuseConfigService
      */
-    constructor(private _fuseConfigService: FuseConfigService, private fuseFacadeService: FuseFacadeService) {
+    constructor(
+        // private _fuseConfigService: FuseConfigService,
+        private _fuseFacadeService: FuseFacadeService
+    ) {
         this._unsubscribeAll = new Subject();
     }
 
@@ -116,9 +118,9 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
      */
     ngOnInit(): void {
         // Subscribe to the config changes
-        this._fuseConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((fuseConfig: any) => {
-            this.fuseConfig = fuseConfig;
-        });
+        // this._fuseConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((fuseConfig: any) => {
+        //     this.fuseConfig = fuseConfig;
+        // });
 
         // check if the basic data input is provided, if not create a dummy widget data
         if (!this.data) {

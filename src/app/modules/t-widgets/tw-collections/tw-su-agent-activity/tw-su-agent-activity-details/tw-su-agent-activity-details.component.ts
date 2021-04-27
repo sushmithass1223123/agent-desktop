@@ -71,13 +71,13 @@ export class TwSuAgentActivityDetailsComponent extends TWidgetWrapper implements
         const profileWidget = new TwWidgetModel('Profile', 'tw-panel', 'account_box');
         profileWidget.Data.ImageURL = item.profilePicture;
         profileWidget.Data.Details = item.details;
-        profileWidget.Config.Class = 'cover panel';
+        profileWidget.Config.Class = 'mx-cover panel';
         profileWidget.Config.Actions = [];
 
         // create snapshot widget
         const snapshotWidget = new TwWidgetModel('Snapshot', 'tw-panel', 'camera');
         snapshotWidget.Data.ImageURL = item.snapshot;
-        snapshotWidget.Config.Class = 'cover panel';
+        snapshotWidget.Config.Class = 'mx-cover panel';
         snapshotWidget.Config.Actions = ['maximize'];
 
         // create location widget
@@ -92,19 +92,19 @@ export class TwSuAgentActivityDetailsComponent extends TWidgetWrapper implements
                 center: latLng(item.location.latitude, item.location.longitude)
             };
         }
-        locationWidget.Config.Class = 'cover panel';
+        locationWidget.Config.Class = 'mx-cover panel';
         locationWidget.Config.Actions = ['maximize'];
 
         // create screenshot widget
         const screenshotWidget = new TwWidgetModel('Screenshot', 'tw-panel', 'all_out');
         screenshotWidget.Data.ImageURL = item.screenshot;
-        screenshotWidget.Config.Class = 'cover panel';
+        screenshotWidget.Config.Class = 'mx-cover panel';
         screenshotWidget.Config.Actions = ['maximize'];
 
         // create screenvideo widget
         const screenVideoWidget = new TwWidgetModel('Screen Video', 'tw-panel', 'featured_video');
         screenVideoWidget.Data.VideoURL = item.screenvideo;
-        screenVideoWidget.Config.Class = 'cover panel';
+        screenVideoWidget.Config.Class = 'mx-cover panel';
         screenVideoWidget.Config.Actions = ['maximize'];
 
         // push all the widgets

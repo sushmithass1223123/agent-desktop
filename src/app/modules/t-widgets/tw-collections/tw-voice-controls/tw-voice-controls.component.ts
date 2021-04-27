@@ -2,19 +2,14 @@ import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Outpu
 import { MatButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
-import { FuseConfigService } from '@fuse/services/config.service';
-import { FuseConfig } from '@fuse/types';
 import { AgentSkillListComponent } from '@modules/shared/components';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { ContentPageService } from '@services/content-page.service';
+import { FuseFacadeService } from '@services/fuse-facade.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TMACEventService } from '@services/tmac-event.service';
-import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AgentSkillListData, InteractionComment, InteractionRef, IWidget } from 'app/interfaces';
-import { Subject, timer } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import {
     AgentInteractionTemplate,
     AVChannel,
@@ -41,6 +36,10 @@ import {
     TUtils,
     UUIDataEvent
 } from '@tmac/sdk';
+import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
+import { AgentSkillListData, InteractionComment, InteractionRef, IWidget } from 'app/interfaces';
+import { Subject, timer } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
 
 /**
  * Voice Controls Component
@@ -71,7 +70,14 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Fuse Config
      */
-    fuseConfig: FuseConfig;
+    // fuseConfig: FuseConfig;
+    /**
+     * Fuse custom config
+     */
+    customFuse = {
+        anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
+        widget$: this._fuseFacadeService.widgetBgClasses$
+    };
     /**
      * App config
      */
@@ -286,10 +292,11 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Common button bg
      */
-    commonButtonBackground = '';
+    // commonButtonBackground = '';
 
     constructor(
-        private _fuseConfigService: FuseConfigService,
+        // private _fuseConfigService: FuseConfigService,
+        private _fuseFacadeService: FuseFacadeService,
         private _fuseProgressBarService: FuseProgressBarService,
         private _appDataService: AppDataService,
         private _interactionManagerService: InteractionManagerService,
@@ -318,11 +325,11 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         this.user = SDKClient.getAgentData() || null;
 
         // subscribe to fuse
-        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.fuseConfig = config;
-            this.commonButtonBackground =
-                config.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor ? config.layout.anchorWidget.bodyBackground : '';
-        });
+        // this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+        //     this.fuseConfig = config;
+        //     this.commonButtonBackground =
+        //         config.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor ? config.layout.anchorWidget.bodyBackground : '';
+        // });
 
         // subscribe to app data config
         this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
@@ -1477,41 +1484,41 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         let data: AgentSkillListData =
             type === 'transfer'
                 ? {
-                      title: 'Transfer Call',
-                      type: 'transferCall',
-                      agent: {
-                          allowed: this.data.Data.Transfer.Agent.Allowed,
-                          blind: this.data.Data.Transfer.Agent.Allowed,
-                          source: this.data.Data.Transfer.Agent.Source,
-                          allowedStates: this.data.Data.Transfer.Agent.AllowedStates,
-                          columns: this.data.Data.Transfer.Agent.Columns
-                      },
-                      skill: {
-                          allowed: this.data.Data.Transfer.Skill.Allowed,
-                          blind: this.data.Data.Transfer.Skill.Allowed,
-                          source: this.data.Data.Transfer.Skill.Source,
-                          channelPrfix: this.data.Data.Transfer.Skill.ChannelPrefix,
-                          columns: this.data.Data.Transfer.Skill.Columns
-                      }
-                  }
+                    title: 'Transfer Call',
+                    type: 'transferCall',
+                    agent: {
+                        allowed: this.data.Data.Transfer.Agent.Allowed,
+                        blind: this.data.Data.Transfer.Agent.Allowed,
+                        source: this.data.Data.Transfer.Agent.Source,
+                        allowedStates: this.data.Data.Transfer.Agent.AllowedStates,
+                        columns: this.data.Data.Transfer.Agent.Columns
+                    },
+                    skill: {
+                        allowed: this.data.Data.Transfer.Skill.Allowed,
+                        blind: this.data.Data.Transfer.Skill.Allowed,
+                        source: this.data.Data.Transfer.Skill.Source,
+                        channelPrfix: this.data.Data.Transfer.Skill.ChannelPrefix,
+                        columns: this.data.Data.Transfer.Skill.Columns
+                    }
+                }
                 : {
-                      title: 'Conference Call',
-                      type: 'conferenceCall',
-                      agent: {
-                          allowed: this.data.Data.Conference.Agent.Allowed,
-                          blind: this.data.Data.Conference.Agent.Allowed,
-                          source: this.data.Data.Conference.Agent.Source,
-                          allowedStates: this.data.Data.Conference.Agent.AllowedStates,
-                          columns: this.data.Data.Conference.Agent.Columns
-                      },
-                      skill: {
-                          allowed: this.data.Data.Conference.Skill.Allowed,
-                          blind: this.data.Data.Conference.Skill.Allowed,
-                          source: 'skill',
-                          channelPrfix: this.data.Data.Conference.Skill.ChannelPrefix,
-                          columns: this.data.Data.Conference.Skill.Columns
-                      }
-                  };
+                    title: 'Conference Call',
+                    type: 'conferenceCall',
+                    agent: {
+                        allowed: this.data.Data.Conference.Agent.Allowed,
+                        blind: this.data.Data.Conference.Agent.Allowed,
+                        source: this.data.Data.Conference.Agent.Source,
+                        allowedStates: this.data.Data.Conference.Agent.AllowedStates,
+                        columns: this.data.Data.Conference.Agent.Columns
+                    },
+                    skill: {
+                        allowed: this.data.Data.Conference.Skill.Allowed,
+                        blind: this.data.Data.Conference.Skill.Allowed,
+                        source: 'skill',
+                        channelPrfix: this.data.Data.Conference.Skill.ChannelPrefix,
+                        columns: this.data.Data.Conference.Skill.Columns
+                    }
+                };
 
         // add common properties
         data = {

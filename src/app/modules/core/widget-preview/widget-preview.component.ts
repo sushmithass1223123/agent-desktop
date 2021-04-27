@@ -102,7 +102,8 @@ export class WidgetPreviewComponent implements OnInit {
                     title: '',
                     description: message,
                     login: false
-                }
+                },
+                queryParamsHandling: 'preserve'
             });
     }
 

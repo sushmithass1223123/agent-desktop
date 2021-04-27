@@ -72,11 +72,9 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
         this.configData = this.data.Data;
 
         // register to event
-        // SDKClient.events.on('TeamAgentInteractionDetailsEvent', this.TeamAgentInteractionDetailsEvent);
-
         this._tmacEventService.getEvents(['TeamAgentInteractionDetailsEvent'])
             .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(evts => this.TeamAgentInteractionDetailsEvent(evts[0]));
+            .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
 
         // start receiving data
         this._dashboardService.triggerAgentInteractions(this.configData?.AgentLoginID, true);
@@ -88,9 +86,6 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-
-        // unregister from event
-        // SDKClient.events.off('TeamAgentInteractionDetailsEvent', this.TeamAgentInteractionDetailsEvent);
 
         // stop receiving data
         this._dashboardService.triggerAgentInteractions(this.configData?.AgentLoginID, false);

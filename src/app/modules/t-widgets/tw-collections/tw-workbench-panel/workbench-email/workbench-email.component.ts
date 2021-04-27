@@ -7,19 +7,18 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { DomSanitizer } from '@angular/platform-browser';
 import { fuseAnimations } from '@fuse/animations';
-import { FuseConfigService } from '@fuse/services/config.service';
-import { FuseConfig } from '@fuse/types';
 import { AgentSkillListComponent } from '@modules/shared/components';
 import { TWidgetWrapper } from '@modules/t-widgets/utils';
 import { AppUiService } from '@services/app-ui.service';
+import { FuseFacadeService } from '@services/fuse-facade.service';
+import { SDKClient } from '@tmac/sdk';
 import { COMMON_ERR_MESSAGE, DRAFT_REASONS, INBOX_REASONS, OUTBOX_REASONS, QUILL_EDITOR_CONFIG } from 'app/constants';
 import { AgentSkillListData, IWidget, ResData } from 'app/interfaces';
 import { formatJsonData } from 'app/utils';
 import { groupBy } from 'lodash';
 import * as moment from 'moment';
 import { Observable } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
-import { SDKClient } from '@tmac/sdk';
+import { filter, map } from 'rxjs/operators';
 
 type AvailableTabs = 'inbox' | 'sentitem' | 'queue' | 'draft';
 type EmailPullItem = {
@@ -96,7 +95,14 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
     /**
      * To store the fuse config for theme
      */
-    fuseConfig: FuseConfig;
+    // fuseConfig: FuseConfig;
+    /**
+     * Fuse custom config
+     */
+    customFuse = {
+        anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
+        widget$: this._fuseFacadeService.widgetBgClasses$
+    };
     /**
      * Search key
      */
@@ -114,13 +120,13 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
          */
         selected: any;
     }> = {
-        error: false,
-        loading: false,
-        msg: '',
-        data: {
-            selected: false
-        }
-    };
+            error: false,
+            loading: false,
+            msg: '',
+            data: {
+                selected: false
+            }
+        };
     /**
      * Global search form control
      */
@@ -177,10 +183,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
 
     /**
      * Constructor
-     * @param {FuseConfigService} _fuseConfigService
      */
     constructor(
-        private _fuseConfigService: FuseConfigService,
+        // private _fuseConfigService: FuseConfigService,
+        private _fuseFacadeService: FuseFacadeService,
         private http: HttpClient,
         private domSanitizer: DomSanitizer,
         private appUiService: AppUiService,
@@ -216,9 +222,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
         // -----------------------------------------------------------
         // To get the fuse config
         // -----------------------------------------------------------
-        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.fuseConfig = config;
-        });
+        // this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+        //     this.fuseConfig = config;
+        // });
 
         // const advancedSearchToggledFields = ['replied', 'closed', 'assigned'];
         this.doAdvancedSearch();

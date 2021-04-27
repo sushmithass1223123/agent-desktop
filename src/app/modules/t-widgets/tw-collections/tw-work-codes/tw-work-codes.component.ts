@@ -5,13 +5,13 @@ import { MatAutocomplete, MatAutocompleteSelectedEvent } from '@angular/material
 import { MatDialog } from '@angular/material/dialog';
 import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
+import { SDKClient, WorkCode, WorkCodeAddedEvent } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { CustomSDKEvent, IWidget, ResData } from 'app/interfaces';
 import { groupBy, orderBy, uniqBy } from 'lodash';
 import { Observable } from 'rxjs';
 import { map, startWith, takeUntil } from 'rxjs/operators';
-import { SDKClient, WorkCode, WorkCodeAddedEvent } from '@tmac/sdk';
 
 /**
  * Work codes Component
@@ -58,29 +58,18 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     /**
      * Data Configuration
      */
-    DataConf: {
-        /**
-         * Source for reusablility
-         */
-        Source: string;
-        /**
-         * Workcodes By team flag
-         */
-        ByTeam: boolean;
-        /**
-         * Workcodes By Group flag
-         */
-        ByGroup: boolean;
-    };
+    widgetData: WidgetData;
 
     /**
      * Selected Workcodes
      */
     selectedWorkCodes: any[] = [];
+
     /**
      * Separator Keys
      */
     separatorKeysCodes: number[] = [ENTER, COMMA];
+
     /**
      * Work Code Form Control
      */
@@ -91,6 +80,9 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
      */
     interactionId: number;
 
+    /**
+     * Workcode model ref
+     */
     @ViewChild('addWorkcodeModalRef')
     addWorkcodeModalRef: TemplateRef<any>;
 
@@ -113,7 +105,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        this.DataConf = this.data.Data;
+        this.widgetData = this.data.Data;
 
         this.filteredOptions = this.workCodeCtrl.valueChanges.pipe(
             startWith(''),
@@ -131,9 +123,6 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-
-        // SDKClient.events.off('TeamrWorkCodeDetailsEvent', this.TeamrWorkCodeDetailsEvent);
-        // SDKClient.events.off('WorkCodeAddedEvent', this.WorkCodeAddedEvent);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -146,12 +135,12 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
      */
     private async getAllWorkCodes(): Promise<void> {
         try {
-            const loadWCRes = await SDKClient.loadCallWorkCodes(this.DataConf.ByTeam, null);
+            const loadWCRes = await SDKClient.loadCallWorkCodes(this.widgetData.ByTeam, null);
             const workGroup = {};
             let workCodeList = [];
 
             // check to order by group
-            if (this.DataConf.ByGroup) {
+            if (this.widgetData.ByGroup) {
                 loadWCRes.response?.forEach((item: any) => {
                     if (item.ParentID === '0') {
                         workGroup[item.Code] = { i: item.Code, Name: item.Name, Pid: item.ParentID };
@@ -170,7 +159,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
 
             workCodeList = uniqBy(workCodeList, 'Name');
 
-            this.loadWorkCodesReq.data = this.DataConf.ByGroup ? groupBy(workCodeList, 'ParentName') : { listData: workCodeList };
+            this.loadWorkCodesReq.data = this.widgetData.ByGroup ? groupBy(workCodeList, 'ParentName') : { listData: workCodeList };
 
             this.loadWorkCodesReq.loading = false;
             this.loadWorkCodesReq.error = false;
@@ -186,16 +175,16 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
      * @method TeamrWorkCodeDetailsEvent
      * @param {CustomSDKEvent} evt
      */
-    private TeamrWorkCodeDetailsEvent = (evt: CustomSDKEvent) => {
+    private TeamrWorkCodeDetailsEvent(evt: CustomSDKEvent): void {
         this.selectedWorkCodes = orderBy(evt.Data, ['Count'], ['desc']);
-    };
+    }
 
     /**
      * WorkCodeAddedEvent Handler
      * @method WorkCodeAddedEvent
      * @param {WorkCodeAddedEvent} evt
      */
-    private WorkCodeAddedEvent = (evt: WorkCodeAddedEvent) => {
+    private WorkCodeAddedEvent(evt: WorkCodeAddedEvent): void {
         // check for interaction
         if (evt.InteractionID !== this.interactionId) {
             return;
@@ -204,7 +193,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         // check if the work code is already added
         if (this.selectedWorkCodes.filter((w: WorkCode) => w.Code === evt.Code).length <= 0) {
             this.selectedWorkCodes.push(evt);
-            if (this.DataConf.ByGroup) {
+            if (this.widgetData.ByGroup) {
                 Object.keys(this.loadWorkCodesReq.data).forEach((k) => {
                     this.loadWorkCodesReq.data[k] = this.loadWorkCodesReq.data[k].filter((x) => x.Code !== evt.Code);
                 });
@@ -212,7 +201,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
                 this.loadWorkCodesReq.data.listData = this.loadWorkCodesReq.data.listData.filter((x) => x.Code !== evt.Code);
             }
         }
-    };
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
@@ -233,30 +222,28 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
      * @method setup
      */
     public setup(): void {
-        this.DataConf.ByGroup = true;
-        if (this.DataConf.Source === 'interaction') {
+        this.widgetData.ByGroup = true;
+        let subscription: Observable<any[]>;
+
+        if (this.widgetData.Role === 'interaction') {
             // assign the interaction id
             this.interactionId = this.data.InteractionDetails?.InteractionID;
             this.loadWorkCodesReq.loading = true;
             this.getAllWorkCodes();
-
-            // SDKClient.events.on('WorkCodeAddedEvent', this.WorkCodeAddedEvent);
-
-            this._tmacEventService
-                .getEvents(['WorkCodeAddedEvent'])
-                .pipe(takeUntil(this.unsubscribeAll))
-                .subscribe((evts) => this.WorkCodeAddedEvent(evts[0]));
-        } else if (this.DataConf.Source === 'supervisor') {
-            // SDKClient.events.on('TeamrWorkCodeDetailsEvent', this.TeamrWorkCodeDetailsEvent);
-
-            this._tmacEventService
-                .getEvents(['TeamrWorkCodeDetailsEvent'])
-                .pipe(takeUntil(this.unsubscribeAll))
-                .subscribe((evts) => this.TeamrWorkCodeDetailsEvent(evts[0]));
+            subscription = this._tmacEventService.getInteractionEvents(['WorkCodeAddedEvent'], this.interactionId);
+        } else if (this.widgetData.Role === 'supervisor') {
+            subscription = this._tmacEventService.getEvents(['TeamrWorkCodeDetailsEvent']);
         } else {
             this.loadWorkCodesReq.error = true;
             this.loadWorkCodesReq.loading = false;
-            this.loadWorkCodesReq.msg = 'Source not provided / Invalid Source';
+            this.loadWorkCodesReq.msg = 'Role not provided / Role Source';
+        }
+
+        // if subscription is not null then subscribe to it
+        if (subscription) {
+            subscription
+                .pipe(takeUntil(this.unsubscribeAll))
+                .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
         }
     }
 
@@ -276,7 +263,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         )
             .then(() => {
                 this.selectedWorkCodes.push(option);
-                if (this.DataConf.ByGroup) {
+                if (this.widgetData.ByGroup) {
                     if (!group) {
                         Object.keys(this.loadWorkCodesReq.data).forEach((k) => {
                             this.loadWorkCodesReq.data[k] = this.loadWorkCodesReq.data[k].filter((x) => x.Code !== option.Code);
@@ -313,7 +300,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         )
             .then(() => {
                 this.selectedWorkCodes = this.selectedWorkCodes.filter((s: any) => s.Code !== option.Code);
-                if (this.DataConf.ByGroup) {
+                if (this.widgetData.ByGroup) {
                     this.loadWorkCodesReq.data[(option as any).ParentName].push(option);
                 } else {
                     this.loadWorkCodesReq.data.listData.push(option);
@@ -332,7 +319,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
      */
     _filterOptions(name: string): Record<string, WorkCode[]> {
         let filteredData: any;
-        if (this.DataConf.ByGroup) {
+        if (this.widgetData.ByGroup) {
             filteredData = {};
             Object.keys(this.loadWorkCodesReq.data).forEach((c) => {
                 filteredData[c] = this.loadWorkCodesReq.data[c].filter((x) => x.Name.toLowerCase().includes(name.toLowerCase()));
@@ -356,6 +343,9 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         return { ...x, ...y };
     }
 
+    /**
+     * To open work code modal
+     */
     openAddWorkCodeModal(): void {
         this.matDialog.open(this.addWorkcodeModalRef, {
             width: '50%'
@@ -363,4 +353,17 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     }
 }
 
-// for more info visit - https://angular.io/api/core
+interface WidgetData {
+    /**
+     * To get data based on agent profile
+     */
+    Role: 'supervisor' | 'interaction';
+    /**
+     * To get call workcodes by team (For Role interaction)
+     */
+    ByTeam: boolean;
+    /**
+     * To group call workcodes (For Role interaction)
+     */
+    ByGroup: boolean;
+}

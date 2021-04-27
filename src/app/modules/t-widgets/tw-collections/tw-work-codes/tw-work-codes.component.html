@@ -11,7 +11,7 @@
         fxLayoutAlign="center"
         class="p-4 position-relative"
     >
-        <div *ngIf="DataConf.Source === 'interaction'" class="w-100-p h-100-p p-12 custom-scroll-adjust">
+        <div *ngIf="widgetData.Role === 'interaction'" class="w-100-p h-100-p p-12 custom-scroll-adjust">
             <mat-chip-list #selectedWorkCodesRef aria-label="WorkCodes">
                 <mat-chip *ngFor="let workCode of selectedWorkCodes" removable (removed)="removeWorkCode(workCode)" class="bg-secondary">
                     <mat-icon class="mat-icon-mirror mr-4">local_offer</mat-icon>
@@ -19,20 +19,13 @@
                     <mat-icon matChipRemove>cancel</mat-icon>
                 </mat-chip>
             </mat-chip-list>
-            <button
-                *ngIf="DataConf.Source === 'interaction'"
-                class="add-workcode"
-                mat-button
-                mat-raised-button
-                mat-icon-button
-                (click)="openAddWorkCodeModal()"
-            >
+            <button class="add-workcode" mat-button mat-raised-button mat-icon-button (click)="openAddWorkCodeModal()">
                 <mat-icon>add</mat-icon>
             </button>
             <p *ngIf="!selectedWorkCodes.length" class="text-center mat-title mt-40">No work code selected</p>
         </div>
 
-        <div *ngIf="DataConf.Source === 'supervisor'" class="w-100-p h-100-p p-12 custom-scroll-adjust">
+        <div *ngIf="widgetData.Role === 'supervisor'" class="w-100-p h-100-p p-12 custom-scroll-adjust">
             <mat-chip-list aria-label="WorkCodes">
                 <mat-chip
                     *ngFor="let workCode of selectedWorkCodes"

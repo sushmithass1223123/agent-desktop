@@ -1,9 +1,8 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { FuseConfigService } from '@fuse/services/config.service';
-import { FuseConfig } from '@fuse/types';
+import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
-import { takeUntil } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
 
 /**
  * Workbench Panel Component
@@ -23,7 +22,14 @@ export class TwWorkbenchPanelComponent extends TWidgetWrapper implements OnInit,
     /**
      * to store the fuse config for theme
      */
-    fuseConfig: FuseConfig;
+    // fuseConfig: FuseConfig;
+    /**
+     * Fuse custom config
+     */
+    customFuse = {
+        anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
+        widget$: this._fuseFacadeService.widgetBgClasses$
+    };
 
     /**
      * Channel tabs
@@ -46,18 +52,20 @@ export class TwWorkbenchPanelComponent extends TWidgetWrapper implements OnInit,
     /**
      * active class for the tab
      */
-    tabActiveClass = '';
+    // tabActiveClass = '';
 
     /**
      * inactive class for the tab
      */
-    tabInactiveClass = '';
+    // tabInactiveClass = '';
 
     /**
      * Constructor
-     * @param {FuseConfigService} _fuseConfigService
      */
-    constructor(private _fuseConfigService: FuseConfigService) {
+    constructor(
+        // private _fuseConfigService: FuseConfigService
+        private _fuseFacadeService: FuseFacadeService
+    ) {
         super();
     }
 
@@ -73,25 +81,25 @@ export class TwWorkbenchPanelComponent extends TWidgetWrapper implements OnInit,
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.fuseConfig = config;
+        // this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+        //     this.fuseConfig = config;
 
-            // set the active tab class
-            this.tabActiveClass =
-                this.fuseConfig.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor
-                    ? this.fuseConfig.layout.anchorWidget.bodyBackground
-                    : this.fuseConfig.layout.widget.customBackgroundColor === true
-                    ? this.fuseConfig.layout.widget.bodyBackground
-                    : '';
+        //     // set the active tab class
+        //     this.tabActiveClass =
+        //         this.fuseConfig.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor
+        //             ? this.fuseConfig.layout.anchorWidget.bodyBackground
+        //             : this.fuseConfig.layout.widget.customBackgroundColor === true
+        //                 ? this.fuseConfig.layout.widget.bodyBackground
+        //                 : '';
 
-            // set the inactive tab class
-            this.tabInactiveClass =
-                this.fuseConfig.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor
-                    ? this.fuseConfig.layout.anchorWidget.contentBackground
-                    : this.fuseConfig.layout.widget.customBackgroundColor === true
-                    ? this.fuseConfig.layout.widget.contentBackground
-                    : '';
-        });
+        //     // set the inactive tab class
+        //     this.tabInactiveClass =
+        //         this.fuseConfig.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor
+        //             ? this.fuseConfig.layout.anchorWidget.contentBackground
+        //             : this.fuseConfig.layout.widget.customBackgroundColor === true
+        //                 ? this.fuseConfig.layout.widget.contentBackground
+        //                 : '';
+        // });
 
         // set the channels
         this.channels = this.data.Data.Channels;

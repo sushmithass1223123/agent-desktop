@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
+import { SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { IAction, IWidget, ResData, ResGamification, ResGamificationBadge } from 'app/interfaces';
@@ -9,7 +10,6 @@ import { TwWidgetModel } from 'app/models';
 import { sortBy } from 'lodash';
 import { interval, Subscription } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
-import { SDKClient } from '@tmac/sdk';
 
 type Coin = {
     /**
@@ -147,8 +147,6 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
 
     /**
      * Constructor
-     * @param {FuseConfigService} _fuseConfigService
-     * @param {AppDataService} _appDataService
      */
     constructor(private http: HttpClient, private appUiService: AppUiService, private _aotWidgetService: AOTWidgetService) {
         super();

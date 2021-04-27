@@ -124,7 +124,7 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
                         if (dt.response && dt.response.ResultCode === 0) {
                             this._appUIService.showSnackbar('Logged out successfully');
                             // route back to login page
-                            this._router.navigate(['login']);
+                            this._router.navigate(['login'], { queryParamsHandling: 'preserve' });
                         }
                         else {
                             // logout error

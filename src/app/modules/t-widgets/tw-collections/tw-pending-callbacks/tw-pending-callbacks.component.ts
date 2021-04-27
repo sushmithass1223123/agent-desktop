@@ -64,8 +64,6 @@ export class TwPendingCallbacksComponent extends TWidgetWrapper implements OnIni
 
     /**
      * Constructor
-     * @param {FuseConfigService} _fuseConfigService
-     * @param {AppDataService} _appDataService
      * @param {http} HttpClient
      * @param {appUiService} AppUiService
      */

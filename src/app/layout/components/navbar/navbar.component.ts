@@ -1,13 +1,13 @@
 import { Component, Input, OnDestroy, OnInit, QueryList, ViewChildren, ViewEncapsulation } from '@angular/core';
 import { MatListOption } from '@angular/material/list';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
-import { FuseConfigService } from '@fuse/services/config.service';
-import { IWidget, InteractionRef } from 'app/interfaces/';
+import { FuseFacadeService } from '@services/fuse-facade.service';
+import { InteractionManagerService } from '@services/interaction-manager.service';
+import { InteractionRef, IWidget } from 'app/interfaces/';
 import { AppDataService } from 'app/services/app-data.service';
 import { ContentPageService } from 'app/services/content-page.service';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { InteractionManagerService } from '@services/interaction-manager.service';
+import { map, takeUntil } from 'rxjs/operators';
 
 /**
  * Navbar component
@@ -36,7 +36,19 @@ export class NavbarComponent implements OnInit, OnDestroy {
     /**
      * Fuse config
      */
-    fuseConfig: any;
+    // fuseConfig: any;
+    /**
+     * Fuse custom config
+     */
+    customFuse$ = this._fuseFacadeService
+        .getConfig({ layoutNavbar: 'layout.navbar' }).pipe(
+            map((conf: any) => {
+                if (!conf.layoutNavbar.customBackgroundColor) {
+                    return { background: '' };
+                }
+                return { background: conf.layoutNavbar.background };
+            })
+        );
 
     /**
      * Widgets on top section of widgets
@@ -66,14 +78,15 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
     /**
      * Constructor
-     * @param {FuseConfigService} _fuseConfigService 
+     * @param {FuseFacadeService} _fuseFacadeService
      * @param {AppDataService} _appDataService 
      * @param {ContentPageService} _contentPageService 
      * @param {FuseSidebarService} _fuseSidebarService 
      * @param {InteractionManagerService} _interactionManagerService 
      */
     constructor(
-        private _fuseConfigService: FuseConfigService,
+        // private _fuseConfigService: FuseConfigService,
+        private _fuseFacadeService: FuseFacadeService,
         private _appDataService: AppDataService,
         private _contentPageService: ContentPageService,
         private _fuseSidebarService: FuseSidebarService,
@@ -93,11 +106,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
 
         // Subscribe to the config changes
-        this._fuseConfigService.config
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((fuseConfig: any) => {
-                this.fuseConfig = fuseConfig;
-            });
+        // this._fuseConfigService.config
+        //     .pipe(takeUntil(this._unsubscribeAll))
+        //     .subscribe((fuseConfig: any) => {
+        //         this.fuseConfig = fuseConfig;
+        //     });
 
         // Subscribe to config changes
         this._appDataService.config

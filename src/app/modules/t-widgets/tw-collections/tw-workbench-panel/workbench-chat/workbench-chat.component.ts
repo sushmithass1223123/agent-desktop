@@ -4,18 +4,17 @@ import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
-import { FuseConfigService } from '@fuse/services/config.service';
-import { FuseConfig } from '@fuse/types';
 import { AgentSkillListComponent } from '@modules/shared/components';
 import { TWidgetWrapper } from '@modules/t-widgets/utils';
 import { AppUiService } from '@services/app-ui.service';
+import { FuseFacadeService } from '@services/fuse-facade.service';
+import { IAgentData, SDKClient } from '@tmac/sdk';
 import { AgentSkillListData, IWidget } from 'app/interfaces';
 import { formatJsonData } from 'app/utils';
 import { groupBy, sortBy } from 'lodash';
 import * as moment from 'moment';
 import { Subscription, timer } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { IAgentData, SDKClient } from '@tmac/sdk';
+import { filter } from 'rxjs/operators';
 
 type ApiCalls = 'search' | 'pull' | 'push';
 type CallStates = 'loading' | 'error' | 'initial' | 'completed';
@@ -71,7 +70,14 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit {
     /**
      * To store the fuse config for theme
      */
-    fuseConfig: FuseConfig;
+    // fuseConfig: FuseConfig;
+    /**
+     * Fuse custom config
+     */
+    customFuse = {
+        anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
+        widget$: this._fuseFacadeService.widgetBgClasses$
+    };
 
     /**
      * Api Call states
@@ -100,7 +106,8 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit {
 
     constructor(
         private http: HttpClient,
-        private _fuseConfigService: FuseConfigService,
+        // private _fuseConfigService: FuseConfigService,
+        private _fuseFacadeService: FuseFacadeService,
         private appUiService: AppUiService,
         private matDialog: MatDialog
     ) {
@@ -122,9 +129,10 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit {
      * On Init
      */
     ngOnInit(): void {
-        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.fuseConfig = config;
-        });
+        // this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+        //     this.fuseConfig = config;
+        // });
+
         this.user = SDKClient.getAgentData();
         this.polling$ = timer(0, this.channelConf.Config.SearchPollingInterval || 5000).subscribe(() => {
             this.doAdvancedSearch();
@@ -371,7 +379,7 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit {
     /**
      * To open push dialog
      */
-    openPushDialog(): void {}
+    openPushDialog(): void { }
 
     /**
      * resets form

@@ -5,12 +5,12 @@ import { fuseAnimations } from '@fuse/animations';
 import { AppConfirmDialogComponent } from '@modules/shared/components';
 import { TWidgetWrapper } from '@modules/t-widgets/utils/widget-wrapper/tw-wrapper';
 import { AppUiService } from '@services/app-ui.service';
+import { AgentReminder, SDKClient } from '@tmac/sdk';
 import { CalendarEventTimesChangedEvent, CalendarMonthViewDay } from 'angular-calendar';
 import { IWidget } from 'app/interfaces';
-import { format, isBefore, isSameDay, isSameMonth, startOfDay } from 'date-fns';
+import { format, isBefore, isSameDay, isSameMonth } from 'date-fns';
 import * as moment from 'moment';
 import { Subject } from 'rxjs';
-import { AgentReminder, SDKClient } from '@tmac/sdk';
 import { CustomCalendarEvent, CustomEventAction } from './calendar.interface';
 import { CalendarEventModel } from './calendar.model';
 import { CalendarEventFormDialogComponent } from './event-form/event-form.component';
@@ -260,7 +260,7 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
             //     item.actions = this.actions;
             //     return new CalendarEventModel(item);
             // });
-        } catch (error) {}
+        } catch (error) { }
     }
 
     /**
