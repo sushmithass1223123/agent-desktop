@@ -5,296 +5,294 @@
 <!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
 
 <tw-wrapper [data]="data" class="active-agent-wrapper">
-    <!-- your code goes here -->
-    <div fxFill fxLayout="column" fxLayoutAlign=" none">
-        <div class="w-100-p px-4 mb-8" fxLayout="row" fxLayoutAlign="center center">
-            <button mat-icon-button [matMenuTriggerFor]="sortMenu">
-                <mat-icon>sort</mat-icon>
-                <mat-menu class="custom" #sortMenu="matMenu" xPosition="after">
-                    <button mat-menu-item (click)="sortAgentList('AgentLoginID')">
-                        <span>Agent ID</span>
-                        <mat-icon *ngIf="sortBy === 'AgentLoginID'">{{ sortType === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
-                    </button>
-                    <button mat-menu-item (click)="sortAgentList('AgentName')">
-                        <span>Agent Name</span>
-                        <mat-icon *ngIf="sortBy === 'AgentName'">{{ sortType === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
-                    </button>
-                    <button mat-menu-item (click)="sortAgentList('CurrentAgentStatus')">
-                        <span>Agent Status</span>
-                        <mat-icon *ngIf="sortBy === 'CurrentAgentStatus'">{{ sortType === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
-                    </button>
-                    <button mat-menu-item (click)="sortAgentList('CurrentStatusDuration')">
-                        <span>Status Duration</span>
-                        <mat-icon *ngIf="sortBy === 'CurrentStatusDuration'">{{ sortType === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
-                    </button>
-                </mat-menu>
-            </button>
-            <mat-form-field class="custom form-field w-100-p" appearance="outline">
-                <input class="login-input" matInput placeholder="Search" [(ngModel)]="searchTerm" (input)="filterAgents()" />
-                <button
-                    *ngIf="!searchTerm; else clearBtn"
-                    mat-icon-button
-                    matSuffix
-                    [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
-                    disabled
-                >
-                    <mat-icon>search</mat-icon>
+    <ng-container
+        *ngIf="{
+            anchor: (customFuse.anchor$ | async),
+            widget: (customFuse.widget$ | async)
+        } as customFuse"
+    >
+        <div fxFill fxLayout="column" fxLayoutAlign=" none">
+            <div class="w-100-p px-4 mb-8" fxLayout="row" fxLayoutAlign="center center">
+                <button mat-icon-button [matMenuTriggerFor]="sortMenu">
+                    <mat-icon>sort</mat-icon>
+                    <mat-menu class="custom" #sortMenu="matMenu" xPosition="after">
+                        <button mat-menu-item (click)="sortAgentList('AgentLoginID')">
+                            <span>Agent ID</span>
+                            <mat-icon *ngIf="sortBy === 'AgentLoginID'">{{ sortType === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+                        </button>
+                        <button mat-menu-item (click)="sortAgentList('AgentName')">
+                            <span>Agent Name</span>
+                            <mat-icon *ngIf="sortBy === 'AgentName'">{{ sortType === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+                        </button>
+                        <button mat-menu-item (click)="sortAgentList('CurrentAgentStatus')">
+                            <span>Agent Status</span>
+                            <mat-icon *ngIf="sortBy === 'CurrentAgentStatus'">{{ sortType === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+                        </button>
+                        <button mat-menu-item (click)="sortAgentList('CurrentStatusDuration')">
+                            <span>Status Duration</span>
+                            <mat-icon *ngIf="sortBy === 'CurrentStatusDuration'">{{
+                                sortType === 'asc' ? 'arrow_upward' : 'arrow_downward'
+                            }}</mat-icon>
+                        </button>
+                    </mat-menu>
                 </button>
-                <ng-template #clearBtn>
+                <mat-form-field class="custom form-field w-100-p" appearance="outline">
+                    <input class="login-input" matInput placeholder="Search" [(ngModel)]="searchTerm" (input)="filterAgents()" />
                     <button
-                        mat-button
-                        color="primary"
-                        matSuffix
+                        *ngIf="!searchTerm; else clearBtn"
                         mat-icon-button
-                        aria-label="Clear"
+                        matSuffix
                         [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
-                        (click)="searchTerm = ''; filterAgents()"
+                        disabled
                     >
-                        <mat-icon>close</mat-icon>
+                        <mat-icon>search</mat-icon>
                     </button>
-                </ng-template>
-            </mat-form-field>
-            <button mat-icon-button (click)="refreshList()" matTooltip="Reload Agent Data" [disabled]="!filteredAgents.length || reload">
-                <mat-icon [ngClass]="{ 'spin-o': reload }">refresh</mat-icon>
-            </button>
-            <button *ngIf="isAgentSupervisor" mat-icon-button matTooltip="Send Broadcast To Team" (click)="sendBroadcast()">
-                <mat-icon>announcement</mat-icon>
-            </button>
-        </div>
-        <p *ngIf="filteredAgents.length" class="m-0 text-center position-absolute left-0 right-0 bottom-0">
-            Agent list is sorted by <b> {{ sortBy }} </b> in <b>{{ sortType }}</b> order
-        </p>
-        <div
-            fxFlex
-            fxLayout="column"
-            fxLayoutAlign=" none"
-            class="agent-list px-4 mb-20 pb-8 custom-scroll-adjust"
-            [@animateStagger]="{ value: '50' }"
-        >
+                    <ng-template #clearBtn>
+                        <button
+                            mat-button
+                            color="primary"
+                            matSuffix
+                            mat-icon-button
+                            aria-label="Clear"
+                            [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
+                            (click)="searchTerm = ''; filterAgents()"
+                        >
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    </ng-template>
+                </mat-form-field>
+                <button mat-icon-button (click)="refreshList()" matTooltip="Reload Agent Data" [disabled]="reload">
+                    <mat-icon [ngClass]="{ 'spin-o': reload }">refresh</mat-icon>
+                </button>
+                <button *ngIf="isAgentSupervisor" mat-icon-button matTooltip="Send Broadcast To Team" (click)="sendBroadcast()">
+                    <mat-icon>announcement</mat-icon>
+                </button>
+            </div>
+            <p *ngIf="filteredAgents.length" class="m-0 text-center position-absolute left-0 right-0 bottom-0">
+                Agent list is sorted by <b> {{ sortBy }} </b> in <b>{{ sortType }}</b> order
+            </p>
             <div
-                *ngFor="let item of filteredAgents; trackBy: trackByID"
-                class="w-100-p p-12 border-radius-20 agent-item mat-elevation-z1"
-                [ngClass]="
-                    (fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
-                        ? fuseConfig.layout.anchorWidget.contentBackground
-                        : fuseConfig.layout.widget.customBackgroundColor === true
-                        ? fuseConfig.layout.widget.contentBackground
-                        : '') +
-                    ' ' +
-                    (item.AgentLoginID === selectedAgent ? 'border-lg-success' : '')
-                "
+                fxFlex
+                fxLayout="column"
+                fxLayoutAlign=" none"
+                class="agent-list px-4 mb-20 pb-8 custom-scroll-adjust"
+                [@animateStagger]="{ value: '50' }"
             >
                 <div
-                    fxLayout="row"
-                    fxLayoutAlign="space-between center"
-                    class="tw-accordion w-100-p"
-                    (click)="selectAgent(item)"
-                    [ngClass]="{ active: item.AgentLoginID === selectedAgent }"
+                    *ngFor="let item of filteredAgents; trackBy: trackByID"
+                    class="w-100-p p-12 border-radius-20 agent-item mat-elevation-z1"
+                    [ngClass]="
+                        (customFuse.anchor?.content || customFuse.widget?.content) +
+                        ' ' +
+                        (item.AgentLoginID === selectedAgent ? 'border-lg-success' : '')
+                    "
                 >
-                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="45">
-                        <div class="position-relative">
-                            <avatar name="{{ item.AgentName }}" [matTooltip]="item.AgentName"></avatar>
-                            <span
-                                class="element-status"
-                                [ngClass]="
-                                    item.CurrentAgentStatus.includes('Available')
-                                        ? 'bg-alt-success'
-                                        : item.CurrentAgentStatus.includes('On Call')
-                                        ? 'bg-alt-danger'
-                                        : 'bg-alt-warning'
-                                "
-                            >
-                            </span>
-                        </div>
-                        <div fxLayout="column" fxLayoutAlign=" none" class="ml-16">
-                            <span class="font-weight-700" *ngIf="item.AgentLoginID !== selectedAgent">
-                                <span matTooltip="First Name">{{ item.FirstName }}</span>
-                                /
-                                <span matTooltip="Agent ID">{{ item.AgentLoginID }}</span>
-                            </span>
-                            <div class="font-weight-700" *ngIf="item.AgentLoginID === selectedAgent" matTooltip="Agent Name">
-                                {{ item.AgentName }}
-                            </div>
-                            <div class="font-weight-700" *ngIf="item.AgentLoginID === selectedAgent">
-                                <span matTooltip="Agent ID">{{ item.AgentLoginID }}</span>
-                                /
-                                <span matTooltip="Station">{{ item.StationID }}</span>
-                            </div>
-                            <span matTooltip="Current Status">{{ item.CurrentAgentStatus }}</span>
-                            <span
-                                matTooltip="Status Duration"
-                                [ngClass]="{
-                                    'text-alt-success': item.CurrentStatusDuration >= 0 && item.CurrentStatusDuration <= 60,
-                                    'text-alt-warning': item.CurrentStatusDuration > 60 && item.CurrentStatusDuration <= 120,
-                                    'text-alt-danger': item.CurrentStatusDuration > 120
-                                }"
-                                >{{ (item.CurrentStatusDuration * 1000 | date: 'HH:mm:ss':'UTC') || '00:00:00' }}</span
-                            >
-                        </div>
-                    </div>
-
                     <div
-                        fxFlex="40"
-                        fxLayout="row wrap"
-                        fxLayoutAlign=" center"
-                        class="channel-list px-8"
-                        *ngIf="item.AgentLoginID !== selectedAgent"
+                        fxLayout="row"
+                        fxLayoutAlign="space-between center"
+                        class="tw-accordion w-100-p"
+                        (click)="selectAgent(item)"
+                        [ngClass]="{ active: item.AgentLoginID === selectedAgent }"
                     >
+                        <div fxLayout="row" fxLayoutAlign="start center" fxFlex="45">
+                            <div class="position-relative">
+                                <avatar name="{{ item.AgentName }}" [matTooltip]="item.AgentName"></avatar>
+                                <span
+                                    class="element-status"
+                                    [ngClass]="
+                                        item.CurrentAgentStatus.includes('Available')
+                                            ? 'bg-alt-success'
+                                            : item.CurrentAgentStatus.includes('On Call')
+                                            ? 'bg-alt-danger'
+                                            : 'bg-alt-warning'
+                                    "
+                                >
+                                </span>
+                            </div>
+                            <div fxLayout="column" fxLayoutAlign=" none" class="ml-16">
+                                <span class="font-weight-700" *ngIf="item.AgentLoginID !== selectedAgent">
+                                    <span matTooltip="First Name">{{ item.FirstName }}</span>
+                                    /
+                                    <span matTooltip="Agent ID">{{ item.AgentLoginID }}</span>
+                                </span>
+                                <div class="font-weight-700" *ngIf="item.AgentLoginID === selectedAgent" matTooltip="Agent Name">
+                                    {{ item.AgentName }}
+                                </div>
+                                <div class="font-weight-700" *ngIf="item.AgentLoginID === selectedAgent">
+                                    <span matTooltip="Agent ID">{{ item.AgentLoginID }}</span>
+                                    /
+                                    <span matTooltip="Station">{{ item.StationID }}</span>
+                                </div>
+                                <span matTooltip="Current Status">{{ item.CurrentAgentStatus }}</span>
+                                <span
+                                    matTooltip="Status Duration"
+                                    [ngClass]="{
+                                        'text-alt-success': item.CurrentStatusDuration >= 0 && item.CurrentStatusDuration <= 60,
+                                        'text-alt-warning': item.CurrentStatusDuration > 60 && item.CurrentStatusDuration <= 120,
+                                        'text-alt-danger': item.CurrentStatusDuration > 120
+                                    }"
+                                    >{{ (item.CurrentStatusDuration * 1000 | date: 'HH:mm:ss':'UTC') || '00:00:00' }}</span
+                                >
+                            </div>
+                        </div>
+
                         <div
-                            mat-card-avatar
-                            *ngFor="let channelItem of item.ChannelCount | slice: 0:3"
-                            [matTooltip]="channelItem.Channel.toUpperCase() + '/' + channelItem.Count"
-                            [matBadge]="channelItem.CurrentCount || ''"
-                            matBadgePosition="after"
+                            fxFlex="40"
+                            fxLayout="row wrap"
+                            fxLayoutAlign=" center"
+                            class="channel-list px-8"
+                            *ngIf="item.AgentLoginID !== selectedAgent"
                         >
-                            <mat-icon>{{
-                                channelItem.Channel === 'voice'
-                                    ? 'phone'
-                                    : channelItem.Channel === 'textchat'
-                                    ? 'chat'
-                                    : channelItem.Channel.includes('audio')
-                                    ? 'settings_phone'
-                                    : channelItem.Channel.includes('video')
-                                    ? 'duo'
-                                    : channelItem.Channel.includes('sms')
-                                    ? 'textsms'
-                                    : channelItem.Channel.includes('email')
-                                    ? 'email'
-                                    : 'receipt'
-                            }}</mat-icon>
+                            <div
+                                mat-card-avatar
+                                *ngFor="let channelItem of item.ChannelCount | slice: 0:3"
+                                [matTooltip]="channelItem.Channel.toUpperCase() + '/' + channelItem.Count"
+                                [matBadge]="channelItem.CurrentCount || ''"
+                                matBadgePosition="after"
+                            >
+                                <mat-icon>{{
+                                    channelItem.Channel === 'voice'
+                                        ? 'phone'
+                                        : channelItem.Channel === 'textchat'
+                                        ? 'chat'
+                                        : channelItem.Channel.includes('audio')
+                                        ? 'settings_phone'
+                                        : channelItem.Channel.includes('video')
+                                        ? 'duo'
+                                        : channelItem.Channel.includes('sms')
+                                        ? 'textsms'
+                                        : channelItem.Channel.includes('email')
+                                        ? 'email'
+                                        : 'receipt'
+                                }}</mat-icon>
+                            </div>
+                        </div>
+
+                        <div fxLayout="row" fxLayoutAlign="end center" fxFlex="15" class="indicators">
+                            <mat-icon *ngIf="item.UserProfileForAgent === 'S'" matTooltip="SUPERVISOR">supervised_user_circle</mat-icon>
+                            <mat-icon *ngIf="item.IsMSAgent" matTooltip="Webphone">phonelink</mat-icon>
+                            <mat-icon
+                                [matTooltip]="(item.ConnectionType.toLowerCase() === 'websockets' ? 'SOCKET' : 'HTTP') + '/' + item.TmacServer"
+                                >{{ item.ConnectionType.toLowerCase() === 'websockets' ? 'wifi_tethering' : 'wifi' }}</mat-icon
+                            >
                         </div>
                     </div>
 
-                    <div fxLayout="row" fxLayoutAlign="end center" fxFlex="15" class="indicators">
-                        <mat-icon *ngIf="item.UserProfileForAgent === 'S'" matTooltip="SUPERVISOR">supervised_user_circle</mat-icon>
-                        <mat-icon *ngIf="item.IsMSAgent" matTooltip="Webphone">phonelink</mat-icon>
-                        <mat-icon [matTooltip]="item.ConnectionType.toLowerCase() === 'websockets' ? 'SOCKET' : 'HTTP'">{{
-                            item.ConnectionType.toLowerCase() === 'websockets' ? 'wifi_tethering' : 'wifi'
-                        }}</mat-icon>
-                    </div>
-                </div>
-
-                <div fxLayout class="tw-accordion-menu border-radius-20" *ngIf="item.AgentLoginID === selectedAgent">
-                    <div fxFlex="50" fxLayout="row wrap" fxLayoutAlign=" start" class="feature-actions border-right-primary px-8">
-                        <ng-container *ngFor="let feature of item.AgentFeatures">
-                            <button
-                                #agentActionBtn
-                                mat-icon-button
-                                *ngIf="featureCheck(feature, 'agent', '')"
-                                (click)="performAgentAction(item, feature)"
-                                [matTooltip]="featureMap[feature.Feature].Label"
-                            >
-                                <mat-icon>{{ featureMap[feature.Feature].Icon }}</mat-icon>
-                            </button>
-
-                            <button
-                                #agentActionBtn
-                                mat-icon-button
-                                [matMenuTriggerFor]="menu"
-                                *ngIf="feature.Feature === 'AllowSupervisorToChangeStatus' && feature.IsEnabled"
-                                [matTooltip]="featureMap[feature.Feature].Label"
-                            >
-                                <mat-icon>{{ featureMap[feature.Feature].Icon }}</mat-icon>
-                            </button>
-
-                            <mat-menu class="custom" #menu="matMenu" xPosition="after">
+                    <div fxLayout class="tw-accordion-menu border-radius-20" *ngIf="item.AgentLoginID === selectedAgent">
+                        <div fxFlex="50" fxLayout="row wrap" fxLayoutAlign=" start" class="feature-actions border-right-primary px-8">
+                            <ng-container *ngFor="let feature of item.AgentFeatures">
                                 <button
-                                    mat-menu-item
-                                    *ngFor="let auxCode of auxCodesList"
-                                    (click)="changeAgentStatus(item, auxCode)"
-                                    disabled="{{ auxCode.Name === item.CurrentAgentStatus || auxCode.Code === 'nodata' }}"
+                                    #agentActionBtn
+                                    mat-icon-button
+                                    *ngIf="featureCheck(feature, 'agent', '')"
+                                    (click)="performAgentAction(item, feature)"
+                                    [matTooltip]="featureMap[feature.Feature].Label"
                                 >
-                                    <mat-icon class="{{ auxCode.Code.toLowerCase() }}">
-                                        {{
-                                            auxCode.Code.toLowerCase() === 'available'
-                                                ? 'check_circle'
-                                                : auxCode.Code === 'logout'
-                                                ? 'settings_power'
-                                                : 'remove_circle'
-                                        }}
-                                    </mat-icon>
-                                    <span>{{ auxCode.Name }}</span>
+                                    <mat-icon>{{ featureMap[feature.Feature].Icon }}</mat-icon>
                                 </button>
-                            </mat-menu>
 
+                                <button
+                                    #agentActionBtn
+                                    mat-icon-button
+                                    [matMenuTriggerFor]="menu"
+                                    *ngIf="feature.Feature === 'AllowSupervisorToChangeStatus' && feature.IsEnabled"
+                                    [matTooltip]="featureMap[feature.Feature].Label"
+                                >
+                                    <mat-icon>{{ featureMap[feature.Feature].Icon }}</mat-icon>
+                                </button>
+
+                                <mat-menu class="custom" #menu="matMenu" xPosition="after">
+                                    <button
+                                        mat-menu-item
+                                        *ngFor="let auxCode of auxCodesList"
+                                        (click)="changeAgentStatus(item, auxCode)"
+                                        disabled="{{ auxCode.Name === item.CurrentAgentStatus || auxCode.Code === 'nodata' }}"
+                                    >
+                                        <mat-icon class="{{ auxCode.Code.toLowerCase() }}">
+                                            {{
+                                                auxCode.Code.toLowerCase() === 'available'
+                                                    ? 'check_circle'
+                                                    : auxCode.Code === 'logout'
+                                                    ? 'settings_power'
+                                                    : 'remove_circle'
+                                            }}
+                                        </mat-icon>
+                                        <span>{{ auxCode.Name }}</span>
+                                    </button>
+                                </mat-menu>
+
+                                <button
+                                    mat-icon-button
+                                    matTooltip="Send Quiz"
+                                    [matMenuTriggerFor]="quizIntentMenu"
+                                    *ngIf="feature.Feature === 'AllowSupervisorToSendQuiz' && feature.IsEnabled"
+                                >
+                                    <mat-icon>rule</mat-icon>
+                                </button>
+
+                                <mat-menu #quizIntentMenu="matMenu" class="custom">
+                                    <button
+                                        mat-menu-item
+                                        class="custom"
+                                        *ngFor="let intent of availableQuizIntents"
+                                        (click)="sendQuizIntent(intent.intent, item)"
+                                    >
+                                        <mat-icon>grading</mat-icon>
+                                        <span>{{ intent.name }}</span>
+                                    </button>
+                                </mat-menu>
+                            </ng-container>
                             <button
                                 mat-icon-button
-                                matTooltip="Send Quiz"
-                                [matMenuTriggerFor]="quizIntentMenu"
-                                *ngIf="feature.Feature === 'AllowSupervisorToSendQuiz' && feature.IsEnabled"
+                                mat-raised-button
+                                *ngIf="checkForActiveInteraction(item.ChannelCount)"
+                                matTooltip="View Interactions"
+                                (click)="viewInteractions(item)"
                             >
-                                <mat-icon>rule</mat-icon>
+                                <mat-icon>preview</mat-icon>
                             </button>
-
-                            <mat-menu #quizIntentMenu="matMenu" class="custom">
-                                <button
-                                    mat-menu-item
-                                    class="custom"
-                                    *ngFor="let intent of availableQuizIntents"
-                                    (click)="sendQuizIntent(intent.intent, item)"
-                                >
-                                    <mat-icon>grading</mat-icon>
-                                    <span>{{ intent.name }}</span>
-                                </button>
-                            </mat-menu>
-                        </ng-container>
-                        <button
-                            mat-icon-button
-                            mat-raised-button
-                            *ngIf="checkForActiveInteraction(item.ChannelCount)"
-                            matTooltip="View Interactions"
-                            (click)="viewInteractions(item)"
-                        >
-                            <mat-icon>preview</mat-icon>
-                        </button>
-                    </div>
-                    <div fxFlex="50" fxLayout="row wrap" fxLayoutAlign=" start" class="channel-list px-8">
-                        <div
-                            mat-card-avatar
-                            *ngFor="let channelItem of item.ChannelCount"
-                            [matTooltip]="channelItem.Channel.toUpperCase() + '/' + channelItem.Count"
-                            [matBadge]="channelItem.CurrentCount || ''"
-                            matBadgePosition="after"
-                        >
-                            <mat-icon>{{
-                                channelItem.Channel === 'voice'
-                                    ? 'phone'
-                                    : channelItem.Channel === 'textchat'
-                                    ? 'chat'
-                                    : channelItem.Channel.includes('audio')
-                                    ? 'settings_phone'
-                                    : channelItem.Channel.includes('video')
-                                    ? 'duo'
-                                    : channelItem.Channel.includes('sms')
-                                    ? 'textsms'
-                                    : channelItem.Channel.includes('email')
-                                    ? 'email'
-                                    : 'receipt'
-                            }}</mat-icon>
+                        </div>
+                        <div fxFlex="50" fxLayout="row wrap" fxLayoutAlign=" start" class="channel-list px-8">
+                            <div
+                                mat-card-avatar
+                                *ngFor="let channelItem of item.ChannelCount"
+                                [matTooltip]="channelItem.Channel.toUpperCase() + '/' + channelItem.Count"
+                                [matBadge]="channelItem.CurrentCount || ''"
+                                matBadgePosition="after"
+                            >
+                                <mat-icon>{{
+                                    channelItem.Channel === 'voice'
+                                        ? 'phone'
+                                        : channelItem.Channel === 'textchat'
+                                        ? 'chat'
+                                        : channelItem.Channel.includes('audio')
+                                        ? 'settings_phone'
+                                        : channelItem.Channel.includes('video')
+                                        ? 'duo'
+                                        : channelItem.Channel.includes('sms')
+                                        ? 'textsms'
+                                        : channelItem.Channel.includes('email')
+                                        ? 'email'
+                                        : 'receipt'
+                                }}</mat-icon>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div
-                *ngIf="filteredAgents.length === 0"
-                fxLayout="row"
-                fxLayoutAlign="center center"
-                class="w-100-p h-68 p-12 border-radius-20 agent-item"
-                [ngClass]="
-                    fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
-                        ? fuseConfig.layout.anchorWidget.contentBackground
-                        : fuseConfig.layout.widget.customBackgroundColor === true
-                        ? fuseConfig.layout.widget.contentBackground
-                        : ''
-                "
-                [@animate]="{ value: '*', params: { y: '100%' } }"
-            >
-                <span class="mat-title m-0"> No agents found!</span>
+                <div
+                    *ngIf="filteredAgents.length === 0"
+                    fxLayout="row"
+                    fxLayoutAlign="center center"
+                    class="w-100-p h-68 p-12 border-radius-20 agent-item"
+                    [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
+                    [@animate]="{ value: '*', params: { y: '100%' } }"
+                >
+                    <span class="mat-title m-0"> No agents found!</span>
+                </div>
             </div>
         </div>
-    </div>
-    <!-- your code goes here -->
+    </ng-container>
 </tw-wrapper>
 
 <tw-su-agent-activity-details *ngIf="activityWidget" [data]="activityWidget" (destroyEvent)="activityWidget = null"></tw-su-agent-activity-details>

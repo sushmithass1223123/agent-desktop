@@ -800,6 +800,7 @@ export class TMACEventService {
 
         // we will route to login page
         this._router.navigate(['login'], {
+            queryParamsHandling: 'preserve'
             // queryParamsHandling: 'preserve',
             // preserveFragment: true,
             // state: {
@@ -856,7 +857,7 @@ export class TMACEventService {
      */
     private TmacServerConnectionAborted = (evt: TmacServerConnectionAborted) => {
         // we will route to login page
-        this._router.navigate(['login'], {});
+        this._router.navigate(['login'], { queryParamsHandling: 'preserve' });
         this._appUIService.showSnackbar('TMAC Server connection closed, Please relogin!');
     }
 

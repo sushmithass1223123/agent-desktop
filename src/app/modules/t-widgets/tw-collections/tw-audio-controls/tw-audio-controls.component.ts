@@ -41,6 +41,13 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     // fuseConfig: any;
     /**
+     * Fuse custom background colors
+     */
+    customFuse = {
+        anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
+        widget$: this._fuseFacadeService.widgetBgClasses$
+    };
+    /**
      * App config
      */
     appConfig: any;
@@ -133,14 +140,6 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
     remoateScreenshareRef: any;
 
     /**
-     * Fuse custom background colors
-     */
-    customFuseColor = {
-        anchor$: this._fusefacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
-        widget$: this._fusefacadeService.widgetBgClasses$
-    };
-
-    /**
      * Constructor
      */
     constructor(
@@ -148,7 +147,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         private _appDataService: AppDataService,
         private _aotWidgetService: AOTWidgetService,
         private _appUIService: AppUiService,
-        private _fusefacadeService: FuseFacadeService
+        private _fuseFacadeService: FuseFacadeService
     ) {
         super();
     }

@@ -1,15 +1,15 @@
+import { DOCUMENT } from '@angular/common';
 import { Component, HostBinding, Inject, OnDestroy, OnInit, Renderer2, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { DOCUMENT } from '@angular/common';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-
 import { fuseAnimations } from '@fuse/animations';
-import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseNavigationService } from '@fuse/components/navigation/navigation.service';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { FuseConfig } from '@fuse/types';
+import { FuseFacadeService } from '@services/fuse-facade.service';
 import { ThemeSelector } from 'app/layout/utils/theme-selector';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
 
 /**
  * Need more Description 
@@ -23,13 +23,37 @@ import { ThemeSelector } from 'app/layout/utils/theme-selector';
     animations: fuseAnimations
 })
 export class AppThemeOptionsComponent implements OnInit, OnDestroy {
-    fuseConfig: any;
+    /**
+     * Fuse config
+     */
+    // fuseConfig:FuseConfig;
+
+    /**
+     * Fuse layout style
+     */
+    layoutStyle = '';
+
+    /**
+     * Form group
+     */
     form: FormGroup;
 
+    /**
+     * Bar closed host binding
+     */
     @HostBinding('class.bar-closed')
     barClosed: boolean;
 
+    /**
+     * Disable custom theme
+     */
+    disableCustom: boolean;
+
     // Private
+
+    /**
+     * Unsubscribe all subject
+     */
     private _unsubscribeAll: Subject<any>;
 
     /**
@@ -37,7 +61,7 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
      *
      * @param {DOCUMENT} document
      * @param {FormBuilder} _formBuilder
-     * @param {FuseConfigService} _fuseConfigService
+     * @param {FuseFacadeService} _fuseFacadeService
      * @param {FuseNavigationService} _fuseNavigationService
      * @param {FuseSidebarService} _fuseSidebarService
      * @param {Renderer2} _renderer
@@ -45,13 +69,14 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
     constructor(
         @Inject(DOCUMENT) private document: any,
         private _formBuilder: FormBuilder,
-        private _fuseConfigService: FuseConfigService,
+        private _fuseFacadeService: FuseFacadeService,
         private _fuseNavigationService: FuseNavigationService,
         private _fuseSidebarService: FuseSidebarService,
         private _renderer: Renderer2
     ) {
         // Set the defaults
         this.barClosed = true;
+        this.disableCustom = false;
 
         // Set the private defaults
         this._unsubscribeAll = new Subject();
@@ -118,18 +143,36 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
             })
         });
 
-        // Subscribe to the config changes
-        this._fuseConfigService.config
+        this._fuseFacadeService.getConfig()
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((config: FuseConfig) => {
 
-                // Update the stored config
-                this.fuseConfig = config;
+                // assign layout style
+                this.layoutStyle = config.layout.style;
+
+                // check if to disable custom
+                this.disableCustom = config.colorTheme !== 'theme-default' && config.colorTheme !== 'theme-default-dark';
 
                 // Set the config form values without emitting an event
                 // so that we don't end up with an infinite loop
                 this.form.setValue(config, { emitEvent: false });
             });
+
+        // // Subscribe to the config changes
+        // this._fuseConfigService.config
+        //     .pipe(takeUntil(this._unsubscribeAll))
+        //     .subscribe((config: FuseConfig) => {
+
+        //         // Update the stored config
+        //         this.fuseConfig = config;
+
+        //         // check if to disable custom
+        //         this.disableCustom = this.fuseConfig.colorTheme !== 'theme-default' && this.fuseConfig.colorTheme !== 'theme-default-dark';
+
+        //         // Set the config form values without emitting an event
+        //         // so that we don't end up with an infinite loop
+        //         this.form.setValue(config, { emitEvent: false });
+        //     });
 
         // Subscribe to the specific form value changes (layout.style)
         this.form.get('layout.style').valueChanges
@@ -145,7 +188,7 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
         this.form.get('colorTheme').valueChanges
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((value) => {
-
+                this.disableCustom = value !== 'theme-default' && value !== 'theme-default-dark';
                 // Reset the form values based on the
                 // selected layout style
                 this._setTheme(value);
@@ -157,7 +200,8 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
             .subscribe((config: FuseConfig) => {
 
                 // Update the config
-                this._fuseConfigService.config = config;
+                // this._fuseConfigService.config = config;
+                this._fuseFacadeService.setConfig = config;
             });
 
         // Add customize nav item that opens the bar programmatically

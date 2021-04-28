@@ -1,37 +1,76 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-
-import { FuseConfigService } from '@fuse/services/config.service';
+import { FuseFacadeService } from '@services/fuse-facade.service';
 import { navigation } from 'app/navigation/navigation';
+import { cloneDeep } from 'lodash';
+import { Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
+
 
 /**
  * Need more Description 
  * Layout 1 horizontal component
  */
 @Component({
-    selector     : 'horizontal-layout-1',
-    templateUrl  : './layout-1.component.html',
-    styleUrls    : ['./layout-1.component.scss'],
+    selector: 'horizontal-layout-1',
+    templateUrl: './layout-1.component.html',
+    styleUrls: ['./layout-1.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class HorizontalLayout1Component implements OnInit, OnDestroy
-{
-    fuseConfig: any;
+export class HorizontalLayout1Component implements OnInit, OnDestroy {
+    // fuseConfig: any;
+
+    /**
+     * Fuse custom config
+     */
+    customFuse$ = this._fuseFacadeService.getConfig({ layout: 'layout' }).pipe(
+        map((config: any) => {
+            const layout = cloneDeep(config.layout);
+            const { navbar, toolbar, content, footer, sidepanel } = layout;
+
+            navbar.background = layout.navbar.customBackgroundColor ? layout.navbar.background : '';
+            navbar.hidden = layout.navbar.hidden;
+            navbar.folded = layout.navbar.folded;
+            navbar.position = layout.navbar.position;
+
+            const toolbarBg = layout.toolbar.customBackgroundColor ? ` ${layout.toolbar.background}` : '';
+            toolbar.hidden = layout.toolbar.hidden;
+            toolbar.position = layout.toolbar.position;
+            toolbar.class = `${toolbar.position}` + toolbarBg;
+
+            content.class = layout.content.customBackgroundColor ? ` ${layout.content.background}` : '';
+
+            const footerBg = layout.footer.customBackgroundColor ? ` ${layout.footer.background}` : '';
+            footer.hidden = layout.footer.hidden;
+            footer.position = layout.footer.position;
+            footer.class = footer.position + footerBg;
+
+            sidepanel.hidden = layout.sidepanel.hidden;
+            sidepanel.position = layout.sidepanel.position;
+
+            return { navbar, toolbar, content, footer, sidepanel };
+        })
+    );
+
+    /**
+     * Navigation
+     */
     navigation: any;
 
     // Private
+    /**
+     * Unsubscribe subject
+     */
     private _unsubscribeAll: Subject<any>;
 
     /**
      * Constructor
      *
-     * @param {FuseConfigService} _fuseConfigService
+     * @param {FuseFacadeService} _fuseFacadeService
      */
     constructor(
-        private _fuseConfigService: FuseConfigService
-    )
-    {
+        // private _fuseConfigService: FuseConfigService
+        private _fuseFacadeService: FuseFacadeService
+    ) {
         // Set the defaults
         this.navigation = navigation;
 
@@ -46,21 +85,19 @@ export class HorizontalLayout1Component implements OnInit, OnDestroy
     /**
      * On init
      */
-    ngOnInit(): void
-    {
+    ngOnInit(): void {
         // Subscribe to config changes
-        this._fuseConfigService.config
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((config) => {
-                this.fuseConfig = config;
-            });
+        // this._fuseConfigService.config
+        //     .pipe(takeUntil(this._unsubscribeAll))
+        //     .subscribe((config) => {
+        //         this.fuseConfig = config;
+        //     });
     }
 
     /**
      * On destroy
      */
-    ngOnDestroy(): void
-    {
+    ngOnDestroy(): void {
         // Unsubscribe from all subscriptions
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();

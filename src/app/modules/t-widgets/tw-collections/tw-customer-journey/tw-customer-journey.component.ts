@@ -1,24 +1,24 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { FuseConfigService } from '@fuse/services/config.service';
 import { TwWrapperComponent } from '@modules/t-widgets/tw-wrapper/tw-wrapper.component';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
+import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TMACEventService } from '@services/tmac-event.service';
+import { IGetInteractionHistory, InteractionAction, InteractionHistory, InteractionHistoryReadyEvent, SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { ChatTranscripts, IWidget, ResData } from 'app/interfaces';
 import { sortBy } from 'lodash';
 import * as moment from 'moment';
 import { from, Observable, of } from 'rxjs';
-import { catchError, map, share, takeUntil, tap } from 'rxjs/operators';
-import { IGetInteractionHistory, InteractionAction, InteractionHistory, InteractionHistoryReadyEvent, SDKClient } from '@tmac/sdk';
+import { catchError, filter, map, share, takeUntil, tap } from 'rxjs/operators';
 
 type Mode = 'Session History' | 'Notes' | 'Actions' | 'Transcript' | null;
 
@@ -47,7 +47,14 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     /**
      * common fuse background
      */
-    fuseBg: { content: string; body: string };
+    // customFuse: { content: string; body: string };
+    /**
+     * Fuse custom config
+     */
+    customFuse = {
+        anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
+        widget$: this._fuseFacadeService.widgetBgClasses$
+    };
 
     /**
      * available modes for maximised views
@@ -70,14 +77,28 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         Intent: new FormControl('')
     });
 
+    /**
+     * Interaction notes ref
+     */
     interactionNotesReq: ResData<Observable<string[]>> = {
         error: false,
         loading: false,
         data: from([])
     };
 
-    interactionTranscripts: string = '{}';
+    /**
+     * Interaction transcripts
+     */
+    interactionTranscripts = '{}';
+
+    /**
+     * Default customer name
+     */
     defaultCustomerName = 'Customer';
+
+    /**
+     * File upload urls
+     */
     fileUploadUrl$ = this._appDataService.config.pipe(
         takeUntil(this.unsubscribeAll),
         map((conf: any) => {
@@ -124,34 +145,73 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     @ViewChild(TwWrapperComponent) wrapperComponent: TwWrapperComponent;
 
     /**
-     * Fuse Perfect scrollbar ref
-     */
-    // @ViewChild(FusePerfectScrollbarDirective) fuseDirective: FusePerfectScrollbarDirective;
-
-    /**
      * Current interaction Id
      */
     interactionId: number;
+
+    /**
+     * History params to fetch data
+     */
     historyParams: IGetInteractionHistory;
 
+    /**
+     * Widget maximzed event
+     */
     @Output() maximizeEvent = new EventEmitter();
+
+    /**
+     * Widget float event
+     */
     @Output() floatEvent = new EventEmitter();
+
+    /**
+     * Widget collapsed event
+     */
     @Output() collapseEvent = new EventEmitter();
+
+    /**
+     * Maximized flag
+     */
+    maximized: boolean;
 
     /**
      * Customer journey table Info
      */
     customerJourneyTable: {
+        /**
+         * Loading flag
+         */
         loading: boolean;
+        /**
+         * Last record id for pagination
+         */
         lastId: string;
+        /**
+         * Iframe url
+         */
         iframeUrl: SafeResourceUrl;
+        /**
+         * Table data
+         */
         tableData: {
+            /**
+             * Table source
+             */
             source: MatTableDataSource<InteractionHistory>;
+            /**
+             * Table columns
+             */
             columns: string[];
+            /**
+             * Table selection
+             */
             selection: SelectionModel<InteractionHistory>;
         };
     };
-    maximized: boolean;
+
+    /**
+     * Interaction data columns
+     */
     interactionDateCols = ['InteractionDateStart', 'InteractionDateEnd'];
 
     /**
@@ -182,7 +242,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
 
     /**
      *
-     * @param _fuseConfigService
+     * @param _fuseFacadeService
      * @param _tmacEventService
      * @param sanitizer
      * @param _appUIService
@@ -190,7 +250,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      * @param matDialog
      */
     constructor(
-        private _fuseConfigService: FuseConfigService,
+        // private _fuseConfigService: FuseConfigService,
+        private _fuseFacadeService: FuseFacadeService,
         private _tmacEventService: TMACEventService,
         private sanitizer: DomSanitizer,
         private _appUIService: AppUiService,
@@ -225,23 +286,23 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         this.interactionId = this.data.InteractionDetails.InteractionID;
 
         // subscribe to fuse
-        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            // config = config;
-            this.fuseBg = {
-                content:
-                    config.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor
-                        ? config.layout.anchorWidget.contentBackground
-                        : config.layout.widget.customBackgroundColor === true
-                        ? config.layout.widget.contentBackground
-                        : '',
-                body:
-                    config.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor
-                        ? config.layout.anchorWidget.bodyBackground
-                        : config.layout.widget.customBackgroundColor === true
-                        ? config.layout.widget.bodyBackground
-                        : ''
-            };
-        });
+        // this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+        //     // config = config;
+        //     this.customFuse = {
+        //         content:
+        //             config.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor
+        //                 ? config.layout.anchorWidget.contentBackground
+        //                 : config.layout.widget.customBackgroundColor === true
+        //                     ? config.layout.widget.contentBackground
+        //                     : '',
+        //         body:
+        //             config.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor
+        //                 ? config.layout.anchorWidget.bodyBackground
+        //                 : config.layout.widget.customBackgroundColor === true
+        //                     ? config.layout.widget.bodyBackground
+        //                     : ''
+        //     };
+        // });
 
         this.historyParams = {
             cif: '',
@@ -384,7 +445,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         };
         // get history
         this.getInteractionHistory();
-    };
+    }
 
     /**
      * Gets interaction history and sets to table
@@ -599,5 +660,5 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     /**
      * Opens advanced search form inside a modal window
      */
-    openAdvancedSearchModal(): void {}
+    openAdvancedSearchModal(): void { }
 }

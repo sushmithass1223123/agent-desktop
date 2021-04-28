@@ -3,9 +3,10 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
+import { DashboardColorCodeModel, SDKClient, TUtils, WallboardRefreshEvent } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
+import { IWidget } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
-import { DashboardColorCodeModel, SDKClient, WallboardRefreshEvent } from '@tmac/sdk';
 
 /**
  * Wallboard componet
@@ -21,7 +22,7 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
     /**
      * App config json data
      */
-    @Input() data: any;
+    @Input() data: IWidget;
 
     /**
      * Table sort Ref
@@ -29,15 +30,9 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
     @ViewChild(MatSort) sort: MatSort;
 
     /**
-     * Source used , since reusable component
-     * To resuse pass a different source in app config and handle in oninit
+     * Widget data
      */
-    source: string;
-
-    /**
-     * Service level flag
-     */
-    slEnabled: boolean;
+    widgetData: WidgetData;
 
     /**
      * Columns displayed in table
@@ -59,7 +54,6 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
      */
     constructor(private _tmacEventService: TMACEventService, private _appUIService: AppUiService) {
         super();
-        this.source = '';
     }
 
     /**
@@ -69,11 +63,10 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        // get source and slEnabled from config
-        this.source = this.data.Data.Source;
-        this.slEnabled = this.data.Data.SLEnabled;
+        // get the widget data
+        this.widgetData = this.data.Data;
 
-        if (this.slEnabled) {
+        if (this.widgetData.SLEnabled) {
             // add service level to column
             this.displayedColumns.push('ServiceLevel');
             // get the dashboard color codes for wallboard
@@ -84,11 +77,24 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
             });
         }
 
-        const eventName = this.source === 'supervisor' ? 'TeamWallboardRefreshEvent' : 'WallboardRefreshEvent';
-        this._tmacEventService
-            .getEvents([eventName])
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((evts) => this.wallboardRefreshEvent(evts[0]));
+        let eventName = '';
+        if (this.widgetData.Role === 'agent') {
+            eventName = 'WallboardRefreshEvent';
+        }
+        else if (this.widgetData.Role === 'supervisor') {
+            eventName = 'TeamWallboardRefreshEvent';
+        }
+        else {
+            TUtils.Logger.warn(`TwWallboardComponent: unable to get event name to regiser, Role=${this.widgetData.Role}`);
+        }
+
+        // register if only eventname is there
+        if (eventName) {
+            this._tmacEventService
+                .getEvents([eventName])
+                .pipe(takeUntil(this.unsubscribeAll))
+                .subscribe((evts) => this.wallboardRefreshEvent(evts[0]));
+        }
     }
 
     /**
@@ -116,7 +122,7 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
         this.dataSource = new MatTableDataSource(evt.Skills);
         // sorting data accessor for nested object sorting
         // check if the SL is enabled, since we need custom sort for Service Level only!
-        if (this.slEnabled) {
+        if (this.widgetData.SLEnabled) {
             this.dataSource.sortingDataAccessor = (item, property) => {
                 switch (property) {
                     case 'ServiceLevel':
@@ -128,7 +134,7 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
         }
         // add the sort
         this.dataSource.sort = this.sort;
-    };
+    }
 
     /**
      * To get SL bg color
@@ -158,22 +164,16 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
         }
         return '';
     }
-
-    /**
-     * sets up the demo for interaction history
-     */
-    getInteractionHistoryDemo(): Array<{ type: 'chat' | 'voice'; date: Date; name: string; icon: string; steps: Array<any> }> {
-        const getExtendate = (x) => {
-            const date = new Date();
-            date.setDate(18 + x);
-            return date;
-        };
-        return new Array(20).fill(1).map((x) => ({
-            date: getExtendate(x),
-            icon: '',
-            type: x % 2 ? 'chat' : 'voice',
-            name: 'John Wick',
-            steps: []
-        }));
-    }
 }
+
+interface WidgetData {
+    /**
+     * Available Roles for this reusable component
+     */
+    Role: 'agent' | 'supervisor';
+    /**
+     * SL enabled flag
+     */
+    SLEnabled: boolean;
+}
+

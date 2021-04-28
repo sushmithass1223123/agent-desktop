@@ -3,14 +3,13 @@ import { MatButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
-import { FuseConfigService } from '@fuse/services/config.service';
-import { FuseConfig } from '@fuse/types';
 import { AgentSkillListComponent, CreateEmailComponent } from '@modules/shared/components';
-import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { ContentPageService } from '@services/content-page.service';
+import { FuseFacadeService } from '@services/fuse-facade.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TMACEventService } from '@services/tmac-event.service';
+import { IAgentData, InteractionDataEvent, IResponse, SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE, DRAFT_REASONS, EMAIL_DRAFT_SAVE_INTERVAL, INBOX_REASONS, OUTBOX_REASONS } from 'app/constants';
 import { AgentSkillListData, InteractionComment, InteractionRef, IWidget, ResData } from 'app/interfaces';
@@ -18,7 +17,6 @@ import { CreateEmailInfo } from 'app/models';
 import { interval, Observable, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
 import { distinctUntilChanged, filter, map, mergeAll } from 'rxjs/operators';
-import { IAgentData, InteractionDataEvent, IResponse, SDKClient } from '@tmac/sdk';
 
 /**
  * Email controls component
@@ -61,11 +59,6 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     };
 
     /**
-     * appConfig
-     */
-    appConfig: any;
-
-    /**
      * stateful getInboxMessageReq request
      */
     getInboxMessageReq: ResData<null> = {
@@ -89,10 +82,17 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     InboxReasons = INBOX_REASONS;
 
+    // /**
+    //  * Fuse config
+    //  */
+    // fuseConfig: FuseConfig;
     /**
-     * Fuse config
+     * Fuse custom config
      */
-    fuseConfig: FuseConfig;
+    customFuse = {
+        anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
+        widget$: this._fuseFacadeService.widgetBgClasses$
+    };
 
     /**
      * Maximise event
@@ -181,15 +181,14 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     viewingEmail: 'original' | 'replied' = 'replied';
 
     constructor(
-        private _fuseConfigService: FuseConfigService,
         private _interactionManagerService: InteractionManagerService,
-        private _appDataService: AppDataService,
         private domSanitizer: DomSanitizer,
         private _fuseProgressBarService: FuseProgressBarService,
         private _appUIService: AppUiService,
         private matDialog: MatDialog,
         private _tmacEventService: TMACEventService,
-        private _contentPageService: ContentPageService
+        private _contentPageService: ContentPageService,
+        private _fuseFacadeService: FuseFacadeService
     ) {
         super();
     }
@@ -214,13 +213,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         // set the sentiment
         this.sentiment = this.data.InteractionDetails.Sentiment || 'NA';
 
-        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.appConfig = config;
-        });
-
-        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.fuseConfig = config;
-        });
+        // this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+        //     this.fuseConfig = config;
+        // });
 
         const emailInteractionObs: Observable<InteractionRef[]> = this._interactionManagerService.interactions.pipe(takeUntil(this.unsubscribeAll));
 

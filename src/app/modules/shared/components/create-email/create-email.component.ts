@@ -23,6 +23,9 @@ import { EmailTemplate, SDKClient } from '@tmac/sdk';
     encapsulation: ViewEncapsulation.None
 })
 export class CreateEmailComponent implements OnInit, OnDestroy {
+    /**
+     * Send email event emitter
+     */
     @Output() sendEmail = new EventEmitter();
     /**
      * Template preview data
@@ -45,7 +48,11 @@ export class CreateEmailComponent implements OnInit, OnDestroy {
      * Suggested users for autocomplete
      */
     suggestedUsers: string[];
-    allUsers = ['rahil@email.com', 'rahil2@email.com', 'rahil3@email.com'];
+
+    /**
+     * Email suggestion all users
+     */
+    allUsers = [];
 
     /**
      * Email form control
@@ -96,15 +103,15 @@ export class CreateEmailComponent implements OnInit, OnDestroy {
     /**
      * Fuse custom background colors
      */
-    customFuseColor$ = this.fuseFacadeService.widgetBgClasses$;
+    customFuse$ = this._fuseFacadeService.widgetBgClasses$;
 
     constructor(
         private appUiService: AppUiService,
         private matDialog: MatDialog,
         private aotService: AOTWidgetService,
         // private fuseConfig: FuseConfigService,
-        private fuseFacadeService: FuseFacadeService
-    ) {}
+        private _fuseFacadeService: FuseFacadeService
+    ) { }
 
     /**
      * Lifecycle hook
@@ -199,7 +206,7 @@ export class CreateEmailComponent implements OnInit, OnDestroy {
      * test functionn for quill editor
      * @param {any} evt
      */
-    onContentChanged(evt: any): void {}
+    onContentChanged(evt: any): void { }
 
     /**
      * Attach files to email

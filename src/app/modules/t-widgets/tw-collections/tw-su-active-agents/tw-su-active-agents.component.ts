@@ -1,19 +1,11 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
-import { FuseConfigService } from '@fuse/services/config.service';
 import { AOTWidgetService } from '@services/aot-widget.service';
-import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { DashboardService } from '@services/dashboard.service';
+import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TMACEventService } from '@services/tmac-event.service';
-import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AGENT_FEATURES_MAP, COMMON_ERR_MESSAGE } from 'app/constants';
-import { CustomSDKEvent, IWidget, QuizEventJsonData } from 'app/interfaces';
-import { InstantMessagingService } from 'app/layout/components/instant-messaging/instant-messaging.service';
-import { TwWidgetModel } from 'app/models';
-import { map, orderBy, random } from 'lodash';
-import { takeUntil } from 'rxjs/operators';
 import {
     AgentFeatures,
     AgentStatusChangeEvent,
@@ -26,6 +18,13 @@ import {
     SuAgentModel,
     TUtils
 } from '@tmac/sdk';
+import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
+import { AGENT_FEATURES_MAP, COMMON_ERR_MESSAGE } from 'app/constants';
+import { CustomSDKEvent, IWidget, QuizEventJsonData } from 'app/interfaces';
+import { InstantMessagingService } from 'app/layout/components/instant-messaging/instant-messaging.service';
+import { TwWidgetModel } from 'app/models';
+import { map, orderBy, random } from 'lodash';
+import { filter, takeUntil } from 'rxjs/operators';
 
 /**
  * Active agents component widget
@@ -46,11 +45,14 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     /**
      * Fuse Config
      */
-    fuseConfig: any;
+    // fuseConfig: any;
     /**
-     * App Config
+     * Fuse custom config
      */
-    appConfig: any;
+    customFuse = {
+        anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
+        widget$: this._fuseFacadeService.widgetBgClasses$
+    };
 
     /**
      * Use info
@@ -117,8 +119,8 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
      * Constructor
      */
     constructor(
-        private _fuseConfigService: FuseConfigService,
-        private _appDataService: AppDataService,
+        // private _fuseConfigService: FuseConfigService,
+        private _fuseFacadeService: FuseFacadeService,
         private _appUIService: AppUiService,
         private _aotWidgetService: AOTWidgetService,
         private _tmacEventService: TMACEventService,
@@ -146,20 +148,12 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         this.initWrapper(this.data);
         this.isAgentSupervisor = SDKClient.getAgentData().agentProfile === 'S';
 
-        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.fuseConfig = config;
-        });
-
-        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.appConfig = config;
-        });
+        // this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+        //     this.fuseConfig = config;
+        // });
 
         this.sortBy = this.data.Data.SortBy ?? 'AgentName';
         this.sortType = this.data.Data.SortType ?? 'asc';
-
-        // listen to agent list event
-        // SDKClient.events.on('SupervisorAgentListEvent', this.SupervisorAgentListEvent);
-        // SDKClient.events.on('TeamAgentListDataEvent', this.TeamAgentListDataEvent);
 
         this._tmacEventService
             .getEvents(['SupervisorAgentListEvent', 'TeamAgentListDataEvent'])
@@ -182,10 +176,6 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-
-        // listen off agent list event
-        // SDKClient.events.off('SupervisorAgentListEvent', this.SupervisorAgentListEvent);
-        // SDKClient.events.off('TeamAgentListDataEvent', this.TeamAgentListDataEvent);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -212,7 +202,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             this.reload = false;
             this._appUIService.showSnackbar('Agent data is reloaded');
         }
-    };
+    }
 
     /**
      * TeamAgentListDataEvent Handler
@@ -241,7 +231,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
 
         // sort agent list
         this.sortAgentList();
-    };
+    }
 
     /**
      * createActivityWidget
@@ -257,7 +247,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         widget.Config.Anchor = true;
         widget.Config.Position.X = 3;
         widget.Config.Position.Y = 4;
-        widget.Config.Class = 'cover no-restore inherit-header';
+        widget.Config.Class = 'mx-cover no-restore inherit-header';
         widget.Data.ActivityDetails = item;
 
         // push the widget to list

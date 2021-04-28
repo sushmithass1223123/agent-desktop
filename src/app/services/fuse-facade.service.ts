@@ -91,7 +91,7 @@ export class FuseFacadeService {
         shareReplay()
     );
 
-    constructor(private fuseConfig: FuseConfigService) {}
+    constructor(private fuseConfig: FuseConfigService) { }
 
     /**
      * Gets fuse specific keys from fuse config
@@ -103,5 +103,13 @@ export class FuseFacadeService {
             return this.fuseConfig.getConfig().pipe(map((conf) => formatJsonData(conf, json)));
         }
         return this.fuseConfig.getConfig();
+    }
+
+
+    /**
+     * Set and get the config
+     */
+    set setConfig(value: any) {
+        this.fuseConfig.config = value;
     }
 }

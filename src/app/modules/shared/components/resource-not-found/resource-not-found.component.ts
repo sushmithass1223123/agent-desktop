@@ -52,7 +52,7 @@ export class ResourceNotFoundComponent implements OnInit {
      */
     routeToLogin(): void {
         // we will route to login page
-        this._router.navigate(['login']);
+        this._router.navigate(['login'], { queryParamsHandling: 'preserve' });
     }
 
 }

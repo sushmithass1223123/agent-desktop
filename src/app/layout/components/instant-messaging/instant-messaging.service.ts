@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Observable, ReplaySubject, Subject } from 'rxjs';
 
 
 /**
@@ -10,13 +10,19 @@ export class InstantMessagingService {
     /**
      * To select a user 
      */
-    _userSubject: Subject<string>;
+    private _userSubject: Subject<string>;
+
+    /**
+     * Config subject
+     */
+    private _configSubject: ReplaySubject<string>;
 
     /**
      * Constructor
      */
     constructor() {
         this._userSubject = new Subject();
+        this._configSubject = new ReplaySubject();
     }
 
     /**
@@ -27,11 +33,27 @@ export class InstantMessagingService {
     }
 
     /**
+     * To get a config observable
+     */
+    get getConfig(): any | Observable<string> {
+        return this._configSubject.asObservable();
+    }
+
+    /**
      * To select a user
      * 
      * @param {string} userId
      */
     selectUser(userId: string): void {
         this._userSubject.next(userId);
+    }
+
+    /**
+     * To pass config between components using this service
+     * 
+     * @param {Any} config 
+     */
+    shareConfig(config: any): void {
+        this._configSubject.next(config);
     }
 }

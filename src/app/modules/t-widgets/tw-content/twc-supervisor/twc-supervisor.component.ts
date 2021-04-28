@@ -1,14 +1,12 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { FuseConfigService } from '@fuse/services/config.service';
-import { FuseConfig } from '@fuse/types';
 import { DashboardService } from '@services/dashboard.service';
+import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TMACEventService } from '@services/tmac-event.service';
+import { IAgentData, SDKClient } from '@tmac/sdk';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { ContentPageService } from 'app/services/content-page.service';
-import { Observable } from 'rxjs';
-import { filter, map, takeUntil } from 'rxjs/operators';
-import { IAgentData, SDKClient } from '@tmac/sdk';
+import { takeUntil } from 'rxjs/operators';
 
 /**
  * Supervisor content widget
@@ -72,16 +70,24 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
     /**
      * fuse background
      */
-    fuseBg: Observable<{
-        /**
-         * fuse background for content
-         */
-        content: string;
-        /**
-         * fuse background for body
-         */
-        body: string;
-    }>;
+    // customFuse: Observable<{
+    //     /**
+    //      * fuse background for content
+    //      */
+    //     content: string;
+    //     /**
+    //      * fuse background for body
+    //      */
+    //     body: string;
+    // }>;
+
+    /**
+     * Fuse custom config
+     */
+    customFuse = {
+        anchor$: this._fuseFacadeService.anchorBgClasses$,
+        widget$: this._fuseFacadeService.widgetBgClasses$
+    };
 
     /**
      * Max date for dashboard data
@@ -89,15 +95,16 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
     maxDate: Date;
 
     /**
-     * Data filter duration
+     * Widget data
      */
-    duration: number;
+    widgetDataConfig: WidgetData;
 
     constructor(
         public hostElement: ElementRef,
         public contentPageService: ContentPageService,
         private _dashboardService: DashboardService,
-        private fuseConfService: FuseConfigService,
+        // private fuseConfService: FuseConfigService,
+        private _fuseFacadeService: FuseFacadeService,
         private _tmacEventService: TMACEventService
     ) {
         super(hostElement, contentPageService);
@@ -110,19 +117,19 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        this.duration = 100;
+        this.widgetDataConfig = this.data.Data;
 
         this.maxDate = new Date();
         this.maxDate.setDate(this.maxDate.getDate() - 1);
 
-        this.fuseBg = this.fuseConfService.config.pipe(
-            takeUntil(this.unsubscribeAll),
-            filter((config: FuseConfig) => config.layout.anchorWidget.customBackgroundColor),
-            map((config: FuseConfig) => ({ content: config.layout.widget.contentBackground, body: config.layout.widget.bodyBackground }))
-        );
+        // this.customFuse = this.fuseConfService.config.pipe(
+        //     takeUntil(this.unsubscribeAll),
+        //     filter((config: FuseConfig) => config.layout.anchorWidget.customBackgroundColor),
+        //     map((config: FuseConfig) => ({ content: config.layout.widget.contentBackground, body: config.layout.widget.bodyBackground }))
+        // );
 
         const initialDate = new Date();
-        initialDate.setDate(initialDate.getDate() - Math.round(this.duration / 24));
+        initialDate.setDate(initialDate.getDate() - Math.round((this.widgetDataConfig.Duration || 100) / 24));
 
         this.dashboardDataFromDate = {
             calculatedSpan: 100,
@@ -132,7 +139,7 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
         this.dashboardDataFromDate.formControl.valueChanges.subscribe((date: Date) => {
             // this.registerToService(false);
             const deltaTime = Math.ceil((Date.now() - date.getTime()) / (1000 * 60 * 60));
-            this.duration = deltaTime;
+            this.widgetDataConfig.Duration = deltaTime;
             this.registerToService(true);
             this.showDashboardDataSpanOverlay = false;
         });
@@ -191,6 +198,14 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
      * @param register
      */
     registerToService(register: boolean): void {
+        // process only for supervisor agent
+        if (this.agentData.agentProfile !== 'S') {
+            return;
+        }
+
+        // get hierarchy
+        const hierarchy = this.widgetDataConfig.AgentHierarchy ?? false;
+
         if (register) {
             this.dataLoading = true;
             // if there is no data, stop data loading
@@ -199,14 +214,12 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
                     this.dataLoading = false;
                 }
             }, 10000);
+
             // start getting data
-            this._dashboardService.triggerActiveAgents(this.agentData.agentId, this.agentData.teamId, true, this.duration);
+            this._dashboardService.triggerActiveAgents(this.agentData.agentId, this.agentData.teamId, true, hierarchy, this.widgetDataConfig.Duration);
         } else {
-            // check for the profile
-            if (this.agentData.agentProfile === 'S') {
-                // stop getting data
-                this._dashboardService.triggerActiveAgents(this.agentData.agentId, this.agentData.teamId, false, 0);
-            }
+            // stop getting data
+            this._dashboardService.triggerActiveAgents(this.agentData.agentId, this.agentData.teamId, false, hierarchy, 0);
         }
     }
 
@@ -216,7 +229,7 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
     onActive = () => {
         if (!this.loaded) {
             // if inited only register, else register in init
-            if (this.init && this.agentData.agentProfile === 'S') {
+            if (this.init) {
                 // register to service
                 this.registerToService(true);
             }
@@ -233,4 +246,15 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
             this.registerToService(false);
         }
     }
+}
+
+interface WidgetData {
+    /**
+     * Dashboard data duration
+     */
+    Duration: number;
+    /**
+     * Agent hierarchy filter flag
+     */
+    AgentHierarchy: boolean;
 }

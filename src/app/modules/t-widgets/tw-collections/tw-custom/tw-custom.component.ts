@@ -1,16 +1,15 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { FuseConfigService } from '@fuse/services/config.service';
-import { FuseConfig } from '@fuse/types';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
+import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { getStringVars, setStringVars } from '@tmac/operators';
+import { SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IPostMessage, IWidget } from 'app/interfaces';
 import { Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient } from '@tmac/sdk';
 
 /**
  * TwCustomComponent
@@ -30,8 +29,11 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
     /**
      * Fuse Config
      */
-    fuseConfig: FuseConfig;
-
+    // fuseConfig: FuseConfig;
+    /**
+     * Fuse custom config
+     */
+    customFuse$ = this._fuseFacadeService.getConfig({ flatTheme: 'flatTheme' });
     /**
      * Window pop widget
      */
@@ -71,7 +73,8 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
         private sanitizer: DomSanitizer,
         private _aotWidgetService: AOTWidgetService,
         private _tmacEventService: TMACEventService,
-        private _fuseConfigService: FuseConfigService,
+        // private _fuseConfigService: FuseConfigService,
+        private _fuseFacadeService: FuseFacadeService,
         private _appDataService: AppDataService
     ) {
         super();
@@ -89,11 +92,11 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
         }
 
         // Subscribe to the config changes
-        this._fuseConfigService.config
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((fuseConfig: FuseConfig) => {
-                this.fuseConfig = fuseConfig;
-            });
+        // this._fuseConfigService.config
+        //     .pipe(takeUntil(this.unsubscribeAll))
+        //     .subscribe((fuseConfig: FuseConfig) => {
+        //         this.fuseConfig = fuseConfig;
+        //     });
 
         // register to post message subject
         this._appDataService.postMessage

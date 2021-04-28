@@ -4,23 +4,29 @@
 </div>
 
 <!-- Widget card -->
-<tw-card
-    cdkDrag
-    [cdkDragBoundary]="aot ? '#container-2' : '.widget-grid'"
-    [cdkDragDisabled]="maximized || (!floating && !aot)"
-    [cdkDragFreeDragPosition]="dragPosition"
-    class="tw-card animate__animated animate__faster {{
-        data.Config.Class + ' ' + (data.Config.Static ? 'tw-static' : '') + ' ' + (maximized ? 'animate__zoomIn' : '')
-    }}"
-    [ngClass]="{ collapsed: collapsed, maximized: maximized, floating: floating, hidden: hidden, aot: aot, 'tw-flat': fuseConfig.flatTheme }"
-    [ngStyle]="{ 'width.px': data.Config.Position.W, 'height.px': data.Config.Position.H }"
+<ng-container
+    *ngIf="{
+        anchor: customFuse.anchor$ | async,
+        widget: customFuse.widget$ | async,
+        config: customFuse.config$ | async
+    } as customFuse"
 >
-    <ng-container *ngIf="{ anchor: customFuseColor.anchor$ | async, widget: customFuseColor.widget$ | async } as fuseBgs">
+    <tw-card
+        cdkDrag
+        [cdkDragBoundary]="aot ? '#container-2' : '.widget-grid'"
+        [cdkDragDisabled]="maximized || (!floating && !aot)"
+        [cdkDragFreeDragPosition]="dragPosition"
+        class="tw-card animate__animated animate__faster {{
+            data.Config.Class + ' ' + (data.Config.Static ? 'tw-static' : '') + ' ' + (maximized ? 'animate__zoomIn' : '')
+        }}"
+        [ngClass]="{ collapsed: collapsed, maximized: maximized, floating: floating, hidden: hidden, aot: aot, 'tw-flat': customFuse.config.flatTheme }"
+        [ngStyle]="{ 'width.px': data.Config.Position.W, 'height.px': data.Config.Position.H }"
+    >
         <!-- We are writing a wrapper over material card -->
         <mat-card
             class="widget-card"
             [ngClass]="
-                (fuseBgs.anchor?.body || fuseBgs.widget?.body) +
+                (customFuse.anchor?.body || customFuse.widget?.body) +
                 ' ' +
                 (floating ? 'floating' : '') +
                 ' ' +
@@ -32,7 +38,7 @@
                 <!-- Enabled header if enabled in config -->
                 <tw-card-header
                     [data]="data"
-                    [fuseConfig]="fuseConfig"
+                    [headerColor]="customFuse.anchor?.header || customFuse.widget?.header"
                     *ngIf="data.Config.Header"
                     [widgetState]="{ maximized: maximized, floating: floating, collapsed: collapsed, aot: aot, pinned: pinned }"
                     (refresh)="refresh()"
@@ -46,7 +52,7 @@
                 <!-- Card content -->
                 <mat-card-content
                     [ngClass]="
-                        (fuseBgs.anchor?.content || fuseBgs.widget?.content) +
+                        (customFuse.anchor?.content || customFuse.widget?.content) +
                         ' ' +
                         (!data.Config.Header ? 'no-header' : '') +
                         ' ' +
@@ -58,5 +64,5 @@
                 </mat-card-content>
             </div>
         </mat-card>
-    </ng-container>
-</tw-card>
+    </tw-card>
+</ng-container>

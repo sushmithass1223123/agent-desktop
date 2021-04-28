@@ -220,7 +220,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
     /**
      * Fuse custom background colors
      */
-    customFuseColor$ = this.fuseFacadeService.anchorOrWidgetBgClasses$;
+    customFuse$ = this.fuseFacadeService.anchorOrWidgetBgClasses$;
 
     /**
      * Search Key for agent / skill list
@@ -899,8 +899,8 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
      */
     loadSkillList(): void {
         this.loading = true;
-        const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-        const res = [{ "__type": "DataModel.FavouriteSkill", "ID": "49033", "Name": "CH_DiceChatSkill2", "OperatingHours": [], "VDN": "49033" }, { "__type": "DataModel.FavouriteSkill", "ID": "49037", "Name": "CH_DiceChatSkill3", "OperatingHours": [], "VDN": "49037" }, { "__type": "DataModel.FavouriteSkill", "ID": "49044", "Name": "EM_DiceEmailSkill1", "OperatingHours": [], "VDN": "49044" }, { "__type": "DataModel.FavouriteSkill", "ID": "49020", "Name": "VO_DiceNewPromo", "OperatingHours": [], "VDN": "49020" }, { "__type": "DataModel.FavouriteSkill", "ID": "49032", "Name": "VO_DiceSkill1", "OperatingHours": [{ "Day": "Fri", "EndTime": { "Ticks": 863400000000, "Days": 0, "Hours": 13, "Milliseconds": 0, "Minutes": 35, "Seconds": 30, "TotalDays": 0.99930555555555556, "TotalHours": 23.983333333333331, "TotalMilliseconds": 86340000, "TotalMinutes": 1439, "TotalSeconds": 86340 }, "StartTime": { "Ticks": 0, "Days": 0, "Hours": 0, "Milliseconds": 0, "Minutes": 0, "Seconds": 0, "TotalDays": 0, "TotalHours": 0, "TotalMilliseconds": 0, "TotalMinutes": 0, "TotalSeconds": 0 } }], "VDN": "49032" }]
+        const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
         // get agent list
         SDKClient.getFavouriteSkills()
             // mock promise
@@ -930,22 +930,22 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                         skill.OperatingHours.forEach((opHours) => {
                             if (weekdays.indexOf(opHours.Day) === today.getDay()) {
                                 const startTime = new Date();
-                                startTime.setHours(opHours.StartTime.Hours)
-                                startTime.setMinutes(opHours.StartTime.Minutes)
-                                startTime.setSeconds(opHours.StartTime.Seconds)
+                                startTime.setHours(opHours.StartTime.Hours);
+                                startTime.setMinutes(opHours.StartTime.Minutes);
+                                startTime.setSeconds(opHours.StartTime.Seconds);
                                 const endTime = new Date();
-                                endTime.setHours(opHours.EndTime.Hours)
-                                endTime.setMinutes(opHours.EndTime.Minutes)
-                                endTime.setSeconds(opHours.EndTime.Seconds)
+                                endTime.setHours(opHours.EndTime.Hours);
+                                endTime.setMinutes(opHours.EndTime.Minutes);
+                                endTime.setSeconds(opHours.EndTime.Seconds);
                                 if (startTime.getTime() <= today.getTime()) {
                                     if (endTime.getTime() >= today.getTime()) {
                                         available = true;
-                                        return
+                                        return;
                                     }
                                 }
                             }
                         });
-                        return available || !skill.OperatingHours.length
+                        return available || !skill.OperatingHours.length;
                     });
                     this.skillListTable.tableData.source.data = list;
                     this.skillListTable.tableData.source.sort = this.sort;

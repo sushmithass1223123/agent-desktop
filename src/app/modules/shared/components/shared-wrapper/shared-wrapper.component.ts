@@ -31,10 +31,6 @@ export class SharedWrapperComponent implements OnInit, OnDestroy {
     @ViewChild('closeBtn')
     private _closeBtn: MatButton;
     /**
-     *  To store the fuse config for theme
-     */
-    // fuseConfig: FuseConfig;
-    /**
      * To unsubscribe from subscription subject
      */
     unsubscribeAll = new Subject();
@@ -42,19 +38,16 @@ export class SharedWrapperComponent implements OnInit, OnDestroy {
     /**
      * Fuse custom background colors
      */
-    customFuseColor = this.fuseFacadeService.anchorOrWidgetBgClasses$;
+    customFuse$ = this._fuseFacadeService.anchorOrWidgetBgClasses$;
+
     constructor(
-        // private _fuseConfigService: FuseConfigService,
-        private fuseFacadeService: FuseFacadeService
-    ) {}
+        private _fuseFacadeService: FuseFacadeService
+    ) { }
 
     /**
      * OnInit
      */
     ngOnInit(): void {
-        // this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-        //     this.fuseConfig = config;
-        // });
     }
 
     /**

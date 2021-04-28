@@ -3,14 +3,14 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
-import { FuseConfigService } from '@fuse/services/config.service';
 import { FuseSplashScreenService } from '@fuse/services/splash-screen.service';
 import { AppUiService } from '@services/app-ui.service';
+import { FuseFacadeService } from '@services/fuse-facade.service';
+import { CommandResultEvent, IResponse, SDKClient, TUtils } from '@tmac/sdk';
 import { AppDataService } from 'app/services/app-data.service';
-import { set, merge } from 'lodash';
+import { merge, set } from 'lodash';
 import { interval, Observable, Subject } from 'rxjs';
 import { filter, map, take, takeUntil, tap } from 'rxjs/operators';
-import { CommandResultEvent, IResponse, SDKClient, TUtils } from '@tmac/sdk';
 import { environment } from '../../../../environments/environment';
 
 /**
@@ -306,7 +306,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
 
     constructor(
-        private _fuseConfigService: FuseConfigService,
+        // private _fuseConfigService: FuseConfigService
+        private _fuseFacadeService: FuseFacadeService,
         private _formBuilder: FormBuilder,
         private _appDataService: AppDataService,
         private _router: Router,
@@ -317,7 +318,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         private fuseSpashService: FuseSplashScreenService
     ) {
         // Configure the layout
-        this._fuseConfigService.config = {
+        this._fuseFacadeService.setConfig = {
             layout: {
                 navbar: {
                     hidden: true
@@ -502,7 +503,8 @@ export class LoginComponent implements OnInit, OnDestroy {
                     title: '404',
                     description: 'Unable to load the config, please contact the administrator.',
                     login: false
-                }
+                },
+                queryParamsHandling: 'preserve'
             });
         }
     }
@@ -805,7 +807,8 @@ export class LoginComponent implements OnInit, OnDestroy {
                                 state: {
                                     routeFrom: 'login',
                                     agentId
-                                }
+                                },
+                                queryParamsHandling: 'preserve'
                             });
                         }
 
