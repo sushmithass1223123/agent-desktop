@@ -14,6 +14,29 @@ import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { AgentModel, CommandResultEvent, FavouriteSkill, IResponse, IResponseData, QueueStatusEvent, SDKClient } from '@tmac/sdk';
 import { SharedWrapperComponent } from '../shared-wrapper/shared-wrapper.component';
+import { formatJsonData } from 'app/utils';
+
+type AgentType = Partial<AgentModel>;
+type SkillType = Partial<FavouriteSkill>;
+
+// FirstName: 'row.FirstName',
+// LastName: 'row.LastName',
+// LoginID: 'row.LoginID',
+// CurrentAgentStatus: 'row.CurrentAgentStatus',
+// InteractionCounts: 'row.InteractionCounts',
+// AgentVoiceSkillsAsString: 'row.AgentVoiceSkillsAsString'
+
+// agentId: row.LoginID,
+// deviceId: row.StationID,
+// tmacServer: row.TmacServer
+
+// CIQ: 'row.CIQ',
+// Avail: 'row.Avail',
+// Staff: 'row.Staff',
+// ID: 'row.ID',
+// VDN: 'row.VDN',
+// Name: 'row.Name',
+// OperatingHours: 'row.OperatingHours'
 
 /**
  * Agent Skill List Component
@@ -80,7 +103,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         /**
          * Current agent list ref
          */
-        agentList: AgentModel[];
+        agentList: AgentType[];
         /**
          * Mat table data
          */
@@ -88,7 +111,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
             /**
              * Data source
              */
-            source: MatTableDataSource<AgentModel>;
+            source: MatTableDataSource<AgentType>;
             /**
              * Table columns
              */
@@ -96,7 +119,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
             /**
              * Selection model
              */
-            selection: SelectionModel<AgentModel>;
+            selection: SelectionModel<AgentType>;
         };
     };
     /**
@@ -110,7 +133,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
             /**
              * Data source
              */
-            source: MatTableDataSource<any>;
+            source: MatTableDataSource<SkillType>;
             /**
              * Table columns
              */
@@ -118,7 +141,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
             /**
              * Selection model
              */
-            selection: SelectionModel<any>;
+            selection: SelectionModel<SkillType>;
         };
     };
     /**
@@ -175,11 +198,11 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
     /**
      * Skill list to filter agent list based on skill
      */
-    allSkills: any;
+    allSkills: any[];
     /**
      * List of all favourite skills
      */
-    allFavouriteSkills: FavouriteSkill[];
+    allFavouriteSkills: SkillType[];
     /**
      * Selected skill for agent list filter
      */
@@ -394,7 +417,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Sets new columns for the table based on configs 
+     * Sets new columns for the table based on configs
      */
     setNewColumns(): void {
         if (this.data.agent.columns) {
@@ -842,12 +865,19 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
     }
 
     /**
+     * Clears displayed value for skill / agent
+     */
+    clearDisplayValues(): void {
+        this.selectedItemDisplayName = '';
+        this.freeTextAgentKey.value = '';
+    }
+
+    /**
      * To clear selected item
      */
     clearSelected(): void {
         this.selectedItem = '';
-        this.selectedItemDisplayName = '';
-        this.freeTextAgentKey.value = '';
+        this.clearDisplayValues();
         // clear grid selection if any
         if (this.activeSwitcher === 'dynamicList') {
             this.dynamicListTable.tableData.selection.clear();
@@ -875,11 +905,27 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 // check if data found
                 if (dt.response.length > 0) {
                     // filter the same agent and bots from the list
-                    dt.response = dt.response.filter(
-                        (r: AgentModel) => r.LoginID !== SDKClient.getAgentData().agentId && r.AgentProfile.AccessRole.toLowerCase() !== 'chatbot'
-                    );
-                    this.agentListTable.tableData.source.data = dt.response;
-                    this.agentListTable.agentList = dt.response;
+                    const list = dt.response
+                        .filter(
+                            (r: AgentModel) => r.LoginID !== SDKClient.getAgentData().agentId && r.AgentProfile.AccessRole.toLowerCase() !== 'chatbot'
+                        )
+                        .map((row) =>
+                            formatJsonData<Partial<AgentModel>>(
+                                { row },
+                                {
+                                    FirstName: 'row.FirstName',
+                                    LastName: 'row.LastName',
+                                    LoginID: 'row.LoginID',
+                                    CurrentAgentStatus: 'row.CurrentAgentStatus',
+                                    InteractionCounts: 'row.InteractionCounts',
+                                    AgentVoiceSkillsAsString: 'row.AgentVoiceSkillsAsString',
+                                    StationID: 'row.StationID',
+                                    TmacServer: 'row.TmacServer'
+                                }
+                            )
+                        );
+                    this.agentListTable.tableData.source.data = list;
+                    this.agentListTable.agentList = list;
                     this.agentListTable.tableData.source.sort = this.sort;
 
                     // if reload the filter after getting the data
@@ -888,8 +934,9 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                     }
                 }
             })
-            .catch(() => {
+            .catch((e) => {
                 this.loading = false;
+                console.error(e);
                 this._appUIService.showSnackbar('Error in loading agent list', 'failure');
             });
     }
@@ -911,7 +958,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 if (dt.response.length > 0) {
                     // check the prefix list
                     const channelPrefix = this.data?.skill.channelPrfix || [];
-                    let list: FavouriteSkill[] = [];
+                    let list: SkillType[] = [];
                     if (channelPrefix.length > 0) {
                         channelPrefix.forEach((prefix) => {
                             const filtered = dt.response.filter((item) => {
@@ -924,8 +971,22 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                     } else {
                         list = dt.response;
                     }
+                    list = list.map((row) =>
+                        formatJsonData(
+                            { row },
+                            {
+                                CIQ: 'row.CIQ',
+                                Avail: 'row.Avail',
+                                Staff: 'row.Staff',
+                                ID: 'row.ID',
+                                VDN: 'row.VDN',
+                                Name: 'row.Name',
+                                OperatingHours: 'row.OperatingHours'
+                            }
+                        )
+                    );
                     const today = new Date();
-                    this.allFavouriteSkills = list.filter(skill => {
+                    this.allFavouriteSkills = list.filter((skill) => {
                         let available = false;
                         skill.OperatingHours.forEach((opHours) => {
                             if (weekdays.indexOf(opHours.Day) === today.getDay()) {
@@ -947,12 +1008,14 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                         });
                         return available || !skill.OperatingHours.length;
                     });
+
                     this.skillListTable.tableData.source.data = list;
                     this.skillListTable.tableData.source.sort = this.sort;
                 }
             })
-            .catch(() => {
+            .catch((e) => {
                 this.loading = false;
+                console.error(e);
                 this._appUIService.showSnackbar('Error in loading skill list', 'failure');
             });
     }
@@ -966,8 +1029,11 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
             return;
         }
         // clear the selection
-        this.selectedItem = '';
-        this.agentListTable.tableData.selection.clear();
+        this.clearSelected();
+        this.freeTextAgentKey.enabled = false;
+        // this.selectedItem = '';
+        // this.agentListTable.tableData.selection.clear();
+        // this.clearDisplayValues();
         this.loading = true;
         const currentStatus = row.CurrentAgentStatus;
         row.CurrentAgentStatus = 'loading';
@@ -1028,8 +1094,11 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
             return;
         }
         // clear the selection
-        this.selectedItem = '';
-        this.skillListTable.tableData.selection.clear();
+        this.clearSelected();
+        this.freeTextAgentKey.enabled = false;
+        // this.selectedItem = '';
+        // this.skillListTable.tableData.selection.clear();
+        // this.clearDisplayValues();
         this.loading = true;
         row.Staff = 'loading';
         row.Avail = 'loading';

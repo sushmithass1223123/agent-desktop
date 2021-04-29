@@ -1136,7 +1136,7 @@
                                                             "Blind": false,
                                                             "Source": {
                                                                 "Use": "agentId",
-                                                                "Display": "${[\"LastName\"]} , ${[\"FirstName\"]}",
+                                                                "Display": "${LastName}, ${FirstName}",
                                                                 "FreeTextAllowed": true
                                                             },
                                                             "AllowedStates": []
