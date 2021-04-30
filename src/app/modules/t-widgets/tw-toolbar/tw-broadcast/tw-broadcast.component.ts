@@ -1,7 +1,7 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { AppUiService } from '@services/app-ui.service';
-import { TWidgetWrapper } from '@twidgets/utils';
 import { AgentNotificaitonEvent, SDKClient } from '@tmac/sdk';
+import { TWidgetWrapper } from '@twidgets/utils';
+import { IWidget } from 'app/interfaces';
 /**
  * Broadcat component
  */
@@ -15,14 +15,14 @@ export class TwBroadcastComponent extends TWidgetWrapper implements OnInit, OnDe
     /**
      * App confog data
      */
-    @Input() data: any;
+    @Input() data: IWidget;
 
     /**
      * Broadcat messgae
      */
     broadcastMessage: string;
 
-    constructor(private appUiService: AppUiService) {
+    constructor() {
         super();
     }
 
@@ -33,6 +33,7 @@ export class TwBroadcastComponent extends TWidgetWrapper implements OnInit, OnDe
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
+
         // register to event
         SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
     }

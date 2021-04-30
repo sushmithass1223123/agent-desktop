@@ -86,7 +86,7 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
             this.pollingSubscription.unsubscribe();
         }
         this.pollingSubscription = interval(10000).pipe(takeUntil(this.unsubscribeAll)).subscribe(this.setBadges);
-    };
+    }
 
     /**
      * Set Badges
@@ -117,28 +117,28 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
                         error: false,
                         data: currentAgentData
                             ? {
-                                  ...currentAgentData,
-                                  TotalBadges: [
-                                      {
-                                          BadgeName: 'Novice',
-                                          BadgeId: 0,
-                                          BadgeUrl: currentAgentData.NoviceBadgeUrl,
-                                          BadgePoints: currentAgentData.NoviceBadges
-                                      },
-                                      {
-                                          BadgeName: 'Influencer',
-                                          BadgeId: 1,
-                                          BadgeUrl: currentAgentData.InfluencerBadgeUrl,
-                                          BadgePoints: currentAgentData.InfluencerBadges
-                                      },
-                                      {
-                                          BadgeName: 'Master',
-                                          BadgeId: 2,
-                                          BadgeUrl: currentAgentData.MasterBadgeUrl,
-                                          BadgePoints: currentAgentData.MasterBadges
-                                      }
-                                  ]
-                              }
+                                ...currentAgentData,
+                                TotalBadges: [
+                                    {
+                                        BadgeName: 'Novice',
+                                        BadgeId: 0,
+                                        BadgeUrl: currentAgentData.NoviceBadgeUrl,
+                                        BadgePoints: currentAgentData.NoviceBadges
+                                    },
+                                    {
+                                        BadgeName: 'Influencer',
+                                        BadgeId: 1,
+                                        BadgeUrl: currentAgentData.InfluencerBadgeUrl,
+                                        BadgePoints: currentAgentData.InfluencerBadges
+                                    },
+                                    {
+                                        BadgeName: 'Master',
+                                        BadgeId: 2,
+                                        BadgeUrl: currentAgentData.MasterBadgeUrl,
+                                        BadgePoints: currentAgentData.MasterBadges
+                                    }
+                                ]
+                            }
                             : { GoldCoins: 0, SilverCoins: 0, BronzeCoins: 0, TotalBadges: [] }
                     };
                 },
@@ -147,7 +147,7 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
                     this.gamificationReqStatus = { msg: 'Something went wrong', error: true, loading: false };
                 }
             );
-    };
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods

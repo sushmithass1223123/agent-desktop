@@ -117,7 +117,7 @@ export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDes
         };
 
         // emit a custom event
-        this._tmacEventService.emitCustomEvent(customEvent);
+        this._tmacEventService.emitSDKEvent(customEvent);
 
         // change the status
         SDKClient.changeStatus({

@@ -2,12 +2,6 @@ import { Injectable } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { ReminderTaskDialogComponent } from '@modules/shared/components';
-import { COMMON_ERR_MESSAGE } from 'app/constants';
-import { IAction, IWidget, QuizEvent } from 'app/interfaces';
-import { TwWidgetModel } from 'app/models';
-import { map as lodashMap, upperFirst } from 'lodash';
-import { BehaviorSubject, merge, Observable, Subject } from 'rxjs';
-import { filter, map, takeUntil } from 'rxjs/operators';
 import {
     ACWTimerEvent,
     AgentForcedLogoffEvent,
@@ -17,16 +11,22 @@ import {
     AgentStatusChangeEvent,
     CommandResultEvent,
     GenericInteractionEvent,
-    HoldTimerEvent,
     IResponse,
     IUIEvent,
     SDKClient,
     TCMDirectAgentNotifyTimeoutEvent,
     TextChatTransferNotificationEvent,
+    TMACEventTypes,
     TmacServerConnectionAborted,
     TmacServerConnectionSuccess,
     TUtils
 } from '@tmac/sdk';
+import { COMMON_ERR_MESSAGE } from 'app/constants';
+import { CustomTMACEventTypes, IAction, IWidget, QuizEvent } from 'app/interfaces';
+import { TwWidgetModel } from 'app/models';
+import { map as lodashMap, upperFirst } from 'lodash';
+import { BehaviorSubject, merge, Observable, Subject } from 'rxjs';
+import { filter, map, takeUntil } from 'rxjs/operators';
 import { AOTWidgetService } from './aot-widget.service';
 import { AppDataService } from './app-data.service';
 import { AppUiService } from './app-ui.service';
@@ -145,7 +145,7 @@ export class TMACEventService {
      * TMAC event listener function
      * @param evt TMAC event
      */
-    private onTMACEvent = (evt: IUIEvent) => {
+    private OnTMACEvent = (evt: IUIEvent) => {
         if (evt.InteractionID > 0) {
             this.processInteractionEvents(evt);
         } else {
@@ -545,25 +545,6 @@ export class TMACEventService {
     }
 
     /**
-     * To process HoldTimerEvent
-     * @param {HoldTimerEvent} evt
-     */
-    private HoldTimerEvent = (evt: HoldTimerEvent) => {
-        const interaction = this._interactionEventArray.find(
-            (e) => e.InteractionID === evt.InteractionID && e.EventName === 'TextChatRemoteUserConnectedEvent'
-        );
-        const nameAndSessionId = `with ${interaction.Name ? interaction.Name + ' and ' : ''} session id ${interaction.JsonDataObj.sessionID}`;
-        const redirectToInteraction = () => {
-            this._appUIService.uiChannel$.next({ type: 'hold/select-chat', data: { interactionId: evt.InteractionID } });
-        };
-        this._appUIService.showAppSnackbar({
-            message: `Interaction ${interaction.InteractionID} ${nameAndSessionId} is on hold for ${evt.HoldTimeString}`,
-            state: evt.ColorCode,
-            onClick: redirectToInteraction
-        });
-    }
-
-    /**
      * To process Quiz Event
      * @param {QuizEvent} evt
      */
@@ -897,19 +878,56 @@ export class TMACEventService {
             }
         });
 
-        SDKClient.events.on('onTMACEvent', this.onTMACEvent);
-        SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
-        SDKClient.events.on('GenericInteractionEvent', this.GenericInteractionEvent);
-        SDKClient.events.on('TCMDirectAgentNotifyTimeoutEvent', this.TCMDirectAgentNotifyTimeoutEvent);
-        SDKClient.events.on('ACWTimerEvent', this.ACWTimerEvent);
-        SDKClient.events.on('HoldTimerEvent', this.HoldTimerEvent);
-        SDKClient.events.on('QuizEvent', this.QuizEvent);
-        SDKClient.events.on('AgentReminderEvent', this.AgentReminderEvent);
-        SDKClient.events.on('AgentForcedLogoffEvent', this.AgentForcedLogoffEvent);
-        SDKClient.events.on('InteractionLimitReachedEvent', this.AgentForcedLogoffEvent);
-        SDKClient.events.on('TextChatTransferNotificationEvent', this.TextChatTransferNotificationEvent);
-        SDKClient.events.on('TmacServerConnectionSuccess', this.TmacServerConnectionSuccess);
-        SDKClient.events.on('TmacServerConnectionAborted', this.TmacServerConnectionAborted);
+        this.addTMACEventListener([
+            {
+                label: 'OnTMACEvent',
+                callback: this.OnTMACEvent
+            },
+            {
+                label: 'AgentNotificaitonEvent',
+                callback: this.AgentNotificaitonEvent
+            },
+            {
+                label: 'GenericInteractionEvent',
+                callback: this.GenericInteractionEvent
+            },
+            {
+                label: 'TCMDirectAgentNotifyTimeoutEvent',
+                callback: this.TCMDirectAgentNotifyTimeoutEvent
+            },
+            {
+                label: 'ACWTimerEvent',
+                callback: this.ACWTimerEvent
+            },
+            {
+                label: 'QuizEvent',
+                callback: this.QuizEvent
+            },
+            {
+                label: 'AgentReminderEvent',
+                callback: this.AgentReminderEvent
+            },
+            {
+                label: 'AgentForcedLogoffEvent',
+                callback: this.AgentForcedLogoffEvent
+            },
+            {
+                label: 'InteractionLimitReachedEvent',
+                callback: this.AgentForcedLogoffEvent
+            },
+            {
+                label: 'TextChatTransferNotificationEvent',
+                callback: this.TextChatTransferNotificationEvent
+            },
+            {
+                label: 'TmacServerConnectionSuccess',
+                callback: this.TmacServerConnectionSuccess
+            },
+            {
+                label: 'TmacServerConnectionAborted',
+                callback: this.TmacServerConnectionAborted
+            }
+        ]);
 
         // subscribe to InteractionManagerService
         this._interactionManagerService.subscribe();
@@ -921,18 +939,64 @@ export class TMACEventService {
     public unsubscribe(): void {
         TUtils.Logger.console('info', 'TMACEventService.unsubscribe');
 
-        SDKClient.events.off('onTMACEvent', this.onTMACEvent);
-        SDKClient.events.off('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
-        SDKClient.events.off('GenericInteractionEvent', this.GenericInteractionEvent);
-        SDKClient.events.off('TCMDirectAgentNotifyTimeoutEvent', this.TCMDirectAgentNotifyTimeoutEvent);
-        SDKClient.events.off('ACWTimerEvent', this.ACWTimerEvent);
-        SDKClient.events.off('HoldTimerEvent', this.HoldTimerEvent);
-        SDKClient.events.off('QuizEvent', this.QuizEvent);
-        SDKClient.events.off('AgentReminderEvent', this.AgentReminderEvent);
-        SDKClient.events.off('AgentForcedLogoffEvent', this.AgentForcedLogoffEvent);
-        SDKClient.events.off('TextChatTransferNotificationEvent', this.TextChatTransferNotificationEvent);
-        SDKClient.events.off('TmacServerConnectionSuccess', this.TmacServerConnectionSuccess);
-        SDKClient.events.off('TmacServerConnectionAborted', this.TmacServerConnectionAborted);
+        // this.removeTMACEventListener([
+        //     {
+        //         label: 'OnTMACEvent',
+        //         callback: this.OnTMACEvent
+        //     }
+        // ]);
+
+        this.removeTMACEventListener([
+            {
+                label: 'OnTMACEvent',
+                callback: this.OnTMACEvent
+            },
+            {
+                label: 'AgentNotificaitonEvent',
+                callback: this.AgentNotificaitonEvent
+            },
+            {
+                label: 'GenericInteractionEvent',
+                callback: this.GenericInteractionEvent
+            },
+            {
+                label: 'TCMDirectAgentNotifyTimeoutEvent',
+                callback: this.TCMDirectAgentNotifyTimeoutEvent
+            },
+            {
+                label: 'ACWTimerEvent',
+                callback: this.ACWTimerEvent
+            },
+            {
+                label: 'QuizEvent',
+                callback: this.QuizEvent
+            },
+            {
+                label: 'AgentReminderEvent',
+                callback: this.AgentReminderEvent
+            },
+            {
+                label: 'AgentForcedLogoffEvent',
+                callback: this.AgentForcedLogoffEvent
+            },
+            {
+                label: 'InteractionLimitReachedEvent',
+                callback: this.AgentForcedLogoffEvent
+            },
+            {
+                label: 'TextChatTransferNotificationEvent',
+                callback: this.TextChatTransferNotificationEvent
+            },
+            {
+                label: 'TmacServerConnectionSuccess',
+                callback: this.TmacServerConnectionSuccess
+            },
+            {
+                label: 'TmacServerConnectionAborted',
+                callback: this.TmacServerConnectionAborted
+            }
+        ]);
+
 
         // unsubscribe from all subscriptions
         this._unsubscribeAll.next();
@@ -994,7 +1058,7 @@ export class TMACEventService {
      *
      * @param eventName Name of the event
      */
-    public getEvents<T = any>(eventNames: string[]): Observable<T[]> {
+    public getEvents<T = any>(eventNames: CustomTMACEventTypes[]): Observable<T[]> {
         // get the event based on interaction Id
         const events = this._nonInteractionEventArray.filter((i: IUIEvent) => eventNames.includes(i.EventName));
 
@@ -1043,7 +1107,7 @@ export class TMACEventService {
      * @param {String[]} eventNames Names of the event
      * @param {Number} interactionId InteractionId to filter
      */
-    public getInteractionEvents<T = any>(eventNames: string[], interactionId: number): Observable<T[]> {
+    public getInteractionEvents<T = any>(eventNames: CustomTMACEventTypes[], interactionId: number): Observable<T[]> {
         // get the event based on interaction Id
         const events = this._interactionEventArray.filter((i: IUIEvent) => i.InteractionID === interactionId && eventNames.includes(i.EventName));
 
@@ -1069,7 +1133,7 @@ export class TMACEventService {
      *
      * @param {String[]} eventNames Names of the event
      */
-    public getInteractionEventsByName<T = any>(eventNames: string[]): Observable<T[]> {
+    public getInteractionEventsByName<T = any>(eventNames: CustomTMACEventTypes[]): Observable<T[]> {
         // get the event based on interaction Id
         const events = this._interactionEventArray.filter((i: IUIEvent) => eventNames.includes(i.EventName));
 
@@ -1121,7 +1185,7 @@ export class TMACEventService {
      *
      * @param {String[]} eventNames Names of the event
      */
-    public getConstructDisposeEvents<T = any>(eventNames: string[]): Observable<T[]> {
+    public getConstructDisposeEvents<T = any>(eventNames: CustomTMACEventTypes[]): Observable<T[]> {
         // get the event based on interaction Id
         const events = this._interactionEventArray.filter(
             (i: IUIEvent) => (i.IsInteractionConstructEvent || i.IsInteractionDisposeEvent) && eventNames.includes(i.EventName)
@@ -1147,9 +1211,50 @@ export class TMACEventService {
     }
 
     /**
-     * To emit custom event through subscriber
+     * To register to TMAC events
      */
-    public emitCustomEvent(evt: any, interactionEvent: boolean = false): void {
+    public addTMACEventListener(events: {
+        /**
+         * Event label
+         */
+        label: TMACEventTypes | string,
+        /**
+         * Event callback
+         */
+        callback: (...args: any[]) => any
+    }[]): void {
+        events.forEach(evt => {
+            const label: any = evt.label;
+            SDKClient.events.on(label, evt.callback);
+        });
+    }
+
+    /**
+     * To de-register from TMAC events
+     */
+    public removeTMACEventListener(events: {
+        /**
+         * Event label
+         */
+        label: TMACEventTypes | string,
+        /**
+         * Event callback
+         */
+        callback: (...args: any[]) => any
+    }[]): void {
+        events.forEach(evt => {
+            const label: any = evt.label;
+            SDKClient.events.off(label, evt.callback);
+        });
+    }
+
+    /**
+     * To emit custom SDK event through subscriber
+     * 
+     * @param {Any} evt 
+     * @param {Boolean} interactionEvent [OPTIONAL]
+     */
+    public emitSDKEvent(evt: any, interactionEvent: boolean = false): void {
         // emit via SDK
         SDKClient.events.emit(evt.EventName, evt);
         // emit via subject

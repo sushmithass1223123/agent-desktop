@@ -1,5 +1,7 @@
 // import { AgentChannelDataModel } from '@tmac/sdk';
 
+import { TMACEventTypes } from "@tmac/sdk";
+
 export interface QuizEvent {
     ACK: any;
     CreatedTime: string;
@@ -23,3 +25,20 @@ export interface QuizEventJsonData {
         enableQuiz: boolean;
     };
 }
+
+export type CustomTMACEventTypes =
+    TMACEventTypes
+    | 'QuizEvent'
+    | 'AgentInteractionDetailsEvent'
+    | 'OnLoadMetricsToAgent'
+    | 'OnAssignPointsToAgent'
+    | 'TeamAgentListEvent'
+    | 'SupervisorAgentListEvent'
+    | 'CallbackDataReceivedForAgent'
+    | 'TeamAgentInteractionDetailsEvent'
+    | 'TeamrWorkCodeDetailsEvent'
+    | 'TeamAgentListDataEvent'
+    | 'TeamChannelListEvent'
+    | 'CannedResposeEvent'
+    | 'VoiceCannedResponseEvent'
+    ;

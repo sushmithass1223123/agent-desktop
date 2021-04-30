@@ -105,7 +105,10 @@
                                     "Enabled": true
                                 },
                                 "Data": {
-                                    "TeamFilter": true
+                                    "TeamFilter": true,
+                                    "AudioEscalateAllowed": true,
+                                    "VideoEscalateAllowed": true,
+                                    "ScreenShareAllowed": true
                                 }
                             },
                             {
@@ -707,7 +710,7 @@
                     "Data": {
                         "Path": "/supervisor",
                         "Duration": 100,
-                        "AgentHierarchy": true,
+                        "AgentHierarchy": false,
                         "Widgets": {
                             "Static": [
                                 {

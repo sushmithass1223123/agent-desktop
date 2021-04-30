@@ -54,7 +54,12 @@ export class TwcVoiceComponent extends TWContentWrapper implements OnInit, OnDes
         this.initWrapper(this.data);
 
         // subscribe to interaction events observable
-        this._tmacEventService.getConstructDisposeEvents(['IncomingCallEvent', 'OutgoingCallEvent', 'InteractionClosedEvent'])
+        this._tmacEventService
+            .getConstructDisposeEvents([
+                'IncomingCallEvent',
+                'OutgoingCallEvent',
+                'InteractionClosedEvent'
+            ])
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
 

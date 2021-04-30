@@ -87,7 +87,7 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
         // append the chart type, default is pie
         this.chart.type = this.widgetData.ChartType || 'pie';
 
-        let eventName = '';
+        let eventName: any;
         switch (this.widgetData.Source.toLowerCase()) {
             case 'auxstatus':
                 if (this.widgetData.Role === 'agent') {
