@@ -1500,6 +1500,16 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      * @param type
      */
     openTransferConferenceDialog(type: string): void {
+        const transferConfig = {
+            agent: this.data.Data.Transfer?.Agent || {},
+            skill: this.data.Data.Transfer?.Skill || {}
+        };
+
+        const conferenceConfig = {
+            agent: this.data.Data.Conference?.Agent || {},
+            skill: this.data.Data.Conference?.Skill || {}
+        };
+
         // get data based on type
         let data: AgentSkillListData =
             type === 'transfer'
@@ -1507,36 +1517,38 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     title: 'Transfer Call',
                     type: 'transferCall',
                     agent: {
-                        allowed: this.data.Data.Transfer.Agent.Allowed,
-                        blind: this.data.Data.Transfer.Agent.Allowed,
-                        source: this.data.Data.Transfer.Agent.Source,
-                        allowedStates: this.data.Data.Transfer.Agent.AllowedStates,
-                        columns: this.data.Data.Transfer.Agent.Columns
+                        allowed: transferConfig.agent.Allowed,
+                        blind: transferConfig.agent.Allowed,
+                        source: transferConfig.agent.Source,
+                        allowedStates: transferConfig.agent.AllowedStates,
+                        columns: transferConfig.agent.Columns,
+                        teamFilter: transferConfig.agent.TeamFilter
                     },
                     skill: {
-                        allowed: this.data.Data.Transfer.Skill.Allowed,
-                        blind: this.data.Data.Transfer.Skill.Allowed,
-                        source: this.data.Data.Transfer.Skill.Source,
-                        channelPrfix: this.data.Data.Transfer.Skill.ChannelPrefix,
-                        columns: this.data.Data.Transfer.Skill.Columns
+                        allowed: transferConfig.skill.Allowed,
+                        blind: transferConfig.skill.Allowed,
+                        source: transferConfig.skill.Source,
+                        channelPrfix: transferConfig.skill.ChannelPrefix,
+                        columns: transferConfig.skill.Columns
                     }
                 }
                 : {
                     title: 'Conference Call',
                     type: 'conferenceCall',
                     agent: {
-                        allowed: this.data.Data.Conference.Agent.Allowed,
-                        blind: this.data.Data.Conference.Agent.Allowed,
-                        source: this.data.Data.Conference.Agent.Source,
-                        allowedStates: this.data.Data.Conference.Agent.AllowedStates,
-                        columns: this.data.Data.Conference.Agent.Columns
+                        allowed: conferenceConfig.agent.Allowed,
+                        blind: conferenceConfig.agent.Allowed,
+                        source: conferenceConfig.agent.Source,
+                        allowedStates: conferenceConfig.agent.AllowedStates,
+                        columns: conferenceConfig.agent.Columns,
+                        teamFilter: conferenceConfig.agent.TeamFilter
                     },
                     skill: {
-                        allowed: this.data.Data.Conference.Skill.Allowed,
-                        blind: this.data.Data.Conference.Skill.Allowed,
-                        source: 'skill',
-                        channelPrfix: this.data.Data.Conference.Skill.ChannelPrefix,
-                        columns: this.data.Data.Conference.Skill.Columns
+                        allowed: conferenceConfig.skill.Allowed,
+                        blind: conferenceConfig.skill.Allowed,
+                        source: conferenceConfig.skill.Source,
+                        channelPrfix: conferenceConfig.skill.ChannelPrefix,
+                        columns: conferenceConfig.skill.Columns
                     }
                 };
 

@@ -857,6 +857,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     transferEmail(email: any): void {
         const agentConfig = this.data.Data.Transfer?.Agent || {};
         const skillConfig = this.data.Data.Transfer?.Skill || {};
+
         const data: AgentSkillListData = {
             title: 'Email Transfer',
             type: 'transferEmail',
@@ -865,7 +866,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 allowedStates: agentConfig.AllowedStates,
                 blind: agentConfig.Blind,
                 source: agentConfig.Source,
-                columns: agentConfig.Columns
+                columns: agentConfig.Columns,
+                teamFilter: agentConfig.TeamFilter
             },
             skill: {
                 allowed: skillConfig.Allowed,

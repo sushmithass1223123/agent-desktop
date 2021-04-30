@@ -12,13 +12,26 @@ import { AgentModel, CommandResultEvent, FavouriteSkill, IResponse, IResponseDat
 import { AgentSkillListData, AgentSkillListSourceObject } from 'app/interfaces';
 import { formatJsonData } from 'app/utils';
 import { orderBy } from 'lodash';
-import { from, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { SharedWrapperComponent } from '../shared-wrapper/shared-wrapper.component';
 
 type AgentType = Partial<AgentModel>;
 type SkillType = Partial<FavouriteSkill>;
-type FreeTextConf = { allowed: boolean; enabled: boolean; value: string };
+type FreeTextConf = {
+    /**
+     * ALlowed flag
+     */
+    allowed: boolean;
+    /**
+     * Enabled flag
+     */
+    enabled: boolean;
+    /**
+     * Value of freetext
+     */
+    value: string
+};
 /**
  * Agent Skill List Component
  */
@@ -876,7 +889,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         // get agent list
         SDKClient.getAgentListStaffed({
             agentId: true,
-            byTeam: true,
+            byTeam: this.data.agent.teamFilter ?? false,
             type: ''
         })
             .then((dt) => {
@@ -889,7 +902,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                             (r: AgentModel) => r.LoginID !== SDKClient.getAgentData().agentId && r.AgentProfile.AccessRole.toLowerCase() !== 'chatbot'
                         )
                         .map((row) =>
-                            formatJsonData<Partial<AgentModel>>(
+                            formatJsonData<Partial<AgentModel | any>>(
                                 { row },
                                 {
                                     FirstName: 'row.FirstName',
@@ -951,7 +964,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                         list = dt.response;
                     }
                     list = list.map((row) =>
-                        formatJsonData(
+                        formatJsonData<Partial<FavouriteSkill | any>>(
                             { row },
                             {
                                 CIQ: 'row.CIQ',
