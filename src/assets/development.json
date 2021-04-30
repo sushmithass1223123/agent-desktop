@@ -1142,7 +1142,9 @@
                                                                 "Display": "${LastName}, ${FirstName}",
                                                                 "FreeTextAllowed": true
                                                             },
-                                                            "AllowedStates": []
+                                                            "AllowedStates": [],
+                                                            "TeamFilter": false,
+                                                            "Columns": []
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
@@ -1154,7 +1156,8 @@
                                                             },
                                                             "ChannelPrefix": [
                                                                 "VO"
-                                                            ]
+                                                            ],
+                                                            "Columns": []
                                                         }
                                                     },
                                                     "Conference": {
@@ -1167,7 +1170,9 @@
                                                                 "Display": "agentName",
                                                                 "FreeTextAllowed": true
                                                             },
-                                                            "AllowedStates": []
+                                                            "AllowedStates": [],
+                                                            "TeamFilter": false,
+                                                            "Columns": []
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
@@ -1179,7 +1184,8 @@
                                                             },
                                                             "ChannelPrefix": [
                                                                 "VO"
-                                                            ]
+                                                            ],
+                                                            "Columns": []
                                                         }
                                                     },
                                                     "IVR": {
@@ -1748,12 +1754,8 @@
                                                                 "FreeTextAllowed": false
                                                             },
                                                             "AllowedStates": [],
-                                                            "Columns": [
-                                                                "FirstName",
-                                                                "LastName",
-                                                                "AgentID",
-                                                                "CurrentAgentStatus"
-                                                            ]
+                                                            "TeamFilter": false,
+                                                            "Columns": []
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
@@ -1764,14 +1766,7 @@
                                                                 "FreeTextAllowed": false
                                                             },
                                                             "ChannelPrefix": [],
-                                                            "Columns": [
-                                                                "Name",
-                                                                "VDN",
-                                                                "ID",
-                                                                "Stf",
-                                                                "Avl",
-                                                                "CIQ"
-                                                            ]
+                                                            "Columns": []
                                                         }
                                                     },
                                                     "Conference": {
@@ -1785,7 +1780,9 @@
                                                                 "FreeTextAllowed": false
                                                             },
                                                             "DisplayedSource": "agentId",
-                                                            "AllowedStates": []
+                                                            "AllowedStates": [],
+                                                            "TeamFilter": false,
+                                                            "Columns": []
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
@@ -1797,7 +1794,8 @@
                                                             },
                                                             "ChannelPrefix": [
                                                                 "CH"
-                                                            ]
+                                                            ],
+                                                            "Columns": []
                                                         }
                                                     },
                                                     "ImmediateCallbackAllowed": false,
@@ -2317,7 +2315,9 @@
                                                                 "Display": "agentName",
                                                                 "FreeTextAllowed": false
                                                             },
-                                                            "AllowedStates": []
+                                                            "AllowedStates": [],
+                                                            "TeamFilter": false,
+                                                            "Columns": []
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
@@ -2329,7 +2329,8 @@
                                                             },
                                                             "ChannelPrefix": [
                                                                 "EM"
-                                                            ]
+                                                            ],
+                                                            "Columns": []
                                                         }
                                                     },
                                                     "ForwardAllowed": true,
@@ -3008,7 +3009,9 @@
                                                                 "Display": "agentName",
                                                                 "FreeTextAllowed": false
                                                             },
-                                                            "AllowedStates": []
+                                                            "AllowedStates": [],
+                                                            "TeamFilter": false,
+                                                            "Columns": []
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
@@ -3020,7 +3023,8 @@
                                                             },
                                                             "ChannelPrefix": [
                                                                 "EM"
-                                                            ]
+                                                            ],
+                                                            "Columns": []
                                                         }
                                                     }
                                                 }
