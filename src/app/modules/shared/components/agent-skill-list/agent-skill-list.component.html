@@ -35,7 +35,7 @@
                                 </button>
                             </mat-form-field>
                             <mat-form-field *ngIf="freeTextAgentKey.enabled" fxFlex appearance="outline" class="custom with-bg">
-                                <input matInput required [placeholder]="mainLabel" [(ngModel)]="freeTextAgentKey.value" />
+                                <input matInput required [placeholder]="'Enter ' + mainLabel" [(ngModel)]="freeTextAgentKey.value" />
                                 <button
                                     mat-button
                                     matSuffix
@@ -96,7 +96,7 @@
                                 class="switch-item"
                                 *ngFor="let item of switcherList"
                                 [ngClass]="activeSwitcher === item.key && customFuse?.body"
-                                (click)="switchTab(item); searchRef.focus()"
+                                (click)="clearSelected(); switchTab(item); searchRef.focus()"
                             >
                                 {{ item.label }}
                             </div>
@@ -167,6 +167,17 @@
                                     <div #searchKeyText class="ml-8 twd-hidden">
                                         <mat-form-field class="form-field custom with-bg w-100-p" appearance="outline">
                                             <input matInput #searchRef [formControl]="searchKey" placeholder="Search" />
+                                            <button
+                                                *ngIf="searchRef.value"
+                                                mat-button
+                                                matSuffix
+                                                mat-icon-button
+                                                type="button"
+                                                matTooltip="Edit"
+                                                (click)="clearSelected()"
+                                            >
+                                                <mat-icon>edit</mat-icon>
+                                            </button>
                                         </mat-form-field>
                                     </div>
                                 </div>

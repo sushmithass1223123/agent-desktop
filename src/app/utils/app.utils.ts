@@ -8,7 +8,7 @@ type Generic = string | number;
  * @param {Record<Generic, Generic | Generic[]>} formatConfig
  * @returns {Record<Generic, Generic | Generic[]>}
  */
-export const formatJsonData = <T = Record<Generic, Generic | Generic[]>>(data: Record<Generic, any>, formatConfig: T): T => {
+export const formatJsonData = <T = Record<Generic, any>>(data: Record<Generic, any>, formatConfig: Record<Generic, Generic | Generic[]>): T => {
     return Object.keys(formatConfig).reduce((acc, cur) => {
         if (typeof formatConfig[cur] === 'string') {
             set(acc, cur, get(data, formatConfig[cur] as string));
