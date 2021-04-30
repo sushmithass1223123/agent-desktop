@@ -103,12 +103,12 @@ export class TwSuGamificationComponent extends TWidgetWrapper implements OnInit,
      * @method setupLeaderBoard
      */
     setupLeaderBoard(): void {
-        if (!this.data.Data.GamificationProxy) {
-            this.gamificationReqStatus = { msg: 'GamificationProxy missing in app config', error: true, loading: false };
+        if (!this.data.Data.GamificationProxyUrl) {
+            this.gamificationReqStatus = { msg: 'GamificationProxyUrl missing in app config', error: true, loading: false };
             return;
         }
         this._http
-            .post<Record<'d', string>>(`${this.data.Data.GamificationProxy}/GetLeaderBoard`, {})
+            .post<Record<'d', string>>(`${this.data.Data.GamificationProxyUrl}/GetLeaderBoard`, {})
             .pipe(
                 map((x) => JSON.parse(x.d)),
                 takeUntil(this.unsubscribeAll)

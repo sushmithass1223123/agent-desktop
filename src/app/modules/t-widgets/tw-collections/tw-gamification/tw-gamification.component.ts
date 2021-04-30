@@ -244,8 +244,8 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
     setupDashboard(): void {
         try {
             // const missingConfigs = this.getMissingConfigs();
-            if (!this.data.Data.GamificationProxy) {
-                this.dashboardState = { loading: false, error: true, msg: 'GamificationProxy missing in app config' };
+            if (!this.data.Data.GamificationProxyUrl) {
+                this.dashboardState = { loading: false, error: true, msg: 'GamificationProxyUrl missing in app config' };
             } else {
                 if (this.polling) {
                     this.polling.unsubscribe();
@@ -278,7 +278,7 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
      */
     fetchLeaderBoard(): void {
         this._http
-            .post<Record<'d', string>>(`${this.data.Data.GamificationProxy}/GetLeaderBoard`, {})
+            .post<Record<'d', string>>(`${this.data.Data.GamificationProxyUrl}/GetLeaderBoard`, {})
             .pipe(
                 map((x) => JSON.parse(x.d)),
                 takeUntil(this.unsubscribeAll)
@@ -330,7 +330,7 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
      */
     getAgentProgress(): void {
         this._http
-            .post<Record<'d', string>>(`${this.data.Data.GamificationProxy}/GetProgress`, {
+            .post<Record<'d', string>>(`${this.data.Data.GamificationProxyUrl}/GetProgress`, {
                 agentId: this.currentUser.agentId
             })
             .pipe(
@@ -372,7 +372,7 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
      */
     getAgentLevels(): void {
         this._http
-            .post<any>(`${this.data.Data.GamificationProxy}/GetAgentLevels`, { agentId: this.currentUser.agentId })
+            .post<any>(`${this.data.Data.GamificationProxyUrl}/GetAgentLevels`, { agentId: this.currentUser.agentId })
             // .pipe(map((x) => ({ ...x.d, data: JSON.parse(x.d.data) })))
             .pipe(
                 takeUntil(this.unsubscribeAll),
@@ -411,7 +411,7 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
     getQuizInfo(): void {
         const coins = [];
         this._http
-            .post<any>(`${this.data.Data.GamificationProxy}/GetQuizInformation`, { agentId: this.currentUser.agentId })
+            .post<any>(`${this.data.Data.GamificationProxyUrl}/GetQuizInformation`, { agentId: this.currentUser.agentId })
             .pipe(
                 takeUntil(this.unsubscribeAll),
                 map((x) => ({ ...x.d, data: x.d ? JSON.parse(x.d.data) : [] }))

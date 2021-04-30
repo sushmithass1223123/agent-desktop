@@ -597,7 +597,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
      * @param {any} user
      */
     public async takeSnapShot(user: any): Promise<void> {
-        if (this.widgetData.chatConfig.Snapshot.Source === 'Local') {
+        if (this.widgetData.chatConfig?.Snapshot?.Source?.toLowerCase() === 'local') {
             this.remoteVideoElements?.forEach((element: ElementRef) => {
                 if (element.nativeElement.id === user.stream.id) {
                     // create a canvas
@@ -671,7 +671,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                     });
                 }
             });
-        } else if (this.widgetData.chatConfig.Snapshot.Source === 'Remote') {
+        } else if (this.widgetData.chatConfig?.Snapshot?.Source?.toLowerCase() === 'remote') {
             try {
                 const matRef = this._appUIService.showSnackbar('Requesting customer for snapshot', 'loading');
                 const res = await SDKClient.sendActionMessage({

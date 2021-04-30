@@ -121,12 +121,13 @@
                                 "Data": {}
                             },
                             {
-                                "Name": "Available Media devices",
+                                "Name": "Available Media Devices",
                                 "Description": "",
                                 "Type": "tw-available-media-device",
                                 "Config": {
                                     "Enabled": true
-                                }
+                                },
+                                "Data": {}
                             },
                             {
                                 "Name": "Create Interaction",
@@ -160,7 +161,8 @@
                                                     "FreeTextAllowed": false
                                                 },
                                                 "AllowedStates": [],
-                                                "TeamFilter": false
+                                                "TeamFilter": false,
+                                                "Columns": []
                                             }
                                         },
                                         {
@@ -692,7 +694,7 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "GamificationProxy": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx",
+                                        "GamificationProxyUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx",
                                         "TVirtualStoreUrl": "https://dice.tetherfi.cloud/TVirtualStore"
                                     }
                                 }
@@ -1031,7 +1033,7 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "GamificationProxy": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx"
+                                        "GamificationProxyUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx"
                                     }
                                 },
                                 {
@@ -1213,7 +1215,8 @@
                                                             ]
                                                         }
                                                     },
-                                                    "DialpadAllowed": true
+                                                    "DialpadAllowed": true,
+                                                    "InteractionCommentAllowed": true
                                                 }
                                             },
                                             {
@@ -1784,7 +1787,6 @@
                                                                 "Display": "agentName",
                                                                 "FreeTextAllowed": false
                                                             },
-                                                            "DisplayedSource": "agentId",
                                                             "AllowedStates": [],
                                                             "TeamFilter": false,
                                                             "Columns": []
@@ -1822,7 +1824,7 @@
                                                     "AskForScreenshareAllowed": false,
                                                     "Snapshot": {
                                                         "Allowed": true,
-                                                        "Source": "Remote",
+                                                        "Source": "remote",
                                                         "RemoteResponseTimeout": 10
                                                     },
                                                     "ShowUserLabel": false,
@@ -2339,7 +2341,8 @@
                                                         }
                                                     },
                                                     "ForwardAllowed": true,
-                                                    "ReplyAllAllowed": true
+                                                    "ReplyAllAllowed": true,
+                                                    "InteractionCommentAllowed": true
                                                 }
                                             },
                                             {
@@ -2612,7 +2615,7 @@
                     }
                 },
                 {
-                    "Name": "Voice",
+                    "Name": "Generic",
                     "Description": "",
                     "Type": "twc-generic",
                     "Config": {

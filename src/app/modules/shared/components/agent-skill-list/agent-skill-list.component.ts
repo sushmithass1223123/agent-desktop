@@ -899,7 +899,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                     // filter the same agent and bots from the list
                     const list = dt.response
                         .filter(
-                            (r: AgentModel) => r.LoginID !== SDKClient.getAgentData().agentId && r.AgentProfile.AccessRole.toLowerCase() !== 'chatbot'
+                            (r: AgentModel) => r.LoginID !== SDKClient.getAgentData().agentId && r.AccessRole?.toLowerCase() !== 'chatbot'
                         )
                         .map((row) =>
                             formatJsonData<Partial<AgentModel | any>>(
