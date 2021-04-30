@@ -494,7 +494,8 @@ export class LoginComponent implements OnInit, OnDestroy {
             }
 
             // set loading flag
-            this.loading = false;
+            // this.loading = false;
+
         } else {
             // we will route to error page
             this._router.navigate(['not-found'], {
@@ -659,6 +660,7 @@ export class LoginComponent implements OnInit, OnDestroy {
             })
             .finally(() => {
                 this.connectionError.retrying = false;
+                this.loading = false;
             });
     }
 

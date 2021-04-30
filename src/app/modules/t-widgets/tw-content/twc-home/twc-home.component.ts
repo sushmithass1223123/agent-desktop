@@ -3,7 +3,6 @@ import { FormControl } from '@angular/forms';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { DashboardService } from '@services/dashboard.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
-import { TMACEventService } from '@services/tmac-event.service';
 import { IAgentData, SDKClient } from '@tmac/sdk';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { ContentPageService } from 'app/services/content-page.service';
@@ -106,7 +105,6 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
         private _dashboardService: DashboardService,
         // private fuseConfService: FuseConfigService,
         private _fuseFacadeService: FuseFacadeService,
-        private _tmacEventService: TMACEventService,
         private _aotWidgetService: AOTWidgetService
     ) {
         super(hostElement, contentPageService);
@@ -147,13 +145,26 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
         this._aotWidgetService.processAOTWidgets(this.aotWidgets);
 
         // subscribe to dashboard service
-        this._dashboardService.connectionState.pipe(takeUntil(this.unsubscribeAll)).subscribe((state: string) => {
-            // check the state
-            if (state === 'connected') {
-                // register to service
-                this.registerToService(true);
-            }
-        });
+        this._dashboardService
+            .connectionState
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((state: string) => {
+                // check the state
+                if (state === 'connected') {
+                    // register to service
+                    this.registerToService(true);
+                }
+            });
+
+        this._dashboardService.
+            dataReceived
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((state: string) => {
+                // check the state
+                if (state === 'agent-received') {
+                    this.dataLoading = false;
+                }
+            });
 
         const initialDate = new Date();
         initialDate.setDate(initialDate.getDate() - Math.round(this.duration / 24));
@@ -169,12 +180,6 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
             this.registerToService(true);
             this.showDashboardDataSpanOverlay = false;
         });
-
-        this._tmacEventService.getEvents(['AgentInteractionDetailsEvent'])
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(() => {
-                this.dataLoading = false;
-            });
 
         // set init flag to true
         this.init = true;

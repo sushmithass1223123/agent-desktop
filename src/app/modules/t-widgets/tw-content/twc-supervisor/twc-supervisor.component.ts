@@ -2,7 +2,6 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@an
 import { FormControl } from '@angular/forms';
 import { DashboardService } from '@services/dashboard.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
-import { TMACEventService } from '@services/tmac-event.service';
 import { IAgentData, SDKClient } from '@tmac/sdk';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { ContentPageService } from 'app/services/content-page.service';
@@ -104,8 +103,7 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
         public contentPageService: ContentPageService,
         private _dashboardService: DashboardService,
         // private fuseConfService: FuseConfigService,
-        private _fuseFacadeService: FuseFacadeService,
-        private _tmacEventService: TMACEventService
+        private _fuseFacadeService: FuseFacadeService
     ) {
         super(hostElement, contentPageService);
     }
@@ -136,13 +134,15 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
             formControl: new FormControl(initialDate)
         };
 
-        this.dashboardDataFromDate.formControl.valueChanges.subscribe((date: Date) => {
-            // this.registerToService(false);
-            const deltaTime = Math.ceil((Date.now() - date.getTime()) / (1000 * 60 * 60));
-            this.widgetDataConfig.Duration = deltaTime;
-            this.registerToService(true);
-            this.showDashboardDataSpanOverlay = false;
-        });
+        this.dashboardDataFromDate
+            .formControl
+            .valueChanges
+            .subscribe((date: Date) => {
+                const deltaTime = Math.ceil((Date.now() - date.getTime()) / (1000 * 60 * 60));
+                this.widgetDataConfig.Duration = deltaTime;
+                this.registerToService(true);
+                this.showDashboardDataSpanOverlay = false;
+            });
 
         // get the agent data
         this.agentData = SDKClient.getAgentData();
@@ -157,21 +157,27 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
         this.dynamicWidgets = supervisorWidgets.Dynamic || [];
         this.aotWidgets = supervisorWidgets.AOT || [];
 
-        // check for the profile
-        if (this.agentData.agentProfile === 'S') {
-            // subscribe to dashboard service
-            this._dashboardService.connectionState.pipe(takeUntil(this.unsubscribeAll)).subscribe((state: string) => {
+
+        // subscribe to dashboard service
+        this._dashboardService.
+            connectionState
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((state: string) => {
                 // check the state
                 if (state === 'connected') {
                     this.registerToService(true);
                 }
             });
-        }
 
-        this._tmacEventService.getEvents(['TeamAgentListDataEvent'])
+
+        this._dashboardService.
+            dataReceived
             .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(() => {
-                this.dataLoading = false;
+            .subscribe((state: string) => {
+                // check the state
+                if (state === 'supervisor-received') {
+                    this.dataLoading = false;
+                }
             });
 
         // set init flag to true

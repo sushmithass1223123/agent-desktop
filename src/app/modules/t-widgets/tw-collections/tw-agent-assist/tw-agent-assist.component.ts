@@ -100,12 +100,13 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         // TODO:: To implement interaction based AOT
         // SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
 
-        this._tmacEventService.getInteractionEvents([
-            'OnNLPDataEvent',
-            'CallerIntentEvent',
-            'TextChatRemoteUserConnectedEvent',
-            'AgentAssistDataEvent'
-        ], this.interactionId)
+        this._tmacEventService
+            .getInteractionEvents([
+                'OnNLPDataEvent',
+                'CallerIntentEvent',
+                'TextChatRemoteUserConnectedEvent',
+                'AgentAssistDataEvent'
+            ], this.interactionId)
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
     }

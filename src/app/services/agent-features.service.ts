@@ -116,7 +116,7 @@ export class AgentFeaturesService {
             screenvideo,
             snapshot
         });
-    };
+    }
 
     /**
      * To process AgentSettingsUpdatedEvent
@@ -130,7 +130,7 @@ export class AgentFeaturesService {
             // set processed
             this._processed = true;
         }
-    };
+    }
 
     /**
      * Need more Description

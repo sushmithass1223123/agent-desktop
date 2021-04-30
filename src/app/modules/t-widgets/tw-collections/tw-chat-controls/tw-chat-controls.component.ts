@@ -16,6 +16,9 @@ import {
     ActionMessageReceivedEvent,
     AVChannel,
     AVControlMessageReceivedEvent,
+    CallHoldEvent,
+    CallHoldReconnectEvent,
+    HoldTimerEvent,
     IAgentData,
     InteractionDataEvent,
     IResponse,
@@ -415,15 +418,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        this._appUIService.uiChannel$
-            .pipe(
-                takeUntil(this.unsubscribeAll),
-                filter((evt) => evt.type === 'hold/select-chat')
-            )
-            .subscribe((res) => {
-                this.selectInteraction(res.data);
-            });
-
         // set the interaction id from data
         this.interactionId = this.data.InteractionDetails?.InteractionID;
 
@@ -492,7 +486,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     'TextChatTransferFailedEvent',
                     'TextChatTransferRejectEvent',
                     'ActionMessageReceivedEvent',
-                    'InteractionDataEvent'
+                    'InteractionDataEvent',
+                    'CallHoldEvent',
+                    'CallHoldReconnectEvent',
+                    'HoldTimerEvent'
                 ],
                 this.interactionId
             )
@@ -918,6 +915,48 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 });
             });
         }
+    }
+
+    /**
+     * To handle CallHoldEvent
+     * 
+     * @param {CallHoldEvent} evt 
+     */
+    private CallHoldEvent(evt: CallHoldEvent): void {
+        this.interactionOnHold = holdState;
+        this.status = 'hold';
+        this.interactionOnHold.loading = false;
+    }
+
+    /**
+     * To handle CallHoldReconnectEvent
+     * 
+     * @param {CallHoldReconnectEvent} evt 
+     */
+    private CallHoldReconnectEvent(evt: CallHoldReconnectEvent): void {
+        this.interactionOnHold = unHoldState;
+        this.status = 'connected';
+        this.interactionOnHold.loading = false;
+    }
+
+    /**
+     * To handle HoldTimerEvent
+     * 
+     * @param {HoldTimerEvent} evt 
+     */
+    private HoldTimerEvent(evt: HoldTimerEvent): void {
+        this._appUIService.showAppSnackbar({
+            message: `Interaction ${this.interactionId} with [${this.customerName}] and Session ID [${this.sessionID}] is on hold for ${evt.HoldTimeString}`,
+            state: evt.ColorCode,
+            onClick: () => {
+                const interaction = this.interactionList.filter(i => i.interactionId === evt.InteractionID)[0];
+                if (interaction) {
+                    // set the content page active
+                    this._contentPageService.mode = interaction.path;
+                    this.selectInteraction(interaction, true);
+                }
+            }
+        });
     }
 
     /**
@@ -1741,11 +1780,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      *
      * @param {InteractionRef} item Interaction item
      */
-    public selectInteraction(item: InteractionRef): void {
+    public selectInteraction(item: InteractionRef, force?: boolean): void {
         // if same interaction is seleted then return
-        if (this.interactionId === item.interactionId) {
+        if (!force && this.interactionId === item.interactionId) {
             return;
         }
+
         // update is active
         this._interactionManagerService.updateInteraction(item.interactionId, {
             isActive: true,
@@ -2359,9 +2399,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             if (this.interactionId) {
                 this.interactionOnHold.loading = true;
                 const res = await SDKClient.holdCall(this.interactionId.toString());
-                this.interactionOnHold = holdState;
-                this.status = 'hold';
-                this.interactionOnHold.loading = false;
+
+                // this.interactionOnHold = holdState;
+                // this.status = 'hold';
+                // this.interactionOnHold.loading = false;
+
                 this._fuseProgressBarService.hide();
                 if (res.response?.ResultCode !== 0) {
                     throw new Error('Interaction id not found');
@@ -2385,9 +2427,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             if (this.interactionId) {
                 this.interactionOnHold.loading = true;
                 const res = await SDKClient.unHoldCall(this.interactionId.toString());
-                this.interactionOnHold = unHoldState;
-                this.status = 'connected';
-                this.interactionOnHold.loading = false;
+
+                // this.interactionOnHold = unHoldState;
+                // this.status = 'connected';
+                // this.interactionOnHold.loading = false;
+
                 this._fuseProgressBarService.hide();
                 if (res.response?.ResultCode !== 0) {
                     throw new Error('Interaction id not found');

@@ -145,16 +145,7 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
     /**
      * Action buttons
      */
-    actions = [{
-        label: 'Voice Call',
-        icon: 'call',
-        type: 'audio'
-    },
-    {
-        label: 'Video Call',
-        icon: 'video_call',
-        type: 'video'
-    }];
+    actions = [];
 
     /**
      * AV call widget ref
@@ -164,12 +155,7 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
     /**
      * Config for instant messaging
      */
-    config: {
-        /**
-         * Team filter flag
-         */
-        TeamFilter: boolean;
-    };
+    config: WidgetData;
 
     /**
      * Constructor
@@ -221,8 +207,8 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
                 }
             });
 
-        this._tmacEventService.getEvents(
-            [
+        this._tmacEventService
+            .getEvents([
                 'TeamAgentListEvent',
                 'AgentNotificaitonEvent',
                 'SupervisorAgentListEvent',
@@ -247,8 +233,24 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
 
         this._instantMessagingService.getConfig
             .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((x: any) => {
+            .subscribe((x: WidgetData) => {
                 this.config = x;
+                // check for audio enabled
+                if (x.AudioEscalateAllowed) {
+                    this.actions.push({
+                        label: 'Video Call',
+                        icon: 'video_call',
+                        type: 'video'
+                    });
+                }
+                // check for video enabled
+                if (x.VideoEscalateAllowed) {
+                    this.actions.push({
+                        label: 'Voice Call',
+                        icon: 'call',
+                        type: 'audio'
+                    });
+                }
             });
     }
 
@@ -425,7 +427,7 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
         this.allChats[evt.FromAgentId].dialog.push({
             FromAgentId: evt.FromAgentId,
             Message: evt.Message,
-            CreatedTime: evt.CreatedTime
+            CreatedTime: evt.CreatedTime,
         });
 
         // check if this contact in list
@@ -573,7 +575,7 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
         widget.Data.CustomerName = avEvent?.FromAgentName || this.selectedContact.name;
         widget.Data.Direction = direction;
         widget.Data.AVEvent = avEvent;
-        widget.Data.Config = {};
+        widget.Data.Config = this.config;
         widget.Data.Opener = this;
         widget.Data.InteractionID = 0;
         widget.Data.SessionID = TUtils.Generic.uuid();
@@ -602,4 +604,22 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
         // dispose the call widget
         this.callWidget = null;
     }
+}
+interface WidgetData {
+    /**
+     * Team filter flag
+     */
+    TeamFilter: boolean;
+    /**
+     * Audio escalate allowed
+     */
+    AudioEscalateAllowed: boolean;
+    /**
+     * Video escalate allowed
+     */
+    VideoEscalateAllowed: boolean;
+    /**
+     * Screenshare allowed
+     */
+    ScreenShareAllowed: boolean;
 }

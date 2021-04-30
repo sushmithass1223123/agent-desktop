@@ -257,7 +257,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // this.endCall();
         this.avConn?.close();
-        this.avConn?.events.off('onAVEvent', this.onAVEvent);
+        this.avConn?.events.off('OnAVEvent', this.onAVEvent);
         SDKClient.events.off('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
         SDKClient.events.off('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
         SDKClient.events.off('AgentAVMessageEvent', this.AgentAVMessageEvent);
@@ -305,7 +305,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         // };
 
         // listen to AV events
-        connection.events.on('onAVEvent', this.onAVEvent);
+        connection.events.on('OnAVEvent', this.onAVEvent);
 
         // assign the av connection
         this.avConn = connection;
@@ -480,7 +480,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
             default:
             // console.log(`unhandled:: [${evt.event}]`, evt);
         }
-    };
+    }
 
     /**
      * AVControlMessageReceivedEvent Handler
@@ -495,7 +495,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // forward the av messages to av channel
         this.avConn?.onMessage(evt.Message);
-    };
+    }
 
     /**
      * AgentAVMessageEvent Handler
@@ -505,7 +505,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
     private AgentAVMessageEvent = (evt: AgentAVMessageEvent) => {
         // forward the av messages to av channel
         this.avConn?.onMessage(evt.Message);
-    };
+    }
 
     /**
      * TextChatDisconnectedEvent Handler
@@ -519,7 +519,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         }
         // close the widget
         this.destroyWidget();
-    };
+    }
 
     /**
      * Widget Cleanup
@@ -659,7 +659,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                                         };
 
                                         // emit a template message sent event to show in UI
-                                        this._tmacEventService.emitCustomEvent(customEvent, true);
+                                        this._tmacEventService.emitSDKEvent(customEvent, true);
                                     } else {
                                         this._appUIService.showSnackbar('Snapshot save failed!', 'failure');
                                     }
@@ -705,11 +705,15 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         if (this.hold) {
             // un hold the call
             this.avConn.unHold();
-            this.widgetData.opener.unHoldInteraction();
+            if (typeof this.widgetData.opener.unHoldInteraction === 'function') {
+                this.widgetData.opener.unHoldInteraction();
+            }
         } else {
             // hold the call
             this.avConn.hold();
-            this.widgetData.opener.holdInteraction();
+            if (typeof this.widgetData.opener.unHoldInteraction === 'function') {
+                this.widgetData.opener.unHoldInteraction();
+            }
         }
         // set the reference varaible
         this.hold = !this.hold;

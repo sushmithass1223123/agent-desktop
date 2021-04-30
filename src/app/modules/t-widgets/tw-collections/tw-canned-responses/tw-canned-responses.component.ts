@@ -1,10 +1,11 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
 import { TMACEventService } from '@services/tmac-event.service';
-import { CallerIntentEvent, IResponse, SDKClient, WorkCodeAddedEvent } from '@tmac/sdk';
+import { CallerIntentEvent, IResponse, OnNLPDataEvent, SDKClient, WorkCodeAddedEvent } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { sortBy, uniqBy } from 'lodash';
+import { Observable, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 /**
@@ -62,7 +63,14 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
      * Loading flag
      */
     loading: boolean;
-
+    /**
+     * TMAC event observable
+     */
+    private _tmacEventsObs: Observable<any[]>;
+    /**
+     * TMAC event subscription
+     */
+    private _tmacEventSub$: Subscription;
     /**
      * Constructor 
      */
@@ -96,13 +104,19 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
                 this.loading = false;
             });
 
-        this._tmacEventService.getInteractionEvents([
-            'OnNLPDataEvent',
-            'CallerIntentEvent',
-            'WorkCodeAddedEvent'
-        ], this.interactionId)
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
+        this._tmacEventsObs =
+            this._tmacEventService
+                .getEvents([
+                    'OnNLPDataEvent',
+                    'CallerIntentEvent',
+                    'WorkCodeAddedEvent'
+                ])
+                .pipe(takeUntil(this.unsubscribeAll));
+
+        // check the response mode
+        if (this.responseMode === 'auto') {
+            this._tmacEventSub$ = this._tmacEventsObs.subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
+        }
     }
 
     /**
@@ -153,7 +167,7 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
      * @method OnNLPDataEvent
      * @param {OnNLPDataEvent} evt 
      */
-    private OnNLPDataEvent = (evt: any): void => {
+    private OnNLPDataEvent = (evt: OnNLPDataEvent): void => {
         const parsedJson = JSON.parse(evt.JsonData);
 
         // check for the interaction
@@ -284,7 +298,7 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
             Data: { Template: template }
         };
 
-        this._tmacEventService.emitCustomEvent(customEvent, true);
+        this._tmacEventService.emitSDKEvent(customEvent, true);
 
         if (this.responseMode !== 'auto') {
             // clear all data
@@ -299,16 +313,13 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
      */
     changeMode(event: MatSelectChange): void {
         if (event.value === 'manual') {
-            SDKClient.events.off('OnNLPDataEvent', this.OnNLPDataEvent);
-            SDKClient.events.off('CallerIntentEvent', this.CallerIntentEvent);
-            SDKClient.events.off('WorkCodeAddedEvent', this.WorkCodeAddedEvent);
-            this.clearAllData();
+            // unsubscribe
+            this._tmacEventSub$?.unsubscribe();
         } else {
-            SDKClient.events.on('OnNLPDataEvent', this.OnNLPDataEvent);
-            SDKClient.events.on('CallerIntentEvent', this.CallerIntentEvent);
-            SDKClient.events.on('WorkCodeAddedEvent', this.WorkCodeAddedEvent);
-            this.clearAllData();
+            // subscribe
+            this._tmacEventSub$ = this._tmacEventsObs.subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
         }
+        this.clearAllData();
     }
 }
 

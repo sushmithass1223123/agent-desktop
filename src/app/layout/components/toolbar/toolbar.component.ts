@@ -3,7 +3,7 @@ import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { FuseConfig } from '@fuse/types';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
-import { SDKClient } from '@tmac/sdk';
+import { SDKClient, SDKConnectivityStatusEvent } from '@tmac/sdk';
 import { IWidget } from 'app/interfaces';
 import { AppDataService } from 'app/services/app-data.service';
 import { Subject } from 'rxjs';
@@ -54,16 +54,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     /**
      * Connectivity Status
      */
-    connectivityStatus: {
-        /**
-         * Status 
-         */
-        status: -1,
-        /**
-         * Event mode
-         */
-        eventMode: '';
-    };
+    connectivityStatus: SDKConnectivityStatusEvent;
 
     /**
      * Unsubscribe all subject
@@ -137,7 +128,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
                 }
             );
 
-        SDKClient.events.on('connectivityStatus', this.connectivityStatusEvent);
+        SDKClient.events.on('SDKConnectivityStatusEvent', this.connectivityStatusEvent);
     }
 
     /**
@@ -148,12 +139,17 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
 
-        SDKClient.events.off('connectivityStatus', this.connectivityStatusEvent);
+        SDKClient.events.off('SDKConnectivityStatusEvent', this.connectivityStatusEvent);
     }
 
-    private connectivityStatusEvent = (data: any) => {
+    /**
+     * To handle SDKConnectivityStatus
+     * 
+     * @param data 
+     */
+    private connectivityStatusEvent = (evt: SDKConnectivityStatusEvent) => {
         setTimeout(() => {
-            this.connectivityStatus = data;
+            this.connectivityStatus = evt;
         }, 100);
     }
 

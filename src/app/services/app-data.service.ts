@@ -277,7 +277,7 @@ export class AppDataService {
                 };
             }
         } catch (error) {
-            TUtils.Logger.error('Exception in AppDataService.getJsonConfig', error);
+            TUtils.Logger.console('error', 'Exception in AppDataService.getJsonConfig', null, error);
         }
         return null;
     }

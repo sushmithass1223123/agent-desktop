@@ -100,7 +100,7 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
         this.initWrapper(this.data);
         this.widgetData = this.data.Data;
 
-        let eventName = '';
+        let eventName: any;
         if (this.widgetData.Role === 'agent') {
             eventName = 'AgentChannelListEvent';
         }

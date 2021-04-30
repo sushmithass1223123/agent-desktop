@@ -228,7 +228,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         this.destroyWrapper();
 
         this.avConn?.close();
-        this.avConn?.events.off('onAVEvent', this.onAVEvent);
+        this.avConn?.events.off('OnAVEvent', this.onAVEvent);
         SDKClient.events.off('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
         SDKClient.events.off('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
         SDKClient.events.off('AgentAVMessageEvent', this.AgentAVMessageEvent);
@@ -274,7 +274,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         // };
 
         // listen to AV events
-        connection.events.on('onAVEvent', this.onAVEvent);
+        connection.events.on('OnAVEvent', this.onAVEvent);
 
         // assign the av connection
         this.avConn = connection;
