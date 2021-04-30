@@ -1140,7 +1140,7 @@
                                                             "Source": {
                                                                 "Use": "agentId",
                                                                 "Display": "${LastName}, ${FirstName}",
-                                                                "FreeTextAllowed": true
+                                                                "FreeTextAllowed": false
                                                             },
                                                             "AllowedStates": []
                                                         },
@@ -3454,8 +3454,8 @@
         "SDK": {
             "Proxy": {
                 "Urls": [
-                    "https://dice.tetherfi.cloud/Dev_TMACSDKProxy/TmacProxy.asmx",
                     "https://dice.tetherfi.cloud/TMACSDKProxyv5/TmacProxy.asmx",
+                    "https://dice.tetherfi.cloud/Dev_TMACSDKProxy/TmacProxy.asmx",
                     "https://localhost:55443/SDKTMACProxy/TmacProxy.asmx"
                 ],
                 "Type": "soap",
