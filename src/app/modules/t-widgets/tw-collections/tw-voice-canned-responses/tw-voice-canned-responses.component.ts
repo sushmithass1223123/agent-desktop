@@ -1,10 +1,11 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { TMACEventService } from '@services/tmac-event.service';
+import { AgentInteractionTemplate, CallDisconnectedEvent, IResponse, SDKClient, TUtils } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { groupBy } from 'lodash';
-import { AgentInteractionTemplate, CallDisconnectedEvent, IResponse, SDKClient, TUtils } from '@tmac/sdk';
+import { takeUntil } from 'rxjs/operators';
 
 /**
  * TwVoiceCannedResponsesComponent
@@ -69,9 +70,10 @@ export class TwVoiceCannedResponsesComponent extends TWidgetWrapper implements O
                 }
             });
 
-        // TODO:: convert to rxjs
-        // listen to call disconnected event
-        SDKClient.events.on('CallDisconnectedEvent', this.CallDisconnectedEvent);
+        this._tmacEventService
+            .getInteractionEvents(['CallDisconnectedEvent'], this.interactionId)
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
     }
 
     /**
@@ -80,9 +82,6 @@ export class TwVoiceCannedResponsesComponent extends TWidgetWrapper implements O
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-
-        // deregister
-        SDKClient.events.on('CallDisconnectedEvent', this.CallDisconnectedEvent);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -92,12 +91,7 @@ export class TwVoiceCannedResponsesComponent extends TWidgetWrapper implements O
     /**
      * To process CallDisconnectedEvent
      */
-    private CallDisconnectedEvent = (evt: CallDisconnectedEvent) => {
-        // check for the interaction id
-        if (evt.InteractionID !== this.interactionId) {
-            return;
-        }
-
+    private CallDisconnectedEvent(evt: CallDisconnectedEvent): void {
         // close the widget
         this._aotWidgetService.destroyWidget(this.data.ID);
     }
@@ -127,7 +121,7 @@ export class TwVoiceCannedResponsesComponent extends TWidgetWrapper implements O
             };
 
             // emit a template message sent event to show in UI
-            this._tmacEventService.emitCustomEvent(customEvent, true);
+            this._tmacEventService.emitSDKEvent(customEvent, true);
         }
     }
 }

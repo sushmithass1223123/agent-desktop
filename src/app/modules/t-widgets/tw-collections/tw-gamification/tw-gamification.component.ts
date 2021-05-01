@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
+import { TMACEventService } from '@services/tmac-event.service';
 import { SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
@@ -148,7 +149,12 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
     /**
      * Constructor
      */
-    constructor(private http: HttpClient, private appUiService: AppUiService, private _aotWidgetService: AOTWidgetService) {
+    constructor(
+        private _http: HttpClient,
+        private _appUIService: AppUiService,
+        private _aotWidgetService: AOTWidgetService,
+        private _tmacEventService: TMACEventService
+    ) {
         super();
     }
 
@@ -177,8 +183,16 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
 
         this.setupDashboard();
 
-        SDKClient.events.on('OnLoadMetricsToAgent', this.OnLoadMetricsToAgent);
-        SDKClient.events.on('OnAssignPointsToAgent', this.OnAssignPointsToAgent);
+        this._tmacEventService.addTMACEventListener([
+            {
+                label: 'OnLoadMetricsToAgent',
+                callback: this.OnLoadMetricsToAgent
+            },
+            {
+                label: 'OnAssignPointsToAgent',
+                callback: this.OnAssignPointsToAgent
+            }
+        ]);
 
         // setTimeout(() => {
         //     this.OnAssignPointsToAgent({
@@ -201,8 +215,17 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
      * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
      */
     ngOnDestroy(): void {
-        SDKClient.events.off('OnLoadMetricsToAgent', this.OnLoadMetricsToAgent);
-        SDKClient.events.off('OnAssignPointsToAgent', this.OnAssignPointsToAgent);
+        this._tmacEventService.removeTMACEventListener([
+            {
+                label: 'OnLoadMetricsToAgent',
+                callback: this.OnLoadMetricsToAgent
+            },
+            {
+                label: 'OnAssignPointsToAgent',
+                callback: this.OnAssignPointsToAgent
+            }
+        ]);
+
         // call the wrapper destroy method
         this.destroyWrapper();
     }
@@ -221,8 +244,8 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
     setupDashboard(): void {
         try {
             // const missingConfigs = this.getMissingConfigs();
-            if (!this.data.Data.GamificationProxy) {
-                this.dashboardState = { loading: false, error: true, msg: 'GamificationProxy missing in app config' };
+            if (!this.data.Data.GamificationProxyUrl) {
+                this.dashboardState = { loading: false, error: true, msg: 'GamificationProxyUrl missing in app config' };
             } else {
                 if (this.polling) {
                     this.polling.unsubscribe();
@@ -254,8 +277,8 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
      * @param url
      */
     fetchLeaderBoard(): void {
-        this.http
-            .post<Record<'d', string>>(`${this.data.Data.GamificationProxy}/GetLeaderBoard`, {})
+        this._http
+            .post<Record<'d', string>>(`${this.data.Data.GamificationProxyUrl}/GetLeaderBoard`, {})
             .pipe(
                 map((x) => JSON.parse(x.d)),
                 takeUntil(this.unsubscribeAll)
@@ -306,8 +329,8 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
      * @param agentId
      */
     getAgentProgress(): void {
-        this.http
-            .post<Record<'d', string>>(`${this.data.Data.GamificationProxy}/GetProgress`, {
+        this._http
+            .post<Record<'d', string>>(`${this.data.Data.GamificationProxyUrl}/GetProgress`, {
                 agentId: this.currentUser.agentId
             })
             .pipe(
@@ -348,8 +371,8 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
      * Get agent levels
      */
     getAgentLevels(): void {
-        this.http
-            .post<any>(`${this.data.Data.GamificationProxy}/GetAgentLevels`, { agentId: this.currentUser.agentId })
+        this._http
+            .post<any>(`${this.data.Data.GamificationProxyUrl}/GetAgentLevels`, { agentId: this.currentUser.agentId })
             // .pipe(map((x) => ({ ...x.d, data: JSON.parse(x.d.data) })))
             .pipe(
                 takeUntil(this.unsubscribeAll),
@@ -387,8 +410,8 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
      */
     getQuizInfo(): void {
         const coins = [];
-        this.http
-            .post<any>(`${this.data.Data.GamificationProxy}/GetQuizInformation`, { agentId: this.currentUser.agentId })
+        this._http
+            .post<any>(`${this.data.Data.GamificationProxyUrl}/GetQuizInformation`, { agentId: this.currentUser.agentId })
             .pipe(
                 takeUntil(this.unsubscribeAll),
                 map((x) => ({ ...x.d, data: x.d ? JSON.parse(x.d.data) : [] }))
@@ -423,7 +446,7 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
     OnLoadMetricsToAgent = (evt: any): void => {
         // const JsonData = JSON.parse(evt.JsonData);
         // console.log({ ...evt, JsonData: { ...JsonData, eventdata: JSON.parse(JsonData.eventdata) } });
-    };
+    }
 
     /**
      * Assign points events
@@ -431,8 +454,8 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
      */
     OnAssignPointsToAgent = (evt: any): void => {
         const JsonData = JSON.parse(evt.JsonData);
-        this.appUiService.addNotification({ message: JsonData.totalPointsAssigned, status: 'new' });
-    };
+        this._appUIService.addNotification({ message: JsonData.totalPointsAssigned, status: 'new' });
+    }
 
     /**
      * Set current agent level
@@ -478,7 +501,7 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
      */
     redeem(): void {
         if (!this.data.Data.TVirtualStoreUrl) {
-            this.appUiService.showSnackbar('Missing TVirtualStore in app config', 'failure');
+            this._appUIService.showSnackbar('Missing TVirtualStore in app config', 'failure');
             return;
         }
         const title = `TVirtualStore`;

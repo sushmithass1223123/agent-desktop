@@ -30,10 +30,14 @@
                     ></avatar>
                 </ng-container>
             </div>
-            <div fxLayout="column" class="h-100-p email-controls border-radius-20" [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
+            <div
+                fxLayout="column"
+                class="h-100-p email-controls border-radius-20"
+                [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
+            >
                 <div fxLayout fxLayoutGap="10px" fxLayoutAlign="end center" class="my-8 px-12">
                     <button
-                        *ngIf="replyInfo || OutboxReasons.includes(currentInteraction.RouteReason)"
+                        *ngIf="data.Data?.InteractionCommentAllowed && (replyInfo || OutboxReasons.includes(currentInteraction.RouteReason))"
                         mat-raised-button
                         class="border-radius-20"
                         matTooltip="Interaction Comment"

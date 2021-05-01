@@ -313,20 +313,10 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             lastId: '0'
         };
 
-        // // get the event from event bag to make sure no events are missed
-        // const eventBag = this._tmacEventService.interactionEvents(this.interactionId);
-
-        // // process the events if any
-        // eventBag.forEach((evt: IUIEvent) => {
-        //     this[evt.EventName]?.(evt);
-        // });
-
-        // SDKClient.events.on('InteractionHistoryReadyEvent', this.InteractionHistoryReadyEvent);
-
         this._tmacEventService
             .getInteractionEvents(['InteractionHistoryReadyEvent'], this.interactionId)
             .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((evts) => this.InteractionHistoryReadyEvent(evts[0]));
+            .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
 
         this.customerJourneyTable.tableData.source.filterPredicate = this.createFilter();
     }
@@ -354,8 +344,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      * Custom filter method fot Angular Material Datatable
      */
     createFilter(): (data: any, filter: string) => boolean {
-        const filterFunction = (data: any, filter: string): boolean => {
-            const searchTerms = JSON.parse(filter);
+        const filterFunction = (data: any, ftr: string): boolean => {
+            const searchTerms = JSON.parse(ftr);
             let isFilterSet = false;
             let filtersApplied = 0;
             let filtersMatched = 0;
@@ -419,9 +409,6 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-
-        // de-register from TMAC event
-        // SDKClient.events.off('InteractionHistoryReadyEvent', this.InteractionHistoryReadyEvent);
     }
 
     /**

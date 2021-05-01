@@ -26,7 +26,14 @@
 
     <div fxLayout>
         <div *ngIf="selectedContact" class="fab-container">
-            <button mat-icon-button cdkOverlayOrigin #actionList="cdkOverlayOrigin" (click)="openActions = !openActions" matTooltip="More Actions">
+            <button
+                [disabled]="actions.length === 0"
+                mat-icon-button
+                cdkOverlayOrigin
+                #actionList="cdkOverlayOrigin"
+                (click)="openActions = !openActions"
+                matTooltip="More Actions"
+            >
                 <mat-icon [@fabTogglerAlt]="{ value: openActions ? 'active' : 'inactive' }"> expand_more </mat-icon>
             </button>
 
@@ -92,7 +99,7 @@
                 *ngIf="contact.avatar"
             ></avatar>
             <div class="unread-count" *ngIf="contact.unread">{{ contact.unread }}</div>
-            <div class="status-icon" [ngClass]="contact.class" [matTooltip]="contact.status"></div>
+            <div class="status-icon" [ngClass]="contact.class" [matTooltip]="contact.status || 'NA'"></div>
         </div>
     </div>
     <!-- / Contacts -->

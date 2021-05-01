@@ -105,7 +105,10 @@
                                     "Enabled": true
                                 },
                                 "Data": {
-                                    "TeamFilter": true
+                                    "TeamFilter": true,
+                                    "AudioEscalateAllowed": true,
+                                    "VideoEscalateAllowed": true,
+                                    "ScreenShareAllowed": true
                                 }
                             },
                             {
@@ -118,12 +121,13 @@
                                 "Data": {}
                             },
                             {
-                                "Name": "Available Media devices",
+                                "Name": "Available Media Devices",
                                 "Description": "",
                                 "Type": "tw-available-media-device",
                                 "Config": {
                                     "Enabled": true
-                                }
+                                },
+                                "Data": {}
                             },
                             {
                                 "Name": "Create Interaction",
@@ -151,8 +155,14 @@
                                             "SubType": "",
                                             "Icon": "call",
                                             "Data": {
-                                                "Source": "station",
-                                                "AllowedState": []
+                                                "Source": {
+                                                    "Use": "station",
+                                                    "Display": "${LastName}, ${FirstName}",
+                                                    "FreeTextAllowed": false
+                                                },
+                                                "AllowedStates": [],
+                                                "TeamFilter": false,
+                                                "Columns": []
                                             }
                                         },
                                         {
@@ -684,7 +694,7 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "GamificationProxy": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx",
+                                        "GamificationProxyUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx",
                                         "TVirtualStoreUrl": "https://dice.tetherfi.cloud/TVirtualStore"
                                     }
                                 }
@@ -707,7 +717,7 @@
                     "Data": {
                         "Path": "/supervisor",
                         "Duration": 100,
-                        "AgentHierarchy": true,
+                        "AgentHierarchy": false,
                         "Widgets": {
                             "Static": [
                                 {
@@ -1023,7 +1033,7 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "GamificationProxy": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx"
+                                        "GamificationProxyUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx"
                                     }
                                 },
                                 {
@@ -1137,9 +1147,11 @@
                                                             "Source": {
                                                                 "Use": "agentId",
                                                                 "Display": "${LastName}, ${FirstName}",
-                                                                "FreeTextAllowed": true
+                                                                "FreeTextAllowed": false
                                                             },
-                                                            "AllowedStates": []
+                                                            "AllowedStates": [],
+                                                            "TeamFilter": false,
+                                                            "Columns": []
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
@@ -1147,11 +1159,12 @@
                                                             "Source": {
                                                                 "Use": "vdn",
                                                                 "Display": "skill",
-                                                                "FreeTextAllowed": true
+                                                                "FreeTextAllowed": false
                                                             },
                                                             "ChannelPrefix": [
                                                                 "VO"
-                                                            ]
+                                                            ],
+                                                            "Columns": []
                                                         }
                                                     },
                                                     "Conference": {
@@ -1162,9 +1175,11 @@
                                                             "Source": {
                                                                 "Use": "agentId",
                                                                 "Display": "agentName",
-                                                                "FreeTextAllowed": true
+                                                                "FreeTextAllowed": false
                                                             },
-                                                            "AllowedStates": []
+                                                            "AllowedStates": [],
+                                                            "TeamFilter": false,
+                                                            "Columns": []
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
@@ -1172,11 +1187,12 @@
                                                             "Source": {
                                                                 "Use": "vdn",
                                                                 "Display": "skill",
-                                                                "FreeTextAllowed": true
+                                                                "FreeTextAllowed": false
                                                             },
                                                             "ChannelPrefix": [
                                                                 "VO"
-                                                            ]
+                                                            ],
+                                                            "Columns": []
                                                         }
                                                     },
                                                     "IVR": {
@@ -1199,7 +1215,8 @@
                                                             ]
                                                         }
                                                     },
-                                                    "DialpadAllowed": true
+                                                    "DialpadAllowed": true,
+                                                    "InteractionCommentAllowed": true
                                                 }
                                             },
                                             {
@@ -1745,12 +1762,8 @@
                                                                 "FreeTextAllowed": false
                                                             },
                                                             "AllowedStates": [],
-                                                            "Columns": [
-                                                                "FirstName",
-                                                                "LastName",
-                                                                "AgentID",
-                                                                "CurrentAgentStatus"
-                                                            ]
+                                                            "TeamFilter": false,
+                                                            "Columns": []
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
@@ -1761,14 +1774,7 @@
                                                                 "FreeTextAllowed": false
                                                             },
                                                             "ChannelPrefix": [],
-                                                            "Columns": [
-                                                                "Name",
-                                                                "VDN",
-                                                                "ID",
-                                                                "Stf",
-                                                                "Avl",
-                                                                "CIQ"
-                                                            ]
+                                                            "Columns": []
                                                         }
                                                     },
                                                     "Conference": {
@@ -1781,8 +1787,9 @@
                                                                 "Display": "agentName",
                                                                 "FreeTextAllowed": false
                                                             },
-                                                            "DisplayedSource": "agentId",
-                                                            "AllowedStates": []
+                                                            "AllowedStates": [],
+                                                            "TeamFilter": false,
+                                                            "Columns": []
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
@@ -1794,7 +1801,8 @@
                                                             },
                                                             "ChannelPrefix": [
                                                                 "CH"
-                                                            ]
+                                                            ],
+                                                            "Columns": []
                                                         }
                                                     },
                                                     "ImmediateCallbackAllowed": false,
@@ -1816,7 +1824,7 @@
                                                     "AskForScreenshareAllowed": false,
                                                     "Snapshot": {
                                                         "Allowed": true,
-                                                        "Source": "Remote",
+                                                        "Source": "remote",
                                                         "RemoteResponseTimeout": 10
                                                     },
                                                     "ShowUserLabel": false,
@@ -2314,7 +2322,9 @@
                                                                 "Display": "agentName",
                                                                 "FreeTextAllowed": false
                                                             },
-                                                            "AllowedStates": []
+                                                            "AllowedStates": [],
+                                                            "TeamFilter": false,
+                                                            "Columns": []
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
@@ -2326,11 +2336,13 @@
                                                             },
                                                             "ChannelPrefix": [
                                                                 "EM"
-                                                            ]
+                                                            ],
+                                                            "Columns": []
                                                         }
                                                     },
                                                     "ForwardAllowed": true,
-                                                    "ReplyAllAllowed": true
+                                                    "ReplyAllAllowed": true,
+                                                    "InteractionCommentAllowed": true
                                                 }
                                             },
                                             {
@@ -2603,7 +2615,7 @@
                     }
                 },
                 {
-                    "Name": "Voice",
+                    "Name": "Generic",
                     "Description": "",
                     "Type": "twc-generic",
                     "Config": {
@@ -3005,7 +3017,9 @@
                                                                 "Display": "agentName",
                                                                 "FreeTextAllowed": false
                                                             },
-                                                            "AllowedStates": []
+                                                            "AllowedStates": [],
+                                                            "TeamFilter": false,
+                                                            "Columns": []
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
@@ -3013,11 +3027,12 @@
                                                             "Source": {
                                                                 "Use": "vdn",
                                                                 "Display": "skill",
-                                                                "FreeTextAllowed": true
+                                                                "FreeTextAllowed": false
                                                             },
                                                             "ChannelPrefix": [
                                                                 "EM"
-                                                            ]
+                                                            ],
+                                                            "Columns": []
                                                         }
                                                     }
                                                 }

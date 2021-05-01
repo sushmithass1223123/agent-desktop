@@ -16,6 +16,9 @@ import {
     ActionMessageReceivedEvent,
     AVChannel,
     AVControlMessageReceivedEvent,
+    CallHoldEvent,
+    CallHoldReconnectEvent,
+    HoldTimerEvent,
     IAgentData,
     InteractionDataEvent,
     IResponse,
@@ -415,15 +418,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        this._appUIService.uiChannel$
-            .pipe(
-                takeUntil(this.unsubscribeAll),
-                filter((evt) => evt.type === 'hold/select-chat')
-            )
-            .subscribe((res) => {
-                this.selectInteraction(res.data);
-            });
-
         // set the interaction id from data
         this.interactionId = this.data.InteractionDetails?.InteractionID;
 
@@ -492,7 +486,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     'TextChatTransferFailedEvent',
                     'TextChatTransferRejectEvent',
                     'ActionMessageReceivedEvent',
-                    'InteractionDataEvent'
+                    'InteractionDataEvent',
+                    'CallHoldEvent',
+                    'CallHoldReconnectEvent',
+                    'HoldTimerEvent'
                 ],
                 this.interactionId
             )
@@ -918,6 +915,48 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 });
             });
         }
+    }
+
+    /**
+     * To handle CallHoldEvent
+     * 
+     * @param {CallHoldEvent} evt 
+     */
+    private CallHoldEvent(evt: CallHoldEvent): void {
+        this.interactionOnHold = holdState;
+        this.status = 'hold';
+        this.interactionOnHold.loading = false;
+    }
+
+    /**
+     * To handle CallHoldReconnectEvent
+     * 
+     * @param {CallHoldReconnectEvent} evt 
+     */
+    private CallHoldReconnectEvent(evt: CallHoldReconnectEvent): void {
+        this.interactionOnHold = unHoldState;
+        this.status = 'connected';
+        this.interactionOnHold.loading = false;
+    }
+
+    /**
+     * To handle HoldTimerEvent
+     * 
+     * @param {HoldTimerEvent} evt 
+     */
+    private HoldTimerEvent(evt: HoldTimerEvent): void {
+        this._appUIService.showAppSnackbar({
+            message: `Interaction ${this.interactionId} with [${this.customerName}] and Session ID [${this.sessionID}] is on hold for ${evt.HoldTimeString}`,
+            state: evt.ColorCode,
+            onClick: () => {
+                const interaction = this.interactionList.filter(i => i.interactionId === evt.InteractionID)[0];
+                if (interaction) {
+                    // set the content page active
+                    this._contentPageService.mode = interaction.path;
+                    this.selectInteraction(interaction, true);
+                }
+            }
+        });
     }
 
     /**
@@ -1741,11 +1780,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      *
      * @param {InteractionRef} item Interaction item
      */
-    public selectInteraction(item: InteractionRef): void {
+    public selectInteraction(item: InteractionRef, force?: boolean): void {
         // if same interaction is seleted then return
-        if (this.interactionId === item.interactionId) {
+        if (!force && this.interactionId === item.interactionId) {
             return;
         }
+
         // update is active
         this._interactionManagerService.updateInteraction(item.interactionId, {
             isActive: true,
@@ -2011,6 +2051,16 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * @param icon
      */
     public openTransferConferenceDialog(type: string): void {
+        const transferConfig = {
+            agent: this.data.Data.Transfer?.Agent || {},
+            skill: this.data.Data.Transfer?.Skill || {}
+        };
+
+        const conferenceConfig = {
+            agent: this.data.Data.Conference?.Agent || {},
+            skill: this.data.Data.Conference?.Skill || {}
+        };
+
         // get data based on type
         let data: AgentSkillListData =
             type === 'transfer'
@@ -2018,36 +2068,38 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     title: 'Transfer Chat',
                     type: 'transferChat',
                     agent: {
-                        allowed: this.data.Data.Transfer.Agent.Allowed,
-                        blind: this.data.Data.Transfer.Agent.Allowed,
-                        source: this.data.Data.Transfer.Agent.Source,
-                        allowedStates: this.data.Data.Transfer.Agent.AllowedStates,
-                        columns: this.data.Data.Transfer.Agent.Columns
+                        allowed: transferConfig.agent.Allowed,
+                        blind: transferConfig.agent.Allowed,
+                        source: transferConfig.agent.Source,
+                        allowedStates: transferConfig.agent.AllowedStates,
+                        columns: transferConfig.agent.Columns,
+                        teamFilter: transferConfig.agent.TeamFilter
                     },
                     skill: {
-                        allowed: this.data.Data.Transfer.Skill.Allowed,
-                        blind: this.data.Data.Transfer.Skill.Allowed,
-                        source: this.data.Data.Transfer.Skill.Source,
-                        channelPrfix: this.data.Data.Transfer.Skill.ChannelPrefix,
-                        columns: this.data.Data.Transfer.Skill.Columns
+                        allowed: transferConfig.skill.Allowed,
+                        blind: transferConfig.skill.Allowed,
+                        source: transferConfig.skill.Source,
+                        channelPrfix: transferConfig.skill.ChannelPrefix,
+                        columns: transferConfig.skill.Columns
                     }
                 }
                 : {
                     title: 'Conference Chat',
                     type: 'conferenceChat',
                     agent: {
-                        allowed: this.data.Data.Conference.Agent.Allowed,
-                        blind: this.data.Data.Conference.Agent.Allowed,
-                        source: this.data.Data.Conference.Agent.Source,
-                        allowedStates: this.data.Data.Conference.Agent.AllowedStates,
-                        columns: this.data.Data.Conference.Agent.Columns
+                        allowed: conferenceConfig.agent.Allowed,
+                        blind: conferenceConfig.agent.Allowed,
+                        source: conferenceConfig.agent.Source,
+                        allowedStates: conferenceConfig.agent.AllowedStates,
+                        columns: conferenceConfig.agent.Columns,
+                        teamFilter: conferenceConfig.agent.TeamFilter
                     },
                     skill: {
-                        allowed: this.data.Data.Conference.Skill.Allowed,
-                        blind: this.data.Data.Conference.Skill.Allowed,
-                        source: this.data.Data.Conference.Skill.Source,
-                        channelPrfix: this.data.Data.Conference.Skill.ChannelPrefix,
-                        columns: this.data.Data.Conference.Skill.Columns
+                        allowed: conferenceConfig.skill.Allowed,
+                        blind: conferenceConfig.skill.Allowed,
+                        source: conferenceConfig.skill.Source,
+                        channelPrfix: conferenceConfig.skill.ChannelPrefix,
+                        columns: conferenceConfig.skill.Columns
                     }
                 };
 
@@ -2359,9 +2411,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             if (this.interactionId) {
                 this.interactionOnHold.loading = true;
                 const res = await SDKClient.holdCall(this.interactionId.toString());
-                this.interactionOnHold = holdState;
-                this.status = 'hold';
-                this.interactionOnHold.loading = false;
+
+                // this.interactionOnHold = holdState;
+                // this.status = 'hold';
+                // this.interactionOnHold.loading = false;
+
                 this._fuseProgressBarService.hide();
                 if (res.response?.ResultCode !== 0) {
                     throw new Error('Interaction id not found');
@@ -2385,9 +2439,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             if (this.interactionId) {
                 this.interactionOnHold.loading = true;
                 const res = await SDKClient.unHoldCall(this.interactionId.toString());
-                this.interactionOnHold = unHoldState;
-                this.status = 'connected';
-                this.interactionOnHold.loading = false;
+
+                // this.interactionOnHold = unHoldState;
+                // this.status = 'connected';
+                // this.interactionOnHold.loading = false;
+
                 this._fuseProgressBarService.hide();
                 if (res.response?.ResultCode !== 0) {
                     throw new Error('Interaction id not found');

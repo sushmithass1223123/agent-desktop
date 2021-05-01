@@ -5,7 +5,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { DashboardColorCodeModel, SDKClient, TUtils, WallboardRefreshEvent } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { IWidget } from 'app/interfaces';
+import { CustomTMACEventTypes, IWidget } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
 
 /**
@@ -77,7 +77,7 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
             });
         }
 
-        let eventName = '';
+        let eventName: CustomTMACEventTypes;
         if (this.widgetData.Role === 'agent') {
             eventName = 'WallboardRefreshEvent';
         }
@@ -93,7 +93,7 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
             this._tmacEventService
                 .getEvents([eventName])
                 .pipe(takeUntil(this.unsubscribeAll))
-                .subscribe((evts) => this.wallboardRefreshEvent(evts[0]));
+                .subscribe(evts => evts.forEach(evt => this.wallboardRefreshEvent(evt)));
         }
     }
 

@@ -26,6 +26,7 @@ import {
     CallTransferInitiatedEvent,
     CallTransferLineDisconnectEvent,
     CallTransferRemoteConnectedEvent,
+    HoldTimerEvent,
     IAgentData,
     InteractionDataEvent,
     IResponse,
@@ -401,7 +402,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     'CallerIntentEvent',
                     'IVRDataEvent',
                     'InteractionDataEvent',
-                    'UUIDataEvent'
+                    'UUIDataEvent',
+                    'HoldTimerEvent'
                 ],
                 this.interactionId
             )
@@ -472,7 +474,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 isMSCall: this.isMSCall
             }
         });
-    };
+    }
 
     /**
      * CallDisconnectedEvent handler
@@ -509,7 +511,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // close all confirm dialogs
         this.dialogRef?.close();
-    };
+    }
 
     /**
      * CallHoldEvent Handler
@@ -530,7 +532,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // hide the progress bar
         this._fuseProgressBarService.hide();
-    };
+    }
 
     /**
      * CallHoldReconnectEvent handler
@@ -552,7 +554,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // hide the progress bar
         this._fuseProgressBarService.hide();
-    };
+    }
 
     /**
      * CallTransferInitiatedEvent handler
@@ -575,7 +577,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         if (!this.tempCallRef?.isConsult && this.tempCallRef?.source === 'agent') {
             this.confirmCallFn(true, null);
         }
-    };
+    }
 
     /**
      * CallTransferRemoteConnectedEvent Handler
@@ -600,7 +602,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 tempCallRef: this.tempCallRef
             }
         });
-    };
+    }
 
     /**
      * CallTransferLineDisconnectEvent handler
@@ -620,7 +622,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 tempCallRef: this.tempCallRef
             }
         });
-    };
+    }
 
     /**
      * CallConferenceInitiatedEvent Handler
@@ -638,7 +640,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             status: 'init',
             type: 'conference'
         };
-    };
+    }
 
     /**
      * CallConferenceRemoteConnectedEvent Handler
@@ -661,7 +663,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         if (this.isMSCall && !this.tempCallRef?.isConsult) {
             this.confirmCallFn(true, null);
         }
-    };
+    }
 
     /**
      * CallConferenceLineDisconnectEvent Handler
@@ -698,7 +700,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 status: 'connected'
             });
         }
-    };
+    }
 
     /**
      * CallConferenceCompletedEvent Handler
@@ -740,7 +742,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // set the temp call reference to null
         this.tempCallRef = null;
-    };
+    }
 
     /**
      * MediaServerEvent Handler
@@ -799,7 +801,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         } catch (error) {
             TUtils.Logger.error('Exception in TwVoiceControlsComponent.MediaServerEvent', error);
         }
-    };
+    }
 
     /**
      * VoiceCannedResponseEvent Handler
@@ -861,7 +863,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         //     SAudioPlayer: this.audioPlayer,
         //     Item: evt.Item
         // });
-    };
+    }
 
     /**
      * CallerIntentEvent Handler
@@ -875,7 +877,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // assign the intent name
         this.intent = evt.IntentName;
-    };
+    }
 
     /**
      * IVRDataEvent Handler
@@ -888,7 +890,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         // }
 
         this.last4IVR = [evt.LastMenu_4, evt.LastMenu_3, evt.LastMenu_2, evt.LastMenu];
-    };
+    }
 
     /**
      * To handle InteractionDataEvent
@@ -960,6 +962,24 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     }
 
     /**
+     * To handle HoldTimerEvent
+     * 
+     * @param {HoldTimerEvent} evt 
+     */
+    private HoldTimerEvent(evt: HoldTimerEvent): void {
+        this._appUIService.showAppSnackbar({
+            message: `Interaction ${this.interactionId} with [${this.callerID}] and Session ID [${this.sessionID}] is on hold for ${evt.HoldTimeString}`,
+            state: evt.ColorCode,
+            onClick: () => {
+                const interaction = this.interactionList.filter(i => i.interactionId === evt.InteractionID)[0];
+                if (interaction) {
+                    this.selectInteraction(interaction);
+                }
+            }
+        });
+    }
+
+    /**
      * Create AV connection
      * @method createAVConnection
      *
@@ -994,7 +1014,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             }
 
             // register to all AV events
-            connection.events.on('onAVEvent', this.onAVEvent);
+            connection.events.on('OnAVEvent', this.onAVEvent);
 
             // push the connection to the list
             this.avConns[sessionId] = connection;
@@ -1069,7 +1089,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             default:
             // console.log(`unhandled:: [${evt.event}]`, evt);
         }
-    };
+    }
 
     /**
      * Process AV event
@@ -1480,6 +1500,16 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      * @param type
      */
     openTransferConferenceDialog(type: string): void {
+        const transferConfig = {
+            agent: this.data.Data.Transfer?.Agent || {},
+            skill: this.data.Data.Transfer?.Skill || {}
+        };
+
+        const conferenceConfig = {
+            agent: this.data.Data.Conference?.Agent || {},
+            skill: this.data.Data.Conference?.Skill || {}
+        };
+
         // get data based on type
         let data: AgentSkillListData =
             type === 'transfer'
@@ -1487,36 +1517,38 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     title: 'Transfer Call',
                     type: 'transferCall',
                     agent: {
-                        allowed: this.data.Data.Transfer.Agent.Allowed,
-                        blind: this.data.Data.Transfer.Agent.Allowed,
-                        source: this.data.Data.Transfer.Agent.Source,
-                        allowedStates: this.data.Data.Transfer.Agent.AllowedStates,
-                        columns: this.data.Data.Transfer.Agent.Columns
+                        allowed: transferConfig.agent.Allowed,
+                        blind: transferConfig.agent.Allowed,
+                        source: transferConfig.agent.Source,
+                        allowedStates: transferConfig.agent.AllowedStates,
+                        columns: transferConfig.agent.Columns,
+                        teamFilter: transferConfig.agent.TeamFilter
                     },
                     skill: {
-                        allowed: this.data.Data.Transfer.Skill.Allowed,
-                        blind: this.data.Data.Transfer.Skill.Allowed,
-                        source: this.data.Data.Transfer.Skill.Source,
-                        channelPrfix: this.data.Data.Transfer.Skill.ChannelPrefix,
-                        columns: this.data.Data.Transfer.Skill.Columns
+                        allowed: transferConfig.skill.Allowed,
+                        blind: transferConfig.skill.Allowed,
+                        source: transferConfig.skill.Source,
+                        channelPrfix: transferConfig.skill.ChannelPrefix,
+                        columns: transferConfig.skill.Columns
                     }
                 }
                 : {
                     title: 'Conference Call',
                     type: 'conferenceCall',
                     agent: {
-                        allowed: this.data.Data.Conference.Agent.Allowed,
-                        blind: this.data.Data.Conference.Agent.Allowed,
-                        source: this.data.Data.Conference.Agent.Source,
-                        allowedStates: this.data.Data.Conference.Agent.AllowedStates,
-                        columns: this.data.Data.Conference.Agent.Columns
+                        allowed: conferenceConfig.agent.Allowed,
+                        blind: conferenceConfig.agent.Allowed,
+                        source: conferenceConfig.agent.Source,
+                        allowedStates: conferenceConfig.agent.AllowedStates,
+                        columns: conferenceConfig.agent.Columns,
+                        teamFilter: conferenceConfig.agent.TeamFilter
                     },
                     skill: {
-                        allowed: this.data.Data.Conference.Skill.Allowed,
-                        blind: this.data.Data.Conference.Skill.Allowed,
-                        source: 'skill',
-                        channelPrfix: this.data.Data.Conference.Skill.ChannelPrefix,
-                        columns: this.data.Data.Conference.Skill.Columns
+                        allowed: conferenceConfig.skill.Allowed,
+                        blind: conferenceConfig.skill.Allowed,
+                        source: conferenceConfig.skill.Source,
+                        channelPrfix: conferenceConfig.skill.ChannelPrefix,
+                        columns: conferenceConfig.skill.Columns
                     }
                 };
 

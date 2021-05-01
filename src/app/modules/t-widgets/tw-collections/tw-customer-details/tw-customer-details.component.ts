@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { TMACEventService } from '@services/tmac-event.service';
+import {
+    IUIEvent, TUtils
+} from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { get, join } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import {
-    IUIEvent
-} from '@tmac/sdk';
 
 /**
  * Custommer details widget
@@ -65,16 +65,25 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
         // get the customer info config
         this.customerInfo = this.data.Data.CustomerInfo;
 
+        // create event names to subscribe
+        const eventNames = [];
+
+        this.customerInfo.forEach(c => {
+            try {
+                // get the event name
+                const eventName = c.ValueSource?.split('.')?.shift();
+                // push to eventNames
+                if (eventName && !eventNames.includes(eventName)) {
+                    eventNames.push(eventName);
+                }
+            } catch (error) {
+                TUtils.Logger.console('error', 'Error in TwCustomerDetailsComponent', null, error);
+            }
+        });
+
         // register to tmac events
-        this._tmacEventService.getInteractionEvents([
-            'IncomingCallEvent',
-            'OutgoingCallEvent',
-            'GenericInteractionEvent',
-            'TextChatRemoteUserConnectedEvent',
-            'CallerIntentEvent',
-            'UUIDataEvent',
-            'CCLDataEvent'
-        ], this.interactionId)
+        this._tmacEventService
+            .getInteractionEvents(eventNames, this.interactionId)
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe(evts => evts.forEach(evt => {
                 this.processCustomerDetails(evt);

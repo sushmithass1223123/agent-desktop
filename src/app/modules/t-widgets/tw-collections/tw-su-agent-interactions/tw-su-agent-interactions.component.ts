@@ -72,7 +72,8 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
         this.configData = this.data.Data;
 
         // register to event
-        this._tmacEventService.getEvents(['TeamAgentInteractionDetailsEvent'])
+        this._tmacEventService
+            .getEvents(['TeamAgentInteractionDetailsEvent'])
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
 

@@ -34,6 +34,10 @@ export class DashboardService {
      */
     private _dashboardServiceSubject: BehaviorSubject<string>;
     /**
+     * Dashboard Seervice subject
+     */
+    private _dataReceivedSubject: Subject<string>;
+    /**
      * Service started flag
      */
     private _serviceStarted: boolean;
@@ -83,52 +87,44 @@ export class DashboardService {
             signalR.hub.on('onRegistered', () => { });
 
             signalR.hub.on('onTeamAgentList', (agentList: any) => {
-                const eventData = {
+                this._tmacEventService.emitSDKEvent({
                     EventName: 'TeamAgentListEvent',
                     Data: agentList
-                };
-
-                this._tmacEventService.emitCustomEvent(eventData);
+                });
             });
 
             signalR.hub.on('onAgentInteractionList', (interactionList: any) => {
-
-                const eventData = {
+                this._tmacEventService.emitSDKEvent({
                     EventName: 'AgentInteractionDetailsEvent',
                     Data: interactionList
-                };
+                });
 
-                this._tmacEventService.emitCustomEvent(eventData);
+                this._dataReceivedSubject.next('agent-received');
             });
 
             signalR.hub.on('onChannelList', (channelList: any) => {
-
-                const eventData = {
+                this._tmacEventService.emitSDKEvent({
                     EventName: 'AgentChannelListEvent',
                     Data: channelList
-                };
+                });
 
-                this._tmacEventService.emitCustomEvent(eventData);
+                this._dataReceivedSubject.next('agent-received');
             });
 
             signalR.hub.on('onStatusList', (statusDetails: AgentStateDurationList) => {
-
-                const eventData = {
+                this._tmacEventService.emitSDKEvent({
                     EventName: 'AgentStatusDetailsEvent',
                     Data: statusDetails
-                };
+                });
 
-                this._tmacEventService.emitCustomEvent(eventData);
+                this._dataReceivedSubject.next('agent-received');
             });
 
             signalR.hub.on('onDataReceivedForAgent', (dataForAgent: any) => {
-
-                const eventData = {
+                this._tmacEventService.emitSDKEvent({
                     EventName: 'CallbackDataReceivedForAgent',
                     Data: dataForAgent
-                };
-
-                this._tmacEventService.emitCustomEvent(eventData);
+                });
             });
 
             // ----- Supervisor -----
@@ -136,92 +132,85 @@ export class DashboardService {
             // check for the profile
             if (agentData.agentProfile === 'S') {
                 signalR.hub.on('onAgentList', (agentList: any) => {
-
-                    const eventData = {
+                    this._tmacEventService.emitSDKEvent({
                         EventName: 'SupervisorAgentListEvent',
                         Data: agentList
-                    };
+                    });
 
-                    this._tmacEventService.emitCustomEvent(eventData);
+                    this._dataReceivedSubject.next('supervisor-received');
                 });
 
                 signalR.hub.on('onAgentListData', (agentListData: any) => {
-
-                    const eventData = {
+                    this._tmacEventService.emitSDKEvent({
                         EventName: 'TeamAgentListDataEvent',
                         Data: agentListData
-                    };
+                    });
 
-                    this._tmacEventService.emitCustomEvent(eventData);
+                    this._dataReceivedSubject.next('supervisor-received');
                 });
 
                 signalR.hub.on('onTeamChannelList', (channelList: any) => {
-
-                    const eventData = {
+                    this._tmacEventService.emitSDKEvent({
                         EventName: 'TeamChannelListEvent',
                         Data: channelList
-                    };
+                    });
 
-                    this._tmacEventService.emitCustomEvent(eventData);
+                    this._dataReceivedSubject.next('supervisor-received');
                 });
 
                 signalR.hub.on('onIntentList', (intentList: any) => {
-                    const eventData = {
+                    this._tmacEventService.emitSDKEvent({
                         EventName: 'TeamIntentListEvent',
                         Data: intentList
-                    };
+                    });
 
-                    this._tmacEventService.emitCustomEvent(eventData);
+                    this._dataReceivedSubject.next('supervisor-received');
                 });
 
                 signalR.hub.on('onTeamActiveStatusList', (activeStatusList: any) => {
-
-                    const eventData = {
+                    this._tmacEventService.emitSDKEvent({
                         EventName: 'TeamActiveStatusDetailsEvent',
                         Data: activeStatusList
-                    };
+                    });
 
-                    this._tmacEventService.emitCustomEvent(eventData);
+                    this._dataReceivedSubject.next('supervisor-received');
                 });
 
                 signalR.hub.on('onTeamActiveChannelList', (activeChannelList: any) => {
-
-                    const eventData = {
+                    this._tmacEventService.emitSDKEvent({
                         EventName: 'TeamActiveChannelListEvent',
                         Data: activeChannelList
-                    };
+                    });
 
-                    this._tmacEventService.emitCustomEvent(eventData);
+                    this._dataReceivedSubject.next('supervisor-received');
                 });
 
                 signalR.hub.on('onInteractionList', (interactionList: any) => {
-
-                    const eventData = {
+                    this._tmacEventService.emitSDKEvent({
                         EventName: 'TeamAgentInteractionDetailsEvent',
                         Data: interactionList
-                    };
+                    });
 
-                    this._tmacEventService.emitCustomEvent(eventData);
+                    this._dataReceivedSubject.next('supervisor-received');
                 });
 
                 signalR.hub.on('onWorkCodeList', (workCodeList: any) => {
-
-                    const eventData = {
+                    this._tmacEventService.emitSDKEvent({
                         EventName: 'TeamrWorkCodeDetailsEvent',
                         Data: workCodeList
-                    };
+                    });
 
-                    this._tmacEventService.emitCustomEvent(eventData);
+                    this._dataReceivedSubject.next('supervisor-received');
                 });
             }
 
             // connection connected event
-            signalR.events.on('onConnected', () => {
+            signalR.events.on('SignalRConnectedEvent', () => {
                 this._dashboardServiceSubject.next('connected');
             });
 
             // connection disconnected event
-            signalR.events.on('onDisconnected', () => {
+            signalR.events.on('SignalRDisconnectedEvent', () => {
                 this._dashboardServiceSubject.next('disconnected');
             });
 
@@ -244,6 +233,13 @@ export class DashboardService {
     }
 
     /**
+     * Getter to observe the data received
+     */
+    get dataReceived(): any | Observable<string> {
+        return this._dataReceivedSubject.asObservable();
+    }
+
+    /**
      * To subscribe to dashboard service
      */
     public subscribe(): void {
@@ -257,6 +253,11 @@ export class DashboardService {
 
         this._unsubscribeAll = new Subject();
         this._dashboardServiceSubject = new BehaviorSubject('');
+        this._dataReceivedSubject = new Subject();
+
+        // set the flag
+        this._subscribed = true;
+        this._serviceStarted = false;
 
         this._appDataService.config
             .pipe(takeUntil(this._unsubscribeAll))
@@ -268,10 +269,6 @@ export class DashboardService {
                     this.startService();
                 }
             });
-
-        // set the flag
-        this._subscribed = true;
-        this._serviceStarted = false;
     }
 
     /**
@@ -292,9 +289,17 @@ export class DashboardService {
         this._dashboardServiceSubject.next('');
         this._dashboardServiceSubject.complete();
 
+        this._dataReceivedSubject.next('');
+        this._dataReceivedSubject.complete();
+
         this._subscribed = false;
         this._serviceStarted = false;
         this._agentHierarchy = false;
+
+        // close the signalr connection for this session
+        if (this._signalRInstance) {
+            this._signalRInstance.close(true);
+        }
     }
 
     /**

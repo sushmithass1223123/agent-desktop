@@ -322,6 +322,7 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit {
      */
     pushChat(node: any): void {
         try {
+            // TODD:: add config for push
             const data: AgentSkillListData = {
                 title: 'Push Chat',
                 type: 'pushChat',

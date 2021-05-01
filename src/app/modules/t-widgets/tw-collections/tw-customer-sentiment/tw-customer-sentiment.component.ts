@@ -1,9 +1,11 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { TMACEventService } from '@services/tmac-event.service';
 import { GenericEvent, SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CHART_COLORS, CUSTOMER_SENTIMENT_PLOT_RECORDS } from 'app/constants';
 import { IWidget, TwChartConfig } from 'app/interfaces';
 import * as Chart from 'chart.js';
+import { takeUntil } from 'rxjs/operators';
 
 /**
  * Neutral image
@@ -139,7 +141,9 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
     /**
      * Constructor
      */
-    constructor() {
+    constructor(
+        private _tmacEventService: TMACEventService
+    ) {
         super();
     }
 
@@ -158,7 +162,15 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
         // set the interaction id from data
         this.interactionId = this.data.InteractionDetails?.InteractionID;
 
-        SDKClient.events.on('OnNLPDataEvent', this.OnNLPDataEvent);
+        if (this.interactionId) {
+            // listen to TMAC events
+            this._tmacEventService
+                .getEvents([
+                    'OnNLPDataEvent'
+                ])
+                .pipe(takeUntil(this.unsubscribeAll))
+                .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
+        }
     }
 
     /**

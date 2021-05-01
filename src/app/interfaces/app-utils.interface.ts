@@ -447,6 +447,10 @@ export interface AgentSkillListData {
          * Allowed Columns
          */
         columns?: string[];
+        /**
+         * To filter agent list based on team visibility
+         */
+        teamFilter?: boolean;
     };
     /**
      * Skill settings
