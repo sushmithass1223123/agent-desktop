@@ -1,9 +1,7 @@
-import { Component, OnInit, ViewEncapsulation, Input } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewEncapsulation } from '@angular/core';
 import { widgetFabAnimations } from '@modules/shared/animations/widget-fab.animation';
-import { IWidget } from 'app/interfaces';
 import { AOTWidgetService } from '@services/aot-widget.service';
-import { merge } from 'lodash';
-import { TwWidgetModel } from 'app/models';
+import { IWidget } from 'app/interfaces';
 
 /**
  * Widget Fab menu
@@ -15,20 +13,27 @@ import { TwWidgetModel } from 'app/models';
     encapsulation: ViewEncapsulation.None,
     animations: widgetFabAnimations
 })
-export class WidgetFabComponent implements OnInit {
+export class WidgetFabComponent implements OnInit, OnChanges {
     /**
      * Input data form app config
      */
     @Input() fabWidgets: IWidget[];
-
+    /**
+     * FAB button drag start flag
+     */
+    @Input() aotFABDrag: boolean;
     /**
      * Widget buttons
      */
     buttons: IWidget[] = [];
     /**
-     * Toggler state
+     * To open widget list flag
      */
-    fabTogglerState = 'inactive';
+    openWidgetList: boolean;
+    /**
+     * FAB drag ref
+     */
+    private _fabDragRef: boolean;
 
     constructor(private _aotWidgetService: AOTWidgetService) { }
 
@@ -36,32 +41,29 @@ export class WidgetFabComponent implements OnInit {
      * Lifecycle hook
      * @method
      */
-    ngOnInit(): void { }
-
-    /**
-     * on toggle , show items
-     * @method
-     */
-    showItems(): void {
-        this.fabTogglerState = 'active';
-        this.buttons = this.fabWidgets;
+    ngOnInit(): void {
+        this.buttons = this.fabWidgets || [];
     }
 
     /**
-     * hide items
-     * @method
+     * On Change
+     * @param {SimpleChanges} changes
      */
-    hideItems(): void {
-        this.fabTogglerState = 'inactive';
-        this.buttons = [];
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.aotFABDrag?.currentValue === true) {
+            this._fabDragRef = true;
+        }
     }
 
     /**
-     * On toggle fab
-     * @method
+     * To toggle widget list
      */
-    onToggleFab(): void {
-        this.buttons.length ? this.hideItems() : this.showItems();
+    toggleWidgetList(): void {
+        if (this._fabDragRef) {
+            this._fabDragRef = false;
+            return;
+        }
+        this.openWidgetList = !this.openWidgetList;
     }
 
     /**
@@ -73,7 +75,5 @@ export class WidgetFabComponent implements OnInit {
         if (widget) {
             this._aotWidgetService.addWidget(widget);
         }
-        // toggle FAB
-        this.onToggleFab();
     }
 }

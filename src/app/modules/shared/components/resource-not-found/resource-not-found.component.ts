@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { FuseSplashScreenService } from '@fuse/services/splash-screen.service';
 
 /**
  * Common resource not found compnent
@@ -31,7 +32,8 @@ export class ResourceNotFoundComponent implements OnInit {
 
     constructor(
         private _router: Router,
-        private _titleService: Title
+        private _titleService: Title,
+        private fuseSplashService: FuseSplashScreenService
     ) { }
 
     /**

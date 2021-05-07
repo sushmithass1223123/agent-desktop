@@ -1,9 +1,15 @@
 <div class="tw-widget-container" [ngStyle]="{ 'width.px': screenWidth, 'height.px': screenHeight }" *ngIf="loaded">
     <div fxFill fxFlex fxLayout="row wrap" fxLayoutAlign=" none">
-        <!-- <tw-template fxFlex="100" class="static-widget-grid" *ngIf="staticWidgets?.length > 0" [widgets]="staticWidgets"></tw-template> -->
         <tw-template fxFlex="100" *ngIf="staticWidgets?.length > 0" [widgets]="staticWidgets" class="h-100-p"></tw-template>
-        <div class="tw-aot-fab" cdkDrag cdkDragBoundary=".tw-widget-container" *ngIf="aotWidgets.length > 0">
-            <widget-fab [fabWidgets]="aotWidgets"></widget-fab>
+        <div
+            class="tw-aot-fab"
+            cdkDrag
+            cdkDragBoundary=".tw-widget-container"
+            (cdkDragStarted)="aotFABDrag = true"
+            (cdkDragReleased)="aotFABDrag = false"
+            *ngIf="aotWidgets.length > 0"
+        >
+            <widget-fab [aotFABDrag]="aotFABDrag" [fabWidgets]="aotWidgets"></widget-fab>
         </div>
     </div>
     <twc-no-widgets class="twc-card" *ngIf="!staticWidgets || staticWidgets.length === 0" type="workbench"></twc-no-widgets>

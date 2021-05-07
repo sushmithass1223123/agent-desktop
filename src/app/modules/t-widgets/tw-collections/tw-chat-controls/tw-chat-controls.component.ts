@@ -18,6 +18,7 @@ import {
     AVControlMessageReceivedEvent,
     CallHoldEvent,
     CallHoldReconnectEvent,
+    CCLDataEvent,
     HoldTimerEvent,
     IAgentData,
     InteractionDataEvent,
@@ -489,7 +490,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     'InteractionDataEvent',
                     'CallHoldEvent',
                     'CallHoldReconnectEvent',
-                    'HoldTimerEvent'
+                    'HoldTimerEvent',
+                    'CCLDataEvent'
                 ],
                 this.interactionId
             )
@@ -733,7 +735,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
                 // add message to the transcripts
                 if (user) {
-                    this.chatTranscripts.push({
+                    this.pushToTranscript({
                         who: user,
                         isAgent,
                         position: isAgent ? 'right' : 'left',
@@ -744,7 +746,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         attachment
                     });
                 } else {
-                    this.chatTranscripts.push({
+                    this.pushToTranscript({
                         divider: true
                     });
                 }
@@ -926,6 +928,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.interactionOnHold = holdState;
         this.status = 'hold';
         this.interactionOnHold.loading = false;
+        // update the interaction status
+        this._interactionManagerService.updateInteraction(evt.InteractionID, {
+            status: 'hold'
+        });
     }
 
     /**
@@ -936,6 +942,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     private CallHoldReconnectEvent(evt: CallHoldReconnectEvent): void {
         this.interactionOnHold = unHoldState;
         this.status = 'connected';
+        // update the interaction status
+        this._interactionManagerService.updateInteraction(evt.InteractionID, {
+            status: 'connected'
+        });
         this.interactionOnHold.loading = false;
     }
 
@@ -957,6 +967,26 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 }
             }
         });
+    }
+
+    /**
+     * To handle CCLDataEvent
+     * 
+     * @param {CCLDataEvent} evt 
+     */
+    private CCLDataEvent(evt: CCLDataEvent): void {
+        // check if customer name available
+        if (evt.CallerName) {
+            this.customerName = evt.CallerName;
+            // update the interaction status and user
+            this._interactionManagerService.updateInteraction(evt.InteractionID, {
+                status: 'connected',
+                user: this.customerName,
+                otherData: {
+                    icon: this.isSMM ? 'custom-' + this.channel : 'chat'
+                }
+            });
+        }
     }
 
     /**
@@ -1056,7 +1086,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         const repliedMsg = this.chatTranscripts.find((transcript) => transcript.messageId === data.replyId);
         // .repliedToMessage
         // add message to the transcripts
-        this.chatTranscripts.push({
+        this.pushToTranscript({
             who: user,
             isAgent: isAgent,
             position: user === this.customerName ? 'left' : 'right',
@@ -1318,7 +1348,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 }
 
                 // add message to the transcripts
-                this.chatTranscripts.push({
+                this.pushToTranscript({
                     who: this.user.agentName,
                     isAgent: true,
                     position: 'right',
@@ -1414,7 +1444,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         };
 
         // Add the message to the chat
-        this.chatTranscripts.push(message);
+        this.pushToTranscript(message);
 
         // check if reply feature/attachment is enabled or not social media
         if ((attachment || this.data.Data.ReplyOnChatAllowed) && !this.isSMM) {
@@ -1631,7 +1661,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
                     // check the message and add message to the transcripts
                     if (message) {
-                        this.chatTranscripts.push({
+                        this.pushToTranscript({
                             who,
                             isAgent: who === 'Chatbot',
                             position: who === 'Chatbot' ? 'right' : 'left',
@@ -1643,7 +1673,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
                     // check if the last item then add divider
                     if (array.length - 1 === index) {
-                        this.chatTranscripts.push({
+                        this.pushToTranscript({
                             divider: true
                         });
                     }
@@ -1720,6 +1750,19 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 this._fuseProgressBarService.hide();
                 this._appUIService.showSnackbar(`Error in conferencing with bot`, 'failure');
             });
+    }
+
+    /**
+     * To push transcript to transcripts
+     * 
+     * @param {ChatTranscripts} transcript 
+     */
+    pushToTranscript(transcript: ChatTranscripts): void {
+        // check for message has link
+        if (transcript.message) {
+
+        }
+        this.chatTranscripts.push(transcript);
     }
 
     // -----------------------------------------------------------------------------------------------------

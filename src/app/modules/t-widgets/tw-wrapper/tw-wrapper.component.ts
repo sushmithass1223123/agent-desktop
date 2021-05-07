@@ -170,7 +170,7 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
     maximize(): void {
         this.maximized = !this.maximized;
         // check if collapsed then expand
-        if (!this.maximized && this.collapsed) {
+        if (this.maximized && this.collapsed) {
             this.collapsed = false;
         }
         this.maximizeEvent.emit(this.maximized);

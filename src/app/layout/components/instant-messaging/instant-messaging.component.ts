@@ -203,7 +203,7 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
                 }
                 else {
                     this._dashboardService.triggerTeamAgentList(this.user.agentId, this.user.teamId, false, this.config.TeamFilter ?? false);
-                    this.selectedContact = null;
+                    this.resetChat();
                 }
             });
 

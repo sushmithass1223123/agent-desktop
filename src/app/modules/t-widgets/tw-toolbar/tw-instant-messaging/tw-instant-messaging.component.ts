@@ -84,9 +84,12 @@ export class TwInstantMessagingComponent extends TWidgetWrapper implements OnIni
                 'right',
                 5000,
                 () => {
-                    this._fuseSidebarService.getSidebar('chatPanel').toggleOpen();
                     setTimeout(() => {
-                        this._instantMessagingService.selectUser(evt.FromAgentId);
+                        this.toggleSidebarOpen();
+
+                        setTimeout(() => {
+                            this._instantMessagingService.selectUser(evt.FromAgentId);
+                        });
                     });
                 });
             this._appUIService.playAudio(undefined, 0.5, false);
@@ -100,10 +103,9 @@ export class TwInstantMessagingComponent extends TWidgetWrapper implements OnIni
 
     /**
      * Toggle sidebar open
-     * @param {String} key
      */
-    toggleSidebarOpen(key: string): void {
-        this._fuseSidebarService.getSidebar(key).toggleOpen();
+    toggleSidebarOpen(): void {
+        this._fuseSidebarService.getSidebar('chatPanel').toggleOpen();
         this.unreadMessages = 0;
     }
 }

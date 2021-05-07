@@ -92,7 +92,7 @@
                     [dataSource]="customerJourneyTable.tableData.source"
                     matSort
                     matSortActive="InteractionDate"
-                    matSortDirection="desc"
+                    matSortDirection="asc"
                     matSortDisableClear
                     [formGroup]="searchForm"
                 >
@@ -329,7 +329,11 @@
                 </div>
                 <p *ngIf="!customerJourneyTable.tableData.source.data.length" class="text-center m-0 mat-title">No Data Available</p>
             </div>
-            <div *ngIf="maximized && mode" class="spread" [ngClass]="(customFuse.anchor?.content || customFuse.widget?.content) + (mode ? ' h-65-p' : '')">
+            <div
+                *ngIf="maximized && mode"
+                class="spread animate__animated animate__slideInUp animate__faster"
+                [ngClass]="(customFuse.anchor?.content || customFuse.widget?.content) + (mode ? ' h-65-p' : '')"
+            >
                 <div class="mat-title px-20 py-12" fxLayout fxLayoutAlign="space-between">
                     <span>
                         {{ mode }}
@@ -413,55 +417,54 @@
                                         <!-- CHAT MESSAGES -->
                                         <div class="chat-messages px-12">
                                             <!-- MESSAGE -->
-                                            <ng-container *ngFor="let message of chatTranscripts; let i = index">
+                                            <ng-container *ngFor="let item of chatTranscripts; let i = index">
                                                 <div
-                                                    *ngIf="message.message"
+                                                    *ngIf="item.message"
                                                     class="message-row"
                                                     [ngClass]="{
-                                                        me: message?.who !== defaultCustomerName,
-                                                        contact: message?.who === defaultCustomerName
+                                                        me: item?.who !== defaultCustomerName,
+                                                        contact: item?.who === defaultCustomerName
                                                     }"
                                                 >
                                                     <div
                                                         fxLayout="column"
                                                         fxLayoutAlign="start start"
                                                         class="bubble"
-                                                        [ngClass]="
-                                                            message.who === defaultCustomerName && (customFuse.anchor?.body || customFuse.widget?.body)
-                                                        "
+                                                        [ngClass]="item.isAgent ? 'right' : 'left'"
                                                     >
                                                         <div
-                                                            *ngIf="chatTranscripts[i - 1]?.who !== message.who"
+                                                            *ngIf="chatTranscripts[i - 1]?.who !== item.who"
                                                             class="user-label font-size-16 text-bold mb-4"
                                                         >
-                                                            {{ message.who }}
+                                                            {{ item.who }}
                                                         </div>
 
                                                         <div class="message">
-                                                            <span *ngIf="message.message.type !== 'attachment'" [innerHTML]="message.message"></span>
-                                                            <div *ngIf="message.message.type === 'attachment'">
+                                                            <div *ngIf="item.message.type === 'attachment'">
                                                                 <!-- <img
                                                                 [src]="
                                                                     ((fileUploadUrl$ | async) || 'TmacProxy') +
                                                                     '/' +
                                                                     selectedSessionId +
                                                                     '/' +
-                                                                    message.message.attachment.name
+                                                                    item.message.attachment.name
                                                                 "
                                                                 class="w-100-p"
-                                                                [alt]="message.message.attachment.name"
+                                                                [alt]="item.message.attachment.name"
                                                             /> -->
+
                                                                 <img
-                                                                    [src]="message.message.attachment.src"
+                                                                    [src]="item.message.attachment.src"
                                                                     class="w-100-p"
-                                                                    [alt]="message.message.attachment.name"
+                                                                    [alt]="item.message.attachment.name"
                                                                 />
-                                                                <span [innerHTML]="message.message.message"></span>
+                                                                <span [innerHTML]="item.message.message"></span>
                                                             </div>
+
+                                                            <span *ngIf="item.message.type === 'text'" [innerHTML]="item.message.message"></span>
                                                         </div>
-                                                        <div class="mat-caption">
-                                                            {{ message.time }}
-                                                            <!-- {{ message.time ? (message.time | date: 'short') : '' }} -->
+                                                        <div class="time">
+                                                            {{ item.time }}
                                                         </div>
                                                     </div>
                                                 </div>

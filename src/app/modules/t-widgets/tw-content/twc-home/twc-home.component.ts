@@ -42,17 +42,18 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
      * Init flag
      */
     init: boolean;
-
+    /**
+     * Data data span drag flag
+     */
+    dashboardDataSpanOverlayDrag = false;
     /**
      * dashboard data span display flag
      */
     showDashboardDataSpanOverlay = false;
-
     /**
      * Dashboard data loading flag
      */
     dataLoading: boolean;
-
     /**
      * dashboard data from date
      */
@@ -66,7 +67,6 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
          */
         calculatedSpan: number;
     };
-
     /**
      * fuse background
      */
@@ -80,7 +80,6 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
     //      */
     //     body: string;
     // }>;
-
     /**
      * Fuse custom config
      */
@@ -88,12 +87,10 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
         anchor$: this._fuseFacadeService.anchorBgClasses$,
         widget$: this._fuseFacadeService.widgetBgClasses$
     };
-
     /**
      * Max date for dashboard data
      */
     maxDate: Date;
-
     /**
      * Data filter duration
      */
@@ -150,7 +147,7 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((state: string) => {
                 // check the state
-                if (state === 'connected') {
+                if (state === 'connected' && this.loaded) {
                     // register to service
                     this.registerToService(true);
                 }
@@ -219,6 +216,17 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
             // stop getting data
             this._dashboardService.triggerAgentData(this.agentData.agentId, false, 0);
         }
+    }
+
+    /**
+     * On click of date range selection for dashboard
+     */
+    showDashboardDataOverlay(): void {
+        if (this.dashboardDataSpanOverlayDrag) {
+            this.dashboardDataSpanOverlayDrag = false;
+            return;
+        }
+        this.showDashboardDataSpanOverlay = !this.showDashboardDataSpanOverlay;
     }
 
     /**

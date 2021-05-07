@@ -1,11 +1,13 @@
 import { DOCUMENT } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+import { IResponse, SDKClient, TEnums, TUtils } from '@tmac/sdk';
+import { ThemeSelector } from 'app/layout/utils/theme-selector';
 import { environment } from 'environments/environment';
 import { merge } from 'lodash';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { IResponse, SDKClient, TEnums, TUtils } from '@tmac/sdk';
 import { version } from '../../../package.json';
+import { FuseFacadeService } from './fuse-facade.service';
 
 /**
  * Service to inject the data for widget from App config json
@@ -39,7 +41,11 @@ export class AppDataService {
      */
     private _postMessageSubject: Subject<any>;
 
-    constructor(@Inject(DOCUMENT) private document: any, private _titleService: Title) {
+    constructor(
+        @Inject(DOCUMENT) private document: any,
+        private _titleService: Title,
+        private _fuseFacadeService: FuseFacadeService
+    ) {
         // Set the config from the default config
         this._configSubject = new BehaviorSubject(new Object());
         this._appConfigSubject = new BehaviorSubject(new Object());
@@ -289,5 +295,23 @@ export class AppDataService {
      */
     getAppVersion(): string {
         return this._appVersion;
+    }
+
+    /**
+     * Set the app config
+     */
+    setTheme(): void {
+        // apply the theme
+        const themeName = this._configSubject.getValue().AppConfigs.Theme || '';
+        const webFont = this._configSubject.getValue().AppConfigs.Font || 'wf-muli';
+        const flatTheme = this._configSubject.getValue().AppConfigs.FlatTheme ?? false;
+        if (themeName) {
+            const theme = ThemeSelector.getFuseConfigByTheme(themeName, false);
+            this._fuseFacadeService.setConfig = {
+                ...theme,
+                flatTheme,
+                webFont
+            };
+        }
     }
 }

@@ -26,3 +26,17 @@ export const formatJsonData = <T = Record<Generic, any>>(data: Record<Generic, a
         return acc;
     }, {}) as any;
 };
+
+
+/**
+ * To convert link to a tag
+ * 
+ * @param {String} text 
+ */
+export const urlify = (text: string): string => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    return text.replace(urlRegex, (url: string) => {
+        return '<a target="_blank" href="' + url + '">' + url + '</a>';
+    });
+};
+

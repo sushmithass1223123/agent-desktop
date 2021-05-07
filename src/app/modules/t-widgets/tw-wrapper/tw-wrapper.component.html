@@ -19,8 +19,18 @@
         class="tw-card animate__animated animate__faster {{
             data.Config.Class + ' ' + (data.Config.Static ? 'tw-static' : '') + ' ' + (maximized ? 'animate__zoomIn' : '')
         }}"
-        [ngClass]="{ collapsed: collapsed, maximized: maximized, floating: floating, hidden: hidden, aot: aot, 'tw-flat': customFuse.config.flatTheme }"
-        [ngStyle]="{ 'width.px': data.Config.Position.W, 'height.px': data.Config.Position.H }"
+        [ngClass]="{
+            collapsed: collapsed,
+            maximized: maximized,
+            floating: floating,
+            hidden: hidden,
+            aot: aot,
+            'tw-flat': customFuse.config.flatTheme
+        }"
+        [ngStyle]="{
+            'width.px': data.Config.Position.W,
+            'height.px': data.Config.Position.H
+        }"
     >
         <!-- We are writing a wrapper over material card -->
         <mat-card

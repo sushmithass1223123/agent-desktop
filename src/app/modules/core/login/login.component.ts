@@ -315,7 +315,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         private _titleService: Title,
         private _activatedRoute: ActivatedRoute,
         private route: ActivatedRoute,
-        private fuseSpashService: FuseSplashScreenService
+        private fuseSplashService: FuseSplashScreenService
     ) {
         // Configure the layout
         this._fuseFacadeService.setConfig = {
@@ -406,7 +406,7 @@ export class LoginComponent implements OnInit, OnDestroy {
                 )
             )
             .subscribe((params) => {
-                this.fuseSpashService.show();
+                this.fuseSplashService.show();
                 this.loginForm.patchValue({ lanId: params.u });
                 this.queryData = params;
                 this.login(true);
@@ -438,6 +438,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.configLoaded(config);
         this.getData();
         this.autoLogin();
+        this._appDataService.setTheme();
     }
 
     /**
@@ -755,7 +756,7 @@ export class LoginComponent implements OnInit, OnDestroy {
                         const customAuthType = JSON.parse(response.Data)?.customAuthType;
                         if (customAuthType === 'otp') {
                             this.showOtp = true;
-                            this.fuseSpashService.hide();
+                            this.fuseSplashService.hide();
                             return;
                         }
                     } else if (response.ResultCode === 3) {
@@ -846,7 +847,7 @@ export class LoginComponent implements OnInit, OnDestroy {
                 // login error
                 this._appUIService.showSnackbar(this.errorMessage, 'failure', 'top', 'right');
             }
-            this.fuseSpashService.hide();
+            this.fuseSplashService.hide();
         } catch (error) {
             TUtils.Logger.error('Exception in login', error);
         }
