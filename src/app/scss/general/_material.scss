@@ -84,11 +84,12 @@ mat-selection-list {
         background: rgba(0, 0, 0, 0.12);
     }
 
-    .mat-list-item {
-        width: 70px !important;
-        height: 44px !important;
-        margin-top: 8px !important;
-        margin-bottom: 8px !important;
+    .mat-list-item,
+    .mat-list-option {
+        width: 90% !important;
+        height: 40px !important;
+        margin-top: 4px !important;
+        margin-bottom: 4px !important;
     }
 
     .mat-list-single-selected-option,
@@ -242,7 +243,7 @@ mat-selection-list {
         justify-content: center;
         text-align: center;
         font-weight: 600;
-        border-radius: 20px;
+        // border-radius: 20px;
     }
 }
 // mat table

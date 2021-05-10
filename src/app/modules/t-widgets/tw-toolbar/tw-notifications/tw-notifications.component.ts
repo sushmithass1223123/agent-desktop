@@ -1,11 +1,12 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { fuseAnimations } from '@fuse/animations';
 import { AppUiService } from '@services/app-ui.service';
+import { AgentNotificaitonEvent, SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils';
 import { AppNotification } from 'app/interfaces';
+import { urlify } from 'app/utils';
 import { orderBy } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { AgentNotificaitonEvent, SDKClient } from '@tmac/sdk';
 
 /**
  * Notfications Component
@@ -100,21 +101,11 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
         ) {
             this._appUIService.addNotification({
                 icon: type === 'broadcast' ? 'announcement' : type === 'notify' ? 'notification_important' : 'info',
-                message: this.urlify(evt.Message),
+                message: urlify(evt.Message),
                 status: 'new',
                 showAlert: type !== 'broadcast'
             });
         }
-    }
-
-    /**
-     * To convert link to a tag
-     */
-    private urlify(text: string): string {
-        const urlRegex = /(https?:\/\/[^\s]+)/g;
-        return text.replace(urlRegex, (url: string) => {
-            return '<a target="_blank" href="' + url + '">' + url + '</a>';
-        });
     }
 
     /**

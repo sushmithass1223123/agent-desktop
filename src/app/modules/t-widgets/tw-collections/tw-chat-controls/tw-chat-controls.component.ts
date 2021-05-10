@@ -18,6 +18,7 @@ import {
     AVControlMessageReceivedEvent,
     CallHoldEvent,
     CallHoldReconnectEvent,
+    CCLDataEvent,
     HoldTimerEvent,
     IAgentData,
     InteractionDataEvent,
@@ -46,11 +47,12 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { INVALID_CHARS } from 'app/constants';
 import { AgentSkillListData, ChatTranscripts, CustomSDKEvent, InteractionComment, InteractionRef, IWidget, SnackbarStateTypes } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
+import { urlify } from 'app/utils';
 import { map } from 'lodash';
 import * as moment from 'moment';
 import { from, Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
-import { delay, filter } from 'rxjs/operators';
+import { catchError, delay, filter } from 'rxjs/operators';
 
 const holdState = { onHold: true, buttonTooltip: 'Unhold', icon: 'play_arrow', loading: false };
 const unHoldState = { onHold: false, buttonTooltip: 'Hold', icon: 'pause', loading: false };
@@ -431,10 +433,31 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         //         config.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor ? config.layout.anchorWidget.bodyBackground : '';
         // });
 
-        this._interactionManagerService.interactions.pipe(takeUntil(this.unsubscribeAll)).subscribe((interactions: InteractionRef[]) => {
-            // filter out the textchat interaction
-            this.interactionList = interactions.filter((i: InteractionRef) => i.type === 'textchat');
-        });
+        this._contentPageService.mode
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((viewMode: string) => {
+                // check if textchat view and selected interaction is this
+                if (viewMode === this.data.Data.Path) {
+                    const interaction = this.interactionList?.filter(i => i.isActive && i.otherData.unreadCount > 0)?.[0];
+                    // check the interaction 
+                    if (interaction) {
+                        // update is unread count
+                        this._interactionManagerService.updateInteraction(interaction.interactionId, {
+                            otherData: {
+                                unreadCount: 0
+                            }
+                        });
+                    }
+                }
+            });
+
+        this._interactionManagerService
+            .interactions
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((interactions: InteractionRef[]) => {
+                // filter out the textchat interaction
+                this.interactionList = interactions.filter((i: InteractionRef) => i.type === 'textchat');
+            });
 
         // set the user info
         this.user = SDKClient.getAgentData() || null;
@@ -489,7 +512,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     'InteractionDataEvent',
                     'CallHoldEvent',
                     'CallHoldReconnectEvent',
-                    'HoldTimerEvent'
+                    'HoldTimerEvent',
+                    'CCLDataEvent'
                 ],
                 this.interactionId
             )
@@ -733,7 +757,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
                 // add message to the transcripts
                 if (user) {
-                    this.chatTranscripts.push({
+                    this.pushToTranscript({
                         who: user,
                         isAgent,
                         position: isAgent ? 'right' : 'left',
@@ -744,7 +768,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         attachment
                     });
                 } else {
-                    this.chatTranscripts.push({
+                    this.pushToTranscript({
                         divider: true
                     });
                 }
@@ -926,6 +950,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.interactionOnHold = holdState;
         this.status = 'hold';
         this.interactionOnHold.loading = false;
+        // update the interaction status
+        this._interactionManagerService.updateInteraction(evt.InteractionID, {
+            status: 'hold'
+        });
     }
 
     /**
@@ -936,6 +964,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     private CallHoldReconnectEvent(evt: CallHoldReconnectEvent): void {
         this.interactionOnHold = unHoldState;
         this.status = 'connected';
+        // update the interaction status
+        this._interactionManagerService.updateInteraction(evt.InteractionID, {
+            status: 'connected'
+        });
         this.interactionOnHold.loading = false;
     }
 
@@ -957,6 +989,26 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 }
             }
         });
+    }
+
+    /**
+     * To handle CCLDataEvent
+     * 
+     * @param {CCLDataEvent} evt 
+     */
+    private CCLDataEvent(evt: CCLDataEvent): void {
+        // check if customer name available
+        if (evt.CallerName) {
+            this.customerName = evt.CallerName;
+            // update the interaction status and user
+            this._interactionManagerService.updateInteraction(evt.InteractionID, {
+                status: 'connected',
+                user: this.customerName,
+                otherData: {
+                    icon: this.isSMM ? 'custom-' + this.channel : 'chat'
+                }
+            });
+        }
     }
 
     /**
@@ -1056,7 +1108,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         const repliedMsg = this.chatTranscripts.find((transcript) => transcript.messageId === data.replyId);
         // .repliedToMessage
         // add message to the transcripts
-        this.chatTranscripts.push({
+        this.pushToTranscript({
             who: user,
             isAgent: isAgent,
             position: user === this.customerName ? 'left' : 'right',
@@ -1068,21 +1120,21 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             repliedToMessage: this.replyingToMessage
         });
 
-        // to show message alert
-        this._appUIService.showDesktopAlert('New Message', `Message from ${this.customerName}`, true, 'message');
-
         let isActive = false;
+
         // check if the interaction is active, else count unread
         this.interactionList.forEach((item: InteractionRef) => {
             isActive = item.interactionId === this.interactionId && item.isActive;
         });
 
         // in not active then increment the count
-        if (!isActive || this._contentPageService.getCurrentMode() !== this.data.Data.Path) {
+        if (!evt.RecoveryEvent && (!isActive || this._contentPageService.getCurrentMode() !== this.data.Data.Path)) {
             const currentInteraction = this.interactionList.filter((i) => i.interactionId === this.interactionId)[0];
             const unreadCount = ++currentInteraction.otherData.unreadCount;
+
             // play new chat sound
             this._appUIService.playAudio('message', 0.5, false);
+
             // update the interaction other data
             this._interactionManagerService.updateInteraction(evt.InteractionID, {
                 otherData: {
@@ -1097,8 +1149,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // freeze auto response if needed
         this.freezeAutoResponse(false);
 
-        // TODO:: show chrome notification if needed
-        //        hide freeze auto response button
+        // to show message alert
+        this._appUIService.showDesktopAlert('New Message', `Message from ${this.customerName}`, true, 'message');
     }
 
     /**
@@ -1318,7 +1370,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 }
 
                 // add message to the transcripts
-                this.chatTranscripts.push({
+                this.pushToTranscript({
                     who: this.user.agentName,
                     isAgent: true,
                     position: 'right',
@@ -1414,7 +1466,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         };
 
         // Add the message to the chat
-        this.chatTranscripts.push(message);
+        this.pushToTranscript(message);
 
         // check if reply feature/attachment is enabled or not social media
         if ((attachment || this.data.Data.ReplyOnChatAllowed) && !this.isSMM) {
@@ -1471,10 +1523,20 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     }
                 } else {
                     this._appUIService.showSnackbar('Message send failed!', 'failure');
+                    this.chatTranscripts.map(t => {
+                        if (t.messageId === messageId) {
+                            t.status = 'failed';
+                        }
+                    });
                 }
             })
             .catch(() => {
                 this._appUIService.showSnackbar('Message send error!', 'failure');
+                this.chatTranscripts.map(t => {
+                    if (t.messageId === messageId) {
+                        t.status = 'failed';
+                    }
+                });
             });
 
         // Reset the reply form
@@ -1631,7 +1693,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
                     // check the message and add message to the transcripts
                     if (message) {
-                        this.chatTranscripts.push({
+                        this.pushToTranscript({
                             who,
                             isAgent: who === 'Chatbot',
                             position: who === 'Chatbot' ? 'right' : 'left',
@@ -1643,7 +1705,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
                     // check if the last item then add divider
                     if (array.length - 1 === index) {
-                        this.chatTranscripts.push({
+                        this.pushToTranscript({
                             divider: true
                         });
                     }
@@ -1720,6 +1782,19 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 this._fuseProgressBarService.hide();
                 this._appUIService.showSnackbar(`Error in conferencing with bot`, 'failure');
             });
+    }
+
+    /**
+     * To push transcript to transcripts
+     * 
+     * @param {ChatTranscripts} transcript 
+     */
+    pushToTranscript(transcript: ChatTranscripts): void {
+        // check for message has link
+        if (transcript.message) {
+            transcript.message = urlify(transcript.message);
+        }
+        this.chatTranscripts.push(transcript);
     }
 
     // -----------------------------------------------------------------------------------------------------

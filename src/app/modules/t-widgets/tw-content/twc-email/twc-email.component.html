@@ -26,8 +26,15 @@
                 [widgets]="item.widgets.dynamic"
             ></tw-template>
 
-            <div class="tw-aot-fab" cdkDrag cdkDragBoundary=".tw-widget-container" *ngIf="item.widgets.aot?.length > 0">
-                <widget-fab [fabWidgets]="item.widgets.aot"></widget-fab>
+            <div
+                class="tw-aot-fab"
+                cdkDrag
+                cdkDragBoundary=".tw-widget-container"
+                (cdkDragStarted)="aotFABDrag = true"
+                (cdkDragReleased)="aotFABDrag = false"
+                *ngIf="item.widgets.aot?.length > 0"
+            >
+                <widget-fab [aotFABDrag]="aotFABDrag" [fabWidgets]="item.widgets.aot"></widget-fab>
             </div>
         </div>
     </div>

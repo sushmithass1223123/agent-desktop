@@ -41,17 +41,18 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
      * Init flag
      */
     init: boolean;
-
+    /**
+     * Data data span drag flag
+     */
+    dashboardDataSpanOverlayDrag = false;
     /**
      * dashboard data span display flag
      */
     showDashboardDataSpanOverlay = false;
-
     /**
      * Dashboard data loading flag
      */
     dataLoading: boolean;
-
     /**
      * dashboard data from date
      */
@@ -65,7 +66,6 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
          */
         calculatedSpan: number;
     };
-
     /**
      * fuse background
      */
@@ -79,7 +79,6 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
     //      */
     //     body: string;
     // }>;
-
     /**
      * Fuse custom config
      */
@@ -87,12 +86,10 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
         anchor$: this._fuseFacadeService.anchorBgClasses$,
         widget$: this._fuseFacadeService.widgetBgClasses$
     };
-
     /**
      * Max date for dashboard data
      */
     maxDate: Date;
-
     /**
      * Widget data
      */
@@ -164,7 +161,7 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((state: string) => {
                 // check the state
-                if (state === 'connected') {
+                if (state === 'connected' && this.loaded) {
                     this.registerToService(true);
                 }
             });
@@ -228,6 +225,18 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
             this._dashboardService.triggerActiveAgents(this.agentData.agentId, this.agentData.teamId, false, hierarchy, 0);
         }
     }
+
+    /**
+     * On click of date range selection for dashboard
+     */
+    showDashboardDataOverlay(): void {
+        if (this.dashboardDataSpanOverlayDrag) {
+            this.dashboardDataSpanOverlayDrag = false;
+            return;
+        }
+        this.showDashboardDataSpanOverlay = !this.showDashboardDataSpanOverlay;
+    }
+
 
     /**
      * On page active callback

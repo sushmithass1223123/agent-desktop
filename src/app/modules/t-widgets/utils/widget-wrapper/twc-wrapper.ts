@@ -1,9 +1,9 @@
 import { Directive, ElementRef, HostBinding, HostListener, Input } from '@angular/core';
 import { ContentPageService } from '@services/content-page.service';
+import { TUtils } from '@tmac/sdk';
 import { IWidget } from 'app/interfaces';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { TUtils } from '@tmac/sdk';
 
 /**
  * TW content wrapper directive
@@ -47,6 +47,10 @@ export class TWContentWrapper {
      * Page active flag
      */
     pageActive: boolean;
+    /**
+     * AOT FAB button drag start flag
+     */
+    aotFABDrag: boolean;
     /**
      * To listen to the window resize
      */

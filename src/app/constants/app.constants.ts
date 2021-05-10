@@ -78,7 +78,16 @@ export const PENDING_CALL_STATUSES = ['Open', 'QueueConnected'];
 /**
  * Alert dialog constants
  */
-export const AppAlertDialogConstants: Record<AppAlertDialogTypes, { heading: string; icon: string }> = {
+export const AppAlertDialogConstants: Record<AppAlertDialogTypes, {
+    /**
+     * Alert heading
+     */
+    heading: string;
+    /**
+     * Alert icon
+     */
+    icon: string
+}> = {
     info: {
         heading: 'Info',
         icon: 'info'
@@ -100,7 +109,20 @@ export const AppAlertDialogConstants: Record<AppAlertDialogTypes, { heading: str
 /**
  * Reminder Task dialog constants
  */
-export const RemiderTaskDialogConstants: Record<ReminderTaskDialogTypes, { title: string; message: string; type: ReminderTaskDialogTypes }> = {
+export const RemiderTaskDialogConstants: Record<ReminderTaskDialogTypes, {
+    /**
+     * Title of dialog
+     */
+    title: string;
+    /**
+     * Dialog message
+     */
+    message: string;
+    /**
+     * Dialog type
+     */
+    type: ReminderTaskDialogTypes
+}> = {
     makecall: {
         title: 'Task Reminder',
         message: 'Do you want to make this call?',
@@ -136,7 +158,20 @@ export const RemiderTaskDialogConstants: Record<ReminderTaskDialogTypes, { title
 /**
  * App confirm dialog constants
  */
-export const AppConfirmDialogConstants: Record<AppConfirmDialogTypes, { title: string; message: string; type: string }> = {
+export const AppConfirmDialogConstants: Record<AppConfirmDialogTypes, {
+    /**
+     * Title of dialog
+     */
+    title: string;
+    /**
+     * Dialog message
+     */
+    message: string;
+    /**
+     * Dialog type
+     */
+    type: string
+}> = {
     takeoverSession: {
         title: 'Confirm Login',
         message: 'Another session detected. Do you want to take it over?',

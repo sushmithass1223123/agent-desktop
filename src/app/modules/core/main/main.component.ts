@@ -122,7 +122,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
         private _tmacEventsService: TMACEventService,
         private _activatedRouter: ActivatedRoute,
         private _titleService: Title,
-        private fuseSpashService: FuseSplashScreenService
+        private fuseSplashService: FuseSplashScreenService
     ) {
         // Set the private defaults
         this._unsubscribeAll = new Subject();
@@ -144,7 +144,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
      * On init
      */
     ngOnInit(): void {
-        this.fuseSpashService.hide();
+        this.fuseSplashService.hide();
         // register to all the tmac events in service
         this._tmacEventsService.subscribe();
 
@@ -159,7 +159,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
             .subscribe((config: any) => {
                 if (Object.keys(config).length) {
                     this.appConfig = config;
-                    this.setTheme();
+                    this._appDataService.setTheme();
                 }
             });
 
@@ -220,31 +220,6 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
     }
 
     /**
-     * Set the app config
-     */
-    private setTheme(): void {
-        // apply the theme
-        const themeName = this.appConfig.AppConfigs.Theme || '';
-        const webFont = this.appConfig.AppConfigs.Font || 'wf-muli';
-        const flatTheme = this.appConfig.AppConfigs.FlatTheme ?? false;
-        if (themeName) {
-            const theme = ThemeSelector.getFuseConfigByTheme(themeName, false);
-
-            // this._fuseConfigService.config = {
-            //     ...theme,
-            //     flatTheme,
-            //     webFont
-            // };
-
-            this._fuseFacadeService.setConfig = {
-                ...theme,
-                flatTheme,
-                webFont
-            };
-        }
-    }
-
-    /**
      * To verify the login
      */
     private async checkLogin(): Promise<any> {
@@ -264,7 +239,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
             if (route !== 'login') {
                 const config = await this._appDataService.getJsonConfig(agentId);
                 this.appConfig = config;
-                this.setTheme();
+                this._appDataService.setTheme();
             }
             // get the login data
             const loginData = await SDKClient.getLoginData(agentId);

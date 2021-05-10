@@ -15,7 +15,7 @@ import { IGetInteractionHistory, InteractionAction, InteractionHistory, Interact
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { ChatTranscripts, IWidget, ResData } from 'app/interfaces';
-import { sortBy } from 'lodash';
+import { orderBy, sortBy } from 'lodash';
 import * as moment from 'moment';
 import { from, Observable, of } from 'rxjs';
 import { catchError, filter, map, share, takeUntil, tap } from 'rxjs/operators';
@@ -89,7 +89,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     /**
      * Interaction transcripts
      */
-    interactionTranscripts = '{}';
+    interactionTranscripts = {};
 
     /**
      * Default customer name
@@ -446,7 +446,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         SDKClient.getInteractionHistory(lastId ? { ...this.historyParams, lastId } : this.historyParams, null)
             .then((res) => {
                 const tableData = {};
-                const transcripts: Record<string, ChatTranscripts[]> = {};
+                let transcripts: Record<string, ChatTranscripts[]> = {};
                 let sortedTabledata = [];
                 if (lastId) {
                     sortedTabledata = sortBy([...this.customerJourneyTable.tableData.source.data, ...res.response], 'ItemID');
@@ -476,7 +476,10 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                     try {
                         message = JSON.parse(data.InteractionText);
                     } catch (e) {
-                        message = data.InteractionText;
+                        message = {
+                            type: 'text',
+                            message: data.InteractionText
+                        };
                     }
                     transcripts[data.SessionID].push({
                         who: data.Direction === 'Out' ? data.AgentName : this.defaultCustomerName,
@@ -484,10 +487,16 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                         message,
                         time: data.InteractionDate,
                         type: data.SubType,
-                        messageId: data.ID
+                        messageId: data.ItemID
                     });
                 });
-                this.interactionTranscripts = JSON.stringify(transcripts);
+                transcripts = Object.entries(transcripts).reduce((acc, curr) => {
+                    const [key, val] = curr;
+                    acc[key] = sortBy(val, 'messageId');
+                    return acc;
+                }, {});
+                // this.interactionTranscripts = JSON.stringify(transcripts);
+                this.interactionTranscripts = transcripts;
                 this.customerJourneyTable.tableData.source.data = Object.values(tableData);
                 this.customerJourneyTable.lastId = res.response[0]?.LastID?.toString();
                 this.customerJourneyTable.loading = false;
@@ -623,9 +632,9 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 break;
             }
             case 'Transcript': {
-                if (typeof this.interactionTranscripts === 'string') {
-                    this.interactionTranscripts = JSON.parse(this.interactionTranscripts);
-                }
+                // if (typeof this.interactionTranscripts === 'string') {
+                //     this.interactionTranscripts = JSON.parse(this.interactionTranscripts);
+                // }
                 break;
             }
             case 'Notes': {
@@ -641,7 +650,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     public closeActionWindow(): void {
         this.mode = null;
         this.customerJourneyTable.tableData.selection.clear();
-        this.interactionTranscripts = JSON.stringify(this.interactionTranscripts);
+        // this.interactionTranscripts = JSON.stringify(this.interactionTranscripts);
     }
 
     /**
