@@ -5,10 +5,10 @@ import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-b
 import { AppUiService } from '@services/app-ui.service';
 import { ContentPageService } from '@services/content-page.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
+import { AVChannel, IResponse, SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils';
 import { InteractionRef } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
-import { AVChannel, IResponse, SDKClient } from '@tmac/sdk';
 
 /**
  * Active interactions
@@ -31,6 +31,11 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
      * Interaction list
      */
     interactionList: InteractionRef[] = [];
+
+    /**
+     * Email interactions ref
+     */
+    emailInteractionList: InteractionRef[] = [];
 
     /**
      * Need more description
@@ -60,9 +65,10 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((interactions: InteractionRef[]) => {
                 // setTimeout(() => {
-                // TODO:: check if filter for status is needed
-                // this.interactionList = interactions.filter(i => i.status !== 'disconnected');
-                this.interactionList = interactions;
+                // non email interactions
+                this.interactionList = interactions.filter(i => i.type !== 'email');
+                // filter email interactions
+                this.emailInteractionList = interactions.filter(i => i.type === 'email');
                 // }, 500);
             });
 
