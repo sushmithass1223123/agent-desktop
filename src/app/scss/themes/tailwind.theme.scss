@@ -1,20 +1,4 @@
-@mixin tailwind-core-theme($palettes) {
-    // Get the contrasts map
-    $contrasts: map-get($palettes, 'contrast');
-    // Generate the color classes...
-    @each $paletteName, $palette in $palettes {
-        @each $hue in $matHues {
-            // Get the color and the contrasting color
-            $color: map-get($palette, $hue);
-            $contrast: map-get($palette, $hue);
-            @if ($color != null and $contrast != null) {
-                // Generate color classes
-                --twd-#{$paletteName}-#{$hue}: #{$color};
-                --twd-#{$paletteName}-contrast-#{$hue}: #{$contrast};
-            }
-        }
-    }
-}
+@import '~@tmac/styles/scss/tailwind.scss';
 
 input[type='text'].twd-input,
 input[type='password'].twd-input,

@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
+import { Component, Inject, Input, OnInit, Optional, ViewEncapsulation } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { TWidgetWrapper } from '@modules/t-widgets/utils/widget-wrapper/tw-wrapper';
@@ -28,7 +28,8 @@ type ModalProps = {
 @Component({
     selector: 'tw-email-template-preview',
     templateUrl: './tw-email-template-preview.component.html',
-    styleUrls: ['./tw-email-template-preview.component.scss']
+    styleUrls: ['./tw-email-template-preview.component.scss'],
+    encapsulation: ViewEncapsulation.None
 })
 export class TwEmailTemplatePreviewComponent extends TWidgetWrapper implements OnInit {
     /**

@@ -10,6 +10,9 @@ tw-email-controls {
     .mat-standard-chip {
         min-height: 50px;
     }
+    .mat-chip {
+        padding: 6px;
+    }
 
     .mat-card-content {
         background: inherit !important;
