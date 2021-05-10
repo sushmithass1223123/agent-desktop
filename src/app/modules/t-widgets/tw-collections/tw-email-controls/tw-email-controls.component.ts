@@ -14,9 +14,11 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE, DRAFT_REASONS, EMAIL_DRAFT_SAVE_INTERVAL, INBOX_REASONS, OUTBOX_REASONS } from 'app/constants';
 import { AgentSkillListData, InteractionComment, InteractionRef, IWidget, ResData } from 'app/interfaces';
 import { CreateEmailInfo } from 'app/models';
+import { urlify } from 'app/utils';
 import { interval, Observable, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
 import { distinctUntilChanged, filter, map, mergeAll } from 'rxjs/operators';
+
 /**
  * Email controls component
  */
@@ -155,6 +157,11 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     replyInfo?: CreateEmailInfo;
 
     /**
+     * A map of reply infos , saved for when interaction is switched
+     */
+    replyInfoMap: Record<string, CreateEmailInfo> = {};
+
+    /**
      * Saved interaction comments
      */
     savedComments: InteractionComment[] = [];
@@ -178,6 +185,11 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Viewing email ref
      */
     viewingEmail: 'original' | 'replied' = 'replied';
+
+    /**
+     * Show more Attachments flag
+     */
+    showAttachments = false;
 
     constructor(
         private _interactionManagerService: InteractionManagerService,
@@ -235,6 +247,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 distinctUntilChanged((prev, curr) => prev.interactionId === curr.interactionId && !this.getInboxMessageReq.loading),
                 map(async (interactionVal) => {
                     let interaction: any = interactionVal.otherData;
+                    // flag to show the editor when an email pulled for the first time
+                    let freshlyPulledEmail = false;
                     if (interaction && !this.getInboxMessageReq.loading) {
                         this.interactionId = interaction.InteractionID;
                         // const fetchFromOutbox = interaction.RouteReason === 'CheckerQueue' || (interaction.RouteReason === 'AgentPull' && interaction.OutSessionID);
@@ -250,12 +264,15 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                                         : SDKClient.getInboxEmail(interaction.SessionId))
                                 ).response;
                                 this.emailBodies[requestedSession] = {
-                                    Body: this.domSanitizer.bypassSecurityTrustHtml(res.Body),
+                                    Body: this.domSanitizer.bypassSecurityTrustHtml(res.Body.replaceAll('<a', '<a target="_blank"')),
                                     AttachmetList: res?.Attachments || []
                                 };
-                                // interaction.Subject = interaction.Subject || res.Subject;
-                                // interaction.To = interaction.To || res.ToList;
-                                // interaction.Subject = interaction.Mailbox || res.Mailbox;
+                                /**
+                                 * Sets the flag to show the editor when an email pulled for the first time
+                                 */
+                                if (['AgentDraftPull', 'AgentPull'].includes(this.currentInteraction.RouteReason)) {
+                                    freshlyPulledEmail = true;
+                                }
                             }
                             interaction = {
                                 ...interaction,
@@ -272,18 +289,25 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                         }
                         // }
                     }
-                    return interaction;
+                    return { ...interaction, freshlyPulledEmail };
                 })
             )
             .subscribe(async (x) => {
-                this.currentInteraction = await x;
-                // console.log({ x });
-                if (this.currentInteraction.RouteReason === 'CheckerQueue') {
-                    this.rejectReason.allReasons = this.currentInteraction.JsonData?.split(',') || [];
-                }
-                if (this.currentInteraction.RejectReason && typeof this.currentInteraction.RejectReason === 'string') {
-                    this.currentInteraction.RejectReason = JSON.parse(this.currentInteraction.RejectReason);
-                    this.currentInteraction.RejectReason.reasonTags = this.currentInteraction.RejectReason.reasonTags?.join(',') || '';
+                const replyInfo = this.replyInfoMap[this.currentInteraction.interactionId];
+                if (replyInfo) {
+                    this.replyInfo = replyInfo;
+                } else {
+                    this.currentInteraction = await x;
+                    if (this.currentInteraction.RouteReason === 'CheckerQueue') {
+                        this.rejectReason.allReasons = this.currentInteraction.JsonData?.split(',') || [];
+                    }
+                    if (this.currentInteraction.RejectReason && typeof this.currentInteraction.RejectReason === 'string') {
+                        this.currentInteraction.RejectReason = JSON.parse(this.currentInteraction.RejectReason);
+                        this.currentInteraction.RejectReason.reasonTags = this.currentInteraction.RejectReason.reasonTags?.join(',') || '';
+                    }
+                    if (this.currentInteraction.freshlyPulledEmail) {
+                        this.showReplyEditor();
+                    }
                 }
             });
 
@@ -295,12 +319,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         this._appUIService.showDesktopAlert('Incoming Email', `You have a new incoming email from ${this.data.InteractionDetails.From}`, false);
 
         this._tmacEventService
-            .getInteractionEvents(
-                [
-                    'InteractionDataEvent'
-                ],
-                this.interactionId
-            )
+            .getInteractionEvents(['InteractionDataEvent'], this.interactionId)
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
     }
@@ -311,8 +330,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     ngAfterViewInit(): void {
         // check if the current page is textchat page
-        if (this._interactionManagerService.getInteractionCount().active <= 1 &&
-            this._contentPageService.getCurrentMode() !== this.data.Data.Path) {
+        if (this._interactionManagerService.getInteractionCount().active <= 1 && this._contentPageService.getCurrentMode() !== this.data.Data.Path) {
             setTimeout(() => {
                 this._contentPageService.mode = this.data.Data.Path;
             }, 500);
@@ -335,13 +353,13 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * To handle InteractionDataEvent
      */
     private InteractionDataEvent(evt: InteractionDataEvent): void {
-        // check the channel 
+        // check the channel
         if (evt.Channel !== 'Voice') {
             return;
         }
         // check if interaction comments available
         if (evt.InteractionComments && evt.InteractionComments.length > 0) {
-            evt.InteractionComments.forEach(c => {
+            evt.InteractionComments.forEach((c) => {
                 const dt = JSON.parse(c);
                 this.savedComments.push({
                     Message: dt.Comment,
@@ -486,6 +504,15 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * @param {InteractionRef} item
      */
     public selectInteraction(item: InteractionRef): void {
+        if (this.createEmailRef?.email) {
+            this.replyInfoMap[this.currentInteraction.interactionId] = {
+                ...this.createEmailRef.email,
+                To: this.createEmailRef.email.To.join(','),
+                CC: this.createEmailRef.email.CC.join(','),
+                BCC: this.createEmailRef.email.BCC.join(',')
+            };
+        }
+
         this.replyInfo = null;
 
         // if same interaction is seleted then return
@@ -502,7 +529,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Forward Email
      */
-    forwardEmail(): void { }
+    forwardEmail(): void {}
 
     /**
      * Show reply email form
@@ -530,10 +557,11 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             To: From || '',
             Body: `
             ${preBody} 
-            ${this.domSanitizer.bypassSecurityTrustHtml(Body || '')['changingThisBreaksApplicationSecurity'][
-                'changingThisBreaksApplicationSecurity'
+            ${
+                this.domSanitizer.bypassSecurityTrustHtml(Body || '')['changingThisBreaksApplicationSecurity'][
+                    'changingThisBreaksApplicationSecurity'
                 ]
-                }`,
+            }`,
             Subject: `RE: ${Subject}`,
             Files: []
         };
@@ -609,10 +637,10 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Sends Email as Maker
      */
-    sendEmailAsMaker(): void {
+    sendEmailAsMaker(email?: any): void {
         // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
         const currentInteraction = this.currentInteraction;
-        const { BCC, CC, To, Subject, Files, Body } = this.createEmailRef.email;
+        const { BCC, CC, To, Subject, Files, Body } = email || this.createEmailRef.email;
         if (!To.length) {
             this._appUIService.showSnackbar('Please add a recipient', 'failure');
             return;
@@ -630,6 +658,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             typeOfResponse: ''
         })
             .then((res) => {
+                this.replyInfoMap[this.currentInteraction.interactionId] = null;
                 const message = {
                     SentToCustomer: 'to customer',
                     SentToCheckerSession: 'to checker'
@@ -695,19 +724,19 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     saveEmailAsDraft(): void {
         // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
         const currentInteraction = this.currentInteraction;
-        const email = this.createEmailRef?.email || this.replyInfo;
+        const email = this.createEmailRef?.email;
         if (email) {
             // @TODO Files not sent as draft arg
             const { BCC, CC, To, Subject, Body, Files } = email;
             SDKClient.saveEmailDraft({
-                bccList: BCC.replaceAll(';', ','),
+                bccList: BCC.join(','),
                 body: Body.toString(),
-                ccList: CC.replaceAll(';', ','),
+                ccList: CC.join(','),
                 inboxSessionId: currentInteraction.SessionId,
                 outboxSessionId: currentInteraction.OutboxSessionId || '',
                 routeId: '',
                 subject: Subject,
-                toList: To.replaceAll(';', ','),
+                toList: To.join(','),
                 typeOfResponse: ''
             }).then((x) => {
                 currentInteraction.OutboxSessionId = x.response;
@@ -724,6 +753,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     closeEditor(): void {
         this.replyInfo = null;
+        this.replyInfoMap[this.currentInteraction.interactionId] = null;
         this.draftPolling.unsubscribe();
     }
 
@@ -892,5 +922,17 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             height: '60%',
             disableClose: true
         });
+    }
+
+    /**
+     * Uelifies the subject
+     * @param subject
+     * @returns
+     */
+    urlify(subject: string): string {
+        if (subject) {
+            return `<span class='twd-text-truncate'> ${urlify(subject)} </span>`;
+        }
+        return 'NA';
     }
 }

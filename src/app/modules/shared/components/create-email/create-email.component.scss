@@ -1,47 +1,48 @@
 .editor-container {
     min-height: 200px;
     border: none !important;
-    // border: 1px solid #ccc !important;
+    height: auto;
+    overflow: auto;
+    // height: 75%;
 }
 
 .ql-toolbar {
-    margin-bottom: 10px;
-    border-radius: 20px;
-    border: none !important;
-    position: absolute;
-    bottom: -100px;
-    opacity: 0;
-    width: 90%;
-    z-index: 1;
-    display: none;
-    transition: opacity 0.5s, bottom 0.3s, display 0s;
-    &.show {
-        opacity: 1;
-        bottom: 0px;
-        left: 10px;
-        display: block;
-    }
+    border: none;
+    @apply twd-shadow-md;
 }
 
-.dark-mode {
-    .ql-toolbar .ql-stroke {
-        fill: none;
-        stroke: #fff;
+.ql-toolbar {
+    .ql-picker {
+        color: var(--twd-primary-300) !important;
     }
-
-    .ql-toolbar .ql-fill {
-        fill: #fff !important;
-        stroke: none;
+    .ql-stroke {
+        fill: none !important;
+        stroke: var(--twd-primary-300) !important;
+        :hover {
+            stroke: var(--twd-primary-900) !important;
+        }
     }
-
-    .ql-toolbar .ql-picker {
-        color: #fff;
+    .ql-fill {
+        fill: var(--twd-primary-300) !important;
+        stroke: none !important;
+        :hover {
+            fill: var(--twd-primary-900) !important;
+        }
     }
 }
 
 create-email {
     height: 100%;
     max-height: 100%;
+    .mat-chip {
+        min-height: auto !important;
+        @apply twd-text-xs;
+        padding: 15px !important;
+    }
+
+    input {
+        border-bottom: 1px solid var(--twd-primary-default) !important;
+    }
     .editor-wrapper {
         height: calc(100% - 50px);
     }

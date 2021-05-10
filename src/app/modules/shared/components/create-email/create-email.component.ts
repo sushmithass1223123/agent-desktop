@@ -1,5 +1,4 @@
-import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatDialog } from '@angular/material/dialog';
@@ -7,11 +6,13 @@ import { TwEmailTemplatePreviewComponent } from '@modules/t-widgets/tw-collectio
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
+import { EmailTemplate, SDKClient } from '@tmac/sdk';
 import { QUILL_EDITOR_CONFIG } from 'app/constants';
 import { CreateEmailInfo, TwWidgetModel } from 'app/models';
+import { urlify } from 'app/utils';
+import Quill from 'quill';
 import { merge } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
-import { EmailTemplate, SDKClient } from '@tmac/sdk';
 
 /**
  * Email creation component view only
@@ -22,7 +23,7 @@ import { EmailTemplate, SDKClient } from '@tmac/sdk';
     styleUrls: ['./create-email.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class CreateEmailComponent implements OnInit, OnDestroy {
+export class CreateEmailComponent implements OnInit, OnDestroy, AfterViewInit {
     /**
      * Send email event emitter
      */
@@ -35,19 +36,9 @@ export class CreateEmailComponent implements OnInit, OnDestroy {
     };
 
     /**
-     * Show toolbar flag
-     */
-    showToolbar = true;
-
-    /**
-     * Config for quill editor
-     */
-    editorConfig = QUILL_EDITOR_CONFIG;
-
-    /**
      * Suggested users for autocomplete
      */
-    suggestedUsers: string[];
+    suggestedUsers: string[] = [];
 
     /**
      * Email suggestion all users
@@ -55,30 +46,9 @@ export class CreateEmailComponent implements OnInit, OnDestroy {
     allUsers = [];
 
     /**
-     * Email form control
-     */
-    emailCtrl = new FormGroup({
-        To: new FormControl('', [Validators.required]),
-        CC: new FormControl(''),
-        BCC: new FormControl(''),
-        Subject: new FormControl('')
-    });
-
-    /**
-     * Separator code keys
-     */
-    separatorKeysCodes: number[] = [ENTER, COMMA];
-    /**
      * Recipient input ref
      */
     @ViewChild('recipientsInput') recipientsInput: ElementRef<HTMLInputElement>;
-
-    /**
-     * Available templates
-     */
-    availableTemplates = {
-        departments: {}
-    };
 
     /**
      * Files currently uploadeng
@@ -91,76 +61,133 @@ export class CreateEmailComponent implements OnInit, OnDestroy {
     showCcBcc = false;
 
     /**
-     * Email Info
-     */
-    email: CreateEmailInfo;
-
-    /**
      * Email info received from parent
      */
-    @Input() emailInfo?: CreateEmailInfo;
+    @Input() emailInfo?: CreateEmailInfo = null;
+
+    /**
+     * A readonly value for from
+     */
+    @Input() from = '';
 
     /**
      * Fuse custom background colors
      */
     customFuse$ = this._fuseFacadeService.widgetBgClasses$;
 
+    emailRecipientFacade = new FormGroup({
+        To: new FormControl(''),
+        CC: new FormControl(''),
+        BCC: new FormControl('')
+    });
+
+    email = {
+        To: this.emailInfo?.To?.split(',') || [],
+        CC: this.emailInfo?.CC?.split(',') || [],
+        BCC: this.emailInfo?.BCC?.split(',') || [],
+        Subject: this.emailInfo?.Subject || '',
+        Body: this.emailInfo?.Body || '',
+        Files: this.emailInfo?.Files || []
+    };
+
+    @ViewChild('quillRef') quillRef: ElementRef<HTMLDivElement>;
+
     constructor(
         private appUiService: AppUiService,
         private matDialog: MatDialog,
         private aotService: AOTWidgetService,
-        // private fuseConfig: FuseConfigService,
         private _fuseFacadeService: FuseFacadeService
-    ) { }
+    ) {}
 
     /**
      * Lifecycle hook
      */
     ngOnInit(): void {
-        this.suggestedUsers = this.allUsers;
-        // this.toolbarBg = this.fuseConfig.config.pipe(
-        //     map((config: FuseConfig) => ({
-        //         content: config.layout.widget.customBackgroundColor === true ? config.layout.widget.contentBackground : '',
-        //         body: config.layout.widget.customBackgroundColor === true ? config.layout.widget.bodyBackground : ''
-        //     }))
-        // );
-
-        this.emailCtrl.setValue({
-            To: this.emailInfo?.To || '',
-            CC: this.emailInfo?.CC || '',
-            BCC: this.emailInfo?.BCC || '',
-            Subject: this.emailInfo?.Subject || ''
-        });
         this.email = {
-            // To: this.emailCtrl.value.To,
-            // CC: this.emailCtrl.value.CC,
-            // BCC: this.emailCtrl.value.BCC,
-            // Subject: this.emailCtrl.value.Subject,
+            To: this.emailInfo?.To?.split(',') || [],
+            CC: this.emailInfo?.CC?.split(',') || [],
+            BCC: this.emailInfo?.BCC?.split(',') || [],
+            Subject: this.emailInfo?.Subject || '',
             Body: this.emailInfo?.Body || '',
-            Files: this.emailInfo?.Files || [],
-            ...this.emailCtrl.value
+            Files: this.emailInfo?.Files || []
         };
 
-        merge(this.emailCtrl.controls.To.valueChanges, this.emailCtrl.controls.CC.valueChanges, this.emailCtrl.controls.BCC.valueChanges)
+        // this.email = {
+        //     Body: this.emailInfo?.Body || '',
+        //     Files: this.emailInfo?.Files || [],
+        //     ...this.emailRecipientFacade.value
+        // };
+
+        // this.emailRecipientFacade.valueChanges.subscribe((res) => {
+        //     if (res) {
+        //         this.email = { ...this.email, ...res };
+        //     }
+        // });
+
+        this.addUserSuggestions();
+        merge(
+            this.emailRecipientFacade.controls.To.valueChanges,
+            this.emailRecipientFacade.controls.CC.valueChanges,
+            this.emailRecipientFacade.controls.BCC.valueChanges
+        )
             .pipe(
-                debounceTime(1000),
-                map((val) => val.split(';').pop()?.toLowerCase())
+                debounceTime(200),
+                map((val) => val.toLowerCase())
             )
             .subscribe((val) => {
                 if (val) {
-                    this.suggestedUsers = this.allUsers.filter((x) => x.includes(val));
+                    this.suggestedUsers = this.allUsers.filter((x) => x.toLowerCase().includes(val));
+                    if (!this.suggestedUsers.length) {
+                        this.suggestedUsers = [val];
+                    }
                 } else {
-                    this.suggestedUsers = [];
+                    this.suggestedUsers = this.allUsers;
                 }
             });
+    }
 
-        SDKClient.getEmailTemplateDepartments()
+    /**
+     * Lifecycle hook
+     */
+    ngAfterViewInit(): void {
+        if (this.quillRef.nativeElement) {
+            const quill = new Quill(this.quillRef.nativeElement, QUILL_EDITOR_CONFIG);
+            quill.root.innerHTML = this.email.Body;
+            // quill.on('text-change', () => {
+            //     this.email.Body = quill.root.innerHTML;
+            // });
+        }
+    }
+
+    /**
+     * Selects user from suggestions
+     * @param key
+     * @param evt
+     */
+    select(key: string, evt: MatAutocompleteSelectedEvent): void {
+        this.email[key].push(evt.option.value);
+        this.emailRecipientFacade.patchValue({ [key]: '' });
+    }
+
+    /**
+     * Removes user chip
+     * @param key
+     * @param value
+     */
+    remove(key: string, value: string): void {
+        this.email[key] = this.email[key].filter((x) => x !== value);
+    }
+
+    /**
+     * Adds user suggestions
+     */
+    addUserSuggestions(): void {
+        SDKClient.getFrequentEmailAddressList()
             .then((res) => {
-                this.availableTemplates.departments = this.getDropdownKeyvaluePair(res.response, 'ID');
+                this.allUsers = res.response;
             })
-            .catch((err) => {
-                console.error(err);
-                this.appUiService.showSnackbar('Something went wrong while fetching departments', 'failure');
+            .catch((e) => {
+                console.error(e);
             });
     }
 
@@ -170,44 +197,6 @@ export class CreateEmailComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.closeTemplatePreview();
     }
-
-    /**
-     * Selects User from list of email interactions
-     * @param {String} key
-     * @param {MatAutocompleteSelectedEvent} evt
-     */
-    selectUser(key: string, evt: MatAutocompleteSelectedEvent): void {
-        const missingColon = this.email[key] && this.email[key].slice(-1) !== ';' ? ';' : '';
-        this.email[key] += missingColon + evt.option.value + ';';
-        this.emailCtrl.patchValue({ [key]: this.email[key] });
-        this.removePrevSuggestions();
-    }
-
-    /**
-     * Remove User / Interaction
-     * @param {String} key
-     * @param {String} user
-     */
-    removeUser(key: string, user: string): void {
-        this.email[key] = this.email[key].filter((x) => x !== user);
-    }
-
-    /**
-     * Remove Previous Suggestions
-     */
-    removePrevSuggestions(): void {
-        // if (!this.suggestedUsers) {
-        //     this.suggestedUsers.filtered = [];
-        // }
-        this.suggestedUsers = this.allUsers;
-    }
-
-    /**
-     * test functionn for quill editor
-     * @param {any} evt
-     */
-    onContentChanged(evt: any): void { }
-
     /**
      * Attach files to email
      * @param {Event} evt
@@ -267,9 +256,6 @@ export class CreateEmailComponent implements OnInit, OnDestroy {
     useTemplate(template: EmailTemplate): void {
         this.email.Body = `${template.BodyHTML} ${this.email.Body}`;
         this.closeTemplatePreview();
-        // if (this.templatePreview.ref) {
-        //     this.templatePreview.ref.close();
-        // }
     }
 
     /**
@@ -280,9 +266,6 @@ export class CreateEmailComponent implements OnInit, OnDestroy {
         this.templatePreview.aots.forEach((aotID) => {
             this.aotService.destroyWidget(aotID);
         });
-        // if (this.templatePreview.ref) {
-        //     this.templatePreview.ref.close();
-        // }
     }
 
     /**
@@ -306,66 +289,9 @@ export class CreateEmailComponent implements OnInit, OnDestroy {
             this.aotService.addWidget(widget);
             this.templatePreview.aots.push(widget.ID);
         } else {
-            this.matDialog.open(TwEmailTemplatePreviewComponent, { data });
-            // ref.afterClosed().subscribe(() => {
-            // this.templatePreview.preview = '';
-            // });
-            // this.templatePreview.ref = ref;
-            // this.email.Body = `${html} ${this.email.Body}`;
+            this.matDialog.open(TwEmailTemplatePreviewComponent, { data, minWidth: '40%', panelClass: 'email-template-dialog' });
         }
     }
-
-    /**
-     * Set groups for selected department
-     * @param {String} departmentId Department's Id
-     */
-    setGroups(departmentId: string): void {
-        if (!this.availableTemplates.departments[departmentId]?.groups) {
-            SDKClient.getEmailTemplateGroups(departmentId)
-                .then((res) => {
-                    if (res.response && res.response.length) {
-                        this.availableTemplates.departments[departmentId].groups = this.getDropdownKeyvaluePair(res.response, 'ID');
-                    }
-                })
-                .catch((err) => {
-                    console.error(err);
-                    this.appUiService.showSnackbar('Something went wrong while fetching groups', 'failure');
-                });
-        }
-    }
-
-    /**
-     * Set Templates for the group
-     * @param {String} departmentId  selected department Id
-     * @param {String} groupId selected group Id
-     */
-    setTemplates(departmentId: string, groupId: string): void {
-        const groups = this.availableTemplates.departments[departmentId].groups;
-        if (!groups[groupId].templates) {
-            SDKClient.getEmailTemplates({ groupId, type: '' })
-                .then((templateRes) => {
-                    if (templateRes.response && templateRes.response.length) {
-                        groups[groupId].templates = this.getDropdownKeyvaluePair(templateRes.response, 'ID');
-                    }
-                })
-                .catch((err) => {
-                    console.error(err);
-                    this.appUiService.showSnackbar('Something went wrong while fetching templates', 'failure');
-                });
-        }
-    }
-
-    /**
-     * Groups by id and returns the value
-     */
-    private getDropdownKeyvaluePair(records: any[], idKey: string): any {
-        const keyVal = {};
-        records.forEach((r) => {
-            keyVal[r[idKey]] = r;
-        });
-        return keyVal;
-    }
-
     /**
      * Focuses the editor
      * @param {any} editor
@@ -380,9 +306,21 @@ export class CreateEmailComponent implements OnInit, OnDestroy {
      * Triggers email send action
      */
     triggerEmailSend(): void {
-        if (!this.emailCtrl.valid) {
+        if (!this.emailRecipientFacade.valid) {
             return;
         }
-        this.sendEmail.emit();
+        this.sendEmail.emit({ ...this.emailRecipientFacade.value, Files: this.email.Files });
+    }
+
+    /**
+     * Uelifies the subject
+     * @param subject
+     * @returns
+     */
+    urlify(subject: string): string {
+        if (subject) {
+            return `<span class='twd-text-truncate'> ${urlify(subject)} </span>`;
+        }
+        return 'NA';
     }
 }

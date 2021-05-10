@@ -39,4 +39,3 @@ export const urlify = (text: string): string => {
         return '<a target="_blank" href="' + url + '">' + url + '</a>';
     });
 };
-
