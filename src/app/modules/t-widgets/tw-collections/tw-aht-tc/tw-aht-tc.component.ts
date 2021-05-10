@@ -98,7 +98,8 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-        this.widgetData = this.data.Data;
+        
+        this.widgetData = this.data.Data || new Object();
 
         let eventName: any;
         if (this.widgetData.Role === 'agent') {

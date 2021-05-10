@@ -101,7 +101,7 @@ export class TWContentWrapper {
         this.hostElement.nativeElement.style.display = 'none';
 
         // set the data
-        this.widgetData = data;
+        this.widgetData = data || new Object();
 
         // Check if the position is defined
         if (data.Config.Position) {

@@ -105,7 +105,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        this.widgetData = this.data.Data;
+        this.widgetData = this.data.Data|| new Object();
 
         this.filteredOptions = this.workCodeCtrl.valueChanges.pipe(
             startWith(''),
