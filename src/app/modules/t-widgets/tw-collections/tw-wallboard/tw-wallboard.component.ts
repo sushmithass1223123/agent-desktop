@@ -64,7 +64,7 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
         this.initWrapper(this.data);
 
         // get the widget data
-        this.widgetData = this.data.Data;
+        this.widgetData = this.data.Data || new Object();
 
         if (this.widgetData.SLEnabled) {
             // add service level to column
