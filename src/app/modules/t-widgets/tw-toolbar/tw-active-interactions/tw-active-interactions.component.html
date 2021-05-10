@@ -65,5 +65,24 @@
             (click)="openInteraction(item)"
             *ngIf="item.type === 'textchat'"
         ></avatar>
+
+        <div
+            class="email-chip mat-elevation-z1 twd-cursor-pointer twd-p-1 hover:twd-shadow twd-rounded-full twd-overflow-hidden"
+            (click)="openInteraction(item)"
+        >
+            <div
+                class="twd-bg-primary-100 twd-flex twd-items-center twd-text-base twd-font-bold twd-p-2 twd-rounded-full twd-overflow-hidden"
+                [ngClass]="{ 'twd-bg-primary-200': item.isActive }"
+            >
+                <avatar
+                    class="mat-elevation-z1 border-radius-100"
+                    [matIcon]="item.otherData.icon || 'email'"
+                    classes="w-36 h-36 border-radius-100 twd-bg-primary-default"
+                    [matTooltip]="item.user || 'New Email'"
+                    *ngIf="item.type === 'email'"
+                ></avatar>
+                <span class="twd-truncate twd-ml-2"> {{ item.otherData.Subject || 'New Email' }} </span>
+            </div>
+        </div>
     </ng-container>
 </div>

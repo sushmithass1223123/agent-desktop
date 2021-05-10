@@ -487,7 +487,37 @@
                 </button>
             </div>
 
-            <div *ngIf="selectedMails.length" class="bulk-operations mt-16" fxLayout fxLayoutAlign="space-around center">
+            <div id="sortControls" class="twd-flex twd-justify-between twd-items-center twd-px-2 twd-pt-2">
+                <div class="twd-font-bold twd-text-sm">
+                    <mat-form-field>
+                        <mat-select [formControl]="sortControls.sortBy">
+                            <mat-option value="default">Default</mat-option>
+                            <mat-option value="Subject">Sort By Name</mat-option>
+                            <mat-option value="addedTime">Sort By Time</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <ng-container
+                    *ngIf="
+                        sortControls.ascending
+                            ? { class: 'twd-rotate-180', tooltip: 'Switch to descending' }
+                            : { class: '', tooltip: 'Switch to ascending' } as buttonDetails
+                    "
+                >
+                    <button
+                        mat-button
+                        mat-icon-button
+                        class="twd-transform twd-transition-transform"
+                        [ngClass]="buttonDetails.class"
+                        [matTooltip]="buttonDetails.tooltip"
+                        (click)="sortControls.ascending = !sortControls.ascending; sortEmailsByOrder()"
+                    >
+                        <mat-icon> sort </mat-icon>
+                    </button>
+                </ng-container>
+            </div>
+
+            <div *ngIf="selectedMails.length" class="bulk-operations twd-pb-2" fxLayout fxLayoutAlign="space-around center">
                 <button
                     mat-raised-button
                     fxFlex="100"
@@ -497,7 +527,15 @@
                 >
                     Reply All
                 </button>
-                <button mat-raised-button fxFlex="100" class="border-radius-20 mx-8" *ngIf="currentTab === 'queue'">Transfer All</button>
+                <button
+                    mat-raised-button
+                    fxFlex="100"
+                    class="border-radius-20 mx-8"
+                    *ngIf="currentTab === 'queue'"
+                    (click)="transferEmail(selectedMails)"
+                >
+                    Transfer All
+                </button>
                 <button
                     mat-raised-button
                     color="primary"
@@ -520,8 +558,8 @@
                 </button>
             </div>
 
-            <div *ngIf="!emailSearchRes.error" class="email-list-groups">
-                <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="tw-list-item border-radius-10 email-tree">
+            <div *ngIf="!emailSearchRes.error && { selectedEmail: emailSearchRes.data.selected } as selectedEmail">
+                <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="tw-list-item border-radius-10 email-tree twd-mt-0">
                     <mat-tree-node *matTreeNodeDef="let node" class="tw-list pb-8" matTreeNodeToggle>
                         <li
                             class="mat-tree-node tw-list-item border-radius-10 selectable"
@@ -533,7 +571,7 @@
                             <div fxLayout fxLayoutAlign="space-between" (click)="openEmail(node)" mat-ripple class="w-90-p px-4">
                                 <div fxFlex="70">
                                     <p class="font-weight-600 my-4">{{ node.From || 'NA' }}</p>
-                                    <p class="my-4">Subject: {{ node.Subject || 'NA' }}</p>
+                                    <p class="my-4">Subject: <span [innerHtml]="node.Subject"></span></p>
                                 </div>
                                 <div fxFlex="30">
                                     <span> {{ node.addedTime | date: 'mediumDate' }} </span>
@@ -543,18 +581,39 @@
                             </div>
                         </li>
                     </mat-tree-node>
-                    <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild" [ngClass]="{ active: treeControl.isExpanded(node) }">
-                        <li matTreeNodeToggle class="mb-8 border-radius-20" [ngClass]="customFuse.anchor?.body || customFuse.widget?.body">
-                            <div class="mat-tree-node">
-                                <button mat-icon-button [attr.aria-label]="'Toggle ' + (node.name || 'NA')">
-                                    <mat-icon [ngClass]="{ 'rotate-90-inverse': !treeControl.isExpanded(node) }"> arrow_drop_down_circle </mat-icon>
-                                </button>
-                                <span class="font-weight-700">
-                                    {{ node.name || 'NA' }}
-                                </span>
+                    <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
+                        <li
+                            *ngIf="{ selected: treeControl.isExpanded(node) } as treeNode"
+                            matTreeNodeToggle
+                            class="mb-8 border-radius-20"
+                            [ngClass]="(customFuse.anchor?.body || customFuse.widget?.body) + (treeNode.selected ? ' active ' : '')"
+                        >
+                            <div
+                                class="mat-tree-node twd-cursor-pointer twd-flex twd-justify-between twd-items-center"
+                                [ngClass]="
+                                    selectedEmail?.selectedEmail
+                                        ? selectedEmail.selectedEmail.To === node.To
+                                            ? node.Skill
+                                                ? selectedEmail.selectedEmail.Skill === node.Skill
+                                                    ? ' twd-text-primary-default'
+                                                    : ''
+                                                : ' twd-text-primary-default'
+                                            : ''
+                                        : ''
+                                "
+                            >
+                                <div class="twd-flex twd-items-center">
+                                    <button mat-icon-button [attr.aria-label]="'Toggle ' + (node.name || 'NA')">
+                                        <mat-icon [ngClass]="{ 'rotate-90-inverse': !treeNode.selected }"> arrow_drop_down_circle </mat-icon>
+                                    </button>
+                                    <span class="font-weight-700">
+                                        {{ node.name || 'NA' }}
+                                    </span>
+                                </div>
+                                <span *ngIf="node.children" class="twd-px-3 twd-font-bold twd-text-sm"> ({{ node.children.length }}) </span>
                             </div>
                             <ul
-                                [class.email-tree-invisible]="!treeControl.isExpanded(node)"
+                                [class.email-tree-invisible]="!treeNode.selected"
                                 [ngClass]="{ 'no-scroll': node.children?.length && node.children[0].children?.length }"
                             >
                                 <ng-container matTreeNodeOutlet></ng-container>
@@ -587,9 +646,9 @@
             </div>
         </div>
 
-        <div fxFlex class="email-open mr-8 border-radius-20 custom-scroll-adjust position-relative">
+        <div fxFlex class="email-open mr-8 border-radius-20 position-relative twd-flex twd-flex-col twd-overflow-hidden">
             <ng-container *ngIf="!emailSearchRes.loading && !emailSearchRes.error && emailSearchRes.data.selected as selectedEmail">
-                <div *ngIf="selectedEmail" fxLayout fxLayoutAlign="end" fxLayoutGap="10px" class="my-20 w-95-p">
+                <div class="twd-flex twd-justify-end twd-gap-4 twd-py-3 w-95-p">
                     <button
                         mat-raised-button
                         class="border-radius-20"
@@ -621,44 +680,93 @@
                 </div>
 
                 <div
-                    *ngIf="selectedEmail"
-                    class="email-open__body w-95-p mx-auto border-radius-20 pt-20 pb-40 px-28 mb-20"
+                    class="email-open__body twd-w-11/12 mx-auto border-radius-20 twd-overflow-hidden twd-mb-3 twd-flex-1 twd-flex twd-flex-col twd-max-h-full"
                     [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                 >
-                    <div class="mat-title">{{ selectedEmail.Subject || 'NA' }}</div>
-                    <div fxLayout fxLayoutAlign="space-between">
-                        <div fxFlex="80">
-                            <p class="font-weight-600 my-4">To : {{ selectedEmail.To }}</p>
-                            <p class="font-weight-600 my-4" *ngIf="selectedEmail.ccList">CC : {{ selectedEmail.ccList }}</p>
-                            <p class="my-4 text-bold">From : {{ selectedEmail.From || 'NA' }}</p>
-                            <p class="my-4 text-bold">Status : {{ selectedEmail.currentStatus || 'NA' }}</p>
-                            <p class="my-4 text-bold">Prirority : {{ selectedEmail.priority || 'NA' }}</p>
-                            <p class="my-4 text-bold">Agent : {{ selectedEmail.agentName || 'NA' }}</p>
-                            <p class="my-4 text-bold">Replied Status : {{ selectedEmail.repliedStatus === '1' ? 'Replied' : 'Not Replied' }}</p>
-                            <p class="my-4 text-bold">Closed Status : {{ selectedEmail.closedBy ? 'Closed by' + selectedEmail.closedBy : 'Open' }}</p>
-                            <p>
-                                <mat-icon>grading</mat-icon> <span class="text-bold">{{ selectedEmail.intent || 'NA' }}</span>
-                            </p>
+                    <div class="twd-shadow">
+                        <div class="twd-text-xl twd-flex twd-justify-between twd-items-center pt-20 px-28 twd-pb-3">
+                            <div
+                                class="twd-relative twd-flex-1 twd-px-1"
+                                [ngClass]="{ 'twd-truncate': !minimizeSubject }"
+                                [innerHtml]="selectedEmail.Subject"
+                            ></div>
+                            <span (click)="minimizeSubject = !minimizeSubject" class="twd-cursor-pointer" matRipple>
+                                <mat-icon>{{ minimizeSubject ? 'expand_more' : 'expand_less' }}</mat-icon>
+                            </span>
                         </div>
-                        <div fxFlex="15">
-                            <p class="my-4">{{ selectedEmail.addedTime | date: 'longDate' }}</p>
-                            <p class="my-4">{{ selectedEmail.addedTime | date: 'shortTime' }}</p>
+                        <div class="twd-transition-all px-28" [ngClass]="{ 'twd-h-0 twd-overflow-y-hidden twd-opacity-0': minimizeSubject }">
+                            <div fxLayout fxLayoutAlign="space-between">
+                                <div fxFlex="80">
+                                    <p class="font-weight-600 my-4">To : {{ selectedEmail.To }}</p>
+                                    <p class="font-weight-600 my-4" *ngIf="selectedEmail.ccList">CC : {{ selectedEmail.ccList }}</p>
+                                    <p class="my-4 text-bold">From : {{ selectedEmail.From || 'NA' }}</p>
+                                    <p class="my-4 text-bold">Status : {{ selectedEmail.currentStatus || 'NA' }}</p>
+                                    <p class="my-4 text-bold">Prirority : {{ selectedEmail.priority || 'NA' }}</p>
+                                    <p class="my-4 text-bold">Agent : {{ selectedEmail.agentName || 'NA' }}</p>
+                                    <p class="my-4 text-bold">
+                                        Replied Status : {{ selectedEmail.repliedStatus === '1' ? 'Replied' : 'Not Replied' }}
+                                    </p>
+                                    <p class="my-4 text-bold">
+                                        Closed Status : {{ selectedEmail.closedBy ? 'Closed by' + selectedEmail.closedBy : 'Open' }}
+                                    </p>
+                                    <p>
+                                        <mat-icon>grading</mat-icon> <span class="text-bold">{{ selectedEmail.intent || 'NA' }}</span>
+                                    </p>
+                                </div>
+                                <div fxFlex="15">
+                                    <p class="my-4">{{ selectedEmail.addedTime | date: 'longDate' }}</p>
+                                    <p class="my-4">{{ selectedEmail.addedTime | date: 'shortTime' }}</p>
+                                </div>
+                            </div>
+                            <div
+                                class="twd-py-5"
+                                *ngIf="{
+                                    lesstItems: selectedEmail.attachmentList.slice(0, 3),
+                                    moreItems: selectedEmail.attachmentList.slice(3, -1)
+                                } as attachList"
+                            >
+                                <mat-chip-list class="twd-mb-3" #chipList aria-label="file selection">
+                                    <mat-chip class="twd-w-1/6" *ngFor="let file of attachList.lesstItems">
+                                        <div><mat-icon>attach_file</mat-icon></div>
+                                        <div class="twd-ml-1 twd-w-10/12">
+                                            <div class="m-0 twd-truncate twd-w-full">{{ file.Name }}</div>
+                                            <a target="_blank" [href]="file.URL">
+                                                <small>View file</small>
+                                            </a>
+                                        </div>
+                                    </mat-chip>
+                                    <ng-container *ngIf="showMoreAttachments">
+                                        <mat-chip class="twd-w-1/6" *ngFor="let file of attachList.moreItems">
+                                            <div><mat-icon>attach_file</mat-icon></div>
+                                            <div class="twd-ml-1 twd-w-10/12">
+                                                <div class="m-0 twd-truncate twd-w-full">{{ file.Name }}</div>
+                                                <a target="_blank" [href]="file.URL">
+                                                    <small>View file</small>
+                                                </a>
+                                            </div>
+                                        </mat-chip>
+                                    </ng-container>
+                                    <button
+                                        mat-button
+                                        *ngIf="!showMoreAttachments && attachList.moreItems.length"
+                                        (click)="showMoreAttachments = !showMoreAttachments"
+                                    >
+                                        <mat-icon> expand_more </mat-icon>
+                                        View {{ attachList.moreItems.length }} more
+                                    </button>
+                                </mat-chip-list>
+                                <button mat-button style="margin-top: 12px" *ngIf="showMoreAttachments" (click)="showMoreAttachments = false">
+                                    <mat-icon>expand_less</mat-icon>
+                                    Show less
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <mat-chip-list #chipList aria-label="file selection">
-                        <mat-chip class="p-16" *ngFor="let file of selectedEmail.attachmentList">
-                            <mat-icon>attach_file</mat-icon>
-                            <div class="ml-8 my-0">
-                                <p class="m-0">{{ file.Name }}</p>
-                                <a target="_blank" [href]="file.URL">
-                                    <small>View file</small>
-                                </a>
-                            </div>
-                        </mat-chip>
-                    </mat-chip-list>
-
-                    <!-- <span>Subject : {{ selectedEmail.Subject }}</span> -->
-                    <div class="mt-20" [innerHtml]="selectedEmail.body"></div>
+                    <div class="twd-flex-1 twd-relative">
+                        <div id="openEmailRef" class="twd-absolute twd-left-0 twd-top-0 twd-w-full twd-p-1 twd-h-full twd-overflow-auto">
+                            <div [ngClass]="{ 'twd-pt-16': minimizeSubject }" [innerHtml]="selectedEmail.body"></div>
+                        </div>
+                    </div>
                 </div>
             </ng-container>
 
@@ -673,15 +781,10 @@
 </ng-container>
 
 <ng-template #replyDialog>
-    <quill-editor
-        class="email-editor"
-        classes="editor-container"
-        [(ngModel)]="replyBody"
-        [placeholder]="editorConfig.placeholder"
-        [modules]="editorConfig.modules"
-        format="html"
-    >
-    </quill-editor>
-    <button mat-raised-button (click)="replyEditorModal.close(true)" color="primary">Send</button>
-    <button mat-raised-button (click)="replyEditorModal.close()" color="accent">Cancel</button>
+    <div #replyEditor id="replyEditor"></div>
+    <div class="twd-flex twd-gap-2 twd-justify-end twd-mt-3">
+        <email-template-selector (selectTemplate)="selectEmailTemplate($event)"></email-template-selector>
+        <button mat-raised-button (click)="replyEditorModal.close(true)" color="primary">Send</button>
+        <button mat-raised-button (click)="replyEditorModal.close()" color="accent">Cancel</button>
+    </div>
 </ng-template>

@@ -1,7 +1,7 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { HttpClient } from '@angular/common/http';
-import { Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
@@ -11,14 +11,16 @@ import { AgentSkillListComponent } from '@modules/shared/components';
 import { TWidgetWrapper } from '@modules/t-widgets/utils';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
-import { SDKClient } from '@tmac/sdk';
+import { EmailTemplate, SDKClient } from '@tmac/sdk';
 import { COMMON_ERR_MESSAGE, DRAFT_REASONS, INBOX_REASONS, OUTBOX_REASONS, QUILL_EDITOR_CONFIG } from 'app/constants';
 import { AgentSkillListData, IWidget, ResData } from 'app/interfaces';
-import { formatJsonData } from 'app/utils';
-import { groupBy } from 'lodash';
+import { formatJsonData, urlify } from 'app/utils';
+import { groupBy, sortBy } from 'lodash';
 import * as moment from 'moment';
+import Quill from 'quill';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
+import { TwWorkBenchService } from '../tw-workbench-panel.service';
 
 type AvailableTabs = 'inbox' | 'sentitem' | 'queue' | 'draft';
 type EmailPullItem = {
@@ -74,12 +76,18 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
     /**
      * Reply body for reply email in bulk
      */
-    replyBody: string;
+    // replyBody = '';
     /**
      * Email reply dialog ref
      */
     @ViewChild('replyDialog')
-    ReplyEditor: TemplateRef<any>;
+    ReplyEditorDialog: TemplateRef<any>;
+
+    /**
+     * replyEditor div ref
+     */
+    @ViewChild('replyEditor')
+    ReplyEditor: ElementRef<HTMLDivElement>;
     /**
      * openeing email flag for loader display
      */
@@ -120,46 +128,21 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
          */
         selected: any;
     }> = {
-            error: false,
-            loading: false,
-            msg: '',
-            data: {
-                selected: false
-            }
-        };
+        error: false,
+        loading: false,
+        msg: '',
+        data: {
+            selected: false
+        }
+    };
     /**
      * Global search form control
      */
-    globalSearchControl = new FormControl();
+    globalSearchControl = this._workbenchService.globalEmailWorkbenchState$.globalSearchKey;
     /**
      * Advanced search form group
      */
-    advancedSearchForm = new FormGroup({
-        fromDate: new FormControl(''),
-        fromTime: new FormControl(''),
-        toDate: new FormControl(''),
-        toTime: new FormControl(''),
-        email: new FormControl(''),
-        subject: new FormControl(''),
-        content: new FormControl(''),
-        skills: new FormControl(''),
-
-        agent: new FormControl(''),
-
-        inSessionid: new FormControl(''),
-
-        deviceid: new FormControl(''),
-        hasAttachments: new FormControl('yes'),
-        assignedTo: new FormControl(''),
-
-        replied: new FormControl('any'),
-        closed: new FormControl('any'),
-        assigned: new FormControl('any'),
-
-        sesisonid: new FormControl(''),
-        global: new FormControl(''),
-        listOfMailboxes: new FormControl('singteldemo@tetherfi.com', [Validators.required])
-    });
+    advancedSearchForm = this._workbenchService.globalEmailWorkbenchState$.searchParams;
     /**
      * Tree Controls
      */
@@ -182,6 +165,35 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
     searchReqObs$: Record<AvailableTabs, (searchParams?: any) => Observable<any>>;
 
     /**
+     * Show more Attachments flag
+     */
+    showMoreAttachments = false;
+
+    /**
+     * Oepened Email's body ref
+     */
+    @ViewChild('openEmailBody')
+    openEmailBodyRef: ElementRef<HTMLDivElement>;
+
+    /**
+     * Minimizes subject and details of opened email
+     */
+    minimizeSubject = false;
+
+    /**
+     * Sort controls
+     */
+    sortControls = {
+        sortBy: new FormControl('default'),
+        ascending: true
+    };
+
+    /**
+     * Quill instance
+     */
+    quillInstance: any;
+
+    /**
      * Constructor
      */
     constructor(
@@ -190,7 +202,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
         private http: HttpClient,
         private domSanitizer: DomSanitizer,
         private appUiService: AppUiService,
-        private matDialog: MatDialog
+        private matDialog: MatDialog,
+        private _workbenchService: TwWorkBenchService
     ) {
         super();
         this.searchReqObs$ = {
@@ -219,15 +232,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
      * and before any of the view or content children have been checked. It is invoked only once when the directive is instantiated.
      */
     ngOnInit(): void {
-        // -----------------------------------------------------------
-        // To get the fuse config
-        // -----------------------------------------------------------
-        // this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-        //     this.fuseConfig = config;
-        // });
-
-        // const advancedSearchToggledFields = ['replied', 'closed', 'assigned'];
+        if (!this.globalSearchControl.value) {
+            this.globalSearchControl.reset();
+        }
         this.doAdvancedSearch();
+        this.sortControls.sortBy.valueChanges.subscribe(() => this.sortEmailsByKey());
     }
 
     /**
@@ -241,6 +250,78 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
     // -----------------------------------------------------------------------------------------------------
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * Sort Callback
+     */
+    sortEmailsByKey(childrenNodes?: any[]): void {
+        if (!childrenNodes) {
+            childrenNodes = this.getAllEmailNodes();
+        }
+        const sortKey = this.sortControls.sortBy.value;
+        let sorted;
+        if (sortKey !== 'default') {
+            sorted = sortBy(childrenNodes, sortKey);
+        } else {
+            sorted = childrenNodes;
+        }
+        const sortedEmails = this.sortControls.ascending ? sorted : sorted.reverse();
+        this.groupNodes(sortedEmails);
+    }
+
+    /**
+     * Sorts by asc / desc
+     */
+    sortEmailsByOrder(): void {
+        const childrenNodes = this.getAllEmailNodes();
+        const sortedEmails = childrenNodes.reverse();
+        this.groupNodes(sortedEmails);
+    }
+
+    /**
+     * Returns all emails nodes
+     * @returns
+     */
+    getAllEmailNodes(): any[] {
+        return this.dataSource.data.reduce((acc, curr) => {
+            const descendants = this.treeControl.getDescendants(curr);
+            if (descendants && descendants.length) {
+                acc.push(...descendants);
+            }
+            return acc;
+        }, []);
+    }
+
+    /**
+     * Groups nodes and assigns to mat-tree
+     * @param sortedEmails
+     */
+    groupNodes(sortedEmails: any[]): void {
+        const byMailList = groupBy(sortedEmails, 'To');
+        let nodes: any;
+        if (['sentitem', 'draft'].includes(this.currentTab)) {
+            nodes = Object.entries(byMailList).reduce((acc, curr) => {
+                const [name, children] = curr;
+                acc.push({ name, children, To: name || '' });
+                return acc;
+            }, []);
+        } else {
+            nodes = Object.keys(byMailList).map((name) => {
+                const groupedNodes = groupBy(byMailList[name], 'Skill');
+                return {
+                    name,
+                    children: Object.keys(groupedNodes).map((n) => ({
+                        name: n,
+                        children: groupedNodes[n],
+                        To: name,
+                        Skill: n
+                    })),
+                    To: name
+                };
+            });
+        }
+        this.dataSource.data = nodes;
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
@@ -276,33 +357,27 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
             this.searchReqObs$[this.currentTab]().subscribe(
                 (res: any) => {
                     if (res.status === 'SUCCESS') {
-                        const mails = res.result.map((x: any) => {
+                        const mails = res.result.map((x: any, idx) => {
                             const mailRes = typeof x.data === 'string' ? JSON.parse(x.data) : x;
                             if (x.addedTime) {
                                 mailRes.addedTime = x.addedTime;
                             }
-                            mailRes.body = this.domSanitizer.bypassSecurityTrustHtml(mailRes.body);
+                            mailRes.uiId = `${idx}_${Date.now()}`;
+                            mailRes.Subject = this.domSanitizer.bypassSecurityTrustHtml(
+                                (mailRes.Subject || '').replaceAll('<a', '<a target="_blank"')
+                            )['changingThisBreaksApplicationSecurity'];
+                            mailRes.body = this.domSanitizer.bypassSecurityTrustHtml((mailRes.body || '').replaceAll('<a', '<a target="_blank"'))[
+                                'changingThisBreaksApplicationSecurity'
+                            ];
                             return mailRes;
                         });
-                        const byMailList = groupBy(mails, 'To');
-                        let nodes: any;
-                        if (['sentitem', 'draft'].includes(this.currentTab)) {
-                            nodes = Object.keys(byMailList).map((name) => {
-                                return { name, children: byMailList[name] };
-                            });
-                        } else {
-                            nodes = Object.keys(byMailList).map((name) => {
-                                const groupedNodes = groupBy(byMailList[name], 'Skill');
-                                return { name, children: Object.keys(groupedNodes).map((n) => ({ name: n, children: groupedNodes[n] })) };
-                            });
-                        }
+                        this.sortEmailsByKey(mails);
                         this.emailSearchRes = {
                             loading: false,
                             error: false,
                             msg: '',
                             data: { selected: this.emailSearchRes.data.selected || false }
                         };
-                        this.dataSource.data = nodes;
                     } else {
                         this.emailSearchRes = {
                             loading: false,
@@ -387,28 +462,17 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                             if (x.addedTime) {
                                 mailRes.addedTime = x.addedTime;
                             }
+                            mailRes.id = Date.now();
                             mailRes.body = this.domSanitizer.bypassSecurityTrustHtml(mailRes.body);
                             return mailRes;
                         });
-                        const byMailList = groupBy(mails, 'To');
-                        let nodes: any;
-                        if (['sentitem', 'draft'].includes(this.currentTab)) {
-                            nodes = Object.keys(byMailList).map((name) => {
-                                return { name, children: byMailList[name] };
-                            });
-                        } else {
-                            nodes = Object.keys(byMailList).map((name) => {
-                                const groupedNodes = groupBy(byMailList[name], 'Skill');
-                                return { name, children: Object.keys(groupedNodes).map((n) => ({ name: n, children: groupedNodes[n] })) };
-                            });
-                        }
+                        this.sortEmailsByKey(mails);
                         this.emailSearchRes = {
                             loading: false,
                             error: false,
                             msg: '',
                             data: { selected: this.emailSearchRes.data.selected || false }
                         };
-                        this.dataSource.data = nodes;
                     } else {
                         this.emailSearchRes = {
                             loading: false,
@@ -445,9 +509,23 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
     async deleteEmails(emails: any[]): Promise<void> {
         const loader = this.appUiService.showSnackbar('Deleting emails', 'loading');
         try {
+            if (!['inbox', 'draft'].includes(this.currentTab)) {
+                throw new Error('Cannot delete emails from this tab');
+            }
             const sessionIds = emails.map((x) => x.SessionId) || [];
-            await SDKClient.deleteBulkEmailsInDraft(sessionIds.join(','));
+            if (this.currentTab === 'inbox') {
+                await SDKClient.maskInboxEmail({
+                    sessionId: sessionIds.join(','),
+                    source: 'agent-desktop'
+                });
+            } else if (this.currentTab === 'draft') {
+                await SDKClient.deleteBulkEmailsInDraft(sessionIds.join(','));
+            }
             this.selectedMails = [];
+            const selectedEmail = this.emailSearchRes.data.selected;
+            if (selectedEmail && sessionIds.includes(selectedEmail.SessionId)) {
+                this.emailSearchRes.data.selected = null;
+            }
             this.doAdvancedSearch();
             loader.dismiss();
         } catch (e) {
@@ -528,7 +606,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
      * Searched through queued emails
      */
     advanceSearchQueuedEmail = (searchParams?: any): Observable<any> => {
-        const { agentId } = SDKClient.getAgentData();
+        // const { agentId } = SDKClient.getAgentData();
 
         const searchFields = searchParams || this.advancedSearchForm.value;
 
@@ -566,7 +644,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
      * Searched through inbox emails
      */
     advanceSearchInboxEmail = (searchParams?: any): Observable<any> => {
-        const { agentId } = SDKClient.getAgentData();
+        // const { agentId } = SDKClient.getAgentData();
 
         const searchFields = this.advancedSearchForm.value;
 
@@ -637,7 +715,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
      * Searches through draft emails
      */
     advanceSearchDraftEmail = (searchParams?: any): Observable<any> => {
-        const { agentId } = SDKClient.getAgentData();
+        // const { agentId } = SDKClient.getAgentData();
 
         const searchFields = this.advancedSearchForm.value;
 
@@ -675,7 +753,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
             .pipe(
                 map((res: any) => ({
                     ...res,
-                    result: res.result.map((x: any, uiId) => {
+                    result: res.result.map((x: any) => {
                         const addedTime = new Date(x.currentStatusDate);
                         const time = x.currentStatusTime.split(':');
                         addedTime.setHours(time[0]);
@@ -687,7 +765,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                             Subject: x.subject,
                             From: x.from,
                             addedTime,
-                            uiId,
                             SessionId: x.sessionID,
                             RouteId: x.routeId
                         };
@@ -700,7 +777,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
      * Advanced searches emails
      */
     advanceSearchSentEmail = (searchParams?: any): Observable<any> => {
-        const { agentId } = SDKClient.getAgentData();
+        // const { agentId } = SDKClient.getAgentData();
 
         const searchFields = this.advancedSearchForm.value;
 
@@ -739,7 +816,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
             .pipe(
                 map((res: any) => ({
                     ...res,
-                    result: res.result.map((x: any, uiId) => {
+                    result: res.result.map((x: any) => {
                         const addedTime = new Date(x.sendDate);
                         const time = x.sendTime.split(':');
                         addedTime.setHours(time[0]);
@@ -751,7 +828,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                             Subject: x.subject,
                             From: x.toList,
                             addedTime,
-                            uiId,
                             SessionId: x.inSessionID,
                             RouteId: x.routeId
                         };
@@ -777,7 +853,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
     async openEmail(email: any): Promise<void> {
         try {
             this.emailSearchRes.loading = true;
-            const fetchFromOutbox = [...this.OutboxReasons, ...this.DraftReasons].includes(email.RouteReason);
+            // const fetchFromOutbox = [...this.OutboxReasons, ...this.DraftReasons].includes(email.RouteReason);
+            const fetchFromOutbox = this.currentTab === 'draft' || this.currentTab === 'sentitem';
             const requestedSession = fetchFromOutbox
                 ? email.sessionID || email.OutSessionId
                 : email.inSessionID || email.sessionID || email.SessionId;
@@ -790,6 +867,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                     this.emailSearchRes.loading = false;
                     return;
                 }
+
                 this.emailBodies[requestedSession] = {
                     body: this.domSanitizer.bypassSecurityTrustHtml(res.Body),
                     attachmentList: res?.Attachments || [],
@@ -802,6 +880,17 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
             }
             this.emailSearchRes.data.selected = { ...email, ...this.emailBodies[requestedSession], currentTab: this.currentTab };
             this.emailSearchRes.loading = false;
+
+            // setTimeout(() => {
+            //     const openEmailBodyRef = document.getElementById('openEmailRef');
+            //     openEmailBodyRef.onscroll = (evt) => {
+            //         if (openEmailBodyRef.scrollTop > 50) {
+            //             this.minimizeSubject = true;
+            //         } else {
+            //             this.minimizeSubject = false;
+            //         }
+            //     };
+            // }, 100);
         } catch (e) {
             console.error(e);
             this.emailSearchRes.loading = false;
@@ -816,8 +905,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
         this.currentTab = tab;
         this.selectedMails = [];
         this.emailSearchRes.data.selected = false;
-        // this.advancedSearchForm.reset();
-        this.resetForm();
+        // this.resetForm();
         this.doAdvancedSearch();
     }
 
@@ -874,6 +962,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                 channelPrfix: skillConfig.ChannelPrefix,
                 source: skillConfig.Source,
                 columns: skillConfig.Columns
+            },
+            callback: ({ success }) => {
+                if (success) {
+                    this.doAdvancedSearch();
+                }
             }
         };
         this.matDialog.open(AgentSkillListComponent, {
@@ -899,23 +992,43 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
      */
     replyToSelectedEmails(emails: any[]): void {
         let loader;
+        // let quill;
         try {
-            this.replyEditorModal = this.matDialog.open(this.ReplyEditor, {
+            this.replyEditorModal = this.matDialog.open(this.ReplyEditorDialog, {
                 minHeight: '30%'
+            });
+            this.replyEditorModal.afterOpened().subscribe(() => {
+                if (this.ReplyEditor.nativeElement) {
+                    this.quillInstance = new Quill(this.ReplyEditor.nativeElement, QUILL_EDITOR_CONFIG);
+                }
             });
             this.replyEditorModal.afterClosed().subscribe(async (reply = false) => {
                 if (reply) {
                     loader = this.appUiService.showSnackbar('Replying to emails', 'loading');
-                    const routeIds = emails.map((x) => x.RouteId) || [];
+                    const { routeIds, uiIds } = emails.reduce(
+                        (acc, curr) => {
+                            if (curr.RouteId) {
+                                acc.routeIds.push(curr.RouteId);
+                            }
+                            if (curr.uiId) {
+                                acc.uiIds.push(curr.uiId);
+                            }
+                        },
+                        { routeIds: [], uiIds: [] }
+                    );
                     await SDKClient.replyBulkEmailsInQueue({
-                        body: this.replyBody || '',
+                        body: this.quillInstance.root?.innerHTML || '',
+                        // body: this.replyBody || '',
                         routeIdList: routeIds.join(',')
                     });
                     this.selectedMails = [];
+                    if (uiIds.includes(this.emailSearchRes.data.selected.uiId)) {
+                        this.emailSearchRes.data.selected = null;
+                    }
                     this.doAdvancedSearch();
                     loader.dismiss();
                 }
-                this.replyBody = '';
+                // this.replyBody = '';
             });
         } catch (e) {
             console.error(e);
@@ -962,6 +1075,25 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
             global: '',
             listOfMailboxes: 'singteldemo@tetherfi.com'
         });
+    }
+
+    /**
+     * Uelifies the subject
+     * @param subject
+     * @returns
+     */
+    urlify(subject: string): string {
+        if (subject) {
+            return `${urlify(subject)} `;
+        }
+        return 'NA';
+    }
+
+    /**
+     * Selects Emailtemplate
+     */
+    selectEmailTemplate(template: EmailTemplate): void {
+        this.quillInstance.clipboard.dangerouslyPasteHTML(template.BodyHTML);
     }
 }
 

@@ -1,4 +1,7 @@
 workbench-email {
+    mat-chip {
+        padding: 25px 10px !important;
+    }
     .editor-container {
         border: none;
         margin-top: 30px;
@@ -10,14 +13,6 @@ workbench-email {
         overflow: auto;
         box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
     }
-
-    // .tw-list-item {
-    //     // overflow: auto;
-    // }
-
-    // .email-list-groups {
-    //     // max-height: 70%;
-    // }
 
     .mat-form-field.custom .mat-form-field-wrapper {
         padding: 0 !important;
@@ -55,6 +50,10 @@ workbench-email {
         }
     }
 
+    .twd-text-primary-default {
+        color: var(--twd-primary-default) !important;
+    }
+
     .email-tree-invisible {
         display: none;
         // &.ul {
@@ -63,7 +62,7 @@ workbench-email {
     }
 
     mat-nested-tree-node {
-        &.active li {
+        & li.active {
             position: relative;
             overflow: hidden;
             &::before {

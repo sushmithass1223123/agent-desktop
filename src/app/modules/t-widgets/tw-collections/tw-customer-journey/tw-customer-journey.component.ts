@@ -316,7 +316,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         this._tmacEventService
             .getInteractionEvents(['InteractionHistoryReadyEvent'], this.interactionId)
             .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
+            .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
 
         this.customerJourneyTable.tableData.source.filterPredicate = this.createFilter();
     }
@@ -432,7 +432,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         };
         // get history
         this.getInteractionHistory();
-    }
+    };
 
     /**
      * Gets interaction history and sets to table
@@ -656,5 +656,5 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     /**
      * Opens advanced search form inside a modal window
      */
-    openAdvancedSearchModal(): void { }
+    openAdvancedSearchModal(): void {}
 }

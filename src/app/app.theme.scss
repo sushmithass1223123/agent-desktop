@@ -265,7 +265,7 @@ body.theme-default-2 {
         warn: $default-warn-palette
     );
 
-    @include tailwind-core-theme($palettes);
+    @include tailwind-core-theme($palettes, 700);
 
     @include fuse-color-classes($palettes);
 }
@@ -297,7 +297,7 @@ body.theme-teal-red {
         warn: $teal-red-warn-palette
     );
 
-    @include tailwind-core-theme($palettes);
+    @include tailwind-core-theme($palettes, 700);
     @include fuse-color-classes($palettes);
 }
 
@@ -332,7 +332,7 @@ body.theme-default-dark {
         warn: $dark-theme-warn-palette
     );
 
-    @include tailwind-core-theme($palettes);
+    @include tailwind-core-theme($palettes, 700);
     @include fuse-color-classes($palettes);
 }
 
@@ -363,7 +363,7 @@ body.theme-blue-grey-dark {
         warn: $blue-grey-dark-warn-palette
     );
 
-    @include tailwind-core-theme($palettes);
+    @include tailwind-core-theme($palettes, 700);
     @include fuse-color-classes($palettes);
 }
 
@@ -394,6 +394,6 @@ body.theme-pink-grey-dark {
         warn: $pink-grey-dark-warn-palette
     );
 
-    @include tailwind-core-theme($palettes);
+    @include tailwind-core-theme($palettes, 700);
     @include fuse-color-classes($palettes);
 }
