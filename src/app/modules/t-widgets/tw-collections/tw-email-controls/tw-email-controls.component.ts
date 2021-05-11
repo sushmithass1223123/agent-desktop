@@ -481,21 +481,26 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             // show the progress bar
             this._fuseProgressBarService.show();
             // disable the button
-            btn.disabled = true;
+            if (btn) {
+                btn.disabled = true;
+            }
             SDKClient.changeEmailStatus({
                 routeId: currentInteraction.RouteId,
                 sessionId: currentInteraction.SessionId,
                 status: 'Close'
             })
                 .then(() => {
-                    btn.disabled = false;
                     this._fuseProgressBarService.hide();
                     this.closeInteraction(btn);
                 })
                 .catch(() => {
-                    btn.disabled = false;
                     this._fuseProgressBarService.hide();
                     this._appUIService.showSnackbar('Close interaction failed!', 'failure');
+                })
+                .finally(() => {
+                    if (btn) {
+                        btn.disabled = true;
+                    }
                 });
         };
         if (force) {
@@ -507,7 +512,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 if (dialogResult) {
                     closeApiCall();
                 } else {
-                    btn.disabled = false;
+                    if (btn) {
+                        btn.disabled = true;
+                    }
                 }
             });
         }
@@ -521,7 +528,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         // show the progress bar
         this._fuseProgressBarService.show();
         // disable the button
-        btn.disabled = true;
+        if (btn) {
+            btn.disabled = true;
+        }
         SDKClient.closeInteraction(this.interactionId.toString(), null)
             .then((dt: IResponse) => {
                 // hide the progress bar
@@ -534,12 +543,16 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 } else {
                     this._appUIService.showSnackbar('Close interaction failed', 'failure');
                 }
-                btn.disabled = false;
+
             })
             .catch(() => {
                 this._fuseProgressBarService.hide();
                 this._appUIService.showSnackbar('Close interaction failed!', 'failure');
-                btn.disabled = false;
+            })
+            .finally(() => {
+                if (btn) {
+                    btn.disabled = true;
+                }
             });
     }
 
@@ -574,7 +587,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Forward Email
      */
-    forwardEmail(): void {}
+    forwardEmail(): void { }
 
     /**
      * Show reply email form
@@ -602,11 +615,10 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             To: From || '',
             Body: `
             ${preBody} 
-            ${
-                this.domSanitizer.bypassSecurityTrustHtml(Body || '')['changingThisBreaksApplicationSecurity'][
-                    'changingThisBreaksApplicationSecurity'
+            ${this.domSanitizer.bypassSecurityTrustHtml(Body || '')['changingThisBreaksApplicationSecurity'][
+                'changingThisBreaksApplicationSecurity'
                 ]
-            }`,
+                }`,
             Subject: `RE: ${Subject}`,
             Files: []
         };
@@ -816,7 +828,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         // const dialogRef = this._appUIService.showCustomDialog('prompt', 'Enter the comments', 'Reject Email');
         this.rejectEmailDialogRef = this.matDialog.open(this.RejectEmailDialog, {
             panelClass: 'reject-reason-dialog',
-            maxWidth: '60%'
+            maxWidth: '60%',
+            disableClose: true
         });
         this.rejectEmailDialogRef.afterClosed().subscribe(() => {
             const { comment, reasonTags } = this.rejectReason;
@@ -827,20 +840,21 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                     sessionId: currentInteraction.OutSessionID
                 })
                     .then((rejectEmailRes) => {
-                        evt.disabled = false;
                         if (rejectEmailRes.response < 0) {
                             this._appUIService.showSnackbar('Email rejection failed', 'failure');
                         } else {
                             this._appUIService.showSnackbar('Email rejected successfully');
                             this.closeEmail(null, true);
                         }
-                        evt.disabled = true;
                         this._fuseProgressBarService.hide();
                     })
-                    .catch(() => {
+                    .catch((ex) => {
+                        console.error(ex);
                         this._fuseProgressBarService.hide();
-                        this._appUIService.showSnackbar('Error in saving interaction comment', 'failure');
-                        evt.disabled = true;
+                        this._appUIService.showSnackbar('Error in email rejection', 'failure');
+                    })
+                    .finally(() => {
+                        evt.disabled = false;
                     });
             }
             evt.disabled = false;
