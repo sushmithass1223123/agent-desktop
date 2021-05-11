@@ -39,8 +39,9 @@ export class TwWorkBenchService {
     /**
      * Internal service state
      */
-    private _internal$ = {
+    private readonly _internal$ = {
         email: {
+            initialized: false,
             searchParams,
             globalSearchKey: new FormControl(''),
             defaultEmail: new FormControl(''),
@@ -53,9 +54,7 @@ export class TwWorkBenchService {
      */
     readonly globalEmailWorkbenchState$ = this._internal$.email;
 
-    constructor() {
-        this.init();
-    }
+    constructor() {}
 
     /**
      * Service init method
@@ -70,12 +69,16 @@ export class TwWorkBenchService {
     async setMailboxes(): Promise<void> {
         try {
             const res = await SDKClient.getMailboxes('agent');
+            if (res.response) {
+                this._internal$.email.initialized = true;
+            }
             if (res.response.length) {
-                const mailboxes = res.response.map((email) => {
-                    const [mail] = email.split(',');
-                    return mail;
-                });
-                this.globalEmailWorkbenchState$.searchParams.patchValue({ listOfMailboxes: mailboxes.join(',') || '' });
+                const listOfMailboxes =
+                    res.response.map((email) => {
+                        const [mail] = email.split(',');
+                        return mail;
+                    }) || [];
+                this.globalEmailWorkbenchState$.searchParams.patchValue({ listOfMailboxes });
                 // this.globalEmailWorkbenchState$.defaultEmail.setValue(res.response[0]);
                 this.globalEmailWorkbenchState$.availableMailboxes.setValue(res.response);
             }

@@ -2,7 +2,7 @@ const { generateMaterialColors } = require('@tmac/styles/tailwind');
 module.exports = {
     prefix: 'twd-',
     purge: {
-        content: ['./src/*/.{html,ts}']
+        content: ['./src/**/*.{html,ts}']
     },
     darkMode: 'class', // or 'media' or 'class'
     theme: {
@@ -62,7 +62,31 @@ module.exports = {
                 accent: generateMaterialColors('twd-accent'),
                 warn: generateMaterialColors('twd-warn')
             },
+            minHeight: {
+                0: '0',
+                '1/4': '25%',
+                '1/2': '50%',
+                '3/4': '75%',
+                '11/12': '91.66%',
+                full: '100%'
+            },
             maxHeight: {
+                0: '0',
+                '1/4': '25%',
+                '1/2': '50%',
+                '3/4': '75%',
+                '11/12': '91.66%',
+                full: '100%'
+            },
+            minWidth: {
+                0: '0',
+                '1/4': '25%',
+                '1/2': '50%',
+                '3/4': '75%',
+                '11/12': '91.66%',
+                full: '100%'
+            },
+            maxWidth: {
                 0: '0',
                 '1/4': '25%',
                 '1/2': '50%',

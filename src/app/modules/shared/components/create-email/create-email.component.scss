@@ -34,14 +34,28 @@
 create-email {
     height: 100%;
     max-height: 100%;
-    .mat-chip {
+    .twd-min-h-0 {
         min-height: auto !important;
+    }
+    .mat-chip {
         @apply twd-text-xs;
         padding: 15px !important;
+        max-width: 40%;
+    }
+
+    .mat-chip-list-wrapper {
+        width: 100%;
+    }
+
+    .email-editor-container {
+        min-height: 200px;
     }
 
     input {
         border-bottom: 1px solid var(--twd-primary-default) !important;
+        // min-width: 200px !important;
+        // width: auto !important;
+        padding: 4px !important;
     }
     .editor-wrapper {
         height: calc(100% - 50px);

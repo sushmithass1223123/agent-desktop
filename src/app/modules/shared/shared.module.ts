@@ -22,7 +22,8 @@ import {
     SharedWrapperComponent,
     SnackbarComponent,
     WidgetFabComponent,
-    EmailTemplateSelectorComponent
+    EmailTemplateSelectorComponent,
+    MailboxSettingsComponent
 } from './components';
 import { TWChartDirective } from './directives';
 import { MaterialModule } from './material.module';
@@ -52,6 +53,7 @@ const sharedModules = [MaterialModule, FuseSharedModule, LeafletModule, ChartsMo
  * Shared components
  */
 const sharedComponents = [
+    MailboxSettingsComponent,
     ResourceNotFoundComponent,
     EmailTemplateSelectorComponent,
     CustomDialogComponent,

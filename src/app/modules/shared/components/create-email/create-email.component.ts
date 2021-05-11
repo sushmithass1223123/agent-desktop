@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatDialog } from '@angular/material/dialog';
 import { TwEmailTemplatePreviewComponent } from '@modules/t-widgets/tw-collections/tw-email-template-preview/tw-email-template-preview.component';
@@ -8,9 +8,8 @@ import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { EmailTemplate, SDKClient } from '@tmac/sdk';
 import { QUILL_EDITOR_CONFIG } from 'app/constants';
-import { CreateEmailInfo, TwWidgetModel } from 'app/models';
+import { CreateEmailInput, CreateEmailOutput, TwWidgetModel } from 'app/models';
 import { urlify } from 'app/utils';
-import Quill from 'quill';
 import { merge } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
 
@@ -27,7 +26,7 @@ export class CreateEmailComponent implements OnInit, OnDestroy, AfterViewInit {
     /**
      * Send email event emitter
      */
-    @Output() sendEmail = new EventEmitter();
+    @Output() sendEmail = new EventEmitter<CreateEmailOutput>();
     /**
      * Template preview data
      */
@@ -63,7 +62,7 @@ export class CreateEmailComponent implements OnInit, OnDestroy, AfterViewInit {
     /**
      * Email info received from parent
      */
-    @Input() emailInfo?: CreateEmailInfo = null;
+    @Input() emailInfo?: CreateEmailInput = null;
 
     /**
      * A readonly value for from
@@ -75,22 +74,36 @@ export class CreateEmailComponent implements OnInit, OnDestroy, AfterViewInit {
      */
     customFuse$ = this._fuseFacadeService.widgetBgClasses$;
 
+    /**
+     * Controls for email recipients
+     */
     emailRecipientFacade = new FormGroup({
         To: new FormControl(''),
         CC: new FormControl(''),
         BCC: new FormControl('')
     });
 
-    email = {
-        To: this.emailInfo?.To?.split(',') || [],
-        CC: this.emailInfo?.CC?.split(',') || [],
-        BCC: this.emailInfo?.BCC?.split(',') || [],
-        Subject: this.emailInfo?.Subject || '',
-        Body: this.emailInfo?.Body || '',
-        Files: this.emailInfo?.Files || []
+    /**
+     * Email ist
+     */
+    email: CreateEmailOutput = {
+        To: [],
+        CC: [],
+        BCC: [],
+        Subject: '',
+        Body: '',
+        Files: []
     };
 
+    /**
+     * Quill div's ref
+     */
     @ViewChild('quillRef') quillRef: ElementRef<HTMLDivElement>;
+
+    /**
+     * Quill Editor Config
+     */
+    editorConfig = QUILL_EDITOR_CONFIG;
 
     constructor(
         private appUiService: AppUiService,
@@ -103,27 +116,19 @@ export class CreateEmailComponent implements OnInit, OnDestroy, AfterViewInit {
      * Lifecycle hook
      */
     ngOnInit(): void {
-        this.email = {
-            To: this.emailInfo?.To?.split(',') || [],
-            CC: this.emailInfo?.CC?.split(',') || [],
-            BCC: this.emailInfo?.BCC?.split(',') || [],
-            Subject: this.emailInfo?.Subject || '',
-            Body: this.emailInfo?.Body || '',
-            Files: this.emailInfo?.Files || []
-        };
-
-        // this.email = {
-        //     Body: this.emailInfo?.Body || '',
-        //     Files: this.emailInfo?.Files || [],
-        //     ...this.emailRecipientFacade.value
-        // };
-
-        // this.emailRecipientFacade.valueChanges.subscribe((res) => {
-        //     if (res) {
-        //         this.email = { ...this.email, ...res };
-        //     }
-        // });
-
+        if (this.emailInfo?.To) {
+            this.email.To = this.emailInfo?.To.split(',');
+        }
+        if (this.emailInfo?.CC) {
+            this.email.CC = this.emailInfo?.CC.split(',');
+        }
+        if (this.emailInfo?.BCC) {
+            this.email.BCC = this.emailInfo?.BCC.split(',');
+        }
+        this.email.Subject = this.emailInfo?.Subject || '';
+        this.email.Body = this.emailInfo?.Body || '';
+        this.email.Files = this.emailInfo?.Files || [];
+        const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         this.addUserSuggestions();
         merge(
             this.emailRecipientFacade.controls.To.valueChanges,
@@ -137,7 +142,7 @@ export class CreateEmailComponent implements OnInit, OnDestroy, AfterViewInit {
             .subscribe((val) => {
                 if (val) {
                     this.suggestedUsers = this.allUsers.filter((x) => x.toLowerCase().includes(val));
-                    if (!this.suggestedUsers.length) {
+                    if (!this.suggestedUsers.length && emailRegex.test(val)) {
                         this.suggestedUsers = [val];
                     }
                 } else {
@@ -150,13 +155,14 @@ export class CreateEmailComponent implements OnInit, OnDestroy, AfterViewInit {
      * Lifecycle hook
      */
     ngAfterViewInit(): void {
-        if (this.quillRef.nativeElement) {
-            const quill = new Quill(this.quillRef.nativeElement, QUILL_EDITOR_CONFIG);
-            quill.root.innerHTML = this.email.Body;
-            // quill.on('text-change', () => {
-            //     this.email.Body = quill.root.innerHTML;
-            // });
-        }
+        // if (this.quillRef.nativeElement) {
+        //     const quill = new Quill(this.quillRef.nativeElement, QUILL_EDITOR_CONFIG);
+        //     quill.root.innerHTML = '';
+        //     quill.clipboard.dangerouslyPasteHTML(0, this.email.Body);
+        // quill.on('text-change', () => {
+        //     this.email.Body = quill.root.innerHTML;
+        // });
+        // }
     }
 
     /**
@@ -289,7 +295,7 @@ export class CreateEmailComponent implements OnInit, OnDestroy, AfterViewInit {
             this.aotService.addWidget(widget);
             this.templatePreview.aots.push(widget.ID);
         } else {
-            this.matDialog.open(TwEmailTemplatePreviewComponent, { data, minWidth: '40%', panelClass: 'email-template-dialog' });
+            this.matDialog.open(TwEmailTemplatePreviewComponent, { data, minWidth: '40%', panelClass: `email-template-dialog --${data.info}` });
         }
     }
     /**
@@ -309,7 +315,7 @@ export class CreateEmailComponent implements OnInit, OnDestroy, AfterViewInit {
         if (!this.emailRecipientFacade.valid) {
             return;
         }
-        this.sendEmail.emit({ ...this.emailRecipientFacade.value, Files: this.email.Files });
+        this.sendEmail.emit(this.email);
     }
 
     /**
