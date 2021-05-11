@@ -217,20 +217,29 @@
                                 >
                                     <mat-icon> filter_frames </mat-icon>
                                 </button>
-                                <button class="w-32" mat-icon-button matTooltip="History" (click)="switchMaximizedViewMode('Actions', element)">
-                                    <mat-icon> history </mat-icon>
+                                <button class="w-32" mat-icon-button matTooltip="Actions" (click)="switchMaximizedViewMode('Actions', element)">
+                                    <mat-icon> list_alt </mat-icon>
                                 </button>
-                                <button class="w-32" mat-icon-button matTooltip="Notes" (click)="switchMaximizedViewMode('Notes', element)">
+                                <button class="w-32" mat-icon-button matTooltip="Comments" (click)="switchMaximizedViewMode('Comments', element)">
                                     <mat-icon> notes </mat-icon>
                                 </button>
                                 <button
                                     class="w-32"
                                     *ngIf="(element.Channel || '' | lowercase).includes('chat')"
                                     mat-icon-button
-                                    matTooltip="Transcript"
-                                    (click)="switchMaximizedViewMode('Transcript', element)"
+                                    matTooltip="Transcripts"
+                                    (click)="switchMaximizedViewMode('Transcripts', element)"
                                 >
                                     <mat-icon> chat </mat-icon>
+                                </button>
+                                <button
+                                    class="w-32"
+                                    *ngIf="(element.Channel || '' | lowercase).includes('email')"
+                                    mat-icon-button
+                                    matTooltip="Show Email"
+                                    (click)="switchMaximizedViewMode('Email Preview', element)"
+                                >
+                                    <mat-icon> email </mat-icon>
                                 </button>
                             </div>
                         </mat-cell>
@@ -239,9 +248,10 @@
                     <mat-header-row *matHeaderRowDef="customerJourneyTable.tableData.columns; sticky: true"></mat-header-row>
                     <mat-row
                         class="selectable"
-                        [ngClass]="{ selected: !!customerJourneyTable.tableData.selection.isSelected(row) }"
                         *matRowDef="let row; columns: customerJourneyTable.tableData.columns"
-                    ></mat-row>
+                        [ngClass]="{ selected: isRowSelected(row) }"
+                    >
+                    </mat-row>
                 </mat-table>
 
                 <div fxLayout fxLayoutAlign="space-between">
@@ -334,7 +344,7 @@
                 class="spread animate__animated animate__slideInUp animate__faster"
                 [ngClass]="(customFuse.anchor?.content || customFuse.widget?.content) + (mode ? ' h-65-p' : '')"
             >
-                <div class="mat-title px-20 py-12" fxLayout fxLayoutAlign="space-between">
+                <div class="px-20 pt-12 twd-text-xl twd-font-bold" fxLayout fxLayoutAlign="space-between">
                     <span>
                         {{ mode }}
                     </span>
@@ -342,7 +352,7 @@
                         <mat-icon> close </mat-icon>
                     </button>
                 </div>
-                <ng-container *ngIf="mode === 'Notes'">
+                <ng-container *ngIf="mode === 'Comments'">
                     <ng-container *ngIf="interactionNotesReq.data | async as iNotes">
                         <div class="custom-scroll-adjust px-12 pb-12" *ngIf="!interactionNotesReq.error && !interactionNotesReq.loading">
                             <p *ngIf="!iNotes.length" class="text-center mat-headline mt-20">No notes available</p>
@@ -400,7 +410,7 @@
                     ></iframe>
                 </ng-container>
 
-                <ng-container *ngIf="mode === 'Transcript'">
+                <ng-container *ngIf="mode === 'Transcripts'">
                     <ng-container
                         *ngIf="interactionTranscripts && customerJourneyTable.tableData.selection?.selected[0]?.SessionID as selectedSessionId"
                     >
@@ -484,6 +494,117 @@
                             </div>
                         </ng-container>
                     </ng-container>
+                </ng-container>
+
+                <ng-container *ngIf="mode === 'Email Preview'">
+                    <div *ngIf="emailThreadReq.data as emailInfo" class="twd-flex-1 twd-h-full twd-z-10 twd-relative">
+                        <div class="twd-absolute twd-w-full twd-h-full twd-top-0 twd-left-0 twd-overflow-hidden twd-flex twd-flex-col">
+                            <div class="twd-max-h-1/2 twd-overflow-y-auto twd-overflow-x-hidden twd-pb-3 twd-z-10 twd-shadow-md twd-px-4">
+                                <div id="rejectReason" *ngIf="emailInfo.RejectReason">
+                                    <div class="twd-bg-red-500 twd-p-1 twd-text-xl">
+                                        [ REJECTED ] {{ emailInfo.RejectReason.reasonTags && ':' + emailInfo.RejectReason.reasonTags }}
+                                    </div>
+                                    <div [ngClass]="{ 'twd-truncate': !smallEmailDescription }">
+                                        Description : {{ emailInfo.RejectReason.comment }}
+                                    </div>
+                                    <button mat-button color="primary" class="twd-mb-4" (click)="smallEmailDescription = !smallEmailDescription">
+                                        {{ smallEmailDescription ? 'Show More' : 'Show less' }}
+                                    </button>
+                                </div>
+
+                                <div id="subject" class="twd-text-xl twd-mb-4 twd-truncate" [innerHtml]="emailInfo.Subject"></div>
+
+                                <div id="emailInfo" class="twd-grid twd-grid-cols-2 twd-gap-2 twd-justify-between">
+                                    <span matTooltip="Intent">
+                                        <mat-icon>grading</mat-icon> <span class="text-bold">{{ intent || 'NA' }}</span>
+                                    </span>
+
+                                    <span class="twd-text-right" matTooltip="Sentiment">
+                                        <mat-icon>person</mat-icon>
+                                        <img *ngIf="sentiment === 'Positive'" class="w-24" src="assets/images/vectors/positive-score.svg" alt="" />
+                                        <img *ngIf="sentiment === 'Neutral'" class="w-24" src="assets/images/vectors/neutral-score.svg" alt="" />
+                                        <img *ngIf="sentiment === 'Negative'" class="w-24" src="assets/images/vectors/negative-score.svg" alt="" />
+                                        <ng-container *ngIf="sentiment === 'NA'"> NA </ng-container>
+                                    </span>
+
+                                    <span class="twd-col-span-2 text-bold twd-flex twd-items-center">
+                                        <mat-icon matTooltip="Mailbox">list_alt</mat-icon> {{ emailInfo.Email_Mailbox || 'NA' }}
+                                    </span>
+
+                                    <div>
+                                        <p class="my-4">{{ emailInfo.AgentName }} ({{ emailInfo.From }})</p>
+                                        <!-- <a
+                                        *ngIf="OutboxReasons.includes(emailInfo.RouteReason)"
+                                        class="twd-cursor-pointer"
+                                        (click)="switchEmailView()"
+                                    >
+                                        {{ emailInView === 'original' ? 'View Checker Email' : 'View original' }}
+                                    </a> -->
+                                    </div>
+                                    <div class="twd-text-right">
+                                        <span>{{ emailInfo.CreatedTime | date: 'mediumDate' }}</span>
+                                        <br />
+                                        <span>{{ emailInfo.CreatedTime | date: 'shortTime' }}</span>
+                                    </div>
+                                </div>
+
+                                <div
+                                    id="attachmentList"
+                                    class="twd-my-3 twd-bg-primary-100 twd-rounded-2xl twd-overflow-hidden twd-text-xs"
+                                    *ngIf="emailInfo.AttachmetList && emailInfo.AttachmetList.length && emailInfo.AttachmetList as attachments"
+                                >
+                                    <div
+                                        (click)="showAttachments = !showAttachments"
+                                        matRipple
+                                        class="twd-text-white twd-flex twd-cursor-pointer twd-items-center twd-font-extrabold twd-px-2"
+                                        [ngClass]="{ 'twd-bg-primary-200 twd-pb-1': showAttachments }"
+                                    >
+                                        <ng-container *ngIf="showAttachments"> <mat-icon>expand_less</mat-icon> Hide attachments </ng-container>
+                                        <ng-container *ngIf="!showAttachments">
+                                            <mat-icon class="twd-mr-1">info</mat-icon> Show {{ attachments.length }} attachments
+                                        </ng-container>
+                                    </div>
+                                    <div
+                                        class="twd-w-11/12 twd-mx-auto twd-overflow-hidden twd-transition-all"
+                                        [ngClass]="{ 'twd-h-0 twd-opacity-0': !showAttachments }"
+                                    >
+                                        <div class="twd-py-2">
+                                            <mat-chip-list #chipList aria-label="file selection">
+                                                <mat-chip *ngFor="let file of attachments">
+                                                    <div><mat-icon>attach_file</mat-icon></div>
+                                                    <div class="twd-ml-1 twd-w-10/12">
+                                                        <div class="m-0 twd-truncate twd-w-full twd-text-xs">{{ file.Name }}</div>
+                                                        <a target="_blank" [href]="file.URL">
+                                                            <small>View file</small>
+                                                        </a>
+                                                    </div>
+                                                </mat-chip>
+                                            </mat-chip-list>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="twd-relative twd-flex-1 twd-overflow-auto">
+                                <div
+                                    *ngIf="!emailThreadReq.data.loading && !emailThreadReq.data.error"
+                                    class="twd-absolute twd-top-0 twd-left-0 twd-w-full twd-h-full twd-pt-1 twd-p-2"
+                                >
+                                    <div [innerHtml]="emailInfo.Body"></div>
+                                </div>
+
+                                <div class="twd-h-3/4 twd-w-full twd-flex twd-items-center twd-justify-center">
+                                    <ng-container *ngIf="emailThreadReq.data.loading">
+                                        <mat-spinner></mat-spinner>
+                                    </ng-container>
+                                    <div *ngIf="emailThreadReq.data.error" class="twd-text-center">
+                                        <p>Something went wrong</p>
+                                        <button mat-raised-button class="twd-mx-auto" color="primary" (click)="showEmailThread()">Retry</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </ng-container>
             </div>
             <!-- </div> -->

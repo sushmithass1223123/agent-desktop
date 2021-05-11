@@ -65,63 +65,6 @@
             <mat-icon>phonelink</mat-icon>
             <span>Webphone</span>
         </button>
-
-        <button mat-menu-item class="twd-flex twd-items-center twd-gap-x-1" (click)="openEmailSelectorDialog(emailSelector)">
-            <span
-                *ngIf="!mailboxes.form.controls.default.value"
-                class="twd-animate-ping twd-absolute twd-inline-flex twd-h-1.5 twd-w-1.5 twd-rounded-full twd-bg-primary-default twd-opacity-75"
-            ></span>
-            <mat-icon>mail</mat-icon>
-            <span> {{ mailboxes.form.controls.default.value || 'Select a mailbox' }} </span>
-            <mat-icon>chevron_right</mat-icon>
-
-            <ng-template #emailSelector>
-                <div class="twd-text-xl twd-flex twd-items-center twd-gap-2 twd-font-bold twd-mb-4">
-                    <mat-icon>settings</mat-icon>
-                    Email Settings
-                </div>
-                <!-- <div class="twd-flex twd-flex-col twd-h-full"> -->
-                <div class="twd-grid twd-grid-cols-1" [formGroup]="mailboxes.form">
-                    <mat-form-field appearance="outline">
-                        <mat-select placeholder="Send Email As" formControlName="default">
-                            <mat-option *ngFor="let mailbox of mailboxes.available" [value]="mailbox">{{ mailbox }}</mat-option>
-                        </mat-select>
-                        <mat-error *ngIf="mailboxes.form.controls.default.errors" class="twd-text-red-400 twd-text-xs twd-font-bold">
-                            Please select a sender account
-                        </mat-error>
-                    </mat-form-field>
-
-                    <mat-form-field appearance="outline">
-                        <mat-select placeholder="Receive emails for" formControlName="selected" multiple>
-                            <mat-select-trigger>
-                                <ng-container *ngIf="mailboxes.form.controls.selected?.value as selectedMailboxes">
-                                    {{ selectedMailboxes ? selectedMailboxes[0] : '' }}
-                                    <span *ngIf="selectedMailboxes?.length > 1">
-                                        (+{{ selectedMailboxes.length - 1 }} {{ selectedMailboxes?.length === 2 ? 'other' : 'others' }})
-                                    </span>
-                                </ng-container>
-                            </mat-select-trigger>
-                            <mat-option *ngFor="let mailbox of mailboxes.available" [value]="mailbox">{{ mailbox }}</mat-option>
-                        </mat-select>
-                    </mat-form-field>
-
-                    <button
-                        mat-raised-button
-                        color="primary"
-                        [matTooltip]="mailboxes.form.controls.default.errors ? 'Please select a sender sccount' : ''"
-                        [disabled]="mailboxes.form.controls.default.errors"
-                        (click)="composeEmail()"
-                    >
-                        Compose New Email
-                    </button>
-                </div>
-                <!-- <div class="twd-flex-1">
-                        <create-email (sendEmail)="sendEmail($event)" [from]="mailboxes.form.controls.default?.value"> </create-email>
-                    </div> -->
-
-                <!-- </div> -->
-            </ng-template>
-        </button>
     </mat-menu>
 
     <div

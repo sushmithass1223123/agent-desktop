@@ -111,4 +111,4 @@ const collectionComponents = [
     imports: [SharedModule, TwWrapperModule, TwChatControlsModule, TwWorkbenchPanelModule, TwCalendarModule],
     exports: collectionComponents
 })
-export class TwCollectionsModule { }
+export class TwCollectionsModule {}

@@ -15,12 +15,12 @@ import { IGetInteractionHistory, InteractionAction, InteractionHistory, Interact
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { ChatTranscripts, IWidget, ResData } from 'app/interfaces';
-import { orderBy, sortBy } from 'lodash';
+import { sortBy } from 'lodash';
 import * as moment from 'moment';
 import { from, Observable, of } from 'rxjs';
 import { catchError, filter, map, share, takeUntil, tap } from 'rxjs/operators';
 
-type Mode = 'Session History' | 'Notes' | 'Actions' | 'Transcript' | null;
+type Mode = 'Session History' | 'Comments' | 'Actions' | 'Transcripts' | 'Email Preview' | null;
 
 /**
  * Customer journey component
@@ -84,6 +84,15 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         error: false,
         loading: false,
         data: from([])
+    };
+
+    /**
+     * Interaction notes ref
+     */
+    emailThreadReq: ResData<Observable<string[]>> = {
+        error: false,
+        loading: false,
+        data: null
     };
 
     /**
@@ -240,6 +249,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         }
     };
 
+    showAttachments = false;
+    smallEmailDescription = true;
     /**
      *
      * @param _fuseFacadeService
@@ -260,7 +271,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     ) {
         super();
         this.customerJourneyTable = {
-            loading: true,
+            loading: false,
             iframeUrl: '',
             lastId: '',
             tableData: {
@@ -419,7 +430,6 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         if (this.interactionId !== evt.InteractionID) {
             return;
         }
-
         const noOfRecords = this.customerJourneyTable.tableData.source.paginator?.pageSize.toString() || this.data.Data.NoOfRecords;
         // assign the history params
         this.historyParams = {
@@ -443,6 +453,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         //     lastId ? { ...this.historyParams, lastId, phone: '96975347' } : { ...this.historyParams, phone: '96975347' },
         //     null
         // )
+        this.customerJourneyTable.loading = true;
         SDKClient.getInteractionHistory(lastId ? { ...this.historyParams, lastId } : this.historyParams, null)
             .then((res) => {
                 const tableData = {};
@@ -590,7 +601,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             SDKClient.getInteractionData({
                 count: 10,
                 fromDate: '',
-                interactionId: record.ID,
+                interactionId: '',
                 sessionId: record.SessionID,
                 toDate: '',
                 agentId: record.AgentID
@@ -608,6 +619,42 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     }
 
     /**
+     * Shows email thread for the session
+     * @param record
+     */
+    public async showEmailThread(interaction?: InteractionHistory): Promise<void> {
+        if (!interaction) {
+            interaction = this.customerJourneyTable.tableData.selection.selected[0];
+        }
+        // const fetchFromOutbox = [...OUTBOX_REASONS, ...DRAFT_REASONS].includes(interaction.);
+        // const requestedSession = fetchFromOutbox ? interaction.OutSessionID : interaction.SessionId;
+        this.emailThreadReq.loading = true;
+        const fetchFromOutbox = interaction.Direction === 'Out';
+        const onSuccess = (res) => {
+            console.log('########################', res);
+            this.emailThreadReq.data = res.response;
+            this.emailThreadReq.loading = false;
+            this.emailThreadReq.error = false;
+        };
+        const onFailure = (err) => {
+            console.error(err);
+            this.emailThreadReq.loading = false;
+            this.emailThreadReq.error = true;
+            this.emailThreadReq.data = err;
+        };
+
+        if (fetchFromOutbox) {
+            SDKClient.getOutboxEmail(interaction.SessionID)
+                .then((res) => onSuccess(res))
+                .catch((err) => onFailure(err));
+        } else {
+            SDKClient.getInboxEmail(interaction.SessionID)
+                .then((res) => onSuccess(res))
+                .catch((err) => onFailure(err));
+        }
+    }
+
+    /**
      * Switches Maximized View
      * @param {Mode} mode
      */
@@ -618,7 +665,9 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             this.wrapperComponent.maximize();
         }
         if (this.customerJourneyTable.tableData.selection?.selected[0]?.ID !== row.ID) {
-            this.customerJourneyTable.tableData.selection.toggle(row);
+            setTimeout(() => {
+                this.customerJourneyTable.tableData.selection.toggle(row);
+            }, 0);
         }
         switch (mode) {
             case 'Session History': {
@@ -631,14 +680,18 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 this.getSessionActions(row.SessionID);
                 break;
             }
-            case 'Transcript': {
+            case 'Transcripts': {
                 // if (typeof this.interactionTranscripts === 'string') {
                 //     this.interactionTranscripts = JSON.parse(this.interactionTranscripts);
                 // }
                 break;
             }
-            case 'Notes': {
+            case 'Comments': {
                 this.showInteractionData(row);
+                break;
+            }
+            case 'Email Preview': {
+                this.showEmailThread(row);
                 break;
             }
         }
@@ -657,4 +710,14 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      * Opens advanced search form inside a modal window
      */
     openAdvancedSearchModal(): void {}
+
+    /**
+     * Is row selected
+     * @param row
+     * @returns
+     */
+    isRowSelected(row: any): boolean {
+        const selected = this.customerJourneyTable.tableData.selection.isSelected(row);
+        return selected;
+    }
 }

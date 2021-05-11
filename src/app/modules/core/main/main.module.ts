@@ -13,12 +13,7 @@ import { MainComponent } from './main.component';
 
 @NgModule({
     declarations: [MainComponent],
-    providers: [
-        AOTWidgetService,
-        AppUiService,
-        AgentFeaturesService,
-        InteractionManagerService
-    ],
+    providers: [AOTWidgetService, AppUiService, AgentFeaturesService, InteractionManagerService],
     imports: [
         // Fuse modules
         FuseProgressBarModule,
@@ -31,4 +26,4 @@ import { MainComponent } from './main.component';
         TWidgetsModule
     ]
 })
-export class MainModule { }
+export class MainModule {}

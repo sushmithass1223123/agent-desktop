@@ -31,7 +31,7 @@
                 </ng-container>
             </div>
             <div
-                class="twd-h-full twd-flex-1 twd-flex twd-flex-col twd-shadow-md twd-rounded-3xl twd-p-3"
+                class="twd-h-full twd-flex-1 twd-flex twd-flex-col twd-shadow-md twd-rounded-3xl twd-p-3 twd-overflow-y-auto"
                 [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
             >
                 <div class="twd-flex twd-gap-3">
@@ -44,6 +44,17 @@
                     >
                         <mat-icon>comment</mat-icon>
                     </button>
+                    <button
+                        *ngIf="currentInteraction.EventName === 'OutgoingEmailEvent'"
+                        mat-raised-button
+                        class="border-radius-20"
+                        color="accent"
+                        (click)="closeInteraction($event)"
+                        matTooltip="Close"
+                    >
+                        Close
+                    </button>
+
                     <ng-container *ngIf="OutboxReasons.includes(currentInteraction.RouteReason)">
                         <button mat-raised-button class="border-radius-20" (click)="sendEmailAsChecker(approveBtn)" color="primary" #approveBtn>
                             Approve
@@ -126,7 +137,7 @@
                                         class="twd-cursor-pointer"
                                         (click)="switchEmailView()"
                                     >
-                                        {{ viewingEmail === 'original' ? 'View Checker Email' : 'View original' }}
+                                        {{ emailInView === 'original' ? 'View Checker Email' : 'View original' }}
                                     </a>
                                 </div>
                                 <div class="twd-text-right">

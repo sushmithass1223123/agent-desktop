@@ -119,7 +119,7 @@
                         [cdkConnectedOverlayPositions]="[{ originX: 'end', originY: 'bottom', overlayX: 'end', overlayY: 'top' }]"
                     >
                         <div class="advanced-search-form mat-elevation-z2 border-radius-20">
-                            <p class="text-center text-bold">Advanced Search</p>
+                            <p class="text-center text-bold twd-pt-8">Advanced Search</p>
                             <form
                                 *ngIf="currentTab === 'queue'"
                                 [formGroup]="advancedSearchForm"
@@ -129,71 +129,47 @@
                                 fxLayout="row wrap"
                                 fxLayoutGap="2%"
                             >
-                                <mat-form-field class="form-field custom with-border" fxFlex="100" appearance="outline">
-                                    <input matInput formControlName="email" type="text" placeholder="Email" [readonly]="globalSearchControl.value" />
+                                <mat-form-field class="twd-text-sm" fxFlex="100" appearance="outline">
+                                    <mat-label>Email</mat-label>
+                                    <input matInput formControlName="email" type="text" [readonly]="globalSearchControl.value" />
                                 </mat-form-field>
 
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
+                                <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                    <mat-label> From Data </mat-label>
                                     <input
                                         matInput
                                         formControlName="fromDate"
                                         [matDatepicker]="fromDatePicker"
-                                        placeholder="From Data"
                                         [readonly]="globalSearchControl.value"
                                     />
                                     <mat-datepicker-toggle matSuffix [for]="fromDatePicker"></mat-datepicker-toggle>
                                     <mat-datepicker #fromDatePicker></mat-datepicker>
                                 </mat-form-field>
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="fromTime"
-                                        type="time"
-                                        placeholder="From Time"
-                                        [readonly]="globalSearchControl.value"
-                                    />
+                                <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                    <mat-label>From Time</mat-label>
+                                    <input matInput formControlName="fromTime" type="time" [readonly]="globalSearchControl.value" />
                                 </mat-form-field>
 
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="toDate"
-                                        [matDatepicker]="toDatePicker"
-                                        placeholder="To Date"
-                                        [readonly]="globalSearchControl.value"
-                                    />
+                                <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                    <mat-label>To Date </mat-label>
+                                    <input matInput formControlName="toDate" [matDatepicker]="toDatePicker" [readonly]="globalSearchControl.value" />
                                     <mat-datepicker-toggle matSuffix [for]="toDatePicker"></mat-datepicker-toggle>
                                     <mat-datepicker #toDatePicker></mat-datepicker>
                                 </mat-form-field>
 
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="toTime"
-                                        type="time"
-                                        placeholder="To Time"
-                                        [readonly]="globalSearchControl.value"
-                                    />
+                                <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                    <mat-label>To Time </mat-label>
+                                    <input matInput formControlName="toTime" type="time" [readonly]="globalSearchControl.value" />
                                     <!-- <span class="btn-time"> <mat-icon>access_time</mat-icon> </span> -->
                                 </mat-form-field>
 
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="subject"
-                                        type="text"
-                                        placeholder="Subject"
-                                        [readonly]="globalSearchControl.value"
-                                    />
+                                <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                    <mat-label>Subject </mat-label>
+                                    <input matInput formControlName="subject" type="text" [readonly]="globalSearchControl.value" />
                                 </mat-form-field>
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="content"
-                                        type="text"
-                                        placeholder="Content"
-                                        [readonly]="globalSearchControl.value"
-                                    />
+                                <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                    <mat-label>Content </mat-label>
+                                    <input matInput formControlName="content" type="text" [readonly]="globalSearchControl.value" />
                                 </mat-form-field>
                                 <button mat-raised-button fxFlex="48" class="adv-search-btn h-40 mb-8 border-radius-20">Search</button>
                                 <button
@@ -216,84 +192,55 @@
                                 fxLayout="row wrap"
                                 fxLayoutGap="2%"
                             >
-                                <mat-form-field class="form-field custom with-border" fxFlex="100" appearance="outline">
-                                    <input matInput formControlName="email" type="text" placeholder="Email" [readonly]="globalSearchControl.value" />
+                                <mat-form-field class="twd-text-sm" fxFlex="100" appearance="outline">
+                                    <mat-label> Email </mat-label>
+                                    <input matInput formControlName="email" type="text" [readonly]="globalSearchControl.value" />
                                 </mat-form-field>
 
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
+                                <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                    <mat-label> From Data </mat-label>
                                     <input
                                         matInput
                                         formControlName="fromDate"
                                         [matDatepicker]="fromDatePicker"
-                                        placeholder="From Data"
                                         [readonly]="globalSearchControl.value"
                                     />
                                     <mat-datepicker-toggle matSuffix [for]="fromDatePicker"></mat-datepicker-toggle>
                                     <mat-datepicker #fromDatePicker></mat-datepicker>
                                 </mat-form-field>
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="fromTime"
-                                        type="time"
-                                        placeholder="From Time"
-                                        [readonly]="globalSearchControl.value"
-                                    />
+                                <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                    <mat-label> From Time </mat-label>
+                                    <input matInput formControlName="fromTime" type="time" [readonly]="globalSearchControl.value" />
                                     <!-- <span class="btn-time"> <mat-icon>access_time</mat-icon> </span> -->
                                 </mat-form-field>
 
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="toDate"
-                                        [matDatepicker]="toDatePicker"
-                                        placeholder="To Date"
-                                        [readonly]="globalSearchControl.value"
-                                    />
+                                <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                    <mat-label> To Date </mat-label>
+                                    <input matInput formControlName="toDate" [matDatepicker]="toDatePicker" [readonly]="globalSearchControl.value" />
                                     <mat-datepicker-toggle matSuffix [for]="toDatePicker"></mat-datepicker-toggle>
                                     <mat-datepicker #toDatePicker></mat-datepicker>
                                 </mat-form-field>
 
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="toTime"
-                                        type="time"
-                                        placeholder="To Time"
-                                        [readonly]="globalSearchControl.value"
-                                    />
+                                <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                    <mat-label> To Time </mat-label>
+                                    <input matInput formControlName="toTime" type="time" [readonly]="globalSearchControl.value" />
                                     <!-- <span class="btn-time"> <mat-icon>access_time</mat-icon> </span> -->
                                 </mat-form-field>
 
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="subject"
-                                        type="text"
-                                        placeholder="Subject"
-                                        [readonly]="globalSearchControl.value"
-                                    />
+                                <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                    <mat-label> Subject </mat-label>
+                                    <input matInput formControlName="subject" type="text" [readonly]="globalSearchControl.value" />
                                 </mat-form-field>
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="content"
-                                        type="text"
-                                        placeholder="Content"
-                                        [readonly]="globalSearchControl.value"
-                                    />
+                                <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                    <mat-label> Content </mat-label>
+                                    <input matInput formControlName="content" type="text" [readonly]="globalSearchControl.value" />
                                 </mat-form-field>
 
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="inSessionid"
-                                        type="text"
-                                        placeholder="In session Id"
-                                        [readonly]="globalSearchControl.value"
-                                    />
+                                <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                    <mat-label> Insession Id </mat-label>
+                                    <input matInput formControlName="inSessionid" type="text" [readonly]="globalSearchControl.value" />
                                 </mat-form-field>
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
+                                <!-- <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
                                     <input
                                         matInput
                                         formControlName="listOfMailboxes"
@@ -301,6 +248,21 @@
                                         placeholder="Mailbox"
                                         [readonly]="globalSearchControl.value"
                                     />
+                                </mat-form-field> -->
+
+                                <mat-form-field fxFlex="48" appearance="outline" class="twd-text-sm">
+                                    <mat-label>List of mailboxes</mat-label>
+                                    <mat-select formControlName="listOfMailboxes" multiple [readonly]="globalSearchControl.value">
+                                        <mat-select-trigger>
+                                            <ng-container *ngIf="advancedSearchForm.controls.listOfMailboxes?.value as selectedMailboxes">
+                                                {{ selectedMailboxes ? selectedMailboxes[0] : '' }}
+                                                <span *ngIf="selectedMailboxes?.length > 1">
+                                                    (+{{ selectedMailboxes.length - 1 }} {{ selectedMailboxes?.length === 2 ? 'other' : 'others' }})
+                                                </span>
+                                            </ng-container>
+                                        </mat-select-trigger>
+                                        <mat-option *ngFor="let mailbox of availableMailboxes" [value]="mailbox">{{ mailbox }}</mat-option>
+                                    </mat-select>
                                 </mat-form-field>
 
                                 <button mat-raised-button fxFlex="48" class="adv-search-btn h-40 mb-8 border-radius-20">Search</button>
@@ -324,105 +286,66 @@
                                 fxLayout="row wrap"
                                 fxLayoutGap="2%"
                             >
-                                <!-- <mat-form-field class="form-field custom with-border" fxFlex="100" appearance="outline">
+                                <!-- <mat-form-field class="twd-text-sm" fxFlex="100" appearance="outline">
                             <input matInput type="text" placeholder="Search" [formControl]="globalSearchControl" />
                         </mat-form-field> -->
-                                <mat-form-field class="form-field custom with-border" fxFlex="100" appearance="outline">
-                                    <input matInput formControlName="email" type="text" placeholder="Email" [readonly]="globalSearchControl.value" />
+                                <mat-form-field class="twd-text-sm" fxFlex="100" appearance="outline">
+                                    <mat-label> Email </mat-label>
+                                    <input matInput formControlName="email" type="text" [readonly]="globalSearchControl.value" />
                                 </mat-form-field>
 
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
+                                <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                    <mat-label> From Data </mat-label>
                                     <input
                                         matInput
                                         formControlName="fromDate"
                                         [matDatepicker]="fromDatePicker"
-                                        placeholder="From Data"
                                         [readonly]="globalSearchControl.value"
                                     />
                                     <mat-datepicker-toggle matSuffix [for]="fromDatePicker"></mat-datepicker-toggle>
                                     <mat-datepicker #fromDatePicker></mat-datepicker>
                                 </mat-form-field>
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="fromTime"
-                                        type="time"
-                                        placeholder="From Time"
-                                        [readonly]="globalSearchControl.value"
-                                    />
+                                <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                    <mat-label> From Time </mat-label>
+                                    <input matInput formControlName="fromTime" type="time" [readonly]="globalSearchControl.value" />
                                     <!-- <span class="btn-time"> <mat-icon>access_time</mat-icon> </span> -->
                                 </mat-form-field>
 
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="toDate"
-                                        [matDatepicker]="toDatePicker"
-                                        placeholder="To Date"
-                                        [readonly]="globalSearchControl.value"
-                                    />
+                                <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                    <mat-label> To Date </mat-label>
+                                    <input matInput formControlName="toDate" [matDatepicker]="toDatePicker" [readonly]="globalSearchControl.value" />
                                     <mat-datepicker-toggle matSuffix [for]="toDatePicker"></mat-datepicker-toggle>
                                     <mat-datepicker #toDatePicker></mat-datepicker>
                                 </mat-form-field>
 
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="toTime"
-                                        type="time"
-                                        placeholder="To Time"
-                                        [readonly]="globalSearchControl.value"
-                                    />
+                                <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                    <mat-label> To Time </mat-label>
+                                    <input matInput formControlName="toTime" type="time" [readonly]="globalSearchControl.value" />
                                     <!-- <span class="btn-time"> <mat-icon>access_time</mat-icon> </span> -->
                                 </mat-form-field>
 
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="subject"
-                                        type="text"
-                                        placeholder="Subject"
-                                        [readonly]="globalSearchControl.value"
-                                    />
+                                <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                    <mat-label> Subject </mat-label>
+                                    <input matInput formControlName="subject" type="text" [readonly]="globalSearchControl.value" />
                                 </mat-form-field>
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="content"
-                                        type="text"
-                                        placeholder="Content"
-                                        [readonly]="globalSearchControl.value"
-                                    />
+                                <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                    <mat-label> Content </mat-label>
+                                    <input matInput formControlName="content" type="text" [readonly]="globalSearchControl.value" />
                                 </mat-form-field>
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="deviceid"
-                                        type="text"
-                                        placeholder="Device Id"
-                                        [readonly]="globalSearchControl.value"
-                                    />
+                                <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                    <mat-label> Device Id </mat-label>
+                                    <input matInput formControlName="deviceid" type="text" [readonly]="globalSearchControl.value" />
                                 </mat-form-field>
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="assignedTo"
-                                        type="text"
-                                        placeholder="Assigned To"
-                                        [readonly]="globalSearchControl.value"
-                                    />
+                                <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                    <mat-label> Assigned To </mat-label>
+                                    <input matInput formControlName="assignedTo" type="text" [readonly]="globalSearchControl.value" />
                                 </mat-form-field>
 
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="sesisonid"
-                                        type="text"
-                                        placeholder="Session Id"
-                                        [readonly]="globalSearchControl.value"
-                                    />
+                                <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                    <mat-label> Session Id </mat-label>
+                                    <input matInput formControlName="sesisonid" type="text" [readonly]="globalSearchControl.value" />
                                 </mat-form-field>
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
+                                <!-- <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
                                     <input
                                         matInput
                                         formControlName="listOfMailboxes"
@@ -430,6 +353,21 @@
                                         placeholder="Mailbox"
                                         [readonly]="globalSearchControl.value"
                                     />
+                                </mat-form-field> -->
+
+                                <mat-form-field fxFlex="48" appearance="outline" class="twd-text-sm">
+                                    <mat-label>List of mailboxes</mat-label>
+                                    <mat-select formControlName="listOfMailboxes" multiple [readonly]="globalSearchControl.value">
+                                        <mat-select-trigger>
+                                            <ng-container *ngIf="advancedSearchForm.controls.listOfMailboxes?.value as selectedMailboxes">
+                                                {{ selectedMailboxes ? selectedMailboxes[0] : '' }}
+                                                <span *ngIf="selectedMailboxes?.length > 1">
+                                                    (+{{ selectedMailboxes.length - 1 }} {{ selectedMailboxes?.length === 2 ? 'other' : 'others' }})
+                                                </span>
+                                            </ng-container>
+                                        </mat-select-trigger>
+                                        <mat-option *ngFor="let mailbox of availableMailboxes" [value]="mailbox">{{ mailbox }}</mat-option>
+                                    </mat-select>
                                 </mat-form-field>
 
                                 <mat-form-field class="form-field custom" fxFlex="100" appearance="outline">
@@ -680,7 +618,13 @@
                 </div>
 
                 <div
-                    class="email-open__body twd-w-11/12 mx-auto border-radius-20 twd-overflow-hidden twd-mb-3 twd-flex-1 twd-flex twd-flex-col twd-max-h-full"
+                    class="
+                        email-open__body
+                        twd-w-11/12
+                        mx-auto
+                        border-radius-20
+                        twd-overflow-hidden twd-mb-3 twd-flex-1 twd-flex twd-flex-col twd-max-h-full
+                    "
                     [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                 >
                     <div class="twd-shadow">

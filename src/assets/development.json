@@ -173,6 +173,15 @@
                                             "SubType": "whatsapp",
                                             "Icon": "custom-whatsapp",
                                             "Data": {}
+                                        },
+                                        {
+                                            "Name": "Send Email",
+                                            "Enable": true,
+                                            "EnableState": "",
+                                            "Type": "email",
+                                            "SubType": "email",
+                                            "Icon": "email",
+                                            "Data": {}
                                         }
                                     ]
                                 }
