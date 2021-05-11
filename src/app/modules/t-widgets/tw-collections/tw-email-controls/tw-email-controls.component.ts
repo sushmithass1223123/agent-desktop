@@ -694,90 +694,103 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Sends Email as Maker
      */
-    sendEmailAsMaker(email?: CreateEmailOutput): void {
-        // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
-        const currentInteraction = this.currentInteraction;
-        const { BCC, CC, To, Subject, Files, Body } = email || this.createEmailRef.email;
-        if (!To.length) {
-            this._appUIService.showSnackbar('Please add a recipient', 'failure');
-            return;
-        }
-        SDKClient.sendEmail({
-            attachmentFileList: Files && Files.length ? JSON.stringify(Files.map((x) => ({ ...x, SessionID: currentInteraction.SessionId }))) : '',
-            bccList: BCC.join(','),
-            toList: To.join(','),
-            ccList: CC.join(','),
-            body: Body.toString(),
-            // inboxSessionId: currentInteraction.SessionId,
-            // outboxSessionId: currentInteraction.OutboxSessionId,
-            inboxSessionId: currentInteraction.SessionId || currentInteraction.InSessionId,
-            outboxSessionId: currentInteraction.OutSessionId,
-            routeId: '',
-            subject: Subject,
-            typeOfResponse: ''
-        })
-            .then((res) => {
-                if (res.response?.CurrentStatus) {
-                    const message = {
-                        SentToCustomer: 'to customer',
-                        SentToCheckerSession: 'to checker'
-                    };
-                    this._appUIService.showSnackbar(`Message sent ${message[res.response?.CurrentStatus]}`, 'success');
-                    this.draftPolling?.unsubscribe();
-                } else {
-                    throw new Error('Unexpected response from server');
-                }
-            })
-            .catch((err) => {
-                console.error(err);
-                this._appUIService.showSnackbar('Something went wrong', 'failure');
+    async sendEmailAsMaker(email?: CreateEmailOutput): Promise<void> {
+        try {
+            const { InSessionId, OutSessionID, SessionId, OutSessionId, EventName } = this.currentInteraction;
+            const { BCC, CC, To, Subject, Files, Body } = email || this.createEmailRef.email;
+            if (!To.length) {
+                this._appUIService.showSnackbar('Please add a recipient', 'failure');
+                return;
+            }
+
+            const res = await SDKClient.sendEmail({
+                attachmentFileList: Files && Files.length ? JSON.stringify(Files.map((x) => ({ ...x, SessionID: SessionId }))) : '',
+                bccList: BCC.join(','),
+                toList: To.join(','),
+                ccList: CC.join(','),
+                body: Body.toString(),
+                ...(EventName === 'OutgoingEmailEvent'
+                    ? {
+                          inboxSessionId: InSessionId,
+                          outboxSessionId: OutSessionId
+                      }
+                    : {
+                          inboxSessionId: SessionId,
+                          outboxSessionId: OutSessionID
+                      }),
+                routeId: '',
+                subject: Subject,
+                typeOfResponse: ''
             });
+            if (res.response?.CurrentStatus) {
+                const message = {
+                    SentToCustomer: 'to customer',
+                    SentToCheckerSession: 'to checker'
+                };
+                this._appUIService.showSnackbar(`Message sent ${message[res.response?.CurrentStatus]}`, 'success');
+                this.draftPolling?.unsubscribe();
+            } else {
+                throw new Error('Unexpected response from server');
+            }
+        } catch (err) {
+            console.error(err);
+            this._appUIService.showSnackbar('Something went wrong', 'failure');
+        }
     }
 
     /**
      * Sends email as Checker
      */
-    sendEmailAsChecker(btn: MatButton): void {
-        btn.disabled = true;
-        const confirmDialogRef = this._appUIService.showAppConfirmDialog('generic', 'Confirm Approve', 'Are you sure to approve this email?');
-        confirmDialogRef.afterClosed().subscribe((dialogResult: boolean) => {
-            if (dialogResult) {
-                // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
-                const currentInteraction = this.currentInteraction;
-                const { AttachmetList, Body, From, CC, Subject } = currentInteraction;
-                const sendLoader = this._appUIService.showSnackbar('Approving email', 'loading');
-                SDKClient.sendEmail({
-                    attachmentFileList: AttachmetList && AttachmetList.length ? JSON.stringify(AttachmetList) : '',
-                    bccList: '',
-                    body: Body['changingThisBreaksApplicationSecurity'],
-                    ccList: CC || '',
-                    inboxSessionId: currentInteraction.SessionId,
-                    outboxSessionId: currentInteraction.OutSessionID,
-                    routeId: '',
-                    subject: Subject,
-                    toList: From,
-                    typeOfResponse: 'approve'
-                })
-                    .then((res) => {
-                        const message = {
-                            SentToCustomer: 'to customer',
-                            SentToCheckerSession: 'to checker'
-                        };
-                        this._appUIService.showSnackbar(`Message sent ${message[res.response.CurrentStatus]}`, 'success');
-                        this.draftPolling?.unsubscribe();
-                        sendLoader.dismiss();
-                        btn.disabled = false;
-                    })
-                    .catch((err) => {
-                        console.error(err);
-                        sendLoader.dismiss();
-                        this._appUIService.showSnackbar('Something went wrong', 'failure');
-                        btn.disabled = false;
+    async sendEmailAsChecker(btn: MatButton): Promise<void> {
+        let sendLoader;
+        try {
+            btn.disabled = true;
+            const { InSessionId, OutSessionID, SessionId, OutSessionId, EventName } = this.currentInteraction;
+            const confirmDialogRef = this._appUIService.showAppConfirmDialog('generic', 'Confirm Approve', 'Are you sure to approve this email?');
+            confirmDialogRef.afterClosed().subscribe(async (dialogResult: boolean) => {
+                if (dialogResult) {
+                    // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
+                    const currentInteraction = this.currentInteraction;
+                    const { AttachmetList, Body, From, CC, Subject } = currentInteraction;
+                    sendLoader = this._appUIService.showSnackbar('Approving email', 'loading');
+                    const res = await SDKClient.sendEmail({
+                        attachmentFileList: AttachmetList && AttachmetList.length ? JSON.stringify(AttachmetList) : '',
+                        bccList: '',
+                        body: Body['changingThisBreaksApplicationSecurity'],
+                        ccList: CC || '',
+                        ...(EventName === 'OutgoingEmailEvent'
+                            ? {
+                                  inboxSessionId: InSessionId,
+                                  outboxSessionId: OutSessionId
+                              }
+                            : {
+                                  inboxSessionId: SessionId,
+                                  outboxSessionId: OutSessionID
+                              }),
+                        routeId: '',
+                        subject: Subject,
+                        toList: From,
+                        typeOfResponse: 'approve'
                     });
-            } else {
-                btn.disabled = false;
-            }
-        });
+
+                    const message = {
+                        SentToCustomer: 'to customer',
+                        SentToCheckerSession: 'to checker'
+                    };
+                    this._appUIService.showSnackbar(`Message sent ${message[res.response.CurrentStatus]}`, 'success');
+                    this.draftPolling?.unsubscribe();
+                    sendLoader?.dismiss();
+                    btn.disabled = false;
+                } else {
+                    btn.disabled = false;
+                }
+            });
+        } catch (err) {
+            console.error(err);
+            sendLoader?.dismiss();
+            this._appUIService.showSnackbar('Something went wrong', 'failure');
+            btn.disabled = false;
+        }
     }
 
     /**
@@ -787,6 +800,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
         const currentInteraction = this.currentInteraction;
         const email = this.createEmailRef?.email;
+        const outsessioKey = currentInteraction.EventName === 'OutgoingEmailEvent' ? 'OutSessionId' : 'OutSessionID';
         if (email) {
             // @TODO Files not sent as draft arg
             const { BCC, CC, To, Subject, Body, Files } = email;
@@ -795,13 +809,13 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 body: Body.toString(),
                 ccList: CC.join(','),
                 inboxSessionId: currentInteraction.SessionId,
-                outboxSessionId: currentInteraction.OutboxSessionId || '',
+                outboxSessionId: currentInteraction[outsessioKey] || '',
                 routeId: '',
                 subject: Subject,
                 toList: To.join(','),
                 typeOfResponse: ''
             }).then((x) => {
-                currentInteraction.OutboxSessionId = x.response;
+                currentInteraction[outsessioKey] = x.response;
             });
         }
         if (!this.draftPolling) {
