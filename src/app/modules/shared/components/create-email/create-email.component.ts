@@ -128,7 +128,8 @@ export class CreateEmailComponent implements OnInit, OnDestroy, AfterViewInit {
         this.email.Subject = this.emailInfo?.Subject || '';
         this.email.Body = this.emailInfo?.Body || '';
         this.email.Files = this.emailInfo?.Files || [];
-        const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        const emailRegex =
+            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         this.addUserSuggestions();
         merge(
             this.emailRecipientFacade.controls.To.valueChanges,
@@ -295,7 +296,11 @@ export class CreateEmailComponent implements OnInit, OnDestroy, AfterViewInit {
             this.aotService.addWidget(widget);
             this.templatePreview.aots.push(widget.ID);
         } else {
-            this.matDialog.open(TwEmailTemplatePreviewComponent, { data, minWidth: '40%', panelClass: `email-template-dialog --${data.info}` });
+            this.matDialog.open(TwEmailTemplatePreviewComponent, {
+                data,
+                minWidth: '40%',
+                panelClass: `email-template-dialog__${data.info?.Type || ''}`
+            });
         }
     }
     /**

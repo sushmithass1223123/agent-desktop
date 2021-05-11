@@ -26,7 +26,7 @@ const searchParams = new FormGroup({
 
     sesisonid: new FormControl(''),
     global: new FormControl(''),
-    listOfMailboxes: new FormControl('', [Validators.required])
+    listOfMailboxes: new FormControl([], [Validators.required])
 });
 
 /**
@@ -69,10 +69,8 @@ export class TwWorkBenchService {
     async setMailboxes(): Promise<void> {
         try {
             const res = await SDKClient.getMailboxes('agent');
-            if (res.response) {
-                this._internal$.email.initialized = true;
-            }
             if (res.response.length) {
+                this._internal$.email.initialized = true;
                 const listOfMailboxes =
                     res.response.map((email) => {
                         const [mail] = email.split(',');
