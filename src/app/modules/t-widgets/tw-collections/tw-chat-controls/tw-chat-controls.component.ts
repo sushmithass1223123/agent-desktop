@@ -423,6 +423,39 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // set the interaction id from data
         this.interactionId = this.data.InteractionDetails?.InteractionID;
 
+        // listen to TMAC events
+        this._tmacEventService
+            .getInteractionEvents(
+                [
+                    'TextChatRemoteUserConnectedEvent',
+                    'TextChatSelfServiceDestinationEvent',
+                    'TextChatAgentConnectedEvent',
+                    'TextChatTranscriptForTransferEvent',
+                    'TextChatMessageSentEvent',
+                    'TextChatMessageTemplateSentEvent',
+                    'TextChatUserMessageWaitTimerEvent',
+                    'TextChatTypingStateChangedEvent',
+                    'TextChatMessageReceivedEvent',
+                    'TextChatAgentMessageReceivedEvent',
+                    'AVControlMessageReceivedEvent',
+                    'TextChatDisconnectedEvent',
+                    'TextChatAgentDisconnectedEvent',
+                    'CannedResposeEvent',
+                    'TextChatTransferSuccessEvent',
+                    'TextChatTransferFailedEvent',
+                    'TextChatTransferRejectEvent',
+                    'ActionMessageReceivedEvent',
+                    'InteractionDataEvent',
+                    'CallHoldEvent',
+                    'CallHoldReconnectEvent',
+                    'HoldTimerEvent',
+                    'CCLDataEvent'
+                ],
+                this.interactionId
+            )
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
+
         this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
             this.appConfig = config;
         });
@@ -486,39 +519,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             // set the conversation limit
             this.conversationService.Limit = this.data.Data.ConversationService.Limit;
         }
-
-        // listen to TMAC events
-        this._tmacEventService
-            .getInteractionEvents(
-                [
-                    'TextChatRemoteUserConnectedEvent',
-                    'TextChatSelfServiceDestinationEvent',
-                    'TextChatAgentConnectedEvent',
-                    'TextChatTranscriptForTransferEvent',
-                    'TextChatMessageSentEvent',
-                    'TextChatMessageTemplateSentEvent',
-                    'TextChatUserMessageWaitTimerEvent',
-                    'TextChatTypingStateChangedEvent',
-                    'TextChatMessageReceivedEvent',
-                    'TextChatAgentMessageReceivedEvent',
-                    'AVControlMessageReceivedEvent',
-                    'TextChatDisconnectedEvent',
-                    'TextChatAgentDisconnectedEvent',
-                    'CannedResposeEvent',
-                    'TextChatTransferSuccessEvent',
-                    'TextChatTransferFailedEvent',
-                    'TextChatTransferRejectEvent',
-                    'ActionMessageReceivedEvent',
-                    'InteractionDataEvent',
-                    'CallHoldEvent',
-                    'CallHoldReconnectEvent',
-                    'HoldTimerEvent',
-                    'CCLDataEvent'
-                ],
-                this.interactionId
-            )
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
 
         if (this.data.Data.ChatTemplate.Allowed) {
             // get text templates
@@ -1237,6 +1237,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
         // close the conf/transfer if opened
         this.transferConfDialogRef?.close();
+        this.confirmDialogRef?.close();
 
         // change the mode to upload to preview the taken image
         this.attachPreviewMode = '';

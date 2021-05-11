@@ -307,7 +307,15 @@
                     <textarea rows="5" matInput name="comment" placeholder="Describe Reason" [(ngModel)]="rejectReason.comment" required> </textarea>
                 </mat-form-field>
                 <button fxFlex="30" mat-raised-button color="primary" class="border-radius-20">Submit</button>
-                <button fxFlex="30" mat-raised-button type="button" (click)="rejectEmailDialogRef.close()" class="border-radius-20">Cancel</button>
+                <button
+                    fxFlex="30"
+                    mat-raised-button
+                    type="button"
+                    (click)="rejectEmailDialogRef.close(); rejectReason = { comment: '', reasonTags: '' }"
+                    class="border-radius-20"
+                >
+                    Cancel
+                </button>
             </form>
         </div>
     </ng-template>
