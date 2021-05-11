@@ -7,7 +7,7 @@ import { ContentPageService } from 'app/services/content-page.service';
 import { InteractionManagerService } from 'app/services/interaction-manager.service';
 import { cloneDeep } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { IncomingEmailEvent, InteractionClosedEvent } from '@tmac/sdk';
+import { IncomingEmailEvent, OutgoingEmailEvent, InteractionClosedEvent } from '@tmac/sdk';
 
 /**
  * TwcEmailComponent
@@ -47,26 +47,21 @@ export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDes
 
         // subscribe to interaction events observable
         this._tmacEventService
-            .getConstructDisposeEvents([
-                'IncomingEmailEvent',
-                'InteractionClosedEvent'
-            ])
+            .getConstructDisposeEvents(['IncomingEmailEvent', 'OutgoingEmailEvent', 'InteractionClosedEvent'])
             .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
+            .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
 
         // subscribe to active interaction observable
-        this._interactionManagerService.interactions
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((interactions: InteractionRef[]) => {
-                // check if there are email interactions first
-                if (this.interactions.length > 0) {
-                    const emailInteractions = interactions.filter((i) => i.type === 'email');
-                    // filter and get the active emailchat interaction if any
-                    emailInteractions.forEach((interaction: InteractionRef) => {
-                        this.activeInteraction = interaction.isActive ? interaction.interactionId : this.activeInteraction;
-                    });
-                }
-            });
+        this._interactionManagerService.interactions.pipe(takeUntil(this.unsubscribeAll)).subscribe((interactions: InteractionRef[]) => {
+            // check if there are email interactions first
+            if (this.interactions.length > 0) {
+                const emailInteractions = interactions.filter((i) => i.type === 'email');
+                // filter and get the active emailchat interaction if any
+                emailInteractions.forEach((interaction: InteractionRef) => {
+                    this.activeInteraction = interaction.isActive ? interaction.interactionId : this.activeInteraction;
+                });
+            }
+        });
     }
 
     /**
@@ -128,7 +123,60 @@ export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDes
             path: this.data.Data.Path,
             otherData: evt
         });
-    }
+    };
+
+    /**
+     * To process OutgoingEmailEvent
+     * @param {OutgoingEmailEvent} evt
+     */
+    private OutgoingEmailEvent = (evt: OutgoingEmailEvent) => {
+        // get the content widgets
+        const emailWidgets = cloneDeep(this.data.Data.Widgets) || [];
+
+        const staticWidgets = emailWidgets.Static || [];
+        const dynamicWidgets = (evt.WidgetConfigData && JSON.parse(evt.WidgetConfigData)) || emailWidgets.Dynamic || [];
+        const aotWidgets = emailWidgets.AOT || [];
+
+        // loop the widgets and add append interaction details
+        staticWidgets.forEach((widget: IWidget) => {
+            widget.InteractionDetails = evt;
+            widget.Data.Path = this.data.Data.Path;
+        });
+
+        dynamicWidgets.forEach((widget: IWidget) => {
+            widget.InteractionDetails = evt;
+            widget.Data.Path = this.data.Data.Path;
+        });
+
+        aotWidgets.forEach((widget: IWidget) => {
+            widget.InteractionDetails = evt;
+            widget.Data.Path = this.data.Data.Path;
+        });
+
+        // process aot widgets
+        this._aotWidgetService.processAOTWidgets(aotWidgets);
+
+        // push the interaction details with widgets to the list
+        this.interactions.push({
+            interactionId: evt.InteractionID,
+            widgets: {
+                static: staticWidgets,
+                dynamic: dynamicWidgets,
+                aot: aotWidgets
+            }
+        });
+
+        // add the construct event to the interaction manager
+        this._interactionManagerService.addInteraction({
+            interactionId: evt.InteractionID,
+            type: 'email',
+            status: 'outgoing',
+            isActive: this.interactions.length === 1,
+            user: 'Customer',
+            path: this.data.Data.Path,
+            otherData: evt
+        });
+    };
 
     /**
      * To process interaction closed event for voice
@@ -141,5 +189,5 @@ export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDes
                 isActive: true
             });
         }
-    }
+    };
 }

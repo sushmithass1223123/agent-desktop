@@ -1,4 +1,4 @@
-<div fxLayout="column" class="w-100-p h-100-p px-20">
+<div fxLayout="column" class="w-100-p h-100-p px-20 twd-overflow-y-auto">
     <form class="my-8" novalidate>
         <div class="border-primary border-radius-20 w-100-p p-12">
             <div [formGroup]="emailRecipientFacade">
@@ -8,28 +8,31 @@
                         {{ from }}
                     </div>
                 </div>
-                <div fxLayout fxLayoutAlign="space-between" fxLayoutGap="8px" class="my-4">
+                <div fxLayout fxLayoutAlign="space-between" fxLayoutGap="8px" class="twd-my-3">
                     <label for="toField" class="font-weight-700">To : </label>
-                    <ng-container *ngTemplateOutlet="recipientInputField; context: { key: 'To' }"></ng-container>
+                    <div class="twd-flex-1 twd-flex">
+                        <ng-container *ngTemplateOutlet="recipientInputField; context: { key: 'To' }"></ng-container>
+                        <span class="twd-cursor-pointer twd-text-xs twd-font-bold" (click)="showCcBcc = !showCcBcc"> CC/BCC </span>
+                    </div>
                 </div>
                 <small *ngIf="emailRecipientFacade.controls.To.errors" class="twd-text-red-600"> To Email Address required </small>
 
                 <ng-container *ngIf="showCcBcc">
-                    <div fxLayout fxLayoutAlign="space-between" fxLayoutGap="8px" class="my-4">
+                    <div fxLayout fxLayoutAlign="space-between" fxLayoutGap="8px" class="twd-my-3">
                         <label for="ccField" class="font-weight-700">CC : </label>
                         <ng-container *ngTemplateOutlet="recipientInputField; context: { key: 'CC' }"></ng-container>
                     </div>
 
-                    <div fxLayout fxLayoutAlign="space-between" fxLayoutGap="8px" class="my-4">
+                    <div fxLayout fxLayoutAlign="space-between" fxLayoutGap="8px" class="twd-my-3">
                         <label for="bccField" class="font-weight-700">BCC : </label>
                         <ng-container *ngTemplateOutlet="recipientInputField; context: { key: 'BCC' }"></ng-container>
                     </div>
                 </ng-container>
             </div>
 
-            <div fxLayout fxLayoutGap="8px" fxLayoutAlign="space-between" class="my-4">
+            <div fxLayout fxLayoutGap="8px" fxLayoutAlign="space-between" class="twd-my-3">
                 <label for="subjectField" class="font-weight-700">Subject : </label>
-                <input id="subjectField" class="flex-1" matInput [(ngModel)]="email.Subject" name="Subject" />
+                <input id="subjectField" class="flex-1 my-2" matInput [(ngModel)]="email.Subject" name="Subject" />
             </div>
         </div>
     </form>
@@ -38,41 +41,41 @@
         <mat-chip-list #chipList aria-label="file selection">
             <mat-chip class="twd-py-4 twd-text-sm twd-font-bold" *ngFor="let file of email.Files" removable (removed)="removeFiles(file.Id)">
                 <mat-icon>attach_file</mat-icon>
-                <div class="ml-8 my-0">
-                    <p class="m-0">{{ file.Name }}</p>
+                <div class="twd-ml-1 twd-w-10/12">
+                    <div class="m-0 twd-truncate twd-w-full">{{ file.Name }}</div>
                     <a target="_blank" [href]="file.URL">
                         <small>View file</small>
                     </a>
                 </div>
                 <mat-icon matChipRemove>cancel</mat-icon>
             </mat-chip>
-        </mat-chip-list>
-
-        <mat-chip-list #chipList aria-label="file selection">
-            <mat-chip class="p-16" *ngFor="let file of uploadingFiles">
+            <mat-chip class="twd-py-4 twd-text-sm twd-font-bold" *ngFor="let file of uploadingFiles">
                 <mat-icon>attach_file</mat-icon>
-                <span class="mx-4"> {{ file }} </span>
-                <span> (uploading ...) </span>
+                <div class="twd-ml-1 twd-w-10/12">
+                    <div class="m-0 twd-truncate twd-w-full">{{ file }}</div>
+                    <span> (uploading ...) </span>
+                </div>
             </mat-chip>
         </mat-chip-list>
     </div>
 
-    <div class="border-primary flex-1 twd-flex twd-flex-col border-radius-20 mb-12 twd-overflow-hidden">
+    <div class="email-editor-container border-primary flex-1 twd-flex twd-flex-col border-radius-20 mb-12 twd-overflow-hidden">
         <div class="twd-flex-1 editor-wrapper position-relative twd-overflow-hidden">
-            <div #quillRef class="h-100-p w-100-p twd-absolute twd-top-0 twd-left-0">
-                <!-- <quill-editor
+            <div class="h-100-p w-100-p twd-absolute twd-top-0 twd-left-0">
+                <quill-editor
                     (onEditorCreated)="setFocus($event)"
                     class="email-editor"
                     classes="editor-container twd-overflow-auto twd-max-h-full border-radius-20"
                     [(ngModel)]="email.Body"
-                    [placeholder]="editorConfig.placeholder"
+                    placeholder="Write your mail"
                     [modules]="editorConfig.modules"
                     format="html"
                 >
-                </quill-editor> -->
+                </quill-editor>
             </div>
         </div>
     </div>
+
     <div class="twd-flex twd-justify-end twd-gap-2">
         <button mat-raised-button mat-icon-button color="primary" class="mx-4" matTooltip="Attach file" (click)="attachFileRef.click()">
             <mat-icon>attach_file</mat-icon>
@@ -86,12 +89,14 @@
 </div>
 
 <ng-template let-key="key" #recipientInputField>
-    <mat-chip-list #chipList>
+    <mat-chip-list class="twd-w-full twd-flex-1 twd-flex twd-flex-wrap" #chipList>
         <mat-chip *ngFor="let email of email[key]" class="twd-my-0 twd-min-h-0" selectable removable (removed)="remove(key, email)">
-            {{ email }}
+            <span class="twd-truncate">
+                {{ email }}
+            </span>
             <mat-icon matChipRemove>cancel</mat-icon>
         </mat-chip>
-        <input [formControl]="emailRecipientFacade.get(key)" matInput [matAutocomplete]="suggestedUsersRef" />
+        <input [formControl]="emailRecipientFacade.get(key)" matInput [matAutocomplete]="suggestedUsersRef" class="my-2 twd-flex-1" />
     </mat-chip-list>
     <mat-autocomplete autoActiveFirstOption #suggestedUsersRef="matAutocomplete" (optionSelected)="select(key, $event)">
         <mat-option *ngFor="let user of suggestedUsers" [value]="user">

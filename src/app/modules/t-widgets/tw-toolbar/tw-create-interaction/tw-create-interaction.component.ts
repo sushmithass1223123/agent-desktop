@@ -1,9 +1,9 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { widgetFabAnimations } from '@modules/shared/animations/widget-fab.animation';
-import { AgentSkillListComponent, CreateMessagingComponent } from '@modules/shared/components';
-import { IWidget } from 'app/interfaces';
+import { AgentSkillListComponent, CreateMessagingComponent, MailboxSettingsComponent } from '@modules/shared/components';
 import { IAUXCodes, SDKClient } from '@tmac/sdk';
+import { IWidget } from 'app/interfaces';
 
 /**
  * Create interaction
@@ -21,21 +21,17 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
      */
     @Input() data: IWidget;
 
-    constructor(
-        private _matDialog: MatDialog
-    ) { }
+    constructor(private _matDialog: MatDialog) {}
 
     /**
      * All channel list
      */
     channels = [];
 
-
     /**
      * OnInit
      */
-    ngOnInit(): void {
-    }
+    ngOnInit(): void {}
 
     /**
      * OnDestroy
@@ -44,14 +40,12 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
         this._matDialog.closeAll();
     }
 
-
     /**
      * Check if the agent can do action based on EnableState
-     * 
+     *
      * @param code
      */
     checkAux(code: string): boolean {
-
         // check if EnableState is provided, if not return true
         if (!code) {
             return true;
@@ -63,15 +57,14 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
         // check if the logout aux matches
         if (auxItem?.Code === code) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
 
     /**
      * To create an outgoing interaction
-     * 
+     *
      * @param channel
      * @param data
      */
@@ -108,6 +101,14 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
                     maxWidth: '100%',
                     height: '60%',
                     disableClose: true
+                });
+                break;
+            case 'email':
+                const ref = this._matDialog.open(MailboxSettingsComponent, {
+                    width: '30%',
+                    data: {
+                        close: () => ref.close()
+                    }
                 });
                 break;
         }

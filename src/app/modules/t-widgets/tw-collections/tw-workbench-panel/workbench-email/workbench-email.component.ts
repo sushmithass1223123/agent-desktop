@@ -19,7 +19,7 @@ import { groupBy, sortBy } from 'lodash';
 import * as moment from 'moment';
 import Quill from 'quill';
 import { Observable } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { catchError, filter, map, takeUntil } from 'rxjs/operators';
 import { TwWorkBenchService } from '../tw-workbench-panel.service';
 
 type AvailableTabs = 'inbox' | 'sentitem' | 'queue' | 'draft';
@@ -194,6 +194,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
     quillInstance: any;
 
     /**
+     * List of availabloe mailboxes
+     */
+    availableMailboxes: string[] = [];
+
+    /**
      * Constructor
      */
     constructor(
@@ -231,10 +236,21 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
      * A callback method that is invoked immediately after the default change detector has checked the directive's data-bound properties for the first time,
      * and before any of the view or content children have been checked. It is invoked only once when the directive is instantiated.
      */
-    ngOnInit(): void {
+    async ngOnInit(): Promise<void> {
         if (!this.globalSearchControl.value) {
             this.globalSearchControl.reset();
         }
+        if (!this._workbenchService.globalEmailWorkbenchState$.initialized) {
+            try {
+                await this._workbenchService.init();
+            } catch (e) {
+                console.error(e);
+            }
+        }
+        this.availableMailboxes = this._workbenchService.globalEmailWorkbenchState$.availableMailboxes.value;
+        this._workbenchService.globalEmailWorkbenchState$.availableMailboxes.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe((res) => {
+            this.availableMailboxes = res;
+        });
         this.doAdvancedSearch();
         this.sortControls.sortBy.valueChanges.subscribe(() => this.sortEmailsByKey());
     }
@@ -447,7 +463,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                 assignedTo: globalKey,
                 sesisonid: globalKey,
                 global: 'GLOBAL',
-                listOfMailboxes: 'singteldemo@tetherfi.com',
+                listOfMailboxes: this._workbenchService.globalEmailWorkbenchState$.searchParams.value.listOfMailboxes.join(','),
 
                 hasAttachments: 'no',
                 replied: 'any',
@@ -680,7 +696,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                 assignedTo: searchFields.assignedTo,
                 sesisonid: searchFields.sesisonid,
                 global: '',
-                listOfMailboxes: searchFields.listOfMailboxes,
+                listOfMailboxes: searchFields.listOfMailboxes.join(','),
                 hasAttachments: searchFields.hasAttachments === 'yes',
                 replied: searchFields.replied !== 'any',
                 closed: searchFields.closed !== 'any',
@@ -748,7 +764,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                 subject: searchFields.subject,
                 content: searchFields.content,
                 inSessionid: searchFields.inSessionid,
-                listOfMailboxes: searchFields.listOfMailboxes
+                listOfMailboxes: searchFields.listOfMailboxes.join(',')
             })
             .pipe(
                 map((res: any) => ({
@@ -809,7 +825,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                 endDate,
                 subject: searchFields.subject,
                 content: searchFields.content,
-                listOfMailboxes: searchFields.listOfMailboxes,
+                listOfMailboxes: searchFields.listOfMailboxes.join(','),
                 InSessionid: searchFields.inSessionid,
                 global: ''
             })
@@ -1047,34 +1063,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
         const yesterday = new Date();
         yesterday.setDate(today.getDate() - 1);
 
-        this.advancedSearchForm.setValue({
-            fromDate: yesterday,
-            fromTime: `00:00`,
-            toDate: today,
-            toTime: `${'23'}:${'59'}`,
-            email: '',
-            subject: '',
-            content: '',
-            skills: '',
-
-            agent: '',
-
-            inSessionid: '',
-
-            deviceid: '',
-            hasAttachments: 'no',
-            assignedTo: '',
-
-            replied: 'any',
-
-            closed: 'any',
-
-            assigned: 'any',
-
-            sesisonid: '',
-            global: '',
-            listOfMailboxes: 'singteldemo@tetherfi.com'
-        });
+        this.advancedSearchForm.reset();
     }
 
     /**
