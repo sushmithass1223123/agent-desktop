@@ -2,7 +2,7 @@ const { generateMaterialColors } = require('@tmac/styles/tailwind');
 module.exports = {
     prefix: 'twd-',
     purge: {
-        content: ['./src/*/.{html,ts}']
+        content: ['./src/**/.{html,ts}']
     },
     darkMode: 'class', // or 'media' or 'class'
     theme: {

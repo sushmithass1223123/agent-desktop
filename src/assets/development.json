@@ -1819,7 +1819,7 @@
                                                     "HoldInteractionAllowed": true,
                                                     "Whiteboard": {
                                                         "Allowed": true,
-                                                        "Url": "http://dice.tetherfi.cloud:55080/Whiteboard/ui/index.html"
+                                                        "Url": "https://dice.tetherfi.cloud/Whiteboard/ui/index.html"
                                                     },
                                                     "AskForScreenshareAllowed": false,
                                                     "Snapshot": {

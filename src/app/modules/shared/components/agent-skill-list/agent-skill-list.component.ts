@@ -323,7 +323,8 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
 
         this.freeTextConf = {
             agentList: { allowed: !!(this.data?.agent.source as AgentSkillListSourceObject)?.FreeTextAllowed, enabled: false, value: '' },
-            skillList: { allowed: !!(this.data?.skill.source as AgentSkillListSourceObject)?.FreeTextAllowed, enabled: false, value: '' }
+            skillList: { allowed: !!(this.data?.skill.source as AgentSkillListSourceObject)?.FreeTextAllowed, enabled: false, value: '' },
+            dynamicList: { allowed: false, enabled: false, value: '' }
         };
 
         this.setupSearchInputListener();
@@ -455,6 +456,17 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                         );
                     } else {
                         this.skillListTable.tableData.source.data = this.allFavouriteSkills;
+                    }
+                } else if (this.activeSwitcher === 'dynamicList') {
+                    // check if key not empty to apply the filter
+                    if (key) {
+                        // for skill only apply searchkey filter
+                        this.dynamicListTable.tableData.source.data = this.data.otherData.dynamicList.data.filter((x: any) =>
+                            // stringify and lowercase for .includes string search
+                            JSON.stringify(x).toLowerCase().includes(key.toLowerCase())
+                        );
+                    } else {
+                        this.dynamicListTable.tableData.source.data = this.data.otherData.dynamicList.data;
                     }
                 }
             });
@@ -667,7 +679,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                         }
                         // transfer error
                         else {
-                            this._appUIService.showSnackbar(`Chat ${type} failed, please try again`, 'failure');
+                            this._appUIService.showSnackbar(`Chat ${type} failed, ${dt.response.ResultMessage}`, 'failure');
                         }
                     })
                     .catch(() => {
@@ -690,7 +702,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                     if (dt.response.ResultCode >= 0) {
                         this.close(true);
                     } else {
-                        this._appUIService.showSnackbar(`Chat ${type} to queue failed, please try again`, 'failure');
+                        this._appUIService.showSnackbar(`Chat ${type} to queue failed, ${dt.response.ResultMessage}`, 'failure');
                     }
                 })
                 .catch(() => {
@@ -843,6 +855,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         this.clearSelected();
         // assign the selected row
         this.selectedRow = null;
+        this.searchKey.setValue('');
     }
 
     /**
@@ -1152,7 +1165,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         // select the row in grid
         this.dynamicListTable.tableData.selection.select(row);
         // assign the selected item
-        this.selectedItem = row[this.data.otherData.dynamicList.selection];
+        this.selectedItemDisplayName = this.selectedItem = row[this.data.otherData.dynamicList.selection];
         // assign the selected row
         this.selectedRow = {
             type: this.data.otherData.dynamicList.type || 'dynamic',
