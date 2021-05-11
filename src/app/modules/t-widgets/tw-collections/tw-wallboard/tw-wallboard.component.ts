@@ -110,14 +110,21 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
      * Updates table data on event
      */
     private wallboardRefreshEvent = (evt: WallboardRefreshEvent) => {
-        // check for skill update
-        if (this.dataSource.data.length && this.dataSource.data.length !== evt.Skills.length) {
-            this._appUIService.showAppSnackbar({
-                message: 'Agent skills has been updated!',
-                state: 'success',
-                duration: 10000
-            });
+        // for team wallboard event filter staffed agents
+        if (evt.EventName === 'TeamWallboardRefreshEvent') {
+            evt.Skills = evt.Skills.filter(s => s.AgentsStaffed > 0);
         }
+        if (evt.EventName === 'WallboardRefreshEvent') {
+            // check for skill update
+            if (this.dataSource.data.length && this.dataSource.data.length !== evt.Skills.length) {
+                this._appUIService.showAppSnackbar({
+                    message: 'Agent skills has been updated!',
+                    state: 'success',
+                    duration: 10000
+                });
+            }
+        }
+
         // assign the data
         this.dataSource = new MatTableDataSource(evt.Skills);
         // sorting data accessor for nested object sorting
