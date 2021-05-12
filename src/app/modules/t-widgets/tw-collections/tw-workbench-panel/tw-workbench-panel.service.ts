@@ -94,4 +94,15 @@ export class TwWorkBenchService {
             this._internal$.email.globalSearchKey.patchValue(global);
         }
     }
+
+    /**
+     * Resets email state
+     */
+    resetEmailState(): void {
+        const params = searchParams.value;
+        this.globalEmailWorkbenchState$.searchParams.setValue({
+            ...params,
+            listOfMailboxes: this.globalEmailWorkbenchState$.availableMailboxes.value
+        });
+    }
 }

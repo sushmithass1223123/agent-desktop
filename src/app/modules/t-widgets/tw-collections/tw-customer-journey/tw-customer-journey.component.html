@@ -500,7 +500,7 @@
                     <div *ngIf="emailThreadReq.data as emailInfo" class="twd-flex-1 twd-h-full twd-z-10 twd-relative">
                         <div class="twd-absolute twd-w-full twd-h-full twd-top-0 twd-left-0 twd-overflow-hidden twd-flex twd-flex-col">
                             <div class="twd-max-h-1/2 twd-overflow-y-auto twd-overflow-x-hidden twd-pb-3 twd-z-10 twd-shadow-md twd-px-4">
-                                <div id="rejectReason" *ngIf="emailInfo.RejectReason">
+                                <div id="rejectReason" >
                                     <div class="twd-bg-red-500 twd-p-1 twd-text-xl">
                                         [ REJECTED ] {{ emailInfo.RejectReason.reasonTags && ':' + emailInfo.RejectReason.reasonTags }}
                                     </div>
@@ -513,41 +513,35 @@
                                 </div>
 
                                 <div id="subject" class="twd-text-xl twd-mb-4 twd-truncate" [innerHtml]="emailInfo.Subject"></div>
+                                <div fxLayout fxLayoutAlign="space-between">
+                                    <div fxFlex="80" class="twd-flex">
+                                        <div class="twd-flex-1">
+                                            <p class="font-weight-600 my-4" >To : {{ emailInfo.To || 'NA' }}</p>
+                                            <p class="my-4 text-bold" >From : {{ emailInfo.From || 'NA' }}</p>
+                                            <p class="font-weight-600 my-4" >CC : {{ emailInfo.ccList }}</p>
+                                            <p  matTooltip="Intent">
+                                                <span class="text-bold"> Intent:   {{ emailInfo.intent || 'NA' }}</span>
+                                            </p>
+                                            <p class="my-4 text-bold" >
+                                                Replied Status : {{ emailInfo.repliedStatus === '1' ? 'Replied' : 'Not Replied' }}
+                                            </p>
+                                            <ng-container  *ngIf="emailInfo.addedTime" >
+                                                <p class="my-4">{{ emailInfo.addedTime | date: 'longDate' }}</p>
+                                                <p class="my-4">{{ emailInfo.addedTime | date: 'shortTime' }}</p>
+                                            </ng-container>
+                                        </div>
 
-                                <div id="emailInfo" class="twd-grid twd-grid-cols-2 twd-gap-2 twd-justify-between">
-                                    <span matTooltip="Intent">
-                                        <mat-icon>grading</mat-icon> <span class="text-bold">{{ intent || 'NA' }}</span>
-                                    </span>
-
-                                    <span class="twd-text-right" matTooltip="Sentiment">
-                                        <mat-icon>person</mat-icon>
-                                        <img *ngIf="sentiment === 'Positive'" class="w-24" src="assets/images/vectors/positive-score.svg" alt="" />
-                                        <img *ngIf="sentiment === 'Neutral'" class="w-24" src="assets/images/vectors/neutral-score.svg" alt="" />
-                                        <img *ngIf="sentiment === 'Negative'" class="w-24" src="assets/images/vectors/negative-score.svg" alt="" />
-                                        <ng-container *ngIf="sentiment === 'NA'"> NA </ng-container>
-                                    </span>
-
-                                    <span class="twd-col-span-2 text-bold twd-flex twd-items-center">
-                                        <mat-icon matTooltip="Mailbox">list_alt</mat-icon> {{ emailInfo.Email_Mailbox || 'NA' }}
-                                    </span>
-
-                                    <div>
-                                        <p class="my-4">{{ emailInfo.AgentName }} ({{ emailInfo.From }})</p>
-                                        <!-- <a
-                                        *ngIf="OutboxReasons.includes(emailInfo.RouteReason)"
-                                        class="twd-cursor-pointer"
-                                        (click)="switchEmailView()"
-                                    >
-                                        {{ emailInView === 'original' ? 'View Checker Email' : 'View original' }}
-                                    </a> -->
-                                    </div>
-                                    <div class="twd-text-right">
-                                        <span>{{ emailInfo.CreatedTime | date: 'mediumDate' }}</span>
-                                        <br />
-                                        <span>{{ emailInfo.CreatedTime | date: 'shortTime' }}</span>
+                                        <div class="twd-grid twd-grid-cols-1 twd-items-center twd-justify-end">
+                                            <p class="my-4 text-bold">Status : {{ emailInfo.currentStatus || 'NA' }}</p>
+                                            <p class="my-4 text-bold">Prirority : {{ emailInfo.priority || 'NA' }}</p>
+                                            <p class="my-4 text-bold">Agent : {{ emailInfo.agentName || 'NA' }}</p>
+                                            <p class="my-4 text-bold">
+                                                Closed Status : {{ emailInfo.closedBy ? 'Closed by' + emailInfo.closedBy : 'Open' }}
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
-
+                                
                                 <div
                                     id="attachmentList"
                                     class="twd-my-3 twd-bg-primary-100 twd-rounded-2xl twd-overflow-hidden twd-text-xs"
