@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
-import { widgetFabAnimations } from '@modules/shared/animations/widget-fab.animation';
+import { appAnimations } from '@modules/shared/animations/app.animation';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { DashboardService } from '@services/dashboard.service';
 import { TMACEventService } from '@services/tmac-event.service';
@@ -73,7 +73,7 @@ interface Chat {
     templateUrl: './instant-messaging.component.html',
     styleUrls: ['./instant-messaging.component.scss'],
     encapsulation: ViewEncapsulation.None,
-    animations: widgetFabAnimations
+    animations: appAnimations
 })
 export class InstantMessagingComponent implements OnInit, OnDestroy {
     /**

@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
-import { widgetFabAnimations } from '@modules/shared/animations/widget-fab.animation';
+import { appAnimations } from '@modules/shared/animations/app.animation';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
@@ -18,7 +18,7 @@ import { takeUntil } from 'rxjs/operators';
     templateUrl: './quick-panel.component.html',
     styleUrls: ['./quick-panel.component.scss'],
     encapsulation: ViewEncapsulation.None,
-    animations: widgetFabAnimations
+    animations: appAnimations
 })
 export class QuickPanelComponent implements OnInit, OnDestroy {
     /**

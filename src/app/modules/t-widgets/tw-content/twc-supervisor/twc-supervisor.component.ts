@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { appAnimations } from '@modules/shared/animations/app.animation';
 import { DashboardService } from '@services/dashboard.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { IAgentData, SDKClient } from '@tmac/sdk';
@@ -14,7 +15,8 @@ import { takeUntil } from 'rxjs/operators';
     selector: 'twc-supervisor',
     templateUrl: './twc-supervisor.component.html',
     styleUrls: ['./twc-supervisor.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    animations: appAnimations
 })
 export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, OnDestroy {
     /**

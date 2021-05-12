@@ -18,7 +18,9 @@
                         <div
                             class="tab-header"
                             [ngClass]="
-                                tab.isActive ? customFuse.anchor?.body || customFuse.widget?.body : customFuse.anchor?.content || customFuse.widget?.content
+                                tab.isActive
+                                    ? customFuse.anchor?.body || customFuse.widget?.body
+                                    : customFuse.anchor?.content || customFuse.widget?.content
                             "
                         >
                             <mat-icon>{{ channel.Icon }}</mat-icon>
@@ -31,6 +33,7 @@
                             [channelConf]="channel"
                             *ngSwitchCase="'email'"
                         ></workbench-email>
+
                         <workbench-chat
                             [data]="{ Data: data.Data?.General || {}, Config: data.Config }"
                             [channelConf]="channel"

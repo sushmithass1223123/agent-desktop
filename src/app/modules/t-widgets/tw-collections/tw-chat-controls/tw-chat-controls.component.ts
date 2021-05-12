@@ -3,7 +3,7 @@ import { NgForm } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
-import { widgetFabAnimations } from '@modules/shared/animations/widget-fab.animation';
+import { appAnimations } from '@modules/shared/animations/app.animation';
 import { AgentSkillListComponent } from '@modules/shared/components';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
@@ -64,7 +64,7 @@ const unHoldState = { onHold: false, buttonTooltip: 'Hold', icon: 'pause', loadi
     selector: 'tw-chat-controls',
     templateUrl: './tw-chat-controls.component.html',
     styleUrls: ['./tw-chat-controls.component.scss'],
-    animations: widgetFabAnimations,
+    animations: appAnimations,
     encapsulation: ViewEncapsulation.None
 })
 export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, OnDestroy, AfterViewInit {

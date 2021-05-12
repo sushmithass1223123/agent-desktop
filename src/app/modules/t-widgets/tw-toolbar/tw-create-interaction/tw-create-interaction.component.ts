@@ -1,6 +1,6 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { widgetFabAnimations } from '@modules/shared/animations/widget-fab.animation';
+import { appAnimations } from '@modules/shared/animations/app.animation';
 import { AgentSkillListComponent, CreateMessagingComponent, MailboxSettingsComponent } from '@modules/shared/components';
 import { IAUXCodes, SDKClient } from '@tmac/sdk';
 import { IWidget } from 'app/interfaces';
@@ -12,7 +12,7 @@ import { IWidget } from 'app/interfaces';
     selector: 'tw-create-interaction',
     templateUrl: './tw-create-interaction.component.html',
     styleUrls: ['./tw-create-interaction.component.scss'],
-    animations: widgetFabAnimations,
+    animations: appAnimations,
     encapsulation: ViewEncapsulation.None
 })
 export class TwCreateInteractionComponent implements OnInit, OnDestroy {

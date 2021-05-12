@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { appAnimations } from '@modules/shared/animations/app.animation';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { DashboardService } from '@services/dashboard.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
@@ -15,7 +16,8 @@ import { takeUntil } from 'rxjs/operators';
     selector: 'twc-home',
     templateUrl: './twc-home.component.html',
     styleUrls: ['./twc-home.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    animations: appAnimations
 })
 export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDestroy {
     /**

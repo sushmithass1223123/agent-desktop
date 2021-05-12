@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewEncapsulation } from '@angular/core';
-import { widgetFabAnimations } from '@modules/shared/animations/widget-fab.animation';
+import { appAnimations } from '@modules/shared/animations/app.animation';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { IWidget } from 'app/interfaces';
 
@@ -11,7 +11,7 @@ import { IWidget } from 'app/interfaces';
     templateUrl: './widget-fab.component.html',
     styleUrls: ['./widget-fab.component.scss'],
     encapsulation: ViewEncapsulation.None,
-    animations: widgetFabAnimations
+    animations: appAnimations
 })
 export class WidgetFabComponent implements OnInit, OnChanges {
     /**

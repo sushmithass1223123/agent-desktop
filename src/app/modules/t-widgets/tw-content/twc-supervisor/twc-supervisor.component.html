@@ -37,7 +37,9 @@
             (cdkDragStarted)="dashboardDataSpanOverlayDrag = true"
             (click)="showDashboardDataOverlay()"
         >
-            <mat-icon *ngIf="!dataLoading"> access_time </mat-icon>
+            <mat-icon *ngIf="!dataLoading" [@fabToggler180]="{ value: showDashboardDataSpanOverlay ? 'active' : 'inactive' }">
+                {{ showDashboardDataSpanOverlay ? 'chevron_left' : 'access_time' }}
+            </mat-icon>
             <mat-icon class="spin" *ngIf="dataLoading"> loop </mat-icon>
         </button>
 
