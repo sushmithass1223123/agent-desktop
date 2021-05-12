@@ -217,15 +217,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
             queue: this.advanceSearchQueuedEmail,
             sentitem: this.advanceSearchSentEmail
         };
-        const today = new Date();
-        const yesterday = new Date();
-        yesterday.setDate(today.getDate() - 1);
-        this.advancedSearchForm.patchValue({
-            fromDate: yesterday,
-            fromTime: `00:00`,
-            toDate: today,
-            toTime: `${'23'}:${'59'}`
-        });
     }
 
     // -----------------------------------------------------------------------------------------------------
