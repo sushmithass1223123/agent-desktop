@@ -2,30 +2,62 @@ import { Injectable } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { SDKClient } from '@tmac/sdk';
 
+const today = new Date();
+const yesterday = new Date();
+yesterday.setDate(today.getDate() - 1);
+
+export const initEmailSearchState = {
+    fromDate: yesterday,
+    fromTime: `00:00`,
+    toDate: today,
+    toTime: `${'23'}:${'59'}`,
+
+    email: '',
+    subject: '',
+    content: '',
+    skills: '',
+
+    agent: '',
+
+    inSessionid: '',
+
+    deviceid: '',
+    hasAttachments: 'yes',
+    assignedTo: '',
+
+    replied: 'any',
+    closed: 'any',
+    assigned: 'any',
+
+    sesisonid: '',
+    global: '',
+    listOfMailboxes: []
+};
+
 const searchParams = new FormGroup({
-    fromDate: new FormControl(''),
-    fromTime: new FormControl(''),
-    toDate: new FormControl(''),
-    toTime: new FormControl(''),
-    email: new FormControl(''),
-    subject: new FormControl(''),
-    content: new FormControl(''),
-    skills: new FormControl(''),
+    fromDate: new FormControl(initEmailSearchState.fromDate),
+    fromTime: new FormControl(initEmailSearchState.fromTime),
+    toDate: new FormControl(initEmailSearchState.toDate),
+    toTime: new FormControl(initEmailSearchState.toTime),
+    email: new FormControl(initEmailSearchState.email),
+    subject: new FormControl(initEmailSearchState.subject),
+    content: new FormControl(initEmailSearchState.content),
+    skills: new FormControl(initEmailSearchState.skills),
 
-    agent: new FormControl(''),
+    agent: new FormControl(initEmailSearchState.agent),
 
-    inSessionid: new FormControl(''),
+    inSessionid: new FormControl(initEmailSearchState.inSessionid),
 
-    deviceid: new FormControl(''),
-    hasAttachments: new FormControl('yes'),
-    assignedTo: new FormControl(''),
+    deviceid: new FormControl(initEmailSearchState.deviceid),
+    hasAttachments: new FormControl(initEmailSearchState.hasAttachments),
+    assignedTo: new FormControl(initEmailSearchState.assignedTo),
 
-    replied: new FormControl('any'),
-    closed: new FormControl('any'),
-    assigned: new FormControl('any'),
+    replied: new FormControl(initEmailSearchState.replied),
+    closed: new FormControl(initEmailSearchState.closed),
+    assigned: new FormControl(initEmailSearchState.assigned),
 
-    sesisonid: new FormControl(''),
-    global: new FormControl(''),
+    sesisonid: new FormControl(initEmailSearchState.sesisonid),
+    global: new FormControl(initEmailSearchState.global),
     listOfMailboxes: new FormControl([], [Validators.required])
 });
 
@@ -99,9 +131,9 @@ export class TwWorkBenchService {
      * Resets email state
      */
     resetEmailState(): void {
-        const params = searchParams.value;
+        this.globalEmailWorkbenchState$.globalSearchKey.reset();
         this.globalEmailWorkbenchState$.searchParams.setValue({
-            ...params,
+            ...initEmailSearchState,
             listOfMailboxes: this.globalEmailWorkbenchState$.availableMailboxes.value
         });
     }
