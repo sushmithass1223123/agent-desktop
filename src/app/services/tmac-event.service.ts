@@ -360,11 +360,17 @@ export class TMACEventService {
                     case 'makecall': {
                         // check if the dialog is already opened
                         if (this._remiderTaskDialog.makeCall) {
-                            TUtils.Logger.console('info', 'TMACEventService.AgentNotificaitonEvent: makeCall dialog is already opened!');
+                            TUtils.Logger.console('warn', 'TMACEventService.AgentNotificaitonEvent: makeCall dialog is already opened!');
                             return;
                         }
 
-                        this._remiderTaskDialog.makeCall = this._appUIService.showRemiderTaskModal('makecall', remiderMessage.Comment || null);
+                        let message = `Make call to ${remiderMessage.Data}`;
+                        // check if any comments added
+                        if (remiderMessage.Comment) {
+                            message += `<br /> ${remiderMessage.Comment} `;
+                        }
+
+                        this._remiderTaskDialog.makeCall = this._appUIService.showRemiderTaskModal('makecall', message);
                         this._remiderTaskDialog.makeCall.afterClosed().subscribe((resp) => {
                             if (resp === 'accept') {
                                 // make call to the provided number and complete the reminder
@@ -407,7 +413,45 @@ export class TMACEventService {
                         break;
                     }
                     case 'meeting': {
-                        // TODO:: handle meeting task
+                        // check if the dialog is already opened
+                        if (this._remiderTaskDialog.meeting) {
+                            TUtils.Logger.console('info', 'TMACEventService.AgentNotificaitonEvent: meeting dialog is already opened!');
+                            return;
+                        }
+
+                        let message = `Meeting ${remiderMessage.Data ? ' - ' + remiderMessage.Data : ''}`;
+                        // check if any comments added
+                        if (remiderMessage.Comment) {
+                            message += `<br /> ${remiderMessage.Comment} `;
+                        }
+
+                        this._remiderTaskDialog.meeting = this._appUIService.showRemiderTaskModal('meeting', message);
+                        this._remiderTaskDialog.meeting.afterClosed().subscribe((resp) => {
+                            if (resp === 'accept') {
+
+                                // TODO:: handle meeting task
+
+                                window.open(
+                                    remiderMessage.Data,
+                                    `meeting_${evt.EventId}`,
+                                    `menubar=no,resizable=yes,location=no,scrollbars=no,
+                                    width=${screen.width},
+                                    height=${screen.height}`
+                                );
+
+                                // complete the reminder
+                                this.updateReminderStatus('Completed', parsedMessage.ID);
+                            } else if (resp === 'reject') {
+                                // reject the reminder
+                                this.updateReminderStatus('Rejected', parsedMessage.ID);
+                            } else {
+                                // show an alert for auto snooze
+                                this._appUIService.showSnackbar('Meeting task is snoozed', 'info');
+                            }
+
+                            // set the dialogRef to null
+                            this._remiderTaskDialog.meeting = null;
+                        });
                         break;
                     }
                     case 'changestate': {
@@ -417,7 +461,15 @@ export class TMACEventService {
                             return;
                         }
 
-                        this._remiderTaskDialog.changeState = this._appUIService.showRemiderTaskModal('changestate', remiderMessage.Comment || null);
+                        const value = remiderMessage.Data.split(',')[1];
+                        const auxCodes = SDKClient.getAgentData().auxCodes.filter((f) => f.Value.toString() === value)?.[0];
+                        let message = `Change Status to ${auxCodes?.Name || remiderMessage.Data}`;
+                        // check if any comments added
+                        if (remiderMessage.Comment) {
+                            message += `<br /> ${remiderMessage.Comment} `;
+                        }
+
+                        this._remiderTaskDialog.changeState = this._appUIService.showRemiderTaskModal('changestate', message);
                         this._remiderTaskDialog.changeState.afterClosed().subscribe((resp) => {
                             if (resp === 'accept') {
                                 // parse the data and get the aux code and value
@@ -1098,7 +1150,8 @@ export class TMACEventService {
         }
 
         // return all non interaction events
-        return merge(tempSub, this._nonInteractionEventSub).pipe(filter((evts) => evts.length > 0));
+        return merge(tempSub, this._nonInteractionEventSub)
+            .pipe(filter((evts) => evts.length > 0));
     }
 
     /**
@@ -1122,10 +1175,11 @@ export class TMACEventService {
         }
 
         // return all interaction events for that interaction id and event names
-        return merge(tempSub, this._interactionEventSub).pipe(
-            map((evts) => evts?.filter((evt) => evt && evt.InteractionID === interactionId && eventNames.includes(evt.EventName))),
-            filter((evts) => evts.length > 0)
-        );
+        return merge(tempSub, this._interactionEventSub)
+            .pipe(
+                map((evts) => evts?.filter((evt) => evt && evt.InteractionID === interactionId && eventNames.includes(evt.EventName))),
+                filter((evts) => evts.length > 0)
+            );
     }
 
     /**
@@ -1148,10 +1202,11 @@ export class TMACEventService {
         }
 
         // return all interaction events for that interaction id and event names
-        return merge(tempSub, this._interactionEventSub).pipe(
-            map((evts) => evts?.filter((evt) => evt && eventNames.includes(evt.EventName))),
-            filter((evts) => evts.length > 0)
-        );
+        return merge(tempSub, this._interactionEventSub)
+            .pipe(
+                map((evts) => evts?.filter((evt) => evt && eventNames.includes(evt.EventName))),
+                filter((evts) => evts.length > 0)
+            );
     }
 
     /**
@@ -1174,10 +1229,11 @@ export class TMACEventService {
         }
 
         // return all interaction events for that interaction id
-        return merge(tempSub, this._interactionEventSub).pipe(
-            map((evts) => evts?.filter((evt) => evt && evt.InteractionID === interactionId)),
-            filter((evts) => evts.length > 0)
-        );
+        return merge(tempSub, this._interactionEventSub)
+            .pipe(
+                map((evts) => evts?.filter((evt) => evt && evt.InteractionID === interactionId)),
+                filter((evts) => evts.length > 0)
+            );
     }
 
     /**
@@ -1202,12 +1258,13 @@ export class TMACEventService {
         }
 
         // return all interaction events for that interaction id and event names
-        return merge(tempSub, this._interactionEventSub).pipe(
-            map((evts) =>
-                evts?.filter((evt) => evt && (evt.IsInteractionConstructEvent || evt.IsInteractionDisposeEvent) && eventNames.includes(evt.EventName))
-            ),
-            filter((evts) => evts.length > 0)
-        );
+        return merge(tempSub, this._interactionEventSub)
+            .pipe(
+                map((evts) =>
+                    evts?.filter((evt) => evt && (evt.IsInteractionConstructEvent || evt.IsInteractionDisposeEvent) && eventNames.includes(evt.EventName))
+                ),
+                filter((evts) => evts.length > 0)
+            );
     }
 
     /**

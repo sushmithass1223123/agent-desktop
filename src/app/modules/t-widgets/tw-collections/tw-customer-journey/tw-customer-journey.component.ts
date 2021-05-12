@@ -249,7 +249,14 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         }
     };
 
+    /**
+     * To show attachments in email
+     */
     showAttachments = false;
+
+    /**
+     * Small email description falg
+     */
     smallEmailDescription = true;
     /**
      *
@@ -442,7 +449,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         };
         // get history
         this.getInteractionHistory();
-    };
+    }
 
     /**
      * Gets interaction history and sets to table
@@ -709,7 +716,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     /**
      * Opens advanced search form inside a modal window
      */
-    openAdvancedSearchModal(): void {}
+    openAdvancedSearchModal(): void { }
 
     /**
      * Is row selected

@@ -939,7 +939,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                             // add comments to the reference
                             this.savedComments.push({
                                 Message: resp1,
-                                Time: new Date().toLocaleTimeString(),
+                                Time: new Date(),
                                 User: SDKClient.getAgentData().agentName
                             });
                             // alert user

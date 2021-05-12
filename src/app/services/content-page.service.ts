@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { filter, shareReplay } from 'rxjs/operators';
 
 /**
  * Content Page Service
@@ -13,7 +14,7 @@ export class ContentPageService {
      * View Mode Subject
      * Need More Description
      */
-    private _viewModeSubject: BehaviorSubject<any>;
+    private _viewModeSubject: BehaviorSubject<string>;
 
     constructor() {
         // Set the config from the default config
@@ -45,5 +46,18 @@ export class ContentPageService {
      */
     getCurrentMode(): string {
         return this._viewModeSubject.getValue();
+    }
+
+    /**
+     * To get response on all registered view
+     * 
+     * @param {String[]} modes
+     */
+    getActive(modes: string[]): Observable<string> {
+        return this._viewModeSubject
+            .pipe(
+                filter(f => modes.includes(f)),
+                shareReplay()
+            );
     }
 }

@@ -5,6 +5,7 @@
     } as customFuse"
 >
     <div
+        #chatWorkBench
         fxLayout
         fxLayoutAlign="space-evenly center"
         class="chat-workbench w-100-p h-100-p py-8"
@@ -135,7 +136,9 @@
                     <mat-tree-node *matTreeNodeDef="let node" class="tw-list pb-8" matTreeNodeToggle>
                         <li
                             class="mat-tree-node tw-list-item selectable"
-                            [ngClass]="customFuse.anchor?.content || customFuse.widget?.content + (selectedSkill === node.uiKey ? 'border-lg-success' : '')"
+                            [ngClass]="
+                                customFuse.anchor?.content || customFuse.widget?.content + (selectedSkill === node.uiKey ? 'border-lg-success' : '')
+                            "
                             mat-ripple
                         >
                             <div fxLayout fxLayoutAlign="space-between" (click)="selectSkill(node)" class="w-90-p pl-4">

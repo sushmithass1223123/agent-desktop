@@ -1,7 +1,7 @@
 // route reasons
 export const OUTBOX_REASONS = ['CheckerQueue', 'CheckerPull'];
 export const DRAFT_REASONS = ['AgentDraftPull'];
-export const INBOX_REASONS = ['MakerQueue', 'AgentPull', 'TransferToAgent'];
+export const INBOX_REASONS = ['MakerQueue', 'AgentPull', 'TransferToAgent', 'TransferToSkill'];
 
 // entites
 export const AVAILABLE_ENTITIES = [

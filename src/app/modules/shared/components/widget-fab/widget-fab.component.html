@@ -8,7 +8,7 @@
         (click)="toggleWidgetList()"
         matTooltip="AOT Widgets"
     >
-        <mat-icon [@fabToggler]="{ value: openWidgetList ? 'active' : 'inactive' }"> add </mat-icon>
+        <mat-icon [@fabToggler180]="{ value: openWidgetList ? 'active' : 'inactive' }"> {{ openWidgetList ? 'expand_less' : 'menu_open' }} </mat-icon>
     </button>
 
     <ng-template

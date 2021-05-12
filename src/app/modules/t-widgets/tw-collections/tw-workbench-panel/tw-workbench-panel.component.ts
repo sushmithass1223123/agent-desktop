@@ -2,7 +2,7 @@ import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
-import { filter, takeUntil } from 'rxjs/operators';
+import { filter } from 'rxjs/operators';
 
 /**
  * Workbench Panel Component
@@ -112,14 +112,6 @@ export class TwWorkbenchPanelComponent extends TWidgetWrapper implements OnInit,
         // call the wrapper destroy method
         this.destroyWrapper();
     }
-
-    // -----------------------------------------------------------------------------------------------------
-    // @  Private Methods
-    // -----------------------------------------------------------------------------------------------------
-
-    // -----------------------------------------------------------------------------------------------------
-    // @  Public Methods
-    // -----------------------------------------------------------------------------------------------------
 }
 
 // for more info visit - https://angular.io/api/core

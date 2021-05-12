@@ -114,7 +114,7 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
         if (evt.EventName === 'TeamWallboardRefreshEvent') {
             evt.Skills = evt.Skills.filter(s => s.AgentsStaffed > 0);
         }
-        if (evt.EventName === 'WallboardRefreshEvent') {
+        else if (evt.EventName === 'WallboardRefreshEvent') {
             // check for skill update
             if (this.dataSource.data.length && this.dataSource.data.length !== evt.Skills.length) {
                 this._appUIService.showAppSnackbar({
