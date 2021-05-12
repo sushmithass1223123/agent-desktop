@@ -44,16 +44,16 @@
                     >
                         <mat-icon>comment</mat-icon>
                     </button>
-                    <button
-                        *ngIf="currentInteraction.EventName === 'OutgoingEmailEvent'"
-                        mat-raised-button
-                        class="border-radius-20"
-                        color="accent"
-                        (click)="closeInteraction($event)"
-                        matTooltip="Close"
-                    >
-                        Close
-                    </button>
+
+                    <ng-container *ngIf="currentInteraction.EventName === 'OutgoingEmailEvent'">
+                        <button mat-raised-button class="border-radius-20" color="accent" (click)="closeInteraction($event)" matTooltip="Close">
+                            Close
+                        </button>
+
+                        <button mat-raised-button class="border-radius-20" matTooltip="Interaction Comment" (click)="saveInteractionComments()">
+                            <mat-icon>comment</mat-icon>
+                        </button>
+                    </ng-container>
 
                     <ng-container *ngIf="OutboxReasons.includes(currentInteraction.RouteReason)">
                         <button mat-raised-button class="border-radius-20" (click)="sendEmailAsChecker(approveBtn)" color="primary" #approveBtn>
@@ -113,39 +113,41 @@
 
                             <div id="subject" class="twd-text-xl twd-mb-4 twd-truncate" [innerHtml]="currentInteraction.Subject"></div>
 
-                            <div id="emailInfo" class="twd-grid twd-grid-cols-2 twd-gap-2 twd-justify-between">
-                                <span matTooltip="Intent">
-                                    <mat-icon>grading</mat-icon> <span class="text-bold">{{ intent || 'NA' }}</span>
-                                </span>
-
-                                <span class="twd-text-right" matTooltip="Sentiment">
-                                    <mat-icon>person</mat-icon>
-                                    <img *ngIf="sentiment === 'Positive'" class="w-24" src="assets/images/vectors/positive-score.svg" alt="" />
-                                    <img *ngIf="sentiment === 'Neutral'" class="w-24" src="assets/images/vectors/neutral-score.svg" alt="" />
-                                    <img *ngIf="sentiment === 'Negative'" class="w-24" src="assets/images/vectors/negative-score.svg" alt="" />
-                                    <ng-container *ngIf="sentiment === 'NA'"> NA </ng-container>
-                                </span>
-
-                                <span class="twd-col-span-2 text-bold twd-flex twd-items-center">
-                                    <mat-icon matTooltip="Mailbox">list_alt</mat-icon> {{ currentInteraction.Email_Mailbox || 'NA' }}
-                                </span>
-
-                                <div>
-                                    <p class="my-4">{{ currentInteraction.AgentName }} ({{ currentInteraction.From }})</p>
-                                    <a
-                                        *ngIf="OutboxReasons.includes(currentInteraction.RouteReason)"
-                                        class="twd-cursor-pointer"
-                                        (click)="switchEmailView()"
-                                    >
-                                        {{ emailInView === 'original' ? 'View Checker Email' : 'View original' }}
-                                    </a>
+                            <div id="emailInfo" class="twd-flex">
+                                <div class="twd-flex-1">
+                                    <span class="twd-flex twd-items-center">
+                                        <mat-icon matTooltip="Intent">grading</mat-icon> <span class="text-bold">{{ intent || 'NA' }}</span>
+                                    </span>
+                                    <span class="twd-col-span-2 text-bold twd-flex twd-items-center">
+                                        <mat-icon matTooltip="Mailbox">list_alt</mat-icon>
+                                        <span class="twd-truncate">
+                                            {{ currentInteraction.Email_Mailbox || 'NA' }}
+                                        </span>
+                                    </span>
+                                    <div>
+                                        <p class="my-4 twd-truncate">{{ currentInteraction.AgentName }} ({{ currentInteraction.From }})</p>
+                                    </div>
                                 </div>
-                                <div class="twd-text-right">
-                                    <span>{{ currentInteraction.CreatedTime | date: 'mediumDate' }}</span>
-                                    <br />
-                                    <span>{{ currentInteraction.CreatedTime | date: 'shortTime' }}</span>
+
+                                <div class="twd-grid twd-grid-cols-1 twd-justify-end">
+                                    <span matTooltip="Sentiment" class="twd-flex twd-justify-end twd-items-center">
+                                        <mat-icon>person</mat-icon>
+                                        <img *ngIf="sentiment === 'Positive'" class="w-24" src="assets/images/vectors/positive-score.svg" alt="" />
+                                        <img *ngIf="sentiment === 'Neutral'" class="w-24" src="assets/images/vectors/neutral-score.svg" alt="" />
+                                        <img *ngIf="sentiment === 'Negative'" class="w-24" src="assets/images/vectors/negative-score.svg" alt="" />
+                                        <ng-container *ngIf="sentiment === 'NA'"> NA </ng-container>
+                                    </span>
+                                    <div class="twd-text-right">
+                                        <span>{{ currentInteraction.CreatedTime | date: 'mediumDate' }}</span>
+                                        <br />
+                                        <span>{{ currentInteraction.CreatedTime | date: 'shortTime' }}</span>
+                                    </div>
                                 </div>
                             </div>
+
+                            <a *ngIf="OutboxReasons.includes(currentInteraction.RouteReason)" class="twd-cursor-pointer" (click)="switchEmailView()">
+                                {{ emailInView === 'original' ? 'View Checker Email' : 'View original' }}
+                            </a>
 
                             <div
                                 id="attachmentList"

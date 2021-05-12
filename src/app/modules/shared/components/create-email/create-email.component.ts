@@ -50,9 +50,9 @@ export class CreateEmailComponent implements OnInit, OnDestroy, AfterViewInit {
     @ViewChild('recipientsInput') recipientsInput: ElementRef<HTMLInputElement>;
 
     /**
-     * Files currently uploadeng
+     * Flag when currently uploading files
      */
-    uploadingFiles = [];
+    // uploadingFiles = false;
 
     /**
      * Show CC / BCC
@@ -105,6 +105,10 @@ export class CreateEmailComponent implements OnInit, OnDestroy, AfterViewInit {
      */
     editorConfig = QUILL_EDITOR_CONFIG;
 
+    /**
+     * Flag to show attachments
+     */
+    showAttachments = false;
     constructor(
         private appUiService: AppUiService,
         private matDialog: MatDialog,
@@ -212,7 +216,9 @@ export class CreateEmailComponent implements OnInit, OnDestroy, AfterViewInit {
         try {
             const input = evt.target as HTMLInputElement;
             if (input.files && input.files.length) {
-                this.uploadingFiles.push(input.files[0].name);
+                const ref = this.appUiService.showSnackbar(`Uploading ${input.files[0].name || 'File'}`, 'loading');
+                // this.uploadingFiles = true;
+                // this.uploadingFiles.push(input.files[0].name);
                 const Base64 = await this.convertToBase64(input.files[0]);
                 const { response } = await SDKClient.uploadFiles({
                     files: [
@@ -228,7 +234,9 @@ export class CreateEmailComponent implements OnInit, OnDestroy, AfterViewInit {
                 });
 
                 this.email.Files.push({ Id: response[0].RelativePath, Direction: 'OUT', Name: response[0].FileName, URL: response[0].Url });
-                this.uploadingFiles.pop();
+                ref.dismiss();
+                // this.uploadingFiles = false;
+                // this.uploadingFiles.pop();
             }
         } catch (e) {
             console.error(e);
