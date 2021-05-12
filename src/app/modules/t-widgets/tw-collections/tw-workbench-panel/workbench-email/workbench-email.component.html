@@ -499,9 +499,14 @@
             <div *ngIf="!emailSearchRes.error && { selectedEmail: emailSearchRes.data.selected } as selectedEmail">
                 <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="tw-list-item border-radius-10 email-tree twd-mt-0">
                     <mat-tree-node *matTreeNodeDef="let node" class="tw-list pb-8" matTreeNodeToggle>
+                        {{ selectedEmail?.selectedEmail.itemID | json }} {{ node.itemID | json }}
                         <li
                             class="mat-tree-node tw-list-item border-radius-10 selectable"
-                            [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
+                            [ngClass]="
+                                selectedEmail?.selectedEmail?.uiId === node.uiId
+                                    ? ' twd-bg-primary-100 twd-border-2 twd-border-primary-default'
+                                    : customFuse.anchor?.content || customFuse.widget?.content
+                            "
                         >
                             <div class="w-10-p px-4" *ngIf="currentTab === 'queue' || currentTab === 'draft'">
                                 <mat-checkbox (change)="selectEmail($event)" [value]="node"></mat-checkbox>
@@ -728,7 +733,7 @@
     <div #replyEditor id="replyEditor"></div>
     <div class="twd-flex twd-gap-2 twd-justify-end twd-mt-3">
         <email-template-selector (selectTemplate)="selectEmailTemplate($event)"></email-template-selector>
-        <button mat-raised-button (click)="replyEditorModal.close(true)" color="primary">Send</button>
+        <button mat-raised-button (click)="replyEditorModal.close(true)" color="primary"   >Send</button>
         <button mat-raised-button (click)="replyEditorModal.close()" color="accent">Cancel</button>
     </div>
 </ng-template>

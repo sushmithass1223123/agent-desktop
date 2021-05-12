@@ -1,6 +1,6 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { HttpClient } from '@angular/common/http';
-import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -19,7 +19,7 @@ import { groupBy, sortBy } from 'lodash';
 import * as moment from 'moment';
 import Quill from 'quill';
 import { Observable } from 'rxjs';
-import { catchError, filter, map, takeUntil } from 'rxjs/operators';
+import { filter, map, takeUntil } from 'rxjs/operators';
 import { TwWorkBenchService } from '../tw-workbench-panel.service';
 
 type AvailableTabs = 'inbox' | 'sentitem' | 'queue' | 'draft';
@@ -300,7 +300,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
      */
     getAllEmailNodes(): any[] {
         return this.dataSource.data.reduce((acc, curr) => {
-            const descendants = this.treeControl.getDescendants(curr);
+            const descendants = this.treeControl.getDescendants(curr).filter((x) => !x.children);
             if (descendants && descendants.length) {
                 acc.push(...descendants);
             }
@@ -479,7 +479,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                                 mailRes.addedTime = x.addedTime;
                             }
                             mailRes.id = Date.now();
-                            mailRes.body = this.domSanitizer.bypassSecurityTrustHtml(mailRes.body);
+                            mailRes.body = this.domSanitizer.bypassSecurityTrustHtml((mailRes.body || '').replaceAll('<a', '<a target="_blank"'));
                             return mailRes;
                         });
                         this.sortEmailsByKey(mails);
@@ -885,7 +885,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                 }
 
                 this.emailBodies[requestedSession] = {
-                    body: this.domSanitizer.bypassSecurityTrustHtml(res.Body),
+                    body: this.domSanitizer.bypassSecurityTrustHtml((res.Body || '').replaceAll('<a', '<a target="_blank"')),
                     attachmentList: res?.Attachments || [],
                     agentName: res?.AgentName,
                     repliedStatus: (res as any)?.RepliedStatus,
@@ -1020,8 +1020,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
             });
             this.replyEditorModal.afterClosed().subscribe(async (reply = false) => {
                 if (reply) {
+                    if (!this.quillInstance.root?.innerHTML) {
+                        this.appUiService.showSnackbar('Email cannot be empty', 'failure');
+                    }
                     loader = this.appUiService.showSnackbar('Replying to emails', 'loading');
-                    const { routeIds, uiIds } = emails.reduce(
+                    const emailIds = emails.reduce(
                         (acc, curr) => {
                             if (curr.RouteId) {
                                 acc.routeIds.push(curr.RouteId);
@@ -1029,9 +1032,12 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                             if (curr.uiId) {
                                 acc.uiIds.push(curr.uiId);
                             }
+                            return acc;
                         },
                         { routeIds: [], uiIds: [] }
                     );
+
+                    const { routeIds, uiIds } = emailIds;
                     await SDKClient.replyBulkEmailsInQueue({
                         body: this.quillInstance.root?.innerHTML || '',
                         // body: this.replyBody || '',
@@ -1063,7 +1069,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
         const yesterday = new Date();
         yesterday.setDate(today.getDate() - 1);
 
-        this.advancedSearchForm.reset();
+        this._workbenchService.resetEmailState();
+        // this.advancedSearchForm.setValue({});
     }
 
     /**
@@ -1082,7 +1089,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
      * Selects Emailtemplate
      */
     selectEmailTemplate(template: EmailTemplate): void {
-        this.quillInstance.clipboard.dangerouslyPasteHTML(template.BodyHTML);
+        this.quillInstance.clipboard.dangerouslyPasteHTML((template.BodyHTML || '').replaceAll('<a', '<a target="_blank"'));
     }
 }
 

@@ -631,7 +631,9 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         this.emailThreadReq.loading = true;
         const fetchFromOutbox = interaction.Direction === 'Out';
         const onSuccess = (res) => {
-            console.log('########################', res);
+            if (res.response.Body) {
+                res.response.Body = res.response.Body.replaceAll('<a', '<a target="_blank"');
+            }
             this.emailThreadReq.data = res.response;
             this.emailThreadReq.loading = false;
             this.emailThreadReq.error = false;
