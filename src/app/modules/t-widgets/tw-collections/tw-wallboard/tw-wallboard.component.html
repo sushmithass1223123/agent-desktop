@@ -1,5 +1,5 @@
 <tw-wrapper [data]="data">
-    <div class="w-100-p bg-inherit mat-table-container custom-scroll-adjust" [ngClass]="this.source === 'supervisor' ? 'h-100-p' : 'h-50-p'">
+    <div class="w-100-p bg-inherit mat-table-container custom-scroll-adjust h-100-p">
         <mat-table matSort [dataSource]="dataSource" matSortActive="CallsInQueue" matSortDirection="desc" matSortDisableClear>
             <ng-container matColumnDef="SkillName">
                 <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="40"> <span> Skill Name </span> </mat-header-cell>
@@ -35,7 +35,6 @@
                 </mat-cell>
             </ng-container>
 
-            <!-- Header and Row Declarations -->
             <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
             <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
         </mat-table>
@@ -43,5 +42,26 @@
         <p *ngIf="dataSource.data.length === 0" class="text-center m-0 mat-title">No Data Available</p>
     </div>
 
-    <img *ngIf="data.Data.Source === 'dashboard'" class="vector-image" src="assets/images/vectors/home.svg" width="580" />
+    <img *ngIf="widgetData.Role === 'agent'" class="vector-image" src="assets/images/vectors/home.svg" width="580" />
+
+    <!-- <div class="w-100-p h-100-p custom-scroll">
+        <div class="record p-8" *ngFor="let item of getInteractionHistoryDemo()">
+            <div class="card">
+                <div class="date-circle">
+                    <div class="date">
+                        {{ item.date | date: 'dd' }}
+                    </div>
+                </div>
+                <div class="connector"></div>
+                <div class="record-details">
+                    <div>{{ item.date | date: 'shortDate' }}</div>
+                    <div>{{ item.type }} - {{ item.date | date: 'shortTime' }}</div>
+                    <div>{{ item.name }}</div>
+                    <div class="indicators">
+                        <mat-icon>add</mat-icon>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> -->
 </tw-wrapper>

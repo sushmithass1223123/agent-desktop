@@ -1,19 +1,11 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { TMACEventService } from '@services/tmac-event.service';
+import {
+    IUIEvent, TUtils
+} from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { get, join } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import {
-    CallerIntentEvent,
-    CCLDataEvent,
-    IncomingCallEvent,
-    IUIEvent,
-    IVRDataEvent,
-    OutgoingCallEvent,
-    SDKClient,
-    TextChatRemoteUserConnectedEvent,
-    UUIDataEvent
-} from 'tmac-sdk';
 
 /**
  * Custommer details widget
@@ -73,33 +65,30 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
         // get the customer info config
         this.customerInfo = this.data.Data.CustomerInfo;
 
-        // // get the event from event bag to make sure no events are missed
-        // const eventBag = this._tmacEventService.interactionEvents(this.interactionId);
+        // create event names to subscribe
+        const eventNames = [];
 
-        // // process the events if any
-        // eventBag.forEach((evt: IUIEvent) => {
-        //     this[evt.EventName]?.(evt);
-        // });
+        this.customerInfo.forEach(c => {
+            try {
+                // get the event name
+                const eventName = c.ValueSource?.split('.')?.shift();
+                // push to eventNames
+                if (eventName && !eventNames.includes(eventName)) {
+                    eventNames.push(eventName);
+                }
+            } catch (error) {
+                TUtils.Logger.console('error', 'Error in TwCustomerDetailsComponent', null, error);
+            }
+        });
 
         // register to tmac events
-        // SDKClient.events.on('IncomingCallEvent', this.IncomingCallEvent);
-        // SDKClient.events.on('OutgoingCallEvent', this.OutgoingCallEvent);
-        // SDKClient.events.on('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
-        // SDKClient.events.on('CallerIntentEvent', this.CallerIntentEvent);
-        // SDKClient.events.on('IVRDataEvent', this.IVRDataEvent);
-        // SDKClient.events.on('UUIDataEvent', this.UUIDataEvent);
-        // SDKClient.events.on('CCLDataEvent', this.CCLDataEvent);
-
-        this._tmacEventService.getInteractionEvents([
-            'IncomingCallEvent',
-            'OutgoingCallEvent',
-            'TextChatRemoteUserConnectedEvent',
-            'CallerIntentEvent',
-            'UUIDataEvent',
-            'CCLDataEvent'
-        ], this.interactionId)
+        this._tmacEventService
+            .getInteractionEvents(eventNames, this.interactionId)
             .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
+            .subscribe(evts => evts.forEach(evt => {
+                this.processCustomerDetails(evt);
+            }
+            ));
     }
 
     /**
@@ -109,71 +98,6 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-
-        // deregister from tmac events
-        // SDKClient.events.off('IncomingCallEvent', this.IncomingCallEvent);
-        // SDKClient.events.off('OutgoingCallEvent', this.OutgoingCallEvent);
-        // SDKClient.events.off('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
-        // SDKClient.events.off('CallerIntentEvent', this.CallerIntentEvent);
-        // SDKClient.events.off('IVRDataEvent', this.IVRDataEvent);
-        // SDKClient.events.off('UUIDataEvent', this.UUIDataEvent);
-        // SDKClient.events.off('CCLDataEvent', this.CCLDataEvent);
-    }
-
-    /**
-     * IncomingCallEvent handler
-     * @param {IncomingCallEvent} evt
-     */
-    private IncomingCallEvent = (evt: IncomingCallEvent) => {
-        this.processCustomerDetails(evt);
-    }
-
-    /**
-     * OutgoingCallEvent handelr
-     * @param {OutgoingCallEvent} evt
-     */
-    private OutgoingCallEvent = (evt: OutgoingCallEvent) => {
-        this.processCustomerDetails(evt);
-    }
-
-    /**
-     * TextChatRemoteUserConnectedEvent Handler
-     * @param {TextChatRemoteUserConnectedEvent} evt
-     */
-    private TextChatRemoteUserConnectedEvent = (evt: TextChatRemoteUserConnectedEvent) => {
-        this.processCustomerDetails(evt);
-    }
-
-    /**
-     * CallerIntentEvent handler
-     * @param {CallerIntentEvent} evt
-     */
-    private CallerIntentEvent = (evt: CallerIntentEvent) => {
-        this.processCustomerDetails(evt);
-    }
-
-    /**
-     * IVRDataEvent Handler
-     * @param {IVRDataEvent} evt
-     */
-    private IVRDataEvent = (evt: IVRDataEvent) => {
-        this.processCustomerDetails(evt);
-    }
-
-    /**
-     * UUIDataEvent Handelr
-     * @param {UUIDataEvent} evt
-     */
-    private UUIDataEvent = (evt: UUIDataEvent) => {
-        this.processCustomerDetails(evt);
-    }
-
-    /**
-     * CCLDataEvent Handler
-     * @param {CCLDataEvent} evt
-     */
-    private CCLDataEvent = (evt: CCLDataEvent) => {
-        this.processCustomerDetails(evt);
     }
 
     /**
@@ -181,27 +105,72 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
      * @param {IUIEvent} evt
      */
     private processCustomerDetails = (evt: IUIEvent) => {
-        // check the interaction
-        // if (evt.InteractionID !== this.interactionId) {
-        //     return;
-        // }
-
         // check if customer info map is available in this event
         this.customerInfo.forEach((item: CustomerInfo) => {
-            // split the value source
-            const valueSourceSplit = item.ValueSource.split('.');
-            // check if the value source event name matches with the current event
-            if (valueSourceSplit[0] !== evt.EventName) {
+            // check if value is added, then ignore
+            if (item.Value) {
                 return;
             }
-            // remove the event name from the array
-            valueSourceSplit.shift();
-            // map the property and get the value from event property
-            const valueMap = join(valueSourceSplit, '.');
+            // get the value source
+            const valueSource = item.ValueSource;
+            let valueSourceSplit = [];
+            // check if we need to parse the json
+            if (valueSource.toLowerCase().includes('jsonparse')) {
+                // expected value = jsonparse(EventName.{...path}).getValue
+                // get the path by taking string between ()
+                const path = valueSource.substring(
+                    valueSource.lastIndexOf('(') + 1,
+                    valueSource.lastIndexOf(')')
+                );
 
-            // get the value from path or default value
-            item.Value = get(evt, valueMap, item.DefaultValue);
+                if (path) {
+                    // split the value source
+                    valueSourceSplit = path.split('.');
+                    // check if the value source event name matches with the current event
+                    if (valueSourceSplit[0] !== evt.EventName) {
+                        return;
+                    }
+
+                    // get the value from path
+                    const jsonStr = this.GetValueFromJson(valueSourceSplit, evt, '');
+
+                    if (jsonStr) {
+                        // get the property by taking string between ) and last
+                        const prop = valueSource.substring(
+                            valueSource.lastIndexOf(')') + 2,
+                            valueSource.length);
+
+                        item.Value = JSON.parse(jsonStr)[prop] ?? '';
+                    }
+                }
+            }
+            else {
+                valueSourceSplit = item.ValueSource.split('.');
+                // check if the value source event name matches with the current event
+                if (valueSourceSplit[0] !== evt.EventName) {
+                    return;
+                }
+
+                // get the value from path or default value
+                item.Value = this.GetValueFromJson(valueSourceSplit, evt, item.DefaultValue);
+            }
         });
+    }
+
+    /**
+     * To get property value from json
+     * 
+     * @param {String[]} valueSourceSplit 
+     * @param {IUIEvent} evt 
+     * @param {String} defaultValue 
+     */
+    private GetValueFromJson(valueSourceSplit: string[], evt: IUIEvent, defaultValue: string): string {
+        // remove the event name from the array
+        valueSourceSplit.shift();
+        // map the property and get the value from event property
+        const valueMap = join(valueSourceSplit, '.');
+        // get the value from path or default value
+        return get(evt, valueMap, defaultValue);
     }
 }
 

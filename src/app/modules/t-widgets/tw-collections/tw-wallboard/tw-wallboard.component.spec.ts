@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TwWallboardComponent } from './tw-wallboard.component';
 
@@ -6,7 +6,7 @@ describe('TwWallboardComponent', () => {
   let component: TwWallboardComponent;
   let fixture: ComponentFixture<TwWallboardComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ TwWallboardComponent ]
     })

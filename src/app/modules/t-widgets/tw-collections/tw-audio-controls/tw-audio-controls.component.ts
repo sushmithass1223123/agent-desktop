@@ -1,14 +1,24 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { FuseConfigService } from '@fuse/services/config.service';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
+import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { map } from 'lodash';
 import { timer } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { AVChannel, AVControlMessageReceivedEvent, AVEvent, IAgentData, SDKClient, TEnums, TextChatDisconnectedEvent, TUtils } from 'tmac-sdk';
+import { filter, takeUntil } from 'rxjs/operators';
+import {
+    AgentAVMessageEvent,
+    AVChannel,
+    AVControlMessageReceivedEvent,
+    AVEvent,
+    IAgentData,
+    SDKClient,
+    TEnums,
+    TextChatDisconnectedEvent,
+    TUtils
+} from '@tmac/sdk';
 import { TwChatControlsComponent } from '../tw-chat-controls/tw-chat-controls.component';
 
 /**
@@ -21,23 +31,29 @@ import { TwChatControlsComponent } from '../tw-chat-controls/tw-chat-controls.co
     encapsulation: ViewEncapsulation.None
 })
 export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-
     /**
-     * holds all the data related to this widget from the config    
+     * holds all the data related to this widget from the config
      */
     @Input() data: IWidget;
 
     /**
      * Fuse config
      */
-    fuseConfig: any;
+    // fuseConfig: any;
+    /**
+     * Fuse custom background colors
+     */
+    customFuse = {
+        anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
+        widget$: this._fuseFacadeService.widgetBgClasses$
+    };
     /**
      * App config
      */
     appConfig: any;
 
     /**
-     * Widget Data 
+     * Widget Data
      */
     widgetData: {
         /**
@@ -124,13 +140,14 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
     remoateScreenshareRef: any;
 
     /**
-     * Constructor 
+     * Constructor
      */
     constructor(
-        private _fuseConfigService: FuseConfigService,
+        // private _fuseConfigService: FuseConfigService,
         private _appDataService: AppDataService,
         private _aotWidgetService: AOTWidgetService,
-        private _appUIService: AppUiService
+        private _appUIService: AppUiService,
+        private _fuseFacadeService: FuseFacadeService
     ) {
         super();
     }
@@ -147,25 +164,13 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        this._fuseConfigService.config
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(
-                (config: any) => {
-                    this.fuseConfig = config;
-                }
-            );
+        // this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+        //     this.fuseConfig = config;
+        // });
 
-        this._appDataService.config
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(
-                (config: any) => {
-                    this.appConfig = config;
-                }
-            );
-
-        // listen to tmac events
-        SDKClient.events.on('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
-        SDKClient.events.on('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
+        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+            this.appConfig = config;
+        });
 
         // get the agent data
         this.user = SDKClient.getAgentData();
@@ -174,32 +179,45 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         this.startTime = new Date();
 
         // add the widget data
-        this.interactionId = this.data.InteractionDetails?.InteractionID;
-        this.sessionID = this.data.InteractionDetails?.TextChatSessionID;
+        this.interactionId = this.data.Data.InteractionID;
+        this.sessionID = this.data.Data.SessionID;
         this.widgetData = {
             customerName: this.data.Data.CustomerName,
             chatConfig: this.data.Data.Config || new Object(),
             opener: this.data.Data.Opener,
             direction: this.data.Data.direction
         };
+
+        // listen to tmac events
+        SDKClient.events.on('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
+        SDKClient.events.on('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
+        SDKClient.events.on('AgentAVMessageEvent', this.AgentAVMessageEvent);
+
+        // check for the avEvent
         const avEvent = this.data.Data.AVEvent || null;
         // create the AV channel connection
         this.createAVConnection(avEvent);
         // start call
-        this.avConn?.startCall(TEnums.WrcCallTypes.Audio, null)
-            .then((dt: any) => {
-                this.showUI = true;
-                // check the response is sucess or timed out
-                if (dt.code === TEnums.WrcCodes.RequestTimeout) {
-                    // close the call widget
-                    this._aotWidgetService.destroyWidget(this.data.ID);
-                }
-            })
-            .catch((error) => {
-                this._appUIService.showSnackbar('Error in starting the call: ' + error, 'failure');
-            });
-
-        this.showUI = true;
+        if (this.data.Data.ConferenceType === 'conf') {
+            this.avConn.join(TEnums.WrcCallTypes.Audio, { mode: 'conference' });
+            // show UI
+            this.showUI = true;
+        } else if (this.data.Data.Direction === 'out') {
+            this.avConn
+                ?.startCall(TEnums.WrcCallTypes.Audio, null)
+                .then((dt: any) => {
+                    // check the response is sucess or timed out
+                    if (dt.code === TEnums.WrcCodes.RequestTimeout) {
+                        // close the call widget
+                        this._aotWidgetService.destroyWidget(this.data.ID);
+                    }
+                    // show UI
+                    this.showUI = true;
+                })
+                .catch((error) => {
+                    this._appUIService.showSnackbar('Error in starting the call: ' + error, 'failure');
+                });
+        }
     }
 
     /**
@@ -210,10 +228,11 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         this.destroyWrapper();
 
         this.avConn?.close();
-        this.avConn?.events.off('onAVEvent', this.onAVEvent);
+        this.avConn?.events.off('OnAVEvent', this.onAVEvent);
         SDKClient.events.off('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
         SDKClient.events.off('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
-        this.widgetData.opener.dsiposeCallWidget();
+        SDKClient.events.off('AgentAVMessageEvent', this.AgentAVMessageEvent);
+        this.widgetData.opener?.disposeCallWidget();
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -223,13 +242,12 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Create AV connection
      * @method createAVConnection
-     * @param {AVControlMessageReceivedEvent} avEvent 
+     * @param {AVControlMessageReceivedEvent} avEvent
      */
     private createAVConnection(avEvent: AVControlMessageReceivedEvent): void {
-        if (!this.interactionId) {
-            TUtils.Logger.log('Error in AVChannel', 'Could not create AV channel instance!');
-            return;
-        }
+        // Set AV Config
+        const AV: any = this.appConfig.AppConfigs.AV || {};
+
         // create a AV channel connection
         const connection = new AVChannel(
             SDKClient,
@@ -238,17 +256,25 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
             this.user.agentName,
             this.sessionID.split('|')[0],
             'chat',
-            this.appConfig.AppConfigs.AV || {}
+            AV
         );
 
         // check if the connection is created
         if (!connection) {
-            TUtils.Logger.log('Error in AVChannel', 'Could not create AV channel instance!');
+            TUtils.Logger.debug('Error in AVChannel: Could not create AV channel instance!');
             return null;
         }
 
+        if (typeof this.data.Data?.SendMessage === 'function') {
+            connection.sendMessage = this.data.Data?.SendMessage;
+        }
+
+        // this.data.Data.OnMessage = (msg: string) => {
+        //     connection.onMessage(msg);
+        // };
+
         // listen to AV events
-        connection.events.on('onAVEvent', this.onAVEvent);
+        connection.events.on('OnAVEvent', this.onAVEvent);
 
         // assign the av connection
         this.avConn = connection;
@@ -261,24 +287,9 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
     }
 
     /**
-     * AVControlMessageReceivedEvent Handler
-     * @method AVControlMessageReceivedEvent
-     * @param {AVControlMessageReceivedEvent} evt 
-     */
-    private AVControlMessageReceivedEvent = (evt: AVControlMessageReceivedEvent) => {
-        // check the interaction
-        if (evt.InteractionID !== this.interactionId) {
-            return;
-        }
-
-        // forward the av messages to av channel
-        this.avConn?.onMessage(evt.Message);
-    }
-
-    /**
      * AVEvent Handler
      * @method onAVEvent
-     * @param {AVEvent} evt 
+     * @param {AVEvent} evt
      */
     private onAVEvent = (evt: AVEvent) => {
         // swtich the av events
@@ -286,28 +297,39 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
             case 'onIncoming':
                 // request param
                 const param = evt.data.param.charAt(0).toUpperCase() + evt.data.param.slice(1);
-                // get confirmation
-                const confirmDialogRef = this._appUIService.showCustomDialog('confirm', param + ' call requested by customer, Do you want to accept it?');
-                confirmDialogRef.afterClosed().subscribe((resp) => {
+
+                const onConfirmDialogClose = (resp) => {
                     if (resp) {
                         // accept request
                         evt.data.response(true);
                         // show the UI
                         this.showUI = true;
+                    } else {
+                        if (param !== 'Screenshare') {
+                            // reject request
+                            evt.data.response(false);
+                            // close the call widget
+                            this._aotWidgetService.destroyWidget(this.data.ID);
+                        }
                     }
-                    else {
-                        // reject request
-                        evt.data.response(false);
-                        // close the call widget
-                        this._aotWidgetService.destroyWidget(this.data.ID);
-                    }
-                });
+                };
+
+                if (param === 'Screenshare' && this.widgetData.opener.allowCustomerScreenShare) {
+                    onConfirmDialogClose(true);
+                } else {
+                    // config incoming call
+                    const confirmDialogRef = this._appUIService.showCustomDialog(
+                        'confirm',
+                        `${param} call requested by ${this.widgetData.customerName}, Do you want to accept it?`
+                    );
+                    confirmDialogRef.afterClosed().subscribe((resp) => onConfirmDialogClose(resp));
+                }
                 break;
             case 'onTrace':
-                TUtils.Logger.log(evt.data);
+                TUtils.Logger.info('TwAudioControlsComponent.onAVEvent.onTrace: ' + evt.data);
                 break;
             case 'onError':
-                TUtils.Logger.log('Exception in TwAudioControlsComponent.onAVEvent', evt.data);
+                TUtils.Logger.error('TwAudioControlsComponent.onAVEvent.onError', evt.data.code + '-' + evt.data.error);
                 break;
             case 'onAVStats':
                 this.status = evt.data;
@@ -360,14 +382,14 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
                 this.remoteScreenSharing = false;
                 this.remoateScreenshareRef = null;
                 // remove the screenshare user
-                this.userList = this.userList.filter(u => u.streamInfo.type !== 'screenshare');
+                this.userList = this.userList.filter((u) => u.streamInfo.type !== 'screenshare');
                 break;
             case 'onFail':
                 // show the error
                 this.connected = false;
                 this.status = 'failed';
                 if (evt.data.code === TEnums.WrcCodes.Rejected) {
-                    this._appUIService.showSnackbar('Customer has rejected your request', 'failure');
+                    this._appUIService.showSnackbar('User has rejected your request', 'failure');
                 } else {
                     this._appUIService.showSnackbar('Call failed: ' + evt.data.error, 'failure');
                 }
@@ -398,20 +420,47 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
             case 'onEnd':
                 this.connected = false;
                 this.status = 'ended';
-                this._appUIService.showSnackbar('Customer has ended the call', 'info');
+                this._appUIService.showSnackbar('User has ended the call', 'info');
                 // close the widget
                 this.destroyWidget();
+                break;
+            case 'onUserLeft':
+                this.userList = this.userList.filter((u) => u.streamInfo.id !== evt.data?.userId);
                 break;
             default:
             // console.log(`unhandled:: [${evt.event}]`, evt);
         }
-    }
+    };
 
+    /**
+     * AVControlMessageReceivedEvent Handler
+     * @method AVControlMessageReceivedEvent
+     * @param {AVControlMessageReceivedEvent} evt
+     */
+    private AVControlMessageReceivedEvent = (evt: AVControlMessageReceivedEvent) => {
+        // check the interaction
+        if (evt.InteractionID !== this.interactionId) {
+            return;
+        }
+
+        // forward the av messages to av channel
+        this.avConn?.onMessage(evt.Message);
+    };
+
+    /**
+     * AgentAVMessageEvent Handler
+     * @method AgentAVMessageEvent
+     * @param {AgentAVMessageEvent} evt
+     */
+    private AgentAVMessageEvent = (evt: AgentAVMessageEvent) => {
+        // forward the av messages to av channel
+        this.avConn?.onMessage(evt.Message);
+    };
 
     /**
      * TextChatDisconnectedEvent Handler
      * @method TextChatDisconnectedEvent
-     * @param {TextChatDisconnectedEvent} evt 
+     * @param {TextChatDisconnectedEvent} evt
      */
     private TextChatDisconnectedEvent = (evt: TextChatDisconnectedEvent) => {
         // check the interaction
@@ -420,8 +469,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         }
         // close the widget
         this.destroyWidget();
-    }
-
+    };
 
     /**
      * Widget Cleanup
@@ -436,7 +484,6 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
 
-
     /**
      * Mute call
      * @method muteCall
@@ -446,15 +493,13 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         if (this.muted) {
             // un mute the call
             this.avConn.unMute(true, false);
-        }
-        else {
+        } else {
             // mute the call
             this.avConn.mute(true, false);
         }
         // set the reference varaible
         this.muted = !this.muted;
     }
-
 
     /**
      * Hold call
@@ -465,15 +510,15 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         if (this.hold) {
             // un hold the call
             this.avConn.unHold();
-        }
-        else {
+            this.widgetData.opener.unHoldInteraction();
+        } else {
             // hold the call
             this.avConn.hold();
+            this.widgetData.opener.holdInteraction();
         }
-        // set the reference varaible 
+        // set the reference varaible
         this.hold = !this.hold;
     }
-
 
     /**
      * Share Screen
@@ -484,13 +529,11 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         if (this.screenSharing) {
             // stop screen sharing
             this.avConn.stopScreenshare();
-        }
-        else {
+        } else {
             // start screen sharing
             this.avConn.startScreenshare();
         }
     }
-
 
     /**
      * End call
@@ -499,11 +542,10 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
     public endCall(): void {
         // end the call
         // if there is only customer then endCall else dropCall
-        if (this.userList.length > 1) {
-            this.avConn.dropCall('');
-        }
-        else {
-            this.avConn.endCall(TEnums.WrcCallTypes.Audio, '');
+        if (this.userList.filter(u => u.streamInfo.type !== 'screenshare').length > 1) {
+            this.avConn?.dropCall('');
+        } else {
+            this.avConn?.endCall(TEnums.WrcCallTypes.Audio, '');
         }
         // close the widget
         this.destroyWidget();

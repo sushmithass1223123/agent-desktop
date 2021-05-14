@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TwInstantMessagingComponent } from './tw-instant-messaging.component';
 
@@ -6,7 +6,7 @@ describe('TwInstantMessagingComponent', () => {
   let component: TwInstantMessagingComponent;
   let fixture: ComponentFixture<TwInstantMessagingComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ TwInstantMessagingComponent ]
     })

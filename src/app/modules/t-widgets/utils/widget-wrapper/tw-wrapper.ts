@@ -1,7 +1,7 @@
 import { HostBinding, Directive } from '@angular/core';
 import { Subject } from 'rxjs';
 import { IWidget } from 'app/interfaces';
-import { TUtils } from 'tmac-sdk';
+import { TUtils } from '@tmac/sdk';
 
 /**
  * T Widget Wrapper directive
@@ -76,6 +76,11 @@ export class TWidgetWrapper {
             }
         }
 
+        // check if the widget is a hidden widget
+        if (data.Config.Hidden) {
+            this.style = `${this.style} display:none;`.trim();
+        }
+
         // check if the Class is defined
         if (data.Config.Class) {
             // add the postion class
@@ -87,7 +92,7 @@ export class TWidgetWrapper {
             this.class += ' ' + data.Config.ViewState;
         }
     }
-    
+
     /**
      * On widget destroy
      */

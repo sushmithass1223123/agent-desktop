@@ -1,7 +1,7 @@
 <tw-wrapper [data]="data">
     <div fxFlex fxFill fxLayout="column" class="tw-voice-panel">
 
-        <ng-container *ngFor="let widget of voicePanelWidgets">
+        <ng-container *ngFor="let widget of widgets">
 
             <tw-voice-controls [data]="widget" *ngIf="widget.Type === 'tw-voice-controls'" [ngClass]="widget.Type + ' ' + 
             (maximized[widget.Type] || widget.Config.ViewState === 'maximize' ? 'maximized' : '') + ' ' + 

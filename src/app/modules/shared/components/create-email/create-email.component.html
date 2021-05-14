@@ -1,227 +1,194 @@
-<div class="w-100-p px-20">
-    <form #f="ngForm" novalidate>
-        <div fxLayout fxLayoutAlign="space-between center" fxLayoutGap="10px">
-            <mat-form-field fxFlex="100" appearance="outline">
-                <mat-label> To :</mat-label>
-                <mat-autocomplete #suggestedUsersRef="matAutocomplete" (optionSelected)="selectUser('To', $event)">
-                    <mat-option *ngFor="let user of suggestedUsers.filtered" [value]="user">
+<div fxLayout="column" class="w-100-p h-100-p px-20">
+    <form [formGroup]="emailCtrl" class="my-8" novalidate>
+        <div class="border-primary border-radius-20 w-100-p p-12">
+            <div fxLayout fxLayoutAlign="space-between" fxLayoutGap="8px" class="my-4">
+                <label for="toField" class="font-weight-700">To : </label>
+                <mat-autocomplete autoActiveFirstOption #suggestedUsersRef="matAutocomplete" (optionSelected)="selectUser('To', $event)">
+                    <mat-option *ngFor="let user of suggestedUsers" [value]="user">
                         {{ user }}
                     </mat-option>
                 </mat-autocomplete>
-                <mat-chip-list #userList aria-label="User selection">
-                    <mat-chip *ngFor="let user of email.To" removable (removed)="removeUser('To', user)">
-                        {{ user }}
-                        <mat-icon matChipRemove>cancel</mat-icon>
-                    </mat-chip>
-                    <input
-                        #recipientsInput
-                        [(ngModel)]="recipients.To"
-                        name="To"
-                        (ngModelChange)="filterUsers('To', $event)"
-                        [matAutocomplete]="suggestedUsersRef"
-                        [matChipInputFor]="userList"
-                        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                    />
-                </mat-chip-list>
-            </mat-form-field>
-            <button type="button" *ngIf="!showCcBcc" mat-raised-button (click)="showCcBcc = true" class="mr-4">CC / BCC</button>
-        </div>
-        <mat-form-field *ngIf="showCcBcc" class="w-100-p" appearance="outline">
-            <mat-label> CC :</mat-label>
-            <mat-autocomplete #suggestedUsersRef="matAutocomplete" (optionSelected)="selectUser('CC', $event)">
-                <mat-option *ngFor="let user of suggestedUsers.filtered" [value]="user">
-                    {{ user }}
-                </mat-option>
-            </mat-autocomplete>
-            <mat-chip-list #userList aria-label="User selection">
-                <mat-chip *ngFor="let user of email.CC" removable (removed)="removeUser('CC', user)">
-                    {{ user }}
-                    <mat-icon matChipRemove>cancel</mat-icon>
-                </mat-chip>
                 <input
-                    #recipientsInput
-                    [(ngModel)]="recipients.CC"
-                    name="CC"
-                    (ngModelChange)="filterUsers('CC', $event)"
+                    formControlName="To"
+                    class="flex-1"
+                    matInput
+                    id="toField"
+                    [ngClass]="{ 'mat-error': emailCtrl.controls.To.errors }"
                     [matAutocomplete]="suggestedUsersRef"
-                    [matChipInputFor]="userList"
-                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                 />
-            </mat-chip-list>
-        </mat-form-field>
-        <mat-form-field *ngIf="showCcBcc" class="w-100-p" appearance="outline">
-            <mat-label> BCC :</mat-label>
-            <mat-autocomplete #suggestedUsersRef="matAutocomplete" (optionSelected)="selectUser('BCC', $event)">
-                <mat-option *ngFor="let user of suggestedUsers.filtered" [value]="user">
-                    {{ user }}
-                </mat-option>
-            </mat-autocomplete>
-            <mat-chip-list #userList aria-label="User selection">
-                <mat-chip *ngFor="let user of email['BCC']" removable (removed)="removeUser('BCC', user)">
-                    {{ user }}
-                    <mat-icon matChipRemove>cancel</mat-icon>
-                </mat-chip>
-                <input
-                    #recipientsInput
-                    [(ngModel)]="recipients.BCC"
-                    name="BCC"
-                    (ngModelChange)="filterUsers('BCC', $event)"
-                    [matAutocomplete]="suggestedUsersRef"
-                    [matChipInputFor]="userList"
-                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                />
-            </mat-chip-list>
-        </mat-form-field>
-        <mat-form-field class="w-100-p" appearance="outline">
-            <mat-label> Subject :</mat-label>
-            <input
-                [(ngModel)]="email.Subject"
-                matInput
-                name="subject"
-                [ngClass]="{ 'is-invalid': subject.invalid && subject.errors?.required }"
-                #subject="ngModel"
-                required
-            />
-            <mat-error *ngIf="subject.invalid && subject.errors?.required"> Subject required </mat-error>
-        </mat-form-field>
-    </form>
-    <div fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="20px" class="w-100-p mb-12">
-        <button mat-icon-button class="primary" (click)="attachFileRef.click()">
-            <mat-icon>attach_file</mat-icon>
-            <input #attachFileRef type="file" (click)="$event.target.value = null" (change)="onFileInput($event)" style="display: none" />
-        </button>
-
-        <mat-menu #departmentMenu="matMenu">
-            <ng-template matMenuContent>
-                <ng-container *ngFor="let dept of availableTemplates.departments | keyvalue">
-                    <button mat-menu-item [matMenuTriggerFor]="groupMenu" (menuOpened)="setGroups(dept.key)">
-                        {{ dept.value.Name }}
-                    </button>
-                    <mat-menu #groupMenu="matMenu">
-                        <ng-template matMenuContent>
-                            <ng-container *ngIf="dept.value.groups">
-                                <button
-                                    mat-menu-item
-                                    [matMenuTriggerFor]="templateMenu"
-                                    *ngFor="let group of dept.value.groups | keyvalue"
-                                    (menuOpened)="setTemplates(dept.value.ID, group.key)"
-                                >
-                                    {{ group.value.Name }}
-                                    <mat-menu #templateMenu="matMenu">
-                                        <ng-template matMenuContent>
-                                            <ng-container *ngIf="group.value.templates">
-                                                <!-- (menuOpened)="selectTemplate(template)" -->
-                                                <button
-                                                    mat-menu-item
-                                                    *ngFor="let template of group.value.templates | keyvalue"
-                                                    (click)="selectTemplate(template.value)"
-                                                >
-                                                    {{ template.value.Name }}
-                                                </button>
-                                            </ng-container>
-                                            <button mat-menu-item disabled *ngIf="!group.value.templates">No templates for this group</button>
-                                        </ng-template>
-                                    </mat-menu>
-                                </button>
-                            </ng-container>
-                            <button mat-menu-item disabled *ngIf="!dept.value.groups">No groups for this department</button>
-                        </ng-template>
-                    </mat-menu>
-                </ng-container>
-            </ng-template>
-        </mat-menu>
-
-        <!-- <ng-template #templatePreviewDialog>
-            <div [innerHTML]="templatePreview.preview"></div>
-            <div class="w-100-p" fxLayout fxLayoutAlign="end center">
-                <button mat-raised-button color="primary"  (click)="useTemplate()" >Use</button>
-                <button mat-button color="accent"  (click)="closeTemplatePreview()" >Cancel</button>
+                <small (click)="showCcBcc = !showCcBcc"> CC / BCC </small>
             </div>
-        </ng-template> -->
+            <small *ngIf="emailCtrl.controls.To.errors" class="twd-text-red-600"> To Email Address required </small>
 
-        <button mat-button [matMenuTriggerFor]="departmentMenu">
-            <span class="mr-4"> Choose Template </span>
-            <mat-icon>description</mat-icon>
-        </button>
-        <!-- <mat-form-field class="custom select-box w-50-p" appearance="outline">
-            <mat-select placeholder="Templates" (selectionChange)="selectTemplate($event)">
-                <mat-option *ngFor="let template of availableTemplates | keyvalue" [value]="template.value">{{ template.key }}</mat-option>
-            </mat-select>
-        </mat-form-field> -->
-        <div fxFlex="100" fxLayout="row wrap" fxLayoutGap="10px" [ngClass]="{ 'mt-20': email.Files.length || uploadingFiles.length }">
-            <!-- <div fxFlex="30" *ngFor="let file of email.Files" class="px-12 py-8 border-radius-20 mat-elevation-z2">
-                <p>{{ file }}</p>
-            </div> -->
-            <mat-chip-list #chipList aria-label="file selection">
-                <mat-chip class="p-16" *ngFor="let file of email.Files" removable (removed)="removeFiles(file.Id)">
-                    <mat-icon>attach_file</mat-icon>
-                    <div class="ml-8 my-0">
-                        <p class="m-0">{{ file.Name }}</p>
-                        <a target="_blank" [href]="file.URL">
-                            <small>View file</small>
-                        </a>
+            <ng-container *ngIf="showCcBcc">
+                <div fxLayout fxLayoutAlign="space-between" fxLayoutGap="8px" class="my-4">
+                    <label for="ccField" class="font-weight-700">CC : </label>
+                    <mat-autocomplete autoActiveFirstOption #ccSuggestedUsersRef="matAutocomplete" (optionSelected)="selectUser('CC', $event)">
+                        <mat-option *ngFor="let user of suggestedUsers" [value]="user">
+                            {{ user }}
+                        </mat-option>
+                    </mat-autocomplete>
+                    <input id="ccField" matInput class="flex-1" formControlName="CC" [matAutocomplete]="ccSuggestedUsersRef" />
+                </div>
+
+                <div fxLayout fxLayoutAlign="space-between" fxLayoutGap="8px" class="my-4">
+                    <label for="bccField" class="font-weight-700">BCC : </label>
+                    <mat-autocomplete autoActiveFirstOption #bccSuggestedUsersRef="matAutocomplete" (optionSelected)="selectUser('BCC', $event)">
+                        <mat-option *ngFor="let user of suggestedUsers" [value]="user">
+                            {{ user }}
+                        </mat-option>
+                    </mat-autocomplete>
+                    <input id="bccField" class="flex-1" formControlName="BCC" matInput [matAutocomplete]="bccSuggestedUsersRef" />
+                </div>
+            </ng-container>
+
+            <div fxLayout fxLayoutGap="8px" fxLayoutAlign="space-between" class="my-4">
+                <label for="subjectField" class="font-weight-700">Subject : </label>
+                <input id="subjectField" class="flex-1" matInput formControlName="Subject" />
+            </div>
+        </div>
+    </form>
+
+    <div fxLayout="row wrap" fxLayoutGap="10px" *ngIf="email.Files.length || uploadingFiles.length" class="w-100-p mb-12">
+        <mat-chip-list #chipList aria-label="file selection">
+            <mat-chip class="p-16" *ngFor="let file of email.Files" removable (removed)="removeFiles(file.Id)">
+                <mat-icon>attach_file</mat-icon>
+                <div class="ml-8 my-0">
+                    <p class="m-0">{{ file.Name }}</p>
+                    <a target="_blank" [href]="file.URL">
+                        <small>View file</small>
+                    </a>
+                </div>
+                <mat-icon matChipRemove>cancel</mat-icon>
+            </mat-chip>
+        </mat-chip-list>
+
+        <mat-chip-list #chipList aria-label="file selection">
+            <mat-chip class="p-16" *ngFor="let file of uploadingFiles">
+                <mat-icon>attach_file</mat-icon>
+                <span class="mx-4"> {{ file }} </span>
+                <span> (uploading ...) </span>
+            </mat-chip>
+        </mat-chip-list>
+    </div>
+
+    <div class="border-primary flex-1 border-radius-20 p-8 mb-12">
+        <div class="editor-wrapper position-relative">
+            <div class="h-100-p w-100-p position-absolute custom-scroll-adjust">
+                <quill-editor
+                    (onEditorCreated)="setFocus($event)"
+                    class="email-editor"
+                    classes="editor-container border-radius-20"
+                    [(ngModel)]="email.Body"
+                    [placeholder]="editorConfig.placeholder"
+                    [modules]="editorConfig.modules"
+                    format="html"
+                >
+                    <div
+                        quill-editor-toolbar
+                        class="border-radius-20 mat-elevation-z2"
+                        [ngClass]="showToolbar ? 'show ' + (customFuse$ | async)?.content : ''"
+                    >
+                        <span class="ql-formats">
+                            <select class="ql-font">
+                                <option selected></option>
+                                <option value="serif"></option>
+                                <option value="monospace"></option>
+                            </select>
+                            <select class="ql-size">
+                                <option value="small"></option>
+                                <option selected></option>
+                                <option value="large"></option>
+                                <option value="huge"></option>
+                            </select>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-bold"></button>
+                            <button class="ql-italic"></button>
+                            <button class="ql-underline"></button>
+                            <button class="ql-strike"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <select class="ql-color"></select>
+                            <select class="ql-background"></select>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-list" value="ordered"></button>
+                            <button class="ql-list" value="bullet"></button>
+                            <select class="ql-align">
+                                <option selected></option>
+                                <option value="center"></option>
+                                <option value="right"></option>
+                                <option value="justify"></option>
+                            </select>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-link"></button>
+                            <button class="ql-image"></button>
+                        </span>
                     </div>
-                    <mat-icon matChipRemove>cancel</mat-icon>
-                </mat-chip>
-            </mat-chip-list>
+                </quill-editor>
+            </div>
+        </div>
 
-            <mat-chip-list #chipList aria-label="file selection">
-                <mat-chip class="p-16" *ngFor="let file of uploadingFiles">
+        <div fxLayout fxLayoutAlign="space-between" class="w-100-p p-4 position-relative">
+            <div>
+                <button mat-raised-button mat-icon-button color="primary" class="mx-4" (click)="attachFileRef.click()">
                     <mat-icon>attach_file</mat-icon>
-                    <span class="mx-4"> {{ file }} </span>
-                    <span> (uploading ...) </span>
-                </mat-chip>
-            </mat-chip-list>
+                    <input #attachFileRef type="file" (click)="$event.target.value = null" (change)="onFileInput($event)" style="display: none" />
+                </button>
+                <button mat-raised-button mat-icon-button color="primary" matTooltip="Templates" [matMenuTriggerFor]="departmentMenu" class="mx-4">
+                    <!-- <span class="mr-4"> Choose Template </span> -->
+                    <mat-icon>description</mat-icon>
+                </button>
+                <button mat-icon-button color="primary" style="z-index: 2" class="mx-4" (click)="showToolbar = !showToolbar">
+                    <mat-icon> more_horiz </mat-icon>
+                </button>
+            </div>
+            <div>
+                <button mat-raised-button mat-icon-button color="primary" class="mx-4" (click)="triggerEmailSend()">
+                    <mat-icon>send</mat-icon>
+                </button>
+            </div>
         </div>
     </div>
-    <!-- (onContentChanged)="onContentChanged($event)" -->
-    <quill-editor
-        (onEditorCreated)="setFocus($event)"
-        class="email-editor"
-        classes="editor-container border-radius-20"
-        [(ngModel)]="email.Body"
-        [placeholder]="editorConfig.placeholder"
-        [modules]="editorConfig.modules"
-        format="html"
-    >
-        <!-- <div quill-editor-toolbar class="border-radius-20">
-            <span class="ql-formats">
-                <select class="ql-font">
-                    <option selected></option>
-                    <option value="serif"></option>
-                    <option value="monospace"></option>
-                </select>
-                <select class="ql-size">
-                    <option value="small"></option>
-                    <option selected></option>
-                    <option value="large"></option>
-                    <option value="huge"></option>
-                </select>
-            </span>
-            <span class="ql-formats">
-                <button class="ql-bold"></button>
-                <button class="ql-italic"></button>
-                <button class="ql-underline"></button>
-                <button class="ql-strike"></button>
-            </span>
-            <span class="ql-formats">
-                <select class="ql-color"></select>
-                <select class="ql-background"></select>
-            </span>
-            <span class="ql-formats">
-                <button class="ql-list" value="ordered"></button>
-                <button class="ql-list" value="bullet"></button>
-                <select class="ql-align">
-                    <option selected></option>
-                    <option value="center"></option>
-                    <option value="right"></option>
-                    <option value="justify"></option>
-                </select>
-            </span>
-            <span class="ql-formats">
-                <button class="ql-link"></button>
-                <button class="ql-image"></button>
-            </span>
-        </div> -->
-    </quill-editor>
 </div>
+
+<mat-menu #departmentMenu="matMenu">
+    <ng-template matMenuContent>
+        <ng-container *ngFor="let dept of availableTemplates.departments | keyvalue">
+            <button mat-menu-item [matMenuTriggerFor]="groupMenu" (menuOpened)="setGroups(dept.key)">
+                {{ dept.value.Name }}
+            </button>
+            <mat-menu #groupMenu="matMenu">
+                <ng-template matMenuContent>
+                    <ng-container *ngIf="dept.value.groups">
+                        <button
+                            mat-menu-item
+                            [matMenuTriggerFor]="templateMenu"
+                            *ngFor="let group of dept.value.groups | keyvalue"
+                            (menuOpened)="setTemplates(dept.value.ID, group.key)"
+                        >
+                            {{ group.value.Name }}
+                            <mat-menu #templateMenu="matMenu">
+                                <ng-template matMenuContent>
+                                    <ng-container *ngIf="group.value.templates">
+                                        <button
+                                            mat-menu-item
+                                            *ngFor="let template of group.value.templates | keyvalue"
+                                            (click)="selectTemplate(template.value)"
+                                        >
+                                            {{ template.value.Name }}
+                                        </button>
+                                    </ng-container>
+                                    <button mat-menu-item disabled *ngIf="!group.value.templates">No templates for this group</button>
+                                </ng-template>
+                            </mat-menu>
+                        </button>
+                    </ng-container>
+                    <button mat-menu-item disabled *ngIf="!dept.value.groups">No groups for this department</button>
+                </ng-template>
+            </mat-menu>
+        </ng-container>
+    </ng-template>
+</mat-menu>

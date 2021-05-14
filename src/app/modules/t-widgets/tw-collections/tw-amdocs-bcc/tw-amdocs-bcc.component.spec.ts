@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TwAmdocsBccComponent } from './tw-amdocs-bcc.component';
 
@@ -6,7 +6,7 @@ describe('TwAmdocsBccComponent', () => {
   let component: TwAmdocsBccComponent;
   let fixture: ComponentFixture<TwAmdocsBccComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ TwAmdocsBccComponent ]
     })

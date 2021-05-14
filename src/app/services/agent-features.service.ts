@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AgentFeatures, AgentSettingsUpdatedEvent, SDKClient, TUtils } from 'tmac-sdk';
+import { AgentFeatures, AgentSettingsUpdatedEvent, SDKClient, TUtils } from '@tmac/sdk';
 import { AppUiService } from './app-ui.service';
 
 /**
@@ -16,7 +16,6 @@ declare const navigator: Navigator | any;
     providedIn: 'root'
 })
 export class AgentFeaturesService {
-
     /**
      * Processed
      * Need More Description
@@ -44,7 +43,7 @@ export class AgentFeaturesService {
              * Whether location acces is enabled
              */
             location: boolean;
-        },
+        };
         /**
          * Current features data
          */
@@ -52,12 +51,12 @@ export class AgentFeaturesService {
             /**
              * Camera stream
              */
-            cameraStream: MediaStream,
+            cameraStream: MediaStream;
             /**
              * Need more Description
              * Current display stream
              */
-            displayStream: MediaStream,
+            displayStream: MediaStream;
             /**
              * Current Location
              */
@@ -71,7 +70,7 @@ export class AgentFeaturesService {
                  */
                 longitude: number;
             };
-        }
+        };
     };
 
     constructor(private _appUIService: AppUiService) { }
@@ -79,7 +78,7 @@ export class AgentFeaturesService {
     /**
      * Need more Description
      * Event to take snapshot
-     * @param {any} evt 
+     * @param {any} evt
      */
     private AgentSnapShotEvent = async (evt: any) => {
         // init variables
@@ -121,7 +120,7 @@ export class AgentFeaturesService {
 
     /**
      * To process AgentSettingsUpdatedEvent
-     * 
+     *
      * @param {AgentSettingsUpdatedEvent} evt
      */
     private AgentSettingsUpdatedEvent = (evt: AgentSettingsUpdatedEvent) => {
@@ -135,7 +134,7 @@ export class AgentFeaturesService {
 
     /**
      * Need more Description
-     * @param {string} type 
+     * @param {string} type
      */
     private async getUrlFromStream(type: string): Promise<string> {
         // media stream reference
@@ -144,8 +143,7 @@ export class AgentFeaturesService {
         // check the type
         if (type === 'screenshot') {
             stream = this._agentFeatureInfo.data.displayStream;
-        }
-        else if (type === 'snapshot') {
+        } else if (type === 'snapshot') {
             stream = this._agentFeatureInfo.data.cameraStream;
         }
 
@@ -177,7 +175,7 @@ export class AgentFeaturesService {
                 };
             } catch (error) {
                 // log the error to server for troubleshooting purpose
-                TUtils.Logger.log('Exception in getUrlFromStream', error);
+                TUtils.Logger.error('Exception in getUrlFromStream', error);
                 reject(error);
             }
         });
@@ -217,7 +215,7 @@ export class AgentFeaturesService {
                     this.captureCameraStream();
                 }, 4000);
                 // log the error to server for troubleshooting purpose
-                TUtils.Logger.log('Exception in getUserMedia', error);
+                TUtils.Logger.error('Exception in getUserMedia', error);
             }
         );
     }
@@ -232,7 +230,8 @@ export class AgentFeaturesService {
         }
 
         // get screen recording stream
-        navigator.mediaDevices.getDisplayMedia()
+        navigator.mediaDevices
+            .getDisplayMedia()
             .then((stream: any) => {
                 stream.getVideoTracks()[0].onended = () => {
                     this._agentFeatureInfo.permissions.display = false;
@@ -263,7 +262,7 @@ export class AgentFeaturesService {
                     this.captureDisplayStream();
                 }, 2000);
                 // log the error to server for troubleshooting purpose
-                TUtils.Logger.log('Exception in getDisplayMedia', error);
+                TUtils.Logger.error('Exception in getDisplayMedia', error);
             });
     }
 
@@ -279,7 +278,7 @@ export class AgentFeaturesService {
         // get geolocation
         navigator.geolocation.getCurrentPosition(
             // success
-            (location: Position) => {
+            (location: GeolocationPosition) => {
                 this._agentFeatureInfo.permissions.location = true;
                 // get location from browser and save the stream to reference
                 this._agentFeatureInfo.data.location = {
@@ -287,16 +286,17 @@ export class AgentFeaturesService {
                     longitude: location.coords.longitude
                 };
             },
-            (error: PositionError) => {
+            (error: GeolocationPositionError) => {
                 this._agentFeatureInfo.permissions.location = false;
                 // log the error to server for troubleshooting purpose
-                TUtils.Logger.log('Exception in getCurrentPosition', error);
-            });
+                TUtils.Logger.error('Exception in getCurrentPosition', error);
+            }
+        );
     }
 
     /**
      * To process agent features
-     * 
+     *
      * @param {AgentFeatures} agentFeatures
      */
     private processAgentFeatures(agentFeatures: AgentFeatures[]): void {
@@ -307,8 +307,7 @@ export class AgentFeaturesService {
                     // check if enabled, then capture camera
                     if (feature.IsEnabled) {
                         this.captureCameraStream();
-                    }
-                    else {
+                    } else {
                         this.stopCamera();
                     }
                     break;
@@ -316,8 +315,7 @@ export class AgentFeaturesService {
                     // check if enabled, then capture camera
                     if (feature.IsEnabled) {
                         this.captureDisplayStream();
-                    }
-                    else {
+                    } else {
                         this.stopScreenShare();
                     }
                     break;
@@ -384,7 +382,7 @@ export class AgentFeaturesService {
 
         // check the list
         if (agentFeatures.length === 0) {
-            TUtils.Logger.log('AgentFeaturesService.subscribe: agent features are empty!');
+            TUtils.Logger.debug('AgentFeaturesService.subscribe: agent features are empty!');
             return;
         }
 

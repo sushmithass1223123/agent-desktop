@@ -1,14 +1,15 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
-import { FuseConfigService } from '@fuse/services/config.service';
-import { FuseConfig } from '@fuse/types';
 import { AgentSkillListComponent, CreateEmailComponent } from '@modules/shared/components';
-import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
+import { ContentPageService } from '@services/content-page.service';
+import { FuseFacadeService } from '@services/fuse-facade.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
+import { TMACEventService } from '@services/tmac-event.service';
+import { IAgentData, InteractionDataEvent, IResponse, SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE, DRAFT_REASONS, EMAIL_DRAFT_SAVE_INTERVAL, INBOX_REASONS, OUTBOX_REASONS } from 'app/constants';
 import { AgentSkillListData, InteractionComment, InteractionRef, IWidget, ResData } from 'app/interfaces';
@@ -16,8 +17,6 @@ import { CreateEmailInfo } from 'app/models';
 import { interval, Observable, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
 import { distinctUntilChanged, filter, map, mergeAll } from 'rxjs/operators';
-import { IAgentData, IResponse, SDKClient } from 'tmac-sdk';
-
 /**
  * Email controls component
  */
@@ -27,7 +26,7 @@ import { IAgentData, IResponse, SDKClient } from 'tmac-sdk';
     styleUrls: ['./tw-email-controls.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, AfterViewInit, OnDestroy {
     /**
      * data from widget
      */
@@ -59,11 +58,6 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     };
 
     /**
-     * appConfig
-     */
-    appConfig: any;
-
-    /**
      * stateful getInboxMessageReq request
      */
     getInboxMessageReq: ResData<null> = {
@@ -72,23 +66,43 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         msg: ''
     };
 
+    /**
+     * Outbox reasons
+     */
     OutboxReasons = OUTBOX_REASONS;
-    DraftReasons = DRAFT_REASONS;
-    InboxReasons = INBOX_REASONS;
 
     /**
-     * Fuse config
+     * Draft reasons
      */
-    fuseConfig: FuseConfig;
+    DraftReasons = DRAFT_REASONS;
+
+    /**
+     * Inbox reasons
+     */
+    InboxReasons = INBOX_REASONS;
+
+    // /**
+    //  * Fuse config
+    //  */
+    // fuseConfig: FuseConfig;
+    /**
+     * Fuse custom config
+     */
+    customFuse = {
+        anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
+        widget$: this._fuseFacadeService.widgetBgClasses$
+    };
 
     /**
      * Maximise event
      */
     @Output() maximizeEvent = new EventEmitter();
+
     /**
      * Float event
      */
     @Output() floatEvent = new EventEmitter();
+
     /**
      * Collapse event
      */
@@ -98,31 +112,38 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Maximized flag
      */
     maximized: boolean;
+
     /**
      * Interaction list
      */
     // interactionList: Observable<InteractionRef[]>;
     interactionList: InteractionRef[];
+
     /**
      * Current interaction
      */
     currentInteraction: any = {};
+
     /**
      * Email body responses
      */
     emailBodies: Record<string, any> = {};
+
     /**
      * Current intreaction id
      */
     interactionId: number;
+
     /**
      * User info
      */
     user: IAgentData;
+
     /**
      * Email intent
      */
     intent: string;
+
     /**
      * Customer sentiment
      */
@@ -132,6 +153,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Reply info for create email component
      */
     replyInfo?: CreateEmailInfo;
+
     /**
      * Saved interaction comments
      */
@@ -152,16 +174,20 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     draftPolling: Subscription;
 
+    /**
+     * Viewing email ref
+     */
     viewingEmail: 'original' | 'replied' = 'replied';
 
     constructor(
-        private _fuseConfigService: FuseConfigService,
         private _interactionManagerService: InteractionManagerService,
-        private _appDataService: AppDataService,
         private domSanitizer: DomSanitizer,
         private _fuseProgressBarService: FuseProgressBarService,
         private _appUIService: AppUiService,
-        private matDialog: MatDialog
+        private matDialog: MatDialog,
+        private _tmacEventService: TMACEventService,
+        private _contentPageService: ContentPageService,
+        private _fuseFacadeService: FuseFacadeService
     ) {
         super();
     }
@@ -186,13 +212,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         // set the sentiment
         this.sentiment = this.data.InteractionDetails.Sentiment || 'NA';
 
-        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.appConfig = config;
-        });
-
-        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.fuseConfig = config;
-        });
+        // this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+        //     this.fuseConfig = config;
+        // });
 
         const emailInteractionObs: Observable<InteractionRef[]> = this._interactionManagerService.interactions.pipe(takeUntil(this.unsubscribeAll));
 
@@ -270,6 +292,31 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // play new email sound
         this._appUIService.playAudio('new-email', 0.5, false);
+        this._appUIService.showDesktopAlert('Incoming Email', `You have a new incoming email from ${this.data.InteractionDetails.From}`, false);
+
+        this._tmacEventService
+            .getInteractionEvents(
+                [
+                    'InteractionDataEvent'
+                ],
+                this.interactionId
+            )
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
+    }
+
+    /**
+     * Lifecycle hook
+     * @method
+     */
+    ngAfterViewInit(): void {
+        // check if the current page is textchat page
+        if (this._interactionManagerService.getInteractionCount().active <= 1 &&
+            this._contentPageService.getCurrentMode() !== this.data.Data.Path) {
+            setTimeout(() => {
+                this._contentPageService.mode = this.data.Data.Path;
+            }, 500);
+        }
     }
 
     /**
@@ -284,6 +331,30 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     // @ Private methods
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * To handle InteractionDataEvent
+     */
+    private InteractionDataEvent(evt: InteractionDataEvent): void {
+        // check the channel 
+        if (evt.Channel !== 'Voice') {
+            return;
+        }
+        // check if interaction comments available
+        if (evt.InteractionComments && evt.InteractionComments.length > 0) {
+            evt.InteractionComments.forEach(c => {
+                const dt = JSON.parse(c);
+                this.savedComments.push({
+                    Message: dt.Comment,
+                    Time: dt.Time,
+                    User: dt.User
+                });
+            });
+        }
+    }
+
+    /**
+     * To switch email view
+     */
     switchEmailView(): void {
         let requestedSession: string | null = null;
         if (this.viewingEmail === 'original') {
@@ -373,6 +444,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                         btn.disabled = false;
                         this._appUIService.showSnackbar('Close interaction failed!', 'failure');
                     });
+            } else {
+                btn.disabled = false;
             }
         });
     }
@@ -429,7 +502,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Forward Email
      */
-    forwardEmail(): void {}
+    forwardEmail(): void { }
 
     /**
      * Show reply email form
@@ -452,16 +525,15 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         </p>
         <br />`;
         this.replyInfo = {
-            BCC: [],
-            CC: [],
-            To: From ? [From] : [],
+            BCC: '',
+            CC: '',
+            To: From || '',
             Body: `
             ${preBody} 
-            ${
-                this.domSanitizer.bypassSecurityTrustHtml(Body || '')['changingThisBreaksApplicationSecurity'][
-                    'changingThisBreaksApplicationSecurity'
+            ${this.domSanitizer.bypassSecurityTrustHtml(Body || '')['changingThisBreaksApplicationSecurity'][
+                'changingThisBreaksApplicationSecurity'
                 ]
-            }`,
+                }`,
             Subject: `RE: ${Subject}`,
             Files: []
         };
@@ -489,9 +561,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         </p>
         <br />`;
         this.replyInfo = {
-            BCC: [],
-            CC: CCList ? CCList.split(',') : [],
-            To: From ? [From] : [],
+            BCC: '',
+            CC: CCList || '',
+            To: From || '',
             Body: `
                 ${preBody}
                 ${this.domSanitizer.bypassSecurityTrustHtml(Body)['changingThisBreaksApplicationSecurity']['changingThisBreaksApplicationSecurity']}`,
@@ -522,9 +594,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         </p>
         <br />`;
         this.replyInfo = {
-            BCC: [],
-            CC: [],
-            To: [],
+            BCC: '',
+            CC: '',
+            To: '',
             Body: `
                 ${preBody}
                 ${this.domSanitizer.bypassSecurityTrustHtml(Body)['changingThisBreaksApplicationSecurity']['changingThisBreaksApplicationSecurity']}`,
@@ -547,14 +619,14 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         }
         SDKClient.sendEmail({
             attachmentFileList: Files && Files.length ? JSON.stringify(Files.map((x) => ({ ...x, SessionID: currentInteraction.SessionId }))) : '',
-            bccList: BCC.join(','),
+            bccList: BCC.replaceAll(';', ','),
             body: Body.toString(),
-            ccList: CC.join(','),
+            ccList: CC.replaceAll(';', ','),
             inboxSessionId: currentInteraction.SessionId,
             outboxSessionId: currentInteraction.OutboxSessionId,
             routeId: '',
             subject: Subject,
-            toList: To.join(','),
+            toList: To.replaceAll(';', ','),
             typeOfResponse: ''
         })
             .then((res) => {
@@ -611,6 +683,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                         this._appUIService.showSnackbar('Something went wrong', 'failure');
                         btn.disabled = false;
                     });
+            } else {
+                btn.disabled = false;
             }
         });
     }
@@ -626,14 +700,14 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             // @TODO Files not sent as draft arg
             const { BCC, CC, To, Subject, Body, Files } = email;
             SDKClient.saveEmailDraft({
-                bccList: BCC.join(','),
+                bccList: BCC.replaceAll(';', ','),
                 body: Body.toString(),
-                ccList: CC.join(','),
+                ccList: CC.replaceAll(';', ','),
                 inboxSessionId: currentInteraction.SessionId,
                 outboxSessionId: currentInteraction.OutboxSessionId || '',
                 routeId: '',
                 subject: Subject,
-                toList: To.join(','),
+                toList: To.replaceAll(';', ','),
                 typeOfResponse: ''
             }).then((x) => {
                 currentInteraction.OutboxSessionId = x.response;
@@ -688,9 +762,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                         this._appUIService.showSnackbar('Error in saving interaction comment', 'failure');
                         evt.disabled = true;
                     });
-            } else {
-                evt.disabled = false;
             }
+            evt.disabled = false;
         });
     }
 
@@ -737,14 +810,15 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         // check the saved comments
         this.savedComments.forEach((item) => {
             message += `
-                 <div>${item.Message.replace(/(?:\r\n|\r|\n)/g, '<br>')}</div>
-                 <span class="time secondary-text">${item.Time}</span>
+                 <div class="text-primary mat-title m-0">${item.Message.replace(/(?:\r\n|\r|\n)/g, '<br>')}</div>
+                 <span class="time secondary-text">${item.User}</span>,
+                 <span class="time secondary-text">${new Date(item.Time).toLocaleString()}</span>
                  <br /><br />
                  `;
         });
         message += 'Add new comment:';
 
-        const dialogRef = this._appUIService.showCustomDialog('prompt', message, 'Interaction Comments');
+        const dialogRef = this._appUIService.showCustomDialog('prompt', message, 'Interaction Notes', { minRows: 4 }, { minWidth: '30%' });
         dialogRef.afterClosed().subscribe((resp1) => {
             if (resp1) {
                 this._fuseProgressBarService.show();
@@ -783,6 +857,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     transferEmail(email: any): void {
         const agentConfig = this.data.Data.Transfer?.Agent || {};
         const skillConfig = this.data.Data.Transfer?.Skill || {};
+
         const data: AgentSkillListData = {
             title: 'Email Transfer',
             type: 'transferEmail',
@@ -790,13 +865,16 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 allowed: agentConfig.Allowed,
                 allowedStates: agentConfig.AllowedStates,
                 blind: agentConfig.Blind,
-                source: agentConfig.Source
+                source: agentConfig.Source,
+                columns: agentConfig.Columns,
+                teamFilter: agentConfig.TeamFilter
             },
             skill: {
                 allowed: skillConfig.Allowed,
                 blind: false,
                 channelPrfix: skillConfig.ChannelPrefix,
-                source: skillConfig.Source
+                source: skillConfig.Source,
+                columns: skillConfig.Columns
             }
         };
         this.matDialog.open(AgentSkillListComponent, {

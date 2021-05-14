@@ -75,6 +75,10 @@ export interface IWidgetConfig {
      */
     Enabled: boolean;
     /**
+     * Hidden widget flag
+     */
+    Hidden: boolean;
+    /**
      * Static flag
      */
     Static: boolean;
@@ -86,6 +90,10 @@ export interface IWidgetConfig {
      * AOT flag
      */
     AOT: boolean;
+    /**
+     * Flag to auto open AOT widget
+     */
+    AutoOpen: boolean;
     /**
      * Icon of Widget
      */
@@ -116,7 +124,7 @@ export interface IWidgetConfig {
     Header: boolean;
 }
 
-export type IAction = 'restore' | 'maximize' | 'collapse' | 'destroy' | 'float' | 'pin';
+export type IAction = 'restore' | 'maximize' | 'collapse' | 'destroy' | 'float' | 'pin' | 'refresh';
 
 export interface IWidgetPosition {
     /**

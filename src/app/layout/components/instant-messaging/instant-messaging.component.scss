@@ -41,6 +41,18 @@ instant-messaging {
                 transition: opacity 300ms ease-in-out;
             }
         }
+
+        .fab-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            > div {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+        }
     }
 
     .content {
@@ -136,6 +148,7 @@ instant-messaging {
                 left: 50px;
                 border: 2px solid;
                 border-radius: 50%;
+                background-color: #838383;
 
                 &.online {
                     background-color: #4caf50;

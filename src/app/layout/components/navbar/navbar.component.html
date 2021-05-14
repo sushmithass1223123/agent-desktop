@@ -1,4 +1,4 @@
-<div class="navbar-header" [ngClass]="fuseConfig.layout.navbar.customBackgroundColor === true ? fuseConfig.layout.navbar.background : ''">
+<div class="navbar-header" [ngClass]="(customFuse$ | async).background">
     <div class="logo" *ngIf="customerLogo?.Small.Src">
         <img
             class="logo-icon"
@@ -10,7 +10,7 @@
     </div>
 </div>
 
-<div class="navbar-content" [ngClass]="fuseConfig.layout.navbar.customBackgroundColor === true ? fuseConfig.layout.navbar.background : ''">
+<div class="navbar-content" [ngClass]="(customFuse$ | async).background">
     <div class="twn-list">
         <mat-selection-list #sidebarList [multiple]="false">
             <div class="top mat-elevation-z1">

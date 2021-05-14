@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
-import { IResponse, TUtils } from 'tmac-sdk';
+import { IResponse, TUtils } from '@tmac/sdk';
 import { TwWidgetModel } from 'app/models';
 
 /**
@@ -102,7 +102,8 @@ export class WidgetPreviewComponent implements OnInit {
                     title: '',
                     description: message,
                     login: false
-                }
+                },
+                queryParamsHandling: 'preserve'
             });
     }
 
@@ -138,7 +139,7 @@ export class WidgetPreviewComponent implements OnInit {
                 }
             }, 1000, result);
         } catch (error) {
-            TUtils.Logger.log('Exception in getTemplateJson', error);
+            TUtils.Logger.console('error', 'Exception in getTemplateJson', error);
             this.routeToNotFound('Error in getting template');
         }
     }

@@ -7,8 +7,33 @@
 // Import app theme styles
 @import 'app/app.theme';
 
-html {
-    font-family: 'Montserrat', 'Muli', 'Helvetica Neue', 'Arial', sans-serif;
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+// @import '@tmac/notebook/styles/default.scss';
+
+body {
+    font-family: 'Arial', sans-serif;
+
+    &.wf-muli {
+        font-family: 'Muli';
+    }
+
+    &.wf-montserrat {
+        font-family: 'Montserrat';
+    }
+
+    &.wf-source-sans-pro {
+        font-family: 'Source Sans Pro';
+    }
+}
+
+img {
+    border: none;
+}
+
+img {
+    border: none;
 }
 
 ::-webkit-scrollbar {
@@ -24,15 +49,6 @@ html {
     overflow: auto;
     &-adjust {
         overflow: auto;
-        // overflow: hidden;
-        // max-width: calc(100% - 8px);
-        // margin-right: 8px;
-        // &:hover {
-        //     overflow-x: auto;
-        //     overflow-y: scroll;
-        //     // margin-right: 0px;
-        //     max-width: 100%;
-        // }
     }
 }
 

@@ -164,9 +164,21 @@ $custom_palettes: (
 // @ Typography
 // -----------------------------------------------------------------------------------------------------
 
+// // Angular Material typography
+// $typography: mat-typography-config(
+//     $font-family: 'Montserrat, Muli, Helvetica Neue, Arial, sans-serif',
+//     $title: mat-typography-level(20px, 32px, 600),
+//     $body-2: mat-typography-level(14px, 24px, 600),
+//     $button: mat-typography-level(14px, 14px, 600),
+//     $input: mat-typography-level(16px, 1.125, 400) // line-height must be unitless !!!,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+// );
+
+// // Setup the typography
+// @include angular-material-typography($typography);
+
 // Angular Material typography
 $typography: mat-typography-config(
-    $font-family: 'Source Sans Pro, Montserrat, Muli, Helvetica Neue, Arial, sans-serif',
+    $font-family: 'Arial, sans-serif',
     $title: mat-typography-level(20px, 32px, 600),
     $body-2: mat-typography-level(14px, 24px, 600),
     $button: mat-typography-level(14px, 14px, 600),
@@ -175,6 +187,50 @@ $typography: mat-typography-config(
 
 // Setup the typography
 @include angular-material-typography($typography);
+
+body.wf-muli {
+    // Angular Material typography
+    $typography: mat-typography-config(
+        $font-family: 'Muli',
+        $title: mat-typography-level(20px, 32px, 600),
+        $body-2: mat-typography-level(14px, 24px, 600),
+        $button: mat-typography-level(14px, 14px, 600),
+        $input: mat-typography-level(16px, 1.125, 400) // line-height must be unitless !!!,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+    );
+
+    // Setup the typography
+    @include angular-material-typography($typography);
+}
+
+body.wf-montserrat {
+    // Angular Material typography
+    $typography: mat-typography-config(
+        $font-family: 'Montserrat',
+        $title: mat-typography-level(20px, 32px, 600),
+        $body-2: mat-typography-level(14px, 24px, 600),
+        $button: mat-typography-level(14px, 14px, 600),
+        $input: mat-typography-level(16px, 1.125, 400) // line-height must be unitless !!!,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+    );
+
+    // Setup the typography
+    @include angular-material-typography($typography);
+}
+
+body.wf-source-sans-pro {
+    // Angular Material typography
+    $typography: mat-typography-config(
+        $font-family: 'Source Sans Pro',
+        $title: mat-typography-level(20px, 32px, 600),
+        $caption: mat-typography-level(14px, 24px, 600),
+        $body-1: mat-typography-level(16px, 24px, 500),
+        $body-2: mat-typography-level(18px, 24px, 600),
+        $button: mat-typography-level(14px, 14px, 600),
+        $input: mat-typography-level(16px, 1.125, 400) // line-height must be unitless !!!,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+    );
+
+    // Setup the typography
+    @include angular-material-typography($typography);
+}
 
 // -----------------------------------------------------------------------------------------------------
 // @ Define the default theme
@@ -191,6 +247,7 @@ $theme: mat-light-theme($default-primary-palette, $default-accent-palette, $defa
 // Add ".theme-default/theme-default-2" class to the body to activate this theme.
 // Class name must start with "theme-" !!!
 body.theme-default,
+body.theme-default-3,
 body.theme-default-2 {
     // Create an Angular Material theme from the $theme map
     @include angular-material-theme($theme);
@@ -207,6 +264,8 @@ body.theme-default-2 {
         accent: $default-accent-palette,
         warn: $default-warn-palette
     );
+
+    @include tailwind-core-theme($palettes);
 
     @include fuse-color-classes($palettes);
 }
@@ -238,6 +297,7 @@ body.theme-teal-red {
         warn: $teal-red-warn-palette
     );
 
+    @include tailwind-core-theme($palettes);
     @include fuse-color-classes($palettes);
 }
 
@@ -272,6 +332,7 @@ body.theme-default-dark {
         warn: $dark-theme-warn-palette
     );
 
+    @include tailwind-core-theme($palettes);
     @include fuse-color-classes($palettes);
 }
 
@@ -302,6 +363,7 @@ body.theme-blue-grey-dark {
         warn: $blue-grey-dark-warn-palette
     );
 
+    @include tailwind-core-theme($palettes);
     @include fuse-color-classes($palettes);
 }
 
@@ -332,5 +394,6 @@ body.theme-pink-grey-dark {
         warn: $pink-grey-dark-warn-palette
     );
 
+    @include tailwind-core-theme($palettes);
     @include fuse-color-classes($palettes);
 }

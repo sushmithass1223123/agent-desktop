@@ -1,20 +1,22 @@
-<div fxFlayout fxLayoutAlign="space-between center">
-    <div [innerHTML]="data.message"></div>
-    <mat-icon
-        *ngIf="data.state !== 'close'"
-        matRipple
-        (click)="close()"
-        class="ml-8 border-radius-20"
-        [ngClass]="{
-            spin: data.loading,
-            'text-info': data.state === 'info' || data.state === 'loading',
-            'text-alt-success': data.state === 'success',
-            'text-alt-warning': data.state === 'warning',
-            'text-alt-danger': data.state === 'failure'
-        }"
-    >
-        {{ data.icon }}
-    </mat-icon>
+<div class="h-100-p" fxFlayout fxLayoutAlign="space-between center">
+    <div class="w-100-p cursor-pointer" (click)="onClick()" fxLayout="row" fxLayoutAlign="space-between center">
+        <div [innerHTML]="data.message"></div>
+        <mat-icon
+            *ngIf="data.state !== 'close'"
+            matRipple
+            (click)="close()"
+            class="ml-8 border-radius-20"
+            [ngClass]="{
+                spin: data.loading,
+                'text-info': data.state === 'info' || data.state === 'loading',
+                'text-alt-success': data.state === 'success',
+                'text-alt-warning': data.state === 'warning',
+                'text-alt-danger': data.state === 'failure'
+            }"
+        >
+            {{ data.icon }}
+        </mat-icon>
+    </div>
     <button mat-icon-button *ngIf="data.state === 'close'" color="warn" (click)="close()">
         <mat-icon>close</mat-icon>
     </button>

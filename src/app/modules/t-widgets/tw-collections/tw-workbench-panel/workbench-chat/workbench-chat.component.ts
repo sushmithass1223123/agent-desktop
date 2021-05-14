@@ -1,0 +1,391 @@
+import { NestedTreeControl } from '@angular/cdk/tree';
+import { HttpClient } from '@angular/common/http';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { MatTreeNestedDataSource } from '@angular/material/tree';
+import { AgentSkillListComponent } from '@modules/shared/components';
+import { TWidgetWrapper } from '@modules/t-widgets/utils';
+import { AppUiService } from '@services/app-ui.service';
+import { FuseFacadeService } from '@services/fuse-facade.service';
+import { IAgentData, SDKClient } from '@tmac/sdk';
+import { AgentSkillListData, IWidget } from 'app/interfaces';
+import { formatJsonData } from 'app/utils';
+import { groupBy, sortBy } from 'lodash';
+import * as moment from 'moment';
+import { Subscription, timer } from 'rxjs';
+import { filter } from 'rxjs/operators';
+
+type ApiCalls = 'search' | 'pull' | 'push';
+type CallStates = 'loading' | 'error' | 'initial' | 'completed';
+
+/**
+ * Workbench Chat
+ */
+@Component({
+    selector: 'workbench-chat',
+    templateUrl: './workbench-chat.component.html',
+    styleUrls: ['./workbench-chat.component.scss']
+})
+export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit {
+    /**
+     * holds all the data related to the parent tw workbecnh widget from the config
+     */
+    @Input() data: IWidget;
+    /**
+     * holds all the data related to this workbench tab
+     */
+    @Input() channelConf: any;
+
+    /**
+     * Fetched Queued Chats observable
+     */
+    queuedChats: any[];
+    /**
+     * Advanced search visibility
+     */
+    showAdvancedSearchForm = false;
+    /**
+     * Current user data
+     */
+    user: IAgentData;
+    /**
+     * Polling Subscription
+     */
+    polling$: Subscription;
+    /**
+     * Tree Controls
+     */
+    treeControl = new NestedTreeControl<any>((node) => node.children);
+
+    /**
+     * Tree Data source
+     */
+    dataSource = new MatTreeNestedDataSource<any>();
+
+    /**
+     * Advanced Search form control
+     */
+    advancedSearchForm: FormGroup;
+    /**
+     * To store the fuse config for theme
+     */
+    // fuseConfig: FuseConfig;
+    /**
+     * Fuse custom config
+     */
+    customFuse = {
+        anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
+        widget$: this._fuseFacadeService.widgetBgClasses$
+    };
+
+    /**
+     * Api Call states
+     */
+    callStates: Record<ApiCalls, CallStates> = {
+        pull: 'initial',
+        push: 'initial',
+        search: 'loading'
+    };
+
+    /**
+     * Global search form control
+     */
+    globalSearchControl = new FormControl('');
+
+    /**
+     * Selected skill's unique key
+     */
+    selectedSkill = '';
+
+    /**
+     * Chats cards ref
+     */
+    @ViewChild('chatsRef')
+    chatsRef: ElementRef<HTMLDivElement>;
+
+    constructor(
+        private http: HttpClient,
+        // private _fuseConfigService: FuseConfigService,
+        private _fuseFacadeService: FuseFacadeService,
+        private appUiService: AppUiService,
+        private matDialog: MatDialog
+    ) {
+        super();
+        const today = new Date();
+        const yesterday = new Date();
+        yesterday.setDate(today.getDate() - 1);
+        this.advancedSearchForm = new FormGroup({
+            skills: new FormControl(''),
+            agent: new FormControl(''),
+            fromDate: new FormControl(yesterday),
+            fromTime: new FormControl(`00:00`),
+            toDate: new FormControl(today),
+            toTime: new FormControl(`${'23'}:${'59'}`)
+        });
+    }
+
+    /**
+     * On Init
+     */
+    ngOnInit(): void {
+        // this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+        //     this.fuseConfig = config;
+        // });
+
+        this.user = SDKClient.getAgentData();
+        this.polling$ = timer(0, this.channelConf.Config.SearchPollingInterval || 5000).subscribe(() => {
+            this.doAdvancedSearch();
+        });
+    }
+
+    ngOnDestroy(): void {
+        this.polling$.unsubscribe();
+    }
+
+    /**
+     * Does Advance search and Gets Queued Chats
+     */
+    doAdvancedSearch(searchParams?: any): void {
+        try {
+            const searchFields = searchParams || this.advancedSearchForm.value;
+            const { agentId } = this.user;
+
+            let startDate: any = '';
+            let endDate: any = '';
+
+            if (searchFields.fromDate) {
+                startDate = new Date(searchFields.fromDate);
+                startDate.setHours(searchFields.fromTime?.split(':')[0] || '00');
+                startDate.setMinutes(searchFields.fromTime?.split(':')[1] || '00');
+                startDate.setSeconds(0);
+                startDate = moment(startDate).format('YYYYMMDDHHmmss');
+            }
+
+            if (searchFields.toDate) {
+                endDate = new Date(searchFields.toDate);
+                endDate.setHours(searchFields.toTime?.split(':')[0] || '00');
+                endDate.setMinutes(searchFields.toTime?.split(':')[1] || '00');
+                endDate.setSeconds(0);
+                endDate = moment(endDate).format('YYYYMMDDHHmmss');
+            }
+
+            this.callStates.search = 'loading';
+            this.http
+                .post<any[]>(this.data.Data.WorkbenchUrl + '/chat/queue/search', {
+                    skills: searchFields.skills ? [searchFields.skills] : [],
+                    agent: '',
+                    startDate,
+                    endDate
+                })
+                .subscribe((res: any) => {
+                    if (!res || res.status !== 'SUCCESS') {
+                        this.appUiService.showSnackbar('Unable to complete advanced search', 'failure');
+                        return;
+                    }
+                    this.queuedChats = res.result;
+                    // if (res.result.length === 0) {
+                    //     this.queuedChats = Array(10).fill(temp);
+                    // }
+                    this.queuedChats = this.queuedChats.map((x, i) => ({
+                        ...formatJsonData(
+                            { ...x, data: JSON.parse(x.data) },
+                            {
+                                name: ['data', 'pName'],
+                                intent: ['data', 'pIntent'],
+                                customerName: ['data', 'customerName'],
+                                channel: 'channel',
+                                skillId: 'skillId',
+                                itemID: 'itemID',
+                                addedTime: 'addedTime',
+                                'display.Skill': 'skillId',
+                                'display.Created By': ['data', 'customerName'],
+                                'display.Sub-Channel': 'subChannel',
+                                'display.Name': ['data', 'customerName'],
+                                'display.Mobile No': ['data', 'mobile'],
+                                'display.Session ID': ['data', 'sessionID'],
+                                'display.Agent Id': '',
+                                'display.User Id': '',
+                                'display.Gender': '',
+                                'display.Nationality': '',
+                                'display.Language': ''
+                            }
+                        ),
+                        uiKey: `ui_${i}`
+                    }));
+                    const nodesByChannel = groupBy(this.queuedChats, 'channel');
+                    this.dataSource.data = Object.keys(nodesByChannel).map((name) => {
+                        const nodesBySkillId = groupBy(nodesByChannel[name], 'skillId');
+                        return {
+                            name,
+                            children: nodesByChannel[name].map((x) => {
+                                const grandChildren = sortBy(nodesBySkillId[x.skillId], 'addedTime');
+                                return {
+                                    ...x,
+                                    grandChildren: grandChildren,
+                                    oldestSince: new Date(grandChildren[0].addedTime)
+                                };
+                            })
+                        };
+                    });
+                });
+        } catch (e) {
+            console.error(e);
+            this.appUiService.showSnackbar('Unable to complete advanced search', 'failure');
+        }
+    }
+
+    /**
+     * Does a global search
+     */
+    doGlobalSearch(): void {
+        const globalKey = this.globalSearchControl.value;
+        const { agentId } = this.user;
+
+        const today = new Date();
+        const yesterday = new Date();
+        yesterday.setDate(today.getDate() - 1);
+
+        const searchParams = {
+            skills: [globalKey],
+            agent: '',
+            startDate: moment(today).format('YYYYMMDDHHmmss'),
+            endDate: moment(yesterday).format('YYYYMMDDHHmmss')
+        };
+    }
+
+    /**
+     * Check if tree node has child
+     * @param {number} _
+     * @param {any} node
+     */
+    hasChild = (_: number, node: any) => !!node.children && node.children.length > 0;
+
+    /**
+     * selects skill and scrolls to the skill
+     * @param node
+     */
+    selectSkill(node: any): void {
+        const element = document.getElementById(node.uiKey);
+        this.selectedSkill = node.uiKey;
+        if (element) {
+            this.chatsRef.nativeElement.scrollTop = element.offsetTop - 50;
+        } else {
+            console.error('Element not found !!!!');
+        }
+    }
+
+    /**
+     * Pulls email
+     * @param {any} node
+     */
+    pullChat(node: any): void {
+        const pullFunc = () => {
+            const { tmacServer, agentId } = this.user;
+            const { channel, itemID: itemid } = node;
+            this.appUiService.showSnackbar('Pulling Chat', 'loading');
+            this.http
+                .post(this.data.Data.WorkbenchUrl + '/chat/queue/pull', {
+                    tmacServer,
+                    agentId,
+                    channel: channel,
+                    items: [{ itemid }]
+                })
+                .subscribe((res: any) => {
+                    if (res && res.status !== 'FAILED') {
+                        this.appUiService.showSnackbar('Chat Pushed successfuly', 'success');
+                        return;
+                    }
+                    this.appUiService.showSnackbar('Unable to Pull chat', 'failure');
+                });
+        };
+        try {
+            if (this.channelConf.Config.AskPullConfirmation) {
+                const confirmDialogRef = this.appUiService.showAppConfirmDialog('generic', 'Pull Chat', 'Are you sure you want to pull this chat ?');
+                confirmDialogRef.afterClosed().subscribe((resp) => {
+                    if (resp) {
+                        pullFunc();
+                    }
+                });
+            } else {
+                pullFunc();
+            }
+        } catch (e) {
+            console.error(e);
+            this.appUiService.showSnackbar('Chat Pull failed', 'failure');
+        }
+    }
+
+    /**
+     * Pulls email
+     * @param {any} node
+     */
+    pushChat(node: any): void {
+        try {
+            // TODD:: add config for push
+            const data: AgentSkillListData = {
+                title: 'Push Chat',
+                type: 'pushChat',
+                agent: {
+                    allowed: true,
+                    allowedStates: [],
+                    blind: false,
+                    source: 'agentId'
+                },
+                skill: {
+                    allowed: false,
+                    blind: false,
+                    channelPrfix: [],
+                    source: 'skill'
+                }
+            };
+
+            data.callback = (callbackData) => {
+                const { TmacServer, LoginID } = callbackData.selectedRow;
+                const { channel, itemID: itemid } = node;
+                this.appUiService.showSnackbar('Pushing Chat', 'loading');
+                this.http
+                    .post(this.data.Data.WorkbenchUrl + '/chat/queue/push', {
+                        tmacServer: TmacServer,
+                        agentId: LoginID,
+                        channel: channel,
+                        items: [{ itemid }]
+                    })
+                    .subscribe((res: any) => {
+                        if (res && res.status !== 'FAILED') {
+                            this.appUiService.showSnackbar('Chat Pushed successfuly', 'success');
+                            return;
+                        }
+                        this.appUiService.showSnackbar('Unable to push chat', 'failure');
+                    });
+            };
+
+            this.matDialog.open(AgentSkillListComponent, {
+                data: {
+                    ...data,
+                    otherData: node
+                },
+                panelClass: 'agent-skill-dialog',
+                minWidth: '30%',
+                maxWidth: '100%',
+                height: '60%',
+                disableClose: true
+            });
+        } catch (e) {
+            console.error(e);
+            this.appUiService.showSnackbar('Chat Push failed', 'failure');
+        }
+    }
+
+    /**
+     * To open push dialog
+     */
+    openPushDialog(): void { }
+
+    /**
+     * resets form
+     */
+    resetForm(): void {
+        this.advancedSearchForm.reset();
+    }
+}

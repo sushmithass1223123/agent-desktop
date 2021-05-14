@@ -1,6 +1,7 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { AgentNotificaitonEvent, SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils';
-import { AgentNotificaitonEvent, SDKClient } from 'tmac-sdk';
+import { IWidget } from 'app/interfaces';
 /**
  * Broadcat component
  */
@@ -11,11 +12,10 @@ import { AgentNotificaitonEvent, SDKClient } from 'tmac-sdk';
     encapsulation: ViewEncapsulation.None
 })
 export class TwBroadcastComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-
     /**
      * App confog data
      */
-    @Input() data: any;
+    @Input() data: IWidget;
 
     /**
      * Broadcat messgae
@@ -51,10 +51,10 @@ export class TwBroadcastComponent extends TWidgetWrapper implements OnInit, OnDe
     }
 
     /**
-     * 
+     *
      * Triggered on notification reception
      * @param {AgentNotificaitonEvent} evt
-     * @method 
+     * @method
      */
     private AgentNotificaitonEvent = (evt: AgentNotificaitonEvent) => {
         // check if the interaction id is there then return
@@ -71,6 +71,4 @@ export class TwBroadcastComponent extends TWidgetWrapper implements OnInit, OnDe
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
-
-
 }

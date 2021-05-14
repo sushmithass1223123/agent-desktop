@@ -19,8 +19,9 @@ tw-email-controls {
 
     .email-content {
         // min-height: 500px;
-        height: 100%;
+        // height: 100%;
         width: 100%;
+        flex: 1;
         overflow: auto;
     }
 
@@ -34,7 +35,7 @@ tw-email-controls {
 
     .email-controls {
         flex: 1;
-        overflow: auto;
+        // overflow: auto;
     }
 
     button {

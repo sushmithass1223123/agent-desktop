@@ -8,7 +8,7 @@ import { InteractionManagerService } from '@services/interaction-manager.service
 import { TWidgetWrapper } from '@twidgets/utils';
 import { InteractionRef } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
-import { AVChannel, IResponse, SDKClient } from 'tmac-sdk';
+import { AVChannel, IResponse, SDKClient } from '@tmac/sdk';
 
 /**
  * Active interactions

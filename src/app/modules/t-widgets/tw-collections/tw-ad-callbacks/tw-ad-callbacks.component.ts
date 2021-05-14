@@ -1,13 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TMACEventService } from '@services/tmac-event.service';
+import { SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { ACTIVE_CALL_STATUSES, COMMON_ERR_MESSAGE, PENDING_CALL_STATUSES } from 'app/constants';
 import { CustomSDKEvent, ResData } from 'app/interfaces';
 import { sortBy } from 'lodash';
 import * as moment from 'moment';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient } from 'tmac-sdk';
 
 /**
  * Agent Callbacks Widget
@@ -102,11 +102,10 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
             };
         });
 
-        // SDKClient.events.on('CallbackDataReceivedForAgent', this.CallbackDataReceivedForAgent);
-
-        this._tmacEventService.getEvents(['CallbackDataReceivedForAgent'])
+        this._tmacEventService
+            .getEvents(['CallbackDataReceivedForAgent'])
             .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(evts => this.CallbackDataReceivedForAgent(evts[0]));
+            .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
     }
 
     /**
@@ -115,8 +114,6 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-
-        // SDKClient.events.off('CallbackDataReceivedForAgent', this.CallbackDataReceivedForAgent);
     }
 
     // -----------------------------------------------------------------------------------------------------

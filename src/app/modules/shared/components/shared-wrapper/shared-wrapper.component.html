@@ -1,51 +1,27 @@
 <!-- We are writing a wrapper over material card -->
 <div class="tw-shared-wrapper">
-    <mat-card
-        class="widget-card"
-        [ngClass]="
-            fuseConfig.layout.anchorWidget.customBackgroundColor === true
-                ? fuseConfig.layout.anchorWidget.bodyBackground
-                : fuseConfig.layout.widget.customBackgroundColor === true
-                ? fuseConfig.layout.widget.bodyBackground
-                : ''
-        "
-    >
-        <!-- Wrapper to wrap header and body -->
-        <div fxLayout="column" fxLayoutAlign=" none" class="card-wrapper">
-            <mat-card-header
-                [ngClass]="
-                    fuseConfig.layout.anchorWidget.customBackgroundColor === true
-                        ? fuseConfig.layout.anchorWidget.headerBackground
-                        : fuseConfig.layout.widget.customBackgroundColor === true
-                        ? fuseConfig.layout.widget.headerBackground
-                        : ''
-                "
-            >
-                <div mat-card-avatar>
-                    <mat-icon *ngIf="icon.indexOf('custom') < 0">{{ icon || 'widgets' }}</mat-icon>
-                    <mat-icon [svgIcon]="icon" *ngIf="icon.indexOf('custom') >= 0"></mat-icon>
-                </div>
-                <mat-card-title>{{ title || 'Widget' }}</mat-card-title>
-                <span class="spacer"></span>
-                <button mat-icon-button matTooltip="Close" mat-dialog-close #closeBtn tabindex="-1">
-                    <mat-icon>close</mat-icon>
-                </button>
-            </mat-card-header>
-            <!-- Card content -->
-            <mat-card-content
-                class="border-radius-20"
-                [ngClass]="
-                    fuseConfig.layout.anchorWidget.customBackgroundColor === true
-                        ? fuseConfig.layout.anchorWidget.contentBackground
-                        : fuseConfig.layout.widget.customBackgroundColor === true
-                        ? fuseConfig.layout.widget.contentBackground
-                        : ''
-                "
-            >
-                <mat-progress-bar *ngIf="loading" mode="query"></mat-progress-bar>
-                <!-- All the card content goes here -->
-                <ng-content></ng-content>
-            </mat-card-content>
-        </div>
-    </mat-card>
+    <ng-container *ngIf="customFuse$ | async as customFuse">
+        <mat-card class="widget-card" [ngClass]="customFuse.body">
+            <!-- Wrapper to wrap header and body -->
+            <div fxLayout="column" fxLayoutAlign=" none" class="card-wrapper">
+                <mat-card-header [ngClass]="customFuse.header">
+                    <div mat-card-avatar>
+                        <mat-icon *ngIf="icon.indexOf('custom') < 0">{{ icon || 'widgets' }}</mat-icon>
+                        <mat-icon [svgIcon]="icon" *ngIf="icon.indexOf('custom') >= 0"></mat-icon>
+                    </div>
+                    <mat-card-title>{{ title || 'Widget' }}</mat-card-title>
+                    <span class="spacer"></span>
+                    <button mat-icon-button matTooltip="Close" mat-dialog-close #closeBtn tabindex="-1">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </mat-card-header>
+                <!-- Card content -->
+                <mat-card-content class="border-radius-20" [ngClass]="customFuse.content">
+                    <mat-progress-bar *ngIf="loading" mode="query"></mat-progress-bar>
+                    <!-- All the card content goes here -->
+                    <ng-content></ng-content>
+                </mat-card-content>
+            </div>
+        </mat-card>
+    </ng-container>
 </div>

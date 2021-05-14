@@ -2,6 +2,9 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@an
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { ContentPageService } from 'app/services/content-page.service';
 
+/**
+ * Unknown Content Widget
+ */
 @Component({
     selector: 'twc-unknown',
     templateUrl: './twc-unknown.component.html',
@@ -29,5 +32,4 @@ export class TwcUnknownComponent extends TWContentWrapper implements OnInit, OnD
     ngOnDestroy(): void {
         this.destroyWrapper();
     }
-
 }

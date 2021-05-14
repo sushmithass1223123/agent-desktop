@@ -10,7 +10,7 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AGENT_FEATURES_MAP, COMMON_ERR_MESSAGE } from 'app/constants';
 import { CustomSDKEvent, IWidget } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
-import { AgentFeatures, IAgentData, InteractionDataModel, IResponse, SDKClient, SuAgentInteractionModel, SuAgentModel } from 'tmac-sdk';
+import { AgentFeatures, IAgentData, InteractionDataModel, IResponse, SDKClient, SuAgentInteractionModel, SuAgentModel } from '@tmac/sdk';
 
 @Component({
     selector: 'tw-su-agent-interactions',
@@ -72,11 +72,10 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
         this.configData = this.data.Data;
 
         // register to event
-        // SDKClient.events.on('TeamAgentInteractionDetailsEvent', this.TeamAgentInteractionDetailsEvent);
-
-        this._tmacEventService.getEvents(['TeamAgentInteractionDetailsEvent'])
+        this._tmacEventService
+            .getEvents(['TeamAgentInteractionDetailsEvent'])
             .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(evts => this.TeamAgentInteractionDetailsEvent(evts[0]));
+            .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
 
         // start receiving data
         this._dashboardService.triggerAgentInteractions(this.configData?.AgentLoginID, true);
@@ -88,9 +87,6 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-
-        // unregister from event
-        // SDKClient.events.off('TeamAgentInteractionDetailsEvent', this.TeamAgentInteractionDetailsEvent);
 
         // stop receiving data
         this._dashboardService.triggerAgentInteractions(this.configData?.AgentLoginID, false);

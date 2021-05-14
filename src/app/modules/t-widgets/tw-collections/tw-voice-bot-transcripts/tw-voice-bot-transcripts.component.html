@@ -5,88 +5,56 @@
 <!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
 
 <tw-wrapper [data]="data">
-    <div
-        class="w-100-p h-100-p chat-controls"
-        [ngClass]="
-            fuseConfig.layout.anchorWidget.customBackgroundColor === true && data.Config.Anchor
-                ? fuseConfig.layout.anchorWidget.contentBackground
-                : fuseConfig.layout.widget.customBackgroundColor === true
-                ? fuseConfig.layout.widget.contentBackground
-                : ''
-        "
+    <ng-container
+        *ngIf="{
+            anchor: (customFuse.anchor$ | async),
+            widget: (customFuse.widget$ | async)
+        } as customFuse"
     >
-        <div *ngIf="chatTranscripts.length" fxLayout="row" fxLayoutAlign=" none" class="mt-4 w-100-p h-100-p chat-container">
-            <div fxLayout="column" fxLayoutAlign=" none" class="border-radius-20 chat-content">
-                <!-- CHAT CONTENT -->
-                <div
-                    class="chat-transcripts w-100-p custom-scroll-adjust"
-                    fxFlex="1 1 auto"
-                >
-                    <!-- CHAT MESSAGES -->
-                    <div class="chat-messages px-12">
-                        <!-- MESSAGE -->
-                        <div
-                            *ngFor="let message of chatTranscripts; let i = index"
-                            class="message-row"
-                            [ngClass]="{
-                                me: message?.who === user.agentName,
-                                contact: message?.who !== user.agentName
-                            }"
-                        >
+        <div class="w-100-p h-100-p chat-controls" [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
+            <div *ngIf="chatTranscripts.length" fxLayout="row" fxLayoutAlign=" none" class="mt-4 w-100-p h-100-p chat-container">
+                <div fxLayout="column" fxLayoutAlign=" none" class="border-radius-20 chat-content">
+                    <!-- CHAT CONTENT -->
+                    <div class="chat-transcripts w-100-p custom-scroll-adjust" fxFlex="1 1 auto">
+                        <!-- CHAT MESSAGES -->
+                        <div class="chat-messages px-12">
+                            <!-- MESSAGE -->
                             <div
-                                fxLayout="column"
-                                fxLayoutAlign="start start"
-                                class="bubble"
-                                [ngClass]="
-                                    (message.who !== user.agentName && fuseConfig.layout.anchorWidget.customBackgroundColor === true
-                                        ? fuseConfig.layout.anchorWidget.bodyBackground
-                                        : '') + ' '
-                                "
+                                *ngFor="let message of chatTranscripts; let i = index"
+                                class="message-row"
+                                [ngClass]="{
+                                    me: message?.who === user.agentName,
+                                    contact: message?.who !== user.agentName
+                                }"
                             >
-                                <!-- <div [ngClass]="message.who === user.agentName ? 'right-svg' : 'left-svg'">
-                                    <svg
-                                        *ngIf="message.who !== user.agentName"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 8 13"
-                                        width="8"
-                                        height="13"
-                                    >
-                                        <path opacity=".13" fill="#0000000" d="M1.533 3.568L8 12.193V1H2.812C1.042 1 .474 2.156 1.533 3.568z"></path>
-                                        <path fill="currentColor" d="M1.533 2.568L8 11.193V0H2.812C1.042 0 .474 1.156 1.533 2.568z"></path>
-                                    </svg>
-                                    <svg
-                                        *ngIf="message.who === user.agentName"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 8 13"
-                                        width="8"
-                                        height="13"
-                                    >
-                                        <path opacity=".13" d="M5.188 1H0v11.193l6.467-8.625C7.526 2.156 6.958 1 5.188 1z"></path>
-                                        <path fill="currentColor" d="M5.188 0H0v11.193l6.467-8.625C7.526 1.156 6.958 0 5.188 0z"></path>
-                                    </svg>
-                                </div> -->
+                                <div
+                                    fxLayout="column"
+                                    fxLayoutAlign="start start"
+                                    class="bubble"
+                                    [ngClass]="(message.who !== user.agentName ? customFuse.anchor?.content : '') + ' '"
+                                >
+                                    <div *ngIf="chatTranscripts[i - 1]?.who !== message.who" class="user-label font-size-16 text-bold mb-4">
+                                        {{ message.who }}
+                                    </div>
 
-                                <div *ngIf="chatTranscripts[i - 1]?.who !== message.who" class="user-label font-size-16 text-bold mb-4">
-                                    {{ message.who }}
-                                </div>
-
-                                <div class="message">
-                                    <span [innerHTML]="message.message"></span>
-                                    <!-- <span class="spacer"></span> -->
+                                    <div class="message">
+                                        <span [innerHTML]="message.message"></span>
+                                        <!-- <span class="spacer"></span> -->
+                                    </div>
                                 </div>
                             </div>
+                            <!-- / MESSAGE -->
                         </div>
-                        <!-- / MESSAGE -->
+                        <!-- CHAT MESSAGES -->
                     </div>
-                    <!-- CHAT MESSAGES -->
+                    <!-- / CHAT CONTENT -->
                 </div>
-                <!-- / CHAT CONTENT -->
+            </div>
+
+            <div *ngIf="!chatTranscripts.length" class="w-100-p h-85-p">
+                <img src="assets/images/vectors/no-data-1.svg" class="w-100-p h-100-p box-shadow-3d" />
+                <p class="text-center mat-title m-0">No Transcripts Available</p>
             </div>
         </div>
-
-        <div *ngIf="!chatTranscripts.length" class="w-100-p h-85-p">
-            <img src="assets/images/vectors/no-data-2.svg" class="w-100-p h-100-p box-shadow-3d" />
-            <p class="text-center mat-title m-0">No Transcripts Available</p>
-        </div>
-    </div>
+    </ng-container>
 </tw-wrapper>

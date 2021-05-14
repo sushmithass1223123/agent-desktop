@@ -1,12 +1,13 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
-import { FuseConfigService } from '@fuse/services/config.service';
+import { FuseConfig } from '@fuse/types';
 import { AppUiService } from '@services/app-ui.service';
+import { FuseFacadeService } from '@services/fuse-facade.service';
+import { SDKClient, SDKConnectivityStatusEvent } from '@tmac/sdk';
 import { IWidget } from 'app/interfaces';
 import { AppDataService } from 'app/services/app-data.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient } from 'tmac-sdk';
 
 /**
  * Toolbar component
@@ -53,16 +54,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     /**
      * Connectivity Status
      */
-    connectivityStatus: {
-        /**
-         * Status 
-         */
-        status: -1,
-        /**
-         * Event mode
-         */
-        eventMode: '';
-    };
+    connectivityStatus: SDKConnectivityStatusEvent;
 
     /**
      * Unsubscribe all subject
@@ -72,12 +64,13 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     /**
      * Constructor
      *
-     * @param {FuseConfigService} _fuseConfigService
+     * @param {FuseFacadeService} _fuseFacadeService
      * @param {FuseSidebarService} _fuseSidebarService
      * @param {AppDataService} _appDataService
      */
     constructor(
-        private _fuseConfigService: FuseConfigService,
+        // private _fuseConfigService: FuseConfigService,
+        private _fuseFacadeService: FuseFacadeService,
         private _fuseSidebarService: FuseSidebarService,
         private _appDataService: AppDataService,
         private _appUIService: AppUiService
@@ -95,14 +88,23 @@ export class ToolbarComponent implements OnInit, OnDestroy {
      * On init
      */
     ngOnInit(): void {
-        // Subscribe to the config changes
-        this._fuseConfigService.config
+        // Subscribe to custom fuse config changes
+        this._fuseFacadeService.getConfig()
             .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((settings: any) => {
-                this.horizontalNavbar = settings.layout.navbar.position === 'top';
-                this.rightNavbar = settings.layout.navbar.position === 'right';
-                this.hiddenNavbar = settings.layout.navbar.hidden === true;
+            .subscribe((config: FuseConfig) => {
+                this.horizontalNavbar = config.layout.navbar.position === 'top';
+                this.rightNavbar = config.layout.navbar.position === 'right';
+                this.hiddenNavbar = config.layout.navbar.hidden === true;
             });
+
+        // Subscribe to config changes
+        // this._fuseConfigService.config
+        //     .pipe(takeUntil(this._unsubscribeAll))
+        //     .subscribe((settings: any) => {
+        //         this.horizontalNavbar = settings.layout.navbar.position === 'top';
+        //         this.rightNavbar = settings.layout.navbar.position === 'right';
+        //         this.hiddenNavbar = settings.layout.navbar.hidden === true;
+        //     });
 
         // Subscribe to config changes
         this._appDataService.config
@@ -126,7 +128,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
                 }
             );
 
-        SDKClient.events.on('connectivityStatus', this.connectivityStatusEvent);
+        SDKClient.events.on('SDKConnectivityStatusEvent', this.connectivityStatusEvent);
     }
 
     /**
@@ -137,12 +139,17 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
 
-        SDKClient.events.off('connectivityStatus', this.connectivityStatusEvent);
+        SDKClient.events.off('SDKConnectivityStatusEvent', this.connectivityStatusEvent);
     }
 
-    private connectivityStatusEvent = (data: any) => {
+    /**
+     * To handle SDKConnectivityStatus
+     * 
+     * @param data 
+     */
+    private connectivityStatusEvent = (evt: SDKConnectivityStatusEvent) => {
         setTimeout(() => {
-            this.connectivityStatus = data;
+            this.connectivityStatus = evt;
         }, 100);
     }
 

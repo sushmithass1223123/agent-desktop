@@ -1,12 +1,11 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewEncapsulation } from '@angular/core';
-import { FuseConfig } from '@fuse/types';
-import { IWidget } from 'app/interfaces';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
+import { AppUiService } from '@services/app-ui.service';
+import { IWidget } from 'app/interfaces';
+import { map } from 'lodash';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { map } from 'lodash';
-import { AppUiService } from '@services/app-ui.service';
 
 /**
  * Card header component
@@ -24,13 +23,18 @@ export class TwCardHeaderComponent implements OnInit, OnDestroy {
      */
     @Input() data: IWidget;
     /**
-     * Fuse config
+     * Header color
      */
-    @Input() fuseConfig: FuseConfig;
+    @Input() headerColor: string;
     /**
      * Current widget State
      */
     @Input() widgetState: Record<string, boolean>;
+
+    /**
+     * Refresh event emitter
+     */
+    @Output() refresh = new EventEmitter();
 
     /**
      * Maximise event emitter
@@ -86,6 +90,13 @@ export class TwCardHeaderComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
+    }
+
+    /**
+     * Refresh method
+     */
+    refreshWidget(): void {
+        this.refresh.emit();
     }
 
     /**

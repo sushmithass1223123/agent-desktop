@@ -3,8 +3,9 @@ import { Inject, Injectable } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { environment } from 'environments/environment';
 import { merge } from 'lodash';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { IResponse, SDKClient, TEnums, TUtils } from 'tmac-sdk';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { IResponse, SDKClient, TEnums, TUtils } from '@tmac/sdk';
+import { version } from '../../../package.json';
 
 /**
  * Service to inject the data for widget from App config json
@@ -29,14 +30,22 @@ export class AppDataService {
      * App Config Json subject
      */
     private _appConfigSubject: BehaviorSubject<any>;
+    /**
+     * App version
+     */
+    private _appVersion: string;
+    /**
+     * Need more Description
+     */
+    private _postMessageSubject: Subject<any>;
 
-    constructor(
-        @Inject(DOCUMENT) private document: any,
-        private _titleService: Title
-    ) {
+    constructor(@Inject(DOCUMENT) private document: any, private _titleService: Title) {
         // Set the config from the default config
         this._configSubject = new BehaviorSubject(new Object());
         this._appConfigSubject = new BehaviorSubject(new Object());
+        this._postMessageSubject = new BehaviorSubject(new Object());
+        this._appVersion = version;
+        this.registerToPostMessage();
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -87,41 +96,17 @@ export class AppDataService {
     // -----------------------------------------------------------------------------------------------------
 
     /**
-     * To get config for the app
-     * 
-     * @param {string} agentId
+     * Get PostMessages
      */
-    async getConfig(agentId?: string): Promise<any> {
-        let data = null;
-        try {
-            // check the environment and load config
-            if (environment.production) {
-                // get the config from server for production
-                data = await this.getProductionConfig(agentId);
-                TUtils.Logger.console('info', 'App config loaded');
-            }
-            else {
-                // get the config from local for development
-                data = await this.getDevelopmentConfig();
-                TUtils.Logger.console('info', 'App config loaded', data);
-            }
-
-            // set the config to service
-            if (data) {
-                this.config = data;
-                this.setAppConfig(data);
-                return data;
-            }
-
-        } catch (error) {
-            TUtils.Logger.log('Exception in AppDataService.getConfig', error);
-        }
-        return null;
+    get postMessage(): any | Observable<any> {
+        return this._postMessageSubject.asObservable();
     }
+
+    // -----------------------------------------------------------------------------------------------------    
 
     /**
      * To get production config
-     * 
+     *
      * @param {string} agentId
      */
     private async getProductionConfig(agentId?: string): Promise<any> {
@@ -175,39 +160,134 @@ export class AppDataService {
     }
 
     /**
-     * To set app config
+     * To set json config
      */
-    private setAppConfig(config: any): void {
-        // set the title
-        if (config.AppConfigs.TitleName) {
-            this._titleService.setTitle(config.AppConfigs.TitleName);
-        }
+    private setJsonConfig(config: any): void {
+        try {
+            // set the title
+            if (config.AppConfigs.TitleName) {
+                this._titleService.setTitle(config.AppConfigs.TitleName);
+            }
 
-        // set the favicon
-        if (config.AppConfigs.Logos.Favicon) {
-            this.document.getElementById('appFavicon').setAttribute('href', config.AppConfigs.Logos.Favicon);
-        }
+            // set the favicon
+            if (config.AppConfigs.Logos.Favicon) {
+                this.document.getElementById('appFavicon').setAttribute('href', config.AppConfigs.Logos.Favicon);
+            }
 
-        // set the SDK config
-        SDKClient.setConfig({
-            proxy: {
-                urls: config.AppConfigs.SDK.Proxy.Urls || '',
-                type: config.AppConfigs.SDK.Proxy.Type || TEnums.ProxyType.SOAP,
-                timeout: config.AppConfigs.SDK.Proxy.Timeout || 30000
-            },
-            signalRProxy: {
-                enabled: config.AppConfigs.SDK.SignalRProxy.enabled || true,
-                logging: config.AppConfigs.SDK.SignalRProxy.Logging || false,
-                protocol: config.AppConfigs.SDK.SignalRProxy?.Protocol,
-                timeout: config.AppConfigs.SDK.SignalRProxy.Timeout || 30
-            },
-            logging: {
-                enabled: config.AppConfigs.SDK.Logging.Enabled || false,
-                remote: config.AppConfigs.SDK.Logging.Remote || false,
-                remoteThreshold: config.AppConfigs.SDK.Logging.RemoteThreshold || 15
-            },
-            customScripts:
-                [...config.AppConfigs.SDK.CustomSripts]
-        });
+            // set the SDK config
+            SDKClient.setConfig({
+                proxy: {
+                    urls: config.AppConfigs.SDK.Proxy.Urls || '',
+                    type: config.AppConfigs.SDK.Proxy.Type || TEnums.ProxyType.SOAP,
+                    timeout: config.AppConfigs.SDK.Proxy.Timeout || 30000
+                },
+                signalRProxy: {
+                    enabled: config.AppConfigs.SDK.SignalRProxy.enabled ?? true,
+                    logging: config.AppConfigs.SDK.SignalRProxy.Logging ?? false,
+                    protocol: config.AppConfigs.SDK.SignalRProxy?.Protocol,
+                    timeout: config.AppConfigs.SDK.SignalRProxy.Timeout || 30,
+                    fallback: config.AppConfigs.SDK.SignalRProxy.Fallback ?? true
+                },
+                logging: {
+                    enabled: config.AppConfigs.SDK.Logging.Enabled ?? false,
+                    level: {
+                        debug: config.AppConfigs.SDK.Logging.Level?.Debug ?? false,
+                        info: config.AppConfigs.SDK.Logging.Level?.Info ?? false,
+                        warn: config.AppConfigs.SDK.Logging.Level?.Warn ?? false,
+                        error: config.AppConfigs.SDK.Logging.Level?.Error ?? false
+                    },
+                    remote: {
+                        enabled: config.AppConfigs.SDK.Logging.Remote?.Enabled ?? false,
+                        timeout: config.AppConfigs.SDK.Logging.Remote?.Timeout || 30,
+                        count: config.AppConfigs.SDK.Logging.Remote?.Count || 10
+                    },
+                    sdkMethods: config.AppConfigs.SDK.Logging.SDKMethods ?? false,
+                    sdkEvents: config.AppConfigs.SDK.Logging.SDKEvents ?? false
+                },
+                customScripts: [...config.AppConfigs.SDK.CustomSripts]
+            });
+        } catch (error) {
+            TUtils.Logger.console('error', 'Exception in AppDataService.setJsonConfig', null, error);
+        }
+    }
+
+    /**
+     * To register to post message
+     */
+    private registerToPostMessage(): void {
+        try {
+            window.addEventListener('message', (evt: any) => {
+                // if event data is null then return
+                if (!evt.data) {
+                    return;
+                }
+
+                let data: any = {};
+                if (typeof evt.data === 'string') {
+                    try {
+                        data = JSON.parse(evt.data);
+                    } catch (error) {
+                        data = {};
+                    }
+                } else if (typeof evt.data === 'object') {
+                    data = evt.data;
+                }
+
+                // check if destination is tmac
+                if (data.destination?.toLowerCase() === 'tmac') {
+                    // notify the observers
+                    this._postMessageSubject.next(data);
+                }
+            }, false);
+        } catch (error) {
+            TUtils.Logger.console('error', 'Exception in registerToPostMessage', null, error);
+        }
+    }
+
+    /**
+     * To get config for the app
+     *
+     * @param {string} agentId
+     */
+    async getJsonConfig(agentId?: string): Promise<any> {
+        let data = null;
+        try {
+            // check the environment and load config
+            if (environment.production) {
+                // get the config from server for production
+                data = await this.getProductionConfig(agentId);
+                TUtils.Logger.console('info', 'Production config loaded');
+            } else {
+                // get the config from local for development
+                data = await this.getDevelopmentConfig();
+                TUtils.Logger.console('info', 'Development config loaded', data);
+            }
+
+            // set the config to service
+            if (data) {
+                let conf = JSON.stringify(data);
+                const domain = window.location.hostname || '';
+                conf.replaceAll('${domainName}', domain);
+                conf = JSON.parse(conf);
+                this.config = conf;
+                this.setJsonConfig(data);
+                return {
+                    ...data,
+                    ConfigMode: this._appConfigSubject.getValue().ConfigMode
+                };
+            }
+        } catch (error) {
+            TUtils.Logger.console('error', 'Exception in AppDataService.getJsonConfig', null, error);
+        }
+        return null;
+    }
+
+    /**
+     * To get app version
+     * 
+     * @returns {String} app version
+     */
+    getAppVersion(): string {
+        return this._appVersion;
     }
 }

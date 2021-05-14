@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TwcTextchatComponent } from './twc-textchat.component';
 
@@ -6,7 +6,7 @@ describe('TwcTextchatComponent', () => {
   let component: TwcTextchatComponent;
   let fixture: ComponentFixture<TwcTextchatComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ TwcTextchatComponent ]
     })

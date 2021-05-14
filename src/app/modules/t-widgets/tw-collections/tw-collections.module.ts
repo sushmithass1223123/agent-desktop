@@ -12,6 +12,7 @@ import { TwAgentAssistComponent } from './tw-agent-assist/tw-agent-assist.compon
 import { TwAhtTcComponent } from './tw-aht-tc/tw-aht-tc.component';
 import { TwAmdocsBccComponent } from './tw-amdocs-bcc/tw-amdocs-bcc.component';
 import { TwAudioControlsComponent } from './tw-audio-controls/tw-audio-controls.component';
+import { TwCalendarModule } from './tw-calendar/tw-calendar.module';
 import { TwCannedResponsesComponent } from './tw-canned-responses/tw-canned-responses.component';
 import { TwChatControlsModule } from './tw-chat-controls/tw-chat-controls.module';
 import { TwChatPanelComponent } from './tw-chat-panel/tw-chat-panel.component';
@@ -23,8 +24,12 @@ import { TwEmailControlsComponent } from './tw-email-controls/tw-email-controls.
 import { TwEmailPanelComponent } from './tw-email-panel/tw-email-panel.component';
 import { TwEmailTemplatePreviewComponent } from './tw-email-template-preview/tw-email-template-preview.component';
 import { TwEntitiesComponent } from './tw-entities/tw-entities.component';
+import { TwFaxControlsComponent } from './tw-fax-controls/tw-fax-controls.component';
+import { TwFaxPanelComponent } from './tw-fax-panel/tw-fax-panel.component';
 import { RaceCarTrackComponent } from './tw-gamification/race-car-track/race-car-track.component';
 import { TwGamificationComponent } from './tw-gamification/tw-gamification.component';
+import { TwGenericControlsComponent } from './tw-generic-controls/tw-generic-controls.component';
+import { TwGenericPanelComponent } from './tw-generic-panel/tw-generic-panel.component';
 import { TwPanelComponent } from './tw-panel/tw-panel.component';
 import { TwPendingCallbacksComponent } from './tw-pending-callbacks/tw-pending-callbacks.component';
 import { TwPieChartComponent } from './tw-pie-chart/tw-pie-chart.component';
@@ -36,6 +41,7 @@ import { TwSuAgentActivityComponent } from './tw-su-agent-activity/tw-su-agent-a
 import { TwSuAgentInteractionsComponent } from './tw-su-agent-interactions/tw-su-agent-interactions.component';
 import { TwSuGamificationComponent } from './tw-su-gamification/tw-su-gamification.component';
 import { TwUnknownComponent } from './tw-unknown/tw-unknown.component';
+import { TwUserLocationComponent } from './tw-user-location/tw-user-location.component';
 import { TwVideoControlsComponent } from './tw-video-controls/tw-video-controls.component';
 import { TwVoiceBotTranscriptsComponent } from './tw-voice-bot-transcripts/tw-voice-bot-transcripts.component';
 import { TwVoiceCannedResponsesComponent } from './tw-voice-canned-responses/tw-voice-canned-responses.component';
@@ -43,8 +49,7 @@ import { TwVoiceControlsComponent } from './tw-voice-controls/tw-voice-controls.
 import { TwVoicePanelComponent } from './tw-voice-panel/tw-voice-panel.component';
 import { TwWallboardComponent } from './tw-wallboard/tw-wallboard.component';
 import { TwWorkCodesComponent } from './tw-work-codes/tw-work-codes.component';
-import { TwWorkbenchPanelComponent } from './tw-workbench-panel/tw-workbench-panel.component';
-import { WorkbenchEmailComponent } from './tw-workbench-panel/workbench-email/workbench-email.component';
+import { TwWorkbenchPanelModule } from './tw-workbench-panel/tw-workbench-panel.module';
 
 /**
  * Collections components
@@ -84,15 +89,18 @@ const collectionComponents = [
     TwSuAgentInteractionsComponent,
     TwPieChartComponent,
     TwVoiceCannedResponsesComponent,
-    TwWorkbenchPanelComponent,
-    WorkbenchEmailComponent,
     TwEmailPanelComponent,
     TwEmailControlsComponent,
     TwPendingCallbacksComponent,
     TwGamificationComponent,
     RaceCarTrackComponent,
     TwEntitiesComponent,
-    TwEmailTemplatePreviewComponent
+    TwEmailTemplatePreviewComponent,
+    TwUserLocationComponent,
+    TwFaxPanelComponent,
+    TwFaxControlsComponent,
+    TwGenericPanelComponent,
+    TwGenericControlsComponent
 ];
 
 /**
@@ -100,7 +108,7 @@ const collectionComponents = [
  */
 @NgModule({
     declarations: collectionComponents,
-    imports: [SharedModule, TwWrapperModule, TwChatControlsModule],
+    imports: [SharedModule, TwWrapperModule, TwChatControlsModule, TwWorkbenchPanelModule, TwCalendarModule],
     exports: collectionComponents
 })
-export class TwCollectionsModule {}
+export class TwCollectionsModule { }

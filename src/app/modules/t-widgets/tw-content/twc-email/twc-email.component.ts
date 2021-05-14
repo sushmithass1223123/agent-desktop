@@ -7,7 +7,7 @@ import { ContentPageService } from 'app/services/content-page.service';
 import { InteractionManagerService } from 'app/services/interaction-manager.service';
 import { cloneDeep } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { IncomingEmailEvent, InteractionClosedEvent } from 'tmac-sdk';
+import { IncomingEmailEvent, InteractionClosedEvent } from '@tmac/sdk';
 
 /**
  * TwcEmailComponent
@@ -45,20 +45,12 @@ export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDes
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        // // subscribe to interaction events observable
-        // this._tmacEventService.constructDisposeEvents
-        //     .pipe(takeUntil(this.unsubscribeAll))
-        //     .subscribe((evt: any) => {
-        //         // filter the event name
-        //         if (evt.EventName === 'IncomingEmailEvent') {
-        //             this.IncomingEmailEvent(evt);
-        //         } else if (evt.EventName === 'InteractionClosedEvent') {
-        //             this.InteractionClosedEvent(evt);
-        //         }
-        //     });
-
         // subscribe to interaction events observable
-        this._tmacEventService.getConstructDisposeEvents(['IncomingEmailEvent', 'InteractionClosedEvent'])
+        this._tmacEventService
+            .getConstructDisposeEvents([
+                'IncomingEmailEvent',
+                'InteractionClosedEvent'
+            ])
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
 
@@ -94,7 +86,7 @@ export class TwcEmailComponent extends TWContentWrapper implements OnInit, OnDes
         const emailWidgets = cloneDeep(this.data.Data.Widgets) || [];
 
         const staticWidgets = emailWidgets.Static || [];
-        const dynamicWidgets = emailWidgets.Dynamic || [];
+        const dynamicWidgets = (evt.WidgetConfigData && JSON.parse(evt.WidgetConfigData)) || emailWidgets.Dynamic || [];
         const aotWidgets = emailWidgets.AOT || [];
 
         // loop the widgets and add append interaction details

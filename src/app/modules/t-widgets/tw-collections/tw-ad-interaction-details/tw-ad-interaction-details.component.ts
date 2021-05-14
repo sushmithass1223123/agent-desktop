@@ -8,7 +8,6 @@ import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CustomSDKEvent } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
-import { InteractionData, SDKClient } from 'tmac-sdk';
 
 /**
  * Agent Interactions details Table widget
@@ -93,7 +92,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         CreatedTimeEnd: new FormControl(),
         ClosedTimeStart: new FormControl(),
         ClosedTimeEnd: new FormControl(),
-        AgentComment:  new FormControl()
+        AgentComment: new FormControl()
     });
 
     constructor(
@@ -126,11 +125,10 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
             this.interactionDetailsTable.source.filter = stringifiedSearch === '{}' ? '' : stringifiedSearch;
         });
 
-        // SDKClient.events.on('AgentInteractionDetailsEvent', this.AgentInteractionDetailsEvent);
-
-        this._tmacEventService.getEvents(['AgentInteractionDetailsEvent'])
+        this._tmacEventService
+            .getEvents(['AgentInteractionDetailsEvent'])
             .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(evts => this.AgentInteractionDetailsEvent(evts[0]));
+            .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
     }
 
     /**
@@ -140,8 +138,6 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-
-        // SDKClient.events.off('AgentInteractionDetailsEvent', this.AgentInteractionDetailsEvent);
     }
 
     /**
@@ -244,7 +240,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
      * AgentInteractionDetailsEvent hanlder
      * @param {CustomSDKEvent} data
      */
-    private AgentInteractionDetailsEvent = (evt: CustomSDKEvent) => {
+    private AgentInteractionDetailsEvent(evt: CustomSDKEvent): void {
         // check if empty array then reset
         if (!evt.Data.length) {
             this.interactionList = [];

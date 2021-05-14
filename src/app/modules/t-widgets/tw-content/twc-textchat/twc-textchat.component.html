@@ -1,6 +1,7 @@
 <!-- No interaction template -->
 <twc-no-interaction
     *ngIf="interactions.length === 0"
+    class="tw-widget-container"
     type="chat"
     [ngStyle]="{ 'width.px': screenWidth, 'height.px': screenHeight }"
 ></twc-no-interaction>
@@ -22,7 +23,8 @@
             ></tw-template>
 
             <tw-template
-                fxFlex.gt-md="66"
+                [fxFlex.gt-md]="item.widgets.static.length > 0 ? 66 : 100"
+                [ngClass]="{ 'static-less': item.widgets.static.length === 0 }"
                 class="dynamic-widget-grid"
                 *ngIf="item.widgets.dynamic.length > 0"
                 [widgets]="item.widgets.dynamic"
@@ -34,5 +36,5 @@
         </div>
     </div>
     <!-- No widget for interaction -->
-    <twc-no-widgets class="twc-card" *ngIf="item.widgets.static.length === 0" type="chat"></twc-no-widgets>
+    <twc-no-widgets class="twc-card" *ngIf="item.widgets.static.length === 0 && item.widgets.dynamic.length === 0" type="chat"></twc-no-widgets>
 </ng-container>

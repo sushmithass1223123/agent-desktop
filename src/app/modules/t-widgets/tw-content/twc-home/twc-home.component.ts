@@ -1,14 +1,12 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { FuseConfigService } from '@fuse/services/config.service';
-import { FuseConfig } from '@fuse/types';
+import { AOTWidgetService } from '@services/aot-widget.service';
 import { DashboardService } from '@services/dashboard.service';
-import { TMACEventService } from '@services/tmac-event.service';
+import { FuseFacadeService } from '@services/fuse-facade.service';
+import { IAgentData, SDKClient } from '@tmac/sdk';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { ContentPageService } from 'app/services/content-page.service';
-import { Observable } from 'rxjs';
-import { filter, map, takeUntil } from 'rxjs/operators';
-import { IAgentData, SDKClient } from 'tmac-sdk';
+import { takeUntil } from 'rxjs/operators';
 
 /**
  * TwcHomeComponent
@@ -72,16 +70,24 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
     /**
      * fuse background
      */
-    fuseBg: Observable<{
-        /**
-         * fuse background for content
-         */
-        content: string;
-        /**
-         * fuse background for body
-         */
-        body: string;
-    }>;
+    // customFuse: Observable<{
+    //     /**
+    //      * fuse background for content
+    //      */
+    //     content: string;
+    //     /**
+    //      * fuse background for body
+    //      */
+    //     body: string;
+    // }>;
+
+    /**
+     * Fuse custom config
+     */
+    customFuse = {
+        anchor$: this._fuseFacadeService.anchorBgClasses$,
+        widget$: this._fuseFacadeService.widgetBgClasses$
+    };
 
     /**
      * Max date for dashboard data
@@ -97,8 +103,9 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
         public hostElement: ElementRef,
         public contentPageService: ContentPageService,
         private _dashboardService: DashboardService,
-        private fuseConfService: FuseConfigService,
-        private _tmacEventService: TMACEventService
+        // private fuseConfService: FuseConfigService,
+        private _fuseFacadeService: FuseFacadeService,
+        private _aotWidgetService: AOTWidgetService
     ) {
         super(hostElement, contentPageService);
     }
@@ -110,16 +117,16 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        this.duration = 100;
+        this.duration = this.data.Data.Duration || 100;
 
         this.maxDate = new Date();
         this.maxDate.setDate(this.maxDate.getDate() - 1);
 
-        this.fuseBg = this.fuseConfService.config.pipe(
-            takeUntil(this.unsubscribeAll),
-            filter((config: FuseConfig) => config.layout.anchorWidget.customBackgroundColor),
-            map((config: FuseConfig) => ({ content: config.layout.widget.contentBackground, body: config.layout.widget.bodyBackground }))
-        );
+        // this.customFuse = this.fuseConfService.config.pipe(
+        //     takeUntil(this.unsubscribeAll),
+        //     filter((config: FuseConfig) => config.layout.anchorWidget.customBackgroundColor),
+        //     map((config: FuseConfig) => ({ content: config.layout.widget.contentBackground, body: config.layout.widget.bodyBackground }))
+        // );
 
         // subscribe to dashboard service
         this._dashboardService.subscribe();
@@ -134,14 +141,30 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
         this.dynamicWidgets = homeWidgets.Dynamic || [];
         this.aotWidgets = homeWidgets.AOT || [];
 
+        // process aot widgets
+        this._aotWidgetService.processAOTWidgets(this.aotWidgets);
+
         // subscribe to dashboard service
-        this._dashboardService.connectionState.pipe(takeUntil(this.unsubscribeAll)).subscribe((state: string) => {
-            // check the state
-            if (state === 'connected') {
-                // register to service
-                this.registerToService(true);
-            }
-        });
+        this._dashboardService
+            .connectionState
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((state: string) => {
+                // check the state
+                if (state === 'connected') {
+                    // register to service
+                    this.registerToService(true);
+                }
+            });
+
+        this._dashboardService.
+            dataReceived
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((state: string) => {
+                // check the state
+                if (state === 'agent-received') {
+                    this.dataLoading = false;
+                }
+            });
 
         const initialDate = new Date();
         initialDate.setDate(initialDate.getDate() - Math.round(this.duration / 24));
@@ -157,12 +180,6 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
             this.registerToService(true);
             this.showDashboardDataSpanOverlay = false;
         });
-
-        this._tmacEventService.getEvents(['AgentInteractionDetailsEvent'])
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(() => {
-                this.dataLoading = false;
-            });
 
         // set init flag to true
         this.init = true;

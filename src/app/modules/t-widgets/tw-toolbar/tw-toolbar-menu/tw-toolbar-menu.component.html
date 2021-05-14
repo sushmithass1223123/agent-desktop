@@ -1,5 +1,11 @@
 <div class="tw-navbar-menu">
     <div class="menu-item" *ngFor="let widget of toolbarMenuWidget">
+        <tw-available-media-device
+            [data]="widget"
+            *ngIf="widget.Type === 'tw-available-media-device' && widget.Config.Enabled"
+            fxHide
+            fxShow.gt-xs
+        ></tw-available-media-device>
         <tw-aux-timer [data]="widget" *ngIf="widget.Type === 'tw-aux-timer' && widget.Config.Enabled" fxHide fxShow.gt-xs></tw-aux-timer>
         <tw-agent-details [data]="widget" *ngIf="widget.Type === 'tw-agent-details' && widget.Config.Enabled"></tw-agent-details>
         <tw-notifications [data]="widget" *ngIf="widget.Type === 'tw-notifications' && widget.Config.Enabled" fxHide fxShow.gt-xs></tw-notifications>

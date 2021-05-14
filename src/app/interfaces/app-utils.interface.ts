@@ -14,37 +14,37 @@ export interface TWChartPieceLabel {
      */
     precision: number;
     /**
-     * 
+     *
      *  identifies whether or not labels of value 0 are displayed, default is false
      */
     showZero: boolean;
 
     /**
-     * 
+     *
      *  font size, default is defaultFontSize
      */
     fontSize: number;
 
     /**
-     * 
+     *
      *  font color, can be color array for each data or function for dynamic color, default is defaultFontColor
      */
     fontColor: string;
 
     /**
-     * 
+     *
      *  font style, default is defaultFontStyle
      */
     fontStyle: 'normal' | 'bold' | 'italic';
 
     /**
-     * 
+     *
      *  font family, default is defaultFontFamily
      */
     fontFamily: string;
 
     /**
-     * 
+     *
      *  draw label in arc, default is false
      */
     arc: boolean;
@@ -118,9 +118,9 @@ export interface TwChartConfig {
          */
         setFeedbackEmoji?: boolean;
         /**
-         * Piece label 
+         * Piece label
          */
-        pieceLabel?: Partial<TWChartPieceLabel>
+        pieceLabel?: Partial<TWChartPieceLabel>;
     };
     /**
      * Colors for chart
@@ -141,6 +141,10 @@ export interface TwChartConfig {
 }
 
 export interface ChatTranscripts {
+    /**
+     * Message that this message is a reply to
+     */
+    repliedToMessage?: ChatTranscripts;
     /**
      * Sender
      */
@@ -186,7 +190,7 @@ export interface ChatTranscripts {
          */
         src: string;
         /**
-         * Type 
+         * Type
          */
         type: string;
         /**
@@ -194,6 +198,10 @@ export interface ChatTranscripts {
          */
         name: string;
     };
+    /**
+     * Message from server
+     */
+    serverMessage?: boolean;
 }
 
 export interface AppNotification {
@@ -214,7 +222,7 @@ export interface AppNotification {
      */
     time?: string | Date;
     /**
-     * Status of the app notification 
+     * Status of the app notification
      */
     status: 'new' | 'read';
     /**
@@ -222,8 +230,6 @@ export interface AppNotification {
      */
     showAlert?: boolean;
 }
-
-export type SnackbarStateTypes = 'info' | 'loading' | 'warning' | 'success' | 'failure' | 'close';
 
 export type AppAlertDialogTypes = 'success' | 'info' | 'warning' | 'error';
 
@@ -300,6 +306,39 @@ export interface AppConfirmDialogData {
     cancel: () => void;
 }
 
+export type SnackbarStateTypes = 'info' | 'loading' | 'warning' | 'success' | 'failure' | 'close';
+
+export interface SnackBarArgs {
+    /**
+     * Message to show in snackbar
+     */
+    message: string;
+    /**
+     * State of snackbar of SnackbarStateTypes, success by default
+     */
+    state?: SnackbarStateTypes;
+    /**
+     * Vertical Postion of snackbar of type MatSnackBarVerticalPosition, default 'top'
+     */
+    vPos?: MatSnackBarVerticalPosition;
+    /**
+     * Horizontal Postion of snackbar of type MatSnackBarVerticalPosition, default 'center'
+     */
+    hPos?: MatSnackBarHorizontalPosition;
+    /**
+     * Duration of snackbar, 5000 by default
+     */
+    duration?: number;
+    /**
+     * On click of snackbar
+     */
+    onClick?: () => void;
+    /**
+     * On close of snackbar
+     */
+    onClose?: () => void;
+}
+
 export interface AppSnackBarArgs {
     /**
      * Message to show in snackbar
@@ -321,6 +360,10 @@ export interface AppSnackBarArgs {
      * Duration of snackbar, 5000 by default
      */
     duration?: number;
+    /**
+     * performs action when snackbar clicked
+     */
+    onClick?: (...args) => void;
 }
 
 export interface CustomDialogData {
@@ -336,21 +379,46 @@ export interface CustomDialogData {
      * Message for the dialog
      */
     message: any;
-    /**
-     * Done callback
-     */
-    done: (data?: any) => void;
-    /**
-     * Cancel callback
-     */
-    cancel: () => void;
 }
+
+export interface CustomDialogOtherData {
+    /**
+     * Minimim Rows
+     */
+    minRows?: number;
+}
+
+export type AgentSkillListAgentSources = 'station' | 'agentId';
+export type AgentSkillListSkillSources = 'skill' | 'vdn';
+export type AgentSkillListSourceObject<
+    /**
+     * Type of Use Key. Default: any
+     */
+    T = any,
+    /**
+     * Type of Display Key. Default : any
+     */
+    K = any
+    > = {
+        /**
+         * This agent source is forwarded to any api calls / value assigning
+         */
+        Use: T;
+        /**
+         * This agent source is displayed
+         */
+        Display: K;
+        /**
+         * Allow freetext to redirect user to specified source's use key
+         */
+        FreeTextAllowed: boolean;
+    };
 
 export interface AgentSkillListData {
     /**
      * Type of dialog
      */
-    type: 'makeCall' | 'transferCall' | 'conferenceCall' | 'transferChat' | 'conferenceChat' | 'transferEmail' | 'transferFax';
+    type: 'makeCall' | 'transferCall' | 'conferenceCall' | 'transferChat' | 'conferenceChat' | 'transferEmail' | 'transferFax' | 'pushChat';
     /**
      * Title of dialog
      */
@@ -370,11 +438,19 @@ export interface AgentSkillListData {
         /**
          * Source to select
          */
-        source: 'station' | 'agentId';
+        source: AgentSkillListAgentSources | AgentSkillListSourceObject<AgentSkillListAgentSources, AgentSkillListAgentSources | 'agentName'>;
         /**
          * Allowed states to do action
          */
         allowedStates: string[];
+        /**
+         * Allowed Columns
+         */
+        columns?: string[];
+        /**
+         * To filter agent list based on team visibility
+         */
+        teamFilter?: boolean;
     };
     /**
      * Skill settings
@@ -385,17 +461,21 @@ export interface AgentSkillListData {
          */
         allowed: boolean;
         /**
-         * BlindD allowed flag
+         * Blind allowed flag
          */
         blind: boolean;
         /**
          * Source to select
          */
-        source: 'skill' | 'vdn';
+        source: AgentSkillListSkillSources | AgentSkillListSourceObject<AgentSkillListSkillSources, AgentSkillListSkillSources>;
         /**
          * Channel prefix to filter skill list
          */
         channelPrfix: string[];
+        /**
+         * Allowed Columns
+         */
+        columns?: string[];
     };
     /**
      * Interaction Id
@@ -424,4 +504,47 @@ export interface InteractionComment {
      * Comment added time
      */
     Time: string | Date;
+}
+
+export type FuseBgConf = {
+    /**
+     * Body color class of fuse config
+     */
+    body: string;
+    /**
+     * Content color class of fuse config
+     */
+    content: string;
+    /**
+     * Header color class of fuse config
+     */
+    header: string;
+};
+
+
+export interface IPostMessage {
+    /**
+     * Function to call
+     */
+    function: string;
+    /**
+     * Callback function to be invoked 
+     */
+    callback: string;
+    /**
+     * Data to send
+     */
+    data: any;
+    /**
+     * Source name of the app
+     */
+    source: string;
+    /**
+     * Destination which should be tmac
+     */
+    destination: string;
+    /**
+     * User object
+     */
+    userObject: any;
 }

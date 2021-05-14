@@ -1,13 +1,15 @@
 import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FusePerfectScrollbarDirective } from '@fuse/directives/fuse-perfect-scrollbar/fuse-perfect-scrollbar.directive';
-import { FuseConfigService } from '@fuse/services/config.service';
 import { AppUiService } from '@services/app-ui.service';
+import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TMACEventService } from '@services/tmac-event.service';
+import { IAgentData, VoiceBotTranscriptEvent } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { ChatTranscripts } from 'app/interfaces';
-import { takeUntil } from 'rxjs/operators';
-import { IAgentData, IUIEvent, SDKClient, VoiceBotTranscriptEvent } from 'tmac-sdk';
+import { filter, takeUntil } from 'rxjs/operators';
 
+/**
+ * Voice Bot Transcript Component
+ */
 @Component({
     selector: 'tw-voice-bot-transcripts',
     templateUrl: './tw-voice-bot-transcripts.component.html',
@@ -28,7 +30,14 @@ export class TwVoiceBotTranscriptsComponent extends TWidgetWrapper implements On
     /**
      * To store the fuse config for theme
      */
-    fuseConfig: any;
+    // fuseConfig: any;
+    /**
+     * Fuse custom config
+     */
+    customFuse = {
+        anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
+        widget$: this._fuseFacadeService.widgetBgClasses$
+    };
     /**
      * Voice bot transcripts list
      */
@@ -47,12 +56,12 @@ export class TwVoiceBotTranscriptsComponent extends TWidgetWrapper implements On
     /**
      * Constructor
      * 
-     * @param {FuseConfigService} _fuseConfigService
      * @param {TMACEventService} _tmacEventService
      * @param {AppUiService} _appUIService
      */
     constructor(
-        private _fuseConfigService: FuseConfigService,
+        // private _fuseConfigService: FuseConfigService,
+        private _fuseFacadeService: FuseFacadeService,
         private _tmacEventService: TMACEventService,
         private _appUIService: AppUiService
     ) {
@@ -70,26 +79,17 @@ export class TwVoiceBotTranscriptsComponent extends TWidgetWrapper implements On
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.fuseConfig = config;
-        });
+        // this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+        //     this.fuseConfig = config;
+        // });
 
         // set the interaction id from data
         this.interactionId = this.data.InteractionDetails.InteractionID;
 
-        // // get the event from event bag to make sure no events are missed
-        // const eventBag = this._tmacEventService.interactionEvents(this.interactionId);
-
-        // // process the events if any
-        // eventBag.forEach((evt: IUIEvent) => {
-        //     this[evt.EventName]?.(evt);
-        // });
-
-        // SDKClient.events.on('VoiceBotTranscriptEvent', this.VoiceBotTranscriptEvent);
-
-        this._tmacEventService.getInteractionEvents(['VoiceBotTranscriptEvent'], this.interactionId)
+        this._tmacEventService
+            .getInteractionEvents(['VoiceBotTranscriptEvent'], this.interactionId)
             .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(evts => this.VoiceBotTranscriptEvent(evts[0]));
+            .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
     }
 
     /**
@@ -98,8 +98,6 @@ export class TwVoiceBotTranscriptsComponent extends TWidgetWrapper implements On
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-
-        // SDKClient.events.off('VoiceBotTranscriptEvent', this.VoiceBotTranscriptEvent);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -111,7 +109,7 @@ export class TwVoiceBotTranscriptsComponent extends TWidgetWrapper implements On
      * 
      * @param {VoiceBotTranscriptEvent} evt 
      */
-    private VoiceBotTranscriptEvent = (evt: VoiceBotTranscriptEvent) => {
+    private VoiceBotTranscriptEvent(evt: VoiceBotTranscriptEvent): void {
         // check for the interaction
         if (this.interactionId !== evt.InteractionID) {
             return;

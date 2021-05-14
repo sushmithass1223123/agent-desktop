@@ -1,12 +1,11 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { FuseConfigService } from '@fuse/services/config.service';
-import { AppDataService } from '@services/app-data.service';
+import { TMACEventService } from '@services/tmac-event.service';
+import { GenericEvent, SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CHART_COLORS, CUSTOMER_SENTIMENT_PLOT_RECORDS } from 'app/constants';
-import { TwChartConfig, IWidget } from 'app/interfaces';
+import { IWidget, TwChartConfig } from 'app/interfaces';
 import * as Chart from 'chart.js';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient, GenericEvent } from 'tmac-sdk';
 
 /**
  * Neutral image
@@ -139,32 +138,11 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
      */
     nlpCurrentData: any = null;
 
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store the fuse config for theme
-    // -----------------------------------------------------------
-    /**
-     * Fuse config data
-     */
-    fuseConfig: any;
-
-    // -----------------------------------------------------------
-    // @ [OPTIONAL] to store entire app config and get update
-    // -----------------------------------------------------------
-    /**
-     * App config data
-     */
-    appConfig: any;
-
     /**
      * Constructor
-     * @param {FuseConfigService} _fuseConfigService
-     * @param {AppDataService} _appDataService
      */
     constructor(
-        // @ [OPTIONAL]
-        private _fuseConfigService: FuseConfigService,
-        // @ [OPTIONAL]
-        private _appDataService: AppDataService
+        private _tmacEventService: TMACEventService
     ) {
         super();
     }
@@ -180,24 +158,19 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the fuse config
-        // -----------------------------------------------------------
-        this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.fuseConfig = config;
-        });
-
-        // -----------------------------------------------------------
-        // @ [OPTIONAL] to get the app config
-        // -----------------------------------------------------------
-        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-            this.appConfig = config;
-        });
 
         // set the interaction id from data
         this.interactionId = this.data.InteractionDetails?.InteractionID;
 
-        SDKClient.events.on('OnNLPDataEvent', this.OnNLPDataEvent);
+        if (this.interactionId) {
+            // listen to TMAC events
+            this._tmacEventService
+                .getEvents([
+                    'OnNLPDataEvent'
+                ])
+                .pipe(takeUntil(this.unsubscribeAll))
+                .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
+        }
     }
 
     /**
@@ -208,11 +181,15 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
         this.destroyWrapper();
     }
 
+    // -----------------------------------------------------------------------------------------------------
+    // @  Private Methods
+    // -----------------------------------------------------------------------------------------------------
+
     /**
      * OnNLPDataEvent handler
      * @param {GenericEvent} evt 
      */
-    OnNLPDataEvent = (evt: GenericEvent): void => {
+    private OnNLPDataEvent(evt: GenericEvent): void {
         const receivedData = evt;
         if (receivedData) {
             const parsedJson = JSON.parse(receivedData.JsonData);
@@ -237,11 +214,7 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
                 y: parsedJson.sentimentResult
             } as any);
         }
-    };
-
-    // -----------------------------------------------------------------------------------------------------
-    // @  Private Methods
-    // -----------------------------------------------------------------------------------------------------
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TwActiveInteractionsComponent } from './tw-active-interactions.component';
 
@@ -6,7 +6,7 @@ describe('TwActiveInteractionsComponent', () => {
   let component: TwActiveInteractionsComponent;
   let fixture: ComponentFixture<TwActiveInteractionsComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ TwActiveInteractionsComponent ]
     })

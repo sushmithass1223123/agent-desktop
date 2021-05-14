@@ -1,8 +1,10 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { AppUiService } from '@services/app-ui.service';
+import { AgentNotificaitonEvent, SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils';
-import { AgentNotificaitonEvent, SDKClient } from 'tmac-sdk';
+import { IWidget } from 'app/interfaces';
+import { InstantMessagingService } from 'app/layout/components/instant-messaging/instant-messaging.service';
 /**
  * Instant messaging sidebar component
  */
@@ -16,7 +18,7 @@ export class TwInstantMessagingComponent extends TWidgetWrapper implements OnIni
     /**
      * App config data for widget
      */
-    @Input() data: any;
+    @Input() data: IWidget;
 
     /**
      * Opened Flag
@@ -33,7 +35,8 @@ export class TwInstantMessagingComponent extends TWidgetWrapper implements OnIni
 
     constructor(
         private _fuseSidebarService: FuseSidebarService,
-        private _appUIService: AppUiService
+        private _appUIService: AppUiService,
+        private _instantMessagingService: InstantMessagingService
     ) {
         super();
     }
@@ -44,6 +47,9 @@ export class TwInstantMessagingComponent extends TWidgetWrapper implements OnIni
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
+
+        // send the widget config
+        this._instantMessagingService.shareConfig(this.data.Data);
 
         // register to event
         SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
@@ -75,7 +81,14 @@ export class TwInstantMessagingComponent extends TWidgetWrapper implements OnIni
             this._appUIService.showSnackbar(`IM: ${evt.FromAgentName} <br /> ${evt.Message}`,
                 'close',
                 'top',
-                'right');
+                'right',
+                5000,
+                () => {
+                    this._fuseSidebarService.getSidebar('chatPanel').toggleOpen();
+                    setTimeout(() => {
+                        this._instantMessagingService.selectUser(evt.FromAgentId);
+                    });
+                });
             this._appUIService.playAudio(undefined, 0.5, false);
             this.unreadMessages += 1;
         }

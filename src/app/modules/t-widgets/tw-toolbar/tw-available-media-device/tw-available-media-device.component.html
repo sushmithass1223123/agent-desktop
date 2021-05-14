@@ -1,0 +1,42 @@
+<div fxLayout="row wrap" fxLayoutAlign="space-around center" class="px-4">
+    <button mat-icon-button (click)="showAvailableDevices()">
+        <mat-icon matTooltip="Available devices"> headset </mat-icon>
+    </button>
+</div>
+
+<ng-template #availableDevicesMenu class="custom">
+    <div fxLayout="row" fxLayoutAlign="space-between center" class="px-12 py-4">
+        <p class="mat-title m-0">Available Media Devices</p>
+        <button mat-icon-button tabindex="-1" mat-dialog-close>
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+    <div *ngIf="stream" class="mb-8" fxLayout fxLayoutAlign="center center">
+        <video class="w-100-p h-100-p" autoplay [srcObject]="stream" #videoStream></video>
+    </div>
+    <div
+        *ngIf="!mediaDeviceInfo.error && !mediaDeviceInfo.loading && mediaDeviceInfo.devices as mediaDevices"
+        fxLayout
+        fxLayoutAlign="space-between center"
+        class="w-100-p px-8"
+        [formGroup]="mediaSelectFormGroup"
+    >
+        <div fxFlex="33%" fxLayout *ngFor="let device of mediaDevices | keyvalue" class="p-4">
+            <!-- <div fxFlex="10%" class="mr-3" [ngSwitch]="device.key | lowercase">
+                <mat-icon *ngSwitchCase="'mic'"> mic </mat-icon>
+                <mat-icon *ngSwitchCase="'speaker'"> speaker </mat-icon>
+                <mat-icon *ngSwitchCase="'video'"> video_call </mat-icon>
+            </div> -->
+            <mat-form-field fxFlex="100%" appearance="outline">
+                <mat-select [placeholder]="'Select ' + device.key" [formControlName]="device.key">
+                    <mat-option *ngFor="let myDevice of device.value" [value]="myDevice.deviceId">
+                        {{ myDevice.label }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="text-center mt-20 mat-title" *ngIf="mediaDeviceInfo.error || mediaDeviceInfo.loading">
+        {{ mediaDeviceInfo.error || mediaDeviceInfo.loading }}
+    </div>
+</ng-template>

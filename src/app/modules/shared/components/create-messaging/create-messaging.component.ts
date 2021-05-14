@@ -1,13 +1,10 @@
 import { Component, Inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { fuseAnimations } from '@fuse/animations';
-import { FuseConfigService } from '@fuse/services/config.service';
-import { FuseConfig } from '@fuse/types';
 import { AppUiService } from '@services/app-ui.service';
+import { IResponse, SDKClient } from '@tmac/sdk';
 import { sortBy } from 'lodash';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/internal/operators/takeUntil';
-import { IResponse, SDKClient } from 'tmac-sdk';
 import { SharedWrapperComponent } from '../shared-wrapper/shared-wrapper.component';
 
 /**
@@ -21,10 +18,7 @@ import { SharedWrapperComponent } from '../shared-wrapper/shared-wrapper.compone
     animations: fuseAnimations
 })
 export class CreateMessagingComponent implements OnInit, OnDestroy {
-    /**
-     *  To store the fuse config for theme
-     */
-    fuseConfig: FuseConfig;
+
     /**
      * To unsubscribe from subscription subject
      */
@@ -69,10 +63,12 @@ export class CreateMessagingComponent implements OnInit, OnDestroy {
      * Wrapper component Ref
      */
     @ViewChild(SharedWrapperComponent) wrapperComponent: SharedWrapperComponent;
+    /**
+     * Fuse custom background colors
+     */
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: any,
-        private _fuseConfigService: FuseConfigService,
         private _appUIService: AppUiService
     ) { }
 
@@ -80,11 +76,6 @@ export class CreateMessagingComponent implements OnInit, OnDestroy {
      * OnInit
      */
     ngOnInit(): void {
-        this._fuseConfigService.config
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((config: any) => {
-                this.fuseConfig = config;
-            });
         // set loading to true
         this.loading = true;
 

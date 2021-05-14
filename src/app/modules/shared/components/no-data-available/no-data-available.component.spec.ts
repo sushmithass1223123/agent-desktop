@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { NoDataAvailableComponent } from './no-data-available.component';
 
@@ -6,7 +6,7 @@ describe('NoDataAvailableComponent', () => {
   let component: NoDataAvailableComponent;
   let fixture: ComponentFixture<NoDataAvailableComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ NoDataAvailableComponent ]
     })

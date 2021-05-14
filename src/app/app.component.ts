@@ -1,22 +1,22 @@
 import { Platform } from '@angular/cdk/platform';
 import { DOCUMENT } from '@angular/common';
-import { Component, HostListener, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
-import { DomSanitizer, Title } from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
 import { FuseNavigationService } from '@fuse/components/navigation/navigation.service';
-import { FuseConfigService } from '@fuse/services/config.service';
-import { FuseSplashScreenService } from '@fuse/services/splash-screen.service';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { FuseConfig } from '@fuse/types';
 import { TranslateService } from '@ngx-translate/core';
+import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
+import { FuseFacadeService } from '@services/fuse-facade.service';
+import { SDKClient } from '@tmac/sdk';
 import { locale as navigationEnglish } from 'app/navigation/i18n/en';
 import { locale as navigationTurkish } from 'app/navigation/i18n/tr';
 import { navigation } from 'app/navigation/navigation';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { SDKClient } from 'tmac-sdk';
 import { environment } from '../environments/environment';
-import { AppDataService } from './services/app-data.service';
 
 // declare global
 declare global {
@@ -40,35 +40,15 @@ export class AppComponent implements OnInit, OnDestroy {
     /**
      * fuse Config data
      */
-    fuseConfig: any;
+    // fuseConfig: FuseConfig;
+
     /**
      * Need more Description
-     * Navigation 
+     * Navigation
      */
     navigation: any;
     /**
-     * Need more description
-     * Config
-     */
-    config: any;
-
-    /**
-     * Production conofig path
-     */
-    prodConfigPath = 'assets/production.json';
-
-    /**
-     * Dev config path
-     */
-    devConfigPath = 'assets/development.json';
-
-    /**
-     * loading state
-     */
-    loaded = false;
-
-    /**
-     * Custom icon list 
+     * Custom icon list
      */
     customIconList = [
         {
@@ -107,61 +87,33 @@ export class AppComponent implements OnInit, OnDestroy {
     private _unsubscribeAll: Subject<any>;
 
     /**
-     * Disable opening console / refreshing
-     * @param {KeyboardEvent} event 
-     */
-    @HostListener('document:keydown', ['$event'])
-    handleKeyboardEvent(event: KeyboardEvent): any {
-        if (!this.config) {
-            return;
-        }
-        //  Disables refresh (F5, ctrl + r, ctrl + F5)
-        if (this.config.AppConfigs.RefreshDisabled) {
-            if (event.key.toUpperCase() === 'F5'
-                || (event.key.toUpperCase() === 'R' && event.ctrlKey) ||
-                (event.key.toUpperCase() === 'F5' && event.ctrlKey)) {
-                event.preventDefault();
-                return false;
-            }
-        }
-        //  Disabled dev tools (F12, ctrl + shift + c, ctrl + shift + i)
-        if (this.config.AppConfigs.DevToolsDisabled) {
-            if (event.key.toUpperCase() === 'F12' ||
-                (event.key.toUpperCase() === 'C' && event.ctrlKey && event.shiftKey) ||
-                (event.key.toUpperCase() === 'I' && event.ctrlKey && event.shiftKey)) {
-                event.preventDefault();
-                return false;
-            }
-        }
-    }
-
-    /**
      * Constructor
      *
      * @param {DOCUMENT} document
-     * @param {FuseConfigService} _fuseConfigService
+     * @param {FuseFacadeService} _fuseFacadeService
      * @param {FuseNavigationService} _fuseNavigationService
      * @param {FuseSidebarService} _fuseSidebarService
-     * @param {FuseSplashScreenService} _fuseSplashScreenService
      * @param {FuseTranslationLoaderService} _fuseTranslationLoaderService
      * @param {Platform} _platform
-     * @param {TranslateService} _translateService  
+     * @param {TranslateService} _translateService
      * @param {AppUiService} _appUIService
      * @param {MatIconRegistry} _matIconRegistry
      * @param {DomSanitizer} _domSanitizer
      */
     constructor(
         @Inject(DOCUMENT) private document: any,
-        private _fuseConfigService: FuseConfigService,
+        // private _fuseConfigService: FuseConfigService,
+        private _fuseFacadeService: FuseFacadeService,
         private _fuseNavigationService: FuseNavigationService,
-        private _fuseSplashScreenService: FuseSplashScreenService,
         private _fuseTranslationLoaderService: FuseTranslationLoaderService,
         private _platform: Platform,
         private _translateService: TranslateService,
         private _appUIService: AppUiService,
         private _matIconRegistry: MatIconRegistry,
-        private _domSanitizer: DomSanitizer
-    ) {
+        private _domSanitizer: DomSanitizer,
+        private _appDataService: AppDataService
+    ) // private route: ActivatedRoute
+    {
         // Get default navigation
         this.navigation = navigation;
 
@@ -226,9 +178,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
         // add the custom icons to iconRegistry
         this.customIconList.forEach((icon) => {
-            this._matIconRegistry.addSvgIcon(
-                icon.label,
-                this._domSanitizer.bypassSecurityTrustResourceUrl(`assets/icons/custom/${icon.name}.svg`));
+            this._matIconRegistry.addSvgIcon(icon.label, this._domSanitizer.bypassSecurityTrustResourceUrl(`assets/icons/custom/${icon.name}.svg`));
         });
     }
 
@@ -245,21 +195,26 @@ export class AppComponent implements OnInit, OnDestroy {
             return;
         }
 
+        // this.route.queryParams
+        //     .pipe(
+        //         takeUntil(this._unsubscribeAll),
+        //         filter((params) => params.w || params.h)
+        //     )
+        //     .subscribe((params) => {
+        //         window.resizeTo(params.w || window.screen.width, params.h || window.screen.height);
+        //     });
+
         // subscribe to app ui service
         this._appUIService.subscribe();
 
-        // Subscribe to config changes
-        this._fuseConfigService.config
+        // Subscribe to custom fuse config changes
+        this._fuseFacadeService.getConfig()
             .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((config: any) => {
-
-                this.fuseConfig = config;
-
+            .subscribe((config: FuseConfig) => {
                 // Boxed
-                if (this.fuseConfig.layout.width === 'boxed') {
+                if (config.layout.width === 'boxed') {
                     this.document.body.classList.add('boxed');
-                }
-                else {
+                } else {
                     this.document.body.classList.remove('boxed');
                 }
 
@@ -273,14 +228,76 @@ export class AppComponent implements OnInit, OnDestroy {
                     }
                 }
 
-                this.document.body.classList.add(this.fuseConfig.colorTheme);
+                // add the updated theme color
+                this.document.body.classList.add(config.colorTheme);
+
+                // Web font - Use normal for loop for IE11 compatibility
+                // tslint:disable-next-line: prefer-for-of
+                for (let i = 0; i < this.document.body.classList.length; i++) {
+                    const className = this.document.body.classList[i];
+
+                    if (className.startsWith('wf-')) {
+                        this.document.body.classList.remove(className);
+                    }
+                }
+
+                // check if webFont is provided
+                if (config.webFont) {
+                    // add the update web font
+                    this.document.body.classList.add(config.webFont);
+                }
             });
+
+        // Subscribe to config changes
+        // this._fuseConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
+        //     this.fuseConfig = config;
+
+        //     // Boxed
+        //     if (this.fuseConfig.layout.width === 'boxed') {
+        //         this.document.body.classList.add('boxed');
+        //     } else {
+        //         this.document.body.classList.remove('boxed');
+        //     }
+
+        //     // Color theme - Use normal for loop for IE11 compatibility
+        //     // tslint:disable-next-line: prefer-for-of
+        //     for (let i = 0; i < this.document.body.classList.length; i++) {
+        //         const className = this.document.body.classList[i];
+
+        //         if (className.startsWith('theme-')) {
+        //             this.document.body.classList.remove(className);
+        //         }
+        //     }
+
+        //     // add the updated theme color
+        //     this.document.body.classList.add(this.fuseConfig.colorTheme);
+
+        //     // Web font - Use normal for loop for IE11 compatibility
+        //     // tslint:disable-next-line: prefer-for-of
+        //     for (let i = 0; i < this.document.body.classList.length; i++) {
+        //         const className = this.document.body.classList[i];
+
+        //         if (className.startsWith('wf-')) {
+        //             this.document.body.classList.remove(className);
+        //         }
+        //     }
+
+        //     // check if webFont is provided
+        //     if (this.fuseConfig.webFont) {
+        //         // add the update web font
+        //         this.document.body.classList.add(this.fuseConfig.webFont);
+        //     }
+        // });
+
 
         // check the environment and set window variable
         if (!environment.production) {
             // set a global variable to access SDK client on development mode
             window.SDKClient = SDKClient;
         }
+
+        // log the app version
+        console.log(`App Version: ${this._appDataService.getAppVersion()}`);
     }
 
     /**
@@ -298,5 +315,4 @@ export class AppComponent implements OnInit, OnDestroy {
     // -----------------------------------------------------------------------------------------------------
     // @ Private methods
     // -----------------------------------------------------------------------------------------------------
-
 }

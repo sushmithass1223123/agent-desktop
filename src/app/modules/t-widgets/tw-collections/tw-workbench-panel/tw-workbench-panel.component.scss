@@ -40,4 +40,17 @@ tw-workbench-panel {
     .mat-ink-bar {
         height: 0;
     }
+
+    .tw-flat {
+        .mat-card {
+            border: none !important;
+            .mat-tab-label {
+                border-radius: 0px !important;
+            }
+
+            .mat-tab-body-wrapper {
+                border-radius: 0px !important;
+            }
+        }
+    }
 }

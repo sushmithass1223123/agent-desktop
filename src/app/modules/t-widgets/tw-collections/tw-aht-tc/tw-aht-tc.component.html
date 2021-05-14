@@ -2,11 +2,8 @@
 <!-- implement following events in your component to access widget wrapper action events -->
 <!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
 <tw-wrapper twChart [data]="data" (maximizeEvent)="maximized = $event">
-    <div *ngIf="dataConfig.Source === 'dashboard'" class="w-100-p h-100-p">
-        <div
-            class="w-100-p bg-inherit custom-scroll-adjust"
-            [ngClass]="maximized ? 'h-90-p' : 'h-100-p'"
-        >
+    <div *ngIf="widgetData.Type === 'grid'" class="w-100-p h-100-p">
+        <div class="w-100-p bg-inherit custom-scroll-adjust" [ngClass]="maximized ? 'h-90-p' : 'h-100-p'">
             <mat-table [dataSource]="interactionDetailsTable.source" matSort matSortDisableClear>
                 <ng-container matColumnDef="Channel">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>Channel</mat-header-cell>
@@ -58,12 +55,12 @@
         <mat-paginator *ngIf="maximized" [pageSizeOptions]="maximized ? [30, 40, 50] : [3, 6, 12]" showFirstLastButtons> </mat-paginator>
     </div>
 
-    <div *ngIf="dataConfig.Source === 'supervisor'" class="w-100-p h-100-p">
+    <div *ngIf="widgetData.Type === 'chart'" class="w-100-p h-100-p">
         <div
             *ngIf="ahtChart.datasets.length >= 1 && ahtChart.datasets[0].data.length"
             fxLayout="column"
             fxLayoutAlign="center center"
-            class="w-100-p h-100-p"
+            class="w-100-p h-100-p animate__animated animate__zoomIn animate__faster"
         >
             <div class="tw-chart w-100-p h-100-p p-8" #chartContainerRef>
                 <canvas
@@ -87,7 +84,7 @@
             fxLayout="column"
             fxLayoutAlign="center center"
         >
-            <img src="assets/images/vectors/no-data-1.svg" class="w-100-p h-85-p box-shadow-3d" />
+            <img src="assets/images/vectors/no-data-1.svg" class="w-85-p h-85-p box-shadow-3d" />
             <p class="text-center m-0" [ngClass]="{ 'mat-display-2': maximized, ' mat-title': !maximized }">No Data Available</p>
         </div>
     </div>

@@ -59,6 +59,18 @@ tw-chat-controls {
                     }
                 }
 
+                .fab-container {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+
+                    > div {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                    }
+                }
+
                 .chat-transcripts {
                     background: transparent;
                     overflow: auto;
@@ -84,6 +96,30 @@ tw-chat-controls {
 
                             .bubble {
                                 position: relative;
+                                overflow: hidden;
+                                .reply-to {
+                                    position: absolute;
+                                    width: 40px;
+                                    z-index: 2;
+                                    height: 100%;
+                                    z-index: 100;
+                                    right: -40px;
+                                    top: 0;
+                                    background: linear-gradient(to right top, transparent 50%, gray);
+                                    transition: right 0.1s;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    max-height: 50px;
+                                    button {
+                                        transform: scale(0.8);
+                                    }
+                                }
+                                &:hover {
+                                    .reply-to {
+                                        right: 0;
+                                    }
+                                }
                                 display: flex;
                                 align-items: center;
                                 justify-content: center;

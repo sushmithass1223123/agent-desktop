@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { widgetFabAnimations } from '@modules/shared/animations/widget-fab.animation';
 import { AgentSkillListComponent, CreateMessagingComponent } from '@modules/shared/components';
 import { IWidget } from 'app/interfaces';
-import { IAUXCodes, SDKClient } from 'tmac-sdk';
+import { IAUXCodes, SDKClient } from '@tmac/sdk';
 
 /**
  * Create interaction
@@ -93,11 +93,14 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
                             allowed: true,
                             blind: false,
                             source: data.Data.Source,
-                            allowedStates: data.Data.AllowedState
+                            allowedStates: data.Data.AllowedStates,
+                            columns: data.Data.Columns,
+                            teamFilter: data.Data.TeamFilter
                         },
                         skill: {
                             allowed: false,
-                            blind: false
+                            blind: false,
+                            columns: []
                         }
                     },
                     panelClass: 'agent-skill-dialog',

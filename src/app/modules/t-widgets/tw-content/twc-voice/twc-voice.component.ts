@@ -7,7 +7,7 @@ import { InteractionRef, InteractionWidgets, IWidget } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
 import { cloneDeep } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { IncomingCallEvent, InteractionClosedEvent, OutgoingCallEvent } from 'tmac-sdk';
+import { IncomingCallEvent, InteractionClosedEvent, OutgoingCallEvent } from '@tmac/sdk';
 
 /**
  * Voice content component
@@ -53,24 +53,13 @@ export class TwcVoiceComponent extends TWContentWrapper implements OnInit, OnDes
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        // // subscribe to interaction events observable
-        // this._tmacEventService.constructDisposeEvents
-        //     .pipe(takeUntil(this.unsubscribeAll))
-        //     .subscribe((evt: any) => {
-        //         // filter the event name
-        //         if (evt.EventName === 'IncomingCallEvent') {
-        //             this.IncomingCallEvent(evt);
-        //         }
-        //         else if (evt.EventName === 'OutgoingCallEvent') {
-        //             this.OutgoingCallEvent(evt);
-        //         }
-        //         else if (evt.EventName === 'InteractionClosedEvent') {
-        //             this.InteractionClosedEvent(evt);
-        //         }
-        //     });
-
         // subscribe to interaction events observable
-        this._tmacEventService.getConstructDisposeEvents(['IncomingCallEvent', 'OutgoingCallEvent', 'InteractionClosedEvent'])
+        this._tmacEventService
+            .getConstructDisposeEvents([
+                'IncomingCallEvent',
+                'OutgoingCallEvent',
+                'InteractionClosedEvent'
+            ])
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
 
@@ -124,7 +113,7 @@ export class TwcVoiceComponent extends TWContentWrapper implements OnInit, OnDes
         const voiceWidgets = cloneDeep(this.data.Data.Widgets) || [];
 
         const staticWidgets = voiceWidgets.Static || [];
-        const dynamicWidgets = JSON.parse(evt.WidgetConfigData) || voiceWidgets.Dynamic || [];
+        const dynamicWidgets = (evt.WidgetConfigData && JSON.parse(evt.WidgetConfigData)) || voiceWidgets.Dynamic || [];
         const aotWidgets = voiceWidgets.AOT || [];
 
         // loop the widgets and add append interaction details

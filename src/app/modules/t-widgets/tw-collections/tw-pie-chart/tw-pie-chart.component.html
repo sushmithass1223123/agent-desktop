@@ -3,7 +3,12 @@
 <!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
 <tw-wrapper [data]="data" (maximizeEvent)="chart.legend = $event">
     <!-- your code goes here -->
-    <div *ngIf="chart.datasets.length >= 1 && chart.datasets[0].data.length" fxLayout="column" fxLayoutAlign="center center" class="w-100-p h-100-p">
+    <div
+        *ngIf="chart.datasets.length >= 1 && chart.datasets[0].data.length"
+        fxLayout="column"
+        fxLayoutAlign="center center"
+        class="w-100-p h-100-p animate__animated animate__zoomIn animate__faster"
+    >
         <div class="tw-chart w-100-p h-100-p p-8" #chartContainerRef>
             <canvas
                 baseChart
@@ -26,7 +31,7 @@
         fxLayout="column"
         fxLayoutAlign="center center"
     >
-        <img src="assets/images/vectors/no-data-1.svg" class="w-100-p h-85-p box-shadow-3d" />
+        <img src="assets/images/vectors/no-data-1.svg" class="w-85-p h-85-p box-shadow-3d" />
         <p class="text-center m-0" [ngClass]="{ 'mat-display-2': chart.legend, ' mat-title': !chart.legend }">No Data Available</p>
     </div>
     <!-- your code goes here -->

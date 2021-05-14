@@ -1,0 +1,41 @@
+<tw-wrapper [data]="data">
+    <div fxFlex fxFill fxLayout="column" class="tw-email-panel">
+        <ng-container *ngFor="let widget of widgets">
+            <tw-fax-controls
+                [data]="widget"
+                *ngIf="widget.Type === 'tw-fax-controls'"
+                [ngClass]="
+                    widget.Type +
+                    ' ' +
+                    (maximized[widget.Type] || widget.Config.ViewState === 'maximize' ? 'maximized' : '') +
+                    ' ' +
+                    (collapsed[widget.Type] || widget.Config.ViewState === 'collapse' ? 'collapsed' : '') +
+                    ' ' +
+                    (floating[widget.Type] || widget.Config.ViewState === 'float' ? 'floating' : '')
+                "
+                (maximizeEvent)="maximized['tw-fax-controls'] = $event"
+                (collapseEvent)="collapsed['tw-fax-controls'] = $event"
+                (floatEvent)="floating['tw-fax-controls'] = $event"
+            >
+            </tw-fax-controls>
+
+            <tw-customer-journey
+                [data]="widget"
+                *ngIf="widget.Type === 'tw-customer-journey'"
+                [ngClass]="
+                    widget.Type +
+                    ' ' +
+                    (maximized[widget.Type] || widget.Config.ViewState === 'maximize' ? 'maximized' : '') +
+                    ' ' +
+                    (collapsed[widget.Type] || widget.Config.ViewState === 'collapse' ? 'collapsed' : '') +
+                    ' ' +
+                    (floating[widget.Type] || widget.Config.ViewState === 'float' ? 'floating' : '')
+                "
+                (maximizeEvent)="maximized['tw-customer-journey'] = $event"
+                (collapseEvent)="collapsed['tw-customer-journey'] = $event"
+                (floatEvent)="floating['tw-customer-journey'] = $event"
+            >
+            </tw-customer-journey>
+        </ng-container>
+    </div>
+</tw-wrapper>

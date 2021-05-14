@@ -1,14 +1,68 @@
 @import 'src/@fuse/scss/fuse';
 
+body.fit-to-screen {
+    zoom: 80%;
+
+    .tw-content {
+        padding: 0 !important;
+
+        @include media-breakpoint('gt-xs') {
+            justify-content: start !important;
+            padding: 1rem !important;
+        }
+    }
+
+    .tw-widget-container {
+        width: 122vw !important;
+        height: 114vh !important;
+
+        @include media-breakpoint('gt-xs') {
+            width: 119vw !important;
+        }
+    }
+
+    .widget-grid {
+        max-width: calc(125vw - 20px) !important;
+
+        @include media-breakpoint('gt-xs') {
+            max-width: calc(119vw - 112px) !important;
+        }
+    }
+
+    .static-widget-grid,
+    .dynamic-widget-grid {
+        max-width: calc(124vw - 20px) !important;
+
+        @include media-breakpoint('gt-xs') {
+            max-width: calc(119vw - 112px) !important;
+        }
+    }
+
+    .twc-card,
+    .tw-card {
+        max-width: calc(124vw - 20px) !important;
+
+        // @include media-breakpoint('gt-xs') {
+        //     max-width: calc(119vw - 112px) !important;
+        // }
+    }
+
+    .tw-card {
+        .mat-card {
+            .card-wrapper {
+                max-height: fit-content !important;
+            }
+        }
+    }
+}
+
 .widget-grid {
     position: relative;
     width: 100%;
     display: grid;
     gap: 8px;
     grid-template-columns: none;
-    // grid-auto-rows: 29vh;
     grid-auto-rows: minmax(275px, 1fr);
-    // height: calc(100vh - 94px);
     height: 100%;
     max-width: calc(100vw - 20px);
 
@@ -18,12 +72,10 @@
 
     @include media-breakpoint('gt-sm') {
         grid-template-columns: repeat(auto-fit, minmax(calc(100% / 5), 1fr));
-        // grid-auto-rows: minmax(calc(100% / 3), 1fr);
     }
 
     @include media-breakpoint('gt-md') {
         grid-template-columns: repeat(auto-fit, minmax(calc(100% / 7), 1fr));
-        // grid-auto-rows: minmax(calc(100% / 4), 1fr);
     }
 }
 
@@ -34,7 +86,6 @@
     display: grid;
     gap: 8px;
     grid-template-columns: none;
-    // grid-auto-rows: minmax(275px, 1fr);
     margin-bottom: 16px;
     max-width: calc(100vw - 20px);
 
@@ -45,7 +96,6 @@
     @include media-breakpoint('gt-md') {
         margin-bottom: 0;
         margin-right: 8px;
-        // height: calc(100vh - 94px);
     }
 }
 
@@ -59,7 +109,8 @@
     grid-auto-rows: minmax(273px, 1fr);
     margin-bottom: 16px;
     max-width: calc(100vw - 20px);
-    // height: 100vh;
+    overflow: auto;
+    padding-bottom: 1px;
 
     @include media-breakpoint('gt-xs') {
         max-width: calc(100vw - 112px);
@@ -71,8 +122,14 @@
 
     @include media-breakpoint('gt-md') {
         margin-bottom: 0;
-        // height: calc(100vh - 94px);
         grid-template-columns: repeat(auto-fit, minmax(calc(100% / 5), 1fr));
+    }
+
+    &.static-less {
+        @include media-breakpoint('gt-md') {
+            margin-bottom: 0;
+            grid-template-columns: repeat(auto-fit, minmax(calc(100% / 7), 1fr));
+        }
     }
 }
 

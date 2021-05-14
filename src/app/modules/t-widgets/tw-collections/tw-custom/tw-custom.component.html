@@ -4,21 +4,28 @@
 
 <!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
 
-<tw-wrapper [data]="data" *ngIf="show">
+<tw-wrapper [data]="data" *ngIf="show" (refreshEvent)="onRefreshEvent()">
     <!-- your code goes here -->
     <div fxFlex fxFill fxLayout="row" fxLayoutAlign="center center">
-        <div class="spinner" *ngIf="!loaded">
+        <div
+            class="spinner"
+            [ngClass]="{
+                'border-radius-0': (customFuse$ | async).flatTheme
+            }"
+            *ngIf="!loaded"
+        >
             <mat-spinner></mat-spinner>
         </div>
 
         <iframe
             *ngIf="url; else noURL"
             [src]="url"
-            [id]="'frame_' + data.ID"
+            [id]="'tw_frame_' + data.ID"
             class="frame"
+            [ngClass]="{ 'border-radius-0': (customFuse$ | async).flatTheme }"
             frameborder="0"
             seamless="seamless"
-            (load)="frameLoaded()"
+            (load)="frameLoaded($event)"
             allow="geolocation; microphone; camera;"
         ></iframe>
 

@@ -64,8 +64,6 @@ export class TwPendingCallbacksComponent extends TWidgetWrapper implements OnIni
 
     /**
      * Constructor
-     * @param {FuseConfigService} _fuseConfigService
-     * @param {AppDataService} _appDataService
      * @param {http} HttpClient
      * @param {appUiService} AppUiService
      */
@@ -93,7 +91,7 @@ export class TwPendingCallbacksComponent extends TWidgetWrapper implements OnIni
         this.initWrapper(this.data);
 
         // assign the proxy url
-        const url = this.data.Data.TCMProxy;
+        const url = this.data.Data.TCMProxyUrl;
         this.tcmProxyUrl = url.endsWith('/') ? url : url + '/';
         if (!this.tcmProxyUrl) {
             this.getPendingCallbacksReq = { loading: false, error: true, msg: 'Missing TCMProxy in config', data: false };

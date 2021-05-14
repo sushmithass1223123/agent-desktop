@@ -1,13 +1,16 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
+import { widgetFabAnimations } from '@modules/shared/animations/widget-fab.animation';
+import { AOTWidgetService } from '@services/aot-widget.service';
 import { DashboardService } from '@services/dashboard.service';
 import { TMACEventService } from '@services/tmac-event.service';
-import { CustomSDKEvent } from 'app/interfaces';
-import { groupBy, sortBy } from 'lodash';
+import { AgentAVMessageEvent, AgentNotificaitonEvent, AVControlMessageReceivedEvent, IAgentData, SDKClient, SuAgentModel, TUtils } from '@tmac/sdk';
+import { CustomSDKEvent, IWidget } from 'app/interfaces';
+import { TwWidgetModel } from 'app/models';
+import { groupBy, sortBy, uniqBy } from 'lodash';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AgentNotificaitonEvent, IAgentData, SDKClient, SuAgentModel } from 'tmac-sdk';
 import { InstantMessagingService } from './instant-messaging.service';
 
 /**
@@ -69,7 +72,8 @@ interface Chat {
     selector: 'instant-messaging',
     templateUrl: './instant-messaging.component.html',
     styleUrls: ['./instant-messaging.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    animations: widgetFabAnimations
 })
 export class InstantMessagingComponent implements OnInit, OnDestroy {
     /**
@@ -104,6 +108,7 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
      * user
      */
     user: IAgentData;
+
     /**
      * Data loading flag
      */
@@ -133,6 +138,26 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
     private _unsubscribeAll: Subject<any>;
 
     /**
+     * To open actions
+     */
+    openActions: boolean;
+
+    /**
+     * Action buttons
+     */
+    actions = [];
+
+    /**
+     * AV call widget ref
+     */
+    callWidget: IWidget;
+
+    /**
+     * Config for instant messaging
+     */
+    config: WidgetData;
+
+    /**
      * Constructor
      *
      * @param {FuseSidebarService} _fuseSidebarService
@@ -141,7 +166,8 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
         private _fuseSidebarService: FuseSidebarService,
         private _tmacEventService: TMACEventService,
         private _dashboardService: DashboardService,
-        private _instantMessagingService: InstantMessagingService
+        private _instantMessagingService: InstantMessagingService,
+        private _aotWidgetService: AOTWidgetService
     ) {
         // Set the defaults
         this.selectedContact = null;
@@ -167,7 +193,7 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
             .subscribe((opened) => {
                 // check to get team list
                 if (opened) {
-                    this._dashboardService.triggerTeamAgentList(this.user.agentId, true);
+                    this._dashboardService.triggerTeamAgentList(this.user.agentId, this.user.teamId, true, this.config.TeamFilter ?? false);
                     this.loading = true;
                     setTimeout(() => {
                         if (this.loading) {
@@ -176,15 +202,18 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
                     }, 10000);
                 }
                 else {
-                    this._dashboardService.triggerTeamAgentList(this.user.agentId, false);
+                    this._dashboardService.triggerTeamAgentList(this.user.agentId, this.user.teamId, false, this.config.TeamFilter ?? false);
                     this.selectedContact = null;
                 }
             });
 
-        // SDKClient.events.on('TeamAgentListEvent', this.TeamAgentListEvent);
-        // SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
-
-        this._tmacEventService.getEvents(['TeamAgentListEvent', 'AgentNotificaitonEvent', 'SupervisorAgentListEvent'])
+        this._tmacEventService
+            .getEvents([
+                'TeamAgentListEvent',
+                'AgentNotificaitonEvent',
+                'SupervisorAgentListEvent',
+                'AgentAVMessageEvent'
+            ])
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
 
@@ -202,7 +231,27 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
                 }
             });
 
-
+        this._instantMessagingService.getConfig
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((x: WidgetData) => {
+                this.config = x;
+                // check for audio enabled
+                if (x.AudioEscalateAllowed) {
+                    this.actions.push({
+                        label: 'Video Call',
+                        icon: 'video_call',
+                        type: 'video'
+                    });
+                }
+                // check for video enabled
+                if (x.VideoEscalateAllowed) {
+                    this.actions.push({
+                        label: 'Voice Call',
+                        icon: 'call',
+                        type: 'audio'
+                    });
+                }
+            });
     }
 
     /**
@@ -212,9 +261,6 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
         // Unsubscribe from all subscriptions
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
-
-        // SDKClient.events.off('TeamAgentListEvent', this.TeamAgentListEvent);
-        // SDKClient.events.off('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -381,7 +427,7 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
         this.allChats[evt.FromAgentId].dialog.push({
             FromAgentId: evt.FromAgentId,
             Message: evt.Message,
-            CreatedTime: evt.CreatedTime
+            CreatedTime: evt.CreatedTime,
         });
 
         // check if this contact in list
@@ -409,6 +455,24 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
     }
 
     /**
+     * To process AgentAVMessageEvent
+     * 
+     * @param evt 
+     */
+    AgentAVMessageEvent = (evt: AgentAVMessageEvent): void => {
+        // check the type of message
+        if (evt.Type === 'requestav') {
+            // check the type
+            const type = JSON.parse(evt.Message).param;
+            this.openCallWidget(type, 'in', evt);
+        }
+        // else {
+        //     // send to the widget through data
+        //     this.callWidget.Data.OnMessage(evt.Message);
+        // }
+    }
+
+    /**
      * TeamAgentListEvent Handler
      * @param {CustomSDKEvent} evt 
      */
@@ -416,8 +480,13 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
         if (this.loading) {
             this.loading = false;
         }
-        const agents = groupBy(this.contacts, 'id');
-        this.contacts = sortBy(evt.Data, 'AgentName').map((x) => ({
+
+        // get current contact list
+        const curContacts = this.contacts;
+        // group agents by id
+        const agents = groupBy(curContacts, 'id');
+        // create new contact list
+        const newContacts = sortBy(evt.Data, 'AgentName').map((x) => ({
             avatar: x.ProfilePicture,
             id: x.AgentLoginID,
             mood: '',
@@ -427,18 +496,21 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
             unread: agents[x.AgentLoginID] ? agents[x.AgentLoginID][0].unread : 0,
             tmacServer: x.TmacServer
         }));
+
+        // create contact list merging both items
+        this.contacts = uniqBy(curContacts.concat(newContacts), 'id');
     }
 
     /**
      * To process SupervisorAgentListEvent
      */
     SupervisorAgentListEvent = (evt: CustomSDKEvent): void => {
-        const agents = groupBy(this.contacts, 'id');
-
         if (evt.Data.length) {
             // filter out local agent
             evt.Data = evt.Data.filter((d: SuAgentModel) => d.AgentLoginID !== SDKClient.getAgentData().agentId);
         }
+
+        const agents = groupBy(this.contacts, 'id');
         // add to the list
         this.contacts = sortBy(evt.Data, 'AgentName').map((x) => ({
             avatar: x.ProfilePicture,
@@ -461,4 +533,93 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
     trackByID(index: number, contact: any): string {
         return contact.ID;
     }
+
+    /**
+     * To make a call to selected agent
+     * 
+     * @param { 'audio' | 'video' } type 
+     */
+    makeCall(type: 'audio' | 'video'): void {
+        this.openCallWidget(type, 'out', null);
+        this.openActions = false;
+        this.toggleSidebarOpen();
+        this.resetChat();
+    }
+
+    /**
+     * To open voice or video call widget
+     * @param {'audio' | 'video'} param Type of call
+     * @param {'in' | 'out'} direction Direction of the call
+     * @param {AVControlMessageReceivedEvent} avEvent [OPTIONAL] For incoming requestav to process AVControlMessageReceivedEvent
+     */
+    private openCallWidget(param: 'audio' | 'video', direction: 'in' | 'out', avEvent?: AgentAVMessageEvent): void {
+        // if the widget is created then ignore
+        if (this.callWidget) {
+            return;
+        }
+
+        // get the widget type
+        const widgetMode = {
+            title: param === 'audio' ? 'Audio Call' : 'Video Call',
+            type: param === 'audio' ? 'tw-audio-controls' : 'tw-video-controls',
+            icon: param === 'audio' ? 'phone' : 'duo'
+        };
+        // create a call AOT widget
+        const widget = new TwWidgetModel(widgetMode.title, widgetMode.type, widgetMode.icon);
+        widget.Config.Anchor = true;
+        widget.Config.Position.W = param === 'audio' ? 600 : 800;
+        widget.Config.Position.H = param === 'audio' ? 275 : 550;
+        widget.Config.Actions = ['collapse', 'maximize'];
+        widget.Data.DirectCall = false;
+        widget.Data.ConferenceType = '';
+        widget.Data.CustomerName = avEvent?.FromAgentName || this.selectedContact.name;
+        widget.Data.Direction = direction;
+        widget.Data.AVEvent = avEvent;
+        widget.Data.Config = this.config;
+        widget.Data.Opener = this;
+        widget.Data.InteractionID = 0;
+        widget.Data.SessionID = TUtils.Generic.uuid();
+        widget.Data.AgentID = avEvent?.FromAgentId || this.selectedContact.id;
+        widget.Data.TmacServer = avEvent?.FromTmacServer || this.selectedContact.tmacServer;
+        widget.Data.SendMessage = (jsonMessage: any) => {
+            SDKClient.sendAgentAVMessage({
+                jsonData: '',
+                message: JSON.stringify(jsonMessage),
+                toAgentId: widget.Data.AgentID,
+                toTmacServer: widget.Data.TmacServer,
+                type: jsonMessage.type
+            });
+        };
+
+        // open call widget
+        this._aotWidgetService.addWidget(widget);
+        // assign to the local variable
+        this.callWidget = widget;
+    }
+
+    /**
+     * To dispose call widget
+     */
+    public disposeCallWidget(): void {
+        // dispose the call widget
+        this.callWidget = null;
+    }
+}
+interface WidgetData {
+    /**
+     * Team filter flag
+     */
+    TeamFilter: boolean;
+    /**
+     * Audio escalate allowed
+     */
+    AudioEscalateAllowed: boolean;
+    /**
+     * Video escalate allowed
+     */
+    VideoEscalateAllowed: boolean;
+    /**
+     * Screenshare allowed
+     */
+    ScreenShareAllowed: boolean;
 }

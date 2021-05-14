@@ -5,7 +5,7 @@ import { TWidgetWrapper } from '@twidgets/utils';
 import { AppNotification } from 'app/interfaces';
 import { orderBy } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { AgentNotificaitonEvent, SDKClient } from 'tmac-sdk';
+import { AgentNotificaitonEvent, SDKClient } from '@tmac/sdk';
 
 /**
  * Notfications Component
@@ -36,14 +36,12 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
      */
     notifications: AppNotification[];
 
-    constructor(
-        private _appUIService: AppUiService
-    ) {
+    constructor(private _appUIService: AppUiService) {
         super();
     }
 
     /**
-     * Lifecycle hooks 
+     * Lifecycle hooks
      * @method
      */
     ngOnInit(): void {
@@ -53,21 +51,17 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
         // register to event
         SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
 
-        this._appUIService.appNotifications
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(
-                (notifications: AppNotification[]) => {
-                    if (notifications.length > 0 && !this.opened) {
-                        ++this.unreadCount;
-                    }
-                    this.notifications = orderBy(notifications, ['time'], ['desc']);
-                }
-            );
+        this._appUIService.appNotifications.pipe(takeUntil(this.unsubscribeAll)).subscribe((nots: AppNotification[]) => {
+            const notifications = nots.filter((x) => x.message);
+            if (notifications.length > 0 && !this.opened) {
+                ++this.unreadCount;
+            }
+            this.notifications = orderBy(notifications, ['time'], ['desc']);
+        });
     }
 
-
     /**
-     * Lifecycle hooks 
+     * Lifecycle hooks
      * @method
      */
     ngOnDestroy(): void {
@@ -84,11 +78,11 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * AgentNotificaitonEvent Handler
      * @method AgentNotificaitonEvent
-     * @param {AgentNotificaitonEvent} evt 
+     * @param {AgentNotificaitonEvent} evt
      */
     private AgentNotificaitonEvent = (evt: AgentNotificaitonEvent) => {
         // check if the interaction id is there then return
-        if (evt.InteractionID > 0) {
+        if (evt.InteractionID > 0 || !evt.Message) {
             return;
         }
 
@@ -96,12 +90,14 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
         const type = evt.Type?.toLowerCase() || '';
 
         // check the type
-        if (type !== 'im' &&
+        if (
+            type !== 'im' &&
             type !== 'interactionim' &&
             type !== 'executeaction' &&
             type !== 'executetask' &&
             type !== 'customersentimentdetected' &&
-            type !== 'agentsentimentdetected') {
+            type !== 'agentsentimentdetected'
+        ) {
             this._appUIService.addNotification({
                 icon: type === 'broadcast' ? 'announcement' : type === 'notify' ? 'notification_important' : 'info',
                 message: this.urlify(evt.Message),
@@ -110,6 +106,7 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
             });
         }
     }
+
     /**
      * To convert link to a tag
      */
@@ -123,7 +120,7 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Toggle Menu
      * @method menuOpened
-     * @param {Boolean} opened 
+     * @param {Boolean} opened
      */
     menuOpened(opened: boolean): void {
         this.opened = opened;
@@ -135,7 +132,7 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Clear single Notification
      * @method clearNotification
-     * @param {AppNotification} item 
+     * @param {AppNotification} item
      */
     clearNotification(item: AppNotification): void {
         this._appUIService.removeNotification(item.id);

@@ -176,6 +176,9 @@
 }
 
 .border-radius {
+    &-0 {
+        border-radius: 0px !important;
+    }
     &-10 {
         border-radius: 10px !important;
     }
@@ -184,6 +187,23 @@
     }
     &-30 {
         border-radius: 30px !important;
+    }
+}
+
+.tw-flat {
+    .border-radius {
+        &-0 {
+            border-radius: 0px !important;
+        }
+        &-10 {
+            border-radius: 0px !important;
+        }
+        &-20 {
+            border-radius: 0px !important;
+        }
+        &-30 {
+            border-radius: 0px !important;
+        }
     }
 }
 

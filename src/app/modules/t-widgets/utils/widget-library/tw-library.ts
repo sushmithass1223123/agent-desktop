@@ -10,15 +10,23 @@ import { TwAgentAssistComponent } from '@modules/t-widgets/tw-collections/tw-age
 import { TwAhtTcComponent } from '@modules/t-widgets/tw-collections/tw-aht-tc/tw-aht-tc.component';
 import { TwAmdocsBccComponent } from '@modules/t-widgets/tw-collections/tw-amdocs-bcc/tw-amdocs-bcc.component';
 import { TwAudioControlsComponent } from '@modules/t-widgets/tw-collections/tw-audio-controls/tw-audio-controls.component';
+import { TwCalendarComponent } from '@modules/t-widgets/tw-collections/tw-calendar/tw-calendar.component';
 import { TwCannedResponsesComponent } from '@modules/t-widgets/tw-collections/tw-canned-responses/tw-canned-responses.component';
+import { TwChatControlsComponent } from '@modules/t-widgets/tw-collections/tw-chat-controls/tw-chat-controls.component';
 import { TwChatPanelComponent } from '@modules/t-widgets/tw-collections/tw-chat-panel/tw-chat-panel.component';
 import { TwCustomComponent } from '@modules/t-widgets/tw-collections/tw-custom/tw-custom.component';
+import { TwCustomerDetailsComponent } from '@modules/t-widgets/tw-collections/tw-customer-details/tw-customer-details.component';
+import { TwCustomerJourneyComponent } from '@modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.component';
 import { TwCustomerSentimentComponent } from '@modules/t-widgets/tw-collections/tw-customer-sentiment/tw-customer-sentiment.component';
 import { TwEmailControlsComponent } from '@modules/t-widgets/tw-collections/tw-email-controls/tw-email-controls.component';
 import { TwEmailPanelComponent } from '@modules/t-widgets/tw-collections/tw-email-panel/tw-email-panel.component';
 import { TwEmailTemplatePreviewComponent } from '@modules/t-widgets/tw-collections/tw-email-template-preview/tw-email-template-preview.component';
 import { TwEntitiesComponent } from '@modules/t-widgets/tw-collections/tw-entities/tw-entities.component';
+import { TwFaxControlsComponent } from '@modules/t-widgets/tw-collections/tw-fax-controls/tw-fax-controls.component';
+import { TwFaxPanelComponent } from '@modules/t-widgets/tw-collections/tw-fax-panel/tw-fax-panel.component';
 import { TwGamificationComponent } from '@modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component';
+import { TwGenericControlsComponent } from '@modules/t-widgets/tw-collections/tw-generic-controls/tw-generic-controls.component';
+import { TwGenericPanelComponent } from '@modules/t-widgets/tw-collections/tw-generic-panel/tw-generic-panel.component';
 import { TwPendingCallbacksComponent } from '@modules/t-widgets/tw-collections/tw-pending-callbacks/tw-pending-callbacks.component';
 import { TwPieChartComponent } from '@modules/t-widgets/tw-collections/tw-pie-chart/tw-pie-chart.component';
 import { TwRegisterCallbackComponent } from '@modules/t-widgets/tw-collections/tw-register-callback/tw-register-callback.component';
@@ -27,19 +35,27 @@ import { TwSuActiveAgentsComponent } from '@modules/t-widgets/tw-collections/tw-
 import { TwSuAgentActivityComponent } from '@modules/t-widgets/tw-collections/tw-su-agent-activity/tw-su-agent-activity.component';
 import { TwSuAgentInteractionsComponent } from '@modules/t-widgets/tw-collections/tw-su-agent-interactions/tw-su-agent-interactions.component';
 import { TwSuGamificationComponent } from '@modules/t-widgets/tw-collections/tw-su-gamification/tw-su-gamification.component';
+import { TwTcisIntegrationComponent } from '@modules/t-widgets/tw-collections/tw-tcis-integration/tw-tcis-integration.component';
+import { TwTrsIntegrationComponent } from '@modules/t-widgets/tw-collections/tw-trs-integration/tw-trs-integration.component';
 import { TwUnknownComponent } from '@modules/t-widgets/tw-collections/tw-unknown/tw-unknown.component';
+import { TwUserLocationComponent } from '@modules/t-widgets/tw-collections/tw-user-location/tw-user-location.component';
 import { TwVideoControlsComponent } from '@modules/t-widgets/tw-collections/tw-video-controls/tw-video-controls.component';
 import { TwVoiceBotTranscriptsComponent } from '@modules/t-widgets/tw-collections/tw-voice-bot-transcripts/tw-voice-bot-transcripts.component';
 import { TwVoiceCannedResponsesComponent } from '@modules/t-widgets/tw-collections/tw-voice-canned-responses/tw-voice-canned-responses.component';
+import { TwVoiceControlsComponent } from '@modules/t-widgets/tw-collections/tw-voice-controls/tw-voice-controls.component';
 import { TwVoicePanelComponent } from '@modules/t-widgets/tw-collections/tw-voice-panel/tw-voice-panel.component';
 import { TwWallboardComponent } from '@modules/t-widgets/tw-collections/tw-wallboard/tw-wallboard.component';
 import { TwWorkCodesComponent } from '@modules/t-widgets/tw-collections/tw-work-codes/tw-work-codes.component';
 import { TwWorkbenchPanelComponent } from '@modules/t-widgets/tw-collections/tw-workbench-panel/tw-workbench-panel.component';
 import { TwcCustomComponent } from '@modules/t-widgets/tw-content/twc-custom/twc-custom.component';
+import { TwcDockerComponent } from '@modules/t-widgets/tw-content/twc-docker/twc-docker.component';
 import { TwcEmailComponent } from '@modules/t-widgets/tw-content/twc-email/twc-email.component';
+import { TwcFaxComponent } from '@modules/t-widgets/tw-content/twc-fax/twc-fax.component';
+import { TwcGenericComponent } from '@modules/t-widgets/tw-content/twc-generic/twc-generic.component';
 import { TwcHomeComponent } from '@modules/t-widgets/tw-content/twc-home/twc-home.component';
 import { TwcSupervisorComponent } from '@modules/t-widgets/tw-content/twc-supervisor/twc-supervisor.component';
 import { TwcTextchatComponent } from '@modules/t-widgets/tw-content/twc-textchat/twc-textchat.component';
+import { TwcUnknownComponent } from '@modules/t-widgets/tw-content/twc-unknown/twc-unknown.component';
 import { TwcVoiceComponent } from '@modules/t-widgets/tw-content/twc-voice/twc-voice.component';
 import { TwcWorkbenchComponent } from '@modules/t-widgets/tw-content/twc-workbench/twc-workbench.component';
 import { TWidget } from '@modules/t-widgets/utils/t-widget';
@@ -59,11 +75,25 @@ export class TWLibrary {
         'twc-custom': TwcCustomComponent,
         'twc-workbench': TwcWorkbenchComponent,
         'twc-email': TwcEmailComponent,
+        'twc-docker': TwcDockerComponent,
+        'twc-fax': TwcFaxComponent,
+        'twc-generic': TwcGenericComponent,
         'tw-sample': TwSampleComponent,
         'tw-custom': TwCustomComponent,
         'tw-wallboard': TwWallboardComponent,
         'tw-voice-panel': TwVoicePanelComponent,
+        'tw-voice-controls': TwVoiceControlsComponent,
         'tw-chat-panel': TwChatPanelComponent,
+        'tw-chat-controls': TwChatControlsComponent,
+        'tw-email-panel': TwEmailPanelComponent,
+        'tw-email-controls': TwEmailControlsComponent,
+        'tw-fax-panel': TwFaxPanelComponent,
+        'tw-fax-controls': TwFaxControlsComponent,
+        'tw-generic-panel': TwGenericPanelComponent,
+        'tw-generic-controls': TwGenericControlsComponent,
+        'tw-customer-details': TwCustomerDetailsComponent,
+        'tw-customer-journey': TwCustomerJourneyComponent,
+        'tw-workbench-panel': TwWorkbenchPanelComponent,
         'tw-ad-interaction-details': TwAdInteractionDetailsComponent,
         'tw-ad-callbacks': TwAdCallbacksComponent,
         'tw-su-active-agents': TwSuActiveAgentsComponent,
@@ -87,13 +117,14 @@ export class TWLibrary {
         'tw-su-agent-interactions': TwSuAgentInteractionsComponent,
         'tw-pie-chart': TwPieChartComponent,
         'tw-voice-canned-responses': TwVoiceCannedResponsesComponent,
-        'tw-workbench-panel': TwWorkbenchPanelComponent,
-        'tw-email-panel': TwEmailPanelComponent,
-        'tw-email-controls': TwEmailControlsComponent,
         'tw-pending-callbacks': TwPendingCallbacksComponent,
         'tw-gamification': TwGamificationComponent,
         'tw-entities': TwEntitiesComponent,
-        'tw-email-template-preview': TwEmailTemplatePreviewComponent
+        'tw-user-location': TwUserLocationComponent,
+        'tw-email-template-preview': TwEmailTemplatePreviewComponent,
+        'tw-calendar': TwCalendarComponent,
+        'tw-tcis-integration': TwTcisIntegrationComponent,
+        'tw-trs-integration': TwTrsIntegrationComponent
     };
 
     /**
@@ -108,6 +139,11 @@ export class TWLibrary {
         if (widget) {
             // retrun the widget
             return new TWidget(widget, data);
+        }
+        // check content unknown or collection unknown
+        if (type.startsWith('twc')) {
+            // if widget is not found return unknown widget
+            return new TWidget(TwcUnknownComponent, data);
         }
         // if widget is not found return unknown widget
         return new TWidget(TwUnknownComponent, data);

@@ -1,4 +1,4 @@
-import { WorkCode } from 'tmac-sdk';
+import { WorkCode } from '@tmac/sdk';
 
 export interface ResData<T = any> {
     loading: boolean;

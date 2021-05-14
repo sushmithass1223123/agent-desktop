@@ -3,23 +3,22 @@ import { InteractionRef, InteractionCount } from 'app/interfaces';
 import { map } from 'lodash';
 import { Observable } from 'rxjs';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
-import { SDKClient, TUtils } from 'tmac-sdk';
+import { SDKClient, TUtils } from '@tmac/sdk';
 
 /**
- * Need more Description 
+ * Need more Description
  * Interaction Manager Service
  */
 @Injectable({
     providedIn: 'root'
 })
 export class InteractionManagerService {
-
     /**
      * Holds all interaction details
      */
     private _interactionsSubject: BehaviorSubject<InteractionRef[]>;
 
-    constructor() { }
+    constructor() {}
 
     // -----------------------------------------------------------------------------------------------------
     // @ Accessors
@@ -59,7 +58,7 @@ export class InteractionManagerService {
 
     /**
      * Adds incoming interaction to the subject
-     * @param {InteractionRef} payload 
+     * @param {InteractionRef} payload
      */
     addInteraction(payload: InteractionRef): void {
         // check if the data is null
@@ -79,8 +78,8 @@ export class InteractionManagerService {
 
     /**
      * Updates interaction info
-     * @param {Number} interactionId 
-     * @param {any} value 
+     * @param {Number} interactionId
+     * @param {any} value
      */
     updateInteraction(interactionId: number, value: any): void {
         // check if the key and value are not null
@@ -92,7 +91,7 @@ export class InteractionManagerService {
         const interactions = this._interactionsSubject.getValue();
 
         // filter and check if the interaction is present
-        if (interactions.filter(i => i.interactionId === interactionId).length === 0) {
+        if (interactions.filter((i) => i.interactionId === interactionId).length === 0) {
             return;
         }
 
@@ -100,7 +99,7 @@ export class InteractionManagerService {
         let updated = false;
 
         // update the interaction value
-        const updatedInteractions = map(interactions, item => {
+        const updatedInteractions = map(interactions, (item) => {
             const currentItem = { ...item };
             // check the item for isActive
             if (Object.keys(value).includes('isActive')) {
@@ -140,7 +139,7 @@ export class InteractionManagerService {
 
     /**
      * Deleted interaction by interaction Id
-     * @param {number} interactionId 
+     * @param {number} interactionId
      */
     removeInteraction(interactionId: number): void {
         // Get the value from the behavior subject
@@ -163,7 +162,7 @@ export class InteractionManagerService {
     }
 
     /**
-     * Gets interaction counts 
+     * Gets interaction counts
      * returns total and active interactions
      */
     getInteractionCount(): InteractionCount {
@@ -178,11 +177,10 @@ export class InteractionManagerService {
             // try calc the count
             result = {
                 total: interactions.length || 0,
-                active: interactions.filter(i => i.status === 'connected').length || 0
+                active: interactions.filter((i) => i.status === 'connected').length || 0
             };
-        } catch (error) { }
+        } catch (error) {}
         // return the result
         return result;
     }
 }
-

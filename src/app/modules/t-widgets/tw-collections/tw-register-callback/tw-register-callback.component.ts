@@ -2,17 +2,16 @@ import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { fuseAnimations } from '@fuse/animations';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { TMACEventService } from '@services/tmac-event.service';
+import { IUIEvent, SDKClient, TUtils } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { IWidget, ReqCampaignContact, ResCampaign, ResData } from 'app/interfaces';
 import { AppUiService } from 'app/services/app-ui.service';
+import { get, join } from 'lodash';
 import * as moment from 'moment';
-import { SDKClient, IUIEvent, CCLDataEvent, TextChatRemoteUserConnectedEvent } from 'tmac-sdk';
-import { join } from 'lodash';
-import { get } from 'lodash';
-import { fuseAnimations } from '@fuse/animations';
 import { takeUntil } from 'rxjs/operators';
 
 /**
@@ -35,6 +34,11 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
      * Add contact form group
      */
     @ViewChild('addContactForm') addContactFormDialog: TemplateRef<any>;
+
+    /**
+     * TCM Proxy Url
+     */
+    tcmProxyUrl: string;
 
     /**
      * Data Config
@@ -125,11 +129,29 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
         /**
          * Name 
          */
-        Name: string;
+        Name: {
+            /**
+             * Value source
+             */
+            ValueSource: string;
+            /**
+             * Default value
+             */
+            DefaultValue: string;
+        };
         /**
          * Phone
          */
-        Phone: number;
+        Phone: {
+            /**
+             * Value source
+             */
+            ValueSource: string;
+            /**
+             * Default value
+             */
+            DefaultValue: string;
+        };
     };
 
     /**
@@ -167,35 +189,35 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-
-        this.dataConfig = this.data.Data;
+        // assign the proxy url
+        const url = this.data.Data.TCMProxyUrl;
+        this.tcmProxyUrl = url.endsWith('/') ? url : url + '/';
         this.fetchCampaigns();
 
         this.interactionId = this.data.InteractionDetails?.InteractionID;
         this.dataMap = this.data.Data?.DataMap || new Object();
 
-        // this.addContactFormGroup.patchValue({});
+        // create event names to subscribe
+        const eventNames = [];
+
+        Object.entries(this.dataMap)
+            .forEach(a => {
+                try {
+                    // get the event name from value source
+                    const eventName = a[1].ValueSource?.split('.')?.shift();
+                    if (eventName && !eventNames.includes(eventName)) {
+                        eventNames.push(eventName);
+                    }
+                } catch (error) {
+                    TUtils.Logger.console('error', 'Error in TwRegisterCallbackComponent', null, error);
+                }
+            });
 
         // listen to events only if opened in an interaction
-        if (this.interactionId) {
-            // // get the event from event bag to make sure no events are missed
-            // const eventBag = this._tmacEventService.interactionEvents(this.interactionId);
-
-            // // process the events if any
-            // eventBag.forEach((evt: IUIEvent) => {
-            //     this[evt.EventName]?.(evt);
-            // });
-
-            // // register to the event 
-            // SDKClient.events.on('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
-            // SDKClient.events.on('CCLDataEvent', this.CCLDataEvent);
-
-            this._tmacEventService.getInteractionEvents([
-                'TextChatRemoteUserConnectedEvent',
-                'CCLDataEvent'
-            ], this.interactionId)
+        if (this.interactionId && eventNames.length) {
+            this._tmacEventService.getInteractionEvents(eventNames, this.interactionId)
                 .pipe(takeUntil(this.unsubscribeAll))
-                .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
+                .subscribe(evts => evts.forEach(evt => this.processCustomerDetails(evt)));
         }
     }
 
@@ -205,27 +227,6 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-
-        // SDKClient.events.off('TextChatRemoteUserConnectedEvent', this.TextChatRemoteUserConnectedEvent);
-        // SDKClient.events.off('CCLDataEvent', this.CCLDataEvent);
-    }
-
-    /**
-     * TextChatRemoteUserConnectedEvent handler
-     * @method TextChatRemoteUserConnectedEvent
-     * @param {TextChatRemoteUserConnectedEvent} evt 
-     */
-    private TextChatRemoteUserConnectedEvent = (evt: TextChatRemoteUserConnectedEvent) => {
-        this.processCustomerDetails(evt);
-    }
-
-    /**
-     * CCLDataEvent Handler
-     * @method CCLDataEvent
-     * @param {CCLDataEvent} evt 
-     */
-    private CCLDataEvent = (evt: CCLDataEvent) => {
-        this.processCustomerDetails(evt);
     }
 
     /**
@@ -234,11 +235,6 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
      * @param {IUIEvent} evt 
      */
     private processCustomerDetails = (evt: IUIEvent) => {
-        // check the interaction
-        // if (evt.InteractionID !== this.interactionId) {
-        //     return;
-        // }
-
         // return if no map found
         if (!this.dataMap || Object.keys(this.dataMap).length === 0) {
             return;
@@ -267,8 +263,8 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
      * @method fetchCampaigns
      */
     fetchCampaigns(): void {
-        if (this.dataConfig.GetCampaignsUrl) {
-            this.http.get<ResCampaign[]>(this.dataConfig.GetCampaignsUrl).subscribe(
+        if (this.tcmProxyUrl) {
+            this.http.get<ResCampaign[]>(`${this.tcmProxyUrl}/Campaign/GetCampaigns`).subscribe(
                 (res) => {
                     this.getCampaignsReq = {
                         data: res,
@@ -290,7 +286,7 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
             this.getCampaignsReq = {
                 error: true,
                 loading: false,
-                msg: 'GetCampaignsUrl not found'
+                msg: 'TCMProxyUrl not found'
             };
         }
     }
@@ -341,30 +337,39 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
             phoneNumber: contact.Phone,
             retryCount: this.selectedCampaign.retryCount
         };
-        this.http.post(this.dataConfig.CreateContactCampaignUrl, reqPacket).subscribe(
-            () => {
-                this.addCampaingReq = {
-                    error: false,
-                    loading: false,
-                    msg: ''
-                };
-                this.matDialog.closeAll();
-                this._appUiService.showSnackbar('Added contact successfully', 'success');
-                this.addContactFormGroup.reset();
-                // check if the AOT widget
-                if (this.data.Config.AOT) {
-                    this._aotWidgetService.destroyWidget(this.data.ID);
+        if (this.tcmProxyUrl) {
+            this.http.post(`${this.tcmProxyUrl}/Contact/CreateCampaignContact`, reqPacket).subscribe(
+                () => {
+                    this.addCampaingReq = {
+                        error: false,
+                        loading: false,
+                        msg: ''
+                    };
+                    this.matDialog.closeAll();
+                    this._appUiService.showSnackbar('Added contact successfully', 'success');
+                    this.addContactFormGroup.reset();
+                    // check if the AOT widget
+                    if (this.data.Config.AOT) {
+                        this._aotWidgetService.destroyWidget(this.data.ID);
+                    }
+                },
+                () => {
+                    this.addCampaingReq = {
+                        error: true,
+                        loading: false,
+                        msg: COMMON_ERR_MESSAGE
+                    };
+                    this._appUiService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
                 }
-            },
-            () => {
-                this.addCampaingReq = {
-                    error: true,
-                    loading: false,
-                    msg: COMMON_ERR_MESSAGE
-                };
-                this._appUiService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
-            }
-        );
+            );
+        }
+        else {
+            this.getCampaignsReq = {
+                error: true,
+                loading: false,
+                msg: 'TCMProxyUrl not found'
+            };
+        }
     }
 
     /**

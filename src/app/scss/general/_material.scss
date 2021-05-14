@@ -12,6 +12,14 @@
     }
 }
 
+.rotate-90-inverse {
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+}
+
 .rotate-45 {
     -webkit-transform: rotate(45deg);
     -moz-transform: rotate(45deg);
@@ -355,7 +363,7 @@ mat-dialog-container {
         border-radius: 2rem !important;
         max-height: 350px;
 
-        button {
+        button:not(.mat-icon-button) {
             height: 3.2rem;
             line-height: 2rem;
 
