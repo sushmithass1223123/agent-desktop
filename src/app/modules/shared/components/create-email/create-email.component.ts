@@ -9,7 +9,7 @@ import { FuseFacadeService } from '@services/fuse-facade.service';
 import { EmailTemplate, SDKClient } from '@tmac/sdk';
 import { QUILL_EDITOR_CONFIG } from 'app/constants';
 import { CreateEmailInput, CreateEmailOutput, TwWidgetModel } from 'app/models';
-import { urlify } from 'app/utils';
+import { maticonByExtension } from 'app/utils';
 import { merge } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
 
@@ -114,7 +114,7 @@ export class CreateEmailComponent implements OnInit, OnDestroy, AfterViewInit {
         private matDialog: MatDialog,
         private aotService: AOTWidgetService,
         private _fuseFacadeService: FuseFacadeService
-    ) {}
+    ) { }
 
     /**
      * Lifecycle hook
@@ -233,7 +233,17 @@ export class CreateEmailComponent implements OnInit, OnDestroy, AfterViewInit {
                     ]
                 });
 
-                this.email.Files.push({ Id: response[0].RelativePath, Direction: 'OUT', Name: response[0].FileName, URL: response[0].Url });
+                const ext = response[0].FileName.split('.').pop();
+                const icon = maticonByExtension(ext);
+
+                this.email.Files.push({
+                    Id: response[0].RelativePath,
+                    Direction: 'OUT',
+                    Name: response[0].FileName,
+                    URL: response[0].Url,
+                    Ext: ext,
+                    Icon: icon
+                });
                 ref.dismiss();
                 // this.uploadingFiles = false;
                 // this.uploadingFiles.pop();
@@ -332,14 +342,10 @@ export class CreateEmailComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     /**
-     * Uelifies the subject
-     * @param subject
-     * @returns
+     * Opens a selected attachment file
+     * @param {String} fileUrl
      */
-    urlify(subject: string): string {
-        if (subject) {
-            return `<span class='twd-text-truncate'> ${urlify(subject)} </span>`;
-        }
-        return 'NA';
+    openFile(fileUrl: string): void {
+        window.open(fileUrl);
     }
 }

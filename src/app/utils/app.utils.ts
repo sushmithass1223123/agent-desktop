@@ -33,9 +33,66 @@ export const formatJsonData = <T = Record<Generic, any>>(data: Record<Generic, a
  * 
  * @param {String} text 
  */
-export const urlify = (text: string): string => {
+export const urlify = (text: string) => {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     return text.replace(urlRegex, (url: string) => {
         return '<a target="_blank" href="' + url + '">' + url + '</a>';
     });
+};
+
+export const maticonByExtension = (ext: string) => {
+    let icon = '';
+    switch (ext.toLowerCase()) {
+        case 'txt':
+            icon = 'custom-file-text';
+            break;
+
+        case 'pdf':
+            icon = 'custom-file-pdf';
+            break;
+
+        case 'xls':
+        case 'xlsx':
+            icon = 'custom-file-excel';
+            break;
+
+        case 'ppt':
+        case 'pptx':
+            icon = 'custom-file-ppt';
+            break;
+
+        case 'zip':
+        case 'war':
+            icon = 'custom-file-zip';
+            break;
+
+        case 'png':
+        case 'jpeg':
+        case 'jpg':
+            icon = 'custom-file-image';
+            break;
+
+        case 'doc':
+        case 'docx':
+            icon = 'custom-file-word';
+            break;
+
+        case 'mp4':
+        case 'mpeg':
+        case 'avi':
+        case 'ogv':
+        case 'webm':
+            icon = 'custom-file-video';
+            break;
+
+        case 'aac':
+        case 'mp3':
+        case 'wav':
+            icon = 'custom-file-audio';
+            break;
+
+        default:
+            icon = 'custom-file-default';
+    }
+    return icon;
 };

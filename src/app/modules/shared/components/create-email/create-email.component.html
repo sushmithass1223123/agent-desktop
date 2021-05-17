@@ -1,5 +1,5 @@
-<div fxLayout="column" class="w-100-p h-100-p px-20 twd-overflow-y-auto">
-    <form class="my-8" novalidate>
+<div fxLayout="column" class="w-100-p h-100-p twd-overflow-y-auto">
+    <form class="twd-mb-2" novalidate>
         <div class="border-primary border-radius-20 w-100-p p-12">
             <div [formGroup]="emailRecipientFacade">
                 <div *ngIf="from">
@@ -37,8 +37,48 @@
         </div>
     </form>
 
-    <div *ngIf="email.Files.length" class="twd-w-full twd-my-3 twd-bg-primary-100 twd-rounded-2xl twd-overflow-hidden twd-text-xs">
-        <div
+    <div *ngIf="email.Files.length" class="twd-w-full twd-mb-2 twd-rounded-2xl twd-overflow-hidden twd-text-xs attachment-list">
+        <button
+            *ngFor="let file of email.Files | slice: 0:2"
+            mat-stroked-button
+            class="border-radius-20 m-4"
+            [matTooltip]="file.Ext | uppercase"
+            (click)="openFile(file.URL)"
+        >
+            <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
+            <span>{{ file.Name }}</span>
+        </button>
+
+        <button
+            *ngIf="email.Files.length > 2"
+            mat-stroked-button
+            class="border-radius-20 m-4"
+            [matMenuTriggerFor]="attachList"
+            matTooltip="Show More"
+        >
+            +{{ email.Files.length - 2 }}
+        </button>
+
+        <mat-menu class="custom attachment-overlay" #attachList="matMenu">
+            <div class="attachment-menu">
+                <div
+                    *ngFor="let file of email.Files | slice: 2:email.Files.length"
+                    class="
+                        twd-flex twd-items-center twd-text-base twd-font-bold twd-p-2 twd-rounded-full twd-overflow-hidden twd-cursor-pointer
+                        mx-8
+                        my-4
+                        border
+                    "
+                    [matTooltip]="file.Ext | uppercase"
+                    (click)="openFile(file.URL)"
+                >
+                    <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
+                    <span class="twd-truncate twd-ml-2"> {{ file.Name }} </span>
+                </div>
+            </div>
+        </mat-menu>
+
+        <!-- <div
             (click)="showAttachments = !showAttachments"
             matRipple
             class="twd-text-white twd-flex twd-cursor-pointer twd-items-center twd-font-extrabold twd-px-2"
@@ -64,10 +104,10 @@
                     </mat-chip>
                 </mat-chip-list>
             </div>
-        </div>
+        </div> -->
     </div>
 
-    <div class="email-editor-container border-primary flex-1 twd-flex twd-flex-col border-radius-20 mb-12 twd-overflow-hidden">
+    <div class="email-editor-container border-primary flex-1 twd-flex twd-flex-col border-radius-20 twd-mb-2 twd-overflow-hidden">
         <div class="twd-flex-1 editor-wrapper position-relative twd-overflow-hidden">
             <div class="h-100-p w-100-p twd-absolute twd-top-0 twd-left-0">
                 <quill-editor

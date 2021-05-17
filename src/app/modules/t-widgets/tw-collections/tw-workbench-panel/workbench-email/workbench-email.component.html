@@ -5,6 +5,7 @@
     } as customFuse"
 >
     <div
+        #emailWorkBench
         fxLayout
         fxLayoutAlign="space-evenly center"
         class="email-workbench w-100-p h-100-p py-8"
@@ -370,44 +371,44 @@
                                     </mat-select>
                                 </mat-form-field>
 
-                                <mat-form-field class="form-field custom" fxFlex="100" appearance="outline">
-                                    <span fxFlex="20" class="mat-subheading-2"> Attachments : </span>
+                                <div fxFlex="100" class="my-16">
+                                    <span fxFlex="30" class="mat-subheading-2 m-0"> Attachments : </span>
                                     <input matInput placeholder="Input" style="display: none" />
-                                    <mat-button-toggle-group class="w-100-p" formControlName="hasAttachments" fxFlex="80">
-                                        <mat-button-toggle value="yes" fxFlex="100">Has Attachments</mat-button-toggle>
-                                        <mat-button-toggle value="no" fxFlex="100">No Attachments</mat-button-toggle>
-                                    </mat-button-toggle-group>
-                                </mat-form-field>
+                                    <mat-radio-group class="w-100-p" formControlName="hasAttachments" fxFlex="70">
+                                        <mat-radio-button value="any" fxFlex="100">Any</mat-radio-button>
+                                        <mat-radio-button value="yes" fxFlex="100">Yes</mat-radio-button>
+                                        <mat-radio-button value="no" fxFlex="100">No</mat-radio-button>
+                                    </mat-radio-group>
+                                </div>
 
-                                <mat-form-field class="form-field custom" fxFlex="100" appearance="outline">
-                                    <span fxFlex="20" class="mat-subheading-2"> Replied : </span>
-                                    <input matInput placeholder="Input" style="display: none" />
-                                    <mat-button-toggle-group class="w-100-p" formControlName="replied" fxFlex="80">
-                                        <mat-button-toggle value="any" fxFlex="100">Any</mat-button-toggle>
-                                        <mat-button-toggle value="yes" fxFlex="100">Replied only</mat-button-toggle>
-                                        <mat-button-toggle value="no" fxFlex="100">Unreplied only</mat-button-toggle>
-                                    </mat-button-toggle-group>
-                                </mat-form-field>
+                                <div fxFlex="100" class="my-16">
+                                    <span fxFlex="30" class="mat-subheading-2 m-0"> Replied : </span>
+                                    <mat-radio-group class="w-100-p" formControlName="replied" fxFlex="70">
+                                        <mat-radio-button value="any" fxFlex="100">Any</mat-radio-button>
+                                        <mat-radio-button value="yes" fxFlex="100">Yes</mat-radio-button>
+                                        <mat-radio-button value="no" fxFlex="100">No</mat-radio-button>
+                                    </mat-radio-group>
+                                </div>
 
-                                <mat-form-field class="form-field custom" fxFlex="100" appearance="outline">
-                                    <span fxFlex="20" class="mat-subheading-2"> Closed : </span>
+                                <div fxFlex="100" class="my-16">
+                                    <span fxFlex="30" class="mat-subheading-2 m-0"> Closed : </span>
                                     <input matInput placeholder="Input" style="display: none" />
-                                    <mat-button-toggle-group class="w-100-p" formControlName="closed" fxFlex="80">
-                                        <mat-button-toggle value="any" fxFlex="100">Any</mat-button-toggle>
-                                        <mat-button-toggle value="yes" fxFlex="100">Closed only</mat-button-toggle>
-                                        <mat-button-toggle value="no" fxFlex="100">Not Closed</mat-button-toggle>
-                                    </mat-button-toggle-group>
-                                </mat-form-field>
+                                    <mat-radio-group class="w-100-p" formControlName="closed" fxFlex="70">
+                                        <mat-radio-button value="any" fxFlex="100">Any</mat-radio-button>
+                                        <mat-radio-button value="yes" fxFlex="100">Yes</mat-radio-button>
+                                        <mat-radio-button value="no" fxFlex="100">No</mat-radio-button>
+                                    </mat-radio-group>
+                                </div>
 
-                                <mat-form-field class="form-field custom" fxFlex="100" appearance="outline">
-                                    <span fxFlex="20" class="mat-subheading-2"> Assigned : </span>
+                                <div fxFlex="100" class="my-16">
+                                    <span fxFlex="30" class="mat-subheading-2 m-0"> Assigned : </span>
                                     <input matInput placeholder="Input" style="display: none" />
-                                    <mat-button-toggle-group class="w-100-p" formControlName="assigned" fxFlex="80">
-                                        <mat-button-toggle value="any" fxFlex="100">Any</mat-button-toggle>
-                                        <mat-button-toggle value="yes" fxFlex="100">Assigned only</mat-button-toggle>
-                                        <mat-button-toggle value="no" fxFlex="100">Unassigned only</mat-button-toggle>
-                                    </mat-button-toggle-group>
-                                </mat-form-field>
+                                    <mat-radio-group class="w-100-p" formControlName="assigned" fxFlex="70">
+                                        <mat-radio-button value="any" fxFlex="100">Any</mat-radio-button>
+                                        <mat-radio-button value="yes" fxFlex="100">Yes</mat-radio-button>
+                                        <mat-radio-button value="no" fxFlex="100">No</mat-radio-button>
+                                    </mat-radio-group>
+                                </div>
 
                                 <button mat-raised-button fxFlex="48" class="adv-search-btn h-40 mb-8 border-radius-20">Search</button>
                                 <button
@@ -427,7 +428,7 @@
 
             <div id="sortControls" class="twd-flex twd-justify-between twd-items-center twd-px-2 twd-pt-2">
                 <div class="twd-font-bold twd-text-sm">
-                    <mat-form-field>
+                    <mat-form-field class="custom with-border" appearance="outline">
                         <mat-select [formControl]="sortControls.sortBy">
                             <mat-option value="default">Default</mat-option>
                             <mat-option value="Subject">Sort By Name</mat-option>
@@ -635,7 +636,7 @@
                     <div class="twd-shadow">
                         <div class="twd-text-xl twd-flex twd-justify-between twd-items-center pt-20 px-28 twd-pb-3">
                             <div
-                                class="twd-relative twd-flex-1 twd-px-1"
+                                class="twd-relative twd-flex-1 twd-px-1 text-bold"
                                 [ngClass]="{ 'twd-truncate': !minimizeSubject }"
                                 [innerHtml]="selectedEmail.Subject"
                             ></div>
@@ -646,8 +647,8 @@
                         <div class="twd-transition-all px-28" [ngClass]="{ 'twd-h-0 twd-overflow-y-hidden twd-opacity-0': minimizeSubject }">
                             <div fxLayout fxLayoutAlign="space-between">
                                 <div fxFlex="80">
-                                    <p class="font-weight-600 my-4">To : {{ selectedEmail.To }}</p>
-                                    <p class="font-weight-600 my-4" *ngIf="selectedEmail.ccList">CC : {{ selectedEmail.ccList }}</p>
+                                    <p class="text-bold my-4">To : {{ selectedEmail.To }}</p>
+                                    <p class="text-bold my-4" *ngIf="selectedEmail.ccList">CC : {{ selectedEmail.ccList }}</p>
                                     <p class="my-4 text-bold">From : {{ selectedEmail.From || 'NA' }}</p>
                                     <p class="my-4 text-bold">Status : {{ selectedEmail.currentStatus || 'NA' }}</p>
                                     <p class="my-4 text-bold">Prirority : {{ selectedEmail.priority || 'NA' }}</p>
@@ -667,7 +668,7 @@
                                     <p class="my-4">{{ selectedEmail.addedTime | date: 'shortTime' }}</p>
                                 </div>
                             </div>
-                            <div
+                            <!-- <div
                                 class="twd-py-5"
                                 *ngIf="{
                                     lesstItems: selectedEmail.attachmentList.slice(0, 3),
@@ -708,6 +709,58 @@
                                     <mat-icon>expand_less</mat-icon>
                                     Show less
                                 </button>
+                            </div> -->
+
+                            <div
+                                class="twd-py-2"
+                                *ngIf="{
+                                    lesstItems: selectedEmail.attachmentList.slice(0, 3),
+                                    moreItems: selectedEmail.attachmentList.slice(3, -1)
+                                } as attachList"
+                            >
+                                <button
+                                    *ngFor="let file of attachList.lesstItems"
+                                    mat-stroked-button
+                                    class="border-radius-20 m-4"
+                                    [matTooltip]="file.Ext | uppercase"
+                                    (click)="openFile(file.URL)"
+                                >
+                                    <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
+                                    <span>{{ file.Name }}</span>
+                                </button>
+
+                                <ng-container *ngIf="showMoreAttachments">
+                                    <button
+                                        *ngFor="let file of attachList.moreItems"
+                                        mat-stroked-button
+                                        class="border-radius-20 m-4"
+                                        [matTooltip]="file.Ext | uppercase"
+                                        (click)="openFile(file.URL)"
+                                    >
+                                        <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
+                                        <span>{{ file.Name }}</span>
+                                    </button>
+                                </ng-container>
+
+                                <button
+                                    mat-stroked-button
+                                    class="border-radius-20 m-4"
+                                    *ngIf="!showMoreAttachments && attachList.moreItems.length"
+                                    (click)="showMoreAttachments = !showMoreAttachments"
+                                >
+                                    <mat-icon> expand_more </mat-icon>
+                                    View {{ attachList.moreItems.length }} more
+                                </button>
+
+                                <button
+                                    mat-stroked-button
+                                    class="border-radius-20 m-4"
+                                    *ngIf="showMoreAttachments"
+                                    (click)="showMoreAttachments = false"
+                                >
+                                    <mat-icon>expand_less</mat-icon>
+                                    Show less
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -733,7 +786,7 @@
     <div #replyEditor id="replyEditor"></div>
     <div class="twd-flex twd-gap-2 twd-justify-end twd-mt-3">
         <email-template-selector (selectTemplate)="selectEmailTemplate($event)"></email-template-selector>
-        <button mat-raised-button (click)="replyEditorModal.close(true)" color="primary"   >Send</button>
+        <button mat-raised-button (click)="replyEditorModal.close(true)" color="primary">Send</button>
         <button mat-raised-button (click)="replyEditorModal.close()" color="accent">Cancel</button>
     </div>
 </ng-template>

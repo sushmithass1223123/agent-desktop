@@ -8,16 +8,33 @@
 
 tw-email-controls {
     .mat-standard-chip {
-        min-height: 50px;
+        // min-height: 50px;
     }
     .mat-chip {
         padding: 6px;
+    }
+
+    mat-chip mat-icon {
+        color: rgba(0, 0, 0, 0.47) !important;
     }
 
     .mat-card-content {
         background: inherit !important;
         box-shadow: none !important;
         padding: 0px 3px 3px 3px !important;
+    }
+
+    .attachment-list {
+        button {
+            max-width: 150px;
+
+            .mat-button-wrapper {
+                display: block;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
     }
 
     .email-content {
@@ -47,6 +64,19 @@ tw-email-controls {
             justify-content: center;
             align-items: center;
             display: flex;
+        }
+    }
+}
+
+.attachment-overlay {
+    .mat-menu-content {
+        padding: 0px;
+
+        .attachment-menu {
+            overflow: auto;
+            max-height: 350px;
+            border-radius: 20px;
+            padding: 8px 0px;
         }
     }
 }

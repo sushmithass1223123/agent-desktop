@@ -7,6 +7,7 @@ import { fuseAnimations } from '@fuse/animations';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CustomSDKEvent } from 'app/interfaces';
+import { orderBy, sortBy } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 
 /**
@@ -38,7 +39,10 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
     /**
      * Table Paginator ref
      */
-    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+    @ViewChild(MatPaginator)
+    set paginator(value: MatPaginator) {
+        this.interactionDetailsTable.source.paginator = value;
+    }
 
     /**
      * Maximized state
@@ -248,7 +252,16 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         else {
             this.interactionList = [...this.interactionList, ...evt.Data];
         }
-        this.interactionDetailsTable.source = new MatTableDataSource(this.interactionList);
+
+        // assign the interaction list
+        let source = this.interactionList;
+
+        // take only 10 for minimized mode
+        if (!this.maximized) {
+            source = orderBy(this.interactionList, 'CreatedDateTime', ['desc']).slice(0, 15);
+        }
+
+        this.interactionDetailsTable.source = new MatTableDataSource(source);
         this.interactionDetailsTable.source.sort = this.sort;
         this.interactionDetailsTable.source.paginator = this.paginator;
         this.interactionDetailsTable.source.filterPredicate = this.createFilter();
@@ -260,10 +273,18 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
      */
     maximizeEvent(state: boolean): void {
         this.maximized = state;
+        // assign the interaction list
+        let source = this.interactionList;
+
         if (state) {
             this.interactionDetailsTable.columns = this.maxdisplayedColumns;
+            source = orderBy(this.interactionList, 'CreatedDateTime', ['desc']);
         } else {
             this.interactionDetailsTable.columns = this.mindisplayedColumns;
+            source = orderBy(this.interactionList, 'CreatedDateTime', ['desc']).slice(0, 15);
         }
+
+        this.interactionDetailsTable.source = new MatTableDataSource(source);
+        this.interactionDetailsTable.source.sort = this.sort;
     }
 }

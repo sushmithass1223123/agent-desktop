@@ -6,6 +6,8 @@ export interface EmailFile {
     Direction: 'IN' | 'OUT';
     Name: string;
     URL: string;
+    Ext: string;
+    Icon: string;
 }
 
 export interface CreateEmailInput {

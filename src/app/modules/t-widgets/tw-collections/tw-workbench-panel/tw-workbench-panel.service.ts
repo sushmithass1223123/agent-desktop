@@ -22,7 +22,7 @@ export const initEmailSearchState = {
     inSessionid: '',
 
     deviceid: '',
-    hasAttachments: 'yes',
+    hasAttachments: 'no',
     assignedTo: '',
 
     replied: 'any',
@@ -86,7 +86,7 @@ export class TwWorkBenchService {
      */
     readonly globalEmailWorkbenchState$ = this._internal$.email;
 
-    constructor() {}
+    constructor() { }
 
     /**
      * Service init method

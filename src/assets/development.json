@@ -1865,7 +1865,7 @@
                                                         "Customer": true
                                                     },
                                                     "ConversationService": {
-                                                        "Url": "https://dice.tetherfi.cloud:25213/api/v1/",
+                                                        "Url": "",
                                                         "Limit": 50
                                                     }
                                                 }
