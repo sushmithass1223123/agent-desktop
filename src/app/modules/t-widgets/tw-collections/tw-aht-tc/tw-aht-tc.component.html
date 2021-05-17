@@ -52,7 +52,7 @@
 
             <p *ngIf="interactionDetailsTable.source.data.length === 0" class="text-center m-0 mat-title">No Data Available</p>
         </div>
-        <mat-paginator *ngIf="maximized" [pageSizeOptions]="maximized ? [30, 40, 50] : [3, 6, 12]" showFirstLastButtons> </mat-paginator>
+        <mat-paginator *ngIf="maximized" [pageSize]="20" [pageSizeOptions]="[20, 40, 60, 100]" showFirstLastButtons> </mat-paginator>
     </div>
 
     <div *ngIf="widgetData.Type === 'chart'" class="w-100-p h-100-p">

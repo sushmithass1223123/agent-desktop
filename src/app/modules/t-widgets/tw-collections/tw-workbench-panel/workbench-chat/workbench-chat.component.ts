@@ -112,7 +112,7 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit, Af
     chatsRef: ElementRef<HTMLDivElement>;
 
     /**
-     * Chats workbech main ref
+     * Chat workbech main ref
      */
     @ViewChild('chatWorkBench')
     chatWorkBench: ElementRef<HTMLDivElement>;

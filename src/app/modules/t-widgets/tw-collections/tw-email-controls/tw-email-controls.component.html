@@ -34,7 +34,7 @@
                 class="twd-h-full twd-flex-1 twd-flex twd-flex-col twd-shadow-md twd-rounded-3xl twd-p-3 twd-overflow-y-auto"
                 [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
             >
-                <div class="twd-flex twd-gap-3">
+                <div class="twd-flex twd-gap-3 twd-pb-2 twd-justify-end">
                     <button
                         *ngIf="data.Data?.InteractionCommentAllowed && (replyInfo || OutboxReasons.includes(currentInteraction.RouteReason))"
                         mat-raised-button
@@ -46,7 +46,7 @@
                     </button>
 
                     <ng-container *ngIf="currentInteraction.EventName === 'OutgoingEmailEvent'">
-                        <button mat-raised-button class="border-radius-20" color="accent" (click)="closeInteraction($event)" matTooltip="Close">
+                        <button mat-raised-button class="border-radius-20" color="warn" (click)="closeInteraction($event)" matTooltip="Close">
                             Close
                         </button>
 
@@ -56,11 +56,15 @@
                     </ng-container>
 
                     <ng-container *ngIf="OutboxReasons.includes(currentInteraction.RouteReason)">
+                        <button mat-raised-button class="border-radius-20" color="warn" (click)="rejectEmail(rejectEmailBtn)" #rejectEmailBtn>
+                            Reject
+                        </button>
+
                         <button mat-raised-button class="border-radius-20" (click)="sendEmailAsChecker(approveBtn)" color="primary" #approveBtn>
                             Approve
                         </button>
-                        <button mat-raised-button class="border-radius-20" (click)="rejectEmail(rejectEmailBtn)" #rejectEmailBtn>Reject</button>
                     </ng-container>
+
                     <ng-container
                         *ngIf="InboxReasons.includes(currentInteraction.RouteReason) || DraftReasons.includes(currentInteraction.RouteReason)"
                     >
@@ -151,45 +155,104 @@
 
                             <div
                                 id="attachmentList"
-                                class="twd-my-3 twd-bg-primary-100 twd-rounded-2xl twd-overflow-hidden twd-text-xs"
+                                class="twd-my-1 twd-rounded-2xl twd-overflow-hidden twd-text-xs attachment-list"
                                 *ngIf="
                                     currentInteraction.AttachmetList &&
                                     currentInteraction.AttachmetList.length &&
                                     currentInteraction.AttachmetList as attachments
                                 "
                             >
-                                <div
-                                    (click)="showAttachments = !showAttachments"
-                                    matRipple
-                                    class="twd-text-white twd-flex twd-cursor-pointer twd-items-center twd-font-extrabold twd-px-2"
-                                    [ngClass]="{ 'twd-bg-primary-200 twd-pb-1': showAttachments }"
+                                <!-- <mat-chip-list #chipList aria-label="file selection">
+                                    <mat-chip *ngFor="let file of attachments">
+                                        <mat-icon>file_present</mat-icon>
+                                        <div class="twd-ml-1 twd-w-10/12">
+                                            <a target="_blank" [href]="file.URL">
+                                                <small>{{ file.Name }}</small>
+                                            </a>
+                                        </div>
+                                    </mat-chip>
+                                </mat-chip-list> -->
+
+                                <button
+                                    *ngFor="let file of attachments | slice: 0:2"
+                                    mat-stroked-button
+                                    class="border-radius-20 m-4"
+                                    [matTooltip]="file.Ext | uppercase"
+                                    (click)="openFile(file.URL)"
                                 >
-                                    <ng-container *ngIf="showAttachments"> <mat-icon>expand_less</mat-icon> Hide attachments </ng-container>
-                                    <ng-container *ngIf="!showAttachments">
-                                        <mat-icon class="twd-mr-1">info</mat-icon> Show {{ attachments.length }} attachments
-                                    </ng-container>
-                                </div>
-                                <div
-                                    class="twd-w-11/12 twd-mx-auto twd-overflow-hidden twd-transition-all"
-                                    [ngClass]="{ 'twd-h-0 twd-opacity-0': !showAttachments }"
+                                    <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
+                                    <span>{{ file.Name }}</span>
+                                </button>
+
+                                <button
+                                    *ngIf="attachments.length > 2"
+                                    mat-stroked-button
+                                    class="border-radius-20 m-4"
+                                    [matMenuTriggerFor]="attachList"
+                                    matTooltip="Show More"
                                 >
-                                    <div class="twd-py-2">
-                                        <mat-chip-list #chipList aria-label="file selection">
-                                            <mat-chip *ngFor="let file of attachments">
-                                                <div><mat-icon>attach_file</mat-icon></div>
-                                                <div class="twd-ml-1 twd-w-10/12">
-                                                    <div class="m-0 twd-truncate twd-w-full twd-text-xs">{{ file.Name }}</div>
-                                                    <a target="_blank" [href]="file.URL">
-                                                        <small>View file</small>
-                                                    </a>
-                                                </div>
-                                            </mat-chip>
-                                        </mat-chip-list>
+                                    +{{ attachments.length - 2 }}
+                                </button>
+
+                                <mat-menu class="custom attachment-overlay" #attachList="matMenu">
+                                    <div class="attachment-menu" [ngClass]="customFuse.anchor?.body || customFuse.widget?.body">
+                                        <div
+                                            *ngFor="let file of attachments | slice: 2:attachments.length"
+                                            class="
+                                                twd-flex
+                                                twd-items-center
+                                                twd-text-base
+                                                twd-font-bold
+                                                twd-p-2
+                                                twd-rounded-full
+                                                twd-overflow-hidden
+                                                twd-cursor-pointer
+                                                mx-8
+                                                my-4
+                                                border
+                                            "
+                                            [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
+                                            [matTooltip]="file.Ext | uppercase"
+                                            (click)="openFile(file.URL)"
+                                        >
+                                            <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
+                                            <span class="twd-truncate twd-ml-2"> {{ file.Name }} </span>
+                                        </div>
                                     </div>
+                                </mat-menu>
+
+                                <!-- <div
+                                (click)="showAttachments = !showAttachments"
+                                matRipple
+                                class="twd-text-white twd-flex twd-cursor-pointer twd-items-center twd-font-extrabold twd-px-2"
+                                [ngClass]="{ 'twd-bg-primary-200 twd-pb-1': showAttachments }"
+                            >
+                                <ng-container *ngIf="showAttachments"> <mat-icon>expand_less</mat-icon> Hide attachments </ng-container>
+                                <ng-container *ngIf="!showAttachments">
+                                    <mat-icon class="twd-mr-1">info</mat-icon> Show {{ attachments.length }} attachments
+                                </ng-container>
+                            </div>
+                            <div
+                                class="twd-w-11/12 twd-mx-auto twd-overflow-hidden twd-transition-all"
+                                [ngClass]="{ 'twd-h-0 twd-opacity-0': !showAttachments }"
+                            >
+                                <div class="twd-py-2">
+                                    <mat-chip-list #chipList aria-label="file selection">
+                                        <mat-chip *ngFor="let file of attachments">
+                                            <div><mat-icon>attach_file</mat-icon></div>
+                                            <div class="twd-ml-1 twd-w-10/12">
+                                                <div class="m-0 twd-truncate twd-w-full twd-text-xs">{{ file.Name }}</div>
+                                                <a target="_blank" [href]="file.URL">
+                                                    <small>View file</small>
+                                                </a>
+                                            </div>
+                                        </mat-chip>
+                                    </mat-chip-list>
                                 </div>
+                            </div> -->
                             </div>
 
-                            <div id="emailControlButtons" class="twd-flex twd-justify-end twd-items-center mt-12 twd-gap-1">
+                            <div id="emailControlButtons" class="twd-flex twd-justify-end twd-items-center mt-4 twd-gap-1">
                                 <ng-container
                                     *ngIf="
                                         InboxReasons.includes(currentInteraction.RouteReason) || DraftReasons.includes(currentInteraction.RouteReason)
@@ -305,19 +368,31 @@
                         <mat-option [value]="reason" *ngFor="let reason of rejectReason.allReasons">{{ reason }}</mat-option>
                     </mat-select>
                 </mat-form-field>
-                <mat-form-field fxFlex="100" class="message-text">
-                    <textarea rows="5" matInput name="comment" placeholder="Describe Reason" [(ngModel)]="rejectReason.comment" required> </textarea>
+
+                <mat-form-field fxFlex="100" floatLabel="never" appearance="standard" class="custom-2 mb-8 border-radius-20 with-bg">
+                    <textarea
+                        placeholder="Describe reason..."
+                        [(ngModel)]="rejectReason.comment"
+                        matInput
+                        name="comment"
+                        matTextareaAutosize
+                        rows="5"
+                        required
+                    ></textarea>
                 </mat-form-field>
-                <button fxFlex="30" mat-raised-button color="primary" class="border-radius-20">Submit</button>
+
                 <button
-                    fxFlex="30"
-                    mat-raised-button
                     type="button"
-                    (click)="rejectEmailDialogRef.close(); rejectReason = { comment: '', reasonTags: '' }"
+                    fxFlex="30"
                     class="border-radius-20"
+                    color="warn"
+                    mat-raised-button
+                    (click)="rejectEmailDialogRef.close(); rejectReason = { comment: '', reasonTags: '' }"
                 >
                     Cancel
                 </button>
+
+                <button fxFlex="30" mat-raised-button color="primary" class="border-radius-20">Submit</button>
             </form>
         </div>
     </ng-template>

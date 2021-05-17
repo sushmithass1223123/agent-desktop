@@ -78,6 +78,46 @@ export class AppComponent implements OnInit, OnDestroy {
         {
             label: 'custom-twitter',
             name: 'twitter'
+        },
+        {
+            label: 'custom-file-default',
+            name: 'file-default'
+        },
+        {
+            label: 'custom-file-image',
+            name: 'file-image'
+        },
+        {
+            label: 'custom-file-audio',
+            name: 'file-audio'
+        },
+        {
+            label: 'custom-file-text',
+            name: 'file-text'
+        },
+        {
+            label: 'custom-file-excel',
+            name: 'file-excel'
+        },
+        {
+            label: 'custom-file-pdf',
+            name: 'file-pdf'
+        },
+        {
+            label: 'custom-file-ppt',
+            name: 'file-ppt'
+        },
+        {
+            label: 'custom-file-video',
+            name: 'file-video'
+        },
+        {
+            label: 'custom-file-word',
+            name: 'file-word'
+        },
+        {
+            label: 'custom-file-zip',
+            name: 'file-zip'
         }
     ];
 

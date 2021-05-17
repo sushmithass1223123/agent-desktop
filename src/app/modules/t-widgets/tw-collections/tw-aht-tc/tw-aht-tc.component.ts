@@ -42,7 +42,10 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
     /**
      * Table Paginator ref
      */
-    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+    @ViewChild(MatPaginator)
+    set paginator(value: MatPaginator) {
+        this.interactionDetailsTable.source.paginator = value;
+    }
 
     /**
      * Widget Maximized status
@@ -98,7 +101,7 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-        
+
         this.widgetData = this.data.Data || new Object();
 
         let eventName: any;

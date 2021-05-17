@@ -1,6 +1,6 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { HttpClient } from '@angular/common/http';
-import { Component, ElementRef, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -14,11 +14,11 @@ import { FuseFacadeService } from '@services/fuse-facade.service';
 import { EmailTemplate, SDKClient } from '@tmac/sdk';
 import { COMMON_ERR_MESSAGE, DRAFT_REASONS, INBOX_REASONS, OUTBOX_REASONS, QUILL_EDITOR_CONFIG } from 'app/constants';
 import { AgentSkillListData, IWidget, ResData } from 'app/interfaces';
-import { formatJsonData, urlify } from 'app/utils';
+import { formatJsonData, maticonByExtension, urlify } from 'app/utils';
 import { groupBy, sortBy } from 'lodash';
 import * as moment from 'moment';
 import Quill from 'quill';
-import { Observable } from 'rxjs';
+import { Observable, Subscription, timer } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
 import { TwWorkBenchService } from '../tw-workbench-panel.service';
 
@@ -47,7 +47,7 @@ type EmailPullItem = {
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations
 })
-export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, AfterViewInit, OnDestroy {
     /**
      * holds all the data related to the parent tw workbecnh widget from the config
      */
@@ -128,13 +128,13 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
          */
         selected: any;
     }> = {
-        error: false,
-        loading: false,
-        msg: '',
-        data: {
-            selected: false
-        }
-    };
+            error: false,
+            loading: false,
+            msg: '',
+            data: {
+                selected: false
+            }
+        };
     /**
      * Global search form control
      */
@@ -199,6 +199,17 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
     availableMailboxes: string[] = [];
 
     /**
+     * Polling Subscription
+     */
+    polling$: Subscription;
+
+    /**
+     * Chats workbech main ref
+     */
+    @ViewChild('emailWorkBench')
+    emailWorkBench: ElementRef<HTMLDivElement>;
+
+    /**
      * Constructor
      */
     constructor(
@@ -242,8 +253,28 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
         this._workbenchService.globalEmailWorkbenchState$.availableMailboxes.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe((res) => {
             this.availableMailboxes = res;
         });
-        this.doAdvancedSearch();
+        // this.doAdvancedSearch();
         this.sortControls.sortBy.valueChanges.subscribe(() => this.sortEmailsByKey());
+    }
+
+    /**
+     * After View Init
+     */
+    ngAfterViewInit(): void {
+        // create an intersection observer to start/stop polling when page is active/inactive
+        const observer = new IntersectionObserver((entries) => {
+            entries.map((entry) => {
+                if (entry.isIntersecting) {
+                    // TODO:: constant polling
+                    // this.startPolling();
+                    this.doAdvancedSearch();
+                } else {
+                    // this.stopPolling();
+                }
+            });
+        });
+        // observe the element
+        observer.observe(this.emailWorkBench.nativeElement);
     }
 
     /**
@@ -257,6 +288,23 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
     // -----------------------------------------------------------------------------------------------------
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * To start polling
+     */
+    private startPolling(): void {
+        this.polling$ = timer(0, this.channelConf.Config.SearchPollingInterval || 5000)
+            .subscribe(() => {
+                this.doAdvancedSearch();
+            });
+    }
+
+    /**
+     * To stop polling
+     */
+    private stopPolling(): void {
+        this.polling$?.unsubscribe();
+    }
 
     /**
      * Sort Callback
@@ -455,7 +503,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                 sesisonid: globalKey,
                 global: 'GLOBAL',
                 listOfMailboxes: this._workbenchService.globalEmailWorkbenchState$.searchParams.value.listOfMailboxes.join(','),
-
                 hasAttachments: 'no',
                 replied: 'any',
                 closed: 'any',
@@ -644,8 +691,18 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
             endDate,
             subject: searchFields.subject,
             content: searchFields.content
-        });
-    };
+        })
+            .pipe(
+                map((res: any) => ({
+                    ...res,
+                    result: res.result.map((x: any) => {
+                        const data = typeof x.data === 'string' ? JSON.parse(x.data) : x;
+                        data.Skill = x.skillName || x.skillId;
+                        return data;
+                    })
+                }))
+            );
+    }
 
     /**
      * Searched through inbox emails
@@ -674,7 +731,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
             endDate = moment(endDate).format('YYYYMMDDHHmmss');
         }
 
-        return this.http
+        const response = this.http
             .post(this.data.Data.WorkbenchUrl + '/inbox/search', {
                 skills: searchFields.skills ? [searchFields.skills] : [],
                 email: searchFields.email,
@@ -716,7 +773,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                     })
                 }))
             );
-    };
+
+        response.subscribe(console.log);
+
+        return response;
+    }
 
     /**
      * Searches through draft emails
@@ -778,7 +839,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                     })
                 }))
             );
-    };
+    }
 
     /**
      * Advanced searches emails
@@ -841,7 +902,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                     })
                 }))
             );
-    };
+    }
 
     /**
      * Select emails
@@ -873,6 +934,18 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
                     this.appUiService.showSnackbar('Something went wrong, Error in email preview', 'failure');
                     this.emailSearchRes.loading = false;
                     return;
+                }
+
+                // check if attachements are there
+                if (res.Attachments && res.Attachments.length) {
+                    res.Attachments.forEach((item: any) => {
+                        // get the file name from URL
+                        let name = item.URL.split('/').pop();
+                        name = name.replace(item.SessionID, '');
+                        item.Name = name;
+                        item.Ext = name.split('.').pop();
+                        item.Icon = maticonByExtension(item.Ext);
+                    });
                 }
 
                 this.emailBodies[requestedSession] = {
@@ -1065,22 +1138,18 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, O
     }
 
     /**
-     * Uelifies the subject
-     * @param subject
-     * @returns
-     */
-    urlify(subject: string): string {
-        if (subject) {
-            return `${urlify(subject)} `;
-        }
-        return 'NA';
-    }
-
-    /**
      * Selects Emailtemplate
      */
     selectEmailTemplate(template: EmailTemplate): void {
         this.quillInstance.clipboard.dangerouslyPasteHTML((template.BodyHTML || '').replaceAll('<a', '<a target="_blank"'));
+    }
+
+    /**
+     * Opens a selected attachment file
+     * @param {String} fileUrl
+     */
+    openFile(fileUrl: string): void {
+        window.open(fileUrl);
     }
 }
 

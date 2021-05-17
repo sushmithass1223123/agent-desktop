@@ -1790,12 +1790,21 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * 
      * @param {ChatTranscripts} transcript 
      */
-    pushToTranscript(transcript: ChatTranscripts): void {
+    private pushToTranscript(transcript: ChatTranscripts): void {
         // check for message has link
-        if (transcript.message) {
+        if (transcript.message && !this.checkStringIsHTML(transcript.message)) {
             transcript.message = urlify(transcript.message);
         }
         this.chatTranscripts.push(transcript);
+    }
+
+    /**
+     * To check if the string is HTML
+     * 
+     * @param {String} str 
+     */
+    private checkStringIsHTML(str: string): boolean {
+        return /<\/?[a-z][\s\S]*>/i.test(str);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -2080,9 +2089,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // check the saved comments
         this.savedComments.forEach((item) => {
             message += `
-                 <div class="text-primary mat-title m-0">${item.Message.replace(/(?:\r\n|\r|\n)/g, '<br>')}</div>
-                 <span class="time secondary-text">${item.User}</span>,
-                 <span class="time secondary-text">${new Date(item.Time).toLocaleString()}</span>
+                 <div class="text-primary m-0 mat-body-2">${item.Message.replace(/(?:\r\n|\r|\n)/g, '<br>')}</div>
+                 <span class="time secondary-text mat-body-1">${item.User}</span>,
+                 <span class="time secondary-text mat-body-1">${new Date(item.Time).toLocaleString()}</span>
                  <br /><br />
                  `;
         });

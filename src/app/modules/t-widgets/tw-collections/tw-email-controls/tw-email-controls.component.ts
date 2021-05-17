@@ -14,7 +14,7 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE, DRAFT_REASONS, EMAIL_DRAFT_SAVE_INTERVAL, INBOX_REASONS, OUTBOX_REASONS } from 'app/constants';
 import { AgentSkillListData, InteractionComment, InteractionRef, IWidget, ResData } from 'app/interfaces';
 import { CreateEmailInput, CreateEmailOutput } from 'app/models';
-import { urlify } from 'app/utils';
+import { maticonByExtension, urlify } from 'app/utils';
 import { interval, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
 import { filter } from 'rxjs/operators';
@@ -261,6 +261,19 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 // if (this.emailBodies[requestedSession]) {
                 // } else {
                 const res = (await apiCall(requestedSession)).response;
+
+                // check if attachements are there
+                if (res.Attachments && res.Attachments.length) {
+                    res.Attachments.forEach((item: any) => {
+                        // get the file name from URL
+                        let name = item.URL.split('/').pop();
+                        name = name.replace(item.SessionID, '');
+                        item.Name = name;
+                        item.Ext = name.split('.').pop();
+                        item.Icon = maticonByExtension(item.Ext);
+                    });
+                }
+
                 this.emailBodies[requestedSession] = {
                     Body: this.domSanitizer.bypassSecurityTrustHtml(res.Body.replaceAll('<a', '<a target="_blank"')),
                     AttachmetList: res?.Attachments || []
@@ -711,13 +724,13 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 body: Body.toString(),
                 ...(EventName === 'OutgoingEmailEvent'
                     ? {
-                          inboxSessionId: InSessionId,
-                          outboxSessionId: OutSessionId
-                      }
+                        inboxSessionId: InSessionId,
+                        outboxSessionId: OutSessionId
+                    }
                     : {
-                          inboxSessionId: SessionId,
-                          outboxSessionId: OutSessionID
-                      }),
+                        inboxSessionId: SessionId,
+                        outboxSessionId: OutSessionID
+                    }),
                 routeId: '',
                 subject: Subject,
                 typeOfResponse: ''
@@ -760,13 +773,13 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                         ccList: CC || '',
                         ...(EventName === 'OutgoingEmailEvent'
                             ? {
-                                  inboxSessionId: InSessionId,
-                                  outboxSessionId: OutSessionId
-                              }
+                                inboxSessionId: InSessionId,
+                                outboxSessionId: OutSessionId
+                            }
                             : {
-                                  inboxSessionId: SessionId,
-                                  outboxSessionId: OutSessionID
-                              }),
+                                inboxSessionId: SessionId,
+                                outboxSessionId: OutSessionID
+                            }),
                         routeId: '',
                         subject: Subject,
                         toList: From,
@@ -836,13 +849,11 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Rejects email, only available for checkers
      */
     rejectEmail(evt: MatButton): void {
-        // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
         evt.disabled = true;
         const currentInteraction = this.currentInteraction;
-        // const dialogRef = this._appUIService.showCustomDialog('prompt', 'Enter the comments', 'Reject Email');
         this.rejectEmailDialogRef = this.matDialog.open(this.RejectEmailDialog, {
             panelClass: 'reject-reason-dialog',
-            maxWidth: '60%',
+            maxWidth: '450px',
             disableClose: true
         });
         this.rejectEmailDialogRef.afterClosed().subscribe(() => {
@@ -918,15 +929,20 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         // check the saved comments
         this.savedComments.forEach((item) => {
             message += `
-                 <div class="text-primary mat-title m-0">${item.Message.replace(/(?:\r\n|\r|\n)/g, '<br>')}</div>
-                 <span class="time secondary-text">${item.User}</span>,
-                 <span class="time secondary-text">${new Date(item.Time).toLocaleString()}</span>
+                 <div class="text-primary mat-body-2 m-0">${item.Message.replace(/(?:\r\n|\r|\n)/g, '<br>')}</div>
+                 <span class="time secondary-text mat-body-1">${item.User}</span>,
+                 <span class="time secondary-text mat-body-1">${new Date(item.Time).toLocaleString()}</span>
                  <br /><br />
                  `;
         });
         message += 'Add new comment:';
 
-        const dialogRef = this._appUIService.showCustomDialog('prompt', message, 'Interaction Notes', { minRows: 4 }, { minWidth: '30%' });
+        const dialogRef = this._appUIService.showCustomDialog('prompt', message, 'Interaction Notes',
+            { minRows: 4 },
+            {
+                minWidth: '30%',
+                maxWidth: '30%'
+            });
         dialogRef.afterClosed().subscribe((resp1) => {
             if (resp1) {
                 this._fuseProgressBarService.show();
