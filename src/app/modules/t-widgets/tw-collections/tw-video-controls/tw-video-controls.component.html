@@ -71,8 +71,8 @@
                 </div>
             </div>
 
-            <div fxLayout="row wrap" fxLayout="row" fxLayoutAlign=" none" class="call-controls h-48">
-                <div fxFlex="40" fxLayout="row" fxLayoutAlign="start center" class="actions">
+            <div fxLayout="row wrap" fxLayout="row" fxLayoutAlign=" none" class="call-controls">
+                <div fxFlex="40" fxLayout="row" fxLayoutAlign="start center" class="actions-1">
                     <button
                         mat-flat-button
                         mat-icon-button
@@ -108,16 +108,24 @@
                     </button>
                 </div>
 
-                <div fxFlex="60" fxLayout="row" fxLayoutAlign="start center" class="controls">
-                    <button [disabled]="!connected" *ngIf="!hold" mat-flat-button class="warning" matTooltip="Hold" (click)="holdCall()">
+                <div fxFlex="60" fxLayout="row" fxLayoutAlign="start center" class="actions-2">
+                    <button
+                        *ngIf="!hold"
+                        [disabled]="!connected"
+                        mat-flat-button
+                        mat-icon-button
+                        class="warning"
+                        matTooltip="Hold Call"
+                        (click)="holdCall()"
+                    >
                         <mat-icon>phone_paused</mat-icon>
                     </button>
 
-                    <button *ngIf="hold" mat-flat-button class="success" matTooltip="Un Hold" (click)="holdCall()">
+                    <button *ngIf="hold" mat-flat-button mat-icon-button class="success" matTooltip="Unhold Call" (click)="holdCall()">
                         <mat-icon>phone_in_talk</mat-icon>
                     </button>
 
-                    <button mat-flat-button class="danger" matTooltip="End Call" (click)="endCall()">
+                    <button mat-flat-button mat-icon-button color="warn" matTooltip="End Call" (click)="endCall()">
                         <mat-icon>call_end</mat-icon>
                     </button>
                 </div>

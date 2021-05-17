@@ -11,11 +11,12 @@ import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TMACEventService } from '@services/tmac-event.service';
-import { IGetInteractionHistory, InteractionAction, InteractionHistory, InteractionHistoryReadyEvent, SDKClient } from '@tmac/sdk';
+import { EmailInboxModel, EmailOutboxModel, IGetInteractionHistory, InteractionAction, InteractionHistory, InteractionHistoryReadyEvent, IResponseData, SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { ChatTranscripts, IWidget, ResData } from 'app/interfaces';
-import { sortBy } from 'lodash';
+import { maticonByExtension } from 'app/utils';
+import { orderBy, sortBy } from 'lodash';
 import * as moment from 'moment';
 import { from, Observable, of } from 'rxjs';
 import { catchError, filter, map, share, takeUntil, tap } from 'rxjs/operators';
@@ -513,9 +514,10 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                     acc[key] = sortBy(val, 'messageId');
                     return acc;
                 }, {});
-                // this.interactionTranscripts = JSON.stringify(transcripts);
+                // assign the transcripts
                 this.interactionTranscripts = transcripts;
-                this.customerJourneyTable.tableData.source.data = Object.values(tableData);
+                // order table data by received date
+                this.customerJourneyTable.tableData.source.data = orderBy(Object.values(tableData), ['InteractionDate'], ['desc']);
                 this.customerJourneyTable.lastId = res.response[0]?.LastID?.toString();
                 this.customerJourneyTable.loading = false;
             })
@@ -633,19 +635,33 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         if (!interaction) {
             interaction = this.customerJourneyTable.tableData.selection.selected[0];
         }
-        // const fetchFromOutbox = [...OUTBOX_REASONS, ...DRAFT_REASONS].includes(interaction.);
-        // const requestedSession = fetchFromOutbox ? interaction.OutSessionID : interaction.SessionId;
+
         this.emailThreadReq.loading = true;
         const fetchFromOutbox = interaction.Direction === 'Out';
-        const onSuccess = (res) => {
+
+        const onSuccess = (res: any) => {
+            // check if attachements are there
+            if (res.response.Attachments && res.response.Attachments.length) {
+                res.response.Attachments.forEach((item: any) => {
+                    // get the file name from URL
+                    let name = item.URL.split('/').pop();
+                    name = name.replace(item.SessionID, '');
+                    item.Name = name;
+                    item.Ext = name.split('.').pop();
+                    item.Icon = maticonByExtension(item.Ext);
+                });
+            }
+
             if (res.response.Body) {
                 res.response.Body = res.response.Body.replaceAll('<a', '<a target="_blank"');
             }
+
             this.emailThreadReq.data = res.response;
             this.emailThreadReq.loading = false;
             this.emailThreadReq.error = false;
         };
-        const onFailure = (err) => {
+
+        const onFailure = (err: any) => {
             console.error(err);
             this.emailThreadReq.loading = false;
             this.emailThreadReq.error = true;
@@ -728,5 +744,13 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     isRowSelected(row: any): boolean {
         const selected = this.customerJourneyTable.tableData.selection.isSelected(row);
         return selected;
+    }
+
+    /**
+     * Opens a selected attachment file
+     * @param {String} fileUrl
+     */
+    openFile(fileUrl: string): void {
+        window.open(fileUrl);
     }
 }

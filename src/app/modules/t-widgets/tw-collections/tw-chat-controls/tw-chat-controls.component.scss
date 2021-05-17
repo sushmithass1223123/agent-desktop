@@ -30,21 +30,6 @@ tw-chat-controls {
                 border-radius: 20px;
             }
 
-            button {
-                .mat-button-wrapper {
-                    line-height: normal;
-                }
-
-                &.more-option-button {
-                    background-color: grey;
-                    .mat-button-wrapper {
-                        padding: 0;
-                        width: 100%;
-                        height: 100%;
-                    }
-                }
-            }
-
             .chat-content {
                 display: flex;
                 position: relative;

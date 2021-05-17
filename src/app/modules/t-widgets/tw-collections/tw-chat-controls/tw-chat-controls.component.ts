@@ -2449,14 +2449,13 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             });
             if (res.response?.ResultMessage === 'Success') {
                 const widget = new TwWidgetModel('Whiteboard', 'tw-custom', 'create');
-                widget.Config.Actions = ['collapse', 'destroy'];
+                widget.Config.Actions = ['collapse', 'maximize', 'destroy'];
                 widget.Config.ViewState = 'maximize';
                 widget.Config.Anchor = true;
-                widget.Config.Position.X = 3;
-                widget.Config.Position.Y = 4;
+                widget.Config.Position.W = 800;
+                widget.Config.Position.H = 550;
                 widget.Data = {
                     AutoOpen: false,
-                    OpenInNew: false,
                     Url: `${this.data.Data.Whiteboard.Url}?sessionid=${this.sessionID}`
                 };
                 this._aotWidgetService.addWidget(widget);
@@ -2497,10 +2496,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 this.interactionOnHold.loading = true;
                 const res = await SDKClient.holdCall(this.interactionId.toString());
 
-                // this.interactionOnHold = holdState;
-                // this.status = 'hold';
-                // this.interactionOnHold.loading = false;
-
                 this._fuseProgressBarService.hide();
                 if (res.response?.ResultCode !== 0) {
                     throw new Error('Interaction id not found');
@@ -2524,10 +2519,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             if (this.interactionId) {
                 this.interactionOnHold.loading = true;
                 const res = await SDKClient.unHoldCall(this.interactionId.toString());
-
-                // this.interactionOnHold = unHoldState;
-                // this.status = 'connected';
-                // this.interactionOnHold.loading = false;
 
                 this._fuseProgressBarService.hide();
                 if (res.response?.ResultCode !== 0) {

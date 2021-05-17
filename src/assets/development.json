@@ -1154,9 +1154,9 @@
                                                             "Allowed": true,
                                                             "Blind": false,
                                                             "Source": {
-                                                                "Use": "agentId",
+                                                                "Use": "station",
                                                                 "Display": "${LastName}, ${FirstName}",
-                                                                "FreeTextAllowed": false
+                                                                "FreeTextAllowed": true
                                                             },
                                                             "AllowedStates": [],
                                                             "TeamFilter": false,
@@ -1168,7 +1168,7 @@
                                                             "Source": {
                                                                 "Use": "vdn",
                                                                 "Display": "skill",
-                                                                "FreeTextAllowed": false
+                                                                "FreeTextAllowed": true
                                                             },
                                                             "ChannelPrefix": [
                                                                 "VO"
@@ -1182,9 +1182,9 @@
                                                             "Allowed": true,
                                                             "Blind": false,
                                                             "Source": {
-                                                                "Use": "agentId",
+                                                                "Use": "station",
                                                                 "Display": "agentName",
-                                                                "FreeTextAllowed": false
+                                                                "FreeTextAllowed": true
                                                             },
                                                             "AllowedStates": [],
                                                             "TeamFilter": false,
@@ -1196,7 +1196,7 @@
                                                             "Source": {
                                                                 "Use": "vdn",
                                                                 "Display": "skill",
-                                                                "FreeTextAllowed": false
+                                                                "FreeTextAllowed": true
                                                             },
                                                             "ChannelPrefix": [
                                                                 "VO"
@@ -1225,7 +1225,7 @@
                                                         }
                                                     },
                                                     "DialpadAllowed": true,
-                                                    "InteractionCommentAllowed": true
+                                                    "InteractionCommentAllowed": false
                                                 }
                                             },
                                             {
@@ -2716,8 +2716,20 @@
                                                 "Data": {
                                                     "CustomerInfo": [
                                                         {
-                                                            "Title": "Type",
-                                                            "ValueSource": "GenericInteractionEvent.Item.Type",
+                                                            "Title": "Campaign Name",
+                                                            "ValueSource": "JsonParse(GenericInteractionEvent.Item.Data).CampaignName",
+                                                            "Unit": "",
+                                                            "DefaultValue": "NA"
+                                                        },
+                                                        {
+                                                            "Title": "Customer Name",
+                                                            "ValueSource": "JsonParse(GenericInteractionEvent.Item.Data).Name",
+                                                            "Unit": "",
+                                                            "DefaultValue": "NA"
+                                                        },
+                                                        {
+                                                            "Title": "Phone Number",
+                                                            "ValueSource": "JsonParse(GenericInteractionEvent.Item.Data).PhoneNumber",
                                                             "Unit": "",
                                                             "DefaultValue": "NA"
                                                         },
@@ -2728,14 +2740,14 @@
                                                             "DefaultValue": "NA"
                                                         },
                                                         {
-                                                            "Title": "Identifier",
-                                                            "ValueSource": "GenericInteractionEvent.Item.CustomerIdentifier",
+                                                            "Title": "Intent",
+                                                            "ValueSource": "GenericInteractionEvent.Item.Intent",
                                                             "Unit": "",
                                                             "DefaultValue": "NA"
                                                         },
                                                         {
-                                                            "Title": "Intent",
-                                                            "ValueSource": "GenericInteractionEvent.Item.Intent",
+                                                            "Title": "AutoDial",
+                                                            "ValueSource": "JsonParse(GenericInteractionEvent.Item.Data).AutoDial",
                                                             "Unit": "",
                                                             "DefaultValue": "NA"
                                                         }
