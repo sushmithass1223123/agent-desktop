@@ -2,23 +2,11 @@
 <fuse-progress-bar></fuse-progress-bar>
 <!-- / PROGRESS BAR -->
 
-<!-- VERTICAL LAYOUT 1 -->
-<ng-container *ngIf="(customFuse$ | async).layoutStyle === 'vertical-layout-1' && loaded">
-    <vertical-layout-1></vertical-layout-1>
+<!-- VERTICAL LAYOUT -->
+<ng-container *ngIf="(customFuse$ | async).layoutStyle === 'vertical-layout' && loaded">
+    <vertical-layout></vertical-layout>
 </ng-container>
-<!-- / VERTICAL LAYOUT 1 -->
-
-<!-- HORIZONTAL LAYOUT 1 -->
-<ng-container *ngIf="(customFuse$ | async).layoutStyle === 'horizontal-layout-1' && loaded">
-    <horizontal-layout-1></horizontal-layout-1>
-</ng-container>
-<!-- / HORIZONTAL LAYOUT 1 -->
-
-<!-- THEME OPTIONS PANEL -->
-<!-- <button mat-icon-button class="warn mat-elevation-z2 theme-options-button" [ngClass]="{'right-side-panel': fuseConfig.layout.sidepanel.position === 'right',
-'side-panel-hidden': fuseConfig.layout.sidepanel.hidden === true}" (click)="toggleSidebarOpen('themeOptionsPanel')">
-    <mat-icon>settings</mat-icon>
-</button> -->
+<!-- / VERTICAL LAYOUT -->
 
 <fuse-sidebar name="themeOptionsPanel" class="theme-options-sidebar" position="right" [invisibleOverlay]="true">
     <app-theme-options></app-theme-options>

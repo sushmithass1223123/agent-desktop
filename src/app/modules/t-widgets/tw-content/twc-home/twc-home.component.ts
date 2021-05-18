@@ -70,19 +70,6 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
         calculatedSpan: number;
     };
     /**
-     * fuse background
-     */
-    // customFuse: Observable<{
-    //     /**
-    //      * fuse background for content
-    //      */
-    //     content: string;
-    //     /**
-    //      * fuse background for body
-    //      */
-    //     body: string;
-    // }>;
-    /**
      * Fuse custom config
      */
     customFuse = {
@@ -102,7 +89,6 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
         public hostElement: ElementRef,
         public contentPageService: ContentPageService,
         private _dashboardService: DashboardService,
-        // private fuseConfService: FuseConfigService,
         private _fuseFacadeService: FuseFacadeService,
         private _aotWidgetService: AOTWidgetService
     ) {
@@ -120,12 +106,6 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
 
         this.maxDate = new Date();
         this.maxDate.setDate(this.maxDate.getDate() - 1);
-
-        // this.customFuse = this.fuseConfService.config.pipe(
-        //     takeUntil(this.unsubscribeAll),
-        //     filter((config: FuseConfig) => config.layout.anchorWidget.customBackgroundColor),
-        //     map((config: FuseConfig) => ({ content: config.layout.widget.contentBackground, body: config.layout.widget.bodyBackground }))
-        // );
 
         // subscribe to dashboard service
         this._dashboardService.subscribe();

@@ -2,14 +2,12 @@ import { DOCUMENT } from '@angular/common';
 import { Component, HostBinding, Inject, OnDestroy, OnInit, Renderer2, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { fuseAnimations } from '@fuse/animations';
-import { FuseNavigationService } from '@fuse/components/navigation/navigation.service';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { FuseConfig } from '@fuse/types';
 import { FuseFacadeService } from '@services/fuse-facade.service';
-import { ThemeSelector } from 'app/layout/utils/theme-selector';
+import { getFuseConfigByTheme } from 'app/utils';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-
 
 /**
  * Need more Description 
@@ -62,7 +60,6 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
      * @param {DOCUMENT} document
      * @param {FormBuilder} _formBuilder
      * @param {FuseFacadeService} _fuseFacadeService
-     * @param {FuseNavigationService} _fuseNavigationService
      * @param {FuseSidebarService} _fuseSidebarService
      * @param {Renderer2} _renderer
      */
@@ -70,7 +67,6 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
         @Inject(DOCUMENT) private document: any,
         private _formBuilder: FormBuilder,
         private _fuseFacadeService: FuseFacadeService,
-        private _fuseNavigationService: FuseNavigationService,
         private _fuseSidebarService: FuseSidebarService,
         private _renderer: Renderer2
     ) {
@@ -203,27 +199,6 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
                 // this._fuseConfigService.config = config;
                 this._fuseFacadeService.setConfig = config;
             });
-
-        // Add customize nav item that opens the bar programmatically
-        const customFunctionNavItem = {
-            id: 'custom-function',
-            title: 'Custom Function',
-            type: 'group',
-            icon: 'settings',
-            children: [
-                {
-                    id: 'customize',
-                    title: 'Customize',
-                    type: 'item',
-                    icon: 'settings',
-                    function: () => {
-                        this.toggleSidebarOpen('themeOptionsPanel');
-                    }
-                }
-            ]
-        };
-
-        this._fuseNavigationService.addNavigationItem(customFunctionNavItem, 'end');
     }
 
     /**
@@ -233,9 +208,6 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
         // Unsubscribe from all subscriptions
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
-
-        // Remove the custom function menu
-        this._fuseNavigationService.removeNavigationItem('custom-function');
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -251,60 +223,8 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
      */
     private _resetFormValues(value: string): void {
         switch (value) {
-            // Vertical Layout #1
-            case 'vertical-layout-1':
-                {
-                    this.form.patchValue({
-                        layout: {
-                            width: 'fullwidth',
-                            navbar: {
-                                background: 'purple-700',
-                                customBackgroundColor: true,
-                                folded: false,
-                                hidden: false,
-                                position: 'left',
-                                variant: 'vertical-style-1'
-                            },
-                            toolbar: {
-                                customBackgroundColor: true,
-                                background: 'grey-200',
-                                hidden: false,
-                                position: 'below-fixed'
-                            },
-                            content: {
-                                customBackgroundColor: true,
-                                background: 'grey-200'
-                            },
-                            anchorWidget: {
-                                customBackgroundColor: true,
-                                bodyBackground: 'purple-A100',
-                                headerBackground: 'grey-100',
-                                contentBackground: 'grey-100'
-                            },
-                            widget: {
-                                customBackgroundColor: true,
-                                bodyBackground: 'grey-A100',
-                                headerBackground: 'grey-100',
-                                contentBackground: 'grey-100'
-                            },
-                            footer: {
-                                customBackgroundColor: true,
-                                background: 'grey-400',
-                                hidden: true,
-                                position: 'below-static'
-                            },
-                            sidepanel: {
-                                hidden: true,
-                                position: 'right'
-                            }
-                        }
-                    });
-
-                    break;
-                }
-
-            // Horizontal Layout #1
-            case 'horizontal-layout-1':
+            // Vertical Layout
+            case 'vertical-layout':
                 {
                     this.form.patchValue({
                         layout: {
@@ -366,7 +286,7 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
      */
     private _setTheme(value: string): void {
         // get FuseConfig for the theme from selector
-        const getTheme = ThemeSelector.getFuseConfigByTheme(value, true);
+        const getTheme = getFuseConfigByTheme(value, true);
         // patch the value to the form
         this.form.patchValue(getTheme);
     }

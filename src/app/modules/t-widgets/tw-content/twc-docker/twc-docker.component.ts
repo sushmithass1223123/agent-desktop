@@ -17,6 +17,10 @@ export class TwcDockerComponent extends TWContentWrapper implements OnInit, OnDe
      */
     dockerWidgets = [];
     /**
+     * To hold AOT widgets
+     */
+    aotWidgets = [];
+    /**
      * Loaded flag
      */
     loaded: boolean;
@@ -25,10 +29,7 @@ export class TwcDockerComponent extends TWContentWrapper implements OnInit, OnDe
      */
     unload: boolean;
 
-    constructor(
-        public hostElement: ElementRef,
-        public contentPageService: ContentPageService
-    ) {
+    constructor(public hostElement: ElementRef, public contentPageService: ContentPageService) {
         super(hostElement, contentPageService);
     }
 
@@ -41,10 +42,10 @@ export class TwcDockerComponent extends TWContentWrapper implements OnInit, OnDe
 
         // get the docker content widgets
         this.dockerWidgets = this.data.Data.Widgets.Static || [];
+        this.aotWidgets = this.data.Data.Widgets.AOT || [];
 
         // to unload the page
         this.unload = this.data.Data.Unload || false;
-
     }
 
     /**
@@ -61,7 +62,7 @@ export class TwcDockerComponent extends TWContentWrapper implements OnInit, OnDe
         if (!this.loaded) {
             this.loaded = true;
         }
-    }
+    };
 
     /**
      * On page inactive callback
@@ -72,5 +73,5 @@ export class TwcDockerComponent extends TWContentWrapper implements OnInit, OnDe
                 this.loaded = false;
             }
         }
-    }
+    };
 }

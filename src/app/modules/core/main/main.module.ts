@@ -8,6 +8,7 @@ import { AgentFeaturesService } from '@services/agent-features.service';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
+import { AppThemeOptionsModule } from 'app/layout/components/theme-options/theme-options.module';
 import { LayoutModule } from 'app/layout/layout.module';
 import { MainComponent } from './main.component';
 
@@ -20,10 +21,11 @@ import { MainComponent } from './main.component';
         FuseSharedModule,
         FuseSidebarModule,
 
+        AppThemeOptionsModule,
         CommonModule,
         SharedModule,
         LayoutModule,
         TWidgetsModule
     ]
 })
-export class MainModule {}
+export class MainModule { }
