@@ -5,10 +5,9 @@ import { fuseAnimations } from '@fuse/animations';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { FuseConfig } from '@fuse/types';
 import { FuseFacadeService } from '@services/fuse-facade.service';
-import { ThemeSelector } from 'app/layout/utils/theme-selector';
+import { getFuseConfigByTheme } from 'app/utils';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-
 
 /**
  * Need more Description 
@@ -287,7 +286,7 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
      */
     private _setTheme(value: string): void {
         // get FuseConfig for the theme from selector
-        const getTheme = ThemeSelector.getFuseConfigByTheme(value, true);
+        const getTheme = getFuseConfigByTheme(value, true);
         // patch the value to the form
         this.form.patchValue(getTheme);
     }

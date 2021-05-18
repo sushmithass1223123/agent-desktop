@@ -2,7 +2,7 @@ import { DOCUMENT } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { IResponse, SDKClient, TEnums, TUtils } from '@tmac/sdk';
-import { ThemeSelector } from 'app/layout/utils/theme-selector';
+import { getFuseConfigByTheme } from 'app/utils';
 import { environment } from 'environments/environment';
 import { merge } from 'lodash';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
@@ -306,7 +306,7 @@ export class AppDataService {
         const webFont = this._configSubject.getValue().AppConfigs.Font || 'wf-muli';
         const flatTheme = this._configSubject.getValue().AppConfigs.FlatTheme ?? false;
         if (themeName) {
-            const theme = ThemeSelector.getFuseConfigByTheme(themeName, false);
+            const theme = getFuseConfigByTheme(themeName, false);
             this._fuseFacadeService.setConfig = {
                 ...theme,
                 flatTheme,
