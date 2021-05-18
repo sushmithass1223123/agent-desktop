@@ -104,3 +104,7 @@ button:focus {
         @apply twd-w-6;
     }
 }
+
+.mat-chip.twd-cursor-pointer {
+    cursor: pointer !important;
+}

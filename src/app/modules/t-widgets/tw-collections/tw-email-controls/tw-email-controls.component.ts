@@ -623,7 +623,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     showReplyEditor(): void {
         // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
         const currentInteraction = this.currentInteraction;
-        const { Body, Subject, From, To, CreatedTime, RejectReason, RouteReason } = currentInteraction;
+        const { AttachmetList, Body, Subject, From, To, CreatedTime, RejectReason, RouteReason } = currentInteraction;
         const preBody =
             RejectReason || this.DraftReasons.includes(RouteReason)
                 ? ''
@@ -637,6 +637,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             <div> <strong> Subject: </strong> <span> ${Subject} </span> </div>
         </p>
         <br />`;
+        const Files = AttachmetList?.map((x, i) => ({ ...x, Id: `${x.SessionID}_${i}` })) || [];
         this.replyInfo = {
             BCC: '',
             CC: '',
@@ -649,7 +650,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 ]
             }`,
             Subject: `RE: ${Subject}`,
-            Files: []
+            Files
         };
         this.saveEmailAsDraft();
     }
@@ -660,7 +661,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     showReplyAllEmailEditor(): void {
         // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
         const currentInteraction = this.currentInteraction;
-        const { Body, Subject, From, RejectReason, CCList, CreatedTime, RouteReason, To, Files } = currentInteraction;
+        const { Body, Subject, From, RejectReason, CCList, CreatedTime, RouteReason, To, AttachmetList } = currentInteraction;
+        const Files = AttachmetList?.map((x, i) => ({ ...x, Id: `${x.SessionID}_${i}` })) || [];
         const preBody =
             RejectReason || this.DraftReasons.includes(RouteReason)
                 ? ''
@@ -693,7 +695,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     showForwardEmailEditor(): void {
         // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
         const currentInteraction = this.currentInteraction;
-        const { Subject, Body, From, RejectReason, CreatedTime, To, RouteReason } = currentInteraction;
+        const { AttachmetList, Subject, Body, From, RejectReason, CreatedTime, To, RouteReason } = currentInteraction;
         const preBody =
             RejectReason || this.DraftReasons.includes(RouteReason)
                 ? ''
@@ -707,6 +709,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             <div> <strong> Subject: </strong> <span> ${Subject} </span> </div>
         </p>
         <br />`;
+        const Files = AttachmetList?.map((x, i) => ({ ...x, Id: `${x.SessionID}_${i}` })) || [];
         this.replyInfo = {
             BCC: '',
             CC: '',
@@ -715,7 +718,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 ${preBody}
                 ${this.domSanitizer.bypassSecurityTrustHtml(Body)['changingThisBreaksApplicationSecurity']['changingThisBreaksApplicationSecurity']}`,
             Subject: `FW: ${Subject}`,
-            Files: []
+            Files
         };
         this.saveEmailAsDraft();
     }
