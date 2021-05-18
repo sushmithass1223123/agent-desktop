@@ -35,69 +35,102 @@
                 [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
             >
                 <div class="twd-flex twd-gap-3 twd-pb-2 twd-justify-end">
-                    <button
-                        *ngIf="data.Data?.InteractionCommentAllowed && (replyInfo || OutboxReasons.includes(currentInteraction.RouteReason))"
-                        mat-raised-button
-                        class="border-radius-20"
-                        matTooltip="Interaction Comment"
-                        (click)="saveInteractionComments()"
-                    >
-                        <mat-icon>comment</mat-icon>
-                    </button>
-
                     <ng-container *ngIf="currentInteraction.EventName === 'OutgoingEmailEvent'">
-                        <button mat-raised-button class="border-radius-20" color="warn" (click)="closeInteraction($event)" matTooltip="Close">
-                            Close
-                        </button>
-
                         <button mat-raised-button class="border-radius-20" matTooltip="Interaction Comment" (click)="saveInteractionComments()">
                             <mat-icon>comment</mat-icon>
                         </button>
-                    </ng-container>
-
-                    <ng-container *ngIf="OutboxReasons.includes(currentInteraction.RouteReason)">
-                        <button mat-raised-button class="border-radius-20" color="warn" (click)="rejectEmail(rejectEmailBtn)" #rejectEmailBtn>
-                            Reject
-                        </button>
-
-                        <button mat-raised-button class="border-radius-20" (click)="sendEmailAsChecker(approveBtn)" color="primary" #approveBtn>
-                            Approve
-                        </button>
-                    </ng-container>
-
-                    <ng-container
-                        *ngIf="InboxReasons.includes(currentInteraction.RouteReason) || DraftReasons.includes(currentInteraction.RouteReason)"
-                    >
-                        <button *ngIf="replyInfo" mat-raised-button class="border-radius-20" (click)="saveEmailAsDraft(); closeInteraction($event)">
-                            Save As Draft
-                        </button>
-
                         <button
-                            *ngIf="replyInfo"
                             mat-raised-button
                             class="border-radius-20"
-                            color="accent"
-                            (click)="closeEditor()"
-                            matTooltip="Close Editor"
+                            color="warn"
+                            (click)="closeInteraction(closeBtn)"
+                            #closeBtn
+                            matTooltip="Close"
                         >
-                            Cancel
+                            Close
                         </button>
-
                         <button
                             *ngIf="replyInfo"
                             mat-raised-button
                             class="border-radius-20"
                             color="primary"
-                            (click)="sendEmailAsMaker()"
+                            #sendEmailBtn
+                            (click)="sendEmailAsMaker(null, sendEmailBtn)"
                             matTooltip="Send Email"
+                            [disabled]="sendingEmailAsMaker"
                         >
                             Send
                         </button>
                     </ng-container>
+
+                    <ng-container *ngIf="currentInteraction.EventName === 'IncomingEmailEvent'">
+                        <button
+                            *ngIf="data.Data?.InteractionCommentAllowed && (replyInfo || OutboxReasons.includes(currentInteraction.RouteReason))"
+                            mat-raised-button
+                            class="border-radius-20"
+                            matTooltip="Interaction Comment"
+                            (click)="saveInteractionComments()"
+                        >
+                            <mat-icon>comment</mat-icon>
+                        </button>
+
+                        <ng-container *ngIf="OutboxReasons.includes(currentInteraction.RouteReason)">
+                            <button mat-raised-button class="border-radius-20" color="warn" (click)="rejectEmail(rejectBtn)" #rejectBtn>
+                                Reject
+                            </button>
+                            <button mat-raised-button class="border-radius-20" (click)="sendEmailAsChecker(approveBtn)" #approveBtn color="primary">
+                                Approve
+                            </button>
+                        </ng-container>
+
+                        <ng-container
+                            *ngIf="InboxReasons.includes(currentInteraction.RouteReason) || DraftReasons.includes(currentInteraction.RouteReason)"
+                        >
+                            <button
+                                *ngIf="replyInfo"
+                                mat-raised-button
+                                class="border-radius-20"
+                                (click)="saveEmailAsDraft(); closeInteraction(saveAsDraft)"
+                                #saveAsDraft
+                            >
+                                Save As Draft
+                            </button>
+
+                            <button
+                                *ngIf="replyInfo"
+                                mat-raised-button
+                                class="border-radius-20"
+                                color="accent"
+                                (click)="closeEditor()"
+                                matTooltip="Close Editor"
+                            >
+                                Cancel
+                            </button>
+
+                            <button
+                                *ngIf="replyInfo"
+                                mat-raised-button
+                                class="border-radius-20"
+                                color="primary"
+                                (click)="sendEmailAsMaker(null, sendEmailBtn)"
+                                matTooltip="Send Email"
+                                #sendEmailBtn
+                                [disabled]="sendingEmailAsMaker"
+                            >
+                                Send
+                            </button>
+                        </ng-container>
+                    </ng-container>
                 </div>
 
                 <div *ngIf="replyInfo" class="twd-flex-1 twd-z-10">
-                    <create-email [emailInfo]="replyInfo" #createEmailRef (sendEmail)="sendEmailAsMaker($event)"></create-email>
+                    <create-email
+                        [emailInfo]="replyInfo"
+                        #createEmailRef
+                        (sendEmail)="sendEmailAsMaker($event, sendEmailBtn)"
+                        [sendDisabled]="sendingEmailAsMaker"
+                    >
+                    </create-email>
                 </div>
 
                 <div *ngIf="!replyInfo" class="twd-flex-1 twd-h-full twd-z-10 twd-relative">
@@ -317,7 +350,12 @@
             <p class="mat-title">Reject Email</p>
             <form (ngSubmit)="rejectEmailDialogRef.close()" novalidate fxLayout="row wrap" fxLayoutAlign="end" fxLayoutGap="20px">
                 <mat-form-field fxFlex="100" class="form-field custom with-bg" appearance="outline">
-                    <mat-select placeholder="Select Reject Reason" name="reason" multiple [(ngModel)]="rejectReason.reasonTags">
+                    <mat-select
+                        [placeholder]="rejectReason.allReasons?.length ? 'Select Reject Reason' : 'No Reject Reasons available'"
+                        name="reason"
+                        multiple
+                        [(ngModel)]="rejectReason.reasonTags"
+                    >
                         <mat-select-trigger>
                             {{ rejectReason.reasonTags ? rejectReason.reasonTags[0] : '' }}
                             <span *ngIf="rejectReason.reasonTags?.length > 1">

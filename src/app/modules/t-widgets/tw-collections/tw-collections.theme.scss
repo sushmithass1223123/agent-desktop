@@ -272,11 +272,11 @@
                         background-color: #fafafa;
                     }
 
-                    .tw-list-item {
-                        &:hover {
-                            background-color: map-get($background, hover);
-                        }
-                    }
+                    // .tw-list-item {
+                    //     &:hover {
+                    //         background-color: map-get($background, hover);
+                    //     }
+                    // }
                 }
 
                 .email-open {

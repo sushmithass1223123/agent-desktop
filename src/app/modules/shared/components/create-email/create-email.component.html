@@ -130,7 +130,7 @@
             <input #attachFileRef type="file" (click)="$event.target.value = null" (change)="onFileInput($event)" style="display: none" />
         </button>
         <email-template-selector (selectTemplate)="selectTemplate($event)"></email-template-selector>
-        <button mat-raised-button mat-icon-button color="primary" class="mx-4" matTooltip="Send Email" (click)="triggerEmailSend()">
+        <button mat-raised-button mat-icon-button color="primary" class="mx-4" matTooltip="Send Email" [disabled]="sendDisabled"  (click)="triggerEmailSend()">
             <mat-icon>send</mat-icon>
         </button>
     </div>

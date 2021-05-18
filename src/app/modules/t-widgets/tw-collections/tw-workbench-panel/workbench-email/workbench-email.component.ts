@@ -14,7 +14,7 @@ import { FuseFacadeService } from '@services/fuse-facade.service';
 import { EmailTemplate, SDKClient } from '@tmac/sdk';
 import { COMMON_ERR_MESSAGE, DRAFT_REASONS, INBOX_REASONS, OUTBOX_REASONS, QUILL_EDITOR_CONFIG } from 'app/constants';
 import { AgentSkillListData, IWidget, ResData } from 'app/interfaces';
-import { formatJsonData, maticonByExtension, urlify } from 'app/utils';
+import { formatJsonData, maticonByExtension } from 'app/utils';
 import { groupBy, sortBy } from 'lodash';
 import * as moment from 'moment';
 import Quill from 'quill';
@@ -22,6 +22,7 @@ import { Observable, Subscription, timer } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
 import { TwWorkBenchService } from '../tw-workbench-panel.service';
 
+type ComponentActions = 'emails/loading' | 'emails/success' | 'emails/failure' | 'emails/failure/custom-message';
 type AvailableTabs = 'inbox' | 'sentitem' | 'queue' | 'draft';
 type EmailPullItem = {
     /**
@@ -128,13 +129,13 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
          */
         selected: any;
     }> = {
-            error: false,
-            loading: false,
-            msg: '',
-            data: {
-                selected: false
-            }
-        };
+        error: false,
+        loading: false,
+        msg: '',
+        data: {
+            selected: false
+        }
+    };
     /**
      * Global search form control
      */
@@ -209,6 +210,12 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     @ViewChild('emailWorkBench')
     emailWorkBench: ElementRef<HTMLDivElement>;
 
+    polling = {
+        allowed: false,
+        enabled: true,
+        active: false
+    };
+
     /**
      * Constructor
      */
@@ -265,11 +272,14 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         const observer = new IntersectionObserver((entries) => {
             entries.map((entry) => {
                 if (entry.isIntersecting) {
-                    // TODO:: constant polling
-                    // this.startPolling();
-                    this.doAdvancedSearch();
+                    this.polling.allowed = this.polling.enabled = this.channelConf.Config.SearchPollingInterval > 0;
+                    if (this.channelConf.Config.SearchPollingInterval) {
+                        this.startPolling();
+                    } else {
+                        this.doAdvancedSearch();
+                    }
                 } else {
-                    // this.stopPolling();
+                    this.stopPolling();
                 }
             });
         });
@@ -293,9 +303,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * To start polling
      */
     private startPolling(): void {
-        this.polling$ = timer(0, this.channelConf.Config.SearchPollingInterval || 5000)
+        this.polling$ = timer(0, this.channelConf.Config.SearchPollingInterval)
+            .pipe(filter(() => this.polling.enabled))
             .subscribe(() => {
-                this.doAdvancedSearch();
+                this.doAdvancedSearch(true);
             });
     }
 
@@ -376,6 +387,17 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             });
         }
         this.dataSource.data = nodes;
+        // const selected = this.treeControl.expansionModel.selected?.map((n) => n.uiId) || [];
+        // this.treeControl.expandAll();
+        // setTimeout(() => {
+        //     if (selected.length) {
+        //         this.treeControl.dataNodes.forEach((n) => {
+        //             if (selected.includes(n.uiId)) {
+        //                 this.treeControl.expand(n);
+        //             }
+        //         });
+        //     }
+        // }, 0);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -393,21 +415,16 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * Advanced Search
      * @method advancedSearch
      */
-    doAdvancedSearch(): void {
+    doAdvancedSearch(silent = false): void {
         try {
             if (!this.data.Data.WorkbenchUrl) {
-                this.emailSearchRes = {
-                    loading: false,
-                    error: true,
-                    msg: 'WorkbenchUrl not provided',
-                    data: { selected: this.emailSearchRes.data.selected || false }
-                };
+                this.setComponentState('emails/failure/custom-message', { msg: 'WorkbenchUrl not provided', silent });
                 return;
             }
 
-            this.emailSearchRes.loading = true;
-            this.emailSearchRes.error = false;
-            this.showAdvancedSearchForm = false;
+            if (!silent) {
+                this.setComponentState('emails/loading', { silent });
+            }
 
             this.searchReqObs$[this.currentTab]().subscribe(
                 (res: any) => {
@@ -417,7 +434,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                             if (x.addedTime) {
                                 mailRes.addedTime = x.addedTime;
                             }
-                            mailRes.uiId = `${idx}_${Date.now()}`;
+                            // mailRes.uiId = `${idx}_${Date.now()}`;
+                            if (!mailRes.uiId) {
+                                mailRes.uiId = mailRes.SessionId;
+                            }
                             mailRes.Subject = this.domSanitizer.bypassSecurityTrustHtml(
                                 (mailRes.Subject || '').replaceAll('<a', '<a target="_blank"')
                             )['changingThisBreaksApplicationSecurity'];
@@ -427,59 +447,34 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                             return mailRes;
                         });
                         this.sortEmailsByKey(mails);
-                        this.emailSearchRes = {
-                            loading: false,
-                            error: false,
-                            msg: '',
-                            data: { selected: this.emailSearchRes.data.selected || false }
-                        };
+                        this.setComponentState('emails/success', { silent });
                     } else {
-                        this.emailSearchRes = {
-                            loading: false,
-                            error: true,
-                            msg: COMMON_ERR_MESSAGE,
-                            data: { selected: this.emailSearchRes.data.selected || false }
-                        };
+                        this.setComponentState('emails/failure', { silent });
                     }
                 },
                 () => {
-                    this.emailSearchRes = {
-                        loading: false,
-                        error: true,
-                        msg: COMMON_ERR_MESSAGE,
-                        data: { selected: this.emailSearchRes.data.selected || false }
-                    };
+                    this.setComponentState('emails/failure', { silent });
                 }
             );
         } catch (e) {
             console.error(e);
-            this.emailSearchRes = {
-                loading: false,
-                error: true,
-                msg: COMMON_ERR_MESSAGE,
-                data: { selected: this.emailSearchRes.data.selected || false }
-            };
+            this.setComponentState('emails/failure', { silent });
         }
     }
 
     /**
      * To do global search
      */
-    doGlobalSearch(): void {
+    doGlobalSearch(silent = false): void {
         try {
             if (!this.data.Data.WorkbenchUrl) {
-                this.emailSearchRes = {
-                    loading: false,
-                    error: true,
-                    msg: 'WorkbenchUrl not provided',
-                    data: { selected: this.emailSearchRes.data.selected || false }
-                };
+                this.setComponentState('emails/failure/custom-message', { msg: 'WorkbenchUrl not provided', silent });
                 return;
             }
 
-            this.emailSearchRes.loading = true;
-            this.emailSearchRes.error = false;
-            this.showAdvancedSearchForm = false;
+            if (!silent) {
+                this.setComponentState('emails/loading', { silent });
+            }
 
             const today = new Date();
             const yesterday = new Date();
@@ -521,38 +516,18 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                             return mailRes;
                         });
                         this.sortEmailsByKey(mails);
-                        this.emailSearchRes = {
-                            loading: false,
-                            error: false,
-                            msg: '',
-                            data: { selected: this.emailSearchRes.data.selected || false }
-                        };
+                        this.setComponentState('emails/success', { silent });
                     } else {
-                        this.emailSearchRes = {
-                            loading: false,
-                            error: true,
-                            msg: COMMON_ERR_MESSAGE,
-                            data: { selected: this.emailSearchRes.data.selected || false }
-                        };
+                        this.setComponentState('emails/failure', { silent });
                     }
                 },
                 () => {
-                    this.emailSearchRes = {
-                        loading: false,
-                        error: true,
-                        msg: COMMON_ERR_MESSAGE,
-                        data: { selected: this.emailSearchRes.data.selected || false }
-                    };
+                    this.setComponentState('emails/failure', { silent });
                 }
             );
         } catch (e) {
             console.error(e);
-            this.emailSearchRes = {
-                loading: false,
-                error: true,
-                msg: COMMON_ERR_MESSAGE,
-                data: { selected: this.emailSearchRes.data.selected || false }
-            };
+            this.setComponentState('emails/failure', { silent });
         }
     }
 
@@ -573,7 +548,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     source: 'agent-desktop'
                 });
             } else if (this.currentTab === 'draft') {
-                await SDKClient.deleteBulkEmailsInDraft(sessionIds.join(','));
+                const uiIds = emails.map((x) => x.uiId) || [];
+                await SDKClient.deleteBulkEmailsInDraft(uiIds.join(','));
             }
             this.selectedMails = [];
             const selectedEmail = this.emailSearchRes.data.selected;
@@ -660,8 +636,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * Searched through queued emails
      */
     advanceSearchQueuedEmail = (searchParams?: any): Observable<any> => {
-        // const { agentId } = SDKClient.getAgentData();
-
         const searchFields = searchParams || this.advancedSearchForm.value;
 
         let startDate: any = '';
@@ -683,15 +657,16 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             endDate = moment(endDate).format('YYYYMMDDHHmmss');
         }
 
-        return this.http.post(this.data.Data.WorkbenchUrl + '/queue/search', {
-            skills: searchFields.skills ? [searchFields.skills] : [],
-            email: searchFields.email,
-            agent: searchFields.agent || '',
-            startDate,
-            endDate,
-            subject: searchFields.subject,
-            content: searchFields.content
-        })
+        return this.http
+            .post(this.data.Data.WorkbenchUrl + '/queue/search', {
+                skills: searchFields.skills ? [searchFields.skills] : [],
+                email: searchFields.email,
+                agent: searchFields.agent || '',
+                startDate,
+                endDate,
+                subject: searchFields.subject,
+                content: searchFields.content
+            })
             .pipe(
                 map((res: any) => ({
                     ...res,
@@ -702,7 +677,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     })
                 }))
             );
-    }
+    };
 
     /**
      * Searched through inbox emails
@@ -774,10 +749,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 }))
             );
 
-        response.subscribe(console.log);
-
         return response;
-    }
+    };
 
     /**
      * Searches through draft emails
@@ -834,12 +807,13 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                             From: x.from,
                             addedTime,
                             SessionId: x.sessionID,
+                            uiId: `${x.inSessionID}|${x.sessionID}`,
                             RouteId: x.routeId
                         };
                     })
                 }))
             );
-    }
+    };
 
     /**
      * Advanced searches emails
@@ -902,7 +876,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     })
                 }))
             );
-    }
+    };
 
     /**
      * Select emails
@@ -920,7 +894,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     async openEmail(email: any): Promise<void> {
         try {
-            this.emailSearchRes.loading = true;
+            this.setComponentState('emails/loading');
             // const fetchFromOutbox = [...this.OutboxReasons, ...this.DraftReasons].includes(email.RouteReason);
             const fetchFromOutbox = this.currentTab === 'draft' || this.currentTab === 'sentitem';
             const requestedSession = fetchFromOutbox
@@ -931,8 +905,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     .response;
                 // check the response
                 if (!res) {
-                    this.appUiService.showSnackbar('Something went wrong, Error in email preview', 'failure');
-                    this.emailSearchRes.loading = false;
+                    this.setComponentState('emails/failure/custom-message', { msg: 'Something went wrong, Error in email preview', snackbar: true });
                     return;
                 }
 
@@ -959,21 +932,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 };
             }
             this.emailSearchRes.data.selected = { ...email, ...this.emailBodies[requestedSession], currentTab: this.currentTab };
-            this.emailSearchRes.loading = false;
-
-            // setTimeout(() => {
-            //     const openEmailBodyRef = document.getElementById('openEmailRef');
-            //     openEmailBodyRef.onscroll = (evt) => {
-            //         if (openEmailBodyRef.scrollTop > 50) {
-            //             this.minimizeSubject = true;
-            //         } else {
-            //             this.minimizeSubject = false;
-            //         }
-            //     };
-            // }, 100);
+            this.setComponentState('emails/success');
         } catch (e) {
             console.error(e);
-            this.emailSearchRes.loading = false;
+            this.setComponentState('emails/failure/custom-message', { msg: 'Something went wrong, Error in email preview', snackbar: true });
         }
     }
 
@@ -1151,6 +1113,59 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     openFile(fileUrl: string): void {
         window.open(fileUrl);
     }
+
+    setComponentState(action: ComponentActions, payload?: any): void {
+        switch (action) {
+            case 'emails/loading':
+                this.emailSearchRes.loading = true;
+                this.emailSearchRes.error = false;
+                break;
+
+            case 'emails/success':
+                this.emailSearchRes.loading = false;
+                this.emailSearchRes.error = false;
+                break;
+
+            case 'emails/failure':
+                this.emailSearchRes.loading = false;
+                this.emailSearchRes.error = true;
+                this.emailSearchRes.msg = COMMON_ERR_MESSAGE;
+                break;
+
+            case 'emails/failure/custom-message':
+                this.emailSearchRes.loading = false;
+                if (payload.snackbar) {
+                    this.appUiService.showSnackbar(payload.msg, 'failure');
+                } else {
+                    this.emailSearchRes.msg = payload.msg;
+                    this.emailSearchRes.error = true;
+                }
+                break;
+
+            default:
+                break;
+        }
+        if (!payload?.silent) {
+            this.showAdvancedSearchForm = false;
+        } else {
+            this.polling.active = !this.polling.active;
+        }
+    }
+
+    /**
+     *
+     * @param _index
+     * @param email
+     * @returns
+     */
+    trackBy = (_index: number, email: any): string => {
+        const nodes = this.getAllEmailNodes();
+        const index = nodes.reduce((acc, curr) => {
+            acc += curr.uiId;
+            return acc;
+        }, '');
+        return index;
+    };
 }
 
 // for more info visit - https://angular.io/api/core

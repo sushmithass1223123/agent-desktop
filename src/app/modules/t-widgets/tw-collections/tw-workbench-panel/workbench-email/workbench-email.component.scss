@@ -1,4 +1,8 @@
 workbench-email {
+    .polling-btn.enabled {
+        background: lightgrey !important;
+    }
+
     mat-chip {
         padding: 25px 10px !important;
     }

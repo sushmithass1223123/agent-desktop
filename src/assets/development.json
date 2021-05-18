@@ -3055,7 +3055,8 @@
                                                             ],
                                                             "Columns": []
                                                         }
-                                                    }
+                                                    },
+                                                    "SearchPollingInterval": 5000
                                                 }
                                             },
                                             {
