@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
-import { FuseProgressBarModule, FuseSidebarModule, FuseThemeOptionsModule } from '@fuse/components';
+import { FuseProgressBarModule, FuseSidebarModule } from '@fuse/components';
 import { FuseModule } from '@fuse/fuse.module';
 import { FuseSharedModule } from '@fuse/shared.module';
 import { CoreModule } from '@modules/core/core.module';
@@ -28,7 +28,6 @@ import { AppRoutingModule } from './app-routing.module';
         BrowserAnimationsModule,
         HttpClientModule,
         AppRoutingModule,
-
         TranslateModule.forRoot(),
 
         // Fuse modules
@@ -36,7 +35,6 @@ import { AppRoutingModule } from './app-routing.module';
         FuseProgressBarModule,
         FuseSharedModule,
         FuseSidebarModule,
-        FuseThemeOptionsModule,
 
         // App modules
         CoreModule,

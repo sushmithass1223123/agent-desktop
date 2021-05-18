@@ -1,9 +1,3 @@
-/**
- * String.prototype.replaceAll() polyfill
- * https://gomakethings.com/how-to-replace-a-section-of-a-string-with-another-one-with-vanilla-js/
- * @author Chris Ferdinandi
- * @license MIT
- */
 if (!String.prototype.replaceAll) {
     String.prototype.replaceAll = function (str, newStr) {
         // If a regex pattern

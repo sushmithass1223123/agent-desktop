@@ -3253,38 +3253,6 @@
                                         "Url": "https://dice.tetherfi.cloud/tmac_client/test.html",
                                         "AutoRefresh": 0
                                     }
-                                },
-                                {
-                                    "Name": "Test Page 2",
-                                    "Description": "",
-                                    "Key": "TestPage2",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "widgets",
-                                        "Class": "mx-cover",
-                                        "Position": {
-                                            "X": 3,
-                                            "Y": 3
-                                        },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": false,
-                                        "Url": "https://dice.tetherfi.cloud/tmac_client/test.html",
-                                        "AutoRefresh": 0
-                                    }
                                 }
                             ]
                         }

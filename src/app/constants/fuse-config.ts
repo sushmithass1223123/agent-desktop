@@ -15,7 +15,7 @@ export const fuseConfig: FuseConfig = {
     flatTheme: false,
     customScrollbars: true,
     layout: {
-        style: 'vertical-layout-1',
+        style: 'vertical-layout',
         width: 'fullwidth',
         navbar: {
             customBackgroundColor: false,

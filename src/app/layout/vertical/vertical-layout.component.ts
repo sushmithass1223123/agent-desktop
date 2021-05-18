@@ -1,6 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseFacadeService } from '@services/fuse-facade.service';
-import { navigation } from 'app/navigation/navigation';
 import { cloneDeep } from 'lodash';
 import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -11,12 +10,12 @@ import { map } from 'rxjs/operators';
  * Layout 1 component
  */
 @Component({
-    selector: 'vertical-layout-1',
-    templateUrl: './layout-1.component.html',
-    styleUrls: ['./layout-1.component.scss'],
+    selector: 'vertical-layout',
+    templateUrl: './vertical-layout.component.html',
+    styleUrls: ['./vertical-layout.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class VerticalLayout1Component implements OnInit, OnDestroy {
+export class VerticalLayoutComponent implements OnInit, OnDestroy {
     // fuseConfig: any;
 
     /**
@@ -71,9 +70,6 @@ export class VerticalLayout1Component implements OnInit, OnDestroy {
         // private _fuseConfigService: FuseConfigService
         private _fuseFacadeService: FuseFacadeService
     ) {
-        // Set the defaults
-        this.navigation = navigation;
-
         // Set the private defaults
         this._unsubscribeAll = new Subject();
     }

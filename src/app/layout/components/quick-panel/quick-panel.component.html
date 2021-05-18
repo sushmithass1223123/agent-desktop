@@ -1,4 +1,4 @@
-<div fxLayout="column" fxFlex class="custom-scroll-adjust">
+<div class="custom-scroll-adjust twd-flex twd-flex-1 twd-flex-col">
     <mat-list class="date" cdkFocusRegionStart>
         <h3 matSubheader cdkFocusInit>
             <span>Today</span>
@@ -8,7 +8,7 @@
             <div class="mb-12">
                 {{ date | date: 'EEEE' }}
             </div>
-            <div fxLayout="row" fxLayoutAlign="start start">
+            <div class="twd-flex twd-flex-row twd-items-start twd-justify-start">
                 <span> {{ date | date: 'd' }}</span>
                 <span class="mat-subheading-1">th</span>
                 <span> {{ date | date: 'MMMM' }}</span>
@@ -51,8 +51,7 @@
 
         <mat-list-item>
             <mat-slide-toggle
-                fxFlex
-                class="mat-primary"
+                class="mat-primary twd-flex-1"
                 [(ngModel)]="settings.desktopAlert"
                 (change)="updateSettings('desktopAlert', $event.checked)"
                 aria-label="Notifications"
@@ -64,8 +63,7 @@
 
         <mat-list-item>
             <mat-slide-toggle
-                fxFlex
-                class="mat-primary"
+                class="mat-primary twd-flex-1"
                 [(ngModel)]="settings.sounds"
                 (change)="updateSettings('sounds', $event.checked)"
                 aria-label="Notifications"
@@ -119,18 +117,22 @@
                         <mat-card-header>
                             <mat-card-title>Add New Link</mat-card-title>
                         </mat-card-header>
-                        <mat-card-content fxLayout="column" fxLayoutAlign="start none">
-                            <div fxLayout="row" fxLayoutAlign="start center">
+                        <mat-card-content>
+                            <div class="twd-flex twd-flex-row twd-justify-start twd-items-center">
                                 <div class="text-bold w-80">Name:</div>
-                                <mat-form-field fxFlex appearance="outline" class="custom with-bg with-border">
+                                <mat-form-field appearance="outline" class="custom with-bg with-border twd-flex-1">
                                     <input matInput required placeholder="Name" [(ngModel)]="linkName" />
                                     <mat-error> Link name is required </mat-error>
                                 </mat-form-field>
                             </div>
 
-                            <div fxLayout="row" fxLayoutAlign="start center" class="mt-4">
+                            <div class="twd-flex twd-flex-row twd-justify-start twd-items-center mt-4">
                                 <div class="text-bold w-80">URL:</div>
-                                <mat-form-field fxFlex floatLabel="never" appearance="standard" class="link-txt mb-8 border-radius-20 border-xs-info">
+                                <mat-form-field
+                                    floatLabel="never"
+                                    appearance="standard"
+                                    class="link-txt mb-8 border-radius-20 border-xs-info twd-flex-1"
+                                >
                                     <textarea
                                         [(ngModel)]="newLink"
                                         matInput
@@ -142,10 +144,10 @@
                                 </mat-form-field>
                             </div>
                         </mat-card-content>
-                        <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
+                        <div class="twd-flex twd-flex-row twd-justify-end twd-items-center">
+                            <button mat-button class="mr-8" color="warn" (click)="openAddLink = false">CANCEL</button>
                             <button mat-raised-button color="primary" (click)="addNewLink()" [disabled]="!linkName && !newLink">ADD</button>
-                            <button mat-button color="warn" (click)="openAddLink = false">CANCEL</button>
-                        </mat-card-actions>
+                        </div>
                     </mat-card>
                 </ng-template>
             </button>

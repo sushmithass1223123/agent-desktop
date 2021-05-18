@@ -27,11 +27,11 @@
         },
         {
 			"type": "npm",
-			"script": "build:prod:extra",
+			"script": "build:prod:stats",
 			"group": "build",
 			"problemMatcher": [],
-			"label": "ng: build:prod:extra",
-			"detail": "ng build --prod --baseHref=/agent-desktop/ --extra-webpack-config webpack.extra.js"
-		}
+			"label": "ng: build:prod:stats",
+			"detail": "ng build --prod --baseHref=/agent-desktop/ --stats-json"
+        }
     ]
 }
