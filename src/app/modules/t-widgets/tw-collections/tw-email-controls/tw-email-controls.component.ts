@@ -193,6 +193,11 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     showAttachments = false;
 
+    /**
+     * Flag to indicate while sending email
+     */
+    sendingEmailAsMaker = false;
+
     constructor(
         private _interactionManagerService: InteractionManagerService,
         private domSanitizer: DomSanitizer,
@@ -504,7 +509,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             })
                 .then(() => {
                     this._fuseProgressBarService.hide();
-                    this.closeInteraction(btn);
+                    this.closeInteraction(btn, true);
                 })
                 .catch(() => {
                     this._fuseProgressBarService.hide();
@@ -512,7 +517,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 })
                 .finally(() => {
                     if (btn) {
-                        btn.disabled = true;
+                        btn.disabled = false;
                     }
                 });
         };
@@ -526,7 +531,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                     closeApiCall();
                 } else {
                     if (btn) {
-                        btn.disabled = true;
+                        btn.disabled = false;
                     }
                 }
             });
@@ -537,36 +542,52 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Closes current interaction
      * @param {MatButton} btn
      */
-    closeInteraction(btn: MatButton): void {
-        // show the progress bar
-        this._fuseProgressBarService.show();
+    closeInteraction(btn?: MatButton, force = false): void {
+        const closeApiCall = () => {
+            // show the progress bar
+            this._fuseProgressBarService.show();
+            SDKClient.closeInteraction(this.interactionId.toString(), null)
+                .then((dt: IResponse) => {
+                    // hide the progress bar
+                    this._fuseProgressBarService.hide();
+                    // check the response
+                    if (dt.response && dt.response.ResultCode === 0) {
+                        this._appUIService.showSnackbar('Interaction closed sucessfully');
+                        // remove the interaction reference
+                        this._interactionManagerService.removeInteraction(dt.response.InteractionID);
+                    } else {
+                        this._appUIService.showSnackbar('Close interaction failed', 'failure');
+                    }
+                })
+                .catch(() => {
+                    this._fuseProgressBarService.hide();
+                    this._appUIService.showSnackbar('Close interaction failed!', 'failure');
+                })
+                .finally(() => {
+                    if (btn) {
+                        btn.disabled = false;
+                    }
+                });
+        };
         // disable the button
         if (btn) {
             btn.disabled = true;
         }
-        SDKClient.closeInteraction(this.interactionId.toString(), null)
-            .then((dt: IResponse) => {
-                // hide the progress bar
-                this._fuseProgressBarService.hide();
-                // check the response
-                if (dt.response && dt.response.ResultCode === 0) {
-                    this._appUIService.showSnackbar('Interaction closed sucessfully');
-                    // remove the interaction reference
-                    this._interactionManagerService.removeInteraction(dt.response.InteractionID);
+        if (force) {
+            closeApiCall();
+        } else {
+            // confirm close interaction
+            const confirmDialogRef = this._appUIService.showAppConfirmDialog('closeInteraction');
+            confirmDialogRef.afterClosed().subscribe((dialogResult: boolean) => {
+                if (dialogResult) {
+                    closeApiCall();
                 } else {
-                    this._appUIService.showSnackbar('Close interaction failed', 'failure');
-                }
-
-            })
-            .catch(() => {
-                this._fuseProgressBarService.hide();
-                this._appUIService.showSnackbar('Close interaction failed!', 'failure');
-            })
-            .finally(() => {
-                if (btn) {
-                    btn.disabled = true;
+                    if (btn) {
+                        btn.disabled = false;
+                    }
                 }
             });
+        }
     }
 
     /**
@@ -600,7 +621,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Forward Email
      */
-    forwardEmail(): void { }
+    forwardEmail(): void {}
 
     /**
      * Show reply email form
@@ -628,10 +649,11 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             To: From || '',
             Body: `
             ${preBody} 
-            ${this.domSanitizer.bypassSecurityTrustHtml(Body || '')['changingThisBreaksApplicationSecurity'][
-                'changingThisBreaksApplicationSecurity'
+            ${
+                this.domSanitizer.bypassSecurityTrustHtml(Body || '')['changingThisBreaksApplicationSecurity'][
+                    'changingThisBreaksApplicationSecurity'
                 ]
-                }`,
+            }`,
             Subject: `RE: ${Subject}`,
             Files: []
         };
@@ -707,7 +729,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Sends Email as Maker
      */
-    async sendEmailAsMaker(email?: CreateEmailOutput): Promise<void> {
+    async sendEmailAsMaker(email?: CreateEmailOutput, btn?: MatButton): Promise<void> {
         try {
             const { InSessionId, OutSessionID, SessionId, OutSessionId, EventName } = this.currentInteraction;
             const { BCC, CC, To, Subject, Files, Body } = email || this.createEmailRef.email;
@@ -716,6 +738,11 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 return;
             }
 
+            if (btn) {
+                btn.disabled = true;
+            }
+            this.sendingEmailAsMaker = true;
+            this._fuseProgressBarService.show();
             const res = await SDKClient.sendEmail({
                 attachmentFileList: Files && Files.length ? JSON.stringify(Files.map((x) => ({ ...x, SessionID: SessionId }))) : '',
                 bccList: BCC.join(','),
@@ -724,18 +751,23 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 body: Body.toString(),
                 ...(EventName === 'OutgoingEmailEvent'
                     ? {
-                        inboxSessionId: InSessionId,
-                        outboxSessionId: OutSessionId
-                    }
+                          inboxSessionId: InSessionId,
+                          outboxSessionId: OutSessionId
+                      }
                     : {
-                        inboxSessionId: SessionId,
-                        outboxSessionId: OutSessionID
-                    }),
+                          inboxSessionId: SessionId,
+                          outboxSessionId: OutSessionID
+                      }),
                 routeId: '',
                 subject: Subject,
                 typeOfResponse: ''
             });
+            this._fuseProgressBarService.hide();
             if (res.response?.CurrentStatus) {
+                if (btn) {
+                    btn.disabled = false;
+                }
+                this.sendingEmailAsMaker = false;
                 const message = {
                     SentToCustomer: 'to customer',
                     SentToCheckerSession: 'to checker'
@@ -743,10 +775,19 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 this._appUIService.showSnackbar(`Message sent ${message[res.response?.CurrentStatus]}`, 'success');
                 this.draftPolling?.unsubscribe();
             } else {
+                if (btn) {
+                    btn.disabled = false;
+                }
+                this.sendingEmailAsMaker = false;
                 throw new Error('Unexpected response from server');
             }
         } catch (err) {
             console.error(err);
+            if (btn) {
+                btn.disabled = false;
+            }
+            this.sendingEmailAsMaker = false;
+            this._fuseProgressBarService.hide();
             this._appUIService.showSnackbar('Something went wrong', 'failure');
         }
     }
@@ -773,13 +814,13 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                         ccList: CC || '',
                         ...(EventName === 'OutgoingEmailEvent'
                             ? {
-                                inboxSessionId: InSessionId,
-                                outboxSessionId: OutSessionId
-                            }
+                                  inboxSessionId: InSessionId,
+                                  outboxSessionId: OutSessionId
+                              }
                             : {
-                                inboxSessionId: SessionId,
-                                outboxSessionId: OutSessionID
-                            }),
+                                  inboxSessionId: SessionId,
+                                  outboxSessionId: OutSessionID
+                              }),
                         routeId: '',
                         subject: Subject,
                         toList: From,
@@ -937,12 +978,16 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         });
         message += 'Add new comment:';
 
-        const dialogRef = this._appUIService.showCustomDialog('prompt', message, 'Interaction Notes',
+        const dialogRef = this._appUIService.showCustomDialog(
+            'prompt',
+            message,
+            'Interaction Notes',
             { minRows: 4 },
             {
                 minWidth: '30%',
                 maxWidth: '30%'
-            });
+            }
+        );
         dialogRef.afterClosed().subscribe((resp1) => {
             if (resp1) {
                 this._fuseProgressBarService.show();

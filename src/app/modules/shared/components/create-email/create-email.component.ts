@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { TwEmailTemplatePreviewComponent } from '@modules/t-widgets/tw-collections/tw-email-template-preview/tw-email-template-preview.component';
 import { AOTWidgetService } from '@services/aot-widget.service';
@@ -65,6 +66,11 @@ export class CreateEmailComponent implements OnInit, OnDestroy, AfterViewInit {
     @Input() emailInfo?: CreateEmailInput = null;
 
     /**
+     * Flag for disabling send
+     */
+    @Input() sendDisabled? = false;
+
+    /**
      * A readonly value for from
      */
     @Input() from = '';
@@ -114,7 +120,7 @@ export class CreateEmailComponent implements OnInit, OnDestroy, AfterViewInit {
         private matDialog: MatDialog,
         private aotService: AOTWidgetService,
         private _fuseFacadeService: FuseFacadeService
-    ) { }
+    ) {}
 
     /**
      * Lifecycle hook
