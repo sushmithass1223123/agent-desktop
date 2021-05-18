@@ -436,27 +436,50 @@
                         </mat-select>
                     </mat-form-field>
                 </div>
-                <ng-container
-                    *ngIf="
-                        sortControls.ascending
-                            ? { class: 'twd-rotate-180', tooltip: 'Switch to descending' }
-                            : { class: '', tooltip: 'Switch to ascending' } as buttonDetails
-                    "
-                >
-                    <button
-                        mat-button
-                        mat-icon-button
-                        class="twd-transform twd-transition-transform"
-                        [ngClass]="buttonDetails.class"
-                        [matTooltip]="buttonDetails.tooltip"
-                        (click)="sortControls.ascending = !sortControls.ascending; sortEmailsByOrder()"
+                <div>
+                    <ng-container
+                        *ngIf="
+                            polling.allowed &&
+                            (polling.enabled
+                                ? { tooltip: 'Disable Polling', color: 'primary', class: 'enabled' }
+                                : { tooltip: 'Enable Polling', color: 'primary', class: '' }) as pollingDetails
+                        "
                     >
-                        <mat-icon> sort </mat-icon>
-                    </button>
-                </ng-container>
+                        <button
+                            mat-button
+                            mat-icon-button
+                            class="polling-btn"
+                            [ngClass]="pollingDetails.class + (polling.active ? ' spin' : '')"
+                            (click)="polling.enabled = !polling.enabled; polling.active = false"
+                            [disabled]="polling.active"
+                            [matTooltip]="pollingDetails.tooltip"
+                            [color]="pollingDetails.color"
+                        >
+                            <mat-icon>sync</mat-icon>
+                        </button>
+                    </ng-container>
+                    <ng-container
+                        *ngIf="
+                            sortControls.ascending
+                                ? { class: 'twd-rotate-180', tooltip: 'Switch to descending' }
+                                : { class: '', tooltip: 'Switch to ascending' } as buttonDetails
+                        "
+                    >
+                        <button
+                            mat-button
+                            mat-icon-button
+                            class="twd-transform twd-transition-transform"
+                            [ngClass]="buttonDetails.class"
+                            [matTooltip]="buttonDetails.tooltip"
+                            (click)="sortControls.ascending = !sortControls.ascending; sortEmailsByOrder()"
+                        >
+                            <mat-icon> sort </mat-icon>
+                        </button>
+                    </ng-container>
+                </div>
             </div>
 
-            <div *ngIf="selectedMails.length" class="bulk-operations twd-pb-2" fxLayout fxLayoutAlign="space-around center">
+            <div *ngIf="selectedMails.length" class="bulk-operations twd-pb-2 twd-mt-3" fxLayout fxLayoutAlign="space-around center">
                 <button
                     mat-raised-button
                     fxFlex="100"
@@ -498,11 +521,11 @@
             </div>
 
             <div *ngIf="!emailSearchRes.error && { selectedEmail: emailSearchRes.data.selected } as selectedEmail">
+                <!-- [trackBy]="trackBy" -->
                 <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="tw-list-item border-radius-10 email-tree twd-mt-0">
                     <mat-tree-node *matTreeNodeDef="let node" class="tw-list pb-8" matTreeNodeToggle>
-                        {{ selectedEmail?.selectedEmail.itemID | json }} {{ node.itemID | json }}
                         <li
-                            class="mat-tree-node tw-list-item border-radius-10 selectable"
+                            class="mat-tree-node tw-list-item border-radius-10 selectable hover:twd-opacity-90"
                             [ngClass]="
                                 selectedEmail?.selectedEmail?.uiId === node.uiId
                                     ? ' twd-bg-primary-100 twd-border-2 twd-border-primary-default'
@@ -525,7 +548,7 @@
                             </div>
                         </li>
                     </mat-tree-node>
-                    <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
+                    <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild" [isExpanded]="treeControl.isExpanded(node)">
                         <li
                             *ngIf="{ selected: treeControl.isExpanded(node) } as treeNode"
                             matTreeNodeToggle
