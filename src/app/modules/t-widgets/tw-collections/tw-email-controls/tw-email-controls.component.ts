@@ -168,11 +168,6 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     savedComments: InteractionComment[] = [];
 
     /**
-     * Perfect scrollbar ref
-     */
-    // @ViewChildren(FusePerfectScrollbarDirective) directiveScrolls: QueryList<FusePerfectScrollbarDirective>;
-
-    /**
      * Create email compopnnet ref
      */
     @ViewChild('createEmailRef') createEmailRef: CreateEmailComponent;
