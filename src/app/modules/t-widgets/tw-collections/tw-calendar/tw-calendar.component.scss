@@ -1,3 +1,4 @@
+@use '~@angular/material' as mat;
 @import 'src/@fuse/scss/fuse';
 @import 'node_modules/angular-calendar/scss/angular-calendar';
 
@@ -19,7 +20,7 @@
 
         &.cal-selected {
             border: none;
-            @include mat-elevation(9);
+            @include mat.elevation(9);
         }
     }
 
@@ -36,7 +37,7 @@
             flex-direction: row;
             align-items: center;
             justify-content: flex-start;
-            @include mat-elevation(1);
+            @include mat.elevation(1);
             transition: box-shadow 300ms ease;
 
             &:first-of-type {
@@ -48,7 +49,7 @@
             }
 
             &:hover {
-                @include mat-elevation(3);
+                @include mat.elevation(3);
             }
 
             .cal-event {
