@@ -31,6 +31,19 @@
     }
 }
 
+.attachment-overlay {
+    .attachment-menu {
+        width: 97%;
+        margin: auto;
+        overflow-y: auto;
+    }
+    .mat-chip-list-wrapper {
+        width: 100%;
+        margin: none;
+        padding: 0 4px;
+    }
+}
+
 create-email {
     height: 100%;
     max-height: 100%;
