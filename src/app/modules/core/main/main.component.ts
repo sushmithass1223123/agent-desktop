@@ -11,7 +11,6 @@ import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { SDKClient } from '@tmac/sdk';
 import { AUX_STATUSES } from 'app/constants';
-import { ThemeSelector } from 'app/layout/utils/theme-selector';
 import { environment } from 'environments/environment';
 import { Subject } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
@@ -179,7 +178,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
      */
     ngOnDestroy(): void {
         // Unsubscribe from all subscriptions
-        this._unsubscribeAll.next();
+        this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
 
         // de-register the TMAC events in service
@@ -226,7 +225,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
         // get the route history
         const route = history.state?.routeFrom;
         // for production build if the main url is opened directly route to login page
-        if (environment.production && (!route || route !== 'login') && opener && opener === window) {
+        if (environment.production && (!route || route !== 'login') && (!opener || opener === window)) {
             // we will route to login page
             this.routeToLogin();
             return;

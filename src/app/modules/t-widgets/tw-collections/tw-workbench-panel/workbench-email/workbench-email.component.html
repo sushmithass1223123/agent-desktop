@@ -659,7 +659,7 @@
                     <div class="twd-shadow">
                         <div class="twd-text-xl twd-flex twd-justify-between twd-items-center pt-20 px-28 twd-pb-3">
                             <div
-                                class="twd-relative twd-flex-1 twd-px-1 text-bold"
+                                class="twd-relative twd-flex-1 twd-px-1"
                                 [ngClass]="{ 'twd-truncate': !minimizeSubject }"
                                 [innerHtml]="selectedEmail.Subject"
                             ></div>
@@ -670,69 +670,25 @@
                         <div class="twd-transition-all px-28" [ngClass]="{ 'twd-h-0 twd-overflow-y-hidden twd-opacity-0': minimizeSubject }">
                             <div fxLayout fxLayoutAlign="space-between">
                                 <div fxFlex="80">
-                                    <p class="text-bold my-4">To : {{ selectedEmail.To }}</p>
-                                    <p class="text-bold my-4" *ngIf="selectedEmail.ccList">CC : {{ selectedEmail.ccList }}</p>
-                                    <p class="my-4 text-bold">From : {{ selectedEmail.From || 'NA' }}</p>
-                                    <p class="my-4 text-bold">Status : {{ selectedEmail.currentStatus || 'NA' }}</p>
-                                    <p class="my-4 text-bold">Prirority : {{ selectedEmail.priority || 'NA' }}</p>
-                                    <p class="my-4 text-bold">Agent : {{ selectedEmail.agentName || 'NA' }}</p>
+                                    <p class="text-bold my-4">To: {{ selectedEmail.To }}</p>
+                                    <p class="text-bold my-4" *ngIf="selectedEmail.ccList">Cc : {{ selectedEmail.ccList }}</p>
+                                    <p class="my-4 text-bold">From: {{ selectedEmail.From || 'NA' }}</p>
+                                    <p class="my-4 text-bold">Status: {{ selectedEmail.currentStatus || 'NA' }}</p>
+                                    <p class="my-4 text-bold">Prirority: {{ selectedEmail.priority || 'NA' }}</p>
+                                    <p class="my-4 text-bold">Agent: {{ selectedEmail.agentName || 'NA' }}</p>
                                     <p class="my-4 text-bold">
-                                        Replied Status : {{ selectedEmail.repliedStatus === '1' ? 'Replied' : 'Not Replied' }}
+                                        Replied Status: {{ selectedEmail.repliedStatus === '1' ? 'Replied' : 'Not Replied' }}
                                     </p>
                                     <p class="my-4 text-bold">
-                                        Closed Status : {{ selectedEmail.closedBy ? 'Closed by' + selectedEmail.closedBy : 'Open' }}
+                                        Closed Status: {{ selectedEmail.closedBy ? 'Closed by' + selectedEmail.closedBy : 'Open' }}
                                     </p>
-                                    <p>
-                                        <mat-icon>grading</mat-icon> <span class="text-bold">{{ selectedEmail.intent || 'NA' }}</span>
-                                    </p>
+                                    <p class="my-4 text-bold">Intent: {{ selectedEmail.intent || 'NA' }}</p>
                                 </div>
                                 <div fxFlex="15">
                                     <p class="my-4">{{ selectedEmail.addedTime | date: 'longDate' }}</p>
                                     <p class="my-4">{{ selectedEmail.addedTime | date: 'shortTime' }}</p>
                                 </div>
                             </div>
-                            <!-- <div
-                                class="twd-py-5"
-                                *ngIf="{
-                                    lesstItems: selectedEmail.attachmentList.slice(0, 3),
-                                    moreItems: selectedEmail.attachmentList.slice(3, -1)
-                                } as attachList"
-                            >
-                                <mat-chip-list class="twd-mb-3" #chipList aria-label="file selection">
-                                    <mat-chip class="twd-w-1/6" *ngFor="let file of attachList.lesstItems">
-                                        <div><mat-icon>attach_file</mat-icon></div>
-                                        <div class="twd-ml-1 twd-w-10/12">
-                                            <div class="m-0 twd-truncate twd-w-full">{{ file.Name }}</div>
-                                            <a target="_blank" [href]="file.URL">
-                                                <small>View file</small>
-                                            </a>
-                                        </div>
-                                    </mat-chip>
-                                    <ng-container *ngIf="showMoreAttachments">
-                                        <mat-chip class="twd-w-1/6" *ngFor="let file of attachList.moreItems">
-                                            <div><mat-icon>attach_file</mat-icon></div>
-                                            <div class="twd-ml-1 twd-w-10/12">
-                                                <div class="m-0 twd-truncate twd-w-full">{{ file.Name }}</div>
-                                                <a target="_blank" [href]="file.URL">
-                                                    <small>View file</small>
-                                                </a>
-                                            </div>
-                                        </mat-chip>
-                                    </ng-container>
-                                    <button
-                                        mat-button
-                                        *ngIf="!showMoreAttachments && attachList.moreItems.length"
-                                        (click)="showMoreAttachments = !showMoreAttachments"
-                                    >
-                                        <mat-icon> expand_more </mat-icon>
-                                        View {{ attachList.moreItems.length }} more
-                                    </button>
-                                </mat-chip-list>
-                                <button mat-button style="margin-top: 12px" *ngIf="showMoreAttachments" (click)="showMoreAttachments = false">
-                                    <mat-icon>expand_less</mat-icon>
-                                    Show less
-                                </button>
-                            </div> -->
 
                             <div
                                 class="twd-py-2"

@@ -49,15 +49,7 @@ tw-voice-controls {
                 }
 
                 button {
-                    .mat-button-wrapper {
-                        justify-content: center;
-                        align-items: center;
-                        display: flex;
-                    }
-
                     margin: 8px 4px 0px;
-                    // height: 36px;
-                    // border-radius: 20px;
 
                     &.success:not(.mat-button-disabled) {
                         background: $tw-success;

@@ -1,5 +1,5 @@
-<div class="tw-widget-container custom-scroll" [ngStyle]="{ 'width.px': screenWidth, 'height.px': screenHeight }" *ngIf="loaded">
-    <div fxFill fxFlex fxLayout="row wrap" fxLayoutAlign=" none">
+<div *ngIf="loaded" class="tw-widget-container" [ngStyle]="{ 'width.px': screenWidth, 'height.px': screenHeight }">
+    <div *ngIf="staticWidgets.length || dynamicWidgets.length" fxFill fxFlex fxLayout="row wrap" fxLayoutAlign=" none">
         <tw-template
             [fxFlex.gt-md]="dynamicWidgets.length > 0 ? 33 : 100"
             class="static-widget-grid"
@@ -71,5 +71,12 @@
         </ng-template>
     </div>
 
-    <twc-no-widgets class="twc-card" *ngIf="staticWidgets.length === 0 && dynamicWidgets.length === 0" type="home"></twc-no-widgets>
+    <twc-not-found
+        *ngIf="!staticWidgets.length && !dynamicWidgets.length"
+        class="tw-widget-container"
+        [ngStyle]="{ 'width.px': screenWidth, 'height.px': screenHeight }"
+        title="No Widgets"
+        type="widget"
+        message="No home widgets found!"
+    ></twc-not-found>
 </div>

@@ -168,7 +168,7 @@ export class AOTWidgetService {
         TUtils.Logger.console('info', 'AOTWidgetService.unsubscribe');
 
         // unsubscribe from all subscriptions
-        this._unsubscribeAll.next();
+        this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
 
         this._widgetsSubject.next([]);

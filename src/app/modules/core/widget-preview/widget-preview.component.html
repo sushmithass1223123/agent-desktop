@@ -16,7 +16,13 @@
 </div>
 
 <ng-template #noWidgets>
-    <twc-no-widgets class="twc-card" type="Preview"></twc-no-widgets>
+    <twc-not-found
+        class="tw-widget-container"
+        [ngStyle]="{ 'width.px': screenWidth, 'height.px': screenHeight }"
+        title="No Widgets"
+        type="widget"
+        message="No preview widgets found!"
+    ></twc-not-found>
 </ng-template>
 
 <div class="spinner" *ngIf="loading">

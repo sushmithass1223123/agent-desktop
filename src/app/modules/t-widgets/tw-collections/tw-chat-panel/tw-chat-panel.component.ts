@@ -89,7 +89,7 @@ export class TwChatPanelComponent extends TWidgetWrapper implements OnInit, OnDe
         // call the wrapper destroy method
         this.destroyWrapper();
 
-        this.unsubscribeAll.next();
+        this.unsubscribeAll.next(null);
         this.unsubscribeAll.complete();
     }
 

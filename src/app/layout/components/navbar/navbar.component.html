@@ -14,9 +14,7 @@
     <div class="twn-list">
         <mat-selection-list #sidebarList [multiple]="false">
             <div
-                class="top"
-                fxLayout="column"
-                fxLayoutAlign="start center"
+                class="top twd-flex twd-flex-col twd-justify-start twd-items-center"
                 [ngClass]="{
                     'border-top border-bottom py-4': topWidgets.length > 0
                 }"
@@ -38,9 +36,7 @@
             </div>
 
             <div
-                class="bottom custom-scroll-adjust"
-                fxLayout="column"
-                fxLayoutAlign="start center"
+                class="bottom twd-flex twd-flex-col twd-justify-start twd-items-center"
                 [ngClass]="{
                     'border-top border-bottom py-4': bottomWidgets.length > 0
                 }"

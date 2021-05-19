@@ -421,7 +421,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
      * OnDestroy
      */
     ngOnDestroy(): void {
-        this.unsubscribeAll.next();
+        this.unsubscribeAll.next(null);
         this.unsubscribeAll.complete();
     }
 
