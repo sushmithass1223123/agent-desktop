@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import { InteractionRef, InteractionCount } from 'app/interfaces';
-import { map } from 'lodash';
-import { Observable } from 'rxjs';
-import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { SDKClient, TUtils } from '@tmac/sdk';
+import { InteractionCount, InteractionRef } from 'app/interfaces';
+import { map } from 'lodash';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 /**
  * Need more Description

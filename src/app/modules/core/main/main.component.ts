@@ -178,7 +178,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
      */
     ngOnDestroy(): void {
         // Unsubscribe from all subscriptions
-        this._unsubscribeAll.next();
+        this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
 
         // de-register the TMAC events in service

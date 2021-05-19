@@ -4,9 +4,8 @@ import { cloneDeep } from 'lodash';
 import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-
 /**
- * Need more Description 
+ * Need more Description
  * Layout 1 component
  */
 @Component({
@@ -95,7 +94,7 @@ export class VerticalLayoutComponent implements OnInit, OnDestroy {
      */
     ngOnDestroy(): void {
         // Unsubscribe from all subscriptions
-        this._unsubscribeAll.next();
+        this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
     }
 }

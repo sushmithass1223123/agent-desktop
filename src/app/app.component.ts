@@ -196,7 +196,8 @@ export class AppComponent implements OnInit, OnDestroy {
         this._appUIService.subscribe();
 
         // Subscribe to custom fuse config changes
-        this._fuseFacadeService.getConfig()
+        this._fuseFacadeService
+            .getConfig()
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((config: FuseConfig) => {
                 // Boxed
@@ -277,7 +278,6 @@ export class AppComponent implements OnInit, OnDestroy {
         //     }
         // });
 
-
         // check the environment and set window variable
         if (!environment.production) {
             // set a global variable to access SDK client on development mode
@@ -293,7 +293,7 @@ export class AppComponent implements OnInit, OnDestroy {
      */
     ngOnDestroy(): void {
         // Unsubscribe from all subscriptions
-        this._unsubscribeAll.next();
+        this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
 
         // subscribe to app ui service

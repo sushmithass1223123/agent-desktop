@@ -434,7 +434,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         this.destroyWrapper();
 
         // stop duration timer
-        this.stopTimer.next();
+        this.stopTimer.next(null);
 
         // this.deRegisterFromEvents();
     }
@@ -454,7 +454,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         // }
 
         // stop duration timer
-        this.stopTimer.next();
+        this.stopTimer.next(null);
 
         // subscribe to the timer
         timer(1000, 1000)
@@ -498,7 +498,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         });
 
         // stop duration timer
-        this.stopTimer.next();
+        this.stopTimer.next(null);
 
         // clear confirm
         this.tempCallRef = null;
