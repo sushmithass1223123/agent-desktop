@@ -283,7 +283,7 @@ export class DashboardService {
         TUtils.Logger.console('info', 'DashboardService.unsubscribe');
 
         // unsubscribe from all subscriptions
-        this._unsubscribeAll.next();
+        this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
 
         this._dashboardServiceSubject.next('');

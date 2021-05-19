@@ -146,7 +146,7 @@ export class TWContentWrapper {
      */
     destroyWrapper(): void {
         // Unsubscribe from all subscriptions
-        this.unsubscribeAll.next();
+        this.unsubscribeAll.next(null);
         this.unsubscribeAll.complete();
     }
 

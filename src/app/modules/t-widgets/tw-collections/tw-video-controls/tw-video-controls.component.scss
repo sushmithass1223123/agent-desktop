@@ -76,7 +76,10 @@ tw-video-controls {
         }
 
         .call-controls {
-            .actions {
+            height: 48px;
+            margin-bottom: 4px;
+
+            .actions-1 {
                 button {
                     margin: 8px 4px 0px;
                 }
@@ -85,19 +88,13 @@ tw-video-controls {
                 }
             }
 
-            .controls {
+            .actions-2 {
                 button:not(.mat-button-disabled, .mat-warn) {
                     background: $tw-primary;
                     color: $tw-dark;
                 }
 
                 button {
-                    .mat-button-wrapper {
-                        justify-content: center;
-                        align-items: center;
-                        display: flex;
-                    }
-
                     margin: 8px 4px 0px;
                     width: 70px;
                     height: 40px;

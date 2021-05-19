@@ -12,12 +12,10 @@ import { TMACEventService } from '@services/tmac-event.service';
 import { IAgentData, IncomingEmailEvent, InteractionDataEvent, IResponse, OutgoingEmailEvent, SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE, DRAFT_REASONS, EMAIL_DRAFT_SAVE_INTERVAL, INBOX_REASONS, OUTBOX_REASONS } from 'app/constants';
-import { AgentSkillListData, InteractionComment, InteractionRef, IWidget, ResData } from 'app/interfaces';
-import { CreateEmailInput, CreateEmailOutput } from 'app/models';
+import { AgentSkillListData, CreateEmailInput, CreateEmailOutput, InteractionComment, InteractionRef, IWidget, ResData } from 'app/interfaces';
 import { maticonByExtension, urlify } from 'app/utils';
 import { interval, Subscription } from 'rxjs';
-import { takeUntil } from 'rxjs/internal/operators/takeUntil';
-import { filter } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
 
 type EmailEventGeneric = IncomingEmailEvent | OutgoingEmailEvent;
 
@@ -167,11 +165,6 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Saved interaction comments
      */
     savedComments: InteractionComment[] = [];
-
-    /**
-     * Perfect scrollbar ref
-     */
-    // @ViewChildren(FusePerfectScrollbarDirective) directiveScrolls: QueryList<FusePerfectScrollbarDirective>;
 
     /**
      * Create email compopnnet ref

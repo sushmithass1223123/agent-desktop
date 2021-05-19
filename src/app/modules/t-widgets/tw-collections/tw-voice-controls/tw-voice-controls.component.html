@@ -226,6 +226,7 @@
                             color="default"
                             class="mat-elevation-z2"
                             [ngClass]="customFuse.anchor?.body"
+                            [disabled]="status !== 'connected' || (tempCallRef?.isConsult && tempCallRef?.status !== 'connected')"
                             matTooltip="Dialpad"
                             (click)="openDialpad = !openDialpad"
                             cdkOverlayOrigin
@@ -246,7 +247,7 @@
                                         <div>
                                             {{ dialedNumbers }}
                                         </div>
-                                        <button mat-button color="warn" mat-icon-button aria-label="Clear" (click)="dialedNumbers = ''">
+                                        <button mat-button mat-icon-button color="warn" aria-label="Clear" (click)="dialedNumbers = ''">
                                             <mat-icon>close</mat-icon>
                                         </button>
                                     </div>

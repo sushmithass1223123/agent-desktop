@@ -16,7 +16,6 @@ import { takeUntil } from 'rxjs/operators';
     encapsulation: ViewEncapsulation.None
 })
 export class ContentComponent implements OnInit, OnDestroy {
-
     /**
      * Unsubscribe all subject
      */
@@ -33,13 +32,10 @@ export class ContentComponent implements OnInit, OnDestroy {
     /**
      * Constructor
      *
-     * @param {AppDataService} _appDataService 
+     * @param {AppDataService} _appDataService
      * @param {AOTWidgetService} _aotWidgetService
      */
-    constructor(
-        private _appDataService: AppDataService,
-        private _aotWidgetService: AOTWidgetService
-    ) {
+    constructor(private _appDataService: AppDataService, private _aotWidgetService: AOTWidgetService) {
         // Set the private defaults
         this._unsubscribeAll = new Subject();
     }
@@ -53,29 +49,21 @@ export class ContentComponent implements OnInit, OnDestroy {
      */
     ngOnInit(): void {
         // Subscribe to config changes
-        this._appDataService.config
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe(
-                (config: any) => {
-                    // check if the config is not null
-                    if (config !== null) {
-                        // get the content widgets
-                        this.contentWidgets = config.Main.Content.Widgets || [];
-                    }
-                }
-            );
+        this._appDataService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
+            // check if the config is not null
+            if (config !== null) {
+                // get the content widgets
+                this.contentWidgets = config.Main.Content.Widgets || [];
+            }
+        });
 
         // subscribe to the AOT widget service
         this._aotWidgetService.subscribe();
 
         // subscribe to AOT widgets
-        this._aotWidgetService.widgets
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe(
-                (widgets: IWidget[]) => {
-                    this.aotWidgets = widgets;
-                }
-            );
+        this._aotWidgetService.widgets.pipe(takeUntil(this._unsubscribeAll)).subscribe((widgets: IWidget[]) => {
+            this.aotWidgets = widgets;
+        });
     }
 
     /**
@@ -83,7 +71,7 @@ export class ContentComponent implements OnInit, OnDestroy {
      */
     ngOnDestroy(): void {
         // Unsubscribe from all subscriptions
-        this._unsubscribeAll.next();
+        this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
 
         // unsubscribe to the AOT widget service

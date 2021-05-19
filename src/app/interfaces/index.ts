@@ -5,3 +5,4 @@ export * from './interaction-manager.interface';
 export * from './login-data.interface';
 export * from './sdk.interface';
 export * from './widget.interface';
+export * from './email.interface';

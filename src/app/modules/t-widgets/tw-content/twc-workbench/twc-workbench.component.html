@@ -1,16 +1,25 @@
 <div class="tw-widget-container" [ngStyle]="{ 'width.px': screenWidth, 'height.px': screenHeight }" *ngIf="loaded">
-    <div fxFill fxFlex fxLayout="row wrap" fxLayoutAlign=" none">
-        <tw-template fxFlex="100" *ngIf="staticWidgets?.length > 0" [widgets]="staticWidgets" class="h-100-p"></tw-template>
+    <div *ngIf="staticWidgets?.length" fxFill fxFlex fxLayout="row wrap" fxLayoutAlign=" none">
+        <tw-template class="widget-grid h-100-p w-100-p" [widgets]="staticWidgets"></tw-template>
+
         <div
+            *ngIf="aotWidgets.length"
             class="tw-aot-fab"
             cdkDrag
             cdkDragBoundary=".tw-widget-container"
             (cdkDragStarted)="aotFABDrag = true"
             (cdkDragReleased)="aotFABDrag = false"
-            *ngIf="aotWidgets.length > 0"
         >
             <widget-fab [aotFABDrag]="aotFABDrag" [fabWidgets]="aotWidgets"></widget-fab>
         </div>
     </div>
-    <twc-no-widgets class="twc-card" *ngIf="!staticWidgets || staticWidgets.length === 0" type="workbench"></twc-no-widgets>
+
+    <twc-not-found
+        *ngIf="!staticWidgets || !staticWidgets.length"
+        class="tw-widget-container"
+        [ngStyle]="{ 'width.px': screenWidth, 'height.px': screenHeight }"
+        title="No Widgets"
+        type="widget"
+        message="No workbench widgets found!"
+    ></twc-not-found>
 </div>

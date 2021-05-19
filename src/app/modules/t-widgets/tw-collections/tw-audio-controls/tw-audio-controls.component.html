@@ -77,15 +77,23 @@
                     </button>
                 </div>
                 <div fxLayout="row" fxLayoutAlign="start center" class="controls">
-                    <button [disabled]="!connected" *ngIf="!hold" mat-flat-button class="warning" matTooltip="Hold" (click)="holdCall()">
+                    <button
+                        *ngIf="!hold"
+                        [disabled]="!connected"
+                        mat-flat-button
+                        mat-icon-button
+                        class="warning"
+                        matTooltip="Hold"
+                        (click)="holdUnholdCall()"
+                    >
                         <mat-icon>phone_paused</mat-icon>
                     </button>
 
-                    <button *ngIf="hold" mat-flat-button class="success" matTooltip="Un Hold" (click)="holdCall()">
+                    <button *ngIf="hold" mat-flat-button mat-icon-button class="success" matTooltip="Un Hold" (click)="holdUnholdCall()">
                         <mat-icon>phone_in_talk</mat-icon>
                     </button>
 
-                    <button mat-flat-button color="warn" matTooltip="End Call" (click)="endCall()">
+                    <button mat-flat-button mat-icon-button color="warn" matTooltip="End Call" (click)="endCall()">
                         <mat-icon>call_end</mat-icon>
                     </button>
                 </div>

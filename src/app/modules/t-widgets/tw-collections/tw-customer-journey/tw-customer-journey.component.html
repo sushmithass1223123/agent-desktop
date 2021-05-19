@@ -213,10 +213,10 @@
                                     <button
                                         class="w-32"
                                         mat-icon-button
-                                        matTooltip="Load Session"
+                                        matTooltip="Session History"
                                         (click)="switchMaximizedViewMode('Session History', element)"
                                     >
-                                        <mat-icon> filter_frames </mat-icon>
+                                        <mat-icon> history </mat-icon>
                                     </button>
                                     <button class="w-32" mat-icon-button matTooltip="Actions" (click)="switchMaximizedViewMode('Actions', element)">
                                         <mat-icon> list_alt </mat-icon>
@@ -501,82 +501,85 @@
                     <div *ngIf="emailThreadReq.data as emailInfo" class="twd-flex-1 twd-h-full twd-z-10 twd-relative">
                         <div class="twd-absolute twd-w-full twd-h-full twd-top-0 twd-left-0 twd-overflow-hidden twd-flex twd-flex-col">
                             <div class="twd-max-h-1/2 twd-overflow-y-auto twd-overflow-x-hidden twd-pb-3 twd-z-10 twd-shadow-md twd-px-4">
-                                <div id="rejectReason">
-                                    <div class="twd-bg-red-500 twd-p-1 twd-text-xl">
-                                        [ REJECTED ] {{ emailInfo.RejectReason.reasonTags && ':' + emailInfo.RejectReason.reasonTags }}
-                                    </div>
-                                    <div [ngClass]="{ 'twd-truncate': !smallEmailDescription }">
-                                        Description : {{ emailInfo.RejectReason.comment }}
-                                    </div>
-                                    <button mat-button color="primary" class="twd-mb-4" (click)="smallEmailDescription = !smallEmailDescription">
-                                        {{ smallEmailDescription ? 'Show More' : 'Show less' }}
-                                    </button>
-                                </div>
-
-                                <div id="subject" class="twd-text-xl twd-mb-4 twd-truncate" [innerHtml]="emailInfo.Subject"></div>
+                                <div id="subject" class="twd-text-xl twd-mb-2 twd-truncate" [innerHtml]="emailInfo.Subject"></div>
                                 <div fxLayout fxLayoutAlign="space-between">
                                     <div fxFlex="80" class="twd-flex">
                                         <div class="twd-flex-1">
-                                            <p class="font-weight-600 my-4">To : {{ emailInfo.To || 'NA' }}</p>
-                                            <p class="my-4 text-bold">From : {{ emailInfo.From || 'NA' }}</p>
-                                            <p class="font-weight-600 my-4">CC : {{ emailInfo.ccList }}</p>
+                                            <p class="text-bold my-4">To: {{ emailInfo.ToList || 'NA' }}</p>
+                                            <p class="my-4 text-bold">From: {{ emailInfo.From || 'NA' }}</p>
+                                            <p class="text-bold my-4" *ngIf="emailInfo.CCList">Cc: {{ emailInfo.CCList }}</p>
                                             <p matTooltip="Intent">
-                                                <span class="text-bold"> Intent: {{ emailInfo.intent || 'NA' }}</span>
+                                                <span class="text-bold"> Intent: {{ emailInfo.Intent || 'NA' }}</span>
                                             </p>
                                             <p class="my-4 text-bold">
-                                                Replied Status : {{ emailInfo.repliedStatus === '1' ? 'Replied' : 'Not Replied' }}
+                                                Replied Status: {{ emailInfo.RepliedStatus === '1' ? 'Replied' : 'Not Replied' }}
                                             </p>
-                                            <ng-container *ngIf="emailInfo.addedTime">
-                                                <p class="my-4">{{ emailInfo.addedTime | date: 'longDate' }}</p>
-                                                <p class="my-4">{{ emailInfo.addedTime | date: 'shortTime' }}</p>
+                                            <ng-container *ngIf="emailInfo.AddedTime">
+                                                <p class="my-4">{{ emailInfo.AddedTime | date: 'longDate' }}</p>
+                                                <p class="my-4">{{ emailInfo.AddedTime | date: 'shortTime' }}</p>
                                             </ng-container>
                                         </div>
 
                                         <div class="twd-grid twd-grid-cols-1 twd-items-center twd-justify-end">
-                                            <p class="my-4 text-bold">Status : {{ emailInfo.currentStatus || 'NA' }}</p>
-                                            <p class="my-4 text-bold">Prirority : {{ emailInfo.priority || 'NA' }}</p>
-                                            <p class="my-4 text-bold">Agent : {{ emailInfo.agentName || 'NA' }}</p>
+                                            <p class="my-4 text-bold">Status: {{ emailInfo.CurrentStatus || 'NA' }}</p>
+                                            <p class="my-4 text-bold">Prirority: {{ emailInfo.Priority || 'NA' }}</p>
+                                            <p class="my-4 text-bold">Agent: {{ emailInfo.AgentName || 'NA' }}</p>
                                             <p class="my-4 text-bold">
-                                                Closed Status : {{ emailInfo.closedBy ? 'Closed by' + emailInfo.closedBy : 'Open' }}
+                                                Closed Status: {{ emailInfo.ClosedBy ? 'Closed by' + emailInfo.ClosedBy : 'Open' }}
                                             </p>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div
-                                    id="attachmentList"
-                                    class="twd-my-3 twd-bg-primary-100 twd-rounded-2xl twd-overflow-hidden twd-text-xs"
-                                    *ngIf="emailInfo.AttachmetList && emailInfo.AttachmetList.length && emailInfo.AttachmetList as attachments"
+                                    *ngIf="{
+                                        lesstItems: emailInfo.Attachments?.slice(0, 3),
+                                        moreItems: emailInfo.Attachments?.slice(3, -1)
+                                    } as attachList"
                                 >
-                                    <div
-                                        (click)="showAttachments = !showAttachments"
-                                        matRipple
-                                        class="twd-text-white twd-flex twd-cursor-pointer twd-items-center twd-font-extrabold twd-px-2"
-                                        [ngClass]="{ 'twd-bg-primary-200 twd-pb-1': showAttachments }"
+                                    <button
+                                        *ngFor="let file of attachList.lesstItems"
+                                        mat-stroked-button
+                                        class="border-radius-20 m-4"
+                                        [matTooltip]="file.Ext | uppercase"
+                                        (click)="openFile(file.URL)"
                                     >
-                                        <ng-container *ngIf="showAttachments"> <mat-icon>expand_less</mat-icon> Hide attachments </ng-container>
-                                        <ng-container *ngIf="!showAttachments">
-                                            <mat-icon class="twd-mr-1">info</mat-icon> Show {{ attachments.length }} attachments
-                                        </ng-container>
-                                    </div>
-                                    <div
-                                        class="twd-w-11/12 twd-mx-auto twd-overflow-hidden twd-transition-all"
-                                        [ngClass]="{ 'twd-h-0 twd-opacity-0': !showAttachments }"
+                                        <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
+                                        <span>{{ file.Name }}</span>
+                                    </button>
+
+                                    <ng-container *ngIf="showMoreAttachments">
+                                        <button
+                                            *ngFor="let file of attachList.moreItems"
+                                            mat-stroked-button
+                                            class="border-radius-20 m-4"
+                                            [matTooltip]="file.Ext | uppercase"
+                                            (click)="openFile(file.URL)"
+                                        >
+                                            <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
+                                            <span>{{ file.Name }}</span>
+                                        </button>
+                                    </ng-container>
+
+                                    <button
+                                        mat-stroked-button
+                                        class="border-radius-20 m-4"
+                                        *ngIf="!showMoreAttachments && attachList.moreItems.length"
+                                        (click)="showMoreAttachments = !showMoreAttachments"
                                     >
-                                        <div class="twd-py-2">
-                                            <mat-chip-list #chipList aria-label="file selection">
-                                                <mat-chip *ngFor="let file of attachments">
-                                                    <div><mat-icon>attach_file</mat-icon></div>
-                                                    <div class="twd-ml-1 twd-w-10/12">
-                                                        <div class="m-0 twd-truncate twd-w-full twd-text-xs">{{ file.Name }}</div>
-                                                        <a target="_blank" [href]="file.URL">
-                                                            <small>View file</small>
-                                                        </a>
-                                                    </div>
-                                                </mat-chip>
-                                            </mat-chip-list>
-                                        </div>
-                                    </div>
+                                        <mat-icon> expand_more </mat-icon>
+                                        View {{ attachList.moreItems.length }} more
+                                    </button>
+
+                                    <button
+                                        mat-stroked-button
+                                        class="border-radius-20 m-4"
+                                        *ngIf="showMoreAttachments"
+                                        (click)="showMoreAttachments = false"
+                                    >
+                                        <mat-icon>expand_less</mat-icon>
+                                        Show less
+                                    </button>
                                 </div>
                             </div>
 

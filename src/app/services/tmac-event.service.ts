@@ -1051,16 +1051,16 @@ export class TMACEventService {
 
 
         // unsubscribe from all subscriptions
-        this._unsubscribeAll.next();
+        this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
 
-        this._constructDisposeEventSubject.next();
+        this._constructDisposeEventSubject.next(null);
         this._constructDisposeEventSubject.complete();
 
-        this._nonInteractionEventSub.next();
+        this._nonInteractionEventSub.next(null);
         this._nonInteractionEventSub.complete();
 
-        this._nonInteractionEventSub.next();
+        this._nonInteractionEventSub.next(null);
         this._nonInteractionEventSub.complete();
 
         this._interactionEventArray = new Array();

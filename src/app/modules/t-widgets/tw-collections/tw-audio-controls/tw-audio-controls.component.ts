@@ -502,10 +502,10 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
     }
 
     /**
-     * Hold call
-     * @method holdCall
+     * Hold/Unhold call
+     * @method holdUnholdCall
      */
-    public holdCall(): void {
+    public holdUnholdCall(): void {
         // check the muted flag
         if (this.hold) {
             // un hold the call
