@@ -1,36 +1,3 @@
-.editor-container {
-    min-height: 200px;
-    border: none !important;
-    height: auto;
-    overflow: auto;
-    // height: 75%;
-}
-
-.ql-toolbar {
-    border: none;
-    @apply twd-shadow-md;
-}
-
-.ql-toolbar {
-    .ql-picker {
-        color: var(--twd-primary-300) !important;
-    }
-    .ql-stroke {
-        fill: none !important;
-        stroke: var(--twd-primary-300) !important;
-        :hover {
-            stroke: var(--twd-primary-900) !important;
-        }
-    }
-    .ql-fill {
-        fill: var(--twd-primary-300) !important;
-        stroke: none !important;
-        :hover {
-            fill: var(--twd-primary-900) !important;
-        }
-    }
-}
-
 .attachment-overlay {
     .attachment-menu {
         width: 97%;

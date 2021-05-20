@@ -10,18 +10,8 @@ import { WorkbenchEmailComponent } from './workbench-email/workbench-email.compo
  * Workbench Panel Module
  */
 @NgModule({
-    declarations: [
-        TwWorkbenchPanelComponent,
-        WorkbenchEmailComponent,
-        WorkbenchChatComponent
-    ],
-    imports: [
-        CommonModule,
-        TwWrapperModule,
-        SharedModule
-    ],
-    exports: [
-        TwWorkbenchPanelComponent
-    ]
+    declarations: [TwWorkbenchPanelComponent, WorkbenchEmailComponent, WorkbenchChatComponent,],
+    imports: [CommonModule, TwWrapperModule, SharedModule],
+    exports: [TwWorkbenchPanelComponent]
 })
-export class TwWorkbenchPanelModule { }
+export class TwWorkbenchPanelModule {}
