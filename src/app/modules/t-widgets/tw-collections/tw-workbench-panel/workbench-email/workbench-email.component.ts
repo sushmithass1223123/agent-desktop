@@ -4,16 +4,19 @@ import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, Templat
 import { FormControl } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatSnackBarRef } from '@angular/material/snack-bar';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { DomSanitizer } from '@angular/platform-browser';
 import { fuseAnimations } from '@fuse/animations';
-import { AgentSkillListComponent } from '@modules/shared/components';
+import { AgentSkillListComponent, SnackbarComponent } from '@modules/shared/components';
 import { TWidgetWrapper } from '@modules/t-widgets/utils';
+import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
-import { EmailTemplate, SDKClient } from '@tmac/sdk';
+import { SDKClient } from '@tmac/sdk';
 import { COMMON_ERR_MESSAGE, DRAFT_REASONS, INBOX_REASONS, OUTBOX_REASONS, QUILL_EDITOR_CONFIG } from 'app/constants';
 import { AgentSkillListData, IWidget, ResData } from 'app/interfaces';
+import { TwWidgetModel } from 'app/models';
 import { formatJsonData, maticonByExtension } from 'app/utils';
 import { groupBy, sortBy } from 'lodash';
 import * as moment from 'moment';
@@ -22,7 +25,15 @@ import { Observable, Subscription, timer } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
 import { TwWorkBenchService } from '../tw-workbench-panel.service';
 
-type ComponentActions = 'emails/loading' | 'emails/success' | 'emails/failure' | 'emails/failure/custom-message';
+type ComponentActions =
+    | 'emails/loading'
+    | 'emails/success'
+    | 'emails/failure'
+    | 'emails/failure/custom-message'
+    | 'email/reply/loading'
+    | 'email/reply/success'
+    | 'email/reply/failure';
+
 type AvailableTabs = 'inbox' | 'sentitem' | 'queue' | 'draft';
 type EmailPullItem = {
     /**
@@ -96,7 +107,12 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     /**
      * Reply editor Modal
      */
-    replyEditorModal: MatDialogRef<any>;
+    replyEditorModal: {
+        sendEmail: () => void;
+        close: () => void;
+        templateRef: any;
+        sendingEmail: MatSnackBarRef<SnackbarComponent>;
+    };
     /**
      * Config for quill editor
      */
@@ -216,6 +232,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         active: false
     };
 
+    email = {
+        html: '',
+        modules: QUILL_EDITOR_CONFIG
+    };
+
     /**
      * Constructor
      */
@@ -226,7 +247,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         private domSanitizer: DomSanitizer,
         private appUiService: AppUiService,
         private matDialog: MatDialog,
-        private _workbenchService: TwWorkBenchService
+        private _workbenchService: TwWorkBenchService,
+        private _aotWidgetService: AOTWidgetService
     ) {
         super();
         this.searchReqObs$ = {
@@ -417,6 +439,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     doAdvancedSearch(silent = false): void {
         try {
+            if (this.globalSearchControl.value) {
+                this.doGlobalSearch(silent);
+            }
             if (!this.data.Data.WorkbenchUrl) {
                 this.setComponentState('emails/failure/custom-message', { msg: 'WorkbenchUrl not provided', silent });
                 return;
@@ -556,7 +581,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             if (selectedEmail && sessionIds.includes(selectedEmail.SessionId)) {
                 this.emailSearchRes.data.selected = null;
             }
-            this.doAdvancedSearch();
+            this.doAdvancedSearch(true);
             loader.dismiss();
         } catch (e) {
             console.error(e);
@@ -575,7 +600,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             const routeIds = emails.map((x) => x.RouteId) || [];
             await SDKClient.closeBulkEmailsInQueue(routeIds.join(','));
             this.selectedMails = [];
-            this.doAdvancedSearch();
+            this.doAdvancedSearch(true);
             loader.dismiss();
         } catch (e) {
             console.error(e);
@@ -865,10 +890,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                         addedTime.setMinutes(time[1]);
                         return {
                             ...x,
-                            To: x.mailbox,
+                            To: x.toList,
                             Skill: x.makerSkillName || x.cmSkill,
                             Subject: x.subject,
-                            From: x.toList,
+                            From: x.mailbox,
                             addedTime,
                             SessionId: x.inSessionID,
                             RouteId: x.routeId
@@ -928,7 +953,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     repliedStatus: (res as any)?.RepliedStatus,
                     conversationID: res.ConversationID,
                     currentStatus: res.CurrentStatus,
-                    closedBy: (res as any).ClosedBy
+                    closedBy: (res as any).ClosedBy,
+                    ccList: res?.CCList
                 };
             }
             this.emailSearchRes.data.selected = { ...email, ...this.emailBodies[requestedSession], currentTab: this.currentTab };
@@ -1007,7 +1033,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             },
             callback: ({ success }) => {
                 if (success) {
-                    this.doAdvancedSearch();
+                    this.doAdvancedSearch(true);
                 }
             }
         };
@@ -1033,57 +1059,64 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * @param {any} emails email list
      */
     replyToSelectedEmails(emails: any[]): void {
-        let loader;
-        // let quill;
         try {
-            this.replyEditorModal = this.matDialog.open(this.ReplyEditorDialog, {
-                minHeight: '30%'
-            });
-            this.replyEditorModal.afterOpened().subscribe(() => {
-                if (this.ReplyEditor.nativeElement) {
-                    this.quillInstance = new Quill(this.ReplyEditor.nativeElement, QUILL_EDITOR_CONFIG);
-                }
-            });
-            this.replyEditorModal.afterClosed().subscribe(async (reply = false) => {
-                if (reply) {
-                    if (!this.quillInstance.root?.innerHTML) {
-                        this.appUiService.showSnackbar('Email cannot be empty', 'failure');
-                    }
-                    loader = this.appUiService.showSnackbar('Replying to emails', 'loading');
-                    const emailIds = emails.reduce(
-                        (acc, curr) => {
-                            if (curr.RouteId) {
-                                acc.routeIds.push(curr.RouteId);
-                            }
-                            if (curr.uiId) {
-                                acc.uiIds.push(curr.uiId);
-                            }
-                            return acc;
-                        },
-                        { routeIds: [], uiIds: [] }
-                    );
+            const widget = new TwWidgetModel('Reply All', 'tw-panel');
+            widget.Config.Anchor = true;
+            widget.Config.Position.W = 800;
+            widget.Config.Position.H = 500;
+            widget.Config.Actions = ['maximize', 'collapse', 'destroy'];
+            this.replyEditorModal = {
+                sendEmail: async () => {
+                    try {
+                        const reply = this.quillInstance.root.innerHTML;
+                        if (reply && reply !== '<p><br></p>') {
+                            this.setComponentState('email/reply/loading');
+                            const emailIds = emails.reduce(
+                                (acc, curr) => {
+                                    if (curr.RouteId) {
+                                        acc.routeIds.push(curr.RouteId);
+                                    }
+                                    if (curr.uiId) {
+                                        acc.uiIds.push(curr.uiId);
+                                    }
+                                    return acc;
+                                },
+                                { routeIds: [], uiIds: [] }
+                            );
 
-                    const { routeIds, uiIds } = emailIds;
-                    await SDKClient.replyBulkEmailsInQueue({
-                        body: this.quillInstance.root?.innerHTML || '',
-                        // body: this.replyBody || '',
-                        routeIdList: routeIds.join(',')
-                    });
-                    this.selectedMails = [];
-                    if (uiIds.includes(this.emailSearchRes.data.selected.uiId)) {
-                        this.emailSearchRes.data.selected = null;
+                            const { routeIds, uiIds } = emailIds;
+                            await SDKClient.replyBulkEmailsInQueue({
+                                body: reply,
+                                routeIdList: routeIds.join(',')
+                            });
+                            this.selectedMails = [];
+                            if (uiIds.includes(this.emailSearchRes.data.selected.uiId)) {
+                                this.emailSearchRes.data.selected = null;
+                            }
+                            this.doAdvancedSearch(true);
+                            this.setComponentState('email/reply/success');
+                        } else {
+                            this.appUiService.showSnackbar('Email cannot be empty', 'failure');
+                        }
+                    } catch (e) {
+                        console.error(e);
+                        this.setComponentState('email/reply/failure');
                     }
-                    this.doAdvancedSearch();
-                    loader.dismiss();
-                }
-                // this.replyBody = '';
-            });
+                },
+                close: () => {
+                    this._aotWidgetService.destroyWidget(widget.ID);
+                },
+                sendingEmail: null,
+                templateRef: this.ReplyEditorDialog
+            };
+            widget.Data = this.replyEditorModal;
+            this._aotWidgetService.addWidget(widget);
+            setTimeout(() => {
+                this.quillInstance = new Quill(this.ReplyEditor.nativeElement, QUILL_EDITOR_CONFIG);
+            }, 0);
         } catch (e) {
             console.error(e);
-            if (loader) {
-                loader.dismiss();
-            }
-            this.appUiService.showSnackbar('Unable to reply', 'failure');
+            this.setComponentState('email/reply/failure');
         }
     }
 
@@ -1101,9 +1134,18 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
 
     /**
      * Selects Emailtemplate
+     * @param {String} html
      */
-    selectEmailTemplate(template: EmailTemplate): void {
-        this.quillInstance.clipboard.dangerouslyPasteHTML((template.BodyHTML || '').replaceAll('<a', '<a target="_blank"'));
+    selectEmailTemplate(html: string): void {
+        if (!html) {
+            this.appUiService.showSnackbar('Sorry, there is something wrong with this template', 'failure');
+            return;
+        }
+        if (!this.quillInstance) {
+            this.appUiService.showSnackbar('Sorry, unable to assign template', 'failure');
+            return;
+        }
+        this.quillInstance.clipboard.dangerouslyPasteHTML((html || '').replaceAll('<a', '<a target="_blank"'));
     }
 
     /**
@@ -1114,6 +1156,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         window.open(fileUrl);
     }
 
+    /**
+     * Sets component state
+     * @param {ComponentActions} action
+     * @param {any} payload
+     */
     setComponentState(action: ComponentActions, payload?: any): void {
         switch (action) {
             case 'emails/loading':
@@ -1140,6 +1187,25 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     this.emailSearchRes.msg = payload.msg;
                     this.emailSearchRes.error = true;
                 }
+                break;
+
+            case 'email/reply/loading':
+                this.replyEditorModal.sendingEmail = this.appUiService.showSnackbar('Replying to emails', 'loading');
+                break;
+            case 'email/reply/success':
+                if (this.replyEditorModal.sendingEmail) {
+                    this.replyEditorModal.sendingEmail.dismiss();
+                    this.replyEditorModal.sendingEmail = null;
+                }
+                this.replyEditorModal.close();
+                this.appUiService.showSnackbar('Replied to emails');
+                break;
+            case 'email/reply/failure':
+                if (this.replyEditorModal.sendingEmail) {
+                    this.replyEditorModal.sendingEmail.dismiss();
+                    this.replyEditorModal.sendingEmail = null;
+                }
+                this.appUiService.showSnackbar('Unable to reply', 'failure');
                 break;
 
             default:
