@@ -10,7 +10,7 @@ import { CommandResultEvent, IResponse, SDKClient, TUtils } from '@tmac/sdk';
 import { AppDataService } from 'app/services/app-data.service';
 import { merge, set } from 'lodash';
 import { interval, Observable, Subject } from 'rxjs';
-import { filter, map, take, takeUntil, tap } from 'rxjs/operators';
+import { map, take, takeUntil, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 
 /**
@@ -28,7 +28,6 @@ export class LoginComponent implements OnInit, OnDestroy {
      * Unsubscribe all subject
      */
     private _unsubscribeAll: Subject<any>;
-
     /**
      * Used for auto login
      */
@@ -169,17 +168,27 @@ export class LoginComponent implements OnInit, OnDestroy {
      */
     promptAgentIdOnInvalidLanId = false;
     /**
+     * To disable lanId
+     */
+    disableLanId = false;
+    /**
      * Agent Id enabled flag
      */
     agentIdEnabled = false;
     /**
      * Password enabled flag
      */
-    passwordEnabled = false;
+    password = {
+        Agent: false,
+        Station: false
+    };
     /**
      * To show/hide password field
      */
-    hidePassword = true;
+    hidePassword = {
+        agent: true,
+        station: true
+    };
     /**
      * Station enabled flag
      */
@@ -266,7 +275,6 @@ export class LoginComponent implements OnInit, OnDestroy {
             retrying: false,
             errored: false
         };
-
     /**
      * Flag for showing otp input
      */
@@ -306,7 +314,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
 
     constructor(
-        // private _fuseConfigService: FuseConfigService
         private _fuseFacadeService: FuseFacadeService,
         private _formBuilder: FormBuilder,
         private _appDataService: AppDataService,
@@ -369,17 +376,17 @@ export class LoginComponent implements OnInit, OnDestroy {
             domain: ['', Validators.required],
             lanId: ['', Validators.required],
             agentId: ['', Validators.required],
-            password: ['', Validators.required],
+            agentPassword: ['', Validators.required],
+            stationPassword: ['', Validators.required],
             station: ['', Validators.required],
             otp: ['', Validators.required]
         });
-        // this.autoLogin();
     }
 
     /**
-     * Logs in automatically via query params
+     * To checl query params provided
      */
-    autoLogin(): void {
+    checkQueryParams(): void {
         /**
          * subscribes to Activated route
          */
@@ -387,7 +394,7 @@ export class LoginComponent implements OnInit, OnDestroy {
             .pipe(
                 takeUntil(this._unsubscribeAll),
                 // continue only if userId present
-                filter((params) => params.u),
+                // filter((params) => params.u),
                 map((params) =>
                     // Get the query params with jd_ stripped for json data
                     Object.entries(params).reduce((acc, curr) => {
@@ -406,9 +413,19 @@ export class LoginComponent implements OnInit, OnDestroy {
                 )
             )
             .subscribe((params) => {
-                this.fuseSplashService.show();
+                // if there is not user in param then return
+                if (!params.u) {
+                    return;
+                }
+                // patch lanId to form
                 this.loginForm.patchValue({ lanId: params.u });
+                // add the params to query data
                 this.queryData = params;
+                // check if al (auto login) false or 0, then do not auto login
+                if (params.al !== undefined && (params.al === 'false' || params.al === '0')) {
+                    return;
+                }
+                this.fuseSplashService.show();
                 this.login(true);
             });
     }
@@ -437,7 +454,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.appConfig = config;
         this.configLoaded(config);
         this.getData();
-        this.autoLogin();
+        this.checkQueryParams();
         this._appDataService.setTheme();
     }
 
@@ -455,16 +472,20 @@ export class LoginComponent implements OnInit, OnDestroy {
             this.faceAuthEnabled = config.Login.FaceAuth?.Enabled;
             this.faceAuthServerUrl = config.Login.FaceAuth?.AuthServerUrl;
             this.domainListEnabled = config.Login.DomainListEnabled;
-            this.passwordEnabled = config.Login.PasswordEnabled;
             this.stationEnabled = config.Login.StationEnabled;
             this.loginModeEnabled = config.Login.Modes.Enabled;
             this.promptAgentIdOnInvalidLanId = config.Login.PromptAgentIdOnInvalidLanId;
+            this.disableLanId = config.Login.DisableLanId ?? false;
             this.brandLogo = config.AppConfigs.Logos.Default || null;
             this.multiWindowMode = config.Login.MultiWindowMode || {
                 Enabled: false,
                 Width: 0,
                 Height: 0,
                 PixelDimension: false
+            };
+            this.password = config.Login.Password ?? {
+                Agent: config.Login.PasswordEnabled ?? false, // adding for backward compatibility
+                Station: config.Login.PasswordEnabled ?? false // adding for backward compatibility
             };
 
             // check if the login mode is enabled
@@ -494,9 +515,13 @@ export class LoginComponent implements OnInit, OnDestroy {
                 this.startCamera();
             }
 
+            // check to disable lanId
+            if (this.disableLanId) {
+                this.loginForm.get('lanId').disable({ onlySelf: this.disableLanId });
+            }
+
             // set loading flag
             // this.loading = false;
-
         } else {
             // we will route to error page
             this._router.navigate(['not-found'], {
@@ -692,7 +717,8 @@ export class LoginComponent implements OnInit, OnDestroy {
         const selectedDomain = this.loginForm.get('domain').value;
         const lanId = this.loginForm.get('lanId').value;
         const agentId = this.loginForm.get('agentId').value;
-        const password = this.loginForm.get('password').value;
+        const agentPassword = this.loginForm.get('agentPassword').value;
+        const stationPassword = this.loginForm.get('stationPassword').value;
         const station = this.loginForm.get('station').value;
 
         let customAuthData = null;
@@ -722,8 +748,8 @@ export class LoginComponent implements OnInit, OnDestroy {
                 deviceId: this.stationEnabled ? station : lanId.split(',')[0].toLowerCase(),
                 forceReload: force,
                 jsonData: JSON.stringify(jsonData),
-                password: password,
-                sessionKey: '',
+                password: `${agentPassword}${stationPassword ? '<>' + stationPassword : ''}`,
+                sessionKey: ''
             },
             null
         )

@@ -85,6 +85,7 @@
                     </button>
 
                     <button
+                        *ngIf="!oneWayVideo"
                         mat-flat-button
                         mat-icon-button
                         [disabled]="!connected"
@@ -137,7 +138,7 @@
                 class="border-radius-20 bg-dark self-video"
                 [ngClass]="{ minimize: selfViewSmall }"
                 (dblclick)="minimizeVideo()"
-                *ngIf="selfVideo"
+                *ngIf="selfVideo && !oneWayVideo"
                 [@animate]="{ value: '*', params: { scale: '0.5' } }"
             >
                 <div class="drag-handle" cdkDragHandle>

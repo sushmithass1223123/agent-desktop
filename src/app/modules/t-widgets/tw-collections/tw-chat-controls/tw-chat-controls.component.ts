@@ -197,6 +197,19 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     disableAV: boolean;
     /**
+     * To escalate to AV flag
+     */
+    escalateAV: {
+        /**
+         * Audio escalate
+         */
+        audio: boolean;
+        /**
+         * Video escalate
+         */
+        video: boolean;
+    };
+    /**
      * File upload URL
      */
     fileUploadUrl: any;
@@ -261,22 +274,22 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
          */
         icon: string;
     }[] = [
-        {
-            action: 'documents',
-            icon: 'insert_drive_file',
-            label: 'Documents'
-        },
-        {
-            action: 'camera',
-            icon: 'camera_alt',
-            label: 'Camera'
-        },
-        {
-            action: 'media',
-            icon: 'photo',
-            label: 'Photos & Videos'
-        }
-    ];
+            {
+                action: 'documents',
+                icon: 'insert_drive_file',
+                label: 'Documents'
+            },
+            {
+                action: 'camera',
+                icon: 'camera_alt',
+                label: 'Camera'
+            },
+            {
+                action: 'media',
+                icon: 'photo',
+                label: 'Photos & Videos'
+            }
+        ];
     /**
      * Type of attachment previw
      */
@@ -373,6 +386,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     interactionOnHold: typeof unHoldState | typeof holdState = unHoldState;
 
     /**
+     * To disable reply input
+     */
+    textReplyAllowed: boolean;
+
+    /**
      * Constructor
      * @param {InteractionManagerService} _interactionManagerService
      * @param {TMACEventService} _tmacEventService
@@ -384,7 +402,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * @param {AppUiService} _appUIService,
      */
     constructor(
-        // private _fuseConfigService: FuseConfigService,
         private _interactionManagerService: InteractionManagerService,
         private _tmacEventService: TMACEventService,
         private _matDialog: MatDialog,
@@ -459,12 +476,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             this.appConfig = config;
         });
 
-        // this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: FuseConfig) => {
-        //     this.fuseConfig = config;
-        //     this.commonButtonBackground =
-        //         config.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor ? config.layout.anchorWidget.bodyBackground : '';
-        // });
-
         this._contentPageService.mode.pipe(takeUntil(this.unsubscribeAll)).subscribe((viewMode: string) => {
             // check if textchat view and selected interaction is this
             if (viewMode === this.data.Data.Path) {
@@ -535,6 +546,13 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 type: 'signatureRequest'
             });
         }
+
+        this.textReplyAllowed = this.data.Data.TextReplyAllowed ?? true;
+
+        this.escalateAV = {
+            audio: this.data.Data.AudioEscalateAllowed ?? false,
+            video: this.data.Data.VideoEscalateAllowed ?? false
+        };
     }
 
     /**
@@ -626,7 +644,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             // check for conversation history
             this.checkForConversationHistory(evt.CIF);
         }
-    };
+    }
 
     /**
      * To process TextChatSelfServiceDestinationEvent
@@ -639,7 +657,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // }
 
         this.selfServiceDestinations = evt.Destinations || [];
-    };
+    }
 
     /**
      * To process TextChatAgentConnectedEvent
@@ -664,7 +682,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             if (extraParam.conferenceType === 'conf' || extraParam.conferenceType === 'whisper') {
                 this._appUIService.showSnackbar(`${evt.AgentName} connected to the chat`, 'info');
             }
-        } catch (error) {}
+        } catch (error) { }
 
         // add the user to list
         this.conferenceAgentList.push({
@@ -679,7 +697,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         if (evt.IsBotAgent) {
             this.botConnected = true;
         }
-    };
+    }
 
     /**
      * To process TextChatTranscriptForTransferEvent
@@ -768,7 +786,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 }
             }
         );
-    };
+    }
 
     /**
      * To process TextChatMessageSentEvent
@@ -776,7 +794,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     private TextChatMessageSentEvent = (evt: TextChatMessageSentEvent) => {
         this.messageSentEvent(evt);
-    };
+    }
 
     /**
      * To process TextChatMessageTemplateSentEvent
@@ -785,7 +803,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     private TextChatMessageTemplateSentEvent = (evt: TextChatMessageTemplateSentEvent) => {
         this.messageSentEvent(evt);
-    };
+    }
 
     /**
      * To process TextChatUserMessageWaitTimerEvent
@@ -817,7 +835,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             // hide freeze auto response button
             this.showAutoFreeze = false;
         }
-    };
+    }
 
     /**
      * To process TextChatTypingStateChangedEvent
@@ -829,7 +847,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // if (evt.InteractionID !== this.interactionId) {
         //     return;
         // }
-    };
+    }
 
     /**
      * To process TextChatMessageReceivedEvent
@@ -837,7 +855,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     private TextChatMessageReceivedEvent = (evt: TextChatMessageReceivedEvent) => {
         this.chatMessageReceived(evt);
-    };
+    }
 
     /**
      * To process TextChatAgentMessageReceivedEvent
@@ -845,7 +863,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     private TextChatAgentMessageReceivedEvent = (evt: TextChatAgentMessageReceivedEvent) => {
         this.chatMessageReceived(evt);
-    };
+    }
 
     /**
      * To handles ActionMessageReceivedEvent
@@ -912,7 +930,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
         // TODO:: handle app messages
         return;
-    };
+    }
 
     /**
      * To handle InteractionDataEvent
@@ -1090,7 +1108,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     }
                 }
             }
-        } catch (error) {}
+        } catch (error) { }
 
         // TODO:: sanitze the message
         //        add message badge if the chat window is not active
@@ -1145,7 +1163,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // to show message alert
         this._appUIService.showDesktopAlert('New Message', `Message from ${this.customerName}`, true, 'message');
-    };
+    }
 
     /**
      * To process AVControlMessageReceivedEvent
@@ -1167,7 +1185,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // forward the av messages to av channel
         this.avConn?.onMessage(evt.Message);
-    };
+    }
 
     /**
      * To process TextChatDisconnectedEvent
@@ -1235,7 +1253,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // change the mode to upload to preview the taken image
         this.attachPreviewMode = '';
-    };
+    }
 
     /**
      * To process TextChatAgentDisconnectedEvent
@@ -1265,7 +1283,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // Reset the reply form
         this.replyForm?.reset();
-    };
+    }
 
     /**
      * To process custom CannedResposeEvent
@@ -1280,7 +1298,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // send the selected template
         this.sendMessage(evt.Data.Template);
-    };
+    }
 
     /**
      * To process custom TextChatTransferSuccessEvent
@@ -1290,7 +1308,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     private TextChatTransferSuccessEvent = (evt: TextChatTransferSuccessEvent) => {
         // Rahil close AV call here via opener
         this.transferConfDialogRef?.close();
-    };
+    }
 
     /**
      * To process custom TextChatTransferFailedEvent
@@ -1300,7 +1318,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     private TextChatTransferFailedEvent = (evt: TextChatTransferFailedEvent) => {
         this.transferConfDialogRef?.close();
         this._appUIService.showSnackbar(`${evt.ResultMessage}`, 'failure');
-    };
+    }
 
     /**
      * To process custom TextChatTransferRejectEvent
@@ -1310,12 +1328,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     private TextChatTransferRejectEvent = (evt: TextChatTransferRejectEvent) => {
         const otherData = JSON.parse(evt.Data);
         this._appUIService.showSnackbar(
-            `${evt.FromAgentName} has rejected your ${otherData.type === 'conf' ? 'conference' : 'transfer'} request ${
-                evt.Comment !== '' ? ' with comment: ' + evt.Comment : ''
+            `${evt.FromAgentName} has rejected your ${otherData.type === 'conf' ? 'conference' : 'transfer'} request ${evt.Comment !== '' ? ' with comment: ' + evt.Comment : ''
             }`,
             'failure'
         );
-    };
+    }
 
     /**
      * To process both TextChatMessageSentEvent and TextChatMessageTemplateSentEvent
@@ -1431,7 +1448,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     private isValidJson(str: string): boolean {
         try {
             return typeof JSON.parse(str) === 'object';
-        } catch (error) {}
+        } catch (error) { }
         return false;
     }
 
@@ -1646,7 +1663,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             // load all text templates
             const { response } = await SDKClient.getAllTextTemplates();
             this.textTemplates.data = response;
-        } catch (error) {}
+        } catch (error) { }
     }
 
     /**
@@ -1707,7 +1724,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     }
                 });
             }
-        } catch (error) {}
+        } catch (error) { }
     }
 
     /**
@@ -2145,43 +2162,43 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         let data: AgentSkillListData =
             type === 'transfer'
                 ? {
-                      title: 'Transfer Chat',
-                      type: 'transferChat',
-                      agent: {
-                          allowed: transferConfig.agent.Allowed,
-                          blind: transferConfig.agent.Allowed,
-                          source: transferConfig.agent.Source,
-                          allowedStates: transferConfig.agent.AllowedStates,
-                          columns: transferConfig.agent.Columns,
-                          teamFilter: transferConfig.agent.TeamFilter
-                      },
-                      skill: {
-                          allowed: transferConfig.skill.Allowed,
-                          blind: transferConfig.skill.Allowed,
-                          source: transferConfig.skill.Source,
-                          channelPrfix: transferConfig.skill.ChannelPrefix,
-                          columns: transferConfig.skill.Columns
-                      }
-                  }
+                    title: 'Transfer Chat',
+                    type: 'transferChat',
+                    agent: {
+                        allowed: transferConfig.agent.Allowed,
+                        blind: transferConfig.agent.Allowed,
+                        source: transferConfig.agent.Source,
+                        allowedStates: transferConfig.agent.AllowedStates,
+                        columns: transferConfig.agent.Columns,
+                        teamFilter: transferConfig.agent.TeamFilter
+                    },
+                    skill: {
+                        allowed: transferConfig.skill.Allowed,
+                        blind: transferConfig.skill.Allowed,
+                        source: transferConfig.skill.Source,
+                        channelPrfix: transferConfig.skill.ChannelPrefix,
+                        columns: transferConfig.skill.Columns
+                    }
+                }
                 : {
-                      title: 'Conference Chat',
-                      type: 'conferenceChat',
-                      agent: {
-                          allowed: conferenceConfig.agent.Allowed,
-                          blind: conferenceConfig.agent.Allowed,
-                          source: conferenceConfig.agent.Source,
-                          allowedStates: conferenceConfig.agent.AllowedStates,
-                          columns: conferenceConfig.agent.Columns,
-                          teamFilter: conferenceConfig.agent.TeamFilter
-                      },
-                      skill: {
-                          allowed: conferenceConfig.skill.Allowed,
-                          blind: conferenceConfig.skill.Allowed,
-                          source: conferenceConfig.skill.Source,
-                          channelPrfix: conferenceConfig.skill.ChannelPrefix,
-                          columns: conferenceConfig.skill.Columns
-                      }
-                  };
+                    title: 'Conference Chat',
+                    type: 'conferenceChat',
+                    agent: {
+                        allowed: conferenceConfig.agent.Allowed,
+                        blind: conferenceConfig.agent.Allowed,
+                        source: conferenceConfig.agent.Source,
+                        allowedStates: conferenceConfig.agent.AllowedStates,
+                        columns: conferenceConfig.agent.Columns,
+                        teamFilter: conferenceConfig.agent.TeamFilter
+                    },
+                    skill: {
+                        allowed: conferenceConfig.skill.Allowed,
+                        blind: conferenceConfig.skill.Allowed,
+                        source: conferenceConfig.skill.Source,
+                        channelPrfix: conferenceConfig.skill.ChannelPrefix,
+                        columns: conferenceConfig.skill.Columns
+                    }
+                };
 
         // add common properties
         data = {
@@ -2503,7 +2520,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             this.interactionOnHold.loading = false;
             this._fuseProgressBarService.hide();
         }
-    };
+    }
 
     /**
      * Unholds interaction
@@ -2527,5 +2544,5 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             this.interactionOnHold.loading = false;
             this._fuseProgressBarService.hide();
         }
-    };
+    }
 }

@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { SharedModule } from '@modules/shared/shared.module';
 import { TwTemplateModule } from 'app/modules/t-widgets/tw-template/tw-template.module';
 import { TwWrapperModule } from '../tw-wrapper/tw-wrapper.module';
-import { TwcContentComponent } from './twc-content/twc-content.component';
+import { TwcInteractionComponent } from './twc-interaction/twc-interaction.component';
 import { TwcCustomComponent } from './twc-custom/twc-custom.component';
 import { TwcDockerComponent } from './twc-docker/twc-docker.component';
 import { TwcHomeComponent } from './twc-home/twc-home.component';
@@ -18,7 +18,7 @@ import { TwcWorkbenchComponent } from './twc-workbench/twc-workbench.component';
     declarations: [
         TwcHomeComponent,
         TwcSupervisorComponent,
-        TwcContentComponent,
+        TwcInteractionComponent,
         TwcWorkbenchComponent,
         TwcCustomComponent,
         TwcDockerComponent,

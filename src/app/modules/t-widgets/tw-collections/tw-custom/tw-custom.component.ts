@@ -73,7 +73,6 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
         private sanitizer: DomSanitizer,
         private _aotWidgetService: AOTWidgetService,
         private _tmacEventService: TMACEventService,
-        // private _fuseConfigService: FuseConfigService,
         private _fuseFacadeService: FuseFacadeService,
         private _appDataService: AppDataService
     ) {
@@ -91,19 +90,10 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
             this.interactionId = this.data.InteractionDetails.InteractionID;
         }
 
-        // Subscribe to the config changes
-        // this._fuseConfigService.config
-        //     .pipe(takeUntil(this.unsubscribeAll))
-        //     .subscribe((fuseConfig: FuseConfig) => {
-        //         this.fuseConfig = fuseConfig;
-        //     });
-
         // register to post message subject
-        this._appDataService.postMessage
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((data: IPostMessage) => {
-                // check if the function is to get TMAC events
-                if (data.function?.toLowerCase() === 'gettmacevents') {
+        this._appDataService.postMessage.pipe(takeUntil(this.unsubscribeAll)).subscribe((message: IPostMessage) => {
+            switch (message.function?.toLowerCase()) {
+                case 'gettmacevents': // to get TMAC events
                     let events = [];
                     // check if in interaction
                     if (this.interactionId) {
@@ -111,14 +101,17 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                         events = this._tmacEventService.interactionEvents(this.interactionId);
                     }
                     // get non interaction events
-                    events = [
-                        ...events,
-                        ...this._tmacEventService.nonInteractionEvents()
-                    ];
+                    events = [...events, ...this._tmacEventService.nonInteractionEvents()];
                     // send event to the frame/opener
                     this.sendEventsToWindow(events);
-                }
-            });
+                    break;
+                case 'closetab': // to close tab/interaction
+                case 'closeinteraction': // to close tab/interaction
+                    SDKClient.closeInteraction(message.data.interactionID);
+                    break;
+                default:
+            }
+        });
 
         // check if the url is provided
         if (this.data.Data.Url) {
@@ -129,20 +122,16 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
             let setJson = {};
 
             if (stringVals && stringVals.length) {
-                stringVals.forEach(val => {
+                stringVals.forEach((val) => {
                     // get the path by taking string between ()
-                    const path = val.substring(
-                        val.lastIndexOf('${') + 2,
-                        val.lastIndexOf('}')
-                    );
+                    const path = val.substring(val.lastIndexOf('${') + 2, val.lastIndexOf('}'));
                     const splitPath = path.split('.');
                     if (splitPath[0].toLowerCase() === 'agentdata') {
                         setJson = {
                             ...setJson,
                             AgentData: SDKClient.getAgentData()
                         };
-                    }
-                    else if (this.data.InteractionDetails && splitPath[0].toLowerCase() === 'interaction') {
+                    } else if (this.data.InteractionDetails && splitPath[0].toLowerCase() === 'interaction') {
                         setJson = {
                             ...setJson,
                             Interaction: this.data.InteractionDetails
@@ -212,7 +201,6 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
     transform(url: string): any {
         return this.sanitizer.bypassSecurityTrustResourceUrl(url);
     }
-
 
     /**
      * To send TMAC events to the iframe/popup window

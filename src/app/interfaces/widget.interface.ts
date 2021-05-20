@@ -57,15 +57,15 @@ export interface InteractionWidgets {
         /**
          * Static Widgets
          */
-        static: TWidget[];
+        static: IWidget[];
         /**
          * Dynamic Widgets
          */
-        dynamic: TWidget[];
+        dynamic: IWidget[];
         /**
          * AOT widgets
          */
-        aot?: TWidget[];
+        aot?: IWidget[];
     };
 }
 

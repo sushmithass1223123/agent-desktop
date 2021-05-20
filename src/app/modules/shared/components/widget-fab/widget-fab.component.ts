@@ -74,6 +74,7 @@ export class WidgetFabComponent implements OnInit, OnChanges {
         // if widget data is there, then open AOT
         if (widget) {
             this._aotWidgetService.addWidget(widget);
+            this.openWidgetList = false;
         }
     }
 }

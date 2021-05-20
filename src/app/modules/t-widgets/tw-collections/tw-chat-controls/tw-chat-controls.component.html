@@ -264,7 +264,7 @@
                         </button>
 
                         <button
-                            *ngIf="data.Data.AudioEscalateAllowed"
+                            *ngIf="escalateAV.audio"
                             [disabled]="
                                 status !== 'connected' ||
                                 disableAV ||
@@ -282,7 +282,7 @@
                         </button>
 
                         <button
-                            *ngIf="data.Data.VideoEscalateAllowed"
+                            *ngIf="escalateAV.video"
                             [disabled]="
                                 status !== 'connected' ||
                                 disableAV ||
@@ -362,7 +362,7 @@
                     <!-- CHAT CONTENT -->
                     <div class="chat-transcripts custom-scroll-adjust" #messages>
                         <!-- CHAT MESSAGES -->
-                        <div class="chat-messages">
+                        <div class="chat-messages" [ngClass]="{ 'no-reply': !textReplyAllowed || conferenceType === 'silent' }">
                             <!-- MESSAGE -->
                             <div
                                 *ngFor="let message of chatTranscripts; let i = index"
@@ -411,7 +411,7 @@
                     <!-- / CHAT CONTENT -->
 
                     <!-- CHAT FOOTER -->
-                    <div class="chat-footer" *ngIf="conferenceType !== 'silent'">
+                    <div class="chat-footer" *ngIf="conferenceType !== 'silent' && textReplyAllowed">
                         <!-- REPLY FORM -->
                         <div class="reply-form">
                             <button style="display: none" cdkOverlayOrigin #replyingMessageOverlay="cdkOverlayOrigin"></button>

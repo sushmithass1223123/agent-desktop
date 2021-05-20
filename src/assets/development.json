@@ -9,9 +9,12 @@
             "AuthServerUrl": "https://tmac.tetherfilabs.com/TFaceAuthProxyNew/Proxy.asmx/VerifyFaceImages"
         },
         "DomainListEnabled": false,
-        "PasswordEnabled": false,
+        "Password": {
+            "Agent": false,
+            "Station": false
+        },
         "StationEnabled": false,
-        "LanIdDisabled": false,
+        "DisableLanId": false,
         "PromptAgentIdOnInvalidLanId": false,
         "MultiWindowMode": {
             "Enabled": false,
@@ -140,7 +143,7 @@
                                     "Channels": [
                                         {
                                             "Name": "Send SMS",
-                                            "Enable": true,
+                                            "Enabled": true,
                                             "EnableState": "",
                                             "Type": "text",
                                             "SubType": "sms",
@@ -149,10 +152,10 @@
                                         },
                                         {
                                             "Name": "Make Call",
-                                            "Enable": true,
+                                            "Enabled": true,
                                             "EnableState": "calloutbound",
                                             "Type": "voice",
-                                            "SubType": "",
+                                            "SubType": "voice",
                                             "Icon": "call",
                                             "Data": {
                                                 "Source": {
@@ -167,7 +170,7 @@
                                         },
                                         {
                                             "Name": "Send WhatsApp",
-                                            "Enable": true,
+                                            "Enabled": true,
                                             "EnableState": "",
                                             "Type": "text",
                                             "SubType": "whatsapp",
@@ -176,7 +179,7 @@
                                         },
                                         {
                                             "Name": "Send Email",
-                                            "Enable": true,
+                                            "Enabled": true,
                                             "EnableState": "",
                                             "Type": "email",
                                             "SubType": "email",
@@ -265,7 +268,7 @@
                         "Type": "twn-generic",
                         "Config": {
                             "Enabled": true,
-                            "Icon": "widgets"
+                            "Icon": "feed"
                         },
                         "Data": {
                             "Path": "/generic",
@@ -1814,8 +1817,6 @@
                                                             "Columns": []
                                                         }
                                                     },
-                                                    "ImmediateCallbackAllowed": false,
-                                                    "ScheduledCallbackAllowed": false,
                                                     "AudioEscalateAllowed": true,
                                                     "VideoEscalateAllowed": true,
                                                     "SignatureAllowed": true,
@@ -1867,7 +1868,8 @@
                                                     "ConversationService": {
                                                         "Url": "",
                                                         "Limit": 50
-                                                    }
+                                                    },
+                                                    "TextReplyAllowed": true
                                                 }
                                             },
                                             {
@@ -2831,92 +2833,6 @@
                                     }
                                 },
                                 {
-                                    "Name": "Account Information",
-                                    "Description": "",
-                                    "Key": "CustomerAccountInfo",
-                                    "Type": "tw-account-information",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 2,
-                                            "Y": 1
-                                        },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "IsAuthenticated": true
-                                    }
-                                },
-                                {
-                                    "Name": "AMDOC-BCC",
-                                    "Description": "",
-                                    "Key": "AmdocBCC",
-                                    "Type": "tw-amdocs-bcc",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 2,
-                                            "Y": 1
-                                        },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {}
-                                },
-                                {
-                                    "Name": "Customer Sentiment",
-                                    "Description": "feedback",
-                                    "Key": "CustomerSentiment",
-                                    "Type": "tw-customer-sentiment",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "sentiment_satisfied_alt",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 2,
-                                            "Y": 1
-                                        },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {}
-                                },
-                                {
                                     "Name": "Work Codes",
                                     "Description": "",
                                     "Key": "WorkCodes",
@@ -2949,10 +2865,10 @@
                                     }
                                 },
                                 {
-                                    "Name": "Speech Transcripts",
+                                    "Name": "Campaign",
                                     "Description": "",
-                                    "Key": "SpeechTranscript",
-                                    "Type": "tw-voice-bot-transcripts",
+                                    "Key": "CampaignManager",
+                                    "Type": "tw-custom",
                                     "Config": {
                                         "Enabled": true,
                                         "Hidden": false,
@@ -2960,11 +2876,11 @@
                                         "Anchor": false,
                                         "AOT": false,
                                         "AutoOpen": false,
-                                        "Icon": "",
-                                        "Class": "",
+                                        "Icon": "widgets",
+                                        "Class": "mx-cover",
                                         "Position": {
-                                            "X": 2,
-                                            "Y": 1
+                                            "X": 4,
+                                            "Y": 2
                                         },
                                         "Actions": [
                                             "maximize",
@@ -2974,7 +2890,11 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": {}
+                                    "Data": {
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/TCM_Client/ui/campaign_selector.html?phone=${Interaction.Item.PhoneNumber}&agentID=${AgentData.agentId}&extension=${AgentData.deviceId}&ucid=&skill=${Interaction.Item.Skill}&intid=${Interaction.InteractionID}&ID=${Interaction.Item.ID}",
+                                        "AutoRefresh": 0
+                                    }
                                 }
                             ],
                             "AOT": []

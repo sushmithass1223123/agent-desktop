@@ -153,14 +153,12 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
         // });
 
         // subscribe to app changes
-        this._appDataService.config
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((config: any) => {
-                if (Object.keys(config).length) {
-                    this.appConfig = config;
-                    this._appDataService.setTheme();
-                }
-            });
+        this._appDataService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
+            if (Object.keys(config).length) {
+                this.appConfig = config;
+                this._appDataService.setTheme();
+            }
+        });
 
         this.autoStatusChange();
     }
@@ -268,9 +266,8 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
      * Route to login
      */
     private routeToLogin(): void {
-        const route = `login${this.agentId ? '/' + this.agentId : ''}`;
         // we will route to login page
-        this._router.navigate([`${route}`], { queryParamsHandling: 'preserve' });
+        this._router.navigate([`login${this.agentId ? '/' + this.agentId : ''}`]);
     }
 
     /**

@@ -6,7 +6,7 @@
 
     twc-unknown,
     twc-custom,
-    twc-no-widgets {
+    twc-not-found {
         &.twc-card {
             .mat-card {
                 // If it's a light theme, use a darker background
@@ -14,7 +14,7 @@
                 @if ($is-dark) {
                     background: #424242;
                 } @else {
-                    background: #F5F5F5;
+                    background: #f5f5f5;
                 }
             }
         }

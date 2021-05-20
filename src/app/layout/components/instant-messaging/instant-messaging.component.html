@@ -19,7 +19,7 @@
             </avatar>
             <div fxLayout fxLayoutAlign="start center">
                 <h3 class="text-truncate">{{ selectedContact.name }}</h3>
-                <span class="secondary-text ml-4"> | {{ selectedContact.status }} </span>
+                <span *ngIf="selectedContact.status" class="secondary-text ml-4"> | {{ selectedContact.status }} </span>
             </div>
         </div>
     </ng-container>

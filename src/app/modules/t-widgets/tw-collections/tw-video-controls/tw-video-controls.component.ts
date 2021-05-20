@@ -8,6 +8,7 @@ import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import {
     AgentAVMessageEvent,
+    AVApiConfig,
     AVChannel,
     AVControlMessageReceivedEvent,
     AVEvent,
@@ -161,6 +162,10 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
      * Remote Screen sharing flag
      */
     remoteScreenSharing: boolean;
+    /**
+     * Check if OneWayVideo
+     */
+    oneWayVideo: boolean;
 
     /**
      * Remote Video Elements Ref
@@ -277,7 +282,15 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         // create a AV channel connection
 
         // Set AV Config
-        const AV: any = this.appConfig.AppConfigs.AV || {};
+        const AV: AVApiConfig = this.appConfig.AppConfigs.AV || {};
+
+        // check if the agent has IsOneWayVideoEnabled feature enabled
+        this.oneWayVideo = SDKClient.getAgentData().featuresList.filter(f => f.Feature.toLowerCase() === 'isonewayvideoenabled')?.[0]?.IsEnabled;
+
+        // override the av config media constrain
+        if (this.oneWayVideo) {
+            AV.mediaConstraints.type = 'onewayvideo';
+        }
 
         // create a AV channel connection
         const connection = new AVChannel(

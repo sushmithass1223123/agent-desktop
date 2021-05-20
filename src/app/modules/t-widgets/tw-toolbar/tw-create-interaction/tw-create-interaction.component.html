@@ -1,36 +1,38 @@
-<div class="fab-container">
+<div *ngIf="channels.length" class="fab-container">
     <button
+        *ngIf="!channels.length"
         mat-icon-button
         cdkOverlayOrigin
         #channelList="cdkOverlayOrigin"
-        (click)="channels = channels.length ? [] : data.Data.Channels"
+        (click)="openList = !openList"
         matTooltip="More Actions"
     >
-        <mat-icon [@fabToggler]="{ value: !!channels.length ? 'active' : 'inactive' }">add </mat-icon>
+        <mat-icon [@fabToggler]="{ value: openList ? 'active' : 'inactive' }">add </mat-icon>
     </button>
 
     <!-- This template displays the overlay content and is connected to the button -->
     <ng-template
         cdkConnectedOverlay
         [cdkConnectedOverlayOrigin]="channelList"
-        [cdkConnectedOverlayOpen]="channels.length"
+        [cdkConnectedOverlayOpen]="openList"
         cdkConnectedOverlayHasBackdrop
         cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-        (overlayOutsideClick)="channels = []"
+        (overlayOutsideClick)="openList = false"
     >
         <div fxLayout="column" fxLayoutGap="10px" class="mt-12 create-interaction-buttons" [@widgetStagger]="channels.length">
-            <button
-                mat-mini-fab
-                color="secondary"
-                *ngFor="let channel of data.Data.Channels"
-                (click)="addInteraction(channel.Type, channel)"
-                class="fab-secondary"
-                [disabled]="!checkAux(channel.EnableState)"
-                [matTooltip]="channel.Name"
-            >
-                <mat-icon *ngIf="channel.Icon.indexOf('custom') < 0">{{ channel.Icon }}</mat-icon>
-                <mat-icon [svgIcon]="channel.Icon" *ngIf="channel.Icon.indexOf('custom') >= 0"></mat-icon>
-            </button>
+            <ng-container *ngFor="let channel of channels">
+                <button
+                    mat-mini-fab
+                    color="secondary"
+                    (click)="addInteraction(channel.Type, channel)"
+                    class="fab-secondary"
+                    [disabled]="!checkAux(channel.EnableState)"
+                    [matTooltip]="channel.Name"
+                >
+                    <mat-icon *ngIf="channel.Icon.indexOf('custom') < 0">{{ channel.Icon }}</mat-icon>
+                    <mat-icon [svgIcon]="channel.Icon" *ngIf="channel.Icon.indexOf('custom') >= 0"></mat-icon>
+                </button>
+            </ng-container>
         </div>
     </ng-template>
 </div>
