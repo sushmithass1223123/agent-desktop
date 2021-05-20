@@ -1,8 +1,9 @@
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { TemplatePortal } from '@angular/cdk/portal';
+import { Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewContainerRef, ViewEncapsulation } from '@angular/core';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 
 /**
- * Need more Description 
+ * Need more Description
  * Tw Panel Compoenent
  */
 @Component({
@@ -17,10 +18,15 @@ export class TwPanelComponent extends TWidgetWrapper implements OnInit, OnDestro
      */
     @Input() data: any;
 
+    templatePortal: TemplatePortal;
+
+    @ViewChild('templatePortalContent')
+    templatePortalContent: TemplateRef<any>;
+
     /**
-     * Constructor 
+     * Constructor
      */
-    constructor() {
+    constructor(private _viewContainerRef: ViewContainerRef) {
         super();
     }
 
@@ -35,6 +41,9 @@ export class TwPanelComponent extends TWidgetWrapper implements OnInit, OnDestro
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
+        if (this.data.Data?.templateRef) {
+            this.templatePortal = new TemplatePortal(this.data.Data?.templateRef, this._viewContainerRef);
+        }
     }
 
     /**
@@ -53,6 +62,5 @@ export class TwPanelComponent extends TWidgetWrapper implements OnInit, OnDestro
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
 }
-
 
 // for more info visit - https://angular.io/api/core

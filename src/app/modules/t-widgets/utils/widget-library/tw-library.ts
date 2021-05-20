@@ -27,6 +27,7 @@ import { TwFaxPanelComponent } from '@modules/t-widgets/tw-collections/tw-fax-pa
 import { TwGamificationComponent } from '@modules/t-widgets/tw-collections/tw-gamification/tw-gamification.component';
 import { TwGenericControlsComponent } from '@modules/t-widgets/tw-collections/tw-generic-controls/tw-generic-controls.component';
 import { TwGenericPanelComponent } from '@modules/t-widgets/tw-collections/tw-generic-panel/tw-generic-panel.component';
+import { TwPanelComponent } from '@modules/t-widgets/tw-collections/tw-panel/tw-panel.component';
 import { TwPendingCallbacksComponent } from '@modules/t-widgets/tw-collections/tw-pending-callbacks/tw-pending-callbacks.component';
 import { TwPieChartComponent } from '@modules/t-widgets/tw-collections/tw-pie-chart/tw-pie-chart.component';
 import { TwRegisterCallbackComponent } from '@modules/t-widgets/tw-collections/tw-register-callback/tw-register-callback.component';
@@ -47,6 +48,7 @@ import { TwVoicePanelComponent } from '@modules/t-widgets/tw-collections/tw-voic
 import { TwWallboardComponent } from '@modules/t-widgets/tw-collections/tw-wallboard/tw-wallboard.component';
 import { TwWorkCodesComponent } from '@modules/t-widgets/tw-collections/tw-work-codes/tw-work-codes.component';
 import { TwWorkbenchPanelComponent } from '@modules/t-widgets/tw-collections/tw-workbench-panel/tw-workbench-panel.component';
+import { TwcContentComponent } from '@modules/t-widgets/tw-content/twc-content/twc-content.component';
 import { TwcCustomComponent } from '@modules/t-widgets/tw-content/twc-custom/twc-custom.component';
 import { TwcDockerComponent } from '@modules/t-widgets/tw-content/twc-docker/twc-docker.component';
 import { TwcHomeComponent } from '@modules/t-widgets/tw-content/twc-home/twc-home.component';
@@ -120,7 +122,8 @@ export class TWLibrary {
         'tw-email-template-preview': TwEmailTemplatePreviewComponent,
         'tw-calendar': TwCalendarComponent,
         'tw-tcis-integration': TwTcisIntegrationComponent,
-        'tw-trs-integration': TwTrsIntegrationComponent
+        'tw-trs-integration': TwTrsIntegrationComponent,
+        'tw-panel': TwPanelComponent
     };
 
     /**

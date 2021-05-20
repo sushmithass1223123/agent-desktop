@@ -1,5 +1,8 @@
 <tw-wrapper [data]="data">
-    <div fxFlex fxFill fxLayout="row" fxLayoutAlign="none">
-        <ng-content></ng-content>
-    </div>
+    <ng-template #templatePortalContent [cdkPortalOutlet]="templatePortal"></ng-template>
+    <ng-container *ngIf="!data.Data?.templateRef">
+        <div fxFlex fxFill fxLayout="row" fxLayoutAlign="none">
+            <ng-content></ng-content>
+        </div>
+    </ng-container>
 </tw-wrapper>

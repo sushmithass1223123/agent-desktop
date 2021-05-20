@@ -1,6 +1,10 @@
-import { Component, OnInit, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { TwEmailTemplatePreviewComponent } from '@modules/t-widgets/tw-collections/tw-email-template-preview/tw-email-template-preview.component';
+import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
 import { EmailTemplate, SDKClient } from '@tmac/sdk';
+import { TwWidgetModel } from 'app/models';
 
 @Component({
     selector: 'email-template-selector',
@@ -8,7 +12,7 @@ import { EmailTemplate, SDKClient } from '@tmac/sdk';
     styleUrls: ['./email-template-selector.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EmailTemplateSelectorComponent implements OnInit {
+export class EmailTemplateSelectorComponent implements OnInit, OnDestroy {
     /**
      * Emitted when a template selected
      */
@@ -22,9 +26,24 @@ export class EmailTemplateSelectorComponent implements OnInit {
         departments: {}
     };
 
-    constructor(private appUiService: AppUiService) {}
+    /**
+     * Template preview data
+     */
+    templatePreview = {
+        aots: []
+    };
 
-    ngOnInit() {
+    /**
+     * Preview Dialog Ref
+     */
+    previewDialogRef: MatDialogRef<any>;
+
+    constructor(private appUiService: AppUiService, private aotService: AOTWidgetService, private matDialog: MatDialog) {}
+
+    /**
+     * Lifecycle hook
+     */
+    ngOnInit(): void {
         SDKClient.getEmailTemplateDepartments()
             .then((res) => {
                 this.availableTemplates.departments = this.getDropdownKeyvaluePair(res.response, 'ID');
@@ -33,6 +52,13 @@ export class EmailTemplateSelectorComponent implements OnInit {
                 console.error(err);
                 this.appUiService.showSnackbar('Something went wrong while fetching departments', 'failure');
             });
+    }
+
+    /**
+     * Lifecycle hook
+     */
+    ngOnDestroy(): void {
+        this.closeTemplatePreview();
     }
 
     /**
@@ -87,10 +113,49 @@ export class EmailTemplateSelectorComponent implements OnInit {
     }
 
     /**
-     * Emits selected template
-     * @param preview
+     * Select template for email
+     * @param {EmailTemplate} preview
      */
     emitSelectTemplate(preview: EmailTemplate): void {
-        this.selectTemplate.emit(preview);
+        // this.templatePreview.preview = preview.BodyHTML;
+        const data = {
+            info: preview,
+            Name: 'Template',
+            useTemplate: (info: EmailTemplate) => this.useTemplate(info),
+            closeTemplate: () => this.closeTemplatePreview()
+        };
+        if (preview.ID === 4) {
+            const widget = new TwWidgetModel('Template', 'tw-email-template-preview');
+            widget.Config.Anchor = true;
+            widget.Config.Position.W = 500;
+            widget.Config.Actions = ['maximize', 'collapse', 'destroy'];
+            widget.Data = data;
+            this.aotService.addWidget(widget);
+            this.templatePreview.aots.push(widget.ID);
+        } else {
+            this.previewDialogRef = this.matDialog.open(TwEmailTemplatePreviewComponent, {
+                data,
+                minWidth: '40%',
+                panelClass: `email-template-dialog__${data.info?.Type || ''}`
+            });
+        }
+    }
+
+    /**
+     * Closes tempate preview
+     */
+    closeTemplatePreview(): void {
+        this.templatePreview.aots.forEach((aotID) => {
+            this.aotService.destroyWidget(aotID);
+        });
+        this.previewDialogRef?.close();
+    }
+
+    /**
+     * Adds template to editor
+     */
+    useTemplate(template: EmailTemplate): void {
+        this.selectTemplate.emit(template.BodyHTML);
+        this.closeTemplatePreview();
     }
 }

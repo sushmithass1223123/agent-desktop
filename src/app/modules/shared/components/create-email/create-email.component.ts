@@ -1,16 +1,13 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { TwEmailTemplatePreviewComponent } from '@modules/t-widgets/tw-collections/tw-email-template-preview/tw-email-template-preview.component';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
-import { EmailTemplate, SDKClient } from '@tmac/sdk';
+import { SDKClient } from '@tmac/sdk';
 import { QUILL_EDITOR_CONFIG } from 'app/constants';
 import { CreateEmailInput, CreateEmailOutput } from 'app/interfaces';
-import { TwWidgetModel } from 'app/models';
 import { maticonByExtension } from 'app/utils';
 import { merge } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
@@ -24,7 +21,7 @@ import { debounceTime, map } from 'rxjs/operators';
     styleUrls: ['./create-email.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class CreateEmailComponent implements OnInit, OnDestroy, AfterViewInit {
+export class CreateEmailComponent implements OnInit {
     /**
      * Send email event emitter
      */
@@ -69,7 +66,7 @@ export class CreateEmailComponent implements OnInit, OnDestroy, AfterViewInit {
     /**
      * Flag for disabling send
      */
-    @Input() sendDisabled? = false;
+    @Input() sendDisabled ?= false;
 
     /**
      * A readonly value for from
@@ -121,7 +118,7 @@ export class CreateEmailComponent implements OnInit, OnDestroy, AfterViewInit {
         private matDialog: MatDialog,
         private aotService: AOTWidgetService,
         private _fuseFacadeService: FuseFacadeService
-    ) {}
+    ) { }
 
     /**
      * Lifecycle hook
@@ -164,20 +161,6 @@ export class CreateEmailComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     /**
-     * Lifecycle hook
-     */
-    ngAfterViewInit(): void {
-        // if (this.quillRef.nativeElement) {
-        //     const quill = new Quill(this.quillRef.nativeElement, QUILL_EDITOR_CONFIG);
-        //     quill.root.innerHTML = '';
-        //     quill.clipboard.dangerouslyPasteHTML(0, this.email.Body);
-        // quill.on('text-change', () => {
-        //     this.email.Body = quill.root.innerHTML;
-        // });
-        // }
-    }
-
-    /**
      * Selects user from suggestions
      * @param key
      * @param evt
@@ -209,12 +192,6 @@ export class CreateEmailComponent implements OnInit, OnDestroy, AfterViewInit {
             });
     }
 
-    /**
-     * Lifecycle hook
-     */
-    ngOnDestroy(): void {
-        this.closeTemplatePreview();
-    }
     /**
      * Attach files to email
      * @param {Event} evt
@@ -283,50 +260,11 @@ export class CreateEmailComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     /**
-     * Adds template to editor
-     */
-    useTemplate(template: EmailTemplate): void {
-        this.email.Body = `${template.BodyHTML} ${this.email.Body}`;
-        this.closeTemplatePreview();
-    }
-
-    /**
-     * Closes tempate preview
-     */
-    closeTemplatePreview(): void {
-        this.matDialog.closeAll();
-        this.templatePreview.aots.forEach((aotID) => {
-            this.aotService.destroyWidget(aotID);
-        });
-    }
-
-    /**
      * Select template for email
-     * @param {EmailTemplate} preview
+     * @param {string} preview
      */
-    selectTemplate(preview: EmailTemplate): void {
-        // this.templatePreview.preview = preview.BodyHTML;
-        const data = {
-            info: preview,
-            useTemplate: (info: EmailTemplate) => this.useTemplate(info),
-            closeTemplate: () => this.closeTemplatePreview()
-        };
-        if (preview.ID === 4) {
-            const widget = new TwWidgetModel('Template', 'tw-email-template-preview');
-            widget.Config.Anchor = true;
-            widget.Config.Position.W = 800;
-            widget.Config.Position.H = 300;
-            widget.Config.Actions = ['maximize', 'collapse', 'destroy'];
-            widget.Data = data;
-            this.aotService.addWidget(widget);
-            this.templatePreview.aots.push(widget.ID);
-        } else {
-            this.matDialog.open(TwEmailTemplatePreviewComponent, {
-                data,
-                minWidth: '40%',
-                panelClass: `email-template-dialog__${data.info?.Type || ''}`
-            });
-        }
+    selectTemplate(html: string): void {
+        this.email.Body = `${html} ${this.email.Body}`;
     }
     /**
      * Focuses the editor

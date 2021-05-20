@@ -274,22 +274,22 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
          */
         icon: string;
     }[] = [
-            {
-                action: 'documents',
-                icon: 'insert_drive_file',
-                label: 'Documents'
-            },
-            {
-                action: 'camera',
-                icon: 'camera_alt',
-                label: 'Camera'
-            },
-            {
-                action: 'media',
-                icon: 'photo',
-                label: 'Photos & Videos'
-            }
-        ];
+        {
+            action: 'documents',
+            icon: 'insert_drive_file',
+            label: 'Documents'
+        },
+        {
+            action: 'camera',
+            icon: 'camera_alt',
+            label: 'Camera'
+        },
+        {
+            action: 'media',
+            icon: 'photo',
+            label: 'Photos & Videos'
+        }
+    ];
     /**
      * Type of attachment previw
      */
@@ -682,7 +682,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             if (extraParam.conferenceType === 'conf' || extraParam.conferenceType === 'whisper') {
                 this._appUIService.showSnackbar(`${evt.AgentName} connected to the chat`, 'info');
             }
-        } catch (error) { }
+        } catch (error) {}
 
         // add the user to list
         this.conferenceAgentList.push({
@@ -1108,7 +1108,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     }
                 }
             }
-        } catch (error) { }
+        } catch (error) {}
 
         // TODO:: sanitze the message
         //        add message badge if the chat window is not active
@@ -1328,7 +1328,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     private TextChatTransferRejectEvent = (evt: TextChatTransferRejectEvent) => {
         const otherData = JSON.parse(evt.Data);
         this._appUIService.showSnackbar(
-            `${evt.FromAgentName} has rejected your ${otherData.type === 'conf' ? 'conference' : 'transfer'} request ${evt.Comment !== '' ? ' with comment: ' + evt.Comment : ''
+            `${evt.FromAgentName} has rejected your ${otherData.type === 'conf' ? 'conference' : 'transfer'} request ${
+                evt.Comment !== '' ? ' with comment: ' + evt.Comment : ''
             }`,
             'failure'
         );
@@ -1448,7 +1449,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     private isValidJson(str: string): boolean {
         try {
             return typeof JSON.parse(str) === 'object';
-        } catch (error) { }
+        } catch (error) {}
         return false;
     }
 
@@ -1663,7 +1664,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             // load all text templates
             const { response } = await SDKClient.getAllTextTemplates();
             this.textTemplates.data = response;
-        } catch (error) { }
+        } catch (error) {}
     }
 
     /**
@@ -1724,7 +1725,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     }
                 });
             }
-        } catch (error) { }
+        } catch (error) {}
     }
 
     /**
@@ -2162,43 +2163,43 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         let data: AgentSkillListData =
             type === 'transfer'
                 ? {
-                    title: 'Transfer Chat',
-                    type: 'transferChat',
-                    agent: {
-                        allowed: transferConfig.agent.Allowed,
-                        blind: transferConfig.agent.Allowed,
-                        source: transferConfig.agent.Source,
-                        allowedStates: transferConfig.agent.AllowedStates,
-                        columns: transferConfig.agent.Columns,
-                        teamFilter: transferConfig.agent.TeamFilter
-                    },
-                    skill: {
-                        allowed: transferConfig.skill.Allowed,
-                        blind: transferConfig.skill.Allowed,
-                        source: transferConfig.skill.Source,
-                        channelPrfix: transferConfig.skill.ChannelPrefix,
-                        columns: transferConfig.skill.Columns
-                    }
-                }
+                      title: 'Transfer Chat',
+                      type: 'transferChat',
+                      agent: {
+                          allowed: transferConfig.agent.Allowed,
+                          blind: transferConfig.agent.Allowed,
+                          source: transferConfig.agent.Source,
+                          allowedStates: transferConfig.agent.AllowedStates,
+                          columns: transferConfig.agent.Columns,
+                          teamFilter: transferConfig.agent.TeamFilter
+                      },
+                      skill: {
+                          allowed: transferConfig.skill.Allowed,
+                          blind: transferConfig.skill.Allowed,
+                          source: transferConfig.skill.Source,
+                          channelPrfix: transferConfig.skill.ChannelPrefix,
+                          columns: transferConfig.skill.Columns
+                      }
+                  }
                 : {
-                    title: 'Conference Chat',
-                    type: 'conferenceChat',
-                    agent: {
-                        allowed: conferenceConfig.agent.Allowed,
-                        blind: conferenceConfig.agent.Allowed,
-                        source: conferenceConfig.agent.Source,
-                        allowedStates: conferenceConfig.agent.AllowedStates,
-                        columns: conferenceConfig.agent.Columns,
-                        teamFilter: conferenceConfig.agent.TeamFilter
-                    },
-                    skill: {
-                        allowed: conferenceConfig.skill.Allowed,
-                        blind: conferenceConfig.skill.Allowed,
-                        source: conferenceConfig.skill.Source,
-                        channelPrfix: conferenceConfig.skill.ChannelPrefix,
-                        columns: conferenceConfig.skill.Columns
-                    }
-                };
+                      title: 'Conference Chat',
+                      type: 'conferenceChat',
+                      agent: {
+                          allowed: conferenceConfig.agent.Allowed,
+                          blind: conferenceConfig.agent.Allowed,
+                          source: conferenceConfig.agent.Source,
+                          allowedStates: conferenceConfig.agent.AllowedStates,
+                          columns: conferenceConfig.agent.Columns,
+                          teamFilter: conferenceConfig.agent.TeamFilter
+                      },
+                      skill: {
+                          allowed: conferenceConfig.skill.Allowed,
+                          blind: conferenceConfig.skill.Allowed,
+                          source: conferenceConfig.skill.Source,
+                          channelPrfix: conferenceConfig.skill.ChannelPrefix,
+                          columns: conferenceConfig.skill.Columns
+                      }
+                  };
 
         // add common properties
         data = {

@@ -762,10 +762,12 @@
 </ng-container>
 
 <ng-template #replyDialog>
-    <div #replyEditor id="replyEditor"></div>
-    <div class="twd-flex twd-gap-2 twd-justify-end twd-mt-3">
-        <email-template-selector (selectTemplate)="selectEmailTemplate($event)"></email-template-selector>
-        <button mat-raised-button (click)="replyEditorModal.close(true)" color="primary">Send</button>
-        <button mat-raised-button (click)="replyEditorModal.close()" color="accent">Cancel</button>
+    <div class="twd-h-full twd-w-full twd-flex twd-flex-col">
+        <div #replyEditor id="replyEditor"></div>
+        <div class="twd-flex twd-gap-2 twd-justify-end twd-py-2 twd-px-3">
+            <email-template-selector (selectTemplate)="selectEmailTemplate($event)"></email-template-selector>
+            <button mat-raised-button (click)="replyEditorModal.sendEmail()" [disabled]="replyEditorModal.sendingEmail" color="primary">Send</button>
+            <button mat-raised-button (click)="replyEditorModal.close()" color="accent">Cancel</button>
+        </div>
     </div>
 </ng-template>

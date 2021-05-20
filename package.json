@@ -42,7 +42,6 @@
         "@tmac/sdk": "git+https://gitlab+deploy-token-17:abBjHj7fzix3b8nK_o76@git.tetherfi.com/tetherfi_product/products/tmac/ui/tmac-packages/tmac-sdk.git",
         "@tmac/styles": "git+https://gitlab+deploy-token-21:9AsU6yvhroym_FWij7eM@git.tetherfi.com/tetherfi_product/products/tmac/ui/tmac-packages/tmac-styles",
         "angular-calendar": "0.28.24",
-        "angular-user-idle": "2.2.5",
         "animate.css": "4.1.1",
         "chart.js": "2.9.3",
         "chartjs-plugin-piechart-outlabels": "0.1.4",
