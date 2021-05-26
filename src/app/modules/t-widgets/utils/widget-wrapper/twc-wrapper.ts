@@ -28,13 +28,13 @@ export class TWContentWrapper {
      */
     @Input() data: IWidget;
     /**
-     * Screen height
+     * Widget height
      */
-    screenHeight: number;
+    widgetHeight: number;
     /**
-     * Screen width
+     * Widget width
      */
-    screenWidth: number;
+    widgetWidth: number;
     /**
      * Holds all widget's custom data
      */
@@ -73,8 +73,35 @@ export class TWContentWrapper {
      * To set width/height
      */
     private setWidthHeight(): void {
-        this.screenHeight = window.innerHeight - 90;
-        this.screenWidth = window.innerWidth >= 599 ? window.innerWidth - 100 : window.innerWidth;
+        // this.widgetHeight = window.innerHeight - 90;
+        // this.widgetWidth = window.innerWidth >= 599 ? window.innerWidth - 100 : window.innerWidth;
+
+        // default height
+        this.widgetHeight = window.innerHeight - 85;
+
+        // TODO: screen resolution widget height
+        // this.widgetHeight = screen.height - 220;
+        // // for desktop adjust the content widget height
+        // if (!(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent))) {
+        //     // check the display resolutions
+        //     switch (screen.height) {
+        //         case 1050:
+        //         case 1024:
+        //             this.widgetHeight = screen.height - 120;
+        //             break;
+        //         case 900:
+        //             this.widgetHeight = screen.height - 30;
+        //             break;
+        //         case 800:
+        //             this.widgetHeight = screen.height + 110;
+        //             break;
+        //         default:
+        //             if (screen.height <= 768) {
+        //                 this.widgetHeight = screen.height + (768 - screen.height) + 90;
+        //             }
+        //             break;
+        //     }
+        // }
     }
 
     /**

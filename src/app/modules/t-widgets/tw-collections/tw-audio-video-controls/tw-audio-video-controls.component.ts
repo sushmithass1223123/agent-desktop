@@ -1,57 +1,64 @@
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit, QueryList, ViewChildren, ViewEncapsulation } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { fuseAnimations } from '@fuse/animations';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
-import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { IWidget } from 'app/interfaces';
-import { map } from 'lodash';
-import { timer } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { TMACEventService } from '@services/tmac-event.service';
 import {
     AgentAVMessageEvent,
+    AVApiConfig,
     AVChannel,
     AVControlMessageReceivedEvent,
     AVEvent,
     IAgentData,
+    IResponse,
     SDKClient,
     TEnums,
     TextChatDisconnectedEvent,
-    TUtils
+    TUtils,
+    WrcCallTypes
 } from '@tmac/sdk';
+import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
+import { AV_ERRORS, COMMON_ERR_MESSAGE } from 'app/constants';
+import { IWidget } from 'app/interfaces';
+import { TwWidgetModel } from 'app/models';
+import { map } from 'lodash';
+import { timer } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
 import { TwChatControlsComponent } from '../tw-chat-controls/tw-chat-controls.component';
 
 /**
- * Audo controls Component
+ * Audio Video Controls
  */
 @Component({
-    selector: 'tw-audio-controls',
-    templateUrl: './tw-audio-controls.component.html',
-    styleUrls: ['./tw-audio-controls.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    selector: 'tw-audio-video-controls',
+    templateUrl: './tw-audio-video-controls.component.html',
+    styleUrls: ['./tw-audio-video-controls.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    animations: fuseAnimations
 })
-export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     /**
      * holds all the data related to this widget from the config
      */
     @Input() data: IWidget;
-
     /**
-     * Fuse config
-     */
-    // fuseConfig: any;
-    /**
-     * Fuse custom background colors
+     * Fuse custom config
      */
     customFuse = {
         anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
         widget$: this._fuseFacadeService.widgetBgClasses$
     };
     /**
-     * App config
+     * App Config
      */
     appConfig: any;
-
+    /**
+     * Maximized State
+     */
+    maximized: boolean;
     /**
      * Widget Data
      */
@@ -61,29 +68,29 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
          */
         customerName: string;
         /**
-         * Chat config
-         */
-        chatConfig: any;
-        /**
          * Direction
          * Need more description
          */
-        direction: string;
+        direction: 'in' | 'out';
+        /**
+         * Type of call
+         */
+        callType: 'audio' | 'video';
         /**
          * Need more description
          */
         opener: TwChatControlsComponent;
     };
     /**
-     * User info
+     * User Info
      */
     user: IAgentData;
     /**
-     * AV info
+     * AV connection
      */
     avConn: AVChannel;
     /**
-     * Interaction ID
+     * Interaction Id
      */
     interactionId: number;
     /**
@@ -91,19 +98,19 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     sessionID: string;
     /**
-     * User list
+     * Need more decription
      */
-    userList: any[] = [];
+    userList = [];
     /**
      * Start time
      */
     startTime: Date;
     /**
-     * Call Duration
+     * Duration
      */
     duration: number;
     /**
-     * Need more description
+     * Need More description
      */
     mos = '0.00';
     /**
@@ -111,7 +118,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     status = 'initial';
     /**
-     * Connected Flag
+     * Connection Flag
      */
     connected: boolean;
     /**
@@ -119,35 +126,60 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     showUI: boolean;
     /**
-     * Mute flag
+     * Self cam stream visibility flag
      */
-    muted: boolean;
+    selfVideo: MediaStream;
+    /**
+     * Self view stram size
+     */
+    selfViewSmall: boolean;
+    /**
+     * Audio flag
+     */
+    audioMuted: boolean;
+    /**
+     * Video Flag
+     */
+    videoMuted: boolean;
     /**
      * Hold flag
      */
     hold: boolean;
     /**
-     * Local Screen Sharing flag
+     * Local Screensharng flag
      */
     screenSharing: boolean;
     /**
-     * Remote Screenshare flag
+     * Remote Screen sharing flag
      */
     remoteScreenSharing: boolean;
     /**
      * Remote screenshare stream ref
      */
     remoateScreenshareRef: any;
+    /**
+     * Check if OneWayVideo
+     */
+    oneWayVideo: boolean;
+    /**
+     * Wrc call type
+     */
+    wrcCallType: WrcCallTypes;
+    /**
+     * Remote Video Elements Ref
+     */
+    @ViewChildren('remoteVideo') remoteVideoElements: QueryList<ElementRef>;
 
     /**
      * Constructor
      */
     constructor(
         // private _fuseConfigService: FuseConfigService,
+        private _fuseFacadeService: FuseFacadeService,
         private _appDataService: AppDataService,
         private _aotWidgetService: AOTWidgetService,
         private _appUIService: AppUiService,
-        private _fuseFacadeService: FuseFacadeService
+        private _tmacEventService: TMACEventService
     ) {
         super();
     }
@@ -164,10 +196,6 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        // this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-        //     this.fuseConfig = config;
-        // });
-
         this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
             this.appConfig = config;
         });
@@ -183,9 +211,9 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         this.sessionID = this.data.Data.SessionID;
         this.widgetData = {
             customerName: this.data.Data.CustomerName,
-            chatConfig: this.data.Data.Config || new Object(),
             opener: this.data.Data.Opener,
-            direction: this.data.Data.direction
+            direction: this.data.Data.Direction,
+            callType: this.data.Data.CallType
         };
 
         // listen to tmac events
@@ -195,16 +223,20 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // check for the avEvent
         const avEvent = this.data.Data.AVEvent || null;
+
         // create the AV channel connection
         this.createAVConnection(avEvent);
+
+        this.wrcCallType = this.widgetData.callType === 'video' ? TEnums.WrcCallTypes.Video : TEnums.WrcCallTypes.Audio;
+
         // start call
         if (this.data.Data.ConferenceType === 'conf') {
-            this.avConn.join(TEnums.WrcCallTypes.Audio, { mode: 'conference' });
+            this.avConn.join(this.wrcCallType, { mode: 'conference' });
             // show UI
             this.showUI = true;
         } else if (this.data.Data.Direction === 'out') {
             this.avConn
-                ?.startCall(TEnums.WrcCallTypes.Audio, null)
+                ?.startCall(this.wrcCallType)
                 .then((dt: any) => {
                     // check the response is sucess or timed out
                     if (dt.code === TEnums.WrcCodes.RequestTimeout) {
@@ -227,6 +259,12 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
         // call the wrapper destroy method
         this.destroyWrapper();
 
+        // check if the interaction is on hold
+        if (this.hold) {
+            this.holdUnholdCall();
+        }
+
+        // this.endCall();
         this.avConn?.close();
         this.avConn?.events.off('OnAVEvent', this.onAVEvent);
         SDKClient.events.off('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
@@ -240,13 +278,23 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
     // -----------------------------------------------------------------------------------------------------
 
     /**
-     * Create AV connection
+     * Create Av connection
      * @method createAVConnection
      * @param {AVControlMessageReceivedEvent} avEvent
      */
     private createAVConnection(avEvent: AVControlMessageReceivedEvent): void {
+        // create a AV channel connection
+
         // Set AV Config
-        const AV: any = this.appConfig.AppConfigs.AV || {};
+        const AV: AVApiConfig = this.appConfig.AppConfigs.AV || {};
+
+        // check if the agent has IsOneWayVideoEnabled feature enabled
+        this.oneWayVideo = SDKClient.getAgentData().featuresList.filter((f) => f.Feature.toLowerCase() === 'isonewayvideoenabled')?.[0]?.IsEnabled;
+
+        // override the av config media constrain
+        if (this.oneWayVideo) {
+            AV.mediaConstraints.type = 'onewayvideo';
+        }
 
         // create a AV channel connection
         const connection = new AVChannel(
@@ -298,7 +346,7 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
                 // request param
                 const param = evt.data.param.charAt(0).toUpperCase() + evt.data.param.slice(1);
 
-                const onConfirmDialogClose = (resp) => {
+                const onConfirmDialogClose = (resp: any) => {
                     if (resp) {
                         // accept request
                         evt.data.response(true);
@@ -326,10 +374,16 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
                 }
                 break;
             case 'onTrace':
-                TUtils.Logger.info('TwAudioControlsComponent.onAVEvent.onTrace: ' + evt.data);
+                TUtils.Logger.info('TwVideoControlsComponent.onAVEvent.onTrace: ' + evt.data);
                 break;
             case 'onError':
-                TUtils.Logger.error('TwAudioControlsComponent.onAVEvent.onError', evt.data.code + '-' + evt.data.error);
+                let error = evt.data?.error || 'Something went wrong';
+                if (evt.data?.code in AV_ERRORS) {
+                    error = AV_ERRORS[evt.data.code];
+                }
+                this.status = `Error : ${error}`;
+                this._appUIService.showSnackbar(error, 'failure');
+                TUtils.Logger.error('TwVideoControlsComponent.onAVEvent.onError', evt.data.code + '-' + evt.data.error);
                 break;
             case 'onAVStats':
                 this.status = evt.data;
@@ -343,6 +397,10 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
                     .subscribe((val) => {
                         this.duration = (val + 1) * 1000;
                     });
+                break;
+            case 'onSourceVideoAdded':
+                // assign the local stream
+                this.selfVideo = evt.data[0];
                 break;
             case 'onRemoteVideoAdded':
                 // check if the user connected is customer
@@ -427,6 +485,17 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
             case 'onUserLeft':
                 this.userList = this.userList.filter((u) => u.streamInfo.id !== evt.data?.userId);
                 break;
+            case 'onReconnecting':
+                break;
+            case 'onReconnected':
+                break;
+            case 'onStreamStatusChanged':
+                // 1 : connected
+                // 2  :disconnected
+                if (evt.data.status === 2) {
+                } else if (evt.data.status === 1) {
+                }
+                break;
             default:
             // console.log(`unhandled:: [${evt.event}]`, evt);
         }
@@ -485,12 +554,20 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
     // -----------------------------------------------------------------------------------------------------
 
     /**
-     * Mute call
-     * @method muteCall
+     * Minimize video
+     * @method minimizeVideo
      */
-    public muteCall(): void {
+    public minimizeVideo(): void {
+        this.selfViewSmall = !this.selfViewSmall;
+    }
+
+    /**
+     * Mute/Unmute Audio Call
+     * @method muteUnmuteAudioCall
+     */
+    public muteUnmuteAudioCall(): void {
         // check the muted flag
-        if (this.muted) {
+        if (this.audioMuted) {
             // un mute the call
             this.avConn.unMute(true, false);
         } else {
@@ -498,26 +575,24 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
             this.avConn.mute(true, false);
         }
         // set the reference varaible
-        this.muted = !this.muted;
+        this.audioMuted = !this.audioMuted;
     }
 
     /**
-     * Hold/Unhold call
-     * @method holdUnholdCall
+     * Mute/Unmute Video Call
+     * @method muteUnmuteVideoCall
      */
-    public holdUnholdCall(): void {
+    public muteUnmuteVideoCall(): void {
         // check the muted flag
-        if (this.hold) {
-            // un hold the call
-            this.avConn.unHold();
-            this.widgetData.opener.unHoldInteraction();
+        if (this.videoMuted) {
+            // un mute the call
+            this.avConn.unMute(false, true);
         } else {
-            // hold the call
-            this.avConn.hold();
-            this.widgetData.opener.holdInteraction();
+            // mute the call
+            this.avConn.mute(false, true);
         }
         // set the reference varaible
-        this.hold = !this.hold;
+        this.videoMuted = !this.videoMuted;
     }
 
     /**
@@ -536,19 +611,207 @@ export class TwAudioControlsComponent extends TWidgetWrapper implements OnInit, 
     }
 
     /**
-     * End call
+     * Take Snap shot
+     * @method takeSnapShot
+     * @param {any} user
+     */
+    public async takeSnapShot(user: any): Promise<void> {
+        if (this.widgetData.opener.data.Data.Snapshot?.Source?.toLowerCase() === 'local') {
+            this.remoteVideoElements?.forEach((element: ElementRef) => {
+                if (element.nativeElement.id === user.stream.id) {
+                    // create a canvas
+                    const canvas = document.createElement('canvas');
+                    // scale the canvas accordingly
+                    canvas.width = element.nativeElement.videoWidth;
+                    canvas.height = element.nativeElement.videoHeight;
+                    // get the context
+                    const ctx = canvas.getContext('2d');
+                    // draw the canvas
+                    ctx.drawImage(element.nativeElement, 0, 0, canvas.width, canvas.height);
+                    // get base64 url
+                    const base64 = canvas.toDataURL();
+                    // config force login
+                    const confirmDialogRef = this._appUIService.showCustomDialog(
+                        'confirm',
+                        `<img src="${base64}" width="640" height="320" />`,
+                        'Confirm Snapshot'
+                    );
+                    confirmDialogRef.afterClosed().subscribe((resp) => {
+                        if (resp) {
+                            this._appUIService.showSnackbar('Saving ...', 'loading');
+                            // send snapshot
+                            SDKClient.saveVideoSnap(
+                                {
+                                    base64,
+                                    email: '',
+                                    interactionId: this.interactionId.toString(),
+                                    name: this.widgetData.customerName,
+                                    nric: this.data.InteractionDetails.NRIC || '',
+                                    phone: this.data.InteractionDetails.RegNo1 || '',
+                                    sessionId: this.sessionID
+                                },
+                                { base64 }
+                            )
+                                .then((result: IResponse) => {
+                                    if (result.response && result.response.ImageUrl) {
+                                        // snapsot saved sucessfully
+                                        this._appUIService.showSnackbar('Snapshot saved successfully!', 'success');
+
+                                        // create the message to emit
+                                        const message = JSON.stringify({
+                                            messageId: TUtils.Generic.uuid(),
+                                            message: '',
+                                            type: 'image',
+                                            attachment: {
+                                                src: result.userObject.base64,
+                                                type: 'image',
+                                                name: ''
+                                            }
+                                        });
+
+                                        const customEvent = {
+                                            Message: message,
+                                            InteractionID: this.interactionId,
+                                            CreatedTime: new Date(),
+                                            EventName: 'TextChatMessageTemplateSentEvent',
+                                            Result: true
+                                        };
+
+                                        // emit a template message sent event to show in UI
+                                        this._tmacEventService.emitSDKEvent(customEvent, true);
+                                    } else {
+                                        this._appUIService.showSnackbar('Snapshot save failed!', 'failure');
+                                    }
+                                })
+                                .catch(() => {
+                                    this._appUIService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
+                                });
+                        }
+                    });
+                }
+            });
+        } else if (this.widgetData.opener.data.Data.Snapshot?.Source?.toLowerCase() === 'remote') {
+            try {
+                const matRef = this._appUIService.showSnackbar('Requesting customer for snapshot', 'loading');
+
+                try {
+                    await SDKClient.sendActionMessage({
+                        interactionId: this.interactionId as any,
+                        message: JSON.stringify({
+                            source: 'agent',
+                            options: {},
+                            data: {
+                                interactionId: this.interactionId
+                            },
+                            status: 'request',
+                            type: 'snapshot',
+                            eventName: 'ActionMessage',
+                            id: TUtils.Generic.uuid()
+                        })
+                    });
+                } catch (error) {}
+
+                matRef.dismiss();
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }
+
+    /**
+     * Hold/Unhold call
+     * @method holdCall
+     */
+    public holdUnholdCall(): void {
+        // check the hold flag
+        if (this.hold) {
+            // un hold the call
+            this.avConn.unHold();
+            if (typeof this.widgetData.opener.unHoldInteraction === 'function') {
+                this.widgetData.opener.unHoldInteraction();
+            }
+        } else {
+            // hold the call
+            this.avConn.hold();
+            if (typeof this.widgetData.opener.holdInteraction === 'function') {
+                this.widgetData.opener.holdInteraction();
+            }
+        }
+        // set the reference varaible
+        this.hold = !this.hold;
+    }
+
+    /**
+     * End Call
      * @method endCall
      */
     public endCall(): void {
         // end the call
         // if there is only customer then endCall else dropCall
-        if (this.userList.filter(u => u.streamInfo.type !== 'screenshare').length > 1) {
-            this.avConn?.dropCall('');
+        if (this.userList.filter((u) => u.streamInfo.type !== 'screenshare').length > 1) {
+            this.avConn.dropCall('');
         } else {
-            this.avConn?.endCall(TEnums.WrcCallTypes.Audio, '');
+            this.avConn.endCall(this.wrcCallType, '');
         }
         // close the widget
         this.destroyWidget();
+    }
+
+    /**
+     * Opens webrtc stats inside an iframe
+     */
+    async showWebRTCStats(): Promise<void> {
+        try {
+            if (this.data.Data.Config.WebRTCTest.Allowed) {
+                const { Url, Customer } = this.data.Data.Config.WebRTCTest;
+                // create a call AOT widget
+                const widget = new TwWidgetModel('WebRTC Stats', 'tw-custom', 'event_note');
+                widget.Config.Anchor = false;
+                widget.Config.Position.W = 640;
+                widget.Config.Position.H = 480;
+                widget.Config.Actions = ['collapse', 'maximize', 'destroy'];
+
+                widget.Data = {
+                    AutoOpen: false,
+                    OpenInNew: false,
+                    Url
+                };
+
+                this._aotWidgetService.addWidget(widget);
+
+                if (Customer) {
+                    await SDKClient.sendActionMessage({
+                        interactionId: this.interactionId as any,
+                        message: JSON.stringify({
+                            source: 'agent',
+                            options: {},
+                            data: { webRTCUrl: Url },
+                            status: 'request',
+                            type: 'webrtcTroubleshoot',
+                            eventName: 'ActionMessage',
+                            id: TUtils.Generic.uuid()
+                        })
+                    });
+                }
+            } else {
+                throw new Error('WebRTC Url missing in app config');
+            }
+        } catch (err) {
+            this._appUIService.showSnackbar(err, 'failure');
+        }
+    }
+
+    /**
+     * To change from one way video to 2 way video
+     */
+    public async changeToVideo(btn: MatButton): Promise<void> {
+        btn.disabled = true;
+        if (!(await this.avConn.upgradeToVideo())) {
+            this._appUIService.showSnackbar('Upgrade to Video failed!', 'failure');
+        } else {
+            this.oneWayVideo = false;
+        }
+        btn.disabled = false;
     }
 }
 

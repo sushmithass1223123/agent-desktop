@@ -49,7 +49,7 @@ export class AppDataService {
         // Set the config from the default config
         this._configSubject = new BehaviorSubject(new Object());
         this._appConfigSubject = new BehaviorSubject(new Object());
-        this._postMessageSubject = new BehaviorSubject(new Object());
+        this._postMessageSubject = new Subject();
         this._appVersion = version;
         this.registerToPostMessage();
     }

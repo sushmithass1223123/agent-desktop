@@ -1,4 +1,4 @@
-<div *ngIf="loaded" class="tw-widget-container custom-scroll" [ngStyle]="{ 'width.px': screenWidth, 'height.px': screenHeight }">
+<div *ngIf="loaded" class="tw-widget-container custom-scroll" [ngStyle]="{ 'width.px': widgetWidth, 'height.px': widgetHeight }">
     <div *ngIf="dockerWidgets?.length" fxFill fxFlex fxLayout="row wrap" fxLayoutAlign=" none">
         <tw-template class="widget-grid" [widgets]="dockerWidgets"></tw-template>
 
@@ -17,7 +17,7 @@
     <twc-not-found
         *ngIf="!dockerWidgets || !dockerWidgets.length"
         class="tw-widget-container"
-        [ngStyle]="{ 'width.px': screenWidth, 'height.px': screenHeight }"
+        [ngStyle]="{ 'width.px': widgetWidth, 'height.px': widgetHeight }"
         title="No Widgets"
         type="widget"
         message="No docker widgets found!"

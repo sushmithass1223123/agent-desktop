@@ -5,36 +5,49 @@
         config: (customFuse.config$ | async)
     } as customFuse"
 >
-    <ng-template #messageRef let-message="message" let-showName="showName" let-replyAble="replyAble">
+    <ng-template #messageRef let-message="message" let-showName="showName" let-replyAble="replyAble" let-replied="replied">
         <ng-container *ngIf="message">
             <div
                 *ngIf="showName"
-                class="user-label font-size-16 text-bold mb-4"
+                class="user-label font-size-14 text-bold"
                 [ngClass]="{
-                    agent: !message.isAgent && message.who !== customerName
+                    agent: !message.isAgent && message.who !== customerName,
+                    'mb-4': !message.repliedToMessage
                 }"
             >
                 {{ message.who }}
             </div>
-            <div class="message">
-                <div *ngIf="message.repliedToMessage" class="p-8 my-4 border-radius-16 border-left" [ngClass]="customFuse.anchor?.body || ''">
-                    <ng-container *ngTemplateOutlet="messageRef; context: { message: message.repliedToMessage, showName: true }"> </ng-container>
+            <div class="message" [ngClass]="{ 'm-0': replied }">
+                <div *ngIf="message.repliedToMessage" class="p-4 mt-4 mb-8 border-radius-8 border-left-lg-secondary replied">
+                    <ng-container
+                        *ngTemplateOutlet="
+                            messageRef;
+                            context: {
+                                message: message.repliedToMessage,
+                                showName: true,
+                                replyAble: false,
+                                replied: true
+                            }
+                        "
+                    >
+                    </ng-container>
                 </div>
 
                 <div
                     *ngIf="replyAble && message.status !== 'init' && message.status !== 'failed'"
                     class="reply-to cursor-pointer"
                     mat-ripple
-                    (click)="setReplyingToMessage(message); focusReplyInput()"
+                    (click)="setReplyingToMessage(message)"
                 >
                     <button mat-icon-button>
                         <mat-icon>reply</mat-icon>
                     </button>
                 </div>
+
                 <p class="m-0">
                     <ng-container *ngIf="!message.attachment?.src">
                         <span [innerHTML]="message.message"></span>
-                        <span class="spacer"></span>
+                        <span *ngIf="!replied" class="spacer"></span>
                     </ng-container>
                     <ng-container *ngIf="message.attachment?.src">
                         <div class="attachments">
@@ -92,7 +105,8 @@
                     </ng-container>
                 </p>
             </div>
-            <div *ngIf="message.time" [ngClass]="message?.type" class="time twd-flex twd-flex-row twd-items-center twd-justify-end">
+
+            <div *ngIf="!replied && message.time" [ngClass]="message?.type" class="time twd-flex twd-flex-row twd-items-center twd-justify-end">
                 {{ message.time | date: 'shortTime' }}
                 <mat-icon class="s-12 ml-4" *ngIf="message.position === 'right' && message.status === 'init'"> access_time</mat-icon>
                 <mat-icon class="s-12 ml-4" *ngIf="message.position === 'right' && message.status === 'sent'">done </mat-icon>
@@ -198,7 +212,7 @@
                         </div>
 
                         <button
-                            *ngIf="data.Data?.InteractionCommentAllowed"
+                            *ngIf="agentFeatures.comment"
                             mat-mini-fab
                             color="default"
                             [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
@@ -228,7 +242,7 @@
                         </button>
 
                         <button
-                            *ngIf="data.Data?.Transfer.Allowed"
+                            *ngIf="agentFeatures.transfer"
                             [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper' || this.botConnected"
                             mat-mini-fab
                             color="default"
@@ -240,7 +254,7 @@
                         </button>
 
                         <button
-                            *ngIf="data.Data?.Conference.Allowed"
+                            *ngIf="agentFeatures.conference"
                             [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper' || this.botConnected"
                             mat-mini-fab
                             color="default"
@@ -251,7 +265,7 @@
                             <mat-icon>group</mat-icon>
                         </button>
 
-                        <button
+                        <!-- <button
                             mat-mini-fab
                             *ngIf="data.Data.AskForScreenshareAllowed"
                             [disabled]="status !== 'connected'"
@@ -261,10 +275,10 @@
                             (click)="allowCustomerScreenShare = !allowCustomerScreenShare"
                         >
                             <mat-icon>{{ allowCustomerScreenShare ? 'screen_share' : 'stop_screen_share' }}</mat-icon>
-                        </button>
+                        </button> -->
 
                         <button
-                            *ngIf="escalateAV.audio"
+                            *ngIf="agentFeatures.audioEscalate"
                             [disabled]="
                                 status !== 'connected' ||
                                 disableAV ||
@@ -282,7 +296,7 @@
                         </button>
 
                         <button
-                            *ngIf="escalateAV.video"
+                            *ngIf="agentFeatures.videoEscalate"
                             [disabled]="
                                 status !== 'connected' ||
                                 disableAV ||
@@ -301,9 +315,7 @@
 
                         <ng-container
                             *ngIf="
-                                !callWidget &&
-                                data.Data?.HoldInteractionAllowed &&
-                                (interactionOnHold.onHold ? unHoldInteraction : holdInteraction) as holdUnhold
+                                !callWidget && agentFeatures.hold && (interactionOnHold.onHold ? unHoldInteraction : holdInteraction) as holdUnhold
                             "
                         >
                             <button
@@ -362,7 +374,7 @@
                     <!-- CHAT CONTENT -->
                     <div class="chat-transcripts custom-scroll-adjust" #messages>
                         <!-- CHAT MESSAGES -->
-                        <div class="chat-messages" [ngClass]="{ 'no-reply': !textReplyAllowed || conferenceType === 'silent' }">
+                        <div class="chat-messages" [ngClass]="{ 'no-reply': !agentFeatures.reply || conferenceType === 'silent' }">
                             <!-- MESSAGE -->
                             <div
                                 *ngFor="let message of chatTranscripts; let i = index"
@@ -395,7 +407,8 @@
                                                 context: {
                                                     message: message,
                                                     showName: isFirstMessageOfGroup(message, i),
-                                                    replyAble: data.Data.ReplyOnChatAllowed
+                                                    replyAble: agentFeatures.chatReply,
+                                                    replied: false
                                                 }
                                             "
                                         ></ng-container>
@@ -411,14 +424,24 @@
                     <!-- / CHAT CONTENT -->
 
                     <!-- CHAT FOOTER -->
-                    <div class="chat-footer" *ngIf="conferenceType !== 'silent' && textReplyAllowed">
+                    <div class="chat-footer" *ngIf="conferenceType !== 'silent' && agentFeatures.reply">
                         <!-- REPLY FORM -->
                         <div class="reply-form">
                             <button style="display: none" cdkOverlayOrigin #replyingMessageOverlay="cdkOverlayOrigin"></button>
                             <div (click)="replyingToMessage = null" class="w-100-p p-4">
                                 <div *ngIf="replyingToMessage" class="w-100-p p-4 border-radius-8 position-relative twd-flex">
                                     <div class="p-8 border-radius-16 border-left twd-flex-1" [ngClass]="customFuse.anchor?.body">
-                                        <ng-container *ngTemplateOutlet="messageRef; context: { message: replyingToMessage, showName: true }">
+                                        <ng-container
+                                            *ngTemplateOutlet="
+                                                messageRef;
+                                                context: {
+                                                    message: replyingToMessage,
+                                                    showName: true,
+                                                    replyAble: false,
+                                                    replied: false
+                                                }
+                                            "
+                                        >
                                         </ng-container>
                                     </div>
                                     <button mat-icon-button (click)="replyingToMessage = null">
@@ -440,7 +463,7 @@
                                 class="w-100-p twd-flex twd-flex-1 twd-justify-start twd-items-center"
                             >
                                 <button
-                                    *ngIf="data.Data.EmojiAllowed"
+                                    *ngIf="agentFeatures.emoji"
                                     cdkOverlayOrigin
                                     #emojiOverlay="cdkOverlayOrigin"
                                     (click)="showEmojiOverlay = !showEmojiOverlay"
@@ -470,7 +493,7 @@
                                 </button>
 
                                 <button
-                                    *ngIf="data.Data.AttachmentAllowed"
+                                    *ngIf="agentFeatures.attachments"
                                     cdkOverlayOrigin
                                     #attachOverlay="cdkOverlayOrigin"
                                     [disabled]="status !== 'connected'"
@@ -482,7 +505,7 @@
                                     matTooltip="Attach"
                                 >
                                     <!-- <button
-                                *ngIf="data.Data.AttachmentAllowed"
+                                *ngIf="agentFeatures.attachments"
                                 [disabled]="status !== 'connected'"
                                 (click)="attachFileRef.click()"
                                 type="button"
@@ -521,7 +544,7 @@
 
                                 <mat-form-field
                                     class="custom message-text twd-flex-1"
-                                    [ngClass]="{ emoji: data.Data.EmojiAllowed }"
+                                    [ngClass]="{ emoji: agentFeatures.emoji }"
                                     floatLabel="never"
                                     appearance="standard"
                                 >

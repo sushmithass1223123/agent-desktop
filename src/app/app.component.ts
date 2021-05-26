@@ -7,7 +7,7 @@ import { FuseConfig } from '@fuse/types';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
-import { SDKClient } from '@tmac/sdk';
+import { SDKClient, TUtils } from '@tmac/sdk';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { environment } from '../environments/environment';
@@ -19,6 +19,10 @@ declare global {
          * SDK Client global
          */
         SDKClient: typeof SDKClient;
+        /**
+         * TUtils global
+         */
+        TUtils: typeof TUtils;
     }
 }
 
@@ -168,6 +172,29 @@ export class AppComponent implements OnInit, OnDestroy {
         this.customIconList.forEach((icon) => {
             this._matIconRegistry.addSvgIcon(icon.label, this._domSanitizer.bypassSecurityTrustResourceUrl(`assets/icons/custom/${icon.name}.svg`));
         });
+
+        // TODO: screen resolution zoom
+        // // for desktop zoom based on display resolutions
+        // if (!(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent))) {
+        //     // check the display resolutions
+        //     switch (screen.height) {
+        //         case 1050:
+        //         case 1024:
+        //             document.body.style.zoom = 0.90;
+        //             break;
+        //         case 900:
+        //             document.body.style.zoom = 0.80;
+        //             break;
+        //         case 800:
+        //             document.body.style.zoom = 0.67;
+        //             break;
+        //         default:
+        //             if (screen.height <= 768) {
+        //                 document.body.style.zoom = 0.67;
+        //             }
+        //             break;
+        //     }
+        // }
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -282,6 +309,7 @@ export class AppComponent implements OnInit, OnDestroy {
         if (!environment.production) {
             // set a global variable to access SDK client on development mode
             window.SDKClient = SDKClient;
+            window.TUtils = TUtils;
         }
 
         // log the app version

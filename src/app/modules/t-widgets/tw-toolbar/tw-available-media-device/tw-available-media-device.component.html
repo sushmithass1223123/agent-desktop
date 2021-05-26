@@ -12,7 +12,7 @@
         </button>
     </div>
     <div *ngIf="stream" class="mb-8" fxLayout fxLayoutAlign="center center">
-        <video class="w-100-p h-100-p" autoplay [srcObject]="stream" #videoStream></video>
+        <video class="w-100-p h-100-p" autoplay [srcObject]="stream" #videoElm></video>
     </div>
     <div
         *ngIf="!mediaDeviceInfo.error && !mediaDeviceInfo.loading && mediaDeviceInfo.devices as mediaDevices"

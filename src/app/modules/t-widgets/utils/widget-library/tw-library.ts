@@ -9,7 +9,7 @@ import { TwAdScoreComponent } from '@modules/t-widgets/tw-collections/tw-ad-scor
 import { TwAgentAssistComponent } from '@modules/t-widgets/tw-collections/tw-agent-assist/tw-agent-assist.component';
 import { TwAhtTcComponent } from '@modules/t-widgets/tw-collections/tw-aht-tc/tw-aht-tc.component';
 import { TwAmdocsBccComponent } from '@modules/t-widgets/tw-collections/tw-amdocs-bcc/tw-amdocs-bcc.component';
-import { TwAudioControlsComponent } from '@modules/t-widgets/tw-collections/tw-audio-controls/tw-audio-controls.component';
+import { TwAudioVideoControlsComponent } from '@modules/t-widgets/tw-collections/tw-audio-video-controls/tw-audio-video-controls.component';
 import { TwCalendarComponent } from '@modules/t-widgets/tw-collections/tw-calendar/tw-calendar.component';
 import { TwCannedResponsesComponent } from '@modules/t-widgets/tw-collections/tw-canned-responses/tw-canned-responses.component';
 import { TwChatControlsComponent } from '@modules/t-widgets/tw-collections/tw-chat-controls/tw-chat-controls.component';
@@ -40,7 +40,6 @@ import { TwTcisIntegrationComponent } from '@modules/t-widgets/tw-collections/tw
 import { TwTrsIntegrationComponent } from '@modules/t-widgets/tw-collections/tw-trs-integration/tw-trs-integration.component';
 import { TwUnknownComponent } from '@modules/t-widgets/tw-collections/tw-unknown/tw-unknown.component';
 import { TwUserLocationComponent } from '@modules/t-widgets/tw-collections/tw-user-location/tw-user-location.component';
-import { TwVideoControlsComponent } from '@modules/t-widgets/tw-collections/tw-video-controls/tw-video-controls.component';
 import { TwVoiceBotTranscriptsComponent } from '@modules/t-widgets/tw-collections/tw-voice-bot-transcripts/tw-voice-bot-transcripts.component';
 import { TwVoiceCannedResponsesComponent } from '@modules/t-widgets/tw-collections/tw-voice-canned-responses/tw-voice-canned-responses.component';
 import { TwVoiceControlsComponent } from '@modules/t-widgets/tw-collections/tw-voice-controls/tw-voice-controls.component';
@@ -48,7 +47,6 @@ import { TwVoicePanelComponent } from '@modules/t-widgets/tw-collections/tw-voic
 import { TwWallboardComponent } from '@modules/t-widgets/tw-collections/tw-wallboard/tw-wallboard.component';
 import { TwWorkCodesComponent } from '@modules/t-widgets/tw-collections/tw-work-codes/tw-work-codes.component';
 import { TwWorkbenchPanelComponent } from '@modules/t-widgets/tw-collections/tw-workbench-panel/tw-workbench-panel.component';
-import { TwcContentComponent } from '@modules/t-widgets/tw-content/twc-content/twc-content.component';
 import { TwcCustomComponent } from '@modules/t-widgets/tw-content/twc-custom/twc-custom.component';
 import { TwcDockerComponent } from '@modules/t-widgets/tw-content/twc-docker/twc-docker.component';
 import { TwcHomeComponent } from '@modules/t-widgets/tw-content/twc-home/twc-home.component';
@@ -107,8 +105,7 @@ export class TWLibrary {
         'tw-canned-responses': TwCannedResponsesComponent,
         'tw-agent-assist': TwAgentAssistComponent,
         'tw-customer-sentiment': TwCustomerSentimentComponent,
-        'tw-audio-controls': TwAudioControlsComponent,
-        'tw-video-controls': TwVideoControlsComponent,
+        'tw-audio-video-controls': TwAudioVideoControlsComponent,
         'tw-aht-tc': TwAhtTcComponent,
         'tw-voice-bot-transcripts': TwVoiceBotTranscriptsComponent,
         'tw-register-callback': TwRegisterCallbackComponent,

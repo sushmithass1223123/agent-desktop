@@ -1869,7 +1869,7 @@
                                                         "Url": "",
                                                         "Limit": 50
                                                     },
-                                                    "TextReplyAllowed": true
+                                                    "ReplyAllowed": true
                                                 }
                                             },
                                             {

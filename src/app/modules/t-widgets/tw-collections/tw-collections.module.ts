@@ -11,7 +11,7 @@ import { TwAdScoreComponent } from './tw-ad-score/tw-ad-score.component';
 import { TwAgentAssistComponent } from './tw-agent-assist/tw-agent-assist.component';
 import { TwAhtTcComponent } from './tw-aht-tc/tw-aht-tc.component';
 import { TwAmdocsBccComponent } from './tw-amdocs-bcc/tw-amdocs-bcc.component';
-import { TwAudioControlsComponent } from './tw-audio-controls/tw-audio-controls.component';
+import { TwAudioVideoControlsComponent } from './tw-audio-video-controls/tw-audio-video-controls.component';
 import { TwCalendarModule } from './tw-calendar/tw-calendar.module';
 import { TwCannedResponsesComponent } from './tw-canned-responses/tw-canned-responses.component';
 import { TwChatControlsModule } from './tw-chat-controls/tw-chat-controls.module';
@@ -42,7 +42,6 @@ import { TwSuAgentInteractionsComponent } from './tw-su-agent-interactions/tw-su
 import { TwSuGamificationComponent } from './tw-su-gamification/tw-su-gamification.component';
 import { TwUnknownComponent } from './tw-unknown/tw-unknown.component';
 import { TwUserLocationComponent } from './tw-user-location/tw-user-location.component';
-import { TwVideoControlsComponent } from './tw-video-controls/tw-video-controls.component';
 import { TwVoiceBotTranscriptsComponent } from './tw-voice-bot-transcripts/tw-voice-bot-transcripts.component';
 import { TwVoiceCannedResponsesComponent } from './tw-voice-canned-responses/tw-voice-canned-responses.component';
 import { TwVoiceControlsComponent } from './tw-voice-controls/tw-voice-controls.component';
@@ -81,8 +80,6 @@ const collectionComponents = [
     TwCannedResponsesComponent,
     TwAgentAssistComponent,
     TwCustomerSentimentComponent,
-    TwAudioControlsComponent,
-    TwVideoControlsComponent,
     TwAhtTcComponent,
     TwVoiceBotTranscriptsComponent,
     TwRegisterCallbackComponent,
@@ -100,7 +97,8 @@ const collectionComponents = [
     TwFaxPanelComponent,
     TwFaxControlsComponent,
     TwGenericPanelComponent,
-    TwGenericControlsComponent
+    TwGenericControlsComponent,
+    TwAudioVideoControlsComponent
 ];
 
 /**
@@ -111,4 +109,4 @@ const collectionComponents = [
     imports: [SharedModule, TwWrapperModule, TwChatControlsModule, TwWorkbenchPanelModule, TwCalendarModule],
     exports: collectionComponents
 })
-export class TwCollectionsModule {}
+export class TwCollectionsModule { }

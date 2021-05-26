@@ -550,7 +550,7 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
         // get the widget type
         const widgetMode = {
             title: param === 'audio' ? 'Audio Call' : 'Video Call',
-            type: param === 'audio' ? 'tw-audio-controls' : 'tw-video-controls',
+            type: 'tw-audio-video-controls',
             icon: param === 'audio' ? 'phone' : 'duo'
         };
         // create a call AOT widget
@@ -570,6 +570,8 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
         widget.Data.SessionID = TUtils.Generic.uuid();
         widget.Data.AgentID = avEvent?.FromAgentId || this.selectedContact.id;
         widget.Data.TmacServer = avEvent?.FromTmacServer || this.selectedContact.tmacServer;
+        widget.Data.CallType = param;
+
         widget.Data.SendMessage = (jsonMessage: any) => {
             SDKClient.sendAgentAVMessage({
                 jsonData: '',

@@ -1,12 +1,5 @@
 <div *ngIf="channels.length" class="fab-container">
-    <button
-        *ngIf="!channels.length"
-        mat-icon-button
-        cdkOverlayOrigin
-        #channelList="cdkOverlayOrigin"
-        (click)="openList = !openList"
-        matTooltip="More Actions"
-    >
+    <button mat-icon-button cdkOverlayOrigin #channelList="cdkOverlayOrigin" (click)="openList = !openList" matTooltip="More Actions">
         <mat-icon [@fabToggler]="{ value: openList ? 'active' : 'inactive' }">add </mat-icon>
     </button>
 
