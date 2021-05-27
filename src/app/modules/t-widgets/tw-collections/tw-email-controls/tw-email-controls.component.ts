@@ -805,7 +805,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     saveEmailAsDraft(closeEmail = false, btn?: MatButton): void {
         // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
-        const currentInteraction = this.currentInteraction;
+        const { InSessionId, OutSessionID, SessionId, OutSessionId, EventName } = this.currentInteraction;
         const email = this.createEmailRef?.email;
         if (email) {
             // @TODO Files not sent as draft arg
@@ -814,14 +814,25 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 bccList: BCC.join(','),
                 body: Body.toString(),
                 ccList: CC.join(','),
-                inboxSessionId: currentInteraction.InSessionId,
-                outboxSessionId: currentInteraction.OutSessionId || '',
+                ...(EventName === 'OutgoingEmailEvent'
+                    ? {
+                          inboxSessionId: InSessionId,
+                          outboxSessionId: OutSessionId
+                      }
+                    : {
+                          inboxSessionId: SessionId,
+                          outboxSessionId: OutSessionID
+                      }),
                 routeId: '',
                 subject: Subject,
                 toList: To.join(','),
                 typeOfResponse: ''
             }).then((x) => {
-                currentInteraction.OutSessionId = x.response;
+                if (EventName === 'OutgoingEmailEvent') {
+                    this.currentInteraction.OutSessionId = x.response;
+                } else {
+                    this.currentInteraction.OutSessionID = x.response;
+                }
                 if (closeEmail) {
                     this.closeInteraction(btn, true);
                 }

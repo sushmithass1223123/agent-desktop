@@ -44,7 +44,7 @@ export class AppDataService {
     constructor(
         @Inject(DOCUMENT) private document: any,
         private _titleService: Title,
-        private _fuseFacadeService: FuseFacadeService
+        private _fuseFacadeService: FuseFacadeService // private _tmacEventService: TMACEventService
     ) {
         // Set the config from the default config
         this._configSubject = new BehaviorSubject(new Object());
@@ -108,7 +108,7 @@ export class AppDataService {
         return this._postMessageSubject.asObservable();
     }
 
-    // -----------------------------------------------------------------------------------------------------    
+    // -----------------------------------------------------------------------------------------------------
 
     /**
      * To get production config
@@ -222,29 +222,33 @@ export class AppDataService {
      */
     private registerToPostMessage(): void {
         try {
-            window.addEventListener('message', (evt: any) => {
-                // if event data is null then return
-                if (!evt.data) {
-                    return;
-                }
-
-                let data: any = {};
-                if (typeof evt.data === 'string') {
-                    try {
-                        data = JSON.parse(evt.data);
-                    } catch (error) {
-                        data = {};
+            window.addEventListener(
+                'message',
+                (evt: any) => {
+                    // if event data is null then return
+                    if (!evt.data) {
+                        return;
                     }
-                } else if (typeof evt.data === 'object') {
-                    data = evt.data;
-                }
 
-                // check if destination is tmac
-                if (data.destination?.toLowerCase() === 'tmac') {
-                    // notify the observers
-                    this._postMessageSubject.next(data);
-                }
-            }, false);
+                    let data: any = {};
+                    if (typeof evt.data === 'string') {
+                        try {
+                            data = JSON.parse(evt.data);
+                        } catch (error) {
+                            data = {};
+                        }
+                    } else if (typeof evt.data === 'object') {
+                        data = evt.data;
+                    }
+
+                    // check if destination is tmac
+                    if (data.destination?.toLowerCase() === 'tmac') {
+                        // notify the observers
+                        this._postMessageSubject.next(data);
+                    }
+                },
+                false
+            );
         } catch (error) {
             TUtils.Logger.console('error', 'Exception in registerToPostMessage', null, error);
         }
@@ -290,7 +294,7 @@ export class AppDataService {
 
     /**
      * To get app version
-     * 
+     *
      * @returns {String} app version
      */
     getAppVersion(): string {

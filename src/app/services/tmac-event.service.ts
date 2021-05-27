@@ -22,7 +22,7 @@ import {
     TUtils
 } from '@tmac/sdk';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
-import { CustomTMACEventTypes, IAction, IWidget, QuizEvent } from 'app/interfaces';
+import { CustomTMACEventTypes, IAction, IPostMessage, IWidget, QuizEvent } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { map as lodashMap, upperFirst } from 'lodash';
 import { BehaviorSubject, merge, Observable, Subject } from 'rxjs';
@@ -985,6 +985,31 @@ export class TMACEventService {
 
         // subscribe to InteractionManagerService
         this._interactionManagerService.subscribe();
+
+        // register to post message subject
+        this._appDataService.postMessage.pipe(takeUntil(this._unsubscribeAll)).subscribe((message: IPostMessage) => {
+            const fn = message.function?.toLowerCase();
+            // handle generic function here only
+            if (fn === 'emitevent') {
+                this.emitSDKEvent({
+                    event: {
+                        ...message.data
+                    },
+                    isInteractionEvent: message.data.InteractionID !== undefined,
+                    log: true
+                });
+            } else if (fn.endsWith('event')) {
+                // for backward compatibility to support emitting event when AD receives any post message with function which has 'event'
+                this.emitSDKEvent({
+                    event: {
+                        EventName: message.function,
+                        ...message.data
+                    },
+                    isInteractionEvent: message.data.InteractionID !== undefined,
+                    log: true
+                });
+            }
+        });
     }
 
     /**
@@ -1311,14 +1336,38 @@ export class TMACEventService {
      * @param {Any} evt
      * @param {Boolean} interactionEvent [OPTIONAL]
      */
-    public emitSDKEvent(evt: any, interactionEvent: boolean = false): void {
+    public emitSDKEvent(data: {
+        /**
+         * Event to emit
+         */
+        event: any;
+        /**
+         * Is interaction event flag
+         */
+        isInteractionEvent?: boolean;
+        /**
+         * To log the event or not
+         */
+        log?: boolean;
+    }): void {
         // emit via SDK
-        SDKClient.events.emit(evt.EventName, evt);
+        SDKClient.events.emit(data.event.EventName, data.event);
+
         // emit via subject
-        if (interactionEvent) {
-            this.processInteractionEvents(evt);
+        if (data.isInteractionEvent) {
+            this.processInteractionEvents(data.event);
         } else {
-            this.processNonInteractionEvents(evt);
+            this.processNonInteractionEvents(data.event);
         }
+
+        try {
+            // check if logging is enabled
+            const logEnabled = this.appConfig?.AppConfigs?.SDK?.Logging?.SDKEvents ?? false;
+
+            // to log the event
+            if (logEnabled && data.log) {
+                TUtils.Logger.info(`${data.event.EventName} - ${JSON.stringify(data.event)}`);
+            }
+        } catch (error) {}
     }
 }

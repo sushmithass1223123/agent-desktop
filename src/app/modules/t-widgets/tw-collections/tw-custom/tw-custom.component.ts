@@ -91,48 +91,28 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
         }
 
         // register to post message subject
-        this._appDataService.postMessage
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((message: IPostMessage) => {
-                const fn = message.function?.toLowerCase();
-                switch (fn) {
-                    case 'gettmacevents': // to get TMAC events
-                        let events = [];
-                        // check if in interaction
-                        if (this.interactionId) {
-                            // get interaction events
-                            events = this._tmacEventService.interactionEvents(this.interactionId);
-                        }
-                        // get non interaction events
-                        events = [...events, ...this._tmacEventService.nonInteractionEvents()];
-                        // send event to the frame/opener
-                        this.sendEventsToWindow(events);
-                        break;
-                    case 'closetab': // to close tab/interaction
-                    case 'closeinteraction': // to close tab/interaction
-                        SDKClient.closeInteraction(message.data.interactionID);
-                        break;
-                    case 'emitevent':
-                        this._tmacEventService.emitSDKEvent(
-                            {
-                                ...message.data
-                            },
-                            !this.interactionId
-                        );
-                        break;
-                    default:
-                        // for backward compatibility to support emitting event when AD receives any post message with function which has 'event'
-                        if (fn.includes('event') && typeof message.data === 'object') {
-                            this._tmacEventService.emitSDKEvent(
-                                {
-                                    EventName: message.function,
-                                    ...message.data
-                                },
-                                this.interactionId !== undefined
-                            );
-                        }
-                }
-            });
+        this._appDataService.postMessage.pipe(takeUntil(this.unsubscribeAll)).subscribe((message: IPostMessage) => {
+            const fn = message.function?.toLowerCase();
+            switch (fn) {
+                case 'gettmacevents': // to get TMAC events
+                    let events = [];
+                    // check if in interaction
+                    if (this.interactionId) {
+                        // get interaction events
+                        events = this._tmacEventService.interactionEvents(this.interactionId);
+                    }
+                    // get non interaction events
+                    events = [...events, ...this._tmacEventService.nonInteractionEvents()];
+                    // send event to the frame/opener
+                    this.sendEventsToWindow(events);
+                    break;
+                case 'closetab': // to close tab/interaction
+                case 'closeinteraction': // to close tab/interaction
+                    SDKClient.closeInteraction(message.data.interactionID);
+                    break;
+                default:
+            }
+        });
 
         // check if the url is provided
         if (this.data.Data.Url) {

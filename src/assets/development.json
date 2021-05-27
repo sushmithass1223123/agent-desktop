@@ -1691,6 +1691,39 @@
                                         "Pinned": false
                                     },
                                     "Data": {}
+                                },
+                                {
+                                    "Name": "Agent Assist",
+                                    "Description": "",
+                                    "Key": "AgentAssist",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "AutoOpen": false,
+                                        "Icon": "verified_user",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "W": 450,
+                                            "H": 800
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "OpenInNew": false,
+                                        "Url": "http://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=agentassisttest&ucid=${Interaction.UCID}&interactionid=${Interaction.InteractionID}"
+                                    }
                                 }
                             ]
                         }

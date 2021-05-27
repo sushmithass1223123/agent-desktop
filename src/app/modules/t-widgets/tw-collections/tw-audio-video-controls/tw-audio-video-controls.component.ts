@@ -678,7 +678,11 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                                         };
 
                                         // emit a template message sent event to show in UI
-                                        this._tmacEventService.emitSDKEvent(customEvent, true);
+                                        this._tmacEventService.emitSDKEvent({
+                                            event: customEvent,
+                                            isInteractionEvent: true,
+                                            log: true
+                                        });
                                     } else {
                                         this._appUIService.showSnackbar('Snapshot save failed!', 'failure');
                                     }
