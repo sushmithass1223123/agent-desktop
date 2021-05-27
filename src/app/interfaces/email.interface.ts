@@ -14,7 +14,7 @@ export interface CreateEmailInput {
     To: string;
     CC: string;
     BCC: string;
-    Body: SafeHtml;
+    Body: string;
     Subject: string;
     Files: EmailFile[];
 }
@@ -23,7 +23,7 @@ export interface CreateEmailOutput {
     To: string[];
     CC: string[];
     BCC: string[];
-    Body: SafeHtml;
+    Body: string;
     Subject: string;
     Files: EmailFile[];
 }

@@ -1,3 +1,4 @@
+import tinymce from 'tinymce';
 import { Platform } from '@angular/cdk/platform';
 import { DOCUMENT } from '@angular/common';
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
@@ -19,6 +20,7 @@ declare global {
          * SDK Client global
          */
         SDKClient: typeof SDKClient;
+        tinyMCE: typeof tinymce;
     }
 }
 

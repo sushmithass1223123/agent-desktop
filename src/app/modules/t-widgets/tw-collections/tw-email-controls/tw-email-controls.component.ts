@@ -11,7 +11,7 @@ import { InteractionManagerService } from '@services/interaction-manager.service
 import { TMACEventService } from '@services/tmac-event.service';
 import { IAgentData, IncomingEmailEvent, InteractionDataEvent, IResponse, OutgoingEmailEvent, SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { COMMON_ERR_MESSAGE, DRAFT_REASONS, EMAIL_DRAFT_SAVE_INTERVAL, INBOX_REASONS, OUTBOX_REASONS } from 'app/constants';
+import { COMMON_ERR_MESSAGE, DRAFT_REASONS, EMAIL_DRAFT_SAVE_INTERVAL, INBOX_REASONS, OUTBOX_REASONS, SENT_REASONS } from 'app/constants';
 import { AgentSkillListData, CreateEmailInput, CreateEmailOutput, InteractionComment, InteractionRef, IWidget, ResData } from 'app/interfaces';
 import { maticonByExtension, urlify } from 'app/utils';
 import { interval, Subscription } from 'rxjs';
@@ -77,7 +77,10 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Draft reasons
      */
     DraftReasons = DRAFT_REASONS;
-
+    /**
+     * Sent reason
+     */
+    SentReasons = SENT_REASONS;
     /**
      * Inbox reasons
      */
@@ -239,52 +242,23 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             // set the sentiment
             this.sentiment = this.currentInteraction.Sentiment || 'NA';
             const interaction = this.currentInteraction;
-            const fetchFromOutbox = [...this.OutboxReasons, ...this.DraftReasons].includes(interaction.RouteReason);
-            // const requestedSession = fetchFromOutbox ? interaction.OutSessionID : interaction.SessionId;
             interaction.Email_Mailbox = interaction.RecoveryData.Email_Mailbox;
             try {
-                this.getInboxMessageReq = { error: false, loading: true };
-
-                let requestedSession: string;
-                let apiCall: any;
-
-                if (fetchFromOutbox) {
-                    requestedSession = interaction.OutSessionID;
-                    apiCall = (session: string) => SDKClient.getOutboxEmail(session);
-                } else {
-                    requestedSession = interaction.SessionId;
-                    apiCall = (session: string) => SDKClient.getInboxEmail(session);
+                const res = await this.setEmailBody();
+                if (!res?.success) {
+                    throw new Error('Unable to set email body');
                 }
-
-                // if (this.emailBodies[requestedSession]) {
-                // } else {
-                const res = (await apiCall(requestedSession)).response;
-
-                // check if attachements are there
-                if (res.Attachments && res.Attachments.length) {
-                    res.Attachments.forEach((item: any) => {
-                        // get the file name from URL
-                        let name = item.URL.split('/').pop();
-                        name = name.replace(item.SessionID, '');
-                        item.Name = name;
-                        item.Ext = name.split('.').pop();
-                        item.Icon = maticonByExtension(item.Ext);
-                    });
-                }
-
-                this.emailBodies[requestedSession] = {
-                    Body: this.domSanitizer.bypassSecurityTrustHtml(res.Body.replaceAll('<a', '<a target="_blank"')),
-                    AttachmetList: res?.Attachments || []
-                };
-                this.currentInteraction = {
-                    ...interaction,
-                    ...this.emailBodies[requestedSession]
-                };
                 if (['AgentDraftPull'].includes(this.currentInteraction.RouteReason)) {
                     this.showReplyEditor();
                 }
                 if (this.currentInteraction.RouteReason === 'CheckerQueue') {
                     this.rejectReason.allReasons = this.currentInteraction.JsonData?.split(',') || [];
+                } else if (this.currentInteraction.JsonData) {
+                    try {
+                        this.currentInteraction.ParsedJsonData = JSON.parse(this.currentInteraction.JsonData);
+                    } catch (e) {
+                        console.error(`Invalid json data for ${this.currentInteraction.RouteReason}`);
+                    }
                 }
                 if (this.currentInteraction.RejectReason && typeof this.currentInteraction.RejectReason === 'string') {
                     this.currentInteraction.RejectReason = JSON.parse(this.currentInteraction.RejectReason);
@@ -308,57 +282,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 Subject: '',
                 To: ''
             };
+            this.saveEmailAsDraft();
         }
-        // const activeEmails$ = emailInteractionObs.pipe(
-        //     // mergeAll(),
-        //     map((val) => {
-        //         return val.find((i) => i.type === 'email' && i.isActive);
-        //     }),
-        //     filter((i: InteractionRef) => !this.getInboxMessageReq.loading && i.interactionId !== this.interactionId)
-        //     // distinctUntilKeyChanged('interactionId')
-        //     // distinctUntilChanged((prev, curr) => {
-        //     //     console.log('****', prev.interactionId, curr.interactionId);
-        //     //     return prev.interactionId === curr.interactionId;
-        //     // })
-        // );
-
-        // activeEmails$.pipe(filter((email) => email.status === 'outgoing')).subscribe((x) => {
-        //     this.interactionId = x.interactionId;
-        //     const replyInfo = this.replyInfoMap[x.interactionId];
-        //     console.log('######', 'outgoing', replyInfo, this.replyInfoMap);
-        // });
-
-        // let freshlyPulledEmail = false;
-
-        // activeEmails$
-        //     .pipe(
-        //         filter((email) => email.status === 'incoming'),
-        //         map(async (interactionVal) => {
-        //             let interaction: any = interactionVal.otherData;
-        //             // flag to show the editor when an email pulled for the first time
-        //         })
-        //     )
-        //     .subscribe(async (x) => {
-        //         this.currentInteraction = await x;
-        //         const replyInfo = this.replyInfoMap[this.currentInteraction.InteractionID];
-        //         console.log('######', 'incoming', replyInfo, this.replyInfoMap);
-
-        //         if (replyInfo) {
-        //             this.replyInfo = replyInfo;
-        //             this.saveEmailAsDraft();
-        //         } else {
-        //             if (this.currentInteraction.RouteReason === 'CheckerQueue') {
-        //                 this.rejectReason.allReasons = this.currentInteraction.JsonData?.split(',') || [];
-        //             }
-        //             if (this.currentInteraction.RejectReason && typeof this.currentInteraction.RejectReason === 'string') {
-        //                 this.currentInteraction.RejectReason = JSON.parse(this.currentInteraction.RejectReason);
-        //                 this.currentInteraction.RejectReason.reasonTags = this.currentInteraction.RejectReason.reasonTags?.join(',') || '';
-        //             }
-        //             if (this.currentInteraction.freshlyPulledEmail) {
-        //                 this.showReplyEditor();
-        //             }
-        //         }
-        //     });
 
         // set the user info
         this.user = SDKClient.getAgentData() || null;
@@ -422,7 +347,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * To switch email view
      */
-    switchEmailView(): void {
+    async switchEmailView(): Promise<void> {
         let requestedSession: string | null = null;
         if (this.emailInView === 'original') {
             this.emailInView = 'replied';
@@ -437,49 +362,85 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 ...this.emailBodies[requestedSession]
             };
         } else {
-            this.getFullEmail();
+            this.setEmailBody();
+        }
+    }
+
+    /**
+     * Sets email's body and some other details
+     */
+    async setEmailBody(): Promise<{
+        /**
+         * Success flag
+         */
+        success: boolean;
+    }> {
+        try {
+            const interactionDetails = await this.getFullEmail();
+            if (interactionDetails) {
+                this.currentInteraction = interactionDetails;
+                return { success: true };
+            }
+        } catch (err) {
+            console.error(err);
+            this.getInboxMessageReq = {
+                error: true,
+                loading: false,
+                msg: COMMON_ERR_MESSAGE
+            };
         }
     }
 
     /**
      * Gets full email details
      */
-    async getFullEmail(): Promise<void> {
-        try {
-            const { SessionId, OutSessionID } = this.currentInteraction;
+    async getFullEmail(): Promise<any> {
+        const interaction = this.currentInteraction;
+        const fetchFromOutbox =
+            [...this.OutboxReasons, ...this.DraftReasons, ...this.SentReasons].includes(interaction.RouteReason) && this.emailInView === 'replied';
 
-            // const fetchFromOutbox = (this.currentInteraction.RouteReason === 'CheckerQueue' ||
-            //     (this.currentInteraction.RouteReason === 'AgentPull' && this.currentInteraction.OutSessionID)) &&
-            //     this.viewingEmail === 'replied';
-            const fetchFromOutbox =
-                [...this.OutboxReasons, ...this.DraftReasons].includes(this.currentInteraction.RouteReason) && this.emailInView === 'replied';
-            const requestedSession = fetchFromOutbox ? OutSessionID : SessionId;
-            this.getInboxMessageReq = { error: false, loading: true };
+        this.getInboxMessageReq = { error: false, loading: true };
 
-            const res = await (fetchFromOutbox ? SDKClient.getOutboxEmail(requestedSession) : SDKClient.getInboxEmail(requestedSession));
-            if (!res) {
-                throw Error('Unexpected response from server');
-            }
+        let apiCall: any;
+        let requestedSession;
 
-            this.emailBodies[requestedSession] = {
-                Body: this.domSanitizer.bypassSecurityTrustHtml(res.response.Body),
-                AttachmetList: res.response?.Attachments || []
-            };
+        if (fetchFromOutbox) {
+            requestedSession = interaction.OutSessionID;
+            apiCall = (session: string) => SDKClient.getOutboxEmail(session);
+        } else {
+            requestedSession = interaction.SessionId;
+            apiCall = (session: string) => SDKClient.getInboxEmail(session);
+        }
 
-            this.currentInteraction = {
-                ...this.currentInteraction,
-                ...this.emailBodies[requestedSession]
-            };
+        const res = (await apiCall(requestedSession)).response;
 
-            this.getInboxMessageReq = { error: false, loading: false };
-        } catch (e) {
-            console.error(e);
-            this.getInboxMessageReq = {
-                error: true,
-                loading: false,
-                msg: COMMON_ERR_MESSAGE
-            };
-        } // });
+        if (!res) {
+            throw new Error('Invalid server response');
+        }
+
+        // check if attachements are there
+        if (res.Attachments && res.Attachments.length) {
+            res.Attachments.forEach((item: any) => {
+                // get the file name from URL
+                let name = item.URL.split('/').pop();
+                name = name.replace(item.SessionID, '');
+                item.Name = name;
+                item.Ext = name.split('.').pop();
+                item.Icon = maticonByExtension(item.Ext);
+            });
+        }
+
+        this.emailBodies[requestedSession] = {
+            CCList: res.CCList,
+            Body: this.domSanitizer.bypassSecurityTrustHtml(res.Body.replaceAll('<a', '<a target="_blank"')),
+            AttachmetList: res?.Attachments || []
+        };
+
+        this.getInboxMessageReq = { error: false, loading: false };
+        return {
+            ...this.currentInteraction,
+            ...this.emailBodies[requestedSession]
+        };
     }
 
     /**
@@ -627,14 +588,17 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             RejectReason || this.DraftReasons.includes(RouteReason)
                 ? ''
                 : `
-        <p> </p>
-        <br />
-        <p style='border-left: 3px solid gray;'>
-            <div> <strong> From: </strong> <span> ${From} </span> </div>
-            <div> <strong> Sent: </strong> <span> ${CreatedTime} </span> </div>
-            <div> <strong> To: </strong> <span> ${To} </span> </div>
-            <div> <strong> Subject: </strong> <span> ${Subject} </span> </div>
-        </p>
+        <p></p>
+        <br/>
+        <div style='border-top: 1px solid gray;'>
+            <br/>
+            <p style='border-left: 3px solid gray;'>
+                <div> <strong> From: </strong> <span> ${From} </span> </div>
+                <div> <strong> Sent: </strong> <span> ${CreatedTime} </span> </div>
+                <div> <strong> To: </strong> <span> ${To} </span> </div>
+                <div> <strong> Subject: </strong> <span> ${Subject} </span> </div>
+            </p>
+        </div>
         <br />`;
         const Files = AttachmetList?.map((x, i) => ({ ...x, Id: `${x.SessionID}_${i}` })) || [];
         this.replyInfo = {
@@ -643,11 +607,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             To: From || '',
             Body: `
             ${preBody} 
-            ${
-                this.domSanitizer.bypassSecurityTrustHtml(Body || '')['changingThisBreaksApplicationSecurity'][
-                    'changingThisBreaksApplicationSecurity'
-                ]
-            }`,
+            ${this.domSanitizer.bypassSecurityTrustHtml(Body)['changingThisBreaksApplicationSecurity']['changingThisBreaksApplicationSecurity']}`,
             Subject: `RE: ${Subject}`,
             Files
         };
@@ -666,14 +626,15 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             RejectReason || this.DraftReasons.includes(RouteReason)
                 ? ''
                 : `
-        <p> </p>
-        <br />
-        <p style='border-left: 3px solid gray;'>
+        <p></p>
+        <br/>
+        <div style='border-top: 1px solid gray;'>
+            <br/>
             <div> <strong> From: </strong> <span> ${From} </span> </div>
             <div> <strong> Sent: </strong> <span> ${CreatedTime} </span> </div>
             <div> <strong> To: </strong> <span> ${To} </span> </div>
             <div> <strong> Subject: </strong> <span> ${Subject} </span> </div>
-        </p>
+        </div>
         <br />`;
         this.replyInfo = {
             BCC: '',
@@ -699,14 +660,10 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             RejectReason || this.DraftReasons.includes(RouteReason)
                 ? ''
                 : `
-        <p> </p>
-        <br />
-        <p style='border-left: 3px solid gray;'>
-            <div> <strong> From: </strong> <span> ${From} </span> </div>
-            <div> <strong> Sent: </strong> <span> ${CreatedTime} </span> </div>
-            <div> <strong> To: </strong> <span> ${To} </span> </div>
-            <div> <strong> Subject: </strong> <span> ${Subject} </span> </div>
-        </p>
+        <div> <strong> From: </strong> <span> ${From} </span> </div>
+        <div> <strong> Sent: </strong> <span> ${CreatedTime} </span> </div>
+        <div> <strong> To: </strong> <span> ${To} </span> </div>
+        <div> <strong> Subject: </strong> <span> ${Subject} </span> </div>
         <br />`;
         const Files = AttachmetList?.map((x, i) => ({ ...x, Id: `${x.SessionID}_${i}` })) || [];
         this.replyInfo = {
@@ -744,7 +701,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 bccList: BCC.join(','),
                 toList: To.join(','),
                 ccList: CC.join(','),
-                body: Body.toString(),
+                body: Body,
                 ...(EventName === 'OutgoingEmailEvent'
                     ? {
                           inboxSessionId: InSessionId,
@@ -846,11 +803,10 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Save email as Draft
      */
-    saveEmailAsDraft(): void {
+    saveEmailAsDraft(closeEmail = false, btn?: MatButton): void {
         // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
         const currentInteraction = this.currentInteraction;
         const email = this.createEmailRef?.email;
-        const outsessioKey = currentInteraction.EventName === 'OutgoingEmailEvent' ? 'OutSessionId' : 'OutSessionID';
         if (email) {
             // @TODO Files not sent as draft arg
             const { BCC, CC, To, Subject, Body, Files } = email;
@@ -858,14 +814,17 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 bccList: BCC.join(','),
                 body: Body.toString(),
                 ccList: CC.join(','),
-                inboxSessionId: currentInteraction.SessionId,
-                outboxSessionId: currentInteraction[outsessioKey] || '',
+                inboxSessionId: currentInteraction.InSessionId,
+                outboxSessionId: currentInteraction.OutSessionId || '',
                 routeId: '',
                 subject: Subject,
                 toList: To.join(','),
                 typeOfResponse: ''
             }).then((x) => {
-                currentInteraction[outsessioKey] = x.response;
+                currentInteraction.OutSessionId = x.response;
+                if (closeEmail) {
+                    this.closeInteraction(btn, true);
+                }
             });
         }
         if (!this.draftPolling) {

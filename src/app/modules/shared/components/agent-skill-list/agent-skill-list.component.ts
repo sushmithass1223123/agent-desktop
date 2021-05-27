@@ -734,7 +734,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 })
                     .then((res) => {
                         this.loading = false;
-                        if (res.response >= -1) {
+                        if (res.response > 0) {
                             this._appUIService.showSnackbar('Email transferred successfully', 'success');
                             this.close(true);
                         } else {
@@ -758,7 +758,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 })
                     .then((res) => {
                         this.loading = false;
-                        if (res.response >= -1) {
+                        if (res.response > 0) {
                             this._appUIService.showSnackbar('Email transferred successfully', 'success');
                             this.close(true);
                         } else {
