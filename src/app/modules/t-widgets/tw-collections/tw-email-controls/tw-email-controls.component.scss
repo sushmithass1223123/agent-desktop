@@ -12,9 +12,13 @@ tw-email-controls {
         padding: 0px 3px 3px 3px !important;
     }
 
+    .mat-raised-button {
+        @apply twd-min-w-max;
+    }
+
     .attachment-list {
         button {
-            max-width: 150px;
+            // max-width: 150px;
 
             .mat-button-wrapper {
                 display: block;
