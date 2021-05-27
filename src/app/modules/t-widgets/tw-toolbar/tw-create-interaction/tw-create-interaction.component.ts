@@ -21,17 +21,52 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
      */
     @Input() data: IWidget;
 
-    constructor(private _matDialog: MatDialog) {}
-
     /**
      * All channel list
      */
-    channels = [];
+    channels: IChannel[];
+
+    /**
+     * Open list flag
+     */
+    openList: boolean;
+
+    constructor(private _matDialog: MatDialog) { }
 
     /**
      * OnInit
      */
-    ngOnInit(): void {}
+    ngOnInit(): void {
+        // get the channels from config
+        this.channels = this.data.Data.Channels;
+
+        // check the agent features to enable/disable
+        SDKClient.getAgentData().featuresList.forEach(f => {
+            // get the featue
+            const feature = f.Feature.toLowerCase();
+
+            this.channels.forEach(c => {
+                // get the subtype
+                const subtype = c.SubType.toLowerCase();
+
+                if (feature === 'isfaxoutenabled' && subtype === 'fax') {
+                    c.Enabled = f.IsEnabled;
+                }
+                else if (feature === 'issmsoutenabled' && subtype === 'sms') {
+                    c.Enabled = f.IsEnabled;
+                }
+                else if (feature === 'iswhatsappoutenabled' && subtype === 'whatsapp') {
+                    c.Enabled = f.IsEnabled;
+                }
+                else if (feature === 'isemailoutenabled' && subtype === 'email') {
+                    c.Enabled = f.IsEnabled;
+                }
+            });
+        });
+
+        // filter all enabled channels
+        this.channels = this.channels.filter(c => c.Enabled);
+    }
 
     /**
      * OnDestroy
@@ -113,4 +148,35 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
                 break;
         }
     }
+}
+
+interface IChannel {
+    /**
+     * Channel name
+     */
+    Name: string;
+    /**
+     * Channel enabled flag
+     */
+    Enabled: boolean;
+    /**
+     * Channel enable state
+     */
+    EnableState: string;
+    /**
+     * Type of channel
+     */
+    Type: string;
+    /**
+     * Subtype of channel
+     */
+    SubType: string;
+    /**
+     * Icon for the channel
+     */
+    Icon: string;
+    /**
+     * Data for the channel
+     */
+    Data: any;
 }

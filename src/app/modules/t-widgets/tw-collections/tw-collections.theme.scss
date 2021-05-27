@@ -54,6 +54,15 @@
                             background-color: map-get($primary, 700);
                             color: mat-contrast($primary, 700);
                         }
+
+                        .replied {
+                            @if ($is-dark == true) {
+                                background-color: map-get($background, hover);
+                            } @else {
+                                background-color: map-get($primary, 800);
+                                color: mat-contrast($primary, 800);
+                            }
+                        }
                     }
 
                     &.right {
@@ -62,6 +71,15 @@
                         } @else {
                             color: rgba(0, 0, 0, 0.87);
                             background-color: #e0e0e0;
+                        }
+
+                        .replied {
+                            @if ($is-dark == true) {
+                                background-color: map-get($background, hover);
+                            } @else {
+                                color: rgba(0, 0, 0, 0.87);
+                                background-color: #c0c0c0;
+                            }
                         }
                     }
                 }

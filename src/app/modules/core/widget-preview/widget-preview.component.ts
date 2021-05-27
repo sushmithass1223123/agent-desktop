@@ -15,7 +15,6 @@ import { TwWidgetModel } from 'app/models';
     encapsulation: ViewEncapsulation.None
 })
 export class WidgetPreviewComponent implements OnInit {
-
     /**
      * Static widgets
      */
@@ -43,8 +42,7 @@ export class WidgetPreviewComponent implements OnInit {
         private _router: Router,
         private _fuseProgressBarService: FuseProgressBarService,
         private fuseSplashService: FuseSplashScreenService
-    ) {
-    }
+    ) { }
 
     /**
      * Lifecycle Hook
@@ -74,39 +72,36 @@ export class WidgetPreviewComponent implements OnInit {
         if (config) {
             this.appConfig = config;
             // get the query param
-            this._activatedRouter.queryParams.subscribe(params => {
+            this._activatedRouter.queryParams.subscribe((params) => {
                 TUtils.Logger.console('info', 'WidgetPreviewComponent.queryParams', params);
                 // get the template name from the config
                 if (params && params.templateName) {
                     // get the template
                     this.getTemplateJson(params.templateName);
-                }
-                else {
+                } else {
                     this.routeToNotFound('Template name is not found!');
                 }
             });
-        }
-        else {
+        } else {
             this.routeToNotFound('Config is not found, please contact administrator!');
         }
     }
 
     /**
      * Route to 404 page
-     * @param {String} message 
+     * @param {String} message
      */
     private routeToNotFound(message: string): void {
         // route to the not found page
-        this._router.navigate(['not-found'],
-            {
-                state: {
-                    subtitle: 'Oops',
-                    title: '',
-                    description: message,
-                    login: false
-                },
-                queryParamsHandling: 'preserve'
-            });
+        this._router.navigate(['not-found'], {
+            state: {
+                subtitle: 'Oops',
+                title: '',
+                description: message,
+                login: false
+            },
+            queryParamsHandling: 'preserve'
+        });
     }
 
     /**
@@ -127,19 +122,22 @@ export class WidgetPreviewComponent implements OnInit {
                 method: 'POST'
             });
 
-            setTimeout((x) => {
-                this._fuseProgressBarService.hide();
-                // check the response
-                if (x.response) {
-                    // set loading false
-                    this.loading = false;
-                    // assign the widgets
-                    this.dynamicWidgets = x.response.d ? JSON.parse(x.response.d) : [];
-                }
-                else {
-                    this.routeToNotFound('Template name is not found!');
-                }
-            }, 1000, result);
+            setTimeout(
+                (x) => {
+                    this._fuseProgressBarService.hide();
+                    // check the response
+                    if (x.response) {
+                        // set loading false
+                        this.loading = false;
+                        // assign the widgets
+                        this.dynamicWidgets = x.response.d ? JSON.parse(x.response.d) : [];
+                    } else {
+                        this.routeToNotFound('Template name is not found!');
+                    }
+                },
+                1000,
+                result
+            );
         } catch (error) {
             TUtils.Logger.console('error', 'Exception in getTemplateJson', error);
             this.routeToNotFound('Error in getting template');

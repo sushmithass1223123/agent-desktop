@@ -59,24 +59,25 @@ body.fit-to-screen {
 .widget-grid {
     position: relative;
     width: 100%;
-    display: grid;
-    gap: 8px;
-    grid-template-columns: none;
-    grid-auto-rows: minmax(275px, 1fr);
     height: 100%;
-    max-width: calc(100vw - 20px);
+    display: grid;
 
-    @include media-breakpoint('gt-xs') {
-        max-width: calc(100vw - 112px);
-    }
+    // gap: 8px;
+    // grid-template-columns: none;
+    // grid-auto-rows: minmax(275px, 1fr);
+    // max-width: calc(100vw - 20px);
 
-    @include media-breakpoint('gt-sm') {
-        grid-template-columns: repeat(auto-fit, minmax(calc(100% / 5), 1fr));
-    }
+    // @include media-breakpoint('gt-xs') {
+    // max-width: calc(100vw - 112px);
+    // }
 
-    @include media-breakpoint('gt-md') {
-        grid-template-columns: repeat(auto-fit, minmax(calc(100% / 7), 1fr));
-    }
+    // @include media-breakpoint('gt-sm') {
+    // grid-template-columns: repeat(auto-fit, minmax(calc(100% / 5), 1fr));
+    // }
+
+    // @include media-breakpoint('gt-md') {
+    // grid-template-columns: repeat(auto-fit, minmax(calc(100% / 7), 1fr));
+    // }
 }
 
 .static-widget-grid {
@@ -87,11 +88,11 @@ body.fit-to-screen {
     gap: 8px;
     grid-template-columns: none;
     margin-bottom: 16px;
-    max-width: calc(100vw - 20px);
 
-    @include media-breakpoint('gt-xs') {
-        max-width: calc(100vw - 112px);
-    }
+    // max-width: calc(100vw - 20px);
+    // @include media-breakpoint('gt-xs') {
+    // max-width: calc(100vw - 112px);
+    // }
 
     @include media-breakpoint('gt-md') {
         margin-bottom: 0;
@@ -108,19 +109,19 @@ body.fit-to-screen {
     grid-template-columns: none;
     grid-auto-rows: minmax(273px, 1fr);
     margin-bottom: 16px;
-    max-width: calc(100vw - 20px);
-    overflow: auto;
     padding-bottom: 1px;
 
-    @include media-breakpoint('gt-xs') {
-        max-width: calc(100vw - 112px);
-    }
+    // max-width: calc(100vw - 20px);
+    // @include media-breakpoint('gt-xs') {
+    // max-width: calc(100vw - 112px);
+    // }
 
-    @include media-breakpoint('md') {
-        grid-template-columns: repeat(auto-fit, minmax(calc(100% / 3), 1fr));
-    }
+    // @include media-breakpoint('md') {
+    //     grid-template-columns: repeat(auto-fit, minmax(calc(100% / 3), 1fr));
+    // }
 
     @include media-breakpoint('gt-md') {
+        overflow: auto;
         margin-bottom: 0;
         grid-template-columns: repeat(auto-fit, minmax(calc(100% / 5), 1fr));
     }
@@ -141,28 +142,15 @@ body.fit-to-screen {
 .tw-card {
     width: 100%;
     height: 100%;
-    max-width: calc(100vw - 20px);
 
-    @include media-breakpoint('gt-xs') {
-        max-width: calc(100vw - 112px);
-    }
+    // max-width: calc(100vw - 20px);
+    // @include media-breakpoint('gt-xs') {
+    //     max-width: calc(100vw - 112px);
+    // }
 
     @include media-breakpoint('lt-md') {
         grid-column: auto !important;
     }
-}
-
-.tw-full {
-    height: 100% !important;
-    width: 100% !important;
-}
-
-.tw-center {
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    height: 100% !important;
-    width: 100% !important;
 }
 
 .tw-chart {

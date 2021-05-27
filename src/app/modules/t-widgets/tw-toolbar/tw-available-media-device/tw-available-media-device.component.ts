@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { IWrsUtils, TUtils } from '@tmac/sdk';
 
 type AvailableDevices = {
     /**
@@ -72,8 +73,8 @@ export class TwAvailableMediaDeviceComponent implements OnInit {
     /**
      * Video stream dom element
      */
-    @ViewChild('videoStream')
-    videoStream: ElementRef<HTMLMediaElement>;
+    @ViewChild('videoElm')
+    videoElm: ElementRef<HTMLMediaElement>;
 
     constructor(private matDialog: MatDialog) { }
 
@@ -86,6 +87,7 @@ export class TwAvailableMediaDeviceComponent implements OnInit {
             Speaker: new FormControl(''),
             Video: new FormControl('')
         });
+
         const { Speaker, Mic, Video } = await this.selectDevice();
 
         this.mediaSelectFormGroup.controls.Mic.valueChanges.subscribe((res) => Mic(res));
@@ -98,6 +100,7 @@ export class TwAvailableMediaDeviceComponent implements OnInit {
      */
     async showAvailableDevices(): Promise<void> {
         try {
+            this.stream = null;
             await this.setAvailableDevices();
             this.startVideo({ audio: true, video: true });
             this.matDialog
@@ -105,11 +108,12 @@ export class TwAvailableMediaDeviceComponent implements OnInit {
                     width: '50%',
                     panelClass: 'available-media-dialog'
                 })
-                .afterClosed()
+                .beforeClosed()
                 .subscribe(() => {
-                    this.stream.getTracks()
+                    this.stream?.getTracks()
                         .forEach(track => {
                             track.stop();
+                            this.stream.removeTrack(track);
                         });
                 });
         } catch (e) {
@@ -120,10 +124,10 @@ export class TwAvailableMediaDeviceComponent implements OnInit {
     /**
      * Sets available devices to mediaDeviceInfo
      */
-    async setAvailableDevices(retry?: boolean): Promise<void> {
+    async setAvailableDevices(): Promise<void> {
         try {
             if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
-                console.log('enumerateDevices() not supported.');
+                TUtils.Logger.console('error', 'Error in TwAvailableMediaDeviceComponent.setAvailableDevices', null, 'enumerateDevices() not supported');
                 return;
             }
             this.setComponentState('availableDevices/fetching');
@@ -172,12 +176,13 @@ export class TwAvailableMediaDeviceComponent implements OnInit {
             constraints.video = { deviceId: this.mediaSelectFormGroup.value.Video };
             this.startVideo(constraints);
         };
+
         const Speaker = (deviceId?: string) => {
-            if (this.videoStream) {
-                const videoEl = this.videoStream.nativeElement as any;
+            if (this.videoElm) {
+                const videoEl = this.videoElm.nativeElement as any;
                 if (videoEl.setSinkId) {
                     (videoEl.setSinkId(deviceId) as Promise<void>)
-                        .then(() => console.log('Sink id set successsfully'))
+                        .then(() => console.log('Sink id set successfully'))
                         .catch((e) => {
                             console.error(e);
                         });
@@ -194,17 +199,27 @@ export class TwAvailableMediaDeviceComponent implements OnInit {
      * Starts video
      */
     async startVideo(constraints: MediaStreamConstraints): Promise<void> {
-        const media = await navigator.mediaDevices.getUserMedia(constraints);
-        media.getVideoTracks().forEach((track) => {
-            Object.entries(this.mediaDeviceInfo.devices).forEach((deviceGroup) => {
-                deviceGroup[1].forEach((device) => {
-                    if (device.deviceId === track.getCapabilities().deviceId && !this.mediaSelectFormGroup.get(deviceGroup[0]).value) {
-                        this.mediaSelectFormGroup.patchValue({ [deviceGroup[0]]: device.deviceId });
-                    }
+        const wrsUtils = TUtils.Generic.wrsUtils<IWrsUtils>();
+        if (wrsUtils) {
+            this.stream = await wrsUtils.getUserMedia(constraints, null);
+            this?.stream
+                .getVideoTracks()
+                .forEach((track) => {
+                    Object.entries(this.mediaDeviceInfo.devices).forEach((deviceGroup) => {
+                        deviceGroup[1].forEach((device) => {
+                            if (
+                                device.deviceId === track.getCapabilities().deviceId &&
+                                !this.mediaSelectFormGroup.get(deviceGroup[0]).value
+                            ) {
+                                this.mediaSelectFormGroup.patchValue({ [deviceGroup[0]]: device.deviceId });
+                            }
+                        });
+                    });
                 });
-            });
-        });
-        this.stream = media;
+        }
+        else {
+            this.setComponentState('availableDevices/error');
+        }
     }
 
     /**

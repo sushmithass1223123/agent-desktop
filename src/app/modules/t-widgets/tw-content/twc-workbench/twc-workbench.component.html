@@ -1,4 +1,4 @@
-<div class="tw-widget-container" [ngStyle]="{ 'width.px': screenWidth, 'height.px': screenHeight }" *ngIf="loaded">
+<div class="tw-widget-container" [ngStyle]="{ 'width.px': widgetWidth, 'height.px': widgetHeight }" *ngIf="loaded">
     <div *ngIf="staticWidgets?.length" fxFill fxFlex fxLayout="row wrap" fxLayoutAlign=" none">
         <tw-template class="widget-grid h-100-p w-100-p" [widgets]="staticWidgets"></tw-template>
 
@@ -17,7 +17,7 @@
     <twc-not-found
         *ngIf="!staticWidgets || !staticWidgets.length"
         class="tw-widget-container"
-        [ngStyle]="{ 'width.px': screenWidth, 'height.px': screenHeight }"
+        [ngStyle]="{ 'width.px': widgetWidth, 'height.px': widgetHeight }"
         title="No Widgets"
         type="widget"
         message="No workbench widgets found!"

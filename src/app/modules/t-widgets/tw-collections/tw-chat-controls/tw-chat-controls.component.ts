@@ -44,7 +44,7 @@ import {
     TUtils
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { INVALID_CHARS } from 'app/constants';
+import { AGENT_FEATURES, INVALID_CHARS } from 'app/constants';
 import { AgentSkillListData, ChatTranscripts, CustomSDKEvent, InteractionComment, InteractionRef, IWidget, SnackbarStateTypes } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { urlify } from 'app/utils';
@@ -79,10 +79,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * App config
      */
     appConfig: any;
-    /**
-     * Fuse config
-     */
-    // fuseConfig: FuseConfig;
     /**
      * Fuse custom config
      */
@@ -315,10 +311,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     allowCustomerScreenShare = true;
     /**
-     * common button background
-     */
-    // commonButtonBackground = '';
-    /**
      * Conversation Api Urls
      */
     conversationService: {
@@ -352,7 +344,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * Typing timer
      */
     typingTimer: any;
-
     /**
      * Message id of the message the user is responding to
      */
@@ -361,16 +352,87 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * To open more actions
      */
     openMoreActions: boolean;
-
     /**
      * More action buttons
      */
     moreActions = [];
-
     /**
      * Flag to check if the interaction is on hold
      */
     interactionOnHold: typeof unHoldState | typeof holdState = unHoldState;
+    /**
+     * Agent action features
+     */
+    agentFeatures: {
+        /**
+         * Audio escalate
+         */
+        audioEscalate: boolean;
+        /**
+         * Video escalate
+         */
+        videoEscalate: boolean;
+        /**
+         * Signature request
+         */
+        signature: boolean;
+        /**
+         * Whiteboard request
+         */
+        whiteboard: boolean;
+        /**
+         * Reply to chat
+         */
+        chatReply: boolean;
+        /**
+         * Attachments
+         */
+        attachments: boolean;
+        /**
+         * Emoji
+         */
+        emoji: boolean;
+        /**
+         * Transfer
+         */
+        transfer: boolean;
+        /**
+         * Conference
+         */
+        conference: boolean;
+        /**
+         * Chat template
+         */
+        chatTemplate: boolean;
+        /**
+         * Replying to chat
+         */
+        reply: boolean;
+        /**
+         * Interaction comment
+         */
+        comment: boolean;
+        /**
+         * Hold
+         */
+        hold: boolean;
+        /**
+         * Snapshot
+         */
+        snapshot: boolean;
+        /**
+         * Voice note
+         */
+        voicenote: boolean;
+        /**
+         * Screenshare
+         */
+        screenshare: boolean;
+        /**
+         * WebRTC test
+         */
+        webrtcTest: boolean;
+    };
 
     /**
      * Constructor
@@ -384,7 +446,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * @param {AppUiService} _appUIService,
      */
     constructor(
-        // private _fuseConfigService: FuseConfigService,
         private _interactionManagerService: InteractionManagerService,
         private _tmacEventService: TMACEventService,
         private _matDialog: MatDialog,
@@ -459,12 +520,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             this.appConfig = config;
         });
 
-        // this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: FuseConfig) => {
-        //     this.fuseConfig = config;
-        //     this.commonButtonBackground =
-        //         config.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor ? config.layout.anchorWidget.bodyBackground : '';
-        // });
-
         this._contentPageService.mode.pipe(takeUntil(this.unsubscribeAll)).subscribe((viewMode: string) => {
             // check if textchat view and selected interaction is this
             if (viewMode === this.data.Data.Path) {
@@ -514,13 +569,92 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             this.conversationService.Limit = this.data.Data.ConversationService.Limit;
         }
 
-        if (this.data.Data.ChatTemplate.Allowed) {
+        this.agentFeatures = {
+            audioEscalate: this.data.Data.AudioEscalateAllowed ?? false,
+            videoEscalate: this.data.Data.VideoEscalateAllowed ?? false,
+            signature: this.data.Data.SignatureAllowed,
+            whiteboard: this.data.Data.Whiteboard?.Allowed ?? false,
+            attachments: this.data.Data.AttachmentAllowed ?? false,
+            emoji: this.data.Data.EmojiAllowed ?? false,
+            chatReply: this.data.Data.ReplyOnChatAllowed ?? false,
+            conference: this.data.Data.Conference?.Allowed ?? false,
+            transfer: this.data.Data.Transfer?.Allowed ?? false,
+            chatTemplate: this.data.Data.ChatTemplate?.Allowed ?? false,
+            reply: this.data.Data.ReplyAllowed ?? true,
+            comment: this.data.Data.InteractionCommentAllowed ?? false,
+            hold: this.data.Data.HoldInteractionAllowed ?? false,
+            snapshot: this.data.Data.Snapshot?.Allowed ?? false,
+            voicenote: this.data.Data.VoiceNoteAllowed ?? false,
+            screenshare: this.data.Data.ScreenShareAllowed ?? false,
+            webrtcTest: this.data.Data.WebRTCTest?.Allowed ?? false
+        };
+
+        // check the agent features to enable/disable
+        SDKClient.getAgentData().featuresList.forEach((f) => {
+            // get the featue
+            const feature = f.Feature.toLowerCase();
+
+            // switch the feature
+            switch (feature) {
+                case AGENT_FEATURES.IsAudioEscalateEnabled:
+                    this.agentFeatures.audioEscalate = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsVideoEscalateEnabled:
+                    this.agentFeatures.videoEscalate = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsChatSignatureEnabled:
+                    this.agentFeatures.signature = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsChatWhiteboardEnabled:
+                    this.agentFeatures.whiteboard = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsChatAttachmentsEnabled:
+                    this.agentFeatures.attachments = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsChatEmojiEnabled:
+                    this.agentFeatures.emoji = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsReplyOnChatEnabled:
+                    this.agentFeatures.chatReply = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsChatConferenceEnabled:
+                    this.agentFeatures.conference = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsChatTransferEnabled:
+                    this.agentFeatures.transfer = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsChatTemplateEnabled:
+                    this.agentFeatures.chatTemplate = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsChatReplyEnabled:
+                    this.agentFeatures.reply = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsChatCommentEnabled:
+                    this.agentFeatures.comment = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsChatHoldEnabled:
+                    this.agentFeatures.hold = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsVideoSnapshotEnabled:
+                    this.agentFeatures.snapshot = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsChatVoiceNoteEnabled:
+                    this.agentFeatures.voicenote = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsChatScreenshareEnabled:
+                    this.agentFeatures.screenshare = f.IsEnabled;
+                    break;
+                default:
+            }
+        });
+
+        if (this.agentFeatures.chatTemplate) {
             // get text templates
             this.getTextTemplates();
         }
 
         // check for moreActions
-        if (this.data.Data?.Whiteboard?.Allowed) {
+        if (this.agentFeatures.whiteboard) {
             this.moreActions.push({
                 label: 'Open Whiteboard',
                 icon: 'create',
@@ -528,7 +662,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             });
         }
 
-        if (this.data.Data?.SignatureAllowed) {
+        if (this.agentFeatures.signature) {
             this.moreActions.push({
                 label: 'Signature Request',
                 icon: 'gesture',
@@ -572,444 +706,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     // -----------------------------------------------------------------------------------------------------
 
     /**
-     * To process TextChatRemoteUserConnectedEvent
-     * @param evt TextChatRemoteUserConnectedEvent evt
-     */
-    private TextChatRemoteUserConnectedEvent = (evt: TextChatRemoteUserConnectedEvent) => {
-        // check the interaction
-        // if (evt.InteractionID !== this.interactionId) {
-        //     return;
-        // }
-
-        // replace InteractionDetails with this event
-        // this event has the interaction details properties
-        this.data.InteractionDetails = evt;
-
-        // subscribe to the timer
-        timer(1000, 1000)
-            .pipe(takeUntil(this.unsubscribeAll), takeUntil(this.stopTimer))
-            .subscribe((val) => {
-                this.duration = (val + 1) * 1000;
-            });
-
-        this.status = 'connected';
-        // get the customer name
-        this.customerName = evt.ScreenName || 'Customer';
-        // assign the intent
-        this.intent = evt.TransferIntent || evt.Intent || 'Default';
-        // check the channel
-        this.channel = evt.Channel.toLowerCase() || 'textchat';
-        // check social media
-        this.isSMM = evt.IsSMM || false;
-        // update the interaction status and user
-        this._interactionManagerService.updateInteraction(evt.InteractionID, {
-            status: 'connected',
-            user: this.customerName,
-            otherData: {
-                icon: this.isSMM ? 'custom-' + this.channel : 'chat'
-            }
-        });
-        // update the session ID
-        this.sessionID = evt.TextChatSessionID;
-        // update the conference type
-        this.conferenceType = evt.ConferenceType;
-        // update the chatmode
-        this.chatMode = evt.ChatMode;
-        // to not open video dialog when interaction is over
-        if (!evt.RecoveryEvent && this.mediaChannels.includes(this.chatMode)) {
-            this.escalateToAV(this.chatMode as any);
-        }
-        // check for bot history
-        this.processBotHistory(evt.ChatHistoryData);
-        // check if conversation history is configured
-        if (this.conversationService.Url && evt.CIF) {
-            // check for conversation history
-            this.checkForConversationHistory(evt.CIF);
-        }
-    };
-
-    /**
-     * To process TextChatSelfServiceDestinationEvent
-     * @param evt TextChatSelfServiceDestinationEvent evt
-     */
-    private TextChatSelfServiceDestinationEvent = (evt: TextChatSelfServiceDestinationEvent) => {
-        // check the interaction
-        // if (evt.InteractionID !== this.interactionId) {
-        //     return;
-        // }
-
-        this.selfServiceDestinations = evt.Destinations || [];
-    };
-
-    /**
-     * To process TextChatAgentConnectedEvent
-     * @param evt TextChatAgentConnectedEvent evt
-     */
-    private TextChatAgentConnectedEvent = (evt: TextChatAgentConnectedEvent) => {
-        // check the interaction
-        // if (evt.InteractionID !== this.interactionId) {
-        //     return;
-        // }
-
-        // to store connected agent's TmacServer
-        let tmacServer = '';
-        try {
-            // get conference agent info
-            const agentInfo = JSON.parse(evt.AgentInfoJson);
-            // extra parameter for agent info
-            const extraParam = JSON.parse(agentInfo.extraparam);
-            // assign the tmac server
-            tmacServer = extraParam.serverName;
-            // show an alert on connect
-            if (extraParam.conferenceType === 'conf' || extraParam.conferenceType === 'whisper') {
-                this._appUIService.showSnackbar(`${evt.AgentName} connected to the chat`, 'info');
-            }
-        } catch (error) {}
-
-        // add the user to list
-        this.conferenceAgentList.push({
-            AgentId: evt.AgentId,
-            AgentName: evt.AgentName,
-            ConferenceType: evt.ConferenceType,
-            IsBotAgent: evt.IsBotAgent,
-            TmacServer: tmacServer
-        });
-
-        // check if a bot is connected
-        if (evt.IsBotAgent) {
-            this.botConnected = true;
-        }
-    };
-
-    /**
-     * To process TextChatTranscriptForTransferEvent
-     * @param evt TextChatTranscriptForTransferEvent evt
-     */
-    private TextChatTranscriptForTransferEvent = (evt: TextChatTranscriptForTransferEvent) => {
-        // check the interaction
-        // if (evt.InteractionID !== this.interactionId) {
-        //     return;
-        // }
-        // SDKClient.getInteractionData({
-        //     count: 10,
-        //     fromDate: '',
-        //     interactionId: record.ID,
-        //     sessionId: record.SessionID,
-        //     toDate: '',
-        //     agentId: record.AgentID
-        // })
-        // loop through the data
-        evt.Transcript.forEach(
-            (item: {
-                /**
-                 * ID of message
-                 */
-                Id: string;
-                /**
-                 * Type of message
-                 */
-                Type: string;
-                /**
-                 * Message
-                 */
-                Message: string;
-                /**
-                 * Transferred agent's ID
-                 */
-                AgentID: string;
-                /**
-                 * Datetime of message
-                 */
-                DateTime: string;
-                /**
-                 * Transferred agent's name
-                 */
-                AgentName: string;
-            }) => {
-                // is agent flag
-                const isAgent = item.Type.toLowerCase() === 'agent';
-
-                // check the user
-                const user =
-                    item.Type.toLowerCase() === 'agent' ? item.AgentName.split(' ')[0] : item.Type.toLowerCase() === 'user' ? this.customerName : '';
-
-                // format the message get the message data
-                const formattedMessage = this.isValidJson(item.Message) ? JSON.parse(item.Message) : null;
-                const messageId = formattedMessage ? formattedMessage.messageId : item.Id;
-
-                const type = formattedMessage
-                    ? formattedMessage.type === 'attachment'
-                        ? formattedMessage.attachment.type
-                        : formattedMessage.type
-                    : '';
-
-                const message = formattedMessage ? formattedMessage.message : item.Message;
-
-                const attachment = formattedMessage && formattedMessage.attachment ? formattedMessage.attachment : null;
-
-                // TODO:: implement reply and get the replied message
-
-                // add message to the transcripts
-                if (user) {
-                    this.pushToTranscript({
-                        who: user,
-                        isAgent,
-                        position: isAgent ? 'right' : 'left',
-                        messageId,
-                        message,
-                        type,
-                        time: moment(item.DateTime, 'dd/MM/yyyy HH:mm:ss'),
-                        attachment
-                    });
-                } else {
-                    this.pushToTranscript({
-                        divider: true
-                    });
-                }
-            }
-        );
-    };
-
-    /**
-     * To process TextChatMessageSentEvent
-     * @param evt TextChatMessageSentEvent evt
-     */
-    private TextChatMessageSentEvent = (evt: TextChatMessageSentEvent) => {
-        this.messageSentEvent(evt);
-    };
-
-    /**
-     * To process TextChatMessageTemplateSentEvent
-     *
-     * @param evt TextChatMessageTemplateSentEvent evt
-     */
-    private TextChatMessageTemplateSentEvent = (evt: TextChatMessageTemplateSentEvent) => {
-        this.messageSentEvent(evt);
-    };
-
-    /**
-     * To process TextChatUserMessageWaitTimerEvent
-     *
-     * @param evt TextChatUserMessageWaitTimerEvent evt
-     */
-    private TextChatUserMessageWaitTimerEvent = (evt: TextChatUserMessageWaitTimerEvent) => {
-        // check the interaction and the interaction status
-        // if (evt.InteractionID !== this.interactionId || this.status !== 'connected') {
-        //     return;
-        // }
-
-        if (this.status !== 'connected') {
-            return;
-        }
-
-        // show freeze auto response button
-        this.showAutoFreeze = true;
-
-        // get the message template to be sent to customer
-        this.sendMessage({
-            Text: evt.AutoResponseTemplate
-        });
-
-        // if this is the final auto response then disconnect the chat
-        if (evt.IsFinal) {
-            // send end chat to server
-            this.endChat('AutoResponseTimeout');
-            // hide freeze auto response button
-            this.showAutoFreeze = false;
-        }
-    };
-
-    /**
-     * To process TextChatTypingStateChangedEvent
-     *
-     * @param evt TextChatTypingStateChangedEvent evt
-     */
-    private TextChatTypingStateChangedEvent = (evt: TextChatTypingStateChangedEvent) => {
-        // check the interaction
-        // if (evt.InteractionID !== this.interactionId) {
-        //     return;
-        // }
-    };
-
-    /**
-     * To process TextChatMessageReceivedEvent
-     * @param evt TextChatMessageReceivedEvent evt
-     */
-    private TextChatMessageReceivedEvent = (evt: TextChatMessageReceivedEvent) => {
-        this.chatMessageReceived(evt);
-    };
-
-    /**
-     * To process TextChatAgentMessageReceivedEvent
-     * @param evt TextChatAgentMessageReceivedEvent evt
-     */
-    private TextChatAgentMessageReceivedEvent = (evt: TextChatAgentMessageReceivedEvent) => {
-        this.chatMessageReceived(evt);
-    };
-
-    /**
-     * To handles ActionMessageReceivedEvent
-     * @param evt ActionMessageReceivedEvent evt
-     */
-    private ActionMessageReceivedEvent = (evt: ActionMessageReceivedEvent) => {
-        try {
-            // handle snapshot ackknowledgement
-            const msg = JSON.parse(evt.Message);
-            let message = '';
-            let status: SnackbarStateTypes = 'success';
-            switch (msg.type.toLowerCase()) {
-                case 'webrtctroubleshoot':
-                    if (msg.status === 'accepted') {
-                        message = 'Webrtc troubleshoot request accepted by customer';
-                    } else if (msg.status === 'ack') {
-                        message = 'Webrtc troubleshoot request received by customer';
-                        status = 'loading';
-                    } else {
-                        message = 'Webrtc troubleshoot request rejected by customer';
-                        status = 'failure';
-                    }
-                    if (message) {
-                        this._appUIService.showSnackbar(message, status);
-                    }
-                    break;
-                case 'snapshot':
-                    if (msg.status === 'snapshotRequestAck') {
-                        message = 'Retreiving snapshot';
-                        status = 'loading';
-                    } else if (msg.status === 'response') {
-                        message = 'Snapshot Received';
-                        status = 'success';
-                    } else {
-                        message = 'Unable to take snapshot';
-                        status = 'failure';
-                    }
-                    if (message) {
-                        const snapshotMatRef = this._appUIService.showSnackbar(message, status);
-                        if (status === 'loading') {
-                            from([0])
-                                .pipe(takeUntil(this.unsubscribeAll), delay(this.data.Data.Snapshot.RemoteResponseTimeout * 1000 || 10000))
-                                .subscribe(() => {
-                                    snapshotMatRef.dismiss();
-                                    console.error('Snapshot Response timed out');
-                                });
-                        }
-                    }
-                    break;
-                case 'openwhiteboard':
-                    if (msg.status === 'ack') {
-                        this._appUIService.showSnackbar('Whiteboard request received by customer', 'info');
-                    } else if (msg.status === 'accepted') {
-                        this._appUIService.showSnackbar('Whiteboard request accepted by customer', 'success');
-                    } else {
-                        this._appUIService.showSnackbar('Whiteboard request rejected by customer', 'failure');
-                    }
-                    break;
-                default:
-                    console.log('Unknown App Message');
-            }
-        } catch (e) {
-            console.error(e);
-        }
-        // TODO:: handle app messages
-        return;
-    };
-
-    /**
-     * To handle InteractionDataEvent
-     */
-    private InteractionDataEvent(evt: InteractionDataEvent): void {
-        // check the channel
-        if (evt.Channel !== 'TextChat') {
-            return;
-        }
-        // check if interaction comments available
-        if (evt.InteractionComments && evt.InteractionComments.length > 0) {
-            evt.InteractionComments.forEach((c) => {
-                const dt = JSON.parse(c);
-                this.savedComments.push({
-                    Message: dt.Comment,
-                    Time: dt.Time,
-                    User: dt.User
-                });
-            });
-        }
-    }
-
-    /**
-     * To handle CallHoldEvent
-     *
-     * @param {CallHoldEvent} evt
-     */
-    private CallHoldEvent(evt: CallHoldEvent): void {
-        this.interactionOnHold = holdState;
-        this.status = 'hold';
-        this.interactionOnHold.loading = false;
-        // update the interaction status
-        this._interactionManagerService.updateInteraction(evt.InteractionID, {
-            status: 'hold'
-        });
-    }
-
-    /**
-     * To handle CallHoldReconnectEvent
-     *
-     * @param {CallHoldReconnectEvent} evt
-     */
-    private CallHoldReconnectEvent(evt: CallHoldReconnectEvent): void {
-        this.interactionOnHold = unHoldState;
-        this.status = 'connected';
-        // update the interaction status
-        this._interactionManagerService.updateInteraction(evt.InteractionID, {
-            status: 'connected'
-        });
-        this.interactionOnHold.loading = false;
-    }
-
-    /**
-     * To handle HoldTimerEvent
-     *
-     * @param {HoldTimerEvent} evt
-     */
-    private HoldTimerEvent(evt: HoldTimerEvent): void {
-        this._appUIService.showAppSnackbar({
-            message: `Interaction ${this.interactionId} with [${this.customerName}] and Session ID [${this.sessionID}] is on hold for ${evt.HoldTimeString}`,
-            state: evt.ColorCode,
-            onClick: () => {
-                const interaction = this.interactionList.filter((i) => i.interactionId === evt.InteractionID)[0];
-                if (interaction) {
-                    // set the content page active
-                    this._contentPageService.mode = interaction.path;
-                    this.selectInteraction(interaction, true);
-                }
-            }
-        });
-    }
-
-    /**
-     * To handle CCLDataEvent
-     *
-     * @param {CCLDataEvent} evt
-     */
-    private CCLDataEvent(evt: CCLDataEvent): void {
-        // check if customer name available
-        if (evt.CallerName) {
-            this.customerName = evt.CallerName;
-            // update the interaction status and user
-            this._interactionManagerService.updateInteraction(evt.InteractionID, {
-                status: 'connected',
-                user: this.customerName,
-                otherData: {
-                    icon: this.isSMM ? 'custom-' + this.channel : 'chat'
-                }
-            });
-        }
-    }
-
-    /**
      * To proccess both TextChatMessageReceivedEvent and TextChatAgentMessageReceivedEvent
      * @param evt TextChatMessageReceivedEvent | TextChatAgentMessageReceivedEvent data
      */
-    private chatMessageReceived = (evt: TextChatMessageReceivedEvent | TextChatAgentMessageReceivedEvent) => {
+    private chatMessageReceived(evt: TextChatMessageReceivedEvent | TextChatAgentMessageReceivedEvent): void {
         // check the interaction
         // if (evt.InteractionID !== this.interactionId) {
         //     return;
@@ -1021,7 +721,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // // check if app message
         if (evt.IsAppMessage) {
             const msg = JSON.parse(evt.Message);
-            switch (msg.type.toLowerCase()) {
+            switch (msg.type?.toLowerCase()) {
                 case 'clientreloaded':
                     this.callWidget.destroy();
                     this._appUIService.showSnackbar('Client has refreshed their browser', 'failure');
@@ -1099,8 +799,13 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         const isAgent = user !== this.customerName && this.conferenceType === 'silent';
 
-        const repliedMsg = this.chatTranscripts.find((transcript) => transcript.messageId === data.replyId);
-        // .repliedToMessage
+        // check for replied message
+        let repliedMsg: ChatTranscripts;
+        if (data.replyId) {
+            const getTranscript = this.chatTranscripts.find((transcript) => transcript.messageId === data.replyId);
+            repliedMsg = getTranscript && { ...getTranscript, repliedToMessage: null };
+        }
+
         // add message to the transcripts
         this.pushToTranscript({
             who: user,
@@ -1111,7 +816,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             type: data.attachment?.type || 'text',
             time: new Date(),
             attachment: data.attachment,
-            repliedToMessage: this.replyingToMessage
+            repliedToMessage: repliedMsg
         });
 
         let isActive = false;
@@ -1145,177 +850,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // to show message alert
         this._appUIService.showDesktopAlert('New Message', `Message from ${this.customerName}`, true, 'message');
-    };
-
-    /**
-     * To process AVControlMessageReceivedEvent
-     * @param {AVControlMessageReceivedEvent} evt AVControlMessageReceivedEvent data
-     */
-    private AVControlMessageReceivedEvent = (evt: AVControlMessageReceivedEvent) => {
-        // check the interaction
-        // if (evt.InteractionID !== this.interactionId) {
-        //     return;
-        // }
-
-        // check if its a av request
-        if (evt.Type === 'requestav') {
-            // check the type
-            const type = JSON.parse(evt.Message).param;
-            // open the call widget
-            this.openCallWidget(type, 'in', evt);
-        }
-
-        // forward the av messages to av channel
-        this.avConn?.onMessage(evt.Message);
-    };
-
-    /**
-     * To process TextChatDisconnectedEvent
-     * @param evt TextChatDisconnectedEvent data
-     */
-    private TextChatDisconnectedEvent = (evt: TextChatDisconnectedEvent) => {
-        // check the interaction
-        // if (evt.InteractionID !== this.interactionId) {
-        //     return;
-        // }
-
-        this.status = 'disconnected';
-        // update the interaction status
-        this._interactionManagerService.updateInteraction(evt.InteractionID, {
-            status: 'disconnected'
-        });
-        // stop the duration timer
-        this.stopTimer.next(null);
-        // close if there is any any AV
-        this.avConn?.close();
-        // hide auto response if enabled
-        this.showAutoFreeze = false;
-        // get the alert message by reason
-        let alertMessage = '';
-        // show an alert based on reason
-        if (evt.ConferenceType !== 'silent') {
-            switch (evt.Reason.toLowerCase()) {
-                case 'remoteendclosed':
-                    alertMessage = 'Interaction disconnected by customer';
-                    break;
-                case 'agentchatdisconnected':
-                    alertMessage = 'Interaction disconnected by agent';
-                    break;
-                case 'agentchattransfercompleted':
-                    alertMessage = 'Interaction transferred to agent successfully';
-                    break;
-                case 'agentinitiatedcallback':
-                    alertMessage = 'Interaction disconnected by agent - Callback Initiated';
-                    break;
-                case 'customerinitiatedcallback':
-                    alertMessage = 'Interaction disconnected by customer - Callback Initiated';
-                    break;
-                case 'queuetransfercompleted':
-                    alertMessage = 'Interaction transferred to queue successfully';
-                    break;
-                case 'supervisortakeover':
-                    alertMessage = 'Interaction disconnected by supervisor - Supervisor Takeover';
-                    break;
-            }
-        }
-
-        // show the alert
-        if (alertMessage) {
-            this._appUIService.showSnackbar(alertMessage);
-        }
-
-        // destroy the transfer/conf widget
-        if (this.tranfConfWidget) {
-            this._aotWidgetService.destroyWidget(this.tranfConfWidget.ID);
-            this.tranfConfWidget = null;
-        }
-        // close the conf/transfer if opened
-        this.transferConfDialogRef?.close();
-        this.confirmDialogRef?.close();
-
-        // change the mode to upload to preview the taken image
-        this.attachPreviewMode = '';
-    };
-
-    /**
-     * To process TextChatAgentDisconnectedEvent
-     * @param evt TextChatAgentDisconnectedEvent data
-     */
-    private TextChatAgentDisconnectedEvent = (evt: TextChatAgentDisconnectedEvent) => {
-        // check the interaction
-        // if (evt.InteractionID !== this.interactionId) {
-        //     return;
-        // }
-
-        // remove the agent from list
-        this.conferenceAgentList = this.conferenceAgentList.filter((c) => c.AgentId !== evt.AgentId);
-
-        // check if a bot is connected
-        if (evt.IsBotAgent) {
-            this.botConnected = false;
-        }
-
-        // show an alert for non silent agent
-        if (evt.ConferenceType === '' || evt.ConferenceType === 'conf' || evt.ConferenceType === 'whisper') {
-            this._appUIService.showSnackbar(`${evt.AgentName} is disconnected from chat`, 'info');
-        }
-
-        // if any tempates then clear
-        this.textTemplates.filtered = [];
-
-        // Reset the reply form
-        this.replyForm?.reset();
-    };
-
-    /**
-     * To process custom CannedResposeEvent
-     *
-     * @param {CustomSDKEvent} evt CannedResposeEvent data
-     */
-    private CannedResposeEvent = (evt: CustomSDKEvent) => {
-        // check the interaction
-        // if (evt.InteractionID !== this.interactionId) {
-        //     return;
-        // }
-
-        // send the selected template
-        this.sendMessage(evt.Data.Template);
-    };
-
-    /**
-     * To process custom TextChatTransferSuccessEvent
-     *
-     * @param {TextChatTransferSuccessEvent} evt
-     */
-    private TextChatTransferSuccessEvent = (evt: TextChatTransferSuccessEvent) => {
-        // Rahil close AV call here via opener
-        this.transferConfDialogRef?.close();
-    };
-
-    /**
-     * To process custom TextChatTransferFailedEvent
-     *
-     * @param {TextChatTransferFailedEvent} evt
-     */
-    private TextChatTransferFailedEvent = (evt: TextChatTransferFailedEvent) => {
-        this.transferConfDialogRef?.close();
-        this._appUIService.showSnackbar(`${evt.ResultMessage}`, 'failure');
-    };
-
-    /**
-     * To process custom TextChatTransferRejectEvent
-     *
-     * @param {TextChatTransferRejectEvent} evt
-     */
-    private TextChatTransferRejectEvent = (evt: TextChatTransferRejectEvent) => {
-        const otherData = JSON.parse(evt.Data);
-        this._appUIService.showSnackbar(
-            `${evt.FromAgentName} has rejected your ${otherData.type === 'conf' ? 'conference' : 'transfer'} request ${
-                evt.Comment !== '' ? ' with comment: ' + evt.Comment : ''
-            }`,
-            'failure'
-        );
-    };
+    }
 
     /**
      * To process both TextChatMessageSentEvent and TextChatMessageTemplateSentEvent
@@ -1324,17 +859,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     private messageSentEvent(evt: TextChatMessageSentEvent | TextChatMessageTemplateSentEvent): void {
         try {
-            // check the interaction
-            // if (evt.InteractionID !== this.interactionId || this.status === 'disconnected') {
-            //     return;
-            // }
-
             let serverMessage = false;
-
             if (this.status === 'disconnected') {
                 return;
             }
-
             const isJson = this.isValidJson(evt.Message);
             // get the formatted message
             const formattedMessage = isJson ? JSON.parse(evt.Message) : null;
@@ -1352,7 +880,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     attachment.src = `${fileServerUrl}/${this.sessionID}/${attachment.name}`;
                 }
 
-                // TODO:: implement reply and get the replied message
+                // check for replied message
+                let repliedMsg: ChatTranscripts;
+                if (formattedMessage?.replyId) {
+                    const getTranscript = this.chatTranscripts.find((transcript) => transcript.messageId === formattedMessage.replyId);
+                    repliedMsg = getTranscript && { ...getTranscript, repliedToMessage: null };
+                }
 
                 // for template sent turn on freeze button
                 if (evt.EventName === 'TextChatMessageTemplateSentEvent') {
@@ -1376,7 +909,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     type,
                     time: new Date(Date.parse(evt.CreatedTime.toString())) || new Date(),
                     attachment,
-                    serverMessage
+                    serverMessage,
+                    repliedToMessage: repliedMsg
                 });
 
                 // set ready to reply
@@ -1418,7 +952,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * To focus the reply textbox
      */
-    focusReplyInput(): void {
+    private focusReplyInput(): void {
         setTimeout(() => {
             this.replyInput.focus();
         });
@@ -1465,7 +999,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.pushToTranscript(message);
 
         // check if reply feature/attachment is enabled or not social media
-        if ((attachment || this.data.Data.ReplyOnChatAllowed) && !this.isSMM) {
+        if ((attachment || this.agentFeatures.chatReply) && !this.isSMM) {
             if (attachment) {
                 // if media proxy then remove the source
                 if (this.fileUploadUrl.MediaProxy) {
@@ -1560,7 +1094,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // get the widget type
         const widgetMode = {
             title: param === 'audio' ? 'Audio Call' : 'Video Call',
-            type: param === 'audio' ? 'tw-audio-controls' : 'tw-video-controls',
+            type: 'tw-audio-video-controls',
             icon: param === 'audio' ? 'phone' : 'duo'
         };
         // create a call AOT widget
@@ -1581,6 +1115,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         widget.Data.Opener = this;
         widget.Data.InteractionID = this.data.InteractionDetails?.InteractionID;
         widget.Data.SessionID = this.data.InteractionDetails?.TextChatSessionID;
+        widget.Data.CallType = param;
 
         // open call widget
         this._aotWidgetService.addWidget(widget);
@@ -1805,6 +1340,605 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * To process TextChatRemoteUserConnectedEvent
+     * @param evt TextChatRemoteUserConnectedEvent evt
+     */
+    TextChatRemoteUserConnectedEvent(evt: TextChatRemoteUserConnectedEvent): void {
+        // check the interaction
+        // if (evt.InteractionID !== this.interactionId) {
+        //     return;
+        // }
+
+        // replace InteractionDetails with this event
+        // this event has the interaction details properties
+        this.data.InteractionDetails = evt;
+
+        // subscribe to the timer
+        timer(1000, 1000)
+            .pipe(takeUntil(this.unsubscribeAll), takeUntil(this.stopTimer))
+            .subscribe((val) => {
+                this.duration = (val + 1) * 1000;
+            });
+
+        this.status = 'connected';
+        // get the customer name
+        this.customerName = evt.ScreenName || 'Customer';
+        // assign the intent
+        this.intent = evt.TransferIntent || evt.Intent || 'Default';
+        // check the channel
+        this.channel = evt.Channel.toLowerCase() || 'textchat';
+        // check social media
+        this.isSMM = evt.IsSMM || false;
+        // update the interaction status and user
+        this._interactionManagerService.updateInteraction(evt.InteractionID, {
+            status: 'connected',
+            user: this.customerName,
+            otherData: {
+                icon: this.isSMM ? 'custom-' + this.channel : 'chat'
+            }
+        });
+        // update the session ID
+        this.sessionID = evt.TextChatSessionID;
+        // update the conference type
+        this.conferenceType = evt.ConferenceType;
+        // update the chatmode
+        this.chatMode = evt.ChatMode;
+        // to not open video dialog when interaction is over
+        if (!evt.RecoveryEvent && this.mediaChannels.includes(this.chatMode)) {
+            this.escalateToAV(this.chatMode as any);
+        }
+        // check for bot history
+        this.processBotHistory(evt.ChatHistoryData);
+        // check if conversation history is configured
+        if (this.conversationService.Url && evt.CIF) {
+            // check for conversation history
+            this.checkForConversationHistory(evt.CIF);
+        }
+    }
+
+    /**
+     * To process TextChatSelfServiceDestinationEvent
+     * @param evt TextChatSelfServiceDestinationEvent evt
+     */
+    TextChatSelfServiceDestinationEvent(evt: TextChatSelfServiceDestinationEvent): void {
+        // check the interaction
+        // if (evt.InteractionID !== this.interactionId) {
+        //     return;
+        // }
+
+        this.selfServiceDestinations = evt.Destinations || [];
+    }
+
+    /**
+     * To process TextChatAgentConnectedEvent
+     * @param evt TextChatAgentConnectedEvent evt
+     */
+    TextChatAgentConnectedEvent(evt: TextChatAgentConnectedEvent): void {
+        // check the interaction
+        // if (evt.InteractionID !== this.interactionId) {
+        //     return;
+        // }
+
+        // to store connected agent's TmacServer
+        let tmacServer = '';
+        try {
+            // get conference agent info
+            const agentInfo = JSON.parse(evt.AgentInfoJson);
+            // extra parameter for agent info
+            const extraParam = JSON.parse(agentInfo.extraparam);
+            // assign the tmac server
+            tmacServer = extraParam.serverName;
+            // show an alert on connect
+            if (extraParam.conferenceType === 'conf' || extraParam.conferenceType === 'whisper') {
+                this._appUIService.showSnackbar(`${evt.AgentName} connected to the chat`, 'info');
+            }
+        } catch (error) {}
+
+        // add the user to list
+        this.conferenceAgentList.push({
+            AgentId: evt.AgentId,
+            AgentName: evt.AgentName,
+            ConferenceType: evt.ConferenceType,
+            IsBotAgent: evt.IsBotAgent,
+            TmacServer: tmacServer
+        });
+
+        // check if a bot is connected
+        if (evt.IsBotAgent) {
+            this.botConnected = true;
+        }
+    }
+
+    /**
+     * To process TextChatTranscriptForTransferEvent
+     * @param evt TextChatTranscriptForTransferEvent evt
+     */
+    TextChatTranscriptForTransferEvent(evt: TextChatTranscriptForTransferEvent): void {
+        // loop through the data
+        evt.Transcript.forEach(
+            (item: {
+                /**
+                 * ID of message
+                 */
+                Id: string;
+                /**
+                 * Type of message
+                 */
+                Type: string;
+                /**
+                 * Message
+                 */
+                Message: string;
+                /**
+                 * Transferred agent's ID
+                 */
+                AgentID: string;
+                /**
+                 * Datetime of message
+                 */
+                DateTime: string;
+                /**
+                 * Transferred agent's name
+                 */
+                AgentName: string;
+            }) => {
+                // is agent flag
+                const isAgent = item.Type.toLowerCase() === 'agent';
+
+                // check the user
+                const user =
+                    item.Type.toLowerCase() === 'agent' ? item.AgentName.split(' ')[0] : item.Type.toLowerCase() === 'user' ? this.customerName : '';
+
+                // format the message get the message data
+                const formattedMessage = this.isValidJson(item.Message) ? JSON.parse(item.Message) : null;
+                const messageId = formattedMessage ? formattedMessage.messageId : item.Id;
+
+                const type = formattedMessage
+                    ? formattedMessage.type === 'attachment'
+                        ? formattedMessage.attachment.type
+                        : formattedMessage.type
+                    : '';
+
+                const message = formattedMessage ? formattedMessage.message : item.Message;
+
+                // check for attachments
+                const attachment = formattedMessage && formattedMessage.attachment ? formattedMessage.attachment : null;
+
+                // check for replied message
+                let repliedMsg: ChatTranscripts;
+                if (formattedMessage?.replyId) {
+                    const getTranscript = this.chatTranscripts.find((transcript) => transcript.messageId === formattedMessage.replyId);
+                    repliedMsg = getTranscript && { ...getTranscript, repliedToMessage: null };
+                }
+
+                // add message to the transcripts
+                if (user) {
+                    this.pushToTranscript({
+                        who: user,
+                        isAgent,
+                        position: isAgent ? 'right' : 'left',
+                        messageId,
+                        message,
+                        type,
+                        time: moment(item.DateTime, 'dd/MM/yyyy HH:mm:ss'),
+                        attachment,
+                        repliedToMessage: repliedMsg
+                    });
+                } else {
+                    this.pushToTranscript({
+                        divider: true
+                    });
+                }
+            }
+        );
+    }
+
+    /**
+     * To process TextChatMessageSentEvent
+     * @param evt TextChatMessageSentEvent evt
+     */
+    TextChatMessageSentEvent(evt: TextChatMessageSentEvent): void {
+        this.messageSentEvent(evt);
+    }
+
+    /**
+     * To process TextChatMessageTemplateSentEvent
+     *
+     * @param evt TextChatMessageTemplateSentEvent evt
+     */
+    TextChatMessageTemplateSentEvent(evt: TextChatMessageTemplateSentEvent): void {
+        this.messageSentEvent(evt);
+    }
+
+    /**
+     * To process TextChatUserMessageWaitTimerEvent
+     *
+     * @param evt TextChatUserMessageWaitTimerEvent evt
+     */
+    TextChatUserMessageWaitTimerEvent(evt: TextChatUserMessageWaitTimerEvent): void {
+        // check the interaction and the interaction status
+        // if (evt.InteractionID !== this.interactionId || this.status !== 'connected') {
+        //     return;
+        // }
+
+        if (this.status !== 'connected') {
+            return;
+        }
+
+        // show freeze auto response button
+        this.showAutoFreeze = true;
+
+        // get the message template to be sent to customer
+        this.sendMessage({
+            Text: evt.AutoResponseTemplate
+        });
+
+        // if this is the final auto response then disconnect the chat
+        if (evt.IsFinal) {
+            // send end chat to server
+            this.endChat('AutoResponseTimeout');
+            // hide freeze auto response button
+            this.showAutoFreeze = false;
+        }
+    }
+
+    /**
+     * To process TextChatTypingStateChangedEvent
+     *
+     * @param evt TextChatTypingStateChangedEvent evt
+     */
+    TextChatTypingStateChangedEvent(evt: TextChatTypingStateChangedEvent): void {
+        // check the interaction
+        // if (evt.InteractionID !== this.interactionId) {
+        //     return;
+        // }
+    }
+
+    /**
+     * To process TextChatMessageReceivedEvent
+     * @param evt TextChatMessageReceivedEvent evt
+     */
+    TextChatMessageReceivedEvent(evt: TextChatMessageReceivedEvent): void {
+        this.chatMessageReceived(evt);
+    }
+
+    /**
+     * To process TextChatAgentMessageReceivedEvent
+     * @param evt TextChatAgentMessageReceivedEvent evt
+     */
+    TextChatAgentMessageReceivedEvent(evt: TextChatAgentMessageReceivedEvent): void {
+        this.chatMessageReceived(evt);
+    }
+
+    /**
+     * To handles ActionMessageReceivedEvent
+     * @param evt ActionMessageReceivedEvent evt
+     */
+    ActionMessageReceivedEvent(evt: ActionMessageReceivedEvent): void {
+        try {
+            // handle snapshot ackknowledgement
+            const msg = JSON.parse(evt.Message);
+            let message = '';
+            let status: SnackbarStateTypes = 'success';
+            switch (msg.type.toLowerCase()) {
+                case 'webrtctroubleshoot':
+                    if (msg.status === 'accepted') {
+                        message = 'Webrtc troubleshoot request accepted by customer';
+                    } else if (msg.status === 'ack') {
+                        message = 'Webrtc troubleshoot request received by customer';
+                        status = 'loading';
+                    } else {
+                        message = 'Webrtc troubleshoot request rejected by customer';
+                        status = 'failure';
+                    }
+                    if (message) {
+                        this._appUIService.showSnackbar(message, status);
+                    }
+                    break;
+                case 'snapshot':
+                    if (msg.status === 'snapshotRequestAck') {
+                        message = 'Retreiving snapshot';
+                        status = 'loading';
+                    } else if (msg.status === 'response') {
+                        message = 'Snapshot Received';
+                        status = 'success';
+                    } else {
+                        message = 'Unable to take snapshot';
+                        status = 'failure';
+                    }
+                    if (message) {
+                        const snapshotMatRef = this._appUIService.showSnackbar(message, status);
+                        if (status === 'loading') {
+                            from([0])
+                                .pipe(takeUntil(this.unsubscribeAll), delay(this.data.Data.Snapshot.RemoteResponseTimeout * 1000 || 10000))
+                                .subscribe(() => {
+                                    snapshotMatRef.dismiss();
+                                    console.error('Snapshot Response timed out');
+                                });
+                        }
+                    }
+                    break;
+                case 'openwhiteboard':
+                    if (msg.status === 'ack') {
+                        this._appUIService.showSnackbar('Whiteboard request received by customer', 'info');
+                    } else if (msg.status === 'accepted') {
+                        this._appUIService.showSnackbar('Whiteboard request accepted by customer', 'success');
+                    } else {
+                        this._appUIService.showSnackbar('Whiteboard request rejected by customer', 'failure');
+                    }
+                    break;
+                default:
+                    console.log('Unknown App Message');
+            }
+        } catch (e) {
+            console.error(e);
+        }
+        // TODO:: handle app messages
+        return;
+    }
+
+    /**
+     * To handle InteractionDataEvent
+     */
+    InteractionDataEvent(evt: InteractionDataEvent): void {
+        // check the channel
+        if (evt.Channel !== 'TextChat') {
+            return;
+        }
+        // check if interaction comments available
+        if (evt.InteractionComments && evt.InteractionComments.length > 0) {
+            evt.InteractionComments.forEach((c) => {
+                const dt = JSON.parse(c);
+                this.savedComments.push({
+                    Message: dt.Comment,
+                    Time: dt.Time,
+                    User: dt.User
+                });
+            });
+        }
+    }
+
+    /**
+     * To handle CallHoldEvent
+     *
+     * @param {CallHoldEvent} evt
+     */
+    CallHoldEvent(evt: CallHoldEvent): void {
+        this.interactionOnHold = holdState;
+        this.status = 'hold';
+        this.interactionOnHold.loading = false;
+        // update the interaction status
+        this._interactionManagerService.updateInteraction(evt.InteractionID, {
+            status: 'hold'
+        });
+    }
+
+    /**
+     * To handle CallHoldReconnectEvent
+     *
+     * @param {CallHoldReconnectEvent} evt
+     */
+    CallHoldReconnectEvent(evt: CallHoldReconnectEvent): void {
+        this.interactionOnHold = unHoldState;
+        this.status = 'connected';
+        // update the interaction status
+        this._interactionManagerService.updateInteraction(evt.InteractionID, {
+            status: 'connected'
+        });
+        this.interactionOnHold.loading = false;
+    }
+
+    /**
+     * To handle HoldTimerEvent
+     *
+     * @param {HoldTimerEvent} evt
+     */
+    HoldTimerEvent(evt: HoldTimerEvent): void {
+        this._appUIService.showAppSnackbar({
+            message: `Interaction ${this.interactionId} with [${this.customerName}] and Session ID [${this.sessionID}] is on hold for ${evt.HoldTimeString}`,
+            state: evt.ColorCode,
+            onClick: () => {
+                const interaction = this.interactionList.filter((i) => i.interactionId === evt.InteractionID)[0];
+                if (interaction) {
+                    // set the content page active
+                    this._contentPageService.mode = interaction.path;
+                    this.selectInteraction(interaction, true);
+                }
+            }
+        });
+    }
+
+    /**
+     * To handle CCLDataEvent
+     *
+     * @param {CCLDataEvent} evt
+     */
+    CCLDataEvent(evt: CCLDataEvent): void {
+        // check if customer name available
+        if (evt.CallerName) {
+            this.customerName = evt.CallerName;
+            // update the interaction status and user
+            this._interactionManagerService.updateInteraction(evt.InteractionID, {
+                status: 'connected',
+                user: this.customerName,
+                otherData: {
+                    icon: this.isSMM ? 'custom-' + this.channel : 'chat'
+                }
+            });
+        }
+    }
+
+    /**
+     * To process AVControlMessageReceivedEvent
+     * @param {AVControlMessageReceivedEvent} evt AVControlMessageReceivedEvent data
+     */
+    AVControlMessageReceivedEvent(evt: AVControlMessageReceivedEvent): void {
+        // check the interaction
+        // if (evt.InteractionID !== this.interactionId) {
+        //     return;
+        // }
+
+        // check if its a av request
+        if (evt.Type === 'requestav') {
+            // check the type
+            const type = JSON.parse(evt.Message).param;
+            // open the call widget
+            this.openCallWidget(type, 'in', evt);
+        }
+
+        // forward the av messages to av channel
+        this.avConn?.onMessage(evt.Message);
+    }
+
+    /**
+     * To process TextChatDisconnectedEvent
+     * @param evt TextChatDisconnectedEvent data
+     */
+    TextChatDisconnectedEvent(evt: TextChatDisconnectedEvent): void {
+        // check the interaction
+        // if (evt.InteractionID !== this.interactionId) {
+        //     return;
+        // }
+
+        this.status = 'disconnected';
+        // update the interaction status
+        this._interactionManagerService.updateInteraction(evt.InteractionID, {
+            status: 'disconnected'
+        });
+        // stop the duration timer
+        this.stopTimer.next(null);
+        // close if there is any any AV
+        this.avConn?.close();
+        // hide auto response if enabled
+        this.showAutoFreeze = false;
+        // get the alert message by reason
+        let alertMessage = '';
+        // show an alert based on reason
+        if (evt.ConferenceType !== 'silent') {
+            switch (evt.Reason.toLowerCase()) {
+                case 'remoteendclosed':
+                    alertMessage = 'Interaction disconnected by customer';
+                    break;
+                case 'agentchatdisconnected':
+                    alertMessage = 'Interaction disconnected by agent';
+                    break;
+                case 'agentchattransfercompleted':
+                    alertMessage = 'Interaction transferred to agent successfully';
+                    break;
+                case 'agentinitiatedcallback':
+                    alertMessage = 'Interaction disconnected by agent - Callback Initiated';
+                    break;
+                case 'customerinitiatedcallback':
+                    alertMessage = 'Interaction disconnected by customer - Callback Initiated';
+                    break;
+                case 'queuetransfercompleted':
+                    alertMessage = 'Interaction transferred to queue successfully';
+                    break;
+                case 'supervisortakeover':
+                    alertMessage = 'Interaction disconnected by supervisor - Supervisor Takeover';
+                    break;
+            }
+        }
+
+        // show the alert
+        if (alertMessage) {
+            this._appUIService.showSnackbar(alertMessage);
+        }
+
+        // destroy the transfer/conf widget
+        if (this.tranfConfWidget) {
+            this._aotWidgetService.destroyWidget(this.tranfConfWidget.ID);
+            this.tranfConfWidget = null;
+        }
+        // close the conf/transfer if opened
+        this.transferConfDialogRef?.close();
+        this.confirmDialogRef?.close();
+
+        // change the mode to upload to preview the taken image
+        this.attachPreviewMode = '';
+    }
+
+    /**
+     * To process TextChatAgentDisconnectedEvent
+     * @param evt TextChatAgentDisconnectedEvent data
+     */
+    TextChatAgentDisconnectedEvent(evt: TextChatAgentDisconnectedEvent): void {
+        // check the interaction
+        // if (evt.InteractionID !== this.interactionId) {
+        //     return;
+        // }
+
+        // remove the agent from list
+        this.conferenceAgentList = this.conferenceAgentList.filter((c) => c.AgentId !== evt.AgentId);
+
+        // check if a bot is connected
+        if (evt.IsBotAgent) {
+            this.botConnected = false;
+        }
+
+        // show an alert for non silent agent
+        if (evt.ConferenceType === '' || evt.ConferenceType === 'conf' || evt.ConferenceType === 'whisper') {
+            this._appUIService.showSnackbar(`${evt.AgentName} is disconnected from chat`, 'info');
+        }
+
+        // if any tempates then clear
+        this.textTemplates.filtered = [];
+
+        // Reset the reply form
+        this.replyForm?.reset();
+    }
+
+    /**
+     * To process custom CannedResposeEvent
+     *
+     * @param {CustomSDKEvent} evt CannedResposeEvent data
+     */
+    CannedResposeEvent(evt: CustomSDKEvent): void {
+        // check the interaction
+        // if (evt.InteractionID !== this.interactionId) {
+        //     return;
+        // }
+
+        // send the selected template
+        this.sendMessage(evt.Data.Template);
+    }
+
+    /**
+     * To process custom TextChatTransferSuccessEvent
+     *
+     * @param {TextChatTransferSuccessEvent} evt
+     */
+    TextChatTransferSuccessEvent(evt: TextChatTransferSuccessEvent): void {
+        // Rahil close AV call here via opener
+        this.transferConfDialogRef?.close();
+    }
+
+    /**
+     * To process custom TextChatTransferFailedEvent
+     *
+     * @param {TextChatTransferFailedEvent} evt
+     */
+    TextChatTransferFailedEvent(evt: TextChatTransferFailedEvent): void {
+        this.transferConfDialogRef?.close();
+        this._appUIService.showSnackbar(`${evt.ResultMessage}`, 'failure');
+    }
+
+    /**
+     * To process custom TextChatTransferRejectEvent
+     *
+     * @param {TextChatTransferRejectEvent} evt
+     */
+    TextChatTransferRejectEvent(evt: TextChatTransferRejectEvent): void {
+        const otherData = JSON.parse(evt.Data);
+        this._appUIService.showSnackbar(
+            `${evt.FromAgentName} has rejected your ${otherData.type === 'conf' ? 'conference' : 'transfer'} request ${
+                evt.Comment !== '' ? ' with comment: ' + evt.Comment : ''
+            }`,
+            'failure'
+        );
+    }
 
     /**
      * On widget maximzed event
@@ -2357,7 +2491,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     onKeyUp(event: any): void {
         // check if text templates is enabled
-        if (this.data.Data.ChatTemplate.Allowed) {
+        if (this.agentFeatures.chatTemplate) {
             // check for text templates
             if (event.target.value) {
                 const match = event.target.value.split(' ').pop().trim().toLowerCase();
@@ -2416,6 +2550,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     setReplyingToMessage(message: ChatTranscripts): void {
         this.replyingToMessage = { ...message, repliedToMessage: null, time: null };
+        this.focusReplyInput();
     }
 
     /**

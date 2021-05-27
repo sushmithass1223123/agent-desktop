@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AgentFeatures, AgentSettingsUpdatedEvent, SDKClient, TUtils } from '@tmac/sdk';
+import { AGENT_FEATURES } from 'app/constants';
 import { AppUiService } from './app-ui.service';
 
 /**
@@ -73,7 +74,7 @@ export class AgentFeaturesService {
         };
     };
 
-    constructor(private _appUIService: AppUiService) { }
+    constructor(private _appUIService: AppUiService) {}
 
     /**
      * Need more Description
@@ -116,7 +117,7 @@ export class AgentFeaturesService {
             screenvideo,
             snapshot
         });
-    }
+    };
 
     /**
      * To process AgentSettingsUpdatedEvent
@@ -130,7 +131,7 @@ export class AgentFeaturesService {
             // set processed
             this._processed = true;
         }
-    }
+    };
 
     /**
      * Need more Description
@@ -302,8 +303,8 @@ export class AgentFeaturesService {
     private processAgentFeatures(agentFeatures: AgentFeatures[]): void {
         // loop through the features and process
         agentFeatures.forEach((feature: AgentFeatures) => {
-            switch (feature.Feature) {
-                case 'IsCameraCaptureEnabled':
+            switch (feature.Feature.toLowerCase()) {
+                case AGENT_FEATURES.IsCameraCaptureEnabled:
                     // check if enabled, then capture camera
                     if (feature.IsEnabled) {
                         this.captureCameraStream();
@@ -311,7 +312,7 @@ export class AgentFeaturesService {
                         this.stopCamera();
                     }
                     break;
-                case 'IsScreenCaptureEnabled':
+                case AGENT_FEATURES.IsScreenCaptureEnabled:
                     // check if enabled, then capture camera
                     if (feature.IsEnabled) {
                         this.captureDisplayStream();
@@ -319,7 +320,7 @@ export class AgentFeaturesService {
                         this.stopScreenShare();
                     }
                     break;
-                case 'IsLocationEnabled':
+                case AGENT_FEATURES.IsLocationEnabled:
                     // check if enabled, then capture camera
                     if (feature.IsEnabled) {
                         this.captureLocation();

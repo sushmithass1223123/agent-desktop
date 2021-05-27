@@ -78,16 +78,19 @@ export const PENDING_CALL_STATUSES = ['Open', 'QueueConnected'];
 /**
  * Alert dialog constants
  */
-export const AppAlertDialogConstants: Record<AppAlertDialogTypes, {
-    /**
-     * Alert heading
-     */
-    heading: string;
-    /**
-     * Alert icon
-     */
-    icon: string
-}> = {
+export const AppAlertDialogConstants: Record<
+    AppAlertDialogTypes,
+    {
+        /**
+         * Alert heading
+         */
+        heading: string;
+        /**
+         * Alert icon
+         */
+        icon: string;
+    }
+> = {
     info: {
         heading: 'Info',
         icon: 'info'
@@ -109,20 +112,23 @@ export const AppAlertDialogConstants: Record<AppAlertDialogTypes, {
 /**
  * Reminder Task dialog constants
  */
-export const RemiderTaskDialogConstants: Record<ReminderTaskDialogTypes, {
-    /**
-     * Title of dialog
-     */
-    title: string;
-    /**
-     * Dialog message
-     */
-    message: string;
-    /**
-     * Dialog type
-     */
-    type: ReminderTaskDialogTypes
-}> = {
+export const RemiderTaskDialogConstants: Record<
+    ReminderTaskDialogTypes,
+    {
+        /**
+         * Title of dialog
+         */
+        title: string;
+        /**
+         * Dialog message
+         */
+        message: string;
+        /**
+         * Dialog type
+         */
+        type: ReminderTaskDialogTypes;
+    }
+> = {
     makecall: {
         title: 'Task Reminder',
         message: 'Do you want to make this call?',
@@ -158,20 +164,23 @@ export const RemiderTaskDialogConstants: Record<ReminderTaskDialogTypes, {
 /**
  * App confirm dialog constants
  */
-export const AppConfirmDialogConstants: Record<AppConfirmDialogTypes, {
-    /**
-     * Title of dialog
-     */
-    title: string;
-    /**
-     * Dialog message
-     */
-    message: string;
-    /**
-     * Dialog type
-     */
-    type: string
-}> = {
+export const AppConfirmDialogConstants: Record<
+    AppConfirmDialogTypes,
+    {
+        /**
+         * Title of dialog
+         */
+        title: string;
+        /**
+         * Dialog message
+         */
+        message: string;
+        /**
+         * Dialog type
+         */
+        type: string;
+    }
+> = {
     takeoverSession: {
         title: 'Confirm Login',
         message: 'Another session detected. Do you want to take it over?',
@@ -197,6 +206,44 @@ export const AppConfirmDialogConstants: Record<AppConfirmDialogTypes, {
         message: 'Are you sure?',
         type: 'generic'
     }
+};
+
+/**
+ * Agent features
+ */
+export const AGENT_FEATURES = {
+    AllowSupervisorToBargeIn: 'allowsupervisortobargein',
+    AllowSupervisorToCapturePicture: 'allowsupervisortocapturepicture',
+    AllowSupervisorToChangeStatus: 'allowsupervisortochangestatus',
+    AllowSupervisorToChatConference: 'allowsupervisortochatconference',
+    AllowSupervisorToChatSilentMonitor: 'allowsupervisortochatsilentmonitor',
+    AllowSupervisorToChatWhisper: 'allowsupervisortochatwhisper',
+    AllowSupervisorToFaxTransferAgent: 'allowsupervisortofaxtransferagent',
+    AllowSupervisorToFaxTransferSelf: 'allowsupervisortofaxtransferself',
+    AllowSupervisorToInteractionNotification: 'allowsupervisortointeractionnotification',
+    AllowSupervisorToLogout: 'allowsupervisortologout',
+    AllowSupervisorToSendNotification: 'allowsupervisortosendnotification',
+    AllowSupervisorToSilentMonitor: 'allowsupervisortosilentmonitor',
+    AllowSupervisorToViewEmailDetails: 'allowsupervisortoviewemaildetails',
+    IsCameraCaptureEnabled: 'iscameracaptureenabled',
+    IsScreenCaptureEnabled: 'isscreencaptureenabled',
+    IsLocationEnabled: 'islocationenabled',
+    IsAudioEscalateEnabled: 'isaudioescalateenabled',
+    IsVideoEscalateEnabled: 'isvideoescalateenabled',
+    IsChatSignatureEnabled: 'ischatsignatureenabled',
+    IsChatWhiteboardEnabled: 'ischatwhiteboardenabled',
+    IsChatAttachmentsEnabled: 'ischatattachmentsenabled',
+    IsChatEmojiEnabled: 'ischatemojienabled',
+    IsReplyOnChatEnabled: 'isreplyonchatenabled',
+    IsChatConferenceEnabled: 'ischatconferenceenabled',
+    IsChatTransferEnabled: 'ischattransferenabled',
+    IsChatTemplateEnabled: 'ischattemplateenabled',
+    IsChatReplyEnabled: 'ischatreplyenabled',
+    IsChatCommentEnabled: 'ischatcommentenabled',
+    IsChatHoldEnabled: 'ischatholdenabled',
+    IsVideoSnapshotEnabled: 'isvideosnapshotenabled',
+    IsChatVoiceNoteEnabled: 'ischatvoicenoteenabled',
+    IsChatScreenshareEnabled: 'ischatscreenshareenabled'
 };
 
 /**
@@ -310,9 +357,86 @@ export const AUX_STATUSES = {
 /**
  * Invalid chars
  */
-export const INVALID_CHARS =
-    [
-        9, 12, 13, 16, 17, 18, 19, 20, 21, 25, 27, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 47, 91, 92, 93, 95,
-        11, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140,
-        141, 142, 143, 144, 145, 151, 166, 167, , 168, 169, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183
-    ];
+export const INVALID_CHARS = [
+    9,
+    12,
+    13,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    25,
+    27,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    47,
+    91,
+    92,
+    93,
+    95,
+    11,
+    113,
+    114,
+    115,
+    116,
+    117,
+    118,
+    119,
+    120,
+    121,
+    122,
+    123,
+    124,
+    125,
+    126,
+    127,
+    128,
+    129,
+    130,
+    131,
+    132,
+    133,
+    134,
+    135,
+    136,
+    137,
+    138,
+    139,
+    140,
+    141,
+    142,
+    143,
+    144,
+    145,
+    151,
+    166,
+    167,
+    ,
+    168,
+    169,
+    172,
+    173,
+    174,
+    175,
+    176,
+    177,
+    178,
+    179,
+    180,
+    181,
+    182,
+    183
+];

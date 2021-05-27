@@ -1,13 +1,14 @@
 import { Component, ElementRef, Input, OnDestroy, OnInit, QueryList, ViewChildren, ViewEncapsulation } from '@angular/core';
+import { MatButton } from '@angular/material/button';
 import { fuseAnimations } from '@fuse/animations';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
-// import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import {
     AgentAVMessageEvent,
+    AVApiConfig,
     AVChannel,
     AVControlMessageReceivedEvent,
     AVEvent,
@@ -16,7 +17,8 @@ import {
     SDKClient,
     TEnums,
     TextChatDisconnectedEvent,
-    TUtils
+    TUtils,
+    WrcCallTypes
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AV_ERRORS, COMMON_ERR_MESSAGE } from 'app/constants';
@@ -28,26 +30,20 @@ import { filter, takeUntil } from 'rxjs/operators';
 import { TwChatControlsComponent } from '../tw-chat-controls/tw-chat-controls.component';
 
 /**
- * Video Controls
+ * Audio Video Controls
  */
 @Component({
-    selector: 'tw-video-controls',
-    templateUrl: './tw-video-controls.component.html',
-    styleUrls: ['./tw-video-controls.component.scss'],
+    selector: 'tw-audio-video-controls',
+    templateUrl: './tw-audio-video-controls.component.html',
+    styleUrls: ['./tw-audio-video-controls.component.scss'],
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations
 })
-export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     /**
      * holds all the data related to this widget from the config
      */
     @Input() data: IWidget;
-
-    /**
-     * Fuse Config
-     */
-    // fuseConfig: any;
-
     /**
      * Fuse custom config
      */
@@ -55,17 +51,14 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
         widget$: this._fuseFacadeService.widgetBgClasses$
     };
-
     /**
      * App Config
      */
     appConfig: any;
-
     /**
      * Maximized State
      */
     maximized: boolean;
-
     /**
      * Widget Data
      */
@@ -75,20 +68,19 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
          */
         customerName: string;
         /**
-         * Chat config
-         */
-        chatConfig: any;
-        /**
          * Direction
          * Need more description
          */
-        direction: string;
+        direction: 'in' | 'out';
+        /**
+         * Type of call
+         */
+        callType: 'audio' | 'video';
         /**
          * Need more description
          */
         opener: TwChatControlsComponent;
     };
-
     /**
      * User Info
      */
@@ -108,7 +100,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Need more decription
      */
-    userList: any[] = [];
+    userList = [];
     /**
      * Start time
      */
@@ -161,7 +153,18 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
      * Remote Screen sharing flag
      */
     remoteScreenSharing: boolean;
-
+    /**
+     * Remote screenshare stream ref
+     */
+    remoateScreenshareRef: any;
+    /**
+     * Check if OneWayVideo
+     */
+    oneWayVideo: boolean;
+    /**
+     * Wrc call type
+     */
+    wrcCallType: WrcCallTypes;
     /**
      * Remote Video Elements Ref
      */
@@ -193,10 +196,6 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        // this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-        //     this.fuseConfig = config;
-        // });
-
         this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
             this.appConfig = config;
         });
@@ -212,9 +211,9 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         this.sessionID = this.data.Data.SessionID;
         this.widgetData = {
             customerName: this.data.Data.CustomerName,
-            chatConfig: this.data.Data.Config || new Object(),
             opener: this.data.Data.Opener,
-            direction: this.data.Data.direction
+            direction: this.data.Data.Direction,
+            callType: this.data.Data.CallType
         };
 
         // listen to tmac events
@@ -222,17 +221,22 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         SDKClient.events.on('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
         SDKClient.events.on('AgentAVMessageEvent', this.AgentAVMessageEvent);
 
+        // check for the avEvent
         const avEvent = this.data.Data.AVEvent || null;
+
         // create the AV channel connection
         this.createAVConnection(avEvent);
+
+        this.wrcCallType = this.widgetData.callType === 'video' ? TEnums.WrcCallTypes.Video : TEnums.WrcCallTypes.Audio;
+
         // start call
         if (this.data.Data.ConferenceType === 'conf') {
-            this.avConn.join(TEnums.WrcCallTypes.Video, { mode: 'conference' });
+            this.avConn.join(this.wrcCallType, { mode: 'conference' });
             // show UI
             this.showUI = true;
         } else if (this.data.Data.Direction === 'out') {
             this.avConn
-                ?.startCall(TEnums.WrcCallTypes.Video, null)
+                ?.startCall(this.wrcCallType)
                 .then((dt: any) => {
                     // check the response is sucess or timed out
                     if (dt.code === TEnums.WrcCodes.RequestTimeout) {
@@ -255,13 +259,18 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         // call the wrapper destroy method
         this.destroyWrapper();
 
+        // check if the interaction is on hold
+        if (this.hold) {
+            this.holdUnholdCall();
+        }
+
         // this.endCall();
         this.avConn?.close();
         this.avConn?.events.off('OnAVEvent', this.onAVEvent);
         SDKClient.events.off('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
         SDKClient.events.off('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
         SDKClient.events.off('AgentAVMessageEvent', this.AgentAVMessageEvent);
-        this.widgetData.opener.disposeCallWidget();
+        this.widgetData.opener?.disposeCallWidget();
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -277,7 +286,15 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         // create a AV channel connection
 
         // Set AV Config
-        const AV: any = this.appConfig.AppConfigs.AV || {};
+        const AV: AVApiConfig = this.appConfig.AppConfigs.AV || {};
+
+        // check if the agent has IsOneWayVideoEnabled feature enabled
+        this.oneWayVideo = SDKClient.getAgentData().featuresList.filter((f) => f.Feature.toLowerCase() === 'isonewayvideoenabled')?.[0]?.IsEnabled;
+
+        // override the av config media constrain
+        if (this.oneWayVideo) {
+            AV.mediaConstraints.type = 'onewayvideo';
+        }
 
         // create a AV channel connection
         const connection = new AVChannel(
@@ -329,7 +346,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                 // request param
                 const param = evt.data.param.charAt(0).toUpperCase() + evt.data.param.slice(1);
 
-                const onConfirmDialogClose = (resp) => {
+                const onConfirmDialogClose = (resp: any) => {
                     if (resp) {
                         // accept request
                         evt.data.response(true);
@@ -407,6 +424,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                 // check if the user connected is customer
                 if (evt.data.streamInfo?.user === 'customer') {
                     evt.data.streamInfo.user = this.widgetData.customerName + '-Presenting';
+                    this.remoateScreenshareRef = evt.data;
                 } else {
                     // other agent connected
                 }
@@ -420,6 +438,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
             case 'onScreenshareDisconnected':
                 this.status = 'ss-disconnected';
                 this.remoteScreenSharing = false;
+                this.remoateScreenshareRef = null;
                 // remove the screenshare user
                 this.userList = this.userList.filter((u) => u.streamInfo.type !== 'screenshare');
                 break;
@@ -480,7 +499,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
             default:
             // console.log(`unhandled:: [${evt.event}]`, evt);
         }
-    }
+    };
 
     /**
      * AVControlMessageReceivedEvent Handler
@@ -495,7 +514,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // forward the av messages to av channel
         this.avConn?.onMessage(evt.Message);
-    }
+    };
 
     /**
      * AgentAVMessageEvent Handler
@@ -505,7 +524,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
     private AgentAVMessageEvent = (evt: AgentAVMessageEvent) => {
         // forward the av messages to av channel
         this.avConn?.onMessage(evt.Message);
-    }
+    };
 
     /**
      * TextChatDisconnectedEvent Handler
@@ -519,7 +538,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         }
         // close the widget
         this.destroyWidget();
-    }
+    };
 
     /**
      * Widget Cleanup
@@ -543,10 +562,10 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
     }
 
     /**
-     * Mute Audio Call
-     * @method muteAudioCall
+     * Mute/Unmute Audio Call
+     * @method muteUnmuteAudioCall
      */
-    public muteAudioCall(): void {
+    public muteUnmuteAudioCall(): void {
         // check the muted flag
         if (this.audioMuted) {
             // un mute the call
@@ -560,10 +579,10 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
     }
 
     /**
-     * Mute Video Call
-     * @method muteVideoCall
+     * Mute/Unmute Video Call
+     * @method muteUnmuteVideoCall
      */
-    public muteVideoCall(): void {
+    public muteUnmuteVideoCall(): void {
         // check the muted flag
         if (this.videoMuted) {
             // un mute the call
@@ -597,7 +616,7 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
      * @param {any} user
      */
     public async takeSnapShot(user: any): Promise<void> {
-        if (this.widgetData.chatConfig?.Snapshot?.Source?.toLowerCase() === 'local') {
+        if (this.widgetData.opener.data.Data.Snapshot?.Source?.toLowerCase() === 'local') {
             this.remoteVideoElements?.forEach((element: ElementRef) => {
                 if (element.nativeElement.id === user.stream.id) {
                     // create a canvas
@@ -659,7 +678,11 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                                         };
 
                                         // emit a template message sent event to show in UI
-                                        this._tmacEventService.emitSDKEvent(customEvent, true);
+                                        this._tmacEventService.emitSDKEvent({
+                                            event: customEvent,
+                                            isInteractionEvent: true,
+                                            log: true
+                                        });
                                     } else {
                                         this._appUIService.showSnackbar('Snapshot save failed!', 'failure');
                                     }
@@ -671,25 +694,28 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
                     });
                 }
             });
-        } else if (this.widgetData.chatConfig?.Snapshot?.Source?.toLowerCase() === 'remote') {
+        } else if (this.widgetData.opener.data.Data.Snapshot?.Source?.toLowerCase() === 'remote') {
             try {
                 const matRef = this._appUIService.showSnackbar('Requesting customer for snapshot', 'loading');
-                const res = await SDKClient.sendActionMessage({
-                    interactionId: this.interactionId as any,
-                    message: JSON.stringify({
-                        source: 'agent',
-                        options: {},
-                        data: {
-                            interactionId: this.interactionId
-                        },
-                        status: 'request',
-                        type: 'snapshot',
-                        eventName: 'ActionMessage',
-                        id: TUtils.Generic.uuid()
-                    })
-                });
+
+                try {
+                    await SDKClient.sendActionMessage({
+                        interactionId: this.interactionId as any,
+                        message: JSON.stringify({
+                            source: 'agent',
+                            options: {},
+                            data: {
+                                interactionId: this.interactionId
+                            },
+                            status: 'request',
+                            type: 'snapshot',
+                            eventName: 'ActionMessage',
+                            id: TUtils.Generic.uuid()
+                        })
+                    });
+                } catch (error) {}
+
                 matRef.dismiss();
-                // this._appUIService.showSnackbar('Snapshot request sent to customer', 'success');
             } catch (e) {
                 console.error(e);
             }
@@ -697,11 +723,11 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
     }
 
     /**
-     * Hold call
+     * Hold/Unhold call
      * @method holdCall
      */
-    public holdCall(): void {
-        // check the muted flag
+    public holdUnholdCall(): void {
+        // check the hold flag
         if (this.hold) {
             // un hold the call
             this.avConn.unHold();
@@ -711,8 +737,8 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         } else {
             // hold the call
             this.avConn.hold();
-            if (typeof this.widgetData.opener.unHoldInteraction === 'function') {
-                this.widgetData.opener.unHoldInteraction();
+            if (typeof this.widgetData.opener.holdInteraction === 'function') {
+                this.widgetData.opener.holdInteraction();
             }
         }
         // set the reference varaible
@@ -726,10 +752,10 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
     public endCall(): void {
         // end the call
         // if there is only customer then endCall else dropCall
-        if (this.userList.filter(u => u.streamInfo.type !== 'screenshare').length > 1) {
+        if (this.userList.filter((u) => u.streamInfo.type !== 'screenshare').length > 1) {
             this.avConn.dropCall('');
         } else {
-            this.avConn.endCall(TEnums.WrcCallTypes.Audio, '');
+            this.avConn.endCall(this.wrcCallType, '');
         }
         // close the widget
         this.destroyWidget();
@@ -777,6 +803,19 @@ export class TwVideoControlsComponent extends TWidgetWrapper implements OnInit, 
         } catch (err) {
             this._appUIService.showSnackbar(err, 'failure');
         }
+    }
+
+    /**
+     * To change from one way video to 2 way video
+     */
+    public async changeToVideo(btn: MatButton): Promise<void> {
+        btn.disabled = true;
+        if (!(await this.avConn.upgradeToVideo())) {
+            this._appUIService.showSnackbar('Upgrade to Video failed!', 'failure');
+        } else {
+            this.oneWayVideo = false;
+        }
+        btn.disabled = false;
     }
 }
 

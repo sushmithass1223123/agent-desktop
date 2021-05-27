@@ -1,5 +1,5 @@
-<div *ngIf="loaded" class="tw-widget-container" [ngStyle]="{ 'width.px': screenWidth, 'height.px': screenHeight }">
-    <div *ngIf="staticWidgets.length || dynamicWidgets.length" fxFill fxFlex fxLayout="row wrap" fxLayoutAlign=" none">
+<div *ngIf="loaded" class="tw-widget-container" [ngStyle]="{ 'width.px': widgetWidth, 'height.px': widgetHeight }">
+    <div *ngIf="staticWidgets.length || dynamicWidgets.length" fxFill fxFlex fxLayout="row wrap" fxLayoutAlign="center none">
         <tw-template
             [fxFlex.gt-md]="dynamicWidgets.length > 0 ? 33 : 100"
             class="static-widget-grid"
@@ -74,7 +74,7 @@
     <twc-not-found
         *ngIf="!staticWidgets.length && !dynamicWidgets.length"
         class="tw-widget-container"
-        [ngStyle]="{ 'width.px': screenWidth, 'height.px': screenHeight }"
+        [ngStyle]="{ 'width.px': widgetWidth, 'height.px': widgetHeight }"
         title="No Widgets"
         type="widget"
         message="No home widgets found!"

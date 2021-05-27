@@ -9,7 +9,8 @@ import {
     InteractionClosedEvent,
     OutgoingCallEvent,
     OutgoingEmailEvent,
-    TextChatIncomingEvent
+    TextChatIncomingEvent,
+    TUtils
 } from '@tmac/sdk';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { InteractionRef, InteractionWidgets, IWidget } from 'app/interfaces';
@@ -19,19 +20,20 @@ import { cloneDeep } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 
 /**
- * TwcContentComponent
+ * TwcInteractionComponent
  */
 @Component({
-    selector: 'twc-content',
-    templateUrl: './twc-content.component.html',
-    styleUrls: ['./twc-content.component.scss'],
+    selector: 'twc-interaction',
+    templateUrl: './twc-interaction.component.html',
+    styleUrls: ['./twc-interaction.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class TwcContentComponent extends TWContentWrapper implements OnInit, OnDestroy {
+export class TwcInteractionComponent extends TWContentWrapper implements OnInit, OnDestroy {
     /**
      * Holds all the interaction related widgets and process on new interacion for interaction content page
      */
     interactions: InteractionWidgets[] = [];
+
     /**
      * Currently active interaction
      */
@@ -153,6 +155,7 @@ export class TwcContentComponent extends TWContentWrapper implements OnInit, OnD
         });
 
         aotWidgets.forEach((widget: IWidget) => {
+            widget.ID = TUtils.Generic.uuid();
             widget.InteractionDetails = evt;
             widget.Data.Path = this.data.Data.Path;
         });
@@ -213,7 +216,7 @@ export class TwcContentComponent extends TWContentWrapper implements OnInit, OnD
      */
     IncomingEmailEvent(evt: IncomingEmailEvent): void {
         // create email widgets
-        this.createWidgetList(evt, 'incoming', evt.From, false, evt);
+        this.createWidgetList(evt, 'connected', evt.From, false, evt);
     }
 
     /**
@@ -222,27 +225,37 @@ export class TwcContentComponent extends TWContentWrapper implements OnInit, OnD
      */
     OutgoingEmailEvent(evt: OutgoingEmailEvent): void {
         // create email widgets
-        this.createWidgetList(evt, 'outgoing', 'Customer', true, evt);
+        this.createWidgetList(evt, 'connected', 'Customer', true, evt);
     }
 
     /**
      * To process FaxReceivedEvent
      */
     FaxReceivedEvent(evt: FaxReceivedEvent): void {
-        this.createWidgetList(evt, 'incoming', evt.FaxNumber, false, {});
+        this.createWidgetList(evt, 'connected', evt.FaxNumber, false, {});
     }
 
     /**
      * To process GenericInteractionEvent
      */
     GenericInteractionEvent(evt: GenericInteractionEvent): void {
-        this.createWidgetList(evt, 'incoming', evt.Item.CustomerIdentifier, false, {});
+        this.createWidgetList(evt, 'connected', evt.Item.CustomerIdentifier, false, {});
     }
 
     /**
      * To process interaction closed event for voice
      */
     InteractionClosedEvent(evt: InteractionClosedEvent): void {
+        // close all the AOTs
+        this.interactions.forEach(i => {
+            if (i.interactionId === evt.InteractionID) {
+                i.widgets.aot.forEach(widget => {
+                    this._aotWidgetService.destroyWidget(widget.ID);
+                });
+            }
+        });
+
+        // filter out the interaction
         this.interactions = this.interactions.filter((i: InteractionWidgets) => i.interactionId !== evt.InteractionID);
 
         // if there are other item in the list auto select fist chat after closing current

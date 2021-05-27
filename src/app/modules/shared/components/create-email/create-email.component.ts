@@ -87,7 +87,7 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
     /**
      * Flag for disabling send
      */
-    @Input() sendDisabled? = false;
+    @Input() sendDisabled ?= false;
 
     /**
      * A readonly value for from
@@ -131,7 +131,7 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
         private matDialog: MatDialog,
         private aotService: AOTWidgetService,
         private _fuseFacadeService: FuseFacadeService
-    ) {}
+    ) { }
 
     /**
      * Lifecycle hook

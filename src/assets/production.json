@@ -1,4 +1,4 @@
 {
-    "ProxyUrl": "../../TMACSDKProxy/TmacProxy.asmx",
+    "ProxyUrl": "https://dice.tetherfi.cloud/Dev_TMACSDKProxy/TmacProxy.asmx",
     "ConfigMode": "remote"
 }

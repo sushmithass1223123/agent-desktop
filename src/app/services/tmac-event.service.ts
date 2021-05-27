@@ -22,7 +22,7 @@ import {
     TUtils
 } from '@tmac/sdk';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
-import { CustomTMACEventTypes, IAction, IWidget, QuizEvent } from 'app/interfaces';
+import { CustomTMACEventTypes, IAction, IPostMessage, IWidget, QuizEvent } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { map as lodashMap, upperFirst } from 'lodash';
 import { BehaviorSubject, merge, Observable, Subject } from 'rxjs';
@@ -124,7 +124,7 @@ export class TMACEventService {
         private _appUIService: AppUiService,
         private _aotWidgetService: AOTWidgetService,
         private _router: Router
-    ) { }
+    ) {}
 
     // -----------------------------------------------------------------------------------------------------
     // @ Accessors
@@ -151,7 +151,7 @@ export class TMACEventService {
         } else {
             this.processNonInteractionEvents(evt);
         }
-    }
+    };
 
     /**
      * To process interaction events
@@ -428,7 +428,6 @@ export class TMACEventService {
                         this._remiderTaskDialog.meeting = this._appUIService.showRemiderTaskModal('meeting', message);
                         this._remiderTaskDialog.meeting.afterClosed().subscribe((resp) => {
                             if (resp === 'accept') {
-
                                 // TODO:: handle meeting task
 
                                 window.open(
@@ -567,7 +566,7 @@ export class TMACEventService {
         } catch (error) {
             TUtils.Logger.error('Exception in AgentNotificaitonEvent', error);
         }
-    }
+    };
 
     /**
      * Remider action executed method to update agent reminder
@@ -594,7 +593,7 @@ export class TMACEventService {
             state: evt.ColorCode,
             duration: 10000
         });
-    }
+    };
 
     /**
      * To process Quiz Event
@@ -629,7 +628,7 @@ export class TMACEventService {
         widget.Data.Url = url.toString();
 
         this._aotWidgetService.addWidget(widget);
-    }
+    };
 
     /**
      * Tp process GenericInteractionEvent
@@ -637,13 +636,14 @@ export class TMACEventService {
      */
     private GenericInteractionEvent = (evt: GenericInteractionEvent) => {
         // check the type for TCMVoiceWQ
-        if (evt.Item.Type.toLowerCase() !== 'tcmvoicewq') {
+        if (!evt.Item.Type.toLowerCase().includes('tcm')) {
             return;
         }
+
         const { PhoneNumber } = evt.Item;
         const { agentId, deviceId } = SDKClient.getAgentData();
-        // inform TCM proxy about the assignment
         const tcmClientUrl = this.appConfig.Main.Urls.TCMClient || '';
+
         // only notify that callback request is assigned if it was assigned the first time and not if the UI is reloaded or re-login
         if (!evt.RecoveryEvent) {
             if (tcmClientUrl) {
@@ -665,7 +665,9 @@ export class TMACEventService {
                 })
                     .then((dt: IResponse) => {
                         if (dt.response.d === 1) {
-                            this.promptTCMWQDACRequest(evt);
+                            if (evt.Item.Type.toLowerCase() === 'tcmvoicewq') {
+                                this.promptTCMWQDACRequest(evt);
+                            }
                         } else {
                             this.tcwWQDACRequestError(evt.InteractionID.toString());
                         }
@@ -680,7 +682,7 @@ export class TMACEventService {
         } else {
             this.promptTCMWQDACRequest(evt);
         }
-    }
+    };
 
     /**
      * To process TCM WQ DAC request
@@ -688,6 +690,11 @@ export class TMACEventService {
      * @param {GenericInteractionEvent} evt
      */
     private promptTCMWQDACRequest(evt: GenericInteractionEvent): void {
+        // check the type for TCMVoiceWQ
+        if (evt.Item.Type.toLowerCase() !== 'tcmvoicewq') {
+            return;
+        }
+
         const { PhoneNumber, Skill, ID } = evt.Item;
         const { agentId, deviceId } = SDKClient.getAgentData();
         this._remiderTaskDialog.tcmWQVoice = this._appUIService.showRemiderTaskModal('tcmwqvoice', `Dial-out to customer ${PhoneNumber}?`);
@@ -757,7 +764,7 @@ export class TMACEventService {
         this._remiderTaskDialog.tcmWQVoice = null;
         // close the generic interaction in server
         SDKClient.closeInteraction(evt.InteractionID.toString());
-    }
+    };
 
     /**
      * To process AgentReminderEvent
@@ -778,11 +785,7 @@ export class TMACEventService {
                                 <b>Location:</b> ${jsonMsg.Meta.Location || 'NA'}<br />
                                 <b>Notes:</b> ${jsonMsg.Meta.Notes || 'NA'}<br />`;
                 }
-                const dialogRef = this._appUIService.showRemiderTaskModal(
-                    'reminder',
-                    message,
-                    `Reminder @ ${item.RemindDate} ${item.RemindTime}`
-                );
+                const dialogRef = this._appUIService.showRemiderTaskModal('reminder', message, `Reminder @ ${item.RemindDate} ${item.RemindTime}`);
 
                 this._remiderTaskDialog.reminder.push({
                     id: item.ID,
@@ -803,7 +806,7 @@ export class TMACEventService {
                 });
             }
         });
-    }
+    };
 
     /**
      * To process AgentForcedLogoffEvent
@@ -833,7 +836,6 @@ export class TMACEventService {
 
         // we will route to login page
         this._router.navigate(['login'], {
-            queryParamsHandling: 'preserve'
             // queryParamsHandling: 'preserve',
             // preserveFragment: true,
             // state: {
@@ -844,7 +846,7 @@ export class TMACEventService {
             // }
         });
         this._appUIService.showSnackbar(description);
-    }
+    };
 
     /**
      * To process TextChatTransferNotificationEvent
@@ -870,7 +872,7 @@ export class TMACEventService {
             .subscribe((resp1) => {
                 evt.Response(resp1);
             });
-    }
+    };
 
     /**
      * To process TmacServerConnectionSuccess
@@ -881,7 +883,7 @@ export class TMACEventService {
         this._appUIService.showAppSnackbar({
             message: `New TMAC server [(${evt.ResultMessage})] connection established`
         });
-    }
+    };
 
     /**
      * To process TmacServerConnectionAborted
@@ -890,9 +892,9 @@ export class TMACEventService {
      */
     private TmacServerConnectionAborted = (evt: TmacServerConnectionAborted) => {
         // we will route to login page
-        this._router.navigate(['login'], { queryParamsHandling: 'preserve' });
+        this._router.navigate(['login']);
         this._appUIService.showSnackbar('TMAC Server connection closed, Please relogin!');
-    }
+    };
 
     // -----------------------------------------------------------------------------------------------------
     // @ Public Methods
@@ -983,6 +985,31 @@ export class TMACEventService {
 
         // subscribe to InteractionManagerService
         this._interactionManagerService.subscribe();
+
+        // register to post message subject
+        this._appDataService.postMessage.pipe(takeUntil(this._unsubscribeAll)).subscribe((message: IPostMessage) => {
+            const fn = message.function?.toLowerCase();
+            // handle generic function here only
+            if (fn === 'emitevent') {
+                this.emitSDKEvent({
+                    event: {
+                        ...message.data
+                    },
+                    isInteractionEvent: message.data.InteractionID !== undefined,
+                    log: true
+                });
+            } else if (fn.endsWith('event')) {
+                // for backward compatibility to support emitting event when AD receives any post message with function which has 'event'
+                this.emitSDKEvent({
+                    event: {
+                        EventName: message.function,
+                        ...message.data
+                    },
+                    isInteractionEvent: message.data.InteractionID !== undefined,
+                    log: true
+                });
+            }
+        });
     }
 
     /**
@@ -1048,7 +1075,6 @@ export class TMACEventService {
                 callback: this.TmacServerConnectionAborted
             }
         ]);
-
 
         // unsubscribe from all subscriptions
         this._unsubscribeAll.next(null);
@@ -1150,8 +1176,7 @@ export class TMACEventService {
         }
 
         // return all non interaction events
-        return merge(tempSub, this._nonInteractionEventSub)
-            .pipe(filter((evts) => evts.length > 0));
+        return merge(tempSub, this._nonInteractionEventSub).pipe(filter((evts) => evts.length > 0));
     }
 
     /**
@@ -1175,11 +1200,10 @@ export class TMACEventService {
         }
 
         // return all interaction events for that interaction id and event names
-        return merge(tempSub, this._interactionEventSub)
-            .pipe(
-                map((evts) => evts?.filter((evt) => evt && evt.InteractionID === interactionId && eventNames.includes(evt.EventName))),
-                filter((evts) => evts.length > 0)
-            );
+        return merge(tempSub, this._interactionEventSub).pipe(
+            map((evts) => evts?.filter((evt) => evt && evt.InteractionID === interactionId && eventNames.includes(evt.EventName))),
+            filter((evts) => evts.length > 0)
+        );
     }
 
     /**
@@ -1202,11 +1226,10 @@ export class TMACEventService {
         }
 
         // return all interaction events for that interaction id and event names
-        return merge(tempSub, this._interactionEventSub)
-            .pipe(
-                map((evts) => evts?.filter((evt) => evt && eventNames.includes(evt.EventName))),
-                filter((evts) => evts.length > 0)
-            );
+        return merge(tempSub, this._interactionEventSub).pipe(
+            map((evts) => evts?.filter((evt) => evt && eventNames.includes(evt.EventName))),
+            filter((evts) => evts.length > 0)
+        );
     }
 
     /**
@@ -1229,11 +1252,10 @@ export class TMACEventService {
         }
 
         // return all interaction events for that interaction id
-        return merge(tempSub, this._interactionEventSub)
-            .pipe(
-                map((evts) => evts?.filter((evt) => evt && evt.InteractionID === interactionId)),
-                filter((evts) => evts.length > 0)
-            );
+        return merge(tempSub, this._interactionEventSub).pipe(
+            map((evts) => evts?.filter((evt) => evt && evt.InteractionID === interactionId)),
+            filter((evts) => evts.length > 0)
+        );
     }
 
     /**
@@ -1258,29 +1280,30 @@ export class TMACEventService {
         }
 
         // return all interaction events for that interaction id and event names
-        return merge(tempSub, this._interactionEventSub)
-            .pipe(
-                map((evts) =>
-                    evts?.filter((evt) => evt && (evt.IsInteractionConstructEvent || evt.IsInteractionDisposeEvent) && eventNames.includes(evt.EventName))
-                ),
-                filter((evts) => evts.length > 0)
-            );
+        return merge(tempSub, this._interactionEventSub).pipe(
+            map((evts) =>
+                evts?.filter((evt) => evt && (evt.IsInteractionConstructEvent || evt.IsInteractionDisposeEvent) && eventNames.includes(evt.EventName))
+            ),
+            filter((evts) => evts.length > 0)
+        );
     }
 
     /**
      * To register to TMAC events
      */
-    public addTMACEventListener(events: {
-        /**
-         * Event label
-         */
-        label: TMACEventTypes | string,
-        /**
-         * Event callback
-         */
-        callback: (...args: any[]) => any
-    }[]): void {
-        events.forEach(evt => {
+    public addTMACEventListener(
+        events: {
+            /**
+             * Event label
+             */
+            label: TMACEventTypes | string;
+            /**
+             * Event callback
+             */
+            callback: (...args: any[]) => any;
+        }[]
+    ): void {
+        events.forEach((evt) => {
             const label: any = evt.label;
             SDKClient.events.on(label, evt.callback);
         });
@@ -1289,17 +1312,19 @@ export class TMACEventService {
     /**
      * To de-register from TMAC events
      */
-    public removeTMACEventListener(events: {
-        /**
-         * Event label
-         */
-        label: TMACEventTypes | string,
-        /**
-         * Event callback
-         */
-        callback: (...args: any[]) => any
-    }[]): void {
-        events.forEach(evt => {
+    public removeTMACEventListener(
+        events: {
+            /**
+             * Event label
+             */
+            label: TMACEventTypes | string;
+            /**
+             * Event callback
+             */
+            callback: (...args: any[]) => any;
+        }[]
+    ): void {
+        events.forEach((evt) => {
             const label: any = evt.label;
             SDKClient.events.off(label, evt.callback);
         });
@@ -1307,18 +1332,42 @@ export class TMACEventService {
 
     /**
      * To emit custom SDK event through subscriber
-     * 
-     * @param {Any} evt 
+     *
+     * @param {Any} evt
      * @param {Boolean} interactionEvent [OPTIONAL]
      */
-    public emitSDKEvent(evt: any, interactionEvent: boolean = false): void {
+    public emitSDKEvent(data: {
+        /**
+         * Event to emit
+         */
+        event: any;
+        /**
+         * Is interaction event flag
+         */
+        isInteractionEvent?: boolean;
+        /**
+         * To log the event or not
+         */
+        log?: boolean;
+    }): void {
         // emit via SDK
-        SDKClient.events.emit(evt.EventName, evt);
+        SDKClient.events.emit(data.event.EventName, data.event);
+
         // emit via subject
-        if (interactionEvent) {
-            this.processInteractionEvents(evt);
+        if (data.isInteractionEvent) {
+            this.processInteractionEvents(data.event);
         } else {
-            this.processNonInteractionEvents(evt);
+            this.processNonInteractionEvents(data.event);
         }
+
+        try {
+            // check if logging is enabled
+            const logEnabled = this.appConfig?.AppConfigs?.SDK?.Logging?.SDKEvents ?? false;
+
+            // to log the event
+            if (logEnabled && data.log) {
+                TUtils.Logger.info(`${data.event.EventName} - ${JSON.stringify(data.event)}`);
+            }
+        } catch (error) {}
     }
 }

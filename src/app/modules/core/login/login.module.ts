@@ -6,17 +6,18 @@ import { SharedModule } from '@modules/shared/shared.module';
 import { AppUiService } from '@services/app-ui.service';
 import { LoginComponent } from './login.component';
 
+/**
+ * Login Module
+ */
 @NgModule({
     declarations: [LoginComponent],
     providers: [
         AppUiService
     ],
     imports: [
-        // Fuse modules
         FuseProgressBarModule,
         FuseSharedModule,
         FuseSidebarModule,
-
         CommonModule,
         SharedModule
     ]

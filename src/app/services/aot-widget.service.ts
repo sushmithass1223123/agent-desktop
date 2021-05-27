@@ -124,6 +124,7 @@ export class AOTWidgetService {
 
         // check if the id is null
         if (!id) {
+            TUtils.Logger.console('warn', 'AOTWidgetService.destroyWidget: widget ID is not found!');
             return;
         }
 

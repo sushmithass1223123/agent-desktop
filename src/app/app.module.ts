@@ -8,7 +8,6 @@ import { FuseModule } from '@fuse/fuse.module';
 import { FuseSharedModule } from '@fuse/shared.module';
 import { CoreModule } from '@modules/core/core.module';
 import { SharedModule } from '@modules/shared/shared.module';
-import { TranslateModule } from '@ngx-translate/core';
 import { AppDataService } from '@services/app-data.service';
 import { AppComponent } from 'app/app.component';
 import { fuseConfig } from 'app/constants';
@@ -16,7 +15,7 @@ import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 
 /**
- * App modules
+ * App module
  */
 @NgModule({
     declarations: [AppComponent],
@@ -28,7 +27,6 @@ import { AppRoutingModule } from './app-routing.module';
         BrowserAnimationsModule,
         HttpClientModule,
         AppRoutingModule,
-        TranslateModule.forRoot(),
 
         // Fuse modules
         FuseModule.forRoot(fuseConfig),
