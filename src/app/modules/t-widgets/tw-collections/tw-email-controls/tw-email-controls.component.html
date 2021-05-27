@@ -217,7 +217,7 @@
                                 <button
                                     *ngFor="let file of attachments | slice: 0:2"
                                     mat-stroked-button
-                                    class="border-radius-20 m-4"
+                                    class="border-radius-20 m-4 twd-max-w-1/4 lg:twd-max-w-1/2"
                                     [matTooltip]="file.Ext | uppercase"
                                     (click)="openFile(file.URL)"
                                 >
@@ -263,82 +263,82 @@
                                 </mat-menu>
                             </div>
 
-                            <div id="emailControlButtons" class="twd-flex twd-justify-start twd-items-center mt-4 twd-gap-1">
-                                <ng-container
-                                    *ngIf="
-                                        InboxReasons.includes(currentInteraction.RouteReason) ||
-                                        DraftReasons.includes(currentInteraction.RouteReason) ||
-                                        SentReasons.includes(currentInteraction.RouteReason)
-                                    "
+                            <div
+                                id="emailControlButtons"
+                                class="twd-flex twd-flex-wrap twd-justify-end twd-items-center mt-4 twd-gap-1.5"
+                                *ngIf="
+                                    InboxReasons.includes(currentInteraction.RouteReason) ||
+                                    DraftReasons.includes(currentInteraction.RouteReason) ||
+                                    SentReasons.includes(currentInteraction.RouteReason)
+                                "
+                            >
+                                <button
+                                    mat-raised-button
+                                    class="border-radius-20"
+                                    matTooltip="Interaction Comment"
+                                    (click)="saveInteractionComments()"
                                 >
-                                    <button
-                                        mat-raised-button
-                                        class="border-radius-20"
-                                        matTooltip="Interaction Comment"
-                                        (click)="saveInteractionComments()"
-                                    >
-                                        <mat-icon>comment</mat-icon>
-                                    </button>
-                                    <button
-                                        *ngIf="!replyInfo && currentInteraction.IsEmailProbableSpam"
-                                        mat-raised-button
-                                        class="border-radius-20"
-                                        (click)="markAsSpam()"
-                                        matTooltip="Mark As Spam"
-                                    >
-                                        <mat-icon>report</mat-icon>
-                                    </button>
-                                    <button
-                                        *ngIf="data.Data.Transfer.Allowed"
-                                        mat-raised-button
-                                        class="border-radius-20"
-                                        [disabled]="getInboxMessageReq.error"
-                                        (click)="transferEmail(currentInteraction)"
-                                        matTooltip="Transfer"
-                                    >
-                                        <mat-icon>forward_to_inbox</mat-icon>
-                                    </button>
-                                    <button
-                                        mat-raised-button
-                                        class="border-radius-20"
-                                        (click)="showReplyEditor()"
-                                        [disabled]="getInboxMessageReq.error"
-                                        matTooltip="Reply"
-                                    >
-                                        <mat-icon>reply</mat-icon>
-                                    </button>
-                                    <button
-                                        *ngIf="data.Data.ReplyAllAllowed"
-                                        mat-raised-button
-                                        class="border-radius-20"
-                                        (click)="showReplyAllEmailEditor()"
-                                        [disabled]="getInboxMessageReq.error"
-                                        matTooltip="Reply All"
-                                    >
-                                        <mat-icon>reply_all</mat-icon>
-                                    </button>
-                                    <button
-                                        *ngIf="data.Data.ForwardAllowed"
-                                        mat-raised-button
-                                        class="border-radius-20"
-                                        (click)="showForwardEmailEditor()"
-                                        [disabled]="getInboxMessageReq.error"
-                                        matTooltip="Forward"
-                                    >
-                                        <mat-icon>forward</mat-icon>
-                                    </button>
-                                    <button
-                                        *ngIf="!replyInfo"
-                                        mat-raised-button
-                                        class="border-radius-20"
-                                        color="warn"
-                                        #closeBtn
-                                        (click)="closeEmail(closeBtn)"
-                                        matTooltip="Close Interaction"
-                                    >
-                                        Close
-                                    </button>
-                                </ng-container>
+                                    <mat-icon>comment</mat-icon>
+                                </button>
+                                <button
+                                    *ngIf="!replyInfo && currentInteraction.IsEmailProbableSpam"
+                                    mat-raised-button
+                                    class="border-radius-20"
+                                    (click)="markAsSpam()"
+                                    matTooltip="Mark As Spam"
+                                >
+                                    <mat-icon>report</mat-icon>
+                                </button>
+                                <button
+                                    *ngIf="data.Data.Transfer.Allowed"
+                                    mat-raised-button
+                                    class="border-radius-20"
+                                    [disabled]="getInboxMessageReq.error"
+                                    (click)="transferEmail(currentInteraction)"
+                                    matTooltip="Transfer"
+                                >
+                                    <mat-icon>forward_to_inbox</mat-icon>
+                                </button>
+                                <button
+                                    mat-raised-button
+                                    class="border-radius-20"
+                                    (click)="showReplyEditor()"
+                                    [disabled]="getInboxMessageReq.error"
+                                    matTooltip="Reply"
+                                >
+                                    <mat-icon>reply</mat-icon>
+                                </button>
+                                <button
+                                    *ngIf="data.Data.ReplyAllAllowed"
+                                    mat-raised-button
+                                    class="border-radius-20"
+                                    (click)="showReplyAllEmailEditor()"
+                                    [disabled]="getInboxMessageReq.error"
+                                    matTooltip="Reply All"
+                                >
+                                    <mat-icon>reply_all</mat-icon>
+                                </button>
+                                <button
+                                    *ngIf="data.Data.ForwardAllowed"
+                                    mat-raised-button
+                                    class="border-radius-20"
+                                    (click)="showForwardEmailEditor()"
+                                    [disabled]="getInboxMessageReq.error"
+                                    matTooltip="Forward"
+                                >
+                                    <mat-icon>forward</mat-icon>
+                                </button>
+                                <button
+                                    *ngIf="!replyInfo"
+                                    mat-raised-button
+                                    class="border-radius-20"
+                                    color="warn"
+                                    #closeBtn
+                                    (click)="closeEmail(closeBtn)"
+                                    matTooltip="Close Interaction"
+                                >
+                                    Close
+                                </button>
                             </div>
                         </div>
 
