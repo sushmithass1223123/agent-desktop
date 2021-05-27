@@ -140,7 +140,7 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
                 break;
             case 'email':
                 const ref = this._matDialog.open(MailboxSettingsComponent, {
-                    width: '30%',
+                    minWidth: '30%',
                     data: {
                         close: () => ref.close()
                     }

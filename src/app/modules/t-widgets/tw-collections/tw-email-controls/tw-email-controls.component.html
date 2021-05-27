@@ -40,6 +40,15 @@
                             <mat-icon>comment</mat-icon>
                         </button>
                         <button
+                            *ngIf="replyInfo"
+                            mat-raised-button
+                            class="border-radius-20"
+                            (click)="saveEmailAsDraft(true, saveAsDraft)"
+                            #saveAsDraft
+                        >
+                            Save As Draft
+                        </button>
+                        <button
                             mat-raised-button
                             class="border-radius-20"
                             color="warn"
@@ -90,7 +99,7 @@
                                 *ngIf="replyInfo"
                                 mat-raised-button
                                 class="border-radius-20"
-                                (click)="saveEmailAsDraft(); closeInteraction(saveAsDraft)"
+                                (click)="saveEmailAsDraft(true, saveAsDraft)"
                                 #saveAsDraft
                             >
                                 Save As Draft
@@ -174,6 +183,10 @@
                                         <img *ngIf="sentiment === 'Negative'" class="w-24" src="assets/images/vectors/negative-score.svg" alt="" />
                                         <ng-container *ngIf="sentiment === 'NA'"> NA </ng-container>
                                     </span>
+                                    <span class="twd-flex twd-items-center twd-justify-end" matTooltip="Route type">
+                                        <mat-icon>directions</mat-icon>
+                                        {{ currentInteraction.ParsedJsonData?.RouteType || 'NA' }}
+                                    </span>
                                     <div class="twd-text-right">
                                         <span>{{ currentInteraction.CreatedTime | date: 'mediumDate' }}</span>
                                         <br />
@@ -182,7 +195,13 @@
                                 </div>
                             </div>
 
-                            <a *ngIf="OutboxReasons.includes(currentInteraction.RouteReason)" class="twd-cursor-pointer" (click)="switchEmailView()">
+                            <a
+                                *ngIf="
+                                    OutboxReasons.includes(currentInteraction.RouteReason) && !SentReasons.includes(currentInteraction.RouteReason)
+                                "
+                                class="twd-cursor-pointer"
+                                (click)="switchEmailView()"
+                            >
                                 {{ emailInView === 'original' ? 'View Checker Email' : 'View original' }}
                             </a>
 
@@ -247,7 +266,9 @@
                             <div id="emailControlButtons" class="twd-flex twd-justify-start twd-items-center mt-4 twd-gap-1">
                                 <ng-container
                                     *ngIf="
-                                        InboxReasons.includes(currentInteraction.RouteReason) || DraftReasons.includes(currentInteraction.RouteReason)
+                                        InboxReasons.includes(currentInteraction.RouteReason) ||
+                                        DraftReasons.includes(currentInteraction.RouteReason) ||
+                                        SentReasons.includes(currentInteraction.RouteReason)
                                     "
                                 >
                                     <button
@@ -334,8 +355,8 @@
                                     <mat-spinner></mat-spinner>
                                 </ng-container>
                                 <div *ngIf="getInboxMessageReq.error" class="twd-text-center">
-                                    <p>{{ getInboxMessageReq.msg }}</p>
-                                    <button mat-raised-button class="twd-mx-auto" color="primary" (click)="getFullEmail()">Retry</button>
+                                    <p class="twd-font-bold twd-mb-3 twd-text-lg">{{ getInboxMessageReq.msg }}</p>
+                                    <button mat-raised-button class="twd-mx-auto" color="primary" (click)="setEmailBody()">Retry</button>
                                 </div>
                             </div>
                         </div>
