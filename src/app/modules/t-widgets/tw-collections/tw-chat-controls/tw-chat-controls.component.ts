@@ -44,7 +44,7 @@ import {
     TUtils
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { INVALID_CHARS } from 'app/constants';
+import { AGENT_FEATURES, INVALID_CHARS } from 'app/constants';
 import { AgentSkillListData, ChatTranscripts, CustomSDKEvent, InteractionComment, InteractionRef, IWidget, SnackbarStateTypes } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { urlify } from 'app/utils';
@@ -596,52 +596,52 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
             // switch the feature
             switch (feature) {
-                case 'isaudiochatescalateenabled':
+                case AGENT_FEATURES.IsAudioEscalateEnabled:
                     this.agentFeatures.audioEscalate = f.IsEnabled;
                     break;
-                case 'isvideochatescalateenabled':
+                case AGENT_FEATURES.IsVideoEscalateEnabled:
                     this.agentFeatures.videoEscalate = f.IsEnabled;
                     break;
-                case 'ischatsignatureenabled':
+                case AGENT_FEATURES.IsChatSignatureEnabled:
                     this.agentFeatures.signature = f.IsEnabled;
                     break;
-                case 'ischatwhiteboardenabled':
+                case AGENT_FEATURES.IsChatWhiteboardEnabled:
                     this.agentFeatures.whiteboard = f.IsEnabled;
                     break;
-                case 'ischatattachmentsenabled':
+                case AGENT_FEATURES.IsChatAttachmentsEnabled:
                     this.agentFeatures.attachments = f.IsEnabled;
                     break;
-                case 'ischatemojienabled':
+                case AGENT_FEATURES.IsChatEmojiEnabled:
                     this.agentFeatures.emoji = f.IsEnabled;
                     break;
-                case 'isreplyonchatenabled':
+                case AGENT_FEATURES.IsReplyOnChatEnabled:
                     this.agentFeatures.chatReply = f.IsEnabled;
                     break;
-                case 'ischatconferenceenabled':
+                case AGENT_FEATURES.IsChatConferenceEnabled:
                     this.agentFeatures.conference = f.IsEnabled;
                     break;
-                case 'ischattransferenabled':
+                case AGENT_FEATURES.IsChatTransferEnabled:
                     this.agentFeatures.transfer = f.IsEnabled;
                     break;
-                case 'ischattemplateenabled':
+                case AGENT_FEATURES.IsChatTemplateEnabled:
                     this.agentFeatures.chatTemplate = f.IsEnabled;
                     break;
-                case 'ischatreplyenabled':
+                case AGENT_FEATURES.IsChatReplyEnabled:
                     this.agentFeatures.reply = f.IsEnabled;
                     break;
-                case 'ischatcommentenabled':
+                case AGENT_FEATURES.IsChatCommentEnabled:
                     this.agentFeatures.comment = f.IsEnabled;
                     break;
-                case 'ischatholdenabled':
+                case AGENT_FEATURES.IsChatHoldEnabled:
                     this.agentFeatures.hold = f.IsEnabled;
                     break;
-                case 'isvideochatsnapshotenabled':
+                case AGENT_FEATURES.IsVideoSnapshotEnabled:
                     this.agentFeatures.snapshot = f.IsEnabled;
                     break;
-                case 'ischatvoicenoteenabled':
+                case AGENT_FEATURES.IsChatVoiceNoteEnabled:
                     this.agentFeatures.voicenote = f.IsEnabled;
                     break;
-                case 'ischatscreenshareenabled':
+                case AGENT_FEATURES.IsChatScreenshareEnabled:
                     this.agentFeatures.screenshare = f.IsEnabled;
                     break;
                 default:
