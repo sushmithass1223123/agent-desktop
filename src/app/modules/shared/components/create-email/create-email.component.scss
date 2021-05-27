@@ -14,7 +14,22 @@
 create-email {
     height: 100%;
     max-height: 100%;
-    .twd-min-h-0 {
+    .tox-tinymce {
+        .tox-editor-header {
+            box-shadow: 0px 0px 5px grey !important;
+        }
+        .tox-toolbar__primary,
+        .tox-toolbar-overlord,
+        .tox-statusbar,
+        iframe {
+            background: transparent !important;
+        }
+        .tox-statusbar {
+            box-shadow: 0 0 1px grey;
+        }
+    }
+
+    .twd-min-h-auto {
         min-height: auto !important;
     }
     .mat-chip {

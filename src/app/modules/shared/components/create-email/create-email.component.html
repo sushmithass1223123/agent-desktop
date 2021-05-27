@@ -53,7 +53,12 @@
                 </span>
                 <mat-icon matChipRemove>cancel</mat-icon>
             </mat-chip>
-            <mat-chip class="border-radius-20 m-4 twd-cursor-pointer" [matMenuTriggerFor]="attachList" matTooltip="Show More">
+            <mat-chip
+                *ngIf="email.Files.length > 2"
+                class="border-radius-20 m-4 twd-cursor-pointer"
+                [matMenuTriggerFor]="attachList"
+                matTooltip="Show More"
+            >
                 +{{ email.Files.length - 2 }}
             </mat-chip>
         </mat-chip-list>
@@ -83,16 +88,10 @@
     <div class="email-editor-container border-primary flex-1 twd-flex twd-flex-col border-radius-20 twd-mb-2 twd-overflow-hidden">
         <div class="twd-flex-1 editor-wrapper position-relative twd-overflow-hidden">
             <div class="h-100-p w-100-p twd-absolute twd-top-0 twd-left-0">
-                <quill-editor
-                    (onEditorCreated)="setFocus($event)"
-                    class="email-editor"
-                    classes="editor-container twd-overflow-auto twd-max-h-full border-radius-20"
-                    [(ngModel)]="email.Body"
-                    placeholder="Write your mail"
-                    [modules]="editorConfig.modules"
-                    format="html"
-                >
-                </quill-editor>
+                <textarea [id]="editorState.id" class="twd-invisible"> </textarea>
+            </div>
+            <div *ngIf="editorState.loading" class="twd-absolute twd-bg-white twd-bg-opacity-25 twd-w-full twd-h-full twd-z-10 twd-flex twd-items-center twd-justify-center">
+                <p class="twd-text-lg twd-font-bold twd-text-center">Loading editor ...</p>
             </div>
         </div>
     </div>
@@ -119,7 +118,7 @@
 
 <ng-template let-key="key" #recipientInputField>
     <mat-chip-list class="twd-w-full twd-flex-1 twd-flex twd-flex-wrap" #chipList>
-        <mat-chip *ngFor="let email of email[key]" class="twd-my-0 twd-min-h-0" selectable removable (removed)="remove(key, email)">
+        <mat-chip *ngFor="let email of email[key]" class="twd-my-0 twd-min-h-auto" selectable removable (removed)="remove(key, email)">
             <span class="twd-truncate">
                 {{ email }}
             </span>

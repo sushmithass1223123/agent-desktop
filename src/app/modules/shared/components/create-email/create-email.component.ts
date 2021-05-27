@@ -1,16 +1,29 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
+import tinyMCE from 'tinymce';
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    EventEmitter,
+    Inject,
+    Input,
+    OnDestroy,
+    OnInit,
+    Output,
+    ViewChild,
+    ViewEncapsulation
+} from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatDialog } from '@angular/material/dialog';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
-import { SDKClient } from '@tmac/sdk';
-import { QUILL_EDITOR_CONFIG } from 'app/constants';
+import { SDKClient, TUtils } from '@tmac/sdk';
 import { CreateEmailInput, CreateEmailOutput } from 'app/interfaces';
 import { maticonByExtension } from 'app/utils';
 import { merge } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
+import { APP_BASE_HREF } from '@angular/common';
 
 /**
  * Email creation component view only
@@ -21,7 +34,7 @@ import { debounceTime, map } from 'rxjs/operators';
     styleUrls: ['./create-email.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class CreateEmailComponent implements OnInit {
+export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
     /**
      * Send email event emitter
      */
@@ -31,6 +44,14 @@ export class CreateEmailComponent implements OnInit {
      */
     templatePreview = {
         aots: []
+    };
+
+    /**
+     * Id for editor component
+     */
+    editorState = {
+        id: TUtils.Generic.uuid(),
+        loading: false
     };
 
     /**
@@ -100,21 +121,13 @@ export class CreateEmailComponent implements OnInit {
     };
 
     /**
-     * Quill div's ref
-     */
-    @ViewChild('quillRef') quillRef: ElementRef<HTMLDivElement>;
-
-    /**
-     * Quill Editor Config
-     */
-    editorConfig = QUILL_EDITOR_CONFIG;
-
-    /**
      * Flag to show attachments
      */
     showAttachments = false;
+
     constructor(
         private appUiService: AppUiService,
+        @Inject(APP_BASE_HREF) private baseHref: string,
         private matDialog: MatDialog,
         private aotService: AOTWidgetService,
         private _fuseFacadeService: FuseFacadeService
@@ -125,13 +138,13 @@ export class CreateEmailComponent implements OnInit {
      */
     ngOnInit(): void {
         if (this.emailInfo?.To) {
-            this.email.To = this.emailInfo?.To.split(',');
+            this.email.To = this.emailInfo?.To.split(',').filter((x) => !!x);
         }
         if (this.emailInfo?.CC) {
-            this.email.CC = this.emailInfo?.CC.split(',');
+            this.email.CC = this.emailInfo?.CC.split(',').filter((x) => !!x);
         }
         if (this.emailInfo?.BCC) {
-            this.email.BCC = this.emailInfo?.BCC.split(',');
+            this.email.BCC = this.emailInfo?.BCC.split(',').filter((x) => !!x);
         }
         this.email.Subject = this.emailInfo?.Subject || '';
         this.email.Body = this.emailInfo?.Body || '';
@@ -158,6 +171,64 @@ export class CreateEmailComponent implements OnInit {
                     this.suggestedUsers = this.allUsers;
                 }
             });
+        this.editorState.loading = true;
+    }
+
+    /**
+     * Lifecycle hook
+     */
+    ngAfterViewInit(): void {
+        setTimeout(() => {
+            tinyMCE
+                .init({
+                    selector: `textarea#${this.editorState.id}`,
+                    min_height: 200,
+                    height: '100%',
+                    menubar: false,
+                    fontsize_formats: '8pt 9pt 10pt 11pt 12pt 26pt 36pt',
+                    forced_root_block: false,
+                    // force_br_newlines: true,
+                    // force_p_newlines: false,
+                    branding: false,
+                    base_url: `${this.baseHref}assets/tinymce/`,
+                    content_css: `${this.baseHref}assets/tinymce/editor.css`,
+                    plugins: [
+                        'advlist autolink lists link image charmap print preview anchor',
+                        'searchreplace visualblocks code fullscreen',
+                        'insertdatetime media table paste code wordcount'
+                    ],
+                    toolbar:
+                        'undo redo | formatselect | ' +
+                        'bold italic backcolor | alignleft aligncenter ' +
+                        'alignright alignjustify | bullist numlist outdent indent | ' +
+                        'removeformat | help',
+                    content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+                    setup: (editor) => {
+                        editor.on('init', () => {
+                            this.editorState.loading = false;
+                            editor.setContent(this.email.Body || '');
+                            editor.on('blur', () => {
+                                this.email.Body = editor.getContent();
+                            });
+                        });
+                    }
+                })
+                .then(() => {
+                    console.log('Email editor loaded succesfully');
+                })
+                .catch((err) => {
+                    console.error('Unable to load editor');
+                    console.error(err);
+                });
+        }, 0);
+    }
+
+    /**
+     * Lifecycle hook
+     */
+    ngOnDestroy(): void {
+        tinyMCE.activeEditor.off('blur');
+        // tinyMCE.activeEditor.destroy();
     }
 
     /**
@@ -221,7 +292,7 @@ export class CreateEmailComponent implements OnInit {
                 const icon = maticonByExtension(ext);
 
                 this.email.Files.push({
-                    Id: response[0].RelativePath,
+                    Id: Date.now().toString(),
                     Direction: 'OUT',
                     Name: response[0].FileName,
                     URL: response[0].Url,
@@ -264,7 +335,8 @@ export class CreateEmailComponent implements OnInit {
      * @param {string} preview
      */
     selectTemplate(html: string): void {
-        this.email.Body = `${html} ${this.email.Body}`;
+        this.email.Body = `${this.email.Body} ${html}`;
+        tinyMCE.activeEditor.setContent(this.email.Body);
     }
     /**
      * Focuses the editor
@@ -280,9 +352,6 @@ export class CreateEmailComponent implements OnInit {
      * Triggers email send action
      */
     triggerEmailSend(): void {
-        if (!this.emailRecipientFacade.valid) {
-            return;
-        }
         this.sendEmail.emit(this.email);
     }
 
