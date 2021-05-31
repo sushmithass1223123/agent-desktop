@@ -7,8 +7,8 @@ import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Observable, Subject, timer } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 
 /**
  * QuickPanelComponent
@@ -28,7 +28,7 @@ export class QuickPanelComponent implements OnInit, OnDestroy {
     /**
      * Current date
      */
-    date: Date;
+    date$: Observable<Date>;
     /**
      * Event list
      */
@@ -75,7 +75,7 @@ export class QuickPanelComponent implements OnInit, OnDestroy {
         // init the subject
         this.unsubscribeAll = new Subject();
         // Set the defaults
-        this.date = new Date();
+        this.date$ = timer(1000, 1000).pipe(map(() => new Date()));
         this.settings = {
             notify: true,
             cloud: false,
