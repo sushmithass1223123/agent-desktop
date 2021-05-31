@@ -210,7 +210,16 @@
                     </mat-list>
                 </ng-container>
                 <p class="text-center text-danger text-bold">{{ errorMessage || ' ' }}</p>
-                <button mat-raised-button color="primary" class="submit-button" aria-label="LOGIN" (click)="login(false)">LOGIN</button>
+                <button
+                    mat-raised-button
+                    color="primary"
+                    class="submit-button"
+                    aria-label="LOGIN"
+                    (click)="login(false)"
+                    [disabled]="!loginForm.valid"
+                >
+                    LOGIN
+                </button>
             </form>
             <div fxLayout="row" fxLayoutAlign="center center" class="font-size-12 secondary-text copyright-version">
                 <span class="element-status" [ngClass]="version !== 'NA' ? 'bg-alt-success' : 'bg-alt-danger'"></span>

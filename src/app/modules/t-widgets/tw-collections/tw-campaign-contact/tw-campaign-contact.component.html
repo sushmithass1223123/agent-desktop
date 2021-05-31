@@ -5,7 +5,7 @@
             <div class="line-height-30 position-relative twd-min-w-1/3 twd-max-w-1/4" *ngFor="let item of customerInfo">
                 <div class="title text-bold"> {{ item.Title }}: </div>
                 <div>
-                    {{ (item.Value ? item.Value + ' ' + item.Unit : item.DefaultValue) || 'NA' }}
+                    {{ (item.Value ? item.Value + ' ' + item.Unit : item.DefaultValue) || '-' }}
                     <mat-divider class="w-90-p"></mat-divider>
                 </div>
             </div>

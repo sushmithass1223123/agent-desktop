@@ -452,23 +452,24 @@
 
                                                         <div class="message">
                                                             <div *ngIf="item.message.type === 'attachment'">
-                                                                <!-- <img
-                                                                [src]="
-                                                                    ((fileUploadUrl$ | async) || 'TmacProxy') +
-                                                                    '/' +
-                                                                    selectedSessionId +
-                                                                    '/' +
-                                                                    item.message.attachment.name
-                                                                "
-                                                                class="w-100-p"
-                                                                [alt]="item.message.attachment.name"
-                                                            /> -->
-
                                                                 <img
-                                                                    [src]="item.message.attachment.src"
+                                                                    [src]="
+                                                                        ((fileUploadUrl$ | async) || 'TmacProxy') +
+                                                                        '/' +
+                                                                        selectedSessionId +
+                                                                        '/' +
+                                                                        item.message.attachment.name
+                                                                    "
                                                                     class="w-100-p"
                                                                     [alt]="item.message.attachment.name"
                                                                 />
+
+                                                                <!-- <img
+                                                                    [src]="item.message.attachment.src"
+                                                                    class="w-100-p"
+                                                                    [alt]="item.message.attachment.name"
+                                                                /> -->
+
                                                                 <span [innerHTML]="item.message.message"></span>
                                                             </div>
 

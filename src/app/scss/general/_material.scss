@@ -270,6 +270,11 @@ mat-paginator {
 
 // mat form field
 mat-form-field {
+    textarea,
+    input {
+        box-sizing: border-box !important;
+    }
+
     &.custom {
         .mat-form-field-wrapper {
             padding-bottom: 1rem !important;

@@ -1,7 +1,6 @@
-@import "src/@fuse/scss/fuse";
+@import 'src/@fuse/scss/fuse';
 
 .event-form-dialog {
-
     @include media-breakpoint('xs') {
         width: 100%;
     }
@@ -23,5 +22,15 @@
     .primary-color-input,
     .secondary-color-input {
         padding: 6px 8px;
+    }
+
+    .date-time-picker {
+        &.mat-form-field {
+            .mat-form-field-wrapper {
+                .mat-form-field-flex {
+                    height: 63px;
+                }
+            }
+        }
     }
 }

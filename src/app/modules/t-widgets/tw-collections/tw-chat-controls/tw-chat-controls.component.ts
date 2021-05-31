@@ -364,7 +364,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * Agent action features
      */
-    agentFeatures: {
+     agentFeatures: {
         /**
          * Audio escalate
          */
@@ -545,7 +545,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.agentFeatures = {
             audioEscalate: this.data.Data.AudioEscalateAllowed ?? false,
             videoEscalate: this.data.Data.VideoEscalateAllowed ?? false,
-            signature: this.data.Data.SignatureAllowed,
+            signature: this.data.Data.SignatureAllowed ?? false,
             whiteboard: this.data.Data.Whiteboard?.Allowed ?? false,
             attachments: this.data.Data.AttachmentAllowed ?? false,
             emoji: this.data.Data.EmojiAllowed ?? false,
@@ -987,7 +987,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         const inputMessage = template?.Text || this.replyForm.form.value.message;
         const messageId = `a_${TUtils.Generic.uuid()}`;
         let messageData = inputMessage;
-        const attachment = template?.Attachment || null;
+        const attachment = template?.Attachment ?? null;
         const type = template?.Type ? 'attachment' : 'text';
 
         // Message
@@ -1024,8 +1024,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 messageId: messageId,
                 type: type,
                 message: inputMessage,
-                replyId: this.replyingToMessage?.messageId || '',
-                templateId: template?.ID || '',
+                replyId: this.replyingToMessage?.messageId ?? '',
+                templateId: template?.ID ?? '',
                 attachment
             };
 
@@ -1582,7 +1582,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // get the message template to be sent to customer
         this.sendMessage({
-            Text: evt.AutoResponseTemplate
+            Text: evt.AutoResponseTemplate,
+            ID: evt.AutoResponseTemplateId
         });
 
         // if this is the final auto response then disconnect the chat

@@ -2980,8 +2980,7 @@
                         "Position": {
                             "X": 1,
                             "Y": 1
-                        },
-                        "Header" : true
+                        }
                     },
                     "Data": {
                         "Path": "/workbench",

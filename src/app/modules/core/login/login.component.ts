@@ -373,13 +373,13 @@ export class LoginComponent implements OnInit, OnDestroy {
         this._titleService.setTitle(title.split('-')[0].trim());
 
         this.loginForm = this._formBuilder.group({
-            domain: ['', Validators.required],
+            domain: [''],
             lanId: ['', Validators.required],
-            agentId: ['', Validators.required],
-            agentPassword: ['', Validators.required],
-            stationPassword: ['', Validators.required],
-            station: ['', Validators.required],
-            otp: ['', Validators.required]
+            agentId: [''],
+            agentPassword: [''],
+            stationPassword: [''],
+            station: [''],
+            otp: ['']
         });
     }
 
@@ -518,6 +518,23 @@ export class LoginComponent implements OnInit, OnDestroy {
             // check to disable lanId
             if (this.disableLanId) {
                 this.loginForm.get('lanId').disable({ onlySelf: this.disableLanId });
+            }
+
+            // Set validators for form
+            if (this.domainListEnabled) {
+                this.loginForm.controls.domain.setValidators(Validators.required);
+            }
+            if (this.stationEnabled) {
+                this.loginForm.controls.station.setValidators(Validators.required);
+            }
+            if (this.stationEnabled) {
+                this.loginForm.controls.station.setValidators(Validators.required);
+            }
+            if (this.password.Agent) {
+                this.loginForm.controls.agentPassword.setValidators(Validators.required);
+            }
+            if (this.password.Station) {
+                this.loginForm.controls.stationPassword.setValidators(Validators.required);
             }
 
             // set loading flag
@@ -706,6 +723,14 @@ export class LoginComponent implements OnInit, OnDestroy {
      */
     public toggleStation(): void {
         this.stationEnabled = this.pbxChecked || this.msChecked;
+
+        // set form validation
+        if (this.stationEnabled) {
+            this.loginForm.controls.station.setValidators(Validators.required);
+        } else {
+            this.loginForm.controls.station.clearValidators();
+        }
+        this.loginForm.controls.station.updateValueAndValidity();
     }
 
     /**
@@ -743,6 +768,7 @@ export class LoginComponent implements OnInit, OnDestroy {
             {
                 msLogin: this.msChecked,
                 pbxLogin: this.pbxChecked,
+                stationPassword,
                 customAuthData
             },
             this.queryData?.jsonData || {}
@@ -759,7 +785,7 @@ export class LoginComponent implements OnInit, OnDestroy {
                 deviceId: this.stationEnabled ? station : lanId.split(',')[0].toLowerCase(),
                 forceReload: force,
                 jsonData: JSON.stringify(jsonData),
-                password: `${agentPassword}${stationPassword ? '<>' + stationPassword : ''}`,
+                password: agentPassword,
                 sessionKey: ''
             },
             null
@@ -795,6 +821,8 @@ export class LoginComponent implements OnInit, OnDestroy {
                         if (customAuthType === 'otp') {
                             this.showOtp = true;
                             this.fuseSplashService.hide();
+                            this.loginForm.controls.otp.setValidators(Validators.required);
+                            this.loginForm.controls.otp.updateValueAndValidity();
                             return;
                         }
                     } else if (response.ResultCode === 3) {
@@ -865,6 +893,8 @@ export class LoginComponent implements OnInit, OnDestroy {
                     if (this.promptAgentIdOnInvalidLanId) {
                         this.errorMessage = 'Login failed, Invalid LAN ID detected. Please provide agent ID';
                         this.agentIdEnabled = true;
+                        this.loginForm.controls.agentId.setValidators(Validators.required);
+                        this.loginForm.controls.agentId.updateValueAndValidity();
                     } else {
                         // login failed, invalid lan Id
                         this.errorMessage = 'Login failed, Invalid LAN ID detected. Please contact administrator for TMAC access';
