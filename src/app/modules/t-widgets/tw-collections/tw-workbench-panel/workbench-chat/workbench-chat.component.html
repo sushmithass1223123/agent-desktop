@@ -12,7 +12,7 @@
         [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
     >
         <div fxFlex="30" class="chat-list mx-12 border-radius-20 px-8">
-            <div fxLayout fxLayoutAlign="center center" class="search-input mt-8 border-radius-20 position-relative">
+            <div fxLayout fxLayoutAlign="center center" class="theme-bg mt-8 border-radius-20 position-relative">
                 <form class="w-100-p" (ngSubmit)="doGlobalSearch()">
                     <mat-form-field class="custom with-border form-field w-100-p" appearance="outline">
                         <input class="login-input" matInput placeholder="Search" [formControl]="globalSearchControl" />
