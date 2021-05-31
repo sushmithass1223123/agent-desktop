@@ -1044,6 +1044,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         this.loading = true;
         const currentStatus = row.CurrentAgentStatus;
         row.CurrentAgentStatus = 'loading';
+        row.AgentName = row.FirstName + ' ' + row.LastName;
         // get agent's current status
         SDKClient.getAgentStatus({
             agentId: row.LoginID,
@@ -1086,7 +1087,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
             })
             .catch((e) => {
                 console.error(e);
-                this._appUIService.showSnackbar(`Error in getting agent ${row.AgentName} current state`, 'failure');
+                this._appUIService.showSnackbar(`Error in getting agent ${row.AgentName}'s current state`, 'failure');
                 row.CurrentAgentStatus = currentStatus;
                 this.loading = false;
             });

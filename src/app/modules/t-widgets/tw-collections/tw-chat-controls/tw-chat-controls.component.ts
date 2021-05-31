@@ -5,6 +5,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { appAnimations } from '@modules/shared/animations/app.animation';
 import { AgentSkillListComponent } from '@modules/shared/components';
+import { AgentFeaturesService } from '@services/agent-features.service';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
@@ -436,14 +437,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
     /**
      * Constructor
-     * @param {InteractionManagerService} _interactionManagerService
-     * @param {TMACEventService} _tmacEventService
-     * @param {MatDialog} _matDialog
-     * @param {AppDataService} _appDataService
-     * @param {FuseProgressBarService} _fuseProgressBarService
-     * @param {ContentPageService} _contentPageService
-     * @param {AOTWidgetService} _aotWidgetService
-     * @param {AppUiService} _appUIService,
      */
     constructor(
         private _interactionManagerService: InteractionManagerService,
@@ -454,7 +447,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         private _contentPageService: ContentPageService,
         private _aotWidgetService: AOTWidgetService,
         private _appUIService: AppUiService,
-        private _fuseFacadeService: FuseFacadeService
+        private _fuseFacadeService: FuseFacadeService,
+        private _agentFeaturesService: AgentFeaturesService
     ) {
         super();
 
@@ -541,8 +535,38 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             this.interactionList = interactions.filter((i: InteractionRef) => i.type === 'textchat');
         });
 
+        this._agentFeaturesService.features.pipe(takeUntil(this.unsubscribeAll)).subscribe((change: boolean) => {
+            if (change) {
+                // check agent features
+                this.checkAgentFeatures();
+            }
+        });
+
+        this.agentFeatures = {
+            audioEscalate: this.data.Data.AudioEscalateAllowed ?? false,
+            videoEscalate: this.data.Data.VideoEscalateAllowed ?? false,
+            signature: this.data.Data.SignatureAllowed,
+            whiteboard: this.data.Data.Whiteboard?.Allowed ?? false,
+            attachments: this.data.Data.AttachmentAllowed ?? false,
+            emoji: this.data.Data.EmojiAllowed ?? false,
+            chatReply: this.data.Data.ReplyOnChatAllowed ?? false,
+            conference: this.data.Data.Conference?.Allowed ?? false,
+            transfer: this.data.Data.Transfer?.Allowed ?? false,
+            chatTemplate: this.data.Data.ChatTemplate?.Allowed ?? false,
+            reply: this.data.Data.ReplyAllowed ?? true,
+            comment: this.data.Data.InteractionCommentAllowed ?? false,
+            hold: this.data.Data.HoldInteractionAllowed ?? false,
+            snapshot: this.data.Data.Snapshot?.Allowed ?? false,
+            voicenote: this.data.Data.VoiceNoteAllowed ?? false,
+            screenshare: this.data.Data.ScreenShareAllowed ?? false,
+            webrtcTest: this.data.Data.WebRTCTest?.Allowed ?? false
+        };
+
         // set the user info
         this.user = SDKClient.getAgentData() || null;
+
+        // check for agent features
+        this.checkAgentFeatures();
 
         // set the status
         this.status = 'incoming';
@@ -568,85 +592,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             // set the conversation limit
             this.conversationService.Limit = this.data.Data.ConversationService.Limit;
         }
-
-        this.agentFeatures = {
-            audioEscalate: this.data.Data.AudioEscalateAllowed ?? false,
-            videoEscalate: this.data.Data.VideoEscalateAllowed ?? false,
-            signature: this.data.Data.SignatureAllowed,
-            whiteboard: this.data.Data.Whiteboard?.Allowed ?? false,
-            attachments: this.data.Data.AttachmentAllowed ?? false,
-            emoji: this.data.Data.EmojiAllowed ?? false,
-            chatReply: this.data.Data.ReplyOnChatAllowed ?? false,
-            conference: this.data.Data.Conference?.Allowed ?? false,
-            transfer: this.data.Data.Transfer?.Allowed ?? false,
-            chatTemplate: this.data.Data.ChatTemplate?.Allowed ?? false,
-            reply: this.data.Data.ReplyAllowed ?? true,
-            comment: this.data.Data.InteractionCommentAllowed ?? false,
-            hold: this.data.Data.HoldInteractionAllowed ?? false,
-            snapshot: this.data.Data.Snapshot?.Allowed ?? false,
-            voicenote: this.data.Data.VoiceNoteAllowed ?? false,
-            screenshare: this.data.Data.ScreenShareAllowed ?? false,
-            webrtcTest: this.data.Data.WebRTCTest?.Allowed ?? false
-        };
-
-        // check the agent features to enable/disable
-        SDKClient.getAgentData().featuresList.forEach((f) => {
-            // get the featue
-            const feature = f.Feature.toLowerCase();
-
-            // switch the feature
-            switch (feature) {
-                case AGENT_FEATURES.IsAudioEscalateEnabled:
-                    this.agentFeatures.audioEscalate = f.IsEnabled;
-                    break;
-                case AGENT_FEATURES.IsVideoEscalateEnabled:
-                    this.agentFeatures.videoEscalate = f.IsEnabled;
-                    break;
-                case AGENT_FEATURES.IsChatSignatureEnabled:
-                    this.agentFeatures.signature = f.IsEnabled;
-                    break;
-                case AGENT_FEATURES.IsChatWhiteboardEnabled:
-                    this.agentFeatures.whiteboard = f.IsEnabled;
-                    break;
-                case AGENT_FEATURES.IsChatAttachmentsEnabled:
-                    this.agentFeatures.attachments = f.IsEnabled;
-                    break;
-                case AGENT_FEATURES.IsChatEmojiEnabled:
-                    this.agentFeatures.emoji = f.IsEnabled;
-                    break;
-                case AGENT_FEATURES.IsReplyOnChatEnabled:
-                    this.agentFeatures.chatReply = f.IsEnabled;
-                    break;
-                case AGENT_FEATURES.IsChatConferenceEnabled:
-                    this.agentFeatures.conference = f.IsEnabled;
-                    break;
-                case AGENT_FEATURES.IsChatTransferEnabled:
-                    this.agentFeatures.transfer = f.IsEnabled;
-                    break;
-                case AGENT_FEATURES.IsChatTemplateEnabled:
-                    this.agentFeatures.chatTemplate = f.IsEnabled;
-                    break;
-                case AGENT_FEATURES.IsChatReplyEnabled:
-                    this.agentFeatures.reply = f.IsEnabled;
-                    break;
-                case AGENT_FEATURES.IsChatCommentEnabled:
-                    this.agentFeatures.comment = f.IsEnabled;
-                    break;
-                case AGENT_FEATURES.IsChatHoldEnabled:
-                    this.agentFeatures.hold = f.IsEnabled;
-                    break;
-                case AGENT_FEATURES.IsVideoSnapshotEnabled:
-                    this.agentFeatures.snapshot = f.IsEnabled;
-                    break;
-                case AGENT_FEATURES.IsChatVoiceNoteEnabled:
-                    this.agentFeatures.voicenote = f.IsEnabled;
-                    break;
-                case AGENT_FEATURES.IsChatScreenshareEnabled:
-                    this.agentFeatures.screenshare = f.IsEnabled;
-                    break;
-                default:
-            }
-        });
 
         if (this.agentFeatures.chatTemplate) {
             // get text templates
@@ -706,6 +651,70 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     // -----------------------------------------------------------------------------------------------------
 
     /**
+     * To check agent features for One Way Video
+     */
+    private checkAgentFeatures(): void {
+        // check the agent features to enable/disable
+        SDKClient.getAgentData().featuresList.forEach((f) => {
+            // get the featue
+            const feature = f.Feature.toLowerCase();
+
+            // switch the feature
+            switch (feature) {
+                case AGENT_FEATURES.IsAudioEscalateEnabled:
+                    this.agentFeatures.audioEscalate = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsVideoEscalateEnabled:
+                    this.agentFeatures.videoEscalate = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsChatSignatureEnabled:
+                    this.agentFeatures.signature = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsChatWhiteboardEnabled:
+                    this.agentFeatures.whiteboard = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsChatAttachmentsEnabled:
+                    this.agentFeatures.attachments = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsChatEmojiEnabled:
+                    this.agentFeatures.emoji = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsReplyOnChatEnabled:
+                    this.agentFeatures.chatReply = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsChatConferenceEnabled:
+                    this.agentFeatures.conference = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsChatTransferEnabled:
+                    this.agentFeatures.transfer = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsChatTemplateEnabled:
+                    this.agentFeatures.chatTemplate = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsChatReplyEnabled:
+                    this.agentFeatures.reply = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsChatCommentEnabled:
+                    this.agentFeatures.comment = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsChatHoldEnabled:
+                    this.agentFeatures.hold = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsVideoSnapshotEnabled:
+                    this.agentFeatures.snapshot = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsChatVoiceNoteEnabled:
+                    this.agentFeatures.voicenote = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsChatScreenshareEnabled:
+                    this.agentFeatures.screenshare = f.IsEnabled;
+                    break;
+                default:
+            }
+        });
+    }
+
+    /**
      * To proccess both TextChatMessageReceivedEvent and TextChatAgentMessageReceivedEvent
      * @param evt TextChatMessageReceivedEvent | TextChatAgentMessageReceivedEvent data
      */
@@ -723,7 +732,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             const msg = JSON.parse(evt.Message);
             switch (msg.type?.toLowerCase()) {
                 case 'clientreloaded':
-                    this.callWidget.destroy();
+                    this.callWidget?.destroy();
                     this._appUIService.showSnackbar('Client has refreshed their browser', 'failure');
                     break;
                 default:
@@ -1253,9 +1262,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     private async checkForConversationHistory(cif: string): Promise<void> {
         // get the customer id
         const { response } = await TUtils.HttpClient.sendRequest({
-            url:
+            urls: [
                 this.conversationService.Url +
-                `user-conversations-timeline/${cif}?fromTime=0&toTime=${this.startTime.getTime()}&limit=${this.conversationService.Limit}`,
+                    `user-conversations-timeline/${cif}?fromTime=0&toTime=${this.startTime.getTime()}&limit=${this.conversationService.Limit}`
+            ],
             method: 'GET',
             responseType: 'json',
             timeout: 20000
@@ -2221,12 +2231,22 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                  <div class="text-primary m-0 mat-body-2">${item.Message.replace(/(?:\r\n|\r|\n)/g, '<br>')}</div>
                  <span class="time secondary-text mat-body-1">${item.User}</span>,
                  <span class="time secondary-text mat-body-1">${new Date(item.Time).toLocaleString()}</span>
-                 <br /><br />
+                 <br />
+                 <br />
                  `;
         });
         message += 'Add new comment:';
 
-        const dialogRef = this._appUIService.showCustomDialog('prompt', message, 'Interaction Notes', { minRows: 5 }, { minWidth: '30%' });
+        const dialogRef = this._appUIService.showCustomDialog(
+            'prompt',
+            message,
+            'Interaction Notes',
+            { minRows: 4 },
+            {
+                minWidth: '30%',
+                maxWidth: '30%'
+            }
+        );
         dialogRef.afterClosed().subscribe((resp1) => {
             if (resp1) {
                 this._fuseProgressBarService.show();
@@ -2240,7 +2260,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                             this.savedComments.push({
                                 Message: resp1,
                                 Time: new Date(),
-                                User: SDKClient.getAgentData().agentName
+                                User: this.user.agentName
                             });
                             // alert user
                             this._appUIService.showSnackbar('Interaction comment saved successfully');

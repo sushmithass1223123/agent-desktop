@@ -1,5 +1,3 @@
-import { TWidget } from '@modules/t-widgets/utils';
-
 export interface IWidget<T = any> {
     /**
      * Name of the Widget

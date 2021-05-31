@@ -1,4 +1,5 @@
-import { get, set } from 'lodash';
+import { IUIEvent } from '@tmac/sdk';
+import { get, join, set } from 'lodash';
 
 type Generic = string | number;
 
@@ -27,11 +28,10 @@ export const formatJsonData = <T = Record<Generic, any>>(data: Record<Generic, a
     }, {}) as any;
 };
 
-
 /**
  * To convert link to a tag
- * 
- * @param {String} text 
+ *
+ * @param {String} text
  */
 export const urlify = (text: string) => {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -95,4 +95,20 @@ export const maticonByExtension = (ext: string) => {
             icon = 'custom-file-default';
     }
     return icon;
+};
+
+/**
+ * To get property value from event
+ *
+ * @param {String[]} valueSourceSplit
+ * @param {Any} json
+ * @param {String} defaultValue
+ */
+export const getValueFromJson = (valueSourceSplit: string[], json: any, defaultValue: string) => {
+    // remove the event name from the array
+    valueSourceSplit.shift();
+    // map the property and get the value from event property
+    const valueMap = join(valueSourceSplit, '.');
+    // get the value from path or default value
+    return get(json, valueMap, defaultValue);
 };

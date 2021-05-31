@@ -105,7 +105,6 @@ export class FuseFacadeService {
         return this.fuseConfig.getConfig();
     }
 
-
     /**
      * Set and get the config
      */

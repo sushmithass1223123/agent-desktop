@@ -95,20 +95,12 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
             const fn = message.function?.toLowerCase();
             switch (fn) {
                 case 'gettmacevents': // to get TMAC events
-                    let events = [];
-                    // check if in interaction
-                    if (this.interactionId) {
-                        // get interaction events
-                        events = this._tmacEventService.interactionEvents(this.interactionId);
+                    const events = this._tmacEventService.getAllEventsArray();
+                    // check event are there
+                    if (events.length) {
+                        // send event to the frame/opener
+                        this.sendEventsToWindow(events);
                     }
-                    // get non interaction events
-                    events = [...events, ...this._tmacEventService.nonInteractionEvents()];
-                    // send event to the frame/opener
-                    this.sendEventsToWindow(events);
-                    break;
-                case 'closetab': // to close tab/interaction
-                case 'closeinteraction': // to close tab/interaction
-                    SDKClient.closeInteraction(message.data.interactionID);
                     break;
                 default:
             }

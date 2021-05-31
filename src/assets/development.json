@@ -729,7 +729,7 @@
                     "Data": {
                         "Path": "/supervisor",
                         "Duration": 100,
-                        "AgentHierarchy": false,
+                        "AgentHierarchy": true,
                         "Widgets": {
                             "Static": [
                                 {
@@ -1228,7 +1228,7 @@
                                                         }
                                                     },
                                                     "DialpadAllowed": true,
-                                                    "InteractionCommentAllowed": false
+                                                    "InteractionCommentAllowed": true
                                                 }
                                             },
                                             {
@@ -1330,7 +1330,7 @@
                                                 },
                                                 "Data": {
                                                     "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
-                                                    "NoOfRecords": 20,
+                                                    "NoOfRecords": 10,
                                                     "SentimentDashboardUrl": "https://dice.tetherfi.cloud/SentimentDashboard"
                                                 }
                                             }
@@ -1722,7 +1722,7 @@
                                     },
                                     "Data": {
                                         "OpenInNew": false,
-                                        "Url": "http://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=agentassisttest&ucid=${Interaction.UCID}&interactionid=${Interaction.InteractionID}"
+                                        "Url": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=agentassisttest&ucid=${Interaction.UCID}&interactionid=${Interaction.InteractionID}"
                                     }
                                 }
                             ]
@@ -2016,7 +2016,7 @@
                                                 },
                                                 "Data": {
                                                     "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
-                                                    "NoOfRecords": 20,
+                                                    "NoOfRecords": 10,
                                                     "SentimentDashboardUrl": "https://dice.tetherfi.cloud/SentimentDashboard"
                                                 }
                                             }
@@ -2416,7 +2416,7 @@
                                                 },
                                                 "Data": {
                                                     "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
-                                                    "NoOfRecords": 20,
+                                                    "NoOfRecords": 10,
                                                     "SentimentDashboardUrl": "https://dice.tetherfi.cloud/SentimentDashboard"
                                                 }
                                             }
@@ -2721,7 +2721,9 @@
                                                     "Header": true,
                                                     "Pinned": false
                                                 },
-                                                "Data": {}
+                                                "Data": {
+                                                    "CloseInteractionAllowed": false
+                                                }
                                             },
                                             {
                                                 "Name": "Customer Details",
@@ -2816,7 +2818,7 @@
                                                 },
                                                 "Data": {
                                                     "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
-                                                    "NoOfRecords": 20,
+                                                    "NoOfRecords": 10,
                                                     "SentimentDashboardUrl": "https://dice.tetherfi.cloud/SentimentDashboard"
                                                 }
                                             }
@@ -2930,7 +2932,41 @@
                                     }
                                 }
                             ],
-                            "AOT": []
+                            "AOT": [
+                                {
+                                    "Name": "Agent Assist",
+                                    "Description": "",
+                                    "Key": "AgentAssist",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "AutoOpen": true,
+                                        "Icon": "verified_user",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "W": 450,
+                                            "H": 800
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=agentassisttest&ucid=${Interaction.UCID}&interactionid=${Interaction.InteractionID}"
+                                    }
+                                }
+                            ]
                         }
                     }
                 },
@@ -2944,8 +2980,7 @@
                         "Position": {
                             "X": 1,
                             "Y": 1
-                        },
-                        "Header" : true
+                        }
                     },
                     "Data": {
                         "Path": "/workbench",
@@ -3303,8 +3338,8 @@
         },
         "Urls": {
             "DashboardServerUrls": [
-                "https://dice.tetherfi.cloud/SignalRDashboard2",
-                "https://dice.tetherfi.cloud:443/SignalRDashboardSup"
+                "https://dice.tetherfi.cloud:443/SignalRDashboardSup",
+                "https://dice.tetherfi.cloud/SignalRDashboard2"
             ],
             "FileServerUrl": {
                 "SMM": "https://dice.tetherfi.cloud:13019/upload",
@@ -3345,11 +3380,6 @@
                 },
                 "Alt": "Tetherfi"
             }
-        },
-        "WindowSettings": {
-            "SizeInPixel": false,
-            "Width": 40,
-            "Height": 100
         },
         "RefreshDisabled": false,
         "DevToolsDisabled": false,
@@ -3410,8 +3440,8 @@
         "SDK": {
             "Proxy": {
                 "Urls": [
-                    "https://dice.tetherfi.cloud/Dev_TMACSDKProxy/TmacProxy.asmx",
                     "https://dice.tetherfi.cloud/TMACSDKProxyv5/TmacProxy.asmx",
+                    "https://dice.tetherfi.cloud/Dev_TMACSDKProxy/TmacProxy.asmx",
                     "https://localhost:55443/SDKTMACProxy/TmacProxy.asmx"
                 ],
                 "Type": "soap",

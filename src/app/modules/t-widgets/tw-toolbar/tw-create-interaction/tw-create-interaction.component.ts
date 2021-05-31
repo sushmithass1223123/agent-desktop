@@ -2,8 +2,12 @@ import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular
 import { MatDialog } from '@angular/material/dialog';
 import { appAnimations } from '@modules/shared/animations/app.animation';
 import { AgentSkillListComponent, CreateMessagingComponent, MailboxSettingsComponent } from '@modules/shared/components';
+import { AgentFeaturesService } from '@services/agent-features.service';
 import { IAUXCodes, SDKClient } from '@tmac/sdk';
+import { AGENT_FEATURES } from 'app/constants';
 import { IWidget } from 'app/interfaces';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 /**
  * Create interaction
@@ -22,6 +26,11 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
     @Input() data: IWidget;
 
     /**
+     * Subject to unsubscribe
+     */
+    private _unsubscribeAll: Subject<any>;
+
+    /**
      * All channel list
      */
     channels: IChannel[];
@@ -31,7 +40,13 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
      */
     openList: boolean;
 
-    constructor(private _matDialog: MatDialog) { }
+    constructor(
+        private _matDialog: MatDialog,
+        private _agentFeaturesService: AgentFeaturesService
+    ) {
+        // set the unsubscribeAll defaults
+        this._unsubscribeAll = new Subject();
+    }
 
     /**
      * OnInit
@@ -40,6 +55,34 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
         // get the channels from config
         this.channels = this.data.Data.Channels;
 
+        this._agentFeaturesService
+            .features
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((change: boolean) => {
+                if (change) {
+                    // check agent features
+                    this.checkAgentFeatures();
+                }
+            });
+
+        // check agent features
+        this.checkAgentFeatures();
+    }
+
+    /**
+     * OnDestroy
+     */
+    ngOnDestroy(): void {
+        // Unsubscribe from all subscriptions
+        this._unsubscribeAll.next(null);
+        this._unsubscribeAll.complete();
+        this._matDialog.closeAll();
+    }
+
+    /**
+     * To check agent features for One Way Video
+     */
+    private checkAgentFeatures(): void {
         // check the agent features to enable/disable
         SDKClient.getAgentData().featuresList.forEach(f => {
             // get the featue
@@ -49,16 +92,16 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
                 // get the subtype
                 const subtype = c.SubType.toLowerCase();
 
-                if (feature === 'isfaxoutenabled' && subtype === 'fax') {
+                if (feature === AGENT_FEATURES.IsFaxOutEnabled && subtype === 'fax') {
                     c.Enabled = f.IsEnabled;
                 }
-                else if (feature === 'issmsoutenabled' && subtype === 'sms') {
+                else if (feature === AGENT_FEATURES.IsSMSOutEnabled && subtype === 'sms') {
                     c.Enabled = f.IsEnabled;
                 }
-                else if (feature === 'iswhatsappoutenabled' && subtype === 'whatsapp') {
+                else if (feature === AGENT_FEATURES.IsWhatsAppOutEnabled && subtype === 'whatsapp') {
                     c.Enabled = f.IsEnabled;
                 }
-                else if (feature === 'isemailoutenabled' && subtype === 'email') {
+                else if (feature === AGENT_FEATURES.IsEmailOutEnabled && subtype === 'email') {
                     c.Enabled = f.IsEnabled;
                 }
             });
@@ -66,13 +109,6 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
 
         // filter all enabled channels
         this.channels = this.channels.filter(c => c.Enabled);
-    }
-
-    /**
-     * OnDestroy
-     */
-    ngOnDestroy(): void {
-        this._matDialog.closeAll();
     }
 
     /**

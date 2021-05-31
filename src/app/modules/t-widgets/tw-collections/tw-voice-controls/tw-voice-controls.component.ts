@@ -1458,12 +1458,22 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                  <div class="text-primary m-0 mat-body-2">${item.Message.replace(/(?:\r\n|\r|\n)/g, '<br>')}</div>
                  <span class="time secondary-text mat-body-1">${item.User}</span>,
                  <span class="time secondary-text mat-body-1">${new Date(item.Time).toLocaleString()}</span>
-                 <br /><br />
+                 <br />
+                 <br />
                  `;
         });
         message += 'Add new comment:';
 
-        const dialogRef = this._appUIService.showCustomDialog('prompt', message, 'Interaction Notes', { minRows: 4 }, { minWidth: '40%' });
+        const dialogRef = this._appUIService.showCustomDialog(
+            'prompt',
+            message,
+            'Interaction Notes',
+            { minRows: 4 },
+            {
+                minWidth: '30%',
+                maxWidth: '30%'
+            }
+        );
         dialogRef.afterClosed().subscribe((resp1) => {
             if (resp1) {
                 this._fuseProgressBarService.show();
@@ -1475,7 +1485,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                         // add comments to the reference
                         this.savedComments.push({
                             Message: resp1,
-                            Time: new Date().toLocaleTimeString(),
+                            Time: new Date(),
                             User: SDKClient.getAgentData().agentName
                         });
                         if (resp2.response > 0) {

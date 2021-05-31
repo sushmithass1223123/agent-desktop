@@ -1,0 +1,37 @@
+<tw-wrapper [data]="data">
+    <div *ngIf="customerInfo && !contactData.loading" class="h-100-p twd-overflow-auto">
+        <div class="w-100-p twd-flex twd-flex-row twd-flex-wrap px-12 py-8 border-radius-20">
+
+            <div class="line-height-30 position-relative twd-min-w-1/3 twd-max-w-1/4" *ngFor="let item of customerInfo">
+                <div class="title text-bold"> {{ item.Title }}: </div>
+                <div>
+                    {{ (item.Value ? item.Value + ' ' + item.Unit : item.DefaultValue) || 'NA' }}
+                    <mat-divider class="w-90-p"></mat-divider>
+                </div>
+            </div>
+
+            <ng-container *ngIf="contactData.data">
+                <div class="line-height-30 position-relative twd-min-w-1/3 twd-max-w-1/4"
+                    *ngFor="let item of contactData.data.dynamicdata">
+                    <ng-container>
+                        <div class="title text-bold"> {{ item.Key }}: </div>
+                        <div>
+                            {{ item.Value || 'NA' }}
+                            <mat-divider class="w-90-p"></mat-divider>
+                        </div>
+                    </ng-container>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+
+    <div *ngIf="contactData.loading"
+        class="twd-flex twd-justify-center twd-items-center w-100-p h-100-p border-radius-20">
+        <mat-spinner></mat-spinner>
+    </div>
+
+    <div *ngIf="contactData.errorMessage"
+        class="twd-flex twd-justify-center twd-items-center w-100-p h-100-p p-12 border-radius-20">
+        <p>{{ contactData.errorMessage }}</p>
+    </div>
+</tw-wrapper>

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AgentFeatures, AgentSettingsUpdatedEvent, SDKClient, TUtils } from '@tmac/sdk';
 import { AGENT_FEATURES } from 'app/constants';
+import { Observable, Subject } from 'rxjs';
 import { AppUiService } from './app-ui.service';
 
 /**
@@ -74,7 +75,19 @@ export class AgentFeaturesService {
         };
     };
 
-    constructor(private _appUIService: AppUiService) {}
+    /**
+     * Need more Description
+     */
+    private _featureUpdatedSubject: Subject<boolean>;
+
+    constructor(private _appUIService: AppUiService) { }
+
+    /**
+     * Get agent features
+     */
+    get features(): any | Observable<boolean> {
+        return this._featureUpdatedSubject.asObservable();
+    }
 
     /**
      * Need more Description
@@ -128,6 +141,7 @@ export class AgentFeaturesService {
         // process agent featues
         if (evt.AgentProfile.AgentFeatures.length > 0) {
             this.processAgentFeatures(evt.AgentProfile.AgentFeatures);
+            this._featureUpdatedSubject.next(true);
             // set processed
             this._processed = true;
         }
@@ -392,6 +406,9 @@ export class AgentFeaturesService {
 
         // set processed
         this._processed = true;
+
+        // init agent features subject
+        this._featureUpdatedSubject = new Subject();
     }
 
     /**
@@ -403,6 +420,9 @@ export class AgentFeaturesService {
         // unregister from AgentSnapShotEvent
         SDKClient.events.off('AgentSnapShotEvent', this.AgentSnapShotEvent);
         SDKClient.events.off('AgentSettingsUpdatedEvent', this.AgentSettingsUpdatedEvent);
+
+        this._featureUpdatedSubject.next(false);
+        this._featureUpdatedSubject.complete();
 
         // check if processed
         if (this._processed) {

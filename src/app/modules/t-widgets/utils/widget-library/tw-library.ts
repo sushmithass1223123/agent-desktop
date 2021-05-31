@@ -11,6 +11,7 @@ import { TwAhtTcComponent } from '@modules/t-widgets/tw-collections/tw-aht-tc/tw
 import { TwAmdocsBccComponent } from '@modules/t-widgets/tw-collections/tw-amdocs-bcc/tw-amdocs-bcc.component';
 import { TwAudioVideoControlsComponent } from '@modules/t-widgets/tw-collections/tw-audio-video-controls/tw-audio-video-controls.component';
 import { TwCalendarComponent } from '@modules/t-widgets/tw-collections/tw-calendar/tw-calendar.component';
+import { TwCampaignContactComponent } from '@modules/t-widgets/tw-collections/tw-campaign-contact/tw-campaign-contact.component';
 import { TwCannedResponsesComponent } from '@modules/t-widgets/tw-collections/tw-canned-responses/tw-canned-responses.component';
 import { TwChatControlsComponent } from '@modules/t-widgets/tw-collections/tw-chat-controls/tw-chat-controls.component';
 import { TwChatPanelComponent } from '@modules/t-widgets/tw-collections/tw-chat-panel/tw-chat-panel.component';
@@ -120,7 +121,8 @@ export class TWLibrary {
         'tw-calendar': TwCalendarComponent,
         'tw-tcis-integration': TwTcisIntegrationComponent,
         'tw-trs-integration': TwTrsIntegrationComponent,
-        'tw-panel': TwPanelComponent
+        'tw-panel': TwPanelComponent,
+        'tw-campaign-contact': TwCampaignContactComponent
     };
 
     /**

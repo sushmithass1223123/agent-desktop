@@ -1,6 +1,7 @@
 import { Component, ElementRef, Input, OnDestroy, OnInit, QueryList, ViewChildren, ViewEncapsulation } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { fuseAnimations } from '@fuse/animations';
+import { AgentFeaturesService } from '@services/agent-features.service';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
@@ -21,7 +22,7 @@ import {
     WrcCallTypes
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AV_ERRORS, COMMON_ERR_MESSAGE } from 'app/constants';
+import { AGENT_FEATURES, AV_ERRORS, COMMON_ERR_MESSAGE } from 'app/constants';
 import { IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { map } from 'lodash';
@@ -179,7 +180,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         private _appDataService: AppDataService,
         private _aotWidgetService: AOTWidgetService,
         private _appUIService: AppUiService,
-        private _tmacEventService: TMACEventService
+        private _tmacEventService: TMACEventService,
+        private _agentFeaturesService: AgentFeaturesService
     ) {
         super();
     }
@@ -202,6 +204,19 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
 
         // get the agent data
         this.user = SDKClient.getAgentData();
+
+        // check agent features
+        this.checkAgentFeatures();
+
+        this._agentFeaturesService
+            .features
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((change: boolean) => {
+                if (change) {
+                    // check agent features
+                    this.checkAgentFeatures();
+                }
+            });
 
         // assign the start time
         this.startTime = new Date();
@@ -278,6 +293,14 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
     // -----------------------------------------------------------------------------------------------------
 
     /**
+     * To check agent features for One Way Video
+     */
+    private checkAgentFeatures(): void {
+        // check if the agent has IsOneWayVideoEnabled feature enabled
+        this.oneWayVideo = SDKClient.getAgentData().featuresList.filter((f) => f.Feature.toLowerCase() === AGENT_FEATURES.IsOneWayVideoEnabled)?.[0]?.IsEnabled;
+    }
+
+    /**
      * Create Av connection
      * @method createAVConnection
      * @param {AVControlMessageReceivedEvent} avEvent
@@ -287,9 +310,6 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
 
         // Set AV Config
         const AV: AVApiConfig = this.appConfig.AppConfigs.AV || {};
-
-        // check if the agent has IsOneWayVideoEnabled feature enabled
-        this.oneWayVideo = SDKClient.getAgentData().featuresList.filter((f) => f.Feature.toLowerCase() === 'isonewayvideoenabled')?.[0]?.IsEnabled;
 
         // override the av config media constrain
         if (this.oneWayVideo) {
@@ -713,7 +733,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                             id: TUtils.Generic.uuid()
                         })
                     });
-                } catch (error) {}
+                } catch (error) { }
 
                 matRef.dismiss();
             } catch (e) {
