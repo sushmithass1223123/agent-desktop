@@ -36,7 +36,13 @@
             >
                 <div class="twd-flex twd-flex-wrap twd-gap-3 twd-pb-2 twd-justify-end">
                     <ng-container *ngIf="currentInteraction.EventName === 'OutgoingEmailEvent'">
-                        <button mat-raised-button class="border-radius-20" matTooltip="Interaction Comment" (click)="saveInteractionComments()">
+                        <button
+                            *ngIf="data.Data?.InteractionCommentAllowed && replyInfo"
+                            mat-raised-button
+                            class="border-radius-20"
+                            matTooltip="Interaction Comment"
+                            (click)="saveInteractionComments()"
+                        >
                             <mat-icon>comment</mat-icon>
                         </button>
                         <button
@@ -74,7 +80,7 @@
 
                     <ng-container *ngIf="currentInteraction.EventName === 'IncomingEmailEvent'">
                         <button
-                            *ngIf="data.Data?.InteractionCommentAllowed && (replyInfo || OutboxReasons.includes(currentInteraction.RouteReason))"
+                            *ngIf="data.Data?.InteractionCommentAllowed && replyInfo"
                             mat-raised-button
                             class="border-radius-20"
                             matTooltip="Interaction Comment"
