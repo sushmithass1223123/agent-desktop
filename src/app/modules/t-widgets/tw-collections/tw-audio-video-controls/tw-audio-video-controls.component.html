@@ -59,7 +59,7 @@
                             mat-flat-button
                             mat-icon-button
                             [disabled]="!connected || hold"
-                            [matTooltip]="audioMuted ? 'Un Mute' : 'Mute'"
+                            [matTooltip]="audioMuted ? 'Unmute' : 'Mute'"
                             (click)="muteUnmuteAudioCall()"
                             [ngClass]="{ 'mat-warn': audioMuted }"
                         >
@@ -71,7 +71,7 @@
                             mat-flat-button
                             mat-icon-button
                             [disabled]="!connected || hold || remoteScreenSharing"
-                            [matTooltip]="screenSharing ? 'Stop Share' : 'Start Share'"
+                            [matTooltip]="screenSharing ? 'Stop Screen Share' : 'Screen Share'"
                             [ngClass]="{ 'bg-alt-danger': screenSharing }"
                             (click)="shareScreen()"
                         >
@@ -86,7 +86,7 @@
                             mat-flat-button
                             mat-icon-button
                             [class]="hold ? 'success' : 'warning'"
-                            [matTooltip]="hold ? 'Unhold' : 'Hold' + Call"
+                            [matTooltip]="hold ? 'Unhold Call' : 'Hold Call'"
                             (click)="holdUnholdCall()"
                         >
                             <mat-icon>{{ hold ? 'phone_in_talk' : 'phone_paused' }}</mat-icon>
@@ -180,7 +180,7 @@
                             mat-flat-button
                             mat-icon-button
                             [disabled]="!connected || hold"
-                            [matTooltip]="audioMuted ? 'Un Mute Audio' : 'Mute Audio'"
+                            [matTooltip]="audioMuted ? 'Unmute Audio' : 'Mute Audio'"
                             (click)="muteUnmuteAudioCall()"
                             [ngClass]="{ 'mat-warn': audioMuted }"
                         >
@@ -192,7 +192,7 @@
                             mat-flat-button
                             mat-icon-button
                             [disabled]="!connected || hold"
-                            [matTooltip]="videoMuted ? 'Un Mute Video' : 'Mute Video'"
+                            [matTooltip]="videoMuted ? 'Unmute Video' : 'Mute Video'"
                             (click)="muteUnmuteVideoCall()"
                             [ngClass]="{ 'mat-warn': videoMuted }"
                         >
@@ -216,7 +216,7 @@
                             mat-flat-button
                             mat-icon-button
                             [disabled]="!connected || hold || remoteScreenSharing"
-                            [matTooltip]="screenSharing ? 'Stop Share' : 'Start Share'"
+                            [matTooltip]="screenSharing ? 'Stop Screen Share' : 'Screen Share'"
                             [ngClass]="{ 'bg-alt-danger': screenSharing }"
                             (click)="shareScreen()"
                         >
@@ -231,7 +231,7 @@
                             mat-flat-button
                             mat-icon-button
                             [class]="hold ? 'success' : 'warning'"
-                            [matTooltip]="hold ? 'Unhold' : 'Hold' + Call"
+                            [matTooltip]="hold ? 'Unhold Call' : 'Hold Call'"
                             (click)="holdUnholdCall()"
                         >
                             <mat-icon>{{ hold ? 'phone_in_talk' : 'phone_paused' }}</mat-icon>
