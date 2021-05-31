@@ -10,7 +10,6 @@ import { FuseFacadeService } from '@services/fuse-facade.service';
 import * as TMACSDK from '@tmac/sdk';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { environment } from '../environments/environment';
 
 // declare global
 declare global {
@@ -18,7 +17,7 @@ declare global {
         /**
          * SDK Client global
          */
-        TMACSDK: typeof TMACSDK;
+        __TMACSDK: typeof TMACSDK;
     }
 }
 
@@ -227,11 +226,8 @@ export class AppComponent implements OnInit, OnDestroy {
                 }
             });
 
-        // check the environment and set window variable
-        if (!environment.production) {
-            // set a global variable to access SDK client on development mode
-            window.TMACSDK = TMACSDK;
-        }
+        // set a global variable to access SDK client on development mode
+        window.__TMACSDK = TMACSDK;
 
         // log the app version
         console.log(`App Version: ${this._appDataService.getAppVersion()}`);

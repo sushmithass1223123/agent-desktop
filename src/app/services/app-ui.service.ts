@@ -549,7 +549,7 @@ export class AppUiService {
                             10000
                         );
                     } else {
-                        this.showSnackbar('Please grand permission for notifications', 'info', 'top', 'center');
+                        this.showSnackbar('Please grant permission for notifications', 'info', 'top', 'center');
                     }
                     Notification.requestPermission();
                 }

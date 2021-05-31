@@ -271,10 +271,10 @@ export class LoginComponent implements OnInit, OnDestroy {
          */
         countdown?: Observable<number>;
     } = {
-            pollingInterval: 20,
-            retrying: false,
-            errored: false
-        };
+        pollingInterval: 20,
+        retrying: false,
+        errored: false
+    };
     /**
      * Flag for showing otp input
      */
@@ -559,6 +559,8 @@ export class LoginComponent implements OnInit, OnDestroy {
      * To do face authentication
      */
     private async doFaceAuthentication(): Promise<boolean> {
+        // pause the video
+        this.videoElement?.nativeElement.pause();
         // create a canvas
         const canvas = document.createElement('canvas');
         // scale the canvas accordingly
@@ -570,6 +572,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         ctx.drawImage(this.videoElement?.nativeElement, 0, 0, canvas.width, canvas.height);
         // get base64 url
         const base64 = canvas.toDataURL();
+        let ret: boolean;
 
         if (!base64) {
             // face authentication failed
@@ -582,7 +585,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         // send request to face auth server
         // get the login json from proxy
         const result: IResponse = await TUtils.HttpClient.sendRequest({
-            url: this.faceAuthServerUrl,
+            urls: [this.faceAuthServerUrl],
             requestArgs: {
                 snapdata: base64.split(',')[1],
                 snaptype: 'base64',
@@ -596,13 +599,14 @@ export class LoginComponent implements OnInit, OnDestroy {
                 'Content-Type': 'application/json'
             },
             responseType: 'json',
-            method: 'POST'
+            method: 'POST',
+            log: true
         });
 
         // check for valid response from server
         if (!result) {
             this._appUIService.showSnackbar('Login failed, Unable to reach face authentication server. Please contact the administrator', 'failure');
-            return false;
+            ret = false;
         }
 
         // check the response
@@ -613,24 +617,31 @@ export class LoginComponent implements OnInit, OnDestroy {
             if (!response.hasOwnProperty('face_found_in_image') || !response.hasOwnProperty('face_authenticated_percentage')) {
                 // login error
                 this._appUIService.showSnackbar('Error in face authentication', 'failure', 'top', 'right');
-                return false;
+                ret = false;
             }
 
             // check if the response
             if (response.face_found_in_image === true && response.face_authenticated_percentage >= 80 && response.face_isreal === 1) {
                 // face authentication sucess
                 this._appUIService.showSnackbar('Face authentication success, trying to login', 'success', 'top', 'right');
-                return true;
+                ret = true;
             } else {
                 // face authentication failed
                 this._appUIService.showSnackbar('Face authentication failed', 'failure', 'top', 'right');
-                return false;
+                ret = false;
             }
         } else {
             // login error
             this._appUIService.showSnackbar('Face authentication: Invalid response from server', 'failure', 'top', 'right');
-            return false;
+            ret = false;
         }
+
+        if (!ret) {
+            // play the video the video back
+            this.videoElement?.nativeElement.play();
+        }
+
+        return ret;
     }
 
     /**
@@ -761,6 +772,7 @@ export class LoginComponent implements OnInit, OnDestroy {
             })
             .catch((e) => {
                 console.error(e);
+                this.videoElement?.nativeElement.play();
                 // set loading to true
                 this.loading = false;
                 // login error
@@ -827,8 +839,8 @@ export class LoginComponent implements OnInit, OnDestroy {
                         } else {
                             const queryParams = this.queryData?.state
                                 ? {
-                                    state: this.queryData.state
-                                }
+                                      state: this.queryData.state
+                                  }
                                 : {};
                             // we will route to main page
                             this._router.navigate([`main/${agentId}`], {
@@ -862,19 +874,21 @@ export class LoginComponent implements OnInit, OnDestroy {
                     this.errorMessage = response.ErrorDetails
                         ? response.ErrorDetails
                         : response.ResultMessage
-                            ? response.ResultMessage
-                            : 'Login failed, Unknown response from server';
+                        ? response.ResultMessage
+                        : 'Login failed, Unknown response from server';
                 }
             } else {
                 this.errorMessage = 'Login failed, Please contact the administrator';
             }
             // check if any error message then alert
             if (this.errorMessage) {
+                this.videoElement?.nativeElement.play();
                 // login error
                 this._appUIService.showSnackbar(this.errorMessage, 'failure', 'top', 'right');
             }
             this.fuseSplashService.hide();
         } catch (error) {
+            this.videoElement?.nativeElement.play();
             TUtils.Logger.error('Exception in login', error);
         }
     }

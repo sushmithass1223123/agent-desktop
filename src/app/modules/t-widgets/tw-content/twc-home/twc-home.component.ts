@@ -7,6 +7,7 @@ import { FuseFacadeService } from '@services/fuse-facade.service';
 import { IAgentData, SDKClient } from '@tmac/sdk';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { ContentPageService } from 'app/services/content-page.service';
+import { differenceInHours, startOfDay } from 'date-fns';
 import { takeUntil } from 'rxjs/operators';
 
 /**
@@ -105,7 +106,7 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
         this.duration = this.data.Data.Duration || 100;
 
         this.maxDate = new Date();
-        this.maxDate.setDate(this.maxDate.getDate() - 1);
+        this.maxDate.setDate(this.maxDate.getDate());
 
         // subscribe to dashboard service
         this._dashboardService.subscribe();
@@ -154,7 +155,14 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
         };
 
         this.dashboardDataFromDate.formControl.valueChanges.subscribe((date: Date) => {
-            const deltaTime = Math.ceil((Date.now() - date.getTime()) / (1000 * 60 * 60));
+            let deltaTime: number;
+            // check if the date is today, the take from start of the day
+            if (date.getDate() === new Date().getDate()) {
+                deltaTime = differenceInHours(new Date(), startOfDay(Date.now()));
+            }
+            else {
+                deltaTime = differenceInHours(new Date(), date);
+            }
             this.duration = deltaTime;
             this.registerToService(true);
             this.showDashboardDataSpanOverlay = false;

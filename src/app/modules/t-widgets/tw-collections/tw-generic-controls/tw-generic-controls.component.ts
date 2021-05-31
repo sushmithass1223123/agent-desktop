@@ -50,6 +50,11 @@ export class TwGenericControlsComponent extends TWidgetWrapper implements OnInit
     };
 
     /**
+     * To allow user to close
+     */
+    closeInteractionAllowed: boolean;
+
+    /**
      * Fuse custom config
      */
     customFuse = {
@@ -74,6 +79,9 @@ export class TwGenericControlsComponent extends TWidgetWrapper implements OnInit
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
+
+        // check config, default close interaction is true
+        this.closeInteractionAllowed = this.data.Data.CloseInteractionAllowed ?? true;
 
         if (this.data.InteractionDetails) {
             const interactionDetails = this.data.InteractionDetails;

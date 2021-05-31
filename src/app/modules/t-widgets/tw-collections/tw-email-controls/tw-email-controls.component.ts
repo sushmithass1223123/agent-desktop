@@ -575,7 +575,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Forward Email
      */
-    forwardEmail(): void {}
+    forwardEmail(): void { }
 
     /**
      * Show reply email form
@@ -704,13 +704,13 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 body: Body,
                 ...(EventName === 'OutgoingEmailEvent'
                     ? {
-                          inboxSessionId: InSessionId,
-                          outboxSessionId: OutSessionId
-                      }
+                        inboxSessionId: InSessionId,
+                        outboxSessionId: OutSessionId
+                    }
                     : {
-                          inboxSessionId: SessionId,
-                          outboxSessionId: OutSessionID
-                      }),
+                        inboxSessionId: SessionId,
+                        outboxSessionId: OutSessionID
+                    }),
                 routeId: '',
                 subject: Subject,
                 typeOfResponse: ''
@@ -767,13 +767,13 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                         ccList: CC || '',
                         ...(EventName === 'OutgoingEmailEvent'
                             ? {
-                                  inboxSessionId: InSessionId,
-                                  outboxSessionId: OutSessionId
-                              }
+                                inboxSessionId: InSessionId,
+                                outboxSessionId: OutSessionId
+                            }
                             : {
-                                  inboxSessionId: SessionId,
-                                  outboxSessionId: OutSessionID
-                              }),
+                                inboxSessionId: SessionId,
+                                outboxSessionId: OutSessionID
+                            }),
                         routeId: '',
                         subject: Subject,
                         toList: From,
@@ -816,13 +816,13 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 ccList: CC.join(','),
                 ...(EventName === 'OutgoingEmailEvent'
                     ? {
-                          inboxSessionId: InSessionId,
-                          outboxSessionId: OutSessionId
-                      }
+                        inboxSessionId: InSessionId,
+                        outboxSessionId: OutSessionId
+                    }
                     : {
-                          inboxSessionId: SessionId,
-                          outboxSessionId: OutSessionID
-                      }),
+                        inboxSessionId: SessionId,
+                        outboxSessionId: OutSessionID
+                    }),
                 routeId: '',
                 subject: Subject,
                 toList: To.join(','),
@@ -939,7 +939,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                  <div class="text-primary mat-body-2 m-0">${item.Message.replace(/(?:\r\n|\r|\n)/g, '<br>')}</div>
                  <span class="time secondary-text mat-body-1">${item.User}</span>,
                  <span class="time secondary-text mat-body-1">${new Date(item.Time).toLocaleString()}</span>
-                 <br /><br />
+                 <br />
+                 <br />
                  `;
         });
         message += 'Add new comment:';

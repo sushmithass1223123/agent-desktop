@@ -648,7 +648,7 @@ export class TMACEventService {
         if (!evt.RecoveryEvent) {
             if (tcmClientUrl) {
                 TUtils.HttpClient.sendRequest({
-                    url: tcmClientUrl + '/OnDacNotificationEvent',
+                    urls: [tcmClientUrl + '/OnDacNotificationEvent'],
                     header: {
                         'Content-Type': 'application/json'
                     },
@@ -1009,6 +1009,17 @@ export class TMACEventService {
                     log: true
                 });
             }
+            // to close tab/interaction
+            else if (fn === 'closetab' || fn === 'closeinteraction') {
+                // check the interactionId
+                const intId = message.data.interactionID ?? message.data.InteractionID ?? message.data.intId;
+                if (!intId) {
+                    TUtils.Logger.info('TMACEventService: PostMessage to close tab reject, interaction id not found');
+                    return;
+                }
+                // close tab
+                SDKClient.closeInteraction(message.data.interactionID);
+            }
         });
     }
 
@@ -1129,6 +1140,13 @@ export class TMACEventService {
             return events;
         }
         return [];
+    }
+
+    /**
+     * To get interaction as well as non interaction events
+     */
+    public getAllEventsArray(): any[] {
+        return [...this._nonInteractionEventArray, ...this._interactionEventArray];
     }
 
     /**

@@ -102,7 +102,7 @@ export class TwVoiceCannedResponsesComponent extends TWidgetWrapper implements O
     public async sendItem(item: AgentInteractionTemplate): Promise<void> {
         // get the audio buffer from wav file
         const result: IResponse = await TUtils.HttpClient.sendRequest({
-            url: item.Data,
+            urls: [item.Data],
             responseType: 'arraybuffer'
         });
 

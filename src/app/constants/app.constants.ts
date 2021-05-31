@@ -243,7 +243,12 @@ export const AGENT_FEATURES = {
     IsChatHoldEnabled: 'ischatholdenabled',
     IsVideoSnapshotEnabled: 'isvideosnapshotenabled',
     IsChatVoiceNoteEnabled: 'ischatvoicenoteenabled',
-    IsChatScreenshareEnabled: 'ischatscreenshareenabled'
+    IsChatScreenshareEnabled: 'ischatscreenshareenabled',
+    IsFaxOutEnabled: 'isfaxoutenabled',
+    IsSMSOutEnabled: 'issmsoutenabled',
+    IsWhatsAppOutEnabled: 'iswhatsappoutenabled',
+    IsEmailOutEnabled: 'isemailoutenabled',
+    IsOneWayVideoEnabled: 'isonewayvideoenabled'
 };
 
 /**

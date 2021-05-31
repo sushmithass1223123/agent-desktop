@@ -13,6 +13,7 @@ import { TwAhtTcComponent } from './tw-aht-tc/tw-aht-tc.component';
 import { TwAmdocsBccComponent } from './tw-amdocs-bcc/tw-amdocs-bcc.component';
 import { TwAudioVideoControlsComponent } from './tw-audio-video-controls/tw-audio-video-controls.component';
 import { TwCalendarModule } from './tw-calendar/tw-calendar.module';
+import { TwCampaignContactComponent } from './tw-campaign-contact/tw-campaign-contact.component';
 import { TwCannedResponsesComponent } from './tw-canned-responses/tw-canned-responses.component';
 import { TwChatControlsModule } from './tw-chat-controls/tw-chat-controls.module';
 import { TwChatPanelComponent } from './tw-chat-panel/tw-chat-panel.component';
@@ -98,7 +99,8 @@ const collectionComponents = [
     TwFaxControlsComponent,
     TwGenericPanelComponent,
     TwGenericControlsComponent,
-    TwAudioVideoControlsComponent
+    TwAudioVideoControlsComponent,
+    TwCampaignContactComponent
 ];
 
 /**

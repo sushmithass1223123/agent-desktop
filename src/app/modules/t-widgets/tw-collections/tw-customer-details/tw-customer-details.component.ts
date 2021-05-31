@@ -1,11 +1,9 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { TMACEventService } from '@services/tmac-event.service';
-import {
-    IUIEvent, TUtils
-} from '@tmac/sdk';
+import { IUIEvent, TUtils } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { get, join } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
+import { getValueFromJson } from 'app/utils';
 
 /**
  * Custommer details widget
@@ -63,12 +61,12 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
         this.interactionId = this.data.InteractionDetails.InteractionID;
 
         // get the customer info config
-        this.customerInfo = this.data.Data.CustomerInfo;
+        this.customerInfo = this.data.Data.CustomerInfo ?? [];
 
         // create event names to subscribe
         const eventNames = [];
 
-        this.customerInfo.forEach(c => {
+        this.customerInfo.forEach((c) => {
             try {
                 // get the event name
                 const eventName = c.ValueSource?.split('.')?.shift();
@@ -85,10 +83,11 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
         this._tmacEventService
             .getInteractionEvents(eventNames, this.interactionId)
             .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(evts => evts.forEach(evt => {
-                this.processCustomerDetails(evt);
-            }
-            ));
+            .subscribe((evts) =>
+                evts.forEach((evt) => {
+                    this.processCustomerDetails(evt);
+                })
+            );
     }
 
     /**
@@ -118,10 +117,7 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
             if (valueSource.toLowerCase().includes('jsonparse')) {
                 // expected value = jsonparse(EventName.{...path}).getValue
                 // get the path by taking string between ()
-                const path = valueSource.substring(
-                    valueSource.lastIndexOf('(') + 1,
-                    valueSource.lastIndexOf(')')
-                );
+                const path = valueSource.substring(valueSource.lastIndexOf('(') + 1, valueSource.lastIndexOf(')'));
 
                 if (path) {
                     // split the value source
@@ -132,19 +128,16 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
                     }
 
                     // get the value from path
-                    const jsonStr = this.GetValueFromJson(valueSourceSplit, evt, '');
+                    const jsonStr = getValueFromJson(valueSourceSplit, evt, '');
 
                     if (jsonStr) {
                         // get the property by taking string between ) and last
-                        const prop = valueSource.substring(
-                            valueSource.lastIndexOf(')') + 2,
-                            valueSource.length);
+                        const prop = valueSource.substring(valueSource.lastIndexOf(')') + 2, valueSource.length);
 
                         item.Value = JSON.parse(jsonStr)[prop] ?? '';
                     }
                 }
-            }
-            else {
+            } else {
                 valueSourceSplit = item.ValueSource.split('.');
                 // check if the value source event name matches with the current event
                 if (valueSourceSplit[0] !== evt.EventName) {
@@ -152,32 +145,16 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
                 }
 
                 // get the value from path or default value
-                item.Value = this.GetValueFromJson(valueSourceSplit, evt, item.DefaultValue);
+                item.Value = getValueFromJson(valueSourceSplit, evt, item.DefaultValue);
             }
         });
-    }
-
-    /**
-     * To get property value from json
-     * 
-     * @param {String[]} valueSourceSplit 
-     * @param {IUIEvent} evt 
-     * @param {String} defaultValue 
-     */
-    private GetValueFromJson(valueSourceSplit: string[], evt: IUIEvent, defaultValue: string): string {
-        // remove the event name from the array
-        valueSourceSplit.shift();
-        // map the property and get the value from event property
-        const valueMap = join(valueSourceSplit, '.');
-        // get the value from path or default value
-        return get(evt, valueMap, defaultValue);
-    }
+    };
 }
 
 /**
  * Customer info Model
  */
-export interface CustomerInfo {
+interface CustomerInfo {
     /**
      * Title
      */

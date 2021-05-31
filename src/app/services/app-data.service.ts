@@ -2,10 +2,12 @@ import { DOCUMENT } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { IResponse, SDKClient, TEnums, TUtils } from '@tmac/sdk';
-import { getFuseConfigByTheme } from 'app/utils';
+import { IAppConfig } from 'app/interfaces';
+import { formatJsonData, getFuseConfigByTheme } from 'app/utils';
 import { environment } from 'environments/environment';
 import { merge } from 'lodash';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { version } from '../../../package.json';
 import { FuseFacadeService } from './fuse-facade.service';
 
@@ -142,7 +144,7 @@ export class AppDataService {
 
         // get the login json from proxy
         const loginJson: IResponse = await TUtils.HttpClient.sendRequest({
-            url: `${data.ProxyUrl}/GetTmacLoginJson`,
+            urls: [`${data.ProxyUrl}/GetTmacLoginJson`],
             header: {
                 'Content-Type': 'application/json'
             },
@@ -317,5 +319,18 @@ export class AppDataService {
                 webFont
             };
         }
+    }
+
+    /**
+     * Gets app specific keys from app config
+     *
+     * @param {Record<string , string>} json
+     * @returns {Observable<Partial<IAppConfig>>}
+     */
+    public getConfig(json?: Record<string, string>): Observable<any | Partial<IAppConfig>> {
+        if (json) {
+            return this._configSubject.pipe(map((conf) => formatJsonData(conf, json)));
+        }
+        return this._configSubject;
     }
 }

@@ -42,7 +42,7 @@ export class WidgetPreviewComponent implements OnInit {
         private _router: Router,
         private _fuseProgressBarService: FuseProgressBarService,
         private fuseSplashService: FuseSplashScreenService
-    ) { }
+    ) {}
 
     /**
      * Lifecycle Hook
@@ -113,7 +113,7 @@ export class WidgetPreviewComponent implements OnInit {
             this._fuseProgressBarService.show();
             // get the template json
             const result: IResponse = await TUtils.HttpClient.sendRequest({
-                url: `${this.appConfig.ProxyUrl}/GetWidgetPreviewJson`,
+                urls: [`${this.appConfig.ProxyUrl}/GetWidgetPreviewJson`],
                 requestArgs: { id: templateName },
                 header: {
                     'Content-Type': 'application/json'

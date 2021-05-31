@@ -84,10 +84,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
         ext: string;
     }[] = [];
 
-    constructor(
-        private _appUIService: AppUiService,
-        private _fuseProgressBarService: FuseProgressBarService
-    ) { }
+    constructor(private _appUIService: AppUiService, private _fuseProgressBarService: FuseProgressBarService) {}
 
     /**
      * On init
@@ -107,8 +104,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
             setTimeout(() => {
                 this.attachFileRef.nativeElement.click();
             });
-        }
-        else if (this.attachPreviewMode === 'camera') {
+        } else if (this.attachPreviewMode === 'camera') {
             // open camera to take a picture
             this.attachPreviewMode = 'camera';
             // start camera
@@ -127,7 +123,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
 
     /**
      * To get type by file type
-     * 
+     *
      * @param {string} fileType
      */
     private getAttachTypeByFileType(fileType: string): string {
@@ -136,11 +132,9 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
         // get the type and check
         if (fileType.includes('image')) {
             type = 'image';
-        }
-        else if (fileType.includes('video')) {
+        } else if (fileType.includes('video')) {
             type = 'video';
-        }
-        else if (fileType.includes('audio')) {
+        } else if (fileType.includes('audio')) {
             type = 'audio';
         }
         return type;
@@ -186,7 +180,6 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
 
                 this.attachPreviewMode = 'preview';
             }
-
         } catch (e) {
             console.error(e);
             this._appUIService.showSnackbar('Failed to upload file', 'failure');
@@ -195,7 +188,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
 
     /**
      * Convert file to base64
-     * @param {File} file 
+     * @param {File} file
      */
     async convertToBase64(file: File): Promise<any> {
         return new Promise((resolve, reject) => {
@@ -227,7 +220,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
         const base64 = canvas.toDataURL();
         // create new file name
         const fileName = `image_${new Date().getTime()}.png`;
-        const size = Math.round(4 * Math.ceil((base64.length - 'data:image/png;base64,'.length / 3)) * 0.5624896334383812);
+        const size = Math.round(4 * Math.ceil(base64.length - 'data:image/png;base64,'.length / 3) * 0.5624896334383812);
 
         // create file from base64
         const res: Response = await fetch(base64);
@@ -266,14 +259,16 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
      */
     stopCamera(): void {
         if (this.selfVideo) {
-            this.selfVideo.getTracks().forEach((track: MediaStreamTrack) => { track.stop(); });
+            this.selfVideo.getTracks().forEach((track: MediaStreamTrack) => {
+                track.stop();
+            });
             this.selfVideo = null;
         }
     }
 
     /**
      * To send attachments
-     *  
+     *
      */
     async send(): Promise<void> {
         try {
@@ -303,7 +298,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
 
                         // upload the file
                         const { response } = await TUtils.HttpClient.sendRequest({
-                            url: this.fileUploadUrl.SMM,
+                            urls: [this.fileUploadUrl.SMM],
                             method: 'POST',
                             responseType: 'json',
                             formData
@@ -319,8 +314,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
                                 size: response.result.size,
                                 interactionId: response.result.interaction_id
                             });
-                        }
-                        else {
+                        } else {
                             this._appUIService.showSnackbar('Failed to upload file', 'failure');
                         }
 
@@ -346,7 +340,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
 
                         // upload the file
                         const { response } = await TUtils.HttpClient.sendRequest({
-                            url: this.fileUploadUrl.MediaProxy + '/api/FileUpload/Post/',
+                            urls: [this.fileUploadUrl.MediaProxy + '/api/FileUpload/Post/'],
                             method: 'POST',
                             responseType: 'json',
                             formData
@@ -361,8 +355,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
                                 src: response.url,
                                 size: file.size
                             });
-                        }
-                        else {
+                        } else {
                             this._appUIService.showSnackbar('Failed to upload file', 'failure');
                         }
 
@@ -376,12 +369,10 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
                         this._fuseProgressBarService.hide();
                     }
                 });
-            }
-            else {
+            } else {
                 // upload to TMAC proxy
                 const filesToUpload: FileSaveData[] = [];
                 this.uploadingFiles.forEach(async (file) => {
-
                     // add to the list
                     filesToUpload.push({
                         FileName: file.fileName,
@@ -411,7 +402,6 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
 
                 this._fuseProgressBarService.hide();
             }
-        } catch (error) {
-        }
+        } catch (error) {}
     }
 }
