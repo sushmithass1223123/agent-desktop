@@ -5,8 +5,6 @@ import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { FuseSharedModule } from '@fuse/shared.module';
 import * as Chart from 'chart.js';
 import { ChartsModule } from 'ng2-charts';
-import { QuillModule } from 'ngx-quill';
-import Quill from 'quill';
 import {
     AgentSkillListComponent,
     AlertDialogComponent,
@@ -27,9 +25,6 @@ import {
 } from './components';
 import { TWChartDirective } from './directives';
 import { MaterialModule } from './material.module';
-
-const SizeStyle = Quill.import('attributors/style/size');
-Quill.register(SizeStyle, true);
 
 Chart.defaults.global.responsive = true;
 Chart.defaults.global.legend.position = 'right';
@@ -78,7 +73,7 @@ const sharedComponents = [
  */
 @NgModule({
     declarations: sharedComponents,
-    imports: [CommonModule, ...sharedModules, QuillModule.forRoot()],
+    imports: [CommonModule, ...sharedModules],
     providers: [
         {
             provide: APP_BASE_HREF,

@@ -331,8 +331,8 @@
 
                         <mat-paginator
                             *ngIf="customerJourneyTable.tableData.source.data.length"
-                            (page)="pageEvent()"
-                            [pageSizeOptions]="[15, 20, 50, 100]"
+                            (page)="pageEvent($event)"
+                            [pageSizeOptions]="customerJourneyTable.tableData.pageSizes"
                             showFirstLastButtons
                         >
                         </mat-paginator>
@@ -564,7 +564,7 @@
                                     <button
                                         mat-stroked-button
                                         class="border-radius-20 m-4"
-                                        *ngIf="!showMoreAttachments && attachList.moreItems.length"
+                                        *ngIf="!showMoreAttachments && attachList.moreItems?.length"
                                         (click)="showMoreAttachments = !showMoreAttachments"
                                     >
                                         <mat-icon> expand_more </mat-icon>

@@ -280,7 +280,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 CC: '',
                 Files: [],
                 Subject: '',
-                To: ''
+                To: '',
+                From: this.currentInteraction.Mailbox
             };
             this.saveEmailAsDraft();
         }
@@ -609,7 +610,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             ${preBody} 
             ${this.domSanitizer.bypassSecurityTrustHtml(Body)['changingThisBreaksApplicationSecurity']['changingThisBreaksApplicationSecurity']}`,
             Subject: `RE: ${Subject}`,
-            Files
+            Files,
+            From: this.currentInteraction.Mailbox
         };
         this.saveEmailAsDraft();
     }
@@ -644,7 +646,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 ${preBody}
                 ${this.domSanitizer.bypassSecurityTrustHtml(Body)['changingThisBreaksApplicationSecurity']['changingThisBreaksApplicationSecurity']}`,
             Subject: `RE: ${Subject}`,
-            Files
+            Files,
+            From: this.currentInteraction.Mailbox
         };
         this.saveEmailAsDraft();
     }
@@ -674,7 +677,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 ${preBody}
                 ${this.domSanitizer.bypassSecurityTrustHtml(Body)['changingThisBreaksApplicationSecurity']['changingThisBreaksApplicationSecurity']}`,
             Subject: `FW: ${Subject}`,
-            Files
+            Files,
+            From: this.currentInteraction.Mailbox
         };
         this.saveEmailAsDraft();
     }
