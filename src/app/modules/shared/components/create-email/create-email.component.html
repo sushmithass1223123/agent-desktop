@@ -2,10 +2,10 @@
     <form class="twd-mb-2" novalidate>
         <div class="border-primary border-radius-20 w-100-p p-12">
             <div [formGroup]="emailRecipientFacade">
-                <div *ngIf="from">
+                <div *ngIf="emailInfo.From">
                     <div>
                         <span class="twd-font-bold twd-mr-1"> From: </span>
-                        {{ from }}
+                        {{ emailInfo.From }}
                     </div>
                 </div>
                 <div fxLayout fxLayoutAlign="space-between" fxLayoutGap="8px" class="twd-my-3">
@@ -90,7 +90,10 @@
             <div class="h-100-p w-100-p twd-absolute twd-top-0 twd-left-0">
                 <textarea [id]="editorState.id" class="twd-invisible"> </textarea>
             </div>
-            <div *ngIf="editorState.loading" class="twd-absolute twd-bg-white twd-bg-opacity-25 twd-w-full twd-h-full twd-z-10 twd-flex twd-items-center twd-justify-center">
+            <div
+                *ngIf="editorState.loading"
+                class="twd-absolute twd-bg-white twd-bg-opacity-25 twd-w-full twd-h-full twd-z-10 twd-flex twd-items-center twd-justify-center"
+            >
                 <p class="twd-text-lg twd-font-bold twd-text-center">Loading editor ...</p>
             </div>
         </div>

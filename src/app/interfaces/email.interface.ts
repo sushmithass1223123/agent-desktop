@@ -12,6 +12,7 @@ export interface EmailFile {
 
 export interface CreateEmailInput {
     To: string;
+    From?: string;
     CC: string;
     BCC: string;
     Body: string;

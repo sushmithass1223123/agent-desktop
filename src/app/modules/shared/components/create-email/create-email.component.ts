@@ -1,4 +1,4 @@
-import tinyMCE from 'tinymce';
+import { APP_BASE_HREF } from '@angular/common';
 import {
     AfterViewInit,
     Component,
@@ -14,8 +14,6 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { MatDialog } from '@angular/material/dialog';
-import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { SDKClient, TUtils } from '@tmac/sdk';
@@ -23,7 +21,7 @@ import { CreateEmailInput, CreateEmailOutput } from 'app/interfaces';
 import { maticonByExtension } from 'app/utils';
 import { merge } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
-import { APP_BASE_HREF } from '@angular/common';
+import tinyMCE from 'tinymce';
 
 /**
  * Email creation component view only
@@ -87,12 +85,7 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
     /**
      * Flag for disabling send
      */
-    @Input() sendDisabled ?= false;
-
-    /**
-     * A readonly value for from
-     */
-    @Input() from = '';
+    @Input() sendDisabled? = false;
 
     /**
      * Fuse custom background colors
@@ -125,13 +118,7 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     showAttachments = false;
 
-    constructor(
-        private appUiService: AppUiService,
-        @Inject(APP_BASE_HREF) private baseHref: string,
-        private matDialog: MatDialog,
-        private aotService: AOTWidgetService,
-        private _fuseFacadeService: FuseFacadeService
-    ) { }
+    constructor(private appUiService: AppUiService, @Inject(APP_BASE_HREF) private baseHref: string, private _fuseFacadeService: FuseFacadeService) {}
 
     /**
      * Lifecycle hook
@@ -335,7 +322,7 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
      * @param {string} preview
      */
     selectTemplate(html: string): void {
-        this.email.Body = `${this.email.Body} ${html}`;
+        this.email.Body = `${html} ${this.email.Body}`;
         tinyMCE.activeEditor.setContent(this.email.Body);
     }
     /**

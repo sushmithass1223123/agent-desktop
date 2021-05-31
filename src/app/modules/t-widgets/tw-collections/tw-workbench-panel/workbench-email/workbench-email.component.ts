@@ -1,9 +1,10 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
+import { APP_BASE_HREF } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { AfterViewInit, Component, ElementRef, Inject, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBarRef } from '@angular/material/snack-bar';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -13,16 +14,16 @@ import { TWidgetWrapper } from '@modules/t-widgets/utils';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
-import { SDKClient } from '@tmac/sdk';
-import { COMMON_ERR_MESSAGE, DRAFT_REASONS, SENT_REASONS, INBOX_REASONS, OUTBOX_REASONS, QUILL_EDITOR_CONFIG } from 'app/constants';
+import { SDKClient, TUtils } from '@tmac/sdk';
+import { COMMON_ERR_MESSAGE, DRAFT_REASONS, INBOX_REASONS, OUTBOX_REASONS, SENT_REASONS } from 'app/constants';
 import { AgentSkillListData, IWidget, ResData } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { formatJsonData, maticonByExtension } from 'app/utils';
 import { groupBy, sortBy } from 'lodash';
 import * as moment from 'moment';
-import Quill from 'quill';
 import { firstValueFrom, Observable, Subscription, timer } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
+import tinymce from 'tinymce';
 import { TwWorkBenchService } from '../tw-workbench-panel.service';
 
 type ComponentActions =
@@ -120,10 +121,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         sendingEmail: MatSnackBarRef<SnackbarComponent>;
     };
     /**
-     * Config for quill editor
-     */
-    editorConfig = QUILL_EDITOR_CONFIG;
-    /**
      * To store the fuse config for theme
      */
     // fuseConfig: FuseConfig;
@@ -142,6 +139,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * Selected Mail
      */
     selectedMails: any[] = [];
+    /**
+     * Selected Mail
+     */
+    selectedMailIds: any[] = [];
+
     /**
      * Email Search Stateful request
      */
@@ -212,11 +214,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     };
 
     /**
-     * Quill instance
-     */
-    quillInstance: any;
-
-    /**
      * List of availabloe mailboxes
      */
     availableMailboxes: string[] = [];
@@ -232,6 +229,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     @ViewChild('emailWorkBench')
     emailWorkBench: ElementRef<HTMLDivElement>;
 
+    /**
+     * Polling flags
+     */
     polling = {
         allowed: false,
         enabled: true,
@@ -244,6 +244,21 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     showCategoryMenu = true;
 
     /**
+     * Id for editor component
+     */
+    editorState = {
+        id: TUtils.Generic.uuid(),
+        loading: false
+    };
+
+    /**
+     * Selected email form control
+     */
+    // myForm = new FormGroup({
+    selectedEmailsControl = new FormArray([]);
+    // });
+
+    /**
      * Constructor
      */
     constructor(
@@ -254,6 +269,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         private appUiService: AppUiService,
         private matDialog: MatDialog,
         private _workbenchService: TwWorkBenchService,
+        @Inject(APP_BASE_HREF) private baseHref: string,
         private _aotWidgetService: AOTWidgetService
     ) {
         super();
@@ -288,7 +304,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         this._workbenchService.globalEmailWorkbenchState$.availableMailboxes.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe((res) => {
             this.availableMailboxes = res;
         });
-        // this.doAdvancedSearch();
+        this.selectedEmailsControl.valueChanges.subscribe({
+            next: console.log,
+            error: console.error,
+            complete: console.log
+        });
         this.sortControls.sortBy.valueChanges.subscribe(() => this.sortEmailsByKey());
     }
 
@@ -319,6 +339,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
      */
     ngOnDestroy(): void {
+        tinymce.activeEditor?.destroy();
         // call the wrapper destroy method
         this.destroyWrapper();
     }
@@ -396,7 +417,16 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         if (['sentitem', 'draft'].includes(this.currentTab)) {
             nodes = Object.entries(byMailList).reduce((acc, curr) => {
                 const [name, children] = curr;
-                acc.push({ name, children, To: name || '' });
+                const uiId = children.reduce((acc, curr) => {
+                    acc += curr.uiId;
+                    return acc;
+                }, '');
+                acc.push({
+                    name,
+                    children,
+                    To: name || ''
+                    // uiId
+                });
                 return acc;
             }, []);
         } else {
@@ -405,22 +435,32 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 const groupedNodes = groupBy(mailList, 'Skill');
                 const children = Object.entries(groupedNodes).map((n) => {
                     const [nodeName, grandChildrenNodes] = n;
+                    const subUiId = grandChildrenNodes.reduce((acc, curr) => {
+                        acc += curr.uiId;
+                        return acc;
+                    }, '');
                     return {
                         name: nodeName,
                         children: grandChildrenNodes,
                         To: name,
                         Skill: nodeName
+                        // uiId: subUiId
                     };
                 });
-                const grandChildren = children.reduce((acc, curr) => {
-                    acc += curr.children.length;
-                    return acc;
-                }, 0);
+                const { grandChildren, uiId } = children.reduce(
+                    (acc, curr) => {
+                        acc.grandChildren += curr.children.length;
+                        // acc.uiId += curr.uiId;
+                        return acc;
+                    },
+                    { grandChildren: 0, uiId: '' }
+                );
                 return {
                     name,
                     children,
                     To: name,
                     grandChildren
+                    // uiId
                 };
             });
         }
@@ -773,6 +813,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                         data.InSessionId = data.SessionId;
                         data.OutSessionId = data.OutSessionId;
                         data.uiId = `${data.SessionId}|${data.OutSessionID}`;
+                        data.addedTime = new Date(x.addedTime);
                         return data;
                     })
                 }))
@@ -905,7 +946,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                         return {
                             ...x,
                             To: x.mailbox,
-                            ToList: x.To,
+                            ToList: x.toList,
                             Skill: x.makerSkillName || x.cmSkill,
                             Subject: x.subject,
                             From: x.from,
@@ -991,11 +1032,13 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     /**
      * Select emails
      */
-    selectEmail(evt: MatCheckboxChange): void {
-        if (evt.checked) {
-            this.selectedMails.push(evt.source.value);
+    selectEmail(node: any, checked: boolean): void {
+        if (checked) {
+            this.selectedMails.push(node);
+            this.selectedMailIds.push(node.uiId);
         } else {
-            this.selectedMails = this.selectedMails.filter((x) => x.uiId !== (evt.source.value as any).uiId);
+            this.selectedMails = this.selectedMails.filter((x) => x.uiId !== node.uiId);
+            this.selectedMailIds = this.selectedMails.map((x) => x.uiId) || [];
         }
     }
 
@@ -1056,9 +1099,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     switchTab(tab: AvailableTabs): void {
         this.currentTab = tab;
-        this.selectedMails = [];
-        this.emailSearchRes.data.selected = false;
-        // this.resetForm();
+        this.removeEmailsfromView('all');
         this.emailBodies = {};
         this.doAdvancedSearch();
     }
@@ -1163,7 +1204,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             this.replyEditorModal = {
                 sendEmail: async () => {
                     try {
-                        const reply = this.quillInstance.root.innerHTML;
+                        const reply = tinymce.activeEditor.getContent();
                         if (reply && reply !== '<p><br></p>') {
                             this.setComponentState('email/reply/loading');
                             const { routeIds, uiIds } = emails.reduce(
@@ -1179,6 +1220,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                                 routeIdList: routeIds.join(',')
                             });
                             this.selectedMails = [];
+                            this.selectedMailIds = [];
                             if (uiIds.includes(this.emailSearchRes.data.selected.uiId)) {
                                 this.emailSearchRes.data.selected = null;
                             }
@@ -1200,8 +1242,45 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             };
             widget.Data = this.replyEditorModal;
             this._aotWidgetService.addWidget(widget);
+            this.editorState.loading = true;
             setTimeout(() => {
-                this.quillInstance = new Quill(this.ReplyEditor.nativeElement, QUILL_EDITOR_CONFIG);
+                tinymce
+                    .init({
+                        selector: `textarea#${this.editorState.id}`,
+                        min_height: 200,
+                        height: '100%',
+                        menubar: false,
+                        fontsize_formats: '8pt 9pt 10pt 11pt 12pt 26pt 36pt',
+                        forced_root_block: false,
+                        // force_br_newlines: true,
+                        // force_p_newlines: false,
+                        branding: false,
+                        base_url: `${this.baseHref}assets/tinymce/`,
+                        content_css: `${this.baseHref}assets/tinymce/editor.css`,
+                        plugins: [
+                            'advlist autolink lists link image charmap print preview anchor',
+                            'searchreplace visualblocks code fullscreen',
+                            'insertdatetime media table paste code wordcount'
+                        ],
+                        toolbar:
+                            'undo redo | formatselect | ' +
+                            'bold italic backcolor | alignleft aligncenter ' +
+                            'alignright alignjustify | bullist numlist outdent indent | ' +
+                            'removeformat | help',
+                        content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+                        setup: (editor) => {
+                            editor.on('init', () => {
+                                this.editorState.loading = false;
+                            });
+                        }
+                    })
+                    .then(() => {
+                        console.log('Email editor loaded succesfully');
+                    })
+                    .catch((err) => {
+                        console.error('Unable to load editor');
+                        console.error(err);
+                    });
             }, 0);
         } catch (e) {
             console.error(e);
@@ -1230,11 +1309,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             this.appUiService.showSnackbar('Sorry, there is something wrong with this template', 'failure');
             return;
         }
-        if (!this.quillInstance) {
-            this.appUiService.showSnackbar('Sorry, unable to assign template', 'failure');
-            return;
-        }
-        this.quillInstance.clipboard.dangerouslyPasteHTML((html || '').replaceAll('<a', '<a target="_blank"'));
+        tinymce.activeEditor.setContent((html || '').replaceAll('<a', '<a target="_blank"'));
     }
 
     /**
@@ -1255,6 +1330,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             case 'emails/loading':
                 this.emailSearchRes.loading = true;
                 this.emailSearchRes.error = false;
+                this.emailSearchRes.data.selected = false;
                 break;
 
             case 'emails/success':
@@ -1318,12 +1394,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * @returns
      */
     trackBy = (_index: number, email: any): string => {
-        const nodes = this.getAllEmailNodes();
-        const index = nodes.reduce((acc, curr) => {
-            acc += curr.uiId;
-            return acc;
-        }, '');
-        return index;
+        return email.uiId;
     };
 
     /**
@@ -1334,6 +1405,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         if (ids) {
             if (['all', 'selected'].includes(type)) {
                 this.selectedMails = this.selectedMails.filter((m) => !ids.includes(m.uiId));
+                this.selectedMailIds = this.selectedMails.filter((m) => m.uiId) || [];
             }
             if (['all', 'opened'].includes(type) && ids.includes(this.emailSearchRes.data.selected?.uiId)) {
                 this.emailSearchRes.data.selected = null;
@@ -1341,6 +1413,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         } else {
             if (['all', 'selected'].includes(type)) {
                 this.selectedMails = [];
+                this.selectedMailIds = [];
             }
             if (['all', 'opened'].includes(type)) {
                 this.emailSearchRes.data.selected = null;
