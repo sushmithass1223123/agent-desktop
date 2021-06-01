@@ -663,7 +663,10 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             interaction = this.customerJourneyTable.tableData.selection.selected[0];
         }
 
+        this.emailThreadReq.error = false;
+        this.emailThreadReq.data = null;
         this.emailThreadReq.loading = true;
+
         const fetchFromOutbox = interaction.Direction === 'Out';
 
         const onSuccess = (res: any) => {

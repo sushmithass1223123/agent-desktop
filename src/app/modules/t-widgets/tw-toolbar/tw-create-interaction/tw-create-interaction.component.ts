@@ -40,10 +40,7 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
      */
     openList: boolean;
 
-    constructor(
-        private _matDialog: MatDialog,
-        private _agentFeaturesService: AgentFeaturesService
-    ) {
+    constructor(private _matDialog: MatDialog, private _agentFeaturesService: AgentFeaturesService) {
         // set the unsubscribeAll defaults
         this._unsubscribeAll = new Subject();
     }
@@ -55,15 +52,12 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
         // get the channels from config
         this.channels = this.data.Data.Channels;
 
-        this._agentFeaturesService
-            .features
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((change: boolean) => {
-                if (change) {
-                    // check agent features
-                    this.checkAgentFeatures();
-                }
-            });
+        this._agentFeaturesService.features.pipe(takeUntil(this._unsubscribeAll)).subscribe((change: boolean) => {
+            if (change) {
+                // check agent features
+                this.checkAgentFeatures();
+            }
+        });
 
         // check agent features
         this.checkAgentFeatures();
@@ -84,31 +78,28 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
      */
     private checkAgentFeatures(): void {
         // check the agent features to enable/disable
-        SDKClient.getAgentData().featuresList.forEach(f => {
+        SDKClient.getAgentData().featuresList.forEach((f) => {
             // get the featue
             const feature = f.Feature.toLowerCase();
 
-            this.channels.forEach(c => {
+            this.channels.forEach((c) => {
                 // get the subtype
                 const subtype = c.SubType.toLowerCase();
 
                 if (feature === AGENT_FEATURES.IsFaxOutEnabled && subtype === 'fax') {
                     c.Enabled = f.IsEnabled;
-                }
-                else if (feature === AGENT_FEATURES.IsSMSOutEnabled && subtype === 'sms') {
+                } else if (feature === AGENT_FEATURES.IsSMSOutEnabled && subtype === 'sms') {
                     c.Enabled = f.IsEnabled;
-                }
-                else if (feature === AGENT_FEATURES.IsWhatsAppOutEnabled && subtype === 'whatsapp') {
+                } else if (feature === AGENT_FEATURES.IsWhatsAppOutEnabled && subtype === 'whatsapp') {
                     c.Enabled = f.IsEnabled;
-                }
-                else if (feature === AGENT_FEATURES.IsEmailOutEnabled && subtype === 'email') {
+                } else if (feature === AGENT_FEATURES.IsEmailOutEnabled && subtype === 'email') {
                     c.Enabled = f.IsEnabled;
                 }
             });
         });
 
         // filter all enabled channels
-        this.channels = this.channels.filter(c => c.Enabled);
+        this.channels = this.channels.filter((c) => c.Enabled);
     }
 
     /**
@@ -140,7 +131,7 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
      * @param data
      */
     addInteraction(channel: string, data: any): void {
-        this.channels = [];
+        this.openList = false;
         switch (channel.toLowerCase()) {
             case 'text':
                 this._matDialog.open(CreateMessagingComponent, {
