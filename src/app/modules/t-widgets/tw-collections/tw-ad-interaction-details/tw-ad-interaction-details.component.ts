@@ -4,10 +4,11 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { fuseAnimations } from '@fuse/animations';
+import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CustomSDKEvent } from 'app/interfaces';
-import { orderBy, sortBy } from 'lodash';
+import { orderBy } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 
 /**
@@ -99,9 +100,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         AgentComment: new FormControl()
     });
 
-    constructor(
-        private _tmacEventService: TMACEventService
-    ) {
+    constructor(private _tmacEventService: TMACEventService, private _appUIService: AppUiService) {
         super();
     }
 
@@ -132,7 +131,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         this._tmacEventService
             .getEvents(['AgentInteractionDetailsEvent'])
             .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
+            .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
     }
 
     /**
@@ -248,8 +247,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         // check if empty array then reset
         if (!evt.Data.length) {
             this.interactionList = [];
-        }
-        else {
+        } else {
             this.interactionList = [...this.interactionList, ...evt.Data];
         }
 
@@ -286,5 +284,25 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
 
         this.interactionDetailsTable.source = new MatTableDataSource(source);
         this.interactionDetailsTable.source.sort = this.sort;
+    }
+
+    /**
+     * To show agent notes
+     *
+     * @param notes
+     */
+    showNotes(notes: string): void {
+        this._appUIService.showCustomDialog(
+            'alert',
+            notes,
+            'Comments',
+            {
+                messageClasses: 'twd-whitespace-pre-line'
+            },
+            {
+                minWidth: '30%',
+                maxWidth: '30%'
+            }
+        );
     }
 }

@@ -455,7 +455,6 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.configLoaded(config);
         this.getData();
         this.checkQueryParams();
-        this._appDataService.setTheme();
     }
 
     /**

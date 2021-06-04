@@ -1,12 +1,11 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { AppDataService } from '@services/app-data.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { getStringVars, setStringVars } from '@tmac/operators';
 import { SDKClient } from '@tmac/sdk';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
-import { IPostMessage } from 'app/interfaces';
+import { CustomTMACEventTypes, IPostMessage } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
 import { Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -22,10 +21,6 @@ import { takeUntil } from 'rxjs/operators';
 })
 export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDestroy {
     /**
-     * Fuse Config
-     */
-    // fuseConfig: FuseConfig;
-    /**
      * Fuse custom config
      */
     customFuse$ = this._fuseFacadeService.getConfig({ flatTheme: 'flatTheme' });
@@ -38,6 +33,10 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
      */
     url: any;
     /**
+     * Id and name of frame
+     */
+    idName: string;
+    /**
      * Flag to unload the page
      */
     unload: boolean;
@@ -49,23 +48,43 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
      * Auto refresh interval
      */
     autoRefreshInterval: any;
+    /**
+     * Excluded events to emit
+     */
+    excludedEvents: CustomTMACEventTypes[];
 
     /**
      * Constructor
-     * @param {ElementRef} hostElement 
-     * @param {ContentPageService} contentPageService 
-     * @param {DomSanitizer} _sanitizer 
+     * @param {ElementRef} hostElement
+     * @param {ContentPageService} contentPageService
+     * @param {DomSanitizer} _sanitizer
      */
     constructor(
         public hostElement: ElementRef,
         public contentPageService: ContentPageService,
         private _sanitizer: DomSanitizer,
         private _tmacEventService: TMACEventService,
-        // private _fuseConfigService: FuseConfigService,
-        private _fuseFacadeService: FuseFacadeService,
-        private _appDataService: AppDataService
+        private _fuseFacadeService: FuseFacadeService
     ) {
         super(hostElement, contentPageService);
+
+        this.excludedEvents = [
+            'WallboardRefreshEvent',
+            'TeamWallboardRefreshEvent',
+            'QuizEvent',
+            'TeamAgentListEvent',
+            'AgentInteractionDetailsEvent',
+            'AgentChannelListEvent',
+            'AgentStatusDetailsEvent',
+            'SupervisorAgentListEvent',
+            'TeamAgentListDataEvent',
+            'TeamChannelListEvent',
+            'TeamIntentListEvent',
+            'TeamActiveStatusDetailsEvent',
+            'TeamActiveChannelListEvent',
+            'TeamAgentInteractionDetailsEvent',
+            'TeamrWorkCodeDetailsEvent'
+        ];
     }
 
     /**
@@ -75,22 +94,29 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        // subscribe to the config changes
-        // this._fuseConfigService.config
-        //     .pipe(takeUntil(this.unsubscribeAll))
-        //     .subscribe((fuseConfig: FuseConfig) => {
-        //         this.fuseConfig = fuseConfig;
-        //     });
+        // assign id
+        this.idName = `twc_frame_${this.data.ID}`;
 
         // register to post message subject
-        this._appDataService.postMessage
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((data: IPostMessage) => {
-                // check if the function is to get TMAC events
-                if (data.function?.toLowerCase() === 'gettmacevents') {
-                    this.sendEventsToWindow(this._tmacEventService.nonInteractionEvents());
-                }
-            });
+        this._tmacEventService.postMessage.pipe(takeUntil(this.unsubscribeAll)).subscribe((message: IPostMessage) => {
+            const fn = message.function?.toLowerCase();
+            // check the message from frame
+            if (message.name && message.name !== this.idName) {
+                // ignore message from different id
+                return;
+            }
+            switch (fn) {
+                case 'gettmacevents': // to get TMAC events
+                    const events = this._tmacEventService.getAllEventsArrayExcluded(this.excludedEvents);
+                    // check event are there
+                    if (events.length) {
+                        // send event to the frame/opener
+                        this.sendEventsToWindow(events);
+                    }
+                    break;
+                default:
+            }
+        });
 
         this.eventSubscriptions = null;
         this.unload = this.data.Data.Unload || false;
@@ -132,7 +158,7 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
 
     /**
      * To sanitize the URL to load URL safely
-     * 
+     *
      * @param url Url to transform
      */
     private transform(url: string): any {
@@ -153,12 +179,9 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
                 let setJson = {};
 
                 if (stringVals && stringVals.length) {
-                    stringVals.forEach(val => {
+                    stringVals.forEach((val) => {
                         // get the path by taking string between ()
-                        const path = val.substring(
-                            val.lastIndexOf('${') + 2,
-                            val.lastIndexOf('}')
-                        );
+                        const path = val.substring(val.lastIndexOf('${') + 2, val.lastIndexOf('}'));
                         const splitPath = path.split('.');
                         if (splitPath[0].toLowerCase() === 'agentdata') {
                             setJson = {
@@ -186,7 +209,7 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
                 }
             }
         }
-    }
+    };
 
     /**
      * On page inactive callback
@@ -203,7 +226,7 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
                 }
             }
         }
-    }
+    };
 
     /**
      * Iframe loaded event
@@ -212,7 +235,7 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
         if (!this.eventSubscriptions) {
             // subscribe to all non interaction events
             this.eventSubscriptions = this._tmacEventService
-                .getAllEvents()
+                .getAllEventsExcluded(this.excludedEvents)
                 .pipe(takeUntil(this.unsubscribeAll))
                 .subscribe((evts) => this.sendEventsToWindow(evts));
         }
@@ -224,7 +247,7 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
                 this.loaded = true;
             });
         }
-    }
+    };
 
     /**
      * On refresh event
@@ -233,8 +256,12 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
         const urlRef = this.url;
         this.url = null;
         this.loaded = false;
-        setTimeout((x) => {
-            this.url = x;
-        }, 0, urlRef);
+        setTimeout(
+            (x) => {
+                this.url = x;
+            },
+            0,
+            urlRef
+        );
     }
 }

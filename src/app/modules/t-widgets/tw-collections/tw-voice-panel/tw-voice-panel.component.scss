@@ -2,15 +2,15 @@
 
 tw-voice-panel {
     display: grid;
-    .tw-voice-panel {
-        max-height: calc(100vh - 86px);
-        gap: 8px;
+
+    .tw-static-panel {
         .tw-voice-controls,
         .tw-customer-details,
         .tw-customer-journey {
             flex: 1;
-            transition: all 0.6s ease-in-out;
             height: 32.5%;
+            transition: all 300ms ease-in-out;
+
             &.maximized {
                 flex: 0;
                 &.collapsed {
@@ -26,10 +26,6 @@ tw-voice-panel {
                     flex: inherit;
                 }
             }
-        }
-
-        @include media-breakpoint('gt-md') {
-            max-height: calc(100vh - 95px);
         }
     }
 }

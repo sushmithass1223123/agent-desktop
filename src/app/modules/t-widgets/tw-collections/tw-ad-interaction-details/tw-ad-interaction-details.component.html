@@ -20,6 +20,10 @@
                                 ? 'phone'
                                 : element.Channel === 'TextChat'
                                 ? 'chat'
+                                : element.Channel === 'AudioChat'
+                                ? 'phone'
+                                : element.Channel === 'VideoChat'
+                                ? 'duo'
                                 : element.Channel === 'Email'
                                 ? 'email'
                                 : 'feed'
@@ -146,7 +150,10 @@
             <ng-container matColumnDef="AgentComment">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Comments</mat-header-cell>
                 <mat-cell *matCellDef="let element" class="px-8 text-truncate" [matTooltip]="element.AgentComment">
-                    {{ element.AgentComment || 'NA' }}
+                    {{ element.AgentComment ? '' : 'NA' }}
+                    <button *ngIf="element.AgentComment" mat-icon-button (click)="showNotes(element.AgentComment)">
+                        <mat-icon> notes </mat-icon>
+                    </button>
                 </mat-cell>
             </ng-container>
 

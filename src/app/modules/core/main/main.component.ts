@@ -109,7 +109,6 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
      */
     constructor(
         @Inject(DOCUMENT) private document: any,
-        // private _fuseConfigService: FuseConfigService,
         private _fuseFacadeService: FuseFacadeService,
         private _appDataService: AppDataService,
         private _fuseSidebarService: FuseSidebarService,
@@ -146,11 +145,6 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
         this.fuseSplashService.hide();
         // register to all the tmac events in service
         this._tmacEventsService.subscribe();
-
-        // subscribe to config changes
-        // this._fuseConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
-        //     this.fuseConfig = config;
-        // });
 
         // subscribe to app changes
         this._appDataService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
@@ -230,13 +224,12 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
         }
 
         // get the logging agent id
-        const agentId = history.state?.agentId || this.agentId;
+        const agentId = history.state?.agentId ?? this.agentId;
         // check the agent Id
         if (agentId) {
             if (route !== 'login') {
                 const config = await this._appDataService.getJsonConfig(agentId);
                 this.appConfig = config;
-                this._appDataService.setTheme();
             }
             // get the login data
             const loginData = await SDKClient.getLoginData(agentId);

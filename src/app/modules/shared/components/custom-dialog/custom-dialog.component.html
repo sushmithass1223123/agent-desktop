@@ -1,7 +1,7 @@
 <h1 matDialogTitle class="mb-8">{{ data.title || (data.type === 'alert' ? 'Alert' : 'Confirm') }}</h1>
 
 <div mat-dialog-content *ngIf="data.message" fxLayout="column" fxLayoutAlign=" none">
-    <p class="font-size-16 font-weight-600 my-8" [innerHTML]="data.message"></p>
+    <p class="font-size-16 font-weight-600 my-8" [ngClass]="data.messageClasses || ''" [innerHTML]="data.message"></p>
 
     <mat-form-field
         fxFlex

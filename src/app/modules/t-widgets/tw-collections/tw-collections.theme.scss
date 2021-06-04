@@ -204,6 +204,14 @@
                 @if ($is-dark) {
                     background-color: map-get($background, hover);
                 }
+
+                &.selected {
+                    @if ($is-dark) {
+                        background-color: map-get($background, app-bar);
+                    } @else {
+                        background-color: map-get($background, hover);
+                    }
+                }
             }
         }
     }

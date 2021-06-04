@@ -386,6 +386,10 @@ export interface CustomDialogOtherData {
      * Minimim Rows
      */
     minRows?: number;
+    /**
+     * Message Classes
+     */
+    messageClasses?: string;
 }
 
 export type AgentSkillListAgentSources = 'station' | 'agentId';
@@ -399,20 +403,20 @@ export type AgentSkillListSourceObject<
      * Type of Display Key. Default : any
      */
     K = any
-    > = {
-        /**
-         * This agent source is forwarded to any api calls / value assigning
-         */
-        Use: T;
-        /**
-         * This agent source is displayed
-         */
-        Display: K;
-        /**
-         * Allow freetext to redirect user to specified source's use key
-         */
-        FreeTextAllowed: boolean;
-    };
+> = {
+    /**
+     * This agent source is forwarded to any api calls / value assigning
+     */
+    Use: T;
+    /**
+     * This agent source is displayed
+     */
+    Display: K;
+    /**
+     * Allow freetext to redirect user to specified source's use key
+     */
+    FreeTextAllowed: boolean;
+};
 
 export interface AgentSkillListData {
     /**
@@ -521,14 +525,17 @@ export type FuseBgConf = {
     header: string;
 };
 
-
 export interface IPostMessage {
+    /**
+     * Id/Name of frame
+     */
+    name: string;
     /**
      * Function to call
      */
     function: string;
     /**
-     * Callback function to be invoked 
+     * Callback function to be invoked
      */
     callback: string;
     /**
@@ -547,4 +554,23 @@ export interface IPostMessage {
      * User object
      */
     userObject: any;
+}
+
+export interface IMaskData {
+    /**
+     * To mask with char
+     */
+    MaskWith?: string;
+    /**
+     * Maximum masked charecters
+     */
+    MaxMaskedChars?: number;
+    /**
+     * Unmasked start charecters
+     */
+    UnMaskedStartChars?: number;
+    /**
+     * Unmasked end charecters
+     */
+    UnMaskedEndChars?: number;
 }

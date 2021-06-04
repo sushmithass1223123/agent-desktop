@@ -545,7 +545,7 @@
                                         "Class": "",
                                         "Position": {
                                             "X": 2,
-                                            "Y": 2
+                                            "Y": 1
                                         },
                                         "Actions": [
                                             "maximize",
@@ -598,6 +598,36 @@
                                                 "Value": "meeting"
                                             }
                                         ]
+                                    }
+                                },
+                                {
+                                    "Name": "Call-back Details",
+                                    "Description": "",
+                                    "Key": "AgentPendingCallbacks",
+                                    "Type": "tw-ad-callbacks",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "phone_callback",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "TCMProxyUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api"
                                     }
                                 }
                             ],
@@ -1262,7 +1292,8 @@
                                                             "Title": "Mobile",
                                                             "ValueSource": "CCLDataEvent.RegisteredPhone",
                                                             "Unit": "",
-                                                            "DefaultValue": ""
+                                                            "DefaultValue": "",
+                                                            "MaskData": true
                                                         },
                                                         {
                                                             "Title": "Name",
@@ -1292,7 +1323,13 @@
                                                             "Title": "Account Number",
                                                             "ValueSource": "CCLDataEvent.AccountNumber",
                                                             "Unit": "",
-                                                            "DefaultValue": ""
+                                                            "DefaultValue": "",
+                                                            "MaskData": {
+                                                                "MaskWith": "*",
+                                                                "MaxMaskedChars": 14,
+                                                                "UnMaskedStartChars": 0,
+                                                                "UnMaskedEndChars": 4
+                                                            }
                                                         },
                                                         {
                                                             "Title": "Queue time",
@@ -1524,34 +1561,6 @@
                                         "Pinned": false
                                     },
                                     "Data": {}
-                                },
-                                {
-                                    "Name": "Speech Transcripts",
-                                    "Description": "",
-                                    "Key": "SpeechTranscript",
-                                    "Type": "tw-voice-bot-transcripts",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 2,
-                                            "Y": 1
-                                        },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {}
                                 }
                             ],
                             "AOT": [
@@ -1659,7 +1668,7 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "TCMProxyUrl": "https://dice.tetherfi.cloud/TCM_Proxy"
+                                        "TCMProxyUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api"
                                     }
                                 },
                                 {
@@ -1978,13 +1987,23 @@
                                                             "Title": "NRIC",
                                                             "ValueSource": "CCLDataEvent.NRIC",
                                                             "Unit": "",
-                                                            "DefaultValue": ""
+                                                            "DefaultValue": "",
+                                                            "MaskData": {
+                                                                "UnMaskedStartChars": 2,
+                                                                "UnMaskedEndChars": 2
+                                                            }
                                                         },
                                                         {
                                                             "Title": "Account Number",
                                                             "ValueSource": "CCLDataEvent.AccountNumber",
                                                             "Unit": "",
-                                                            "DefaultValue": ""
+                                                            "DefaultValue": "",
+                                                            "MaskData": {
+                                                                "MaskWith": "*",
+                                                                "MaxMaskedChars": 8,
+                                                                "UnMaskedStartChars": 0,
+                                                                "UnMaskedEndChars": 4
+                                                            }
                                                         }
                                                     ]
                                                 }
@@ -2722,7 +2741,7 @@
                                                     "Pinned": false
                                                 },
                                                 "Data": {
-                                                    "CloseInteractionAllowed": false
+                                                    "CloseInteractionAllowed": true
                                                 }
                                             },
                                             {
@@ -2900,10 +2919,10 @@
                                     }
                                 },
                                 {
-                                    "Name": "Campaign",
+                                    "Name": "Campaign Contact",
                                     "Description": "",
                                     "Key": "CampaignManager",
-                                    "Type": "tw-custom",
+                                    "Type": "tw-campaign-contact",
                                     "Config": {
                                         "Enabled": true,
                                         "Hidden": false,
@@ -2911,8 +2930,8 @@
                                         "Anchor": false,
                                         "AOT": false,
                                         "AutoOpen": false,
-                                        "Icon": "widgets",
-                                        "Class": "mx-cover",
+                                        "Icon": "contact_page",
+                                        "Class": "",
                                         "Position": {
                                             "X": 4,
                                             "Y": 2
@@ -2926,9 +2945,48 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "OpenInNew": false,
-                                        "Url": "https://dice.tetherfi.cloud/TCM_Client/ui/campaign_selector.html?phone=${Interaction.Item.PhoneNumber}&agentID=${AgentData.agentId}&extension=${AgentData.deviceId}&ucid=&skill=${Interaction.Item.Skill}&intid=${Interaction.InteractionID}&ID=${Interaction.Item.ID}",
-                                        "AutoRefresh": 0
+                                        "CustomerInfo": [
+                                            {
+                                                "Title": "Name",
+                                                "ValueSource": "ContactData.campaignContact.Name",
+                                                "DefaultValue": ""
+                                            },
+                                            {
+                                                "Title": "PhoneNumber",
+                                                "ValueSource": "ContactData.campaignContact.PhoneNumber",
+                                                "DefaultValue": ""
+                                            },
+                                            {
+                                                "Title": "NRIC",
+                                                "ValueSource": "ContactData.campaignContact.nric",
+                                                "DefaultValue": ""
+                                            },
+                                            {
+                                                "Title": "Gender",
+                                                "ValueSource": "ContactData.campaignContact.Gender",
+                                                "DefaultValue": ""
+                                            },
+                                            {
+                                                "Title": "Age",
+                                                "ValueSource": "ContactData.campaignContact.Age",
+                                                "DefaultValue": ""
+                                            },
+                                            {
+                                                "Title": "Language",
+                                                "ValueSource": "ContactData.campaignContact.language",
+                                                "DefaultValue": ""
+                                            },
+                                            {
+                                                "Title": "Email",
+                                                "ValueSource": "ContactData.campaignContact.Email",
+                                                "DefaultValue": ""
+                                            },
+                                            {
+                                                "Title": "Callback DateTime",
+                                                "ValueSource": "ContactData.campaignContact.ScheduleTime",
+                                                "DefaultValue": ""
+                                            }
+                                        ]
                                     }
                                 }
                             ],
@@ -2944,7 +3002,7 @@
                                         "Static": false,
                                         "Anchor": true,
                                         "AOT": true,
-                                        "AutoOpen": true,
+                                        "AutoOpen": false,
                                         "Icon": "verified_user",
                                         "Class": "",
                                         "Position": {
@@ -3227,8 +3285,104 @@
                                         "Icon": "widgets",
                                         "Class": "mx-cover",
                                         "Position": {
-                                            "X": 3,
-                                            "Y": 3
+                                            "X": 2,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/tmac_client/test.html",
+                                        "AutoRefresh": 0
+                                    }
+                                },
+                                {
+                                    "Name": "Test Page 2",
+                                    "Description": "",
+                                    "Key": "TestPage2",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "widgets",
+                                        "Class": "mx-cover",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/tmac_client/test.html",
+                                        "AutoRefresh": 0
+                                    }
+                                },
+                                {
+                                    "Name": "Test Page 2",
+                                    "Description": "",
+                                    "Key": "TestPage2",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "widgets",
+                                        "Class": "mx-cover",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/tmac_client/test.html",
+                                        "AutoRefresh": 0
+                                    }
+                                },
+                                {
+                                    "Name": "Test Page 2",
+                                    "Description": "",
+                                    "Key": "TestPage2",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "widgets",
+                                        "Class": "mx-cover",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 2
                                         },
                                         "Actions": [
                                             "maximize",
@@ -3440,9 +3594,8 @@
         "SDK": {
             "Proxy": {
                 "Urls": [
-                    "https://dice.tetherfi.cloud/TMACSDKProxyv5/TmacProxy.asmx",
                     "https://dice.tetherfi.cloud/Dev_TMACSDKProxy/TmacProxy.asmx",
-                    "https://localhost:55443/SDKTMACProxy/TmacProxy.asmx"
+                    "https://dice.tetherfi.cloud/TMACSDKProxyv5/TmacProxy.asmx"
                 ],
                 "Type": "soap",
                 "Timeout": 30

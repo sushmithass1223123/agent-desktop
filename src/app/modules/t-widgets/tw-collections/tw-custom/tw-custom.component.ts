@@ -1,15 +1,14 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { AOTWidgetService } from '@services/aot-widget.service';
-import { AppDataService } from '@services/app-data.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { getStringVars, setStringVars } from '@tmac/operators';
 import { SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { IPostMessage, IWidget } from 'app/interfaces';
+import { CustomTMACEventTypes, IPostMessage, IWidget } from 'app/interfaces';
 import { Subscription } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 
 /**
  * TwCustomComponent
@@ -47,6 +46,10 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
      */
     url: any;
     /**
+     * Id and name of frame
+     */
+    idName: string;
+    /**
      * Flag to show the UI or not
      */
     show: boolean;
@@ -69,14 +72,36 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
         allEvents: Subscription;
     }>;
 
+    /**
+     * Excluded events to emit
+     */
+    excludedEvents: CustomTMACEventTypes[];
+
     constructor(
         private sanitizer: DomSanitizer,
         private _aotWidgetService: AOTWidgetService,
         private _tmacEventService: TMACEventService,
-        private _fuseFacadeService: FuseFacadeService,
-        private _appDataService: AppDataService
+        private _fuseFacadeService: FuseFacadeService
     ) {
         super();
+
+        this.excludedEvents = [
+            'WallboardRefreshEvent',
+            'TeamWallboardRefreshEvent',
+            'QuizEvent',
+            'TeamAgentListEvent',
+            'AgentInteractionDetailsEvent',
+            'AgentChannelListEvent',
+            'AgentStatusDetailsEvent',
+            'SupervisorAgentListEvent',
+            'TeamAgentListDataEvent',
+            'TeamChannelListEvent',
+            'TeamIntentListEvent',
+            'TeamActiveStatusDetailsEvent',
+            'TeamActiveChannelListEvent',
+            'TeamAgentInteractionDetailsEvent',
+            'TeamrWorkCodeDetailsEvent'
+        ];
     }
 
     // tslint:disable-next-line: completed-docs
@@ -85,17 +110,25 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
         // call the wrapper init method
         this.initWrapper(this.data);
 
+        // assign id
+        this.idName = `tw_frame_${this.data.ID}`;
+
         // check if this is opened in an interaction
         if (this.data.InteractionDetails) {
             this.interactionId = this.data.InteractionDetails.InteractionID;
         }
 
         // register to post message subject
-        this._appDataService.postMessage.pipe(takeUntil(this.unsubscribeAll)).subscribe((message: IPostMessage) => {
+        this._tmacEventService.postMessage.pipe(takeUntil(this.unsubscribeAll)).subscribe((message: IPostMessage) => {
             const fn = message.function?.toLowerCase();
+            // check the message from frame
+            if (message.name && message.name !== this.idName) {
+                // ignore message from different id
+                return;
+            }
             switch (fn) {
                 case 'gettmacevents': // to get TMAC events
-                    const events = this._tmacEventService.getAllEventsArray();
+                    const events = this._tmacEventService.getAllEventsArrayExcluded(this.excludedEvents);
                     // check event are there
                     if (events.length) {
                         // send event to the frame/opener
@@ -232,9 +265,10 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                     .pipe(takeUntil(this.unsubscribeAll))
                     .subscribe((evts) => this.sendEventsToWindow(evts));
             }
+
             // subscribe to all non interaction events
             this.subscriptions.allEvents = this._tmacEventService
-                .getAllEvents()
+                .getEventsExcluded(this.excludedEvents)
                 .pipe(takeUntil(this.unsubscribeAll))
                 .subscribe((evts) => this.sendEventsToWindow(evts));
         }
