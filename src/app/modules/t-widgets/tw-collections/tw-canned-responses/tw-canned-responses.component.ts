@@ -5,7 +5,7 @@ import { CallerIntentEvent, IResponse, OnNLPDataEvent, SDKClient, WorkCodeAddedE
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { sortBy, uniqBy } from 'lodash';
-import { Observable, Subscription } from 'rxjs';
+import { merge, Observable, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 /**
@@ -66,7 +66,7 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
     /**
      * TMAC event observable
      */
-    private _tmacEventsObs: Observable<any[]>;
+    private _tmacEvents$: Observable<any[]>;
     /**
      * TMAC event subscription
      */
@@ -78,13 +78,8 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
         super();
     }
 
-    // -----------------------------------------------------------------------------------------------------
-    // @ Lifecycle hooks
-    // -----------------------------------------------------------------------------------------------------
-
     /**
-     * A callback method that is invoked immediately after the default change detector has checked the directive's data-bound properties for the first time,
-     * and before any of the view or content children have been checked. It is invoked only once when the directive is instantiated.
+     * On Init
      */
     ngOnInit(): void {
         // call the wrapper init method
@@ -102,75 +97,28 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
                 this.loading = false;
             });
 
-        this._tmacEventsObs = this._tmacEventService
-            .getEvents(['OnNLPDataEvent', 'CallerIntentEvent', 'WorkCodeAddedEvent'])
-            .pipe(takeUntil(this.unsubscribeAll));
+        const stream1$ = this._tmacEventService.getInteractionEvents(['CallerIntentEvent', 'WorkCodeAddedEvent'], this.interactionId);
+
+        // NLPDataEvent is an interaction event but it does not have InteractionID so we get from 'getNonInteractionEvents'
+        // TODO:: Need server side changes to get from 'getInteractionEvents'
+        const stream2$ = this._tmacEventService.getNonInteractionEvents(['OnNLPDataEvent']);
+
+        // merge two streams
+        this._tmacEvents$ = merge(stream1$, stream2$).pipe(takeUntil(this.unsubscribeAll));
 
         // check the response mode
         if (this.responseMode === 'auto') {
-            this._tmacEventSub$ = this._tmacEventsObs.subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
+            this._tmacEventSub$ = this._tmacEvents$.subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
         }
     }
 
     /**
-     * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
+     * On Destroy
      */
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
     }
-
-    // -----------------------------------------------------------------------------------------------------
-    // @  Private Methods
-    // -----------------------------------------------------------------------------------------------------
-
-    /**
-     * WorkCodeAddedEvent Handler
-     * @method WorkCodeAddedEvent
-     * @param {WorkCodeAddedEvent} evt
-     */
-    private WorkCodeAddedEvent = (evt: WorkCodeAddedEvent) => {
-        // check for the interaction
-        if (this.interactionId !== evt.InteractionID) {
-            return;
-        }
-
-        const newGroups = sortBy(uniqBy([...this.groups, evt], 'Name'), 'Name');
-        this.groups = newGroups;
-    };
-
-    /**
-     * CallerIntentEvent Handler
-     * @method CallerIntentEvent
-     * @param {CallerIntentEvent} evt
-     */
-    private CallerIntentEvent = (evt: CallerIntentEvent) => {
-        // check for the interaction
-        if (this.interactionId !== evt.InteractionID) {
-            return;
-        }
-
-        const newGroup = { ...evt, Name: evt.IntentName };
-        const newGroups = sortBy(uniqBy([...this.groups, newGroup], 'Name'), 'Name');
-        this.groups = newGroups;
-    };
-
-    /**
-     * OnNLPDataEvent Handler
-     * @method OnNLPDataEvent
-     * @param {OnNLPDataEvent} evt
-     */
-    private OnNLPDataEvent = (evt: OnNLPDataEvent): void => {
-        const parsedJson = JSON.parse(evt.JsonData);
-
-        // check for the interaction
-        if (this.interactionId.toString() !== parsedJson.interactionID) {
-            return;
-        }
-
-        const newGroup = JSON.parse(parsedJson.nluResult);
-        this.onSelectGroups({ value: newGroup.intent.name });
-    };
 
     /**
      * Reset form
@@ -196,12 +144,57 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
         this.templateText = '';
     }
 
-    // -----------------------------------------------------------------------------------------------------
-    // @  Public Methods
-    // -----------------------------------------------------------------------------------------------------
+    /**
+     * WorkCodeAddedEvent Handler
+     *
+     * @param {WorkCodeAddedEvent} evt
+     */
+    WorkCodeAddedEvent(evt: WorkCodeAddedEvent): void {
+        // check for the interaction
+        if (this.interactionId !== evt.InteractionID) {
+            return;
+        }
+
+        const newGroups = sortBy(uniqBy([...this.groups, evt], 'Name'), 'Name');
+        this.groups = newGroups;
+    }
+
+    /**
+     * CallerIntentEvent Handler
+     *
+     * @param {CallerIntentEvent} evt
+     */
+    CallerIntentEvent(evt: CallerIntentEvent): void {
+        // check for the interaction
+        if (this.interactionId !== evt.InteractionID) {
+            return;
+        }
+
+        const newGroup = { ...evt, Name: evt.IntentName };
+        const newGroups = sortBy(uniqBy([...this.groups, newGroup], 'Name'), 'Name');
+        this.groups = newGroups;
+    }
+
+    /**
+     * OnNLPDataEvent Handler
+     *
+     * @param {OnNLPDataEvent} evt
+     */
+    OnNLPDataEvent(evt: OnNLPDataEvent): void {
+        const parsedJson = JSON.parse(evt.JsonData);
+
+        // check for the interaction
+        if (this.interactionId.toString() !== parsedJson.interactionID) {
+            return;
+        }
+
+        const newGroup = JSON.parse(parsedJson.nluResult);
+        this.onSelectGroups({ value: newGroup.intent.name });
+    }
+
     /**
      * Select Department
-     * @method onSelectDepartment
+     *
      * @param {any} event
      */
     onSelectDepartment(event: any): void {
@@ -228,7 +221,7 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
 
     /**
      * Slect Groups
-     * @method onSelectGroups
+     *
      * @param {any} event
      */
     onSelectGroups(event: any): void {
@@ -259,7 +252,7 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
 
     /**
      * Template Selct
-     * @method onTemplateSelect
+     *
      * @param template
      */
     onTemplateSelect(template: any): void {
@@ -269,7 +262,7 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
 
     /**
      * Send selected template
-     * @method sendTemplate
+     *
      * @param {sendTemplate} template
      */
     sendTemplate(template: any): void {
@@ -302,7 +295,7 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
 
     /**
      * Change Mode
-     * @method changeMode
+     *
      * @param {MatSelectChange} event
      */
     changeMode(event: MatSelectChange): void {
@@ -311,7 +304,7 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
             this._tmacEventSub$?.unsubscribe();
         } else {
             // subscribe
-            this._tmacEventSub$ = this._tmacEventsObs.subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
+            this._tmacEventSub$ = this._tmacEvents$.subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
         }
         this.clearAllData();
     }

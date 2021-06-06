@@ -119,17 +119,15 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
             }
         });
 
+        // since we get data from api as well as event
+        // use 'addTMACEventListener' from _tmacEventService
+        // instead of 'getNonInteractionEvents'
         this._tmacEventService.addTMACEventListener([
             {
                 label: 'CallbackDataReceivedForAgent',
                 callback: this.CallbackDataReceivedForAgent
             }
         ]);
-
-        // this._tmacEventService
-        //     .getEvents(['CallbackDataReceivedForAgent'])
-        //     .pipe(takeUntil(this.unsubscribeAll))
-        //     .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
     }
 
     /**

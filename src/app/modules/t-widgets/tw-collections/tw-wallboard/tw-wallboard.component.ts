@@ -80,20 +80,18 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
         let eventName: CustomTMACEventTypes;
         if (this.widgetData.Role === 'agent') {
             eventName = 'WallboardRefreshEvent';
-        }
-        else if (this.widgetData.Role === 'supervisor') {
+        } else if (this.widgetData.Role === 'supervisor') {
             eventName = 'TeamWallboardRefreshEvent';
-        }
-        else {
+        } else {
             TUtils.Logger.warn(`TwWallboardComponent: unable to get event name to regiser, Role=${this.widgetData.Role}`);
         }
 
         // register if only eventname is there
         if (eventName) {
             this._tmacEventService
-                .getEvents([eventName])
+                .getNonInteractionEvents([eventName])
                 .pipe(takeUntil(this.unsubscribeAll))
-                .subscribe(evts => evts.forEach(evt => this.wallboardRefreshEvent(evt)));
+                .subscribe((evts) => evts.forEach((evt) => this.wallboardRefreshEvent(evt)));
         }
     }
 
@@ -112,9 +110,8 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
     private wallboardRefreshEvent = (evt: WallboardRefreshEvent) => {
         // for team wallboard event filter staffed agents
         if (evt.EventName === 'TeamWallboardRefreshEvent') {
-            evt.Skills = evt.Skills.filter(s => s.AgentsStaffed > 0);
-        }
-        else if (evt.EventName === 'WallboardRefreshEvent') {
+            evt.Skills = evt.Skills.filter((s) => s.AgentsStaffed > 0);
+        } else if (evt.EventName === 'WallboardRefreshEvent') {
             // check for skill update
             if (this.dataSource.data.length && this.dataSource.data.length !== evt.Skills.length) {
                 this._appUIService.showAppSnackbar({
@@ -141,7 +138,7 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
         }
         // add the sort
         this.dataSource.sort = this.sort;
-    }
+    };
 
     /**
      * To get SL bg color
@@ -183,4 +180,3 @@ interface WidgetData {
      */
     SLEnabled: boolean;
 }
-

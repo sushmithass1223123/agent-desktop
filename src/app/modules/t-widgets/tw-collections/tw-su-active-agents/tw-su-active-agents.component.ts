@@ -156,7 +156,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         this.sortType = this.data.Data.SortType ?? 'asc';
 
         this._tmacEventService
-            .getEvents(['SupervisorAgentListEvent', 'TeamAgentListDataEvent'])
+            .getNonInteractionEvents(['SupervisorAgentListEvent', 'TeamAgentListDataEvent'])
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
 

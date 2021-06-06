@@ -127,8 +127,8 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                 return;
             }
             switch (fn) {
-                case 'gettmacevents': // to get TMAC events
-                    const events = this._tmacEventService.getAllEventsArrayExcluded(this.excludedEvents);
+                case 'gettmacevents':
+                    const events = this._tmacEventService.getAllEventsArrayExcluded(this.excludedEvents, this.interactionId);
                     // check event are there
                     if (events.length) {
                         // send event to the frame/opener
@@ -268,7 +268,7 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
 
             // subscribe to all non interaction events
             this.subscriptions.allEvents = this._tmacEventService
-                .getEventsExcluded(this.excludedEvents)
+                .getNonInteractionEventsExcluded(this.excludedEvents)
                 .pipe(takeUntil(this.unsubscribeAll))
                 .subscribe((evts) => this.sendEventsToWindow(evts));
         }

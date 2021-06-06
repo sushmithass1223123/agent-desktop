@@ -235,7 +235,7 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
         if (!this.eventSubscriptions) {
             // subscribe to all non interaction events
             this.eventSubscriptions = this._tmacEventService
-                .getAllEventsExcluded(this.excludedEvents)
+                .getNonInteractionEventsExcluded(this.excludedEvents)
                 .pipe(takeUntil(this.unsubscribeAll))
                 .subscribe((evts) => this.sendEventsToWindow(evts));
         }
