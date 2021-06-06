@@ -43,7 +43,7 @@ tw-voice-controls {
             }
 
             .call-controls {
-                button:not(.mat-button-disabled, .mat-warn) {
+                button:not(.mat-button-disabled, .mat-warn, .mat-primary, .mat-accent) {
                     background: $tw-light;
                     color: $tw-dark;
                 }
@@ -79,5 +79,13 @@ tw-voice-controls {
             line-height: 48px;
             font-size: 18px;
         }
+    }
+}
+
+.make-call-dialog {
+    .mat-dialog-container {
+        padding: 0;
+        border-radius: 20px !important;
+        overflow-x: hidden;
     }
 }

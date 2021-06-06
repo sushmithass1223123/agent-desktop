@@ -201,6 +201,10 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
      * @param {OutgoingCallEvent} evt
      */
     OutgoingCallEvent(evt: OutgoingCallEvent): void {
+        // check if existing interaction and tab exist, then do not create the tab
+        if (evt.IsExistingInteraction && this.interactions.filter((i) => i.interactionId === evt.InteractionID)) {
+            return;
+        }
         this.createWidgetList(evt, 'outgoing', evt.PhoneNumber, true, {});
     }
 

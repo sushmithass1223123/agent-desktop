@@ -526,9 +526,6 @@ export class LoginComponent implements OnInit, OnDestroy {
             if (this.stationEnabled) {
                 this.loginForm.controls.station.setValidators(Validators.required);
             }
-            if (this.stationEnabled) {
-                this.loginForm.controls.station.setValidators(Validators.required);
-            }
             if (this.password.Agent) {
                 this.loginForm.controls.agentPassword.setValidators(Validators.required);
             }
@@ -926,12 +923,11 @@ export class LoginComponent implements OnInit, OnDestroy {
      * To check for number only
      * @param event input event
      */
-    public numberOnly(event: any): boolean {
-        const charCode = event.which ? event.which : event.keyCode;
-        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-            return false;
+    public numberOnly(event: KeyboardEvent): boolean {
+        if (!isNaN(Number(event.key)) || event.key === 'Enter') {
+            return true;
         }
-        return true;
+        return false;
     }
 
     /**

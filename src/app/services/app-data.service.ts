@@ -278,7 +278,7 @@ export class AppDataService {
      * @param {Record<string , string>} json
      * @returns {Observable<Partial<IAppConfig>>}
      */
-    public getConfig(json?: Record<string, string>): Observable<any | Partial<IAppConfig>> {
+    public getConfig(json?: Record<string, string>): Observable<Partial<IAppConfig> | any> {
         if (json) {
             return this._configSubject.pipe(map((conf) => formatJsonData(conf, json)));
         }
