@@ -179,7 +179,6 @@ export class TwGenericControlsComponent extends TWidgetWrapper implements OnInit
      * @param {MatButton} btn
      */
     confirmCloseInteraction(btn: MatButton): void {
-        // config force login
         this.dialogRef = this._appUIService.showAppConfirmDialog('closeInteraction');
         this.dialogRef.afterClosed().subscribe((dialogResult) => {
             if (dialogResult) {

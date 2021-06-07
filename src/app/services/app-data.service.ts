@@ -6,7 +6,7 @@ import { IAppConfig } from 'app/interfaces';
 import { formatJsonData, getFuseConfigByTheme } from 'app/utils';
 import { environment } from 'environments/environment';
 import { merge } from 'lodash';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { version } from '../../../package.json';
 import { FuseFacadeService } from './fuse-facade.service';
@@ -38,10 +38,6 @@ export class AppDataService {
      * App version
      */
     private _appVersion: string;
-    /**
-     * Need more Description
-     */
-    private _postMessageSubject: Subject<any>;
 
     constructor(
         @Inject(DOCUMENT) private document: any,
@@ -51,9 +47,7 @@ export class AppDataService {
         // Set the config from the default config
         this._configSubject = new BehaviorSubject(new Object());
         this._appConfigSubject = new BehaviorSubject(new Object());
-        this._postMessageSubject = new Subject();
         this._appVersion = version;
-        this.registerToPostMessage();
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -102,13 +96,6 @@ export class AppDataService {
     }
 
     // -----------------------------------------------------------------------------------------------------
-
-    /**
-     * Get PostMessages
-     */
-    get postMessage(): any | Observable<any> {
-        return this._postMessageSubject.asObservable();
-    }
 
     // -----------------------------------------------------------------------------------------------------
 
@@ -220,52 +207,15 @@ export class AppDataService {
     }
 
     /**
-     * To register to post message
-     */
-    private registerToPostMessage(): void {
-        try {
-            window.addEventListener(
-                'message',
-                (evt: any) => {
-                    // if event data is null then return
-                    if (!evt.data) {
-                        return;
-                    }
-
-                    let data: any = {};
-                    if (typeof evt.data === 'string') {
-                        try {
-                            data = JSON.parse(evt.data);
-                        } catch (error) {
-                            data = {};
-                        }
-                    } else if (typeof evt.data === 'object') {
-                        data = evt.data;
-                    }
-
-                    // check if destination is tmac
-                    if (data.destination?.toLowerCase() === 'tmac') {
-                        // notify the observers
-                        this._postMessageSubject.next(data);
-                    }
-                },
-                false
-            );
-        } catch (error) {
-            TUtils.Logger.console('error', 'Exception in registerToPostMessage', null, error);
-        }
-    }
-
-    /**
      * To get config for the app
      *
      * @param {string} agentId
      */
-    async getJsonConfig(agentId?: string): Promise<any> {
+    async getJsonConfig(agentId?: string, local?: boolean): Promise<any> {
         let data = null;
         try {
             // check the environment and load config
-            if (environment.production) {
+            if (!local && environment.production) {
                 // get the config from server for production
                 data = await this.getProductionConfig(agentId);
                 TUtils.Logger.console('info', 'Production config loaded');
@@ -283,6 +233,7 @@ export class AppDataService {
                 conf = JSON.parse(conf);
                 this.config = conf;
                 this.setJsonConfig(data);
+                this.setTheme();
                 return {
                     ...data,
                     ConfigMode: this._appConfigSubject.getValue().ConfigMode
@@ -308,8 +259,8 @@ export class AppDataService {
      */
     setTheme(): void {
         // apply the theme
-        const themeName = this._configSubject.getValue().AppConfigs.Theme || '';
-        const webFont = this._configSubject.getValue().AppConfigs.Font || 'wf-muli';
+        const themeName = this._configSubject.getValue().AppConfigs.Theme ?? '';
+        const webFont = this._configSubject.getValue().AppConfigs.Font ?? 'wf-muli';
         const flatTheme = this._configSubject.getValue().AppConfigs.FlatTheme ?? false;
         if (themeName) {
             const theme = getFuseConfigByTheme(themeName, false);
@@ -327,7 +278,7 @@ export class AppDataService {
      * @param {Record<string , string>} json
      * @returns {Observable<Partial<IAppConfig>>}
      */
-    public getConfig(json?: Record<string, string>): Observable<any | Partial<IAppConfig>> {
+    public getConfig(json?: Record<string, string>): Observable<Partial<IAppConfig> | any> {
         if (json) {
             return this._configSubject.pipe(map((conf) => formatJsonData(conf, json)));
         }

@@ -25,7 +25,7 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
     /**
      * Widget config data
      */
-    private WidgetData: ITCISWidgetData;
+    private WidgetData: WidgetData;
 
     /**
      * SignalR wrapper for TCIS connection
@@ -53,12 +53,18 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
                 'OutgoingCallEvent',
                 'CallConnectedEvent',
                 'CallerIntentEvent',
-                'UUIDataEvent',
-                'CCLDataEvent',
                 'CallDisconnectedEvent',
                 'TextChatIncomingEvent',
                 'TextChatRemoteUserConnectedEvent',
                 'TextChatDisconnectedEvent',
+                'IncomingEmailEvent',
+                'OutgoingEmailEvent',
+                'FaxReceivedEvent',
+                'SMSIncomingEvent',
+                'SMSOutgoingEvent',
+                'GenericInteractionEvent',
+                'UUIDataEvent',
+                'CCLDataEvent',
                 'InteractionClosedEvent'
             ])
             .pipe(takeUntil(this.unsubscribeAll))
@@ -104,9 +110,9 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
 
     /**
      * Reduces parameters
-     * 
-     * @param {String[]} params 
-     * @param {IUIEvent} evt 
+     *
+     * @param {String[]} params
+     * @param {IUIEvent} evt
      */
     private reduceParams(params: string[], evt: IUIEvent): string {
         try {
@@ -114,7 +120,7 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
             return params.reduce((acc, curr) => {
                 const [prefix, tmacEvtName] = curr.split('.');
                 let TMACEvent = this._tmacEventService
-                    .interactionEvents(evt.InteractionID)
+                    .getInteractionEventsArray(evt.InteractionID)
                     .reverse()
                     .find((e) => e.EventName === tmacEvtName);
                 if (TMACEvent?.EventName) {
@@ -131,12 +137,16 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
                 } else {
                     const newParams = getStringVars(curr);
                     if (newParams) {
-                        const newParamVals = this.reduceParams(newParams.map((p) => p.replaceAll('${', '').replaceAll('}', '')), evt)?.slice(1)?.split(',');
+                        const newParamVals = this.reduceParams(
+                            newParams.map((p) => p.replaceAll('${', '').replaceAll('}', '')),
+                            evt
+                        )
+                            ?.slice(1)
+                            ?.split(',');
                         acc += `,${newParams.reduce((subAcc, subCurr, i) => {
                             return subAcc.replaceAll(subCurr, newParamVals[i]);
                         }, curr)}`;
-                    }
-                    else {
+                    } else {
                         acc += `,${curr}`;
                     }
                 }
@@ -158,7 +168,7 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
     /**
      * To register hub events
      */
-    private registerHubEvents(): void { }
+    private registerHubEvents(): void {}
 
     /**
      * Method to execute action to invoke the server
@@ -179,7 +189,7 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
     }
 }
 
-interface ITCISWidgetData {
+interface WidgetData {
     /**
      * Connection urls
      */

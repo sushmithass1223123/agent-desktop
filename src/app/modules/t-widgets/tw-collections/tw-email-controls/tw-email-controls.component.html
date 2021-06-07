@@ -154,7 +154,7 @@
 
                 <div *ngIf="!replyInfo" class="twd-flex-1 twd-h-full twd-z-10 twd-relative">
                     <div class="twd-absolute twd-w-full twd-h-full twd-top-0 twd-left-0 twd-overflow-hidden twd-flex twd-flex-col">
-                        <div class="twd-max-h-1/2 twd-overflow-y-auto twd-overflow-x-hidden twd-pb-3 twd-z-10 twd-shadow-md">
+                        <div class="twd-max-h-6/12 twd-overflow-y-auto twd-overflow-x-hidden twd-pb-3 twd-z-10 twd-shadow-md">
                             <div id="rejectReason" *ngIf="currentInteraction.RejectReason">
                                 <div class="twd-bg-red-500 twd-p-1 twd-text-xl">
                                     [ REJECTED ] {{ currentInteraction.RejectReason.reasonTags && ':' + currentInteraction.RejectReason.reasonTags }}
@@ -227,7 +227,7 @@
                                 <button
                                     *ngFor="let file of attachments | slice: 0:2"
                                     mat-stroked-button
-                                    class="border-radius-20 m-4 twd-max-w-1/4 lg:twd-max-w-1/2"
+                                    class="border-radius-20 m-4 twd-max-w-3/12 lg:twd-max-w-6/12"
                                     [matTooltip]="file.Ext | uppercase"
                                     (click)="openFile(file.URL)"
                                 >

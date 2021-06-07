@@ -11,16 +11,7 @@ import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TMACEventService } from '@services/tmac-event.service';
-import {
-    EmailInboxModel,
-    EmailOutboxModel,
-    IGetInteractionHistory,
-    InteractionAction,
-    InteractionHistory,
-    InteractionHistoryReadyEvent,
-    IResponseData,
-    SDKClient
-} from '@tmac/sdk';
+import { IGetInteractionHistory, InteractionAction, InteractionHistory, InteractionHistoryReadyEvent, SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { ChatTranscripts, IWidget, ResData } from 'app/interfaces';
@@ -507,7 +498,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                                 SubType: data.SubType,
                                 SessionID: data.SessionID,
                                 Direction: data.Direction,
-                                ID: data.ID
+                                ID: data.ID,
+                                GroupID: data.GroupID
                             };
                             // tableData[data.SessionID] = data;
                             transcripts[data.SessionID] = [];
@@ -546,6 +538,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                     const lastEl = res.response.slice(-1);
                     this.customerJourneyTable.lastId = lastEl[0].LastID?.toString();
                     this.customerJourneyTable.loading = false;
+                    // console.log('#### newRecords ####', newRecords);
                 }
             })
             .catch((err) => {

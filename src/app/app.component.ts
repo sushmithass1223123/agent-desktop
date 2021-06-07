@@ -167,11 +167,6 @@ export class AppComponent implements OnInit, OnDestroy {
      * On init
      */
     ngOnInit(): void {
-        // do not load config for preview page
-        if (location.pathname.includes('preview')) {
-            return;
-        }
-
         // this.route.queryParams
         //     .pipe(
         //         takeUntil(this._unsubscribeAll),

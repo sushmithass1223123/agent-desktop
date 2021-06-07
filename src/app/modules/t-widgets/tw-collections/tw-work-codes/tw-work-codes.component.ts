@@ -232,7 +232,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
             this.getAllWorkCodes();
             subscription = this._tmacEventService.getInteractionEvents(['WorkCodeAddedEvent'], this.interactionId);
         } else if (this.widgetData.Role === 'supervisor') {
-            subscription = this._tmacEventService.getEvents(['TeamrWorkCodeDetailsEvent']);
+            subscription = this._tmacEventService.getNonInteractionEvents(['TeamrWorkCodeDetailsEvent']);
         } else {
             this.loadWorkCodesReq.error = true;
             this.loadWorkCodesReq.loading = false;
@@ -241,9 +241,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
 
         // if subscription is not null then subscribe to it
         if (subscription) {
-            subscription
-                .pipe(takeUntil(this.unsubscribeAll))
-                .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
+            subscription.pipe(takeUntil(this.unsubscribeAll)).subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
         }
     }
 

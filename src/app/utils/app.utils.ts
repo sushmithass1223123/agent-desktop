@@ -1,4 +1,5 @@
-import { IUIEvent } from '@tmac/sdk';
+import { maskData } from '@tmac/operators';
+import { IMaskData } from 'app/interfaces';
 import { get, join, set } from 'lodash';
 
 type Generic = string | number;
@@ -111,4 +112,33 @@ export const getValueFromJson = (valueSourceSplit: string[], json: any, defaultV
     const valueMap = join(valueSourceSplit, '.');
     // get the value from path or default value
     return get(json, valueMap, defaultValue);
+};
+
+/**
+ * To mask a value based on config
+ *
+ * @param {String} value
+ * @param {IMaskData | boolean} config
+ */
+export const maskDataLocal = (value: string, config: IMaskData | boolean): string => {
+    try {
+        // check if value and config is defined
+        if (value && config) {
+            // mask with default if boolean
+            if (typeof config === 'boolean' && config === true) {
+                return maskData(value);
+                // mask with config is object
+            } else if (typeof config === 'object') {
+                return maskData(value, {
+                    maskWith: config.MaskWith,
+                    maxMaskedChars: config.MaxMaskedChars,
+                    unmaskedStartChars: config.UnMaskedStartChars,
+                    unmaskedEndChars: config.UnMaskedEndChars
+                });
+            }
+        }
+    } catch (error) {}
+
+    // return input for error/default scenario
+    return value;
 };

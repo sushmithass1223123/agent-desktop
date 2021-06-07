@@ -16,6 +16,7 @@ import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { InteractionRef, InteractionWidgets, IWidget } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
 import { InteractionManagerService } from 'app/services/interaction-manager.service';
+import { environment } from 'environments/environment';
 import { cloneDeep } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 
@@ -137,11 +138,11 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
      */
     private createWidgetList(evt: any, status: string, user: string, forceActive: boolean, otherData: any): void {
         // get the content widgets
-        const emailWidgets = cloneDeep(this.data.Data.Widgets) || [];
+        const widgets = cloneDeep(this.data.Data.Widgets) || [];
 
-        const staticWidgets = emailWidgets.Static || [];
-        const dynamicWidgets = (evt.WidgetConfigData && JSON.parse(evt.WidgetConfigData)) || emailWidgets.Dynamic || [];
-        const aotWidgets = emailWidgets.AOT || [];
+        const staticWidgets = widgets.Static || [];
+        const dynamicWidgets = (environment.production && evt.WidgetConfigData && JSON.parse(evt.WidgetConfigData)) || widgets.Dynamic || [];
+        const aotWidgets = widgets.AOT || [];
 
         // loop the widgets and add append interaction details
         staticWidgets.forEach((widget: IWidget) => {
@@ -200,6 +201,10 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
      * @param {OutgoingCallEvent} evt
      */
     OutgoingCallEvent(evt: OutgoingCallEvent): void {
+        // check if existing interaction and tab exist, then do not create the tab
+        if (evt.IsExistingInteraction && this.interactions.filter((i) => i.interactionId === evt.InteractionID)) {
+            return;
+        }
         this.createWidgetList(evt, 'outgoing', evt.PhoneNumber, true, {});
     }
 
@@ -247,9 +252,9 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
      */
     InteractionClosedEvent(evt: InteractionClosedEvent): void {
         // close all the AOTs
-        this.interactions.forEach(i => {
+        this.interactions.forEach((i) => {
             if (i.interactionId === evt.InteractionID) {
-                i.widgets.aot.forEach(widget => {
+                i.widgets.aot.forEach((widget) => {
                     this._aotWidgetService.destroyWidget(widget.ID);
                 });
             }

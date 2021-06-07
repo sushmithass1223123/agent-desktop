@@ -264,14 +264,6 @@
     cursor: pointer;
 }
 
-.custom-btn {
-    &.mat-button-disabled {
-        background-color: rgba(0, 0, 0, 0.12) !important;
-        color: rgba(0, 0, 0, 0.26) !important;
-        cursor: default;
-    }
-}
-
 // z-index helper
 @for $zIndex from -10 through 100 {
     .z-index-#{$zIndex} {

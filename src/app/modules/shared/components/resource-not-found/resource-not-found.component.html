@@ -6,7 +6,8 @@
             <div class="subtitle">{{ subtitle || 'Oops!' }}</div>
             <div class="title">{{ title || '404' }}</div>
             <div class="description">{{ description || 'PAGE NOT FOUND' }}</div>
-            <button mat-raised-button *ngIf="login" color="primary" class="mt-12" (click)="routeToLogin()">Go to login page</button>
+            <button *ngIf="login" mat-raised-button color="primary" class="mt-12" (click)="routeBack()">Go to login page</button>
+            <button *ngIf="route" mat-raised-button color="primary" class="mt-12" (click)="routeBack()">Retry</button>
         </div>
     </div>
 </div>

@@ -2,6 +2,7 @@
 
 // mat icon
 .mat-icon-button,
+.mat-custom-btn,
 .mat-mini-fab {
     .mat-button-wrapper {
         width: 100%;
@@ -9,6 +10,17 @@
         justify-content: center;
         align-items: center;
         display: flex !important;
+    }
+}
+
+.custom-btn,
+.mat-custom-btn {
+    height: 36px;
+    &.mat-button-disabled {
+        background-color: rgba(0, 0, 0, 0.12) !important;
+        color: rgba(0, 0, 0, 0.26) !important;
+        cursor: default;
+        box-shadow: none !important;
     }
 }
 
@@ -347,6 +359,12 @@ mat-form-field {
         }
     }
 
+    &.pb-0 {
+        .mat-form-field-wrapper {
+            padding-bottom: 0 !important;
+        }
+    }
+
     .btn-time {
         position: absolute;
         top: 0;
@@ -384,6 +402,7 @@ mat-dialog-container {
 // mat tooltip
 .mat-tooltip {
     font-size: 1.4rem !important;
+    white-space: pre-line;
 }
 // mat tooltip
 

@@ -156,7 +156,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         this.sortType = this.data.Data.SortType ?? 'asc';
 
         this._tmacEventService
-            .getEvents(['SupervisorAgentListEvent', 'TeamAgentListDataEvent'])
+            .getNonInteractionEvents(['SupervisorAgentListEvent', 'TeamAgentListDataEvent'])
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
 
@@ -202,7 +202,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             this.reload = false;
             this._appUIService.showSnackbar('Agent data is reloaded');
         }
-    }
+    };
 
     /**
      * TeamAgentListDataEvent Handler
@@ -231,7 +231,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
 
         // sort agent list
         this.sortAgentList();
-    }
+    };
 
     /**
      * createActivityWidget
@@ -510,7 +510,11 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                 if (dt.response.EventName === 'AgentStatusChangeEvent') {
                     // parse the result to AgentStatusChangeEvent
                     const response = dt.response as AgentStatusChangeEvent;
-                    this._appUIService.showSnackbar('Status changed successfully', 'success');
+                    let message = 'Agent status changed successfully';
+                    if (agent.CurrentAgentStatus.includes('On Call')) {
+                        message = 'Agent is on call, status change request sent successfully';
+                    }
+                    this._appUIService.showSnackbar(message, 'success');
                     this.filteredAgents = map(this.filteredAgents, (agt: SuAgentModel) => {
                         if (agt.StationID === agent.StationID) {
                             agt.CurrentAgentStatus = response.Status;
@@ -524,7 +528,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             })
             .catch(() => {
                 // logout error
-                this._appUIService.showSnackbar('Change status failed, please try again', 'failure');
+                this._appUIService.showSnackbar('Error in status change, please try again', 'failure');
             });
     }
 

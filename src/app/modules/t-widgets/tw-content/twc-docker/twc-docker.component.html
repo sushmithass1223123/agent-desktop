@@ -1,6 +1,6 @@
 <div *ngIf="loaded" class="tw-widget-container custom-scroll" [ngStyle]="{ 'width.px': widgetWidth, 'height.px': widgetHeight }">
     <div *ngIf="dockerWidgets?.length" fxFill fxFlex fxLayout="row wrap" fxLayoutAlign=" none">
-        <tw-template class="widget-grid" [widgets]="dockerWidgets"></tw-template>
+        <tw-template class="dynamic-widget-grid" [widgets]="dockerWidgets"></tw-template>
 
         <div
             *ngIf="aotWidgets.length"

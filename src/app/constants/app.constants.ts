@@ -63,17 +63,17 @@ export const GAMIFICATION_METRIC_LABELS = {
 /**
  * Active callback statuses
  */
-export const ACTIVE_CALL_STATUSES = ['AgentConnected', 'DacAccepted'];
+export const ACTIVE_CALL_STATUSES = ['agentconnected', 'dacaccepted'];
 
 /**
  * Failed callback statuses
  */
-export const FAILED_CALL_STATUSES = ['DacNotificationFailed'];
+export const FAILED_CALL_STATUSES = ['dacnotificationfailed', 'deleted'];
 
 /**
  * Pending callback statuses
  */
-export const PENDING_CALL_STATUSES = ['Open', 'QueueConnected'];
+export const PENDING_CALL_STATUSES = ['open', 'queueconnected'];
 
 /**
  * Alert dialog constants
