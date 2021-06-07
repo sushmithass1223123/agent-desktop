@@ -586,10 +586,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 sesisonid: globalKey,
                 global: 'GLOBAL',
                 listOfMailboxes: this._workbenchService.globalEmailWorkbenchState$.searchParams.value.listOfMailboxes.join(','),
-                hasAttachments: 'no',
-                replied: 'any',
-                closed: 'any',
-                assigned: 'any'
+                hasAttachments: 2,
+                replied: 2,
+                closed: 2,
+                assigned: 2
             };
             this.searchReqObs$[this.currentTab](searchParams).subscribe({
                 next: (res: any) => {
@@ -861,10 +861,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 sesisonid: searchFields.sesisonid,
                 global: '',
                 listOfMailboxes: searchFields.listOfMailboxes.join(','),
-                hasAttachments: searchFields.hasAttachments === 'yes',
-                replied: searchFields.replied !== 'any',
-                closed: searchFields.closed !== 'any',
-                assigned: searchFields.assigned !== 'any'
+                hasAttachments: searchFields.hasAttachments,
+                replied: searchFields.replied,
+                closed: searchFields.closed,
+                assigned: searchFields.assigned
             })
             .pipe(
                 map((res: any) => ({
@@ -1039,6 +1039,19 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         } else {
             this.selectedMails = this.selectedMails.filter((x) => x.uiId !== node.uiId);
             this.selectedMailIds = this.selectedMails.map((x) => x.uiId) || [];
+        }
+    }
+
+    /**
+     * Selects all emails
+     */
+    selectAllEmails(checked: boolean): void {
+        const nodes = this.getAllEmailNodes();
+        nodes.forEach((n) => {
+            this.selectEmail(n, checked);
+        });
+        for (const n of nodes) {
+            console.log(nodes);
         }
     }
 

@@ -79,7 +79,7 @@
                         <button class="lg:twd-hidden" #expandableButton (click)="showCategoryMenu = !showCategoryMenu">
                             <mat-icon>{{ showCategoryMenu ? 'menu_open' : 'menu' }}</mat-icon>
                         </button>
-                        <form class="twd-max-w-1/2 lg:twd-max-w-full twd-flex-1" (ngSubmit)="doGlobalSearch()">
+                        <form class="twd-max-w-6/12 lg:twd-max-w-full twd-flex-1" (ngSubmit)="doGlobalSearch()">
                             <mat-form-field class="custom with-border form-field w-100-p" appearance="outline">
                                 <input class="login-input" matInput placeholder="Search" [formControl]="globalSearchControl" />
                                 <button *ngIf="!globalSearchControl.value; else clearBtn" mat-icon-button matSuffix disabled type="button">
@@ -351,10 +351,10 @@
                                             <mat-label> Content </mat-label>
                                             <input matInput formControlName="content" type="text" [readonly]="globalSearchControl.value" />
                                         </mat-form-field>
-                                        <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                        <!-- <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
                                             <mat-label> Device Id </mat-label>
                                             <input matInput formControlName="deviceid" type="text" [readonly]="globalSearchControl.value" />
-                                        </mat-form-field>
+                                        </mat-form-field> -->
                                         <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
                                             <mat-label> Assigned To </mat-label>
                                             <input matInput formControlName="assignedTo" type="text" [readonly]="globalSearchControl.value" />
@@ -394,18 +394,18 @@
                                             <span fxFlex="30" class="mat-subheading-2 m-0"> Attachments : </span>
                                             <input matInput placeholder="Input" style="display: none" />
                                             <mat-radio-group class="w-100-p" formControlName="hasAttachments" fxFlex="70">
-                                                <mat-radio-button value="any" fxFlex="100">Any</mat-radio-button>
-                                                <mat-radio-button value="yes" fxFlex="100">Yes</mat-radio-button>
-                                                <mat-radio-button value="no" fxFlex="100">No</mat-radio-button>
+                                                <mat-radio-button value="2" fxFlex="100">Any</mat-radio-button>
+                                                <mat-radio-button value="1" fxFlex="100">Yes</mat-radio-button>
+                                                <mat-radio-button value="0" fxFlex="100">No</mat-radio-button>
                                             </mat-radio-group>
                                         </div>
 
                                         <div fxFlex="100" class="my-16">
                                             <span fxFlex="30" class="mat-subheading-2 m-0"> Replied : </span>
                                             <mat-radio-group class="w-100-p" formControlName="replied" fxFlex="70">
-                                                <mat-radio-button value="any" fxFlex="100">Any</mat-radio-button>
-                                                <mat-radio-button value="yes" fxFlex="100">Yes</mat-radio-button>
-                                                <mat-radio-button value="no" fxFlex="100">No</mat-radio-button>
+                                                <mat-radio-button value="2" fxFlex="100">Any</mat-radio-button>
+                                                <mat-radio-button value="1" fxFlex="100">Yes</mat-radio-button>
+                                                <mat-radio-button value="0" fxFlex="100">No</mat-radio-button>
                                             </mat-radio-group>
                                         </div>
 
@@ -413,9 +413,9 @@
                                             <span fxFlex="30" class="mat-subheading-2 m-0"> Closed : </span>
                                             <input matInput placeholder="Input" style="display: none" />
                                             <mat-radio-group class="w-100-p" formControlName="closed" fxFlex="70">
-                                                <mat-radio-button value="any" fxFlex="100">Any</mat-radio-button>
-                                                <mat-radio-button value="yes" fxFlex="100">Yes</mat-radio-button>
-                                                <mat-radio-button value="no" fxFlex="100">No</mat-radio-button>
+                                                <mat-radio-button value="2" fxFlex="100">Any</mat-radio-button>
+                                                <mat-radio-button value="1" fxFlex="100">Yes</mat-radio-button>
+                                                <mat-radio-button value="0" fxFlex="100">No</mat-radio-button>
                                             </mat-radio-group>
                                         </div>
 
@@ -423,9 +423,9 @@
                                             <span fxFlex="30" class="mat-subheading-2 m-0"> Assigned : </span>
                                             <input matInput placeholder="Input" style="display: none" />
                                             <mat-radio-group class="w-100-p" formControlName="assigned" fxFlex="70">
-                                                <mat-radio-button value="any" fxFlex="100">Any</mat-radio-button>
-                                                <mat-radio-button value="yes" fxFlex="100">Yes</mat-radio-button>
-                                                <mat-radio-button value="no" fxFlex="100">No</mat-radio-button>
+                                                <mat-radio-button value="2" fxFlex="100">Any</mat-radio-button>
+                                                <mat-radio-button value="1" fxFlex="100">Yes</mat-radio-button>
+                                                <mat-radio-button value="0" fxFlex="100">No</mat-radio-button>
                                             </mat-radio-group>
                                         </div>
 
@@ -446,6 +446,10 @@
                     </div>
 
                     <div id="sortControls" class="twd-flex twd-justify-between twd-items-center twd-px-2 twd-pt-2">
+                        <!-- <div>
+                                <mat-checkbox (change)="selectAllEmails($event.checked)"></mat-checkbox>
+                                <span>Select All</span>
+                        </div> -->
                         <div class="twd-font-bold twd-text-sm">
                             <mat-form-field class="custom with-border" appearance="outline">
                                 <mat-select [formControl]="sortControls.sortBy">
@@ -569,7 +573,7 @@
             </div>
 
             <div
-                *ngIf="!emailSearchRes.loading && !emailSearchRes.error && emailSearchRes.data.selected as selectedEmail"
+                *ngIf="emailSearchRes.data.selected as selectedEmail"
                 class="
                     email-open
                     border-radius-20
@@ -715,16 +719,6 @@
                 </div>
             </div>
             <div
-                *ngIf="emailSearchRes.error"
-                class="email-open twd-h-auto lg:twd-h-full border-radius-20 twd-col-span-2 twd-hidden lg:twd-flex twd-items-center twd-justify-center"
-            >
-                <div class="twd-flex twd-flex-col twd-justify-center">
-                    <mat-icon class="s-128 mb-16 select-message-icon hint-text twd-mx-auto"> error </mat-icon>
-                    <span class="twd-text-2xl">Something went wrong</span>
-                </div>
-            </div>
-
-            <div
                 *ngIf="!emailSearchRes.data.selected"
                 class="email-open twd-h-auto lg:twd-h-full border-radius-20 twd-col-span-2 twd-hidden lg:twd-flex twd-items-center twd-justify-center"
             >
@@ -776,18 +770,22 @@
                                 [checked]="selectedMailIds.includes(node.uiId)"
                             ></mat-checkbox>
                         </div>
-                        <div mat-ripple class="twd-flex-1 twd-flex twd-justify-between twd-p-3" (click)="openEmail(node)">
-                            <div fxFlex="70">
+                        <div mat-ripple class="twd-flex-1 twd-flex twd-flex-wrap twd-justify-between twd-p-3" (click)="openEmail(node)">
+                            <div class="twd-w-full 2xl:twd-w-max">
                                 <p class="font-weight-600 my-4 twd-truncate">
                                     <!-- {{ node.ToList || 'NA' }} -->
                                     {{ (['sentitem', 'draft'].includes(currentTab) ? node.ToList : node.From) || 'NA' }}
                                 </p>
                                 <p class="my-4 twd-truncate">Subject: <span class="twd-truncate" [innerHtml]="node.Subject"></span></p>
                             </div>
-                            <div fxFlex="30">
-                                <span> {{ node.addedTime | date: 'mediumDate' }} </span>
-                                <br />
-                                <span> {{ node.addedTime | date: 'shortTime' }} </span>
+                            <div class="twd-w-full 2xl:twd-w-max twd-flex twd-items-start">
+                                <div class="twd-text-xs twd-font-bold twd-mt-1.5">
+                                    <p>{{ node.addedTime | date: 'mediumDate' }}</p>
+                                    <span> {{ node.addedTime | date: 'shortTime' }} </span>
+                                </div>
+                                <div *ngIf="node.HasAttachment" class="twd-transform twd-rotate-90">
+                                    <span><mat-icon>attachment</mat-icon></span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -820,7 +818,7 @@
                                     {{ node.name || 'NA' }}
                                 </span>
                             </div>
-                            <span *ngIf="node.children" class="twd-px-3 twd-font-bold twd-text-sm">
+                            <span *ngIf="node.children" class="twd-px-3 twd-font-bold twd-text-sm twd-min-w-max">
                                 ({{ node.grandChildren || node.children.length }})
                             </span>
                         </div>
