@@ -14,7 +14,7 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { COMMON_ERR_MESSAGE, DRAFT_REASONS, EMAIL_DRAFT_SAVE_INTERVAL, INBOX_REASONS, OUTBOX_REASONS, SENT_REASONS } from 'app/constants';
 import { AgentSkillListData, CreateEmailInput, CreateEmailOutput, InteractionComment, InteractionRef, IWidget, ResData } from 'app/interfaces';
 import { maticonByExtension, urlify } from 'app/utils';
-import { interval, Subscription } from 'rxjs';
+import { firstValueFrom, interval, Subscription } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 
 type EmailEventGeneric = IncomingEmailEvent | OutgoingEmailEvent;
@@ -573,10 +573,6 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         });
     }
 
-    /**
-     * Forward Email
-     */
-    forwardEmail(): void { }
 
     /**
      * Show reply email form
@@ -690,6 +686,17 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         try {
             const { InSessionId, OutSessionID, SessionId, OutSessionId, EventName } = this.currentInteraction;
             const { BCC, CC, To, Subject, Files, Body } = email || this.createEmailRef.email;
+
+            let confirmSend = true;
+            if (!Subject) {
+                confirmSend = await firstValueFrom(
+                    this._appUIService.showAppConfirmDialog('generic', 'Confirm Send', 'Send email without a subject ?').afterClosed()
+                );
+            }
+            if (!confirmSend) {
+                return;
+            }
+
             if (!To.length) {
                 this._appUIService.showSnackbar('Please add a recipient', 'failure');
                 return;
@@ -708,15 +715,15 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 body: Body,
                 ...(EventName === 'OutgoingEmailEvent'
                     ? {
-                        inboxSessionId: InSessionId,
-                        outboxSessionId: OutSessionId
-                    }
+                          inboxSessionId: InSessionId,
+                          outboxSessionId: OutSessionId
+                      }
                     : {
-                        inboxSessionId: SessionId,
-                        outboxSessionId: OutSessionID
-                    }),
+                          inboxSessionId: SessionId,
+                          outboxSessionId: OutSessionID
+                      }),
                 routeId: '',
-                subject: Subject,
+                subject: Subject.replace('RE:', ''),
                 typeOfResponse: ''
             });
             this._fuseProgressBarService.hide();
@@ -771,15 +778,15 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                         ccList: CC || '',
                         ...(EventName === 'OutgoingEmailEvent'
                             ? {
-                                inboxSessionId: InSessionId,
-                                outboxSessionId: OutSessionId
-                            }
+                                  inboxSessionId: InSessionId,
+                                  outboxSessionId: OutSessionId
+                              }
                             : {
-                                inboxSessionId: SessionId,
-                                outboxSessionId: OutSessionID
-                            }),
+                                  inboxSessionId: SessionId,
+                                  outboxSessionId: OutSessionID
+                              }),
                         routeId: '',
-                        subject: Subject,
+                        subject: Subject.replace('RE:', ''),
                         toList: From,
                         typeOfResponse: 'approve'
                     });
@@ -820,13 +827,13 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 ccList: CC.join(','),
                 ...(EventName === 'OutgoingEmailEvent'
                     ? {
-                        inboxSessionId: InSessionId,
-                        outboxSessionId: OutSessionId
-                    }
+                          inboxSessionId: InSessionId,
+                          outboxSessionId: OutSessionId
+                      }
                     : {
-                        inboxSessionId: SessionId,
-                        outboxSessionId: OutSessionID
-                    }),
+                          inboxSessionId: SessionId,
+                          outboxSessionId: OutSessionID
+                      }),
                 routeId: '',
                 subject: Subject,
                 toList: To.join(','),
