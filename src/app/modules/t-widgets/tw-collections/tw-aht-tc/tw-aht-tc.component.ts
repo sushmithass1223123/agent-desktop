@@ -107,20 +107,18 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
         let eventName: any;
         if (this.widgetData.Role === 'agent') {
             eventName = 'AgentChannelListEvent';
-        }
-        else if (this.widgetData.Role === 'supervisor') {
+        } else if (this.widgetData.Role === 'supervisor') {
             eventName = 'TeamChannelListEvent';
-        }
-        else {
+        } else {
             TUtils.Logger.warn(`TwAhtTcComponent: unable to get event name to regiser, Role=${this.widgetData.Role}`);
         }
 
         if (eventName) {
             // subecribe to the event
             this._tmacEventService
-                .getEvents([eventName])
+                .getNonInteractionEvents([eventName])
                 .pipe(takeUntil(this.unsubscribeAll))
-                .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
+                .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
         }
     }
 
@@ -152,7 +150,6 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
         const datasets = { AHT: [], 'Transfer / Conference': [] };
         const labels = [];
         evt.Data.Channels.forEach((c: any) => {
-
             if (c.AverageActiveTime + c.AverageHoldTime) {
                 datasets.AHT.push(c.AverageActiveTime + c.AverageHoldTime);
             }

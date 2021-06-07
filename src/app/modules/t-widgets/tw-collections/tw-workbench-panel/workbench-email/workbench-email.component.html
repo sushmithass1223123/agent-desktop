@@ -79,7 +79,7 @@
                         <button class="lg:twd-hidden" #expandableButton (click)="showCategoryMenu = !showCategoryMenu">
                             <mat-icon>{{ showCategoryMenu ? 'menu_open' : 'menu' }}</mat-icon>
                         </button>
-                        <form class="twd-max-w-1/2 lg:twd-max-w-full twd-flex-1" (ngSubmit)="doGlobalSearch()">
+                        <form class="twd-max-w-6/12 lg:twd-max-w-full twd-flex-1" (ngSubmit)="doGlobalSearch()">
                             <mat-form-field class="custom with-border form-field w-100-p" appearance="outline">
                                 <input class="login-input" matInput placeholder="Search" [formControl]="globalSearchControl" />
                                 <button *ngIf="!globalSearchControl.value; else clearBtn" mat-icon-button matSuffix disabled type="button">

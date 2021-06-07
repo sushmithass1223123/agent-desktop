@@ -1,30 +1,16 @@
-<!-- PROGRESS BAR -->
-<fuse-progress-bar></fuse-progress-bar>
-<!-- / PROGRESS BAR -->
+<div *ngIf="!loading" class="tw-widget-container w-100-p h-100-p twd-flex twd-flex-1 twd-justify-center twd-items-center p-md-36 twd-p-8">
+    <tw-template *ngIf="widgets.length" class="dynamic-widget-grid twd-overflow-auto twd-m-0" [widgets]="widgets"></tw-template>
 
-<div fxFill class="p-md-36 pt-16" fxLayout xLayoutAlign="center center">
-    <div
-        fxFill
-        fxLayout="row wrap"
-        fxLayoutAlign="center none"
-        *ngIf="!loading && dynamicWidgets.length > 0; else noWidgets"
-        class="widget-grid custom-scroll-adjust"
-    >
-        <tw-template fxFlex.gt-md="33" class="static-widget-grid" *ngIf="staticWidgets.length > 0" [widgets]="staticWidgets"></tw-template>
-        <tw-template fxFlex.gt-md="66" class="dynamic-widget-grid" *ngIf="dynamicWidgets.length > 0" [widgets]="dynamicWidgets"></tw-template>
-    </div>
-</div>
-
-<ng-template #noWidgets>
     <twc-not-found
-        class="tw-widget-container"
+        *ngIf="!widgets.length"
+        class="w-100-p h-100-p"
         [ngStyle]="{ 'width.px': widgetWidth, 'height.px': widgetHeight }"
         title="No Widgets"
         type="widget"
         message="No preview widgets found!"
     ></twc-not-found>
-</ng-template>
+</div>
 
-<div class="spinner" *ngIf="loading">
+<div *ngIf="loading" class="spinner">
     <mat-spinner></mat-spinner>
 </div>

@@ -1,0 +1,73 @@
+[
+    {
+        "Name": "Campaign Contact",
+        "Description": "",
+        "Key": "CampaignContact",
+        "Type": "tw-campaign-contact",
+        "Config": {
+            "Enabled": true,
+            "Hidden": false,
+            "Static": false,
+            "Anchor": false,
+            "AOT": false,
+            "AutoOpen": false,
+            "Icon": "contact_page",
+            "Class": "",
+            "Position": {
+                "X": 2,
+                "Y": 2
+            },
+            "Actions": [
+                "maximize",
+                "float"
+            ],
+            "ViewState": "restore",
+            "Header": true,
+            "Pinned": false
+        },
+        "Data": {
+            "CustomerInfo": [
+                {
+                    "Title": "Name",
+                    "ValueSource": "ContactData.campaignContact.Name",
+                    "DefaultValue": ""
+                },
+                {
+                    "Title": "PhoneNumber",
+                    "ValueSource": "ContactData.campaignContact.PhoneNumber",
+                    "DefaultValue": ""
+                },
+                {
+                    "Title": "NRIC",
+                    "ValueSource": "ContactData.campaignContact.nric",
+                    "DefaultValue": ""
+                },
+                {
+                    "Title": "Gender",
+                    "ValueSource": "ContactData.campaignContact.Gender",
+                    "DefaultValue": ""
+                },
+                {
+                    "Title": "Age",
+                    "ValueSource": "ContactData.campaignContact.Age",
+                    "DefaultValue": ""
+                },
+                {
+                    "Title": "Language",
+                    "ValueSource": "ContactData.campaignContact.language",
+                    "DefaultValue": ""
+                },
+                {
+                    "Title": "Email",
+                    "ValueSource": "ContactData.campaignContact.Email",
+                    "DefaultValue": ""
+                },
+                {
+                    "Title": "Callback DateTime",
+                    "ValueSource": "ContactData.campaignContact.ScheduleTime",
+                    "DefaultValue": ""
+                }
+            ]
+        }
+    }
+]

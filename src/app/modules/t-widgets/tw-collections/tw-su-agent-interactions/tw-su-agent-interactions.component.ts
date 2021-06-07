@@ -6,12 +6,15 @@ import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
 import { DashboardService } from '@services/dashboard.service';
 import { TMACEventService } from '@services/tmac-event.service';
+import { AgentFeatures, IAgentData, InteractionDataModel, IResponse, SDKClient, SuAgentModel } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AGENT_FEATURES, AGENT_FEATURES_MAP, COMMON_ERR_MESSAGE } from 'app/constants';
 import { CustomSDKEvent, IWidget } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
-import { AgentFeatures, IAgentData, InteractionDataModel, IResponse, SDKClient, SuAgentInteractionModel, SuAgentModel } from '@tmac/sdk';
 
+/**
+ * Supervisor Agent Interactions Component
+ */
 @Component({
     selector: 'tw-su-agent-interactions',
     templateUrl: './tw-su-agent-interactions.component.html',
@@ -19,22 +22,54 @@ import { AgentFeatures, IAgentData, InteractionDataModel, IResponse, SDKClient, 
     encapsulation: ViewEncapsulation.None
 })
 export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-    // holds all the data related to this widget from the config
+    /**
+     * Holds all the data related to this widget from the config
+     */
     @Input() data: IWidget;
 
+    /**
+     * Mat sort for mat table
+     */
     @ViewChild(MatSort, { static: true }) sort: MatSort;
+
+    /**
+     * Mat paginator for mat table
+     */
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
+    /**
+     * Config data
+     */
     configData: SuAgentModel;
 
+    /**
+     * Maximized flag
+     */
     maximized = false;
+
+    /**
+     * Interaction list
+     */
     interactionList: any;
 
-    mindisplayedColumns: string[] = ['InteractionID', 'Channel', 'LastStatus', 'User', 'ActiveTime', 'HoldTime', 'Actions'];
+    /**
+     * Mat table minimized displayed columns
+     */
+    mindisplayedColumns = ['InteractionID', 'Channel', 'LastStatus', 'User', 'ActiveTime', 'HoldTime', 'Actions'];
 
+    /**
+     * Agent feature map
+     */
     featureMap = AGENT_FEATURES_MAP;
+
+    /**
+     * Agent data
+     */
     agentData: IAgentData;
 
+    /**
+     * Interaction details table
+     */
     interactionDetailsTable = {
         source: new MatTableDataSource([]),
         columns: this.mindisplayedColumns,
@@ -72,7 +107,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
 
         // register to event
         this._tmacEventService
-            .getEvents(['TeamAgentInteractionDetailsEvent'])
+            .getNonInteractionEvents(['TeamAgentInteractionDetailsEvent'])
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
 

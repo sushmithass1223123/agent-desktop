@@ -3,12 +3,13 @@ import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { setStringVars } from '@tmac/operators';
+import { AgentAssistDataEvent, CallerIntentEvent, GenericEvent, TextChatRemoteUserConnectedEvent } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { orderBy } from 'lodash';
+import { merge } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AgentAssistDataEvent, CallerIntentEvent, GenericEvent, TextChatRemoteUserConnectedEvent } from '@tmac/sdk';
 
 /**
  * Agent Assist Component
@@ -47,7 +48,7 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         /**
          * Count of intent
          */
-        Count: number,
+        Count: number;
         /**
          * Url to assist
          */
@@ -63,26 +64,17 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
     }[] = [];
 
     /**
-     * Constructor 
+     * Constructor
      * @param {AOTWidgetService} _aotWidgetService
      * @param {TMACEventService} _tmacEventService
      * @param {AppUiService} _appUIService
      */
-    constructor(
-        private _aotWidgetService: AOTWidgetService,
-        private _tmacEventService: TMACEventService,
-        private _appUIService: AppUiService
-    ) {
+    constructor(private _aotWidgetService: AOTWidgetService, private _tmacEventService: TMACEventService, private _appUIService: AppUiService) {
         super();
     }
 
-    // -----------------------------------------------------------------------------------------------------
-    // @ Lifecycle hooks
-    // -----------------------------------------------------------------------------------------------------
-
     /**
-     * A callback method that is invoked immediately after the default change detector has checked the directive's data-bound properties for the first time,
-     * and before any of the view or content children have been checked. It is invoked only once when the directive is instantiated.
+     * On Init
      */
     ngOnInit(): void {
         // call the wrapper init method
@@ -100,35 +92,61 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         // TODO:: To implement interaction based AOT
         // SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
 
-        this._tmacEventService
-            .getInteractionEvents([
-                'OnNLPDataEvent',
-                'CallerIntentEvent',
-                'TextChatRemoteUserConnectedEvent',
-                'AgentAssistDataEvent'
-            ], this.interactionId)
+        const stream1$ = this._tmacEventService.getInteractionEvents(
+            ['CallerIntentEvent', 'TextChatRemoteUserConnectedEvent', 'AgentAssistDataEvent'],
+            this.interactionId
+        );
+
+        // NLPDataEvent is an interaction event but it does not have InteractionID so we get from 'getNonInteractionEvents'
+        // TODO:: Need server side changes to get from 'getInteractionEvents'
+        const stream2$ = this._tmacEventService.getNonInteractionEvents(['OnNLPDataEvent']);
+
+        // merge two streams
+        merge(stream1$, stream2$)
             .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
+            .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
     }
 
     /**
-     * A callback method that performs
-     *  clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
+     * On Destroy
      */
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
     }
 
-    // -----------------------------------------------------------------------------------------------------
-    // @  Private Methods
-    // -----------------------------------------------------------------------------------------------------
+    /**
+     * To add intent to NLP data
+     *
+     * @param intent Intent to be added
+     * @param url [OPTIONAL] Assist url to be opened
+     * @param width [OPTIONAL] Width of assit widget
+     * @param height [OPTIONAL] Height of assist widget
+     */
+    private addIntentToNLPData(intent: string, url?: string, width?: number, height?: number): void {
+        const getData = this.nlpData.filter((i) => i.Name === intent);
+        if (getData.length > 0) {
+            ++getData[0].Count;
+        } else {
+            this.nlpData.push({
+                Name: intent,
+                Count: 0,
+                Url: url,
+                Width: width,
+                Height: height
+            });
+        }
+
+        // oder by the count
+        this.nlpData = orderBy(this.nlpData, ['Count'], ['desc']);
+    }
 
     /**
      * To process OnNLPDataEvent
-     * @param evt GenericEvent event data
+     *
+     * @param {GenericEvent} evt
      */
-    private OnNLPDataEvent = (evt?: GenericEvent): void => {
+    OnNLPDataEvent(evt?: GenericEvent): void {
         const receivedData = evt;
         if (receivedData) {
             const parsedJson = JSON.parse(receivedData.JsonData);
@@ -167,13 +185,10 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
 
     /**
      * To process CallerIntentEvent
-     * @param evt CallerIntentEvent event data
+     *
+     * @param {CallerIntentEvent} evt
      */
-    private CallerIntentEvent = (evt: CallerIntentEvent): void => {
-        // check for the interaction
-        if (this.interactionId !== evt.InteractionID) {
-            return;
-        }
+    CallerIntentEvent(evt: CallerIntentEvent): void {
         // get the intent from event
         const intent = evt.IntentName;
 
@@ -187,14 +202,10 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
 
     /**
      * To process TextChatRemoteUserConnectedEvent
-     * @param evt TextChatRemoteUserConnectedEvent event data
+     *
+     * @param {TextChatRemoteUserConnectedEvent} evt
      */
-    private TextChatRemoteUserConnectedEvent = (evt: TextChatRemoteUserConnectedEvent) => {
-        // check for the interaction
-        if (this.interactionId !== evt.InteractionID) {
-            return;
-        }
-
+    TextChatRemoteUserConnectedEvent = (evt: TextChatRemoteUserConnectedEvent) => {
         // get the intent from event
         const intent = evt.TransferIntent || evt.Intent;
 
@@ -204,18 +215,13 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         }
 
         this.addIntentToNLPData(intent);
-    }
+    };
 
     /**
      * To process AgentNotificaitonEvent
-     * @param evt AgentNotificaitonEvent event data
+     * @param {AgentNotificaitonEvent} evt
      */
-    // private AgentNotificaitonEvent = (evt: AgentNotificaitonEvent) => {
-    //     // check if the event for the interaction
-    //     if (evt.InteractionID !== this.interactionId) {
-    //         return;
-    //     }
-
+    // AgentNotificaitonEvent(evt: AgentNotificaitonEvent):void {
     //     // check the type
     //     if (evt.Type.toLowerCase() === 'executeaction') {
     //         // parse the action
@@ -255,61 +261,25 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
     // }
 
     /**
-     * To add intent to NLP data
-     * 
-     * @param intent Intent to be added
-     * @param url [OPTIONAL] Assist url to be opened
-     * @param width [OPTIONAL] Width of assit widget
-     * @param height [OPTIONAL] Height of assist widget
-     */
-    private addIntentToNLPData(intent: string, url?: string, width?: number, height?: number): void {
-        const getData = this.nlpData.filter((i) => i.Name === intent);
-        if (getData.length > 0) {
-            ++getData[0].Count;
-        } else {
-            this.nlpData.push({
-                Name: intent,
-                Count: 0,
-                Url: url,
-                Width: width,
-                Height: height
-            });
-        }
-
-        // oder by the count
-        this.nlpData = orderBy(this.nlpData, ['Count'], ['desc']);
-    }
-
-    /**
      * To process AgentAssistDataEvent
-     * 
+     *
      * @param {AgentAssistDataEvent} evt
      */
-    private AgentAssistDataEvent = (evt: AgentAssistDataEvent) => {
-        // check for the interaction
-        if (this.interactionId !== evt.InteractionID) {
-            return;
-        }
-
+    AgentAssistDataEvent(evt: AgentAssistDataEvent): void {
         // add intent to the list
         this.addIntentToNLPData(evt.Name, evt.Url, evt.Width, evt.Height);
     }
 
-
-    // -----------------------------------------------------------------------------------------------------
-    // @  Public Methods
-    // -----------------------------------------------------------------------------------------------------
-
     /**
      * To open assist widget
-     * 
+     *
      * @param intent Intent to be passed to assist widgetData
      * @param isMandatory [OPTIONAL] Falg to pop confirmation before the widget close
      * @param assistUrl [OPTIONAL] Assist url to be opened
      * @param width [OPTIONAL] Width of assit widget
      * @param height [OPTIONAL] Height of assist widget
      */
-    public openAssitWidget(intent: string, isMandatory?: boolean, assistUrl?: string, width?: number, height?: number): void {
+    openAssitWidget(intent: string, isMandatory?: boolean, assistUrl?: string, width?: number, height?: number): void {
         // check if the url to be taken from param
         let url = assistUrl ? assistUrl : this.widgetData.AssistWidgetUrl;
 

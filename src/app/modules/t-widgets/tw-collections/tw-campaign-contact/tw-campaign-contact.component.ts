@@ -1,11 +1,13 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatDialogRef } from '@angular/material/dialog';
 import { TWidgetWrapper } from '@modules/t-widgets/utils/widget-wrapper/tw-wrapper';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
-import { GenericInteractionEvent, IncomingCallEvent, IResponse, SDKClient, TUtils } from '@tmac/sdk';
-import { IWidget } from 'app/interfaces';
-import { getValueFromJson } from 'app/utils';
+import { GenericInteractionEvent, IAgentData, IncomingCallEvent, IResponse, SDKClient, TUtils } from '@tmac/sdk';
+import { IAppConfig, IMaskData, IWidget } from 'app/interfaces';
+import { getValueFromJson, maskDataLocal } from 'app/utils';
 import { firstValueFrom } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -22,12 +24,12 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
     /**
      * holds all the data related to this widget from the config
      */
-    @Input() data: IWidget;
+    @Input() data: IWidget<IncomingCallEvent | GenericInteractionEvent, WidgetData>;
 
     /**
      * To store entire app config and get update
      */
-    appConfig: any;
+    appConfig: IAppConfig;
 
     /**
      * ID of interaction
@@ -48,6 +50,36 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
      */
     customerInfo: CustomerInfo[];
 
+    /**
+     * Confirm dialog ref
+     */
+    dialogRef: MatDialogRef<any, any>;
+
+    /**
+     * Customer primary phone number
+     */
+    phoneNumber: string;
+
+    /**
+     * Current agent data
+     */
+    user: IAgentData;
+
+    /**
+     * TCM client url
+     */
+    tcmClientUrl: string;
+
+    /**
+     * Show make call button flag
+     */
+    showMakeCall: boolean;
+
+    /**
+     * Maximized flag
+     */
+    maximized: boolean;
+
     constructor(private _appDataService: AppDataService, private _appUIService: AppUiService, private _tmacEventService: TMACEventService) {
         super();
     }
@@ -58,6 +90,8 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
     async ngOnInit(): Promise<void> {
         // call the wrapper init method
         this.initWrapper(this.data);
+
+        this.user = SDKClient.getAgentData();
 
         // get interaction id
         this.interaction = this.data.InteractionDetails;
@@ -100,14 +134,15 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
         );
 
         // get the url
-        const tcmClientUrl = appConfig?.tcmUrl;
+        this.tcmClientUrl = appConfig?.tcmUrl;
 
         // check if we got the url
-        if (!tcmClientUrl) {
+        if (!this.tcmClientUrl) {
+            TUtils.Logger.warn('TwCampaignContactComponent: Unable to fetch TCM client url, please check the config!');
             return;
         }
 
-        let phone = '7012765814';
+        let phone = '';
         let fromAddr = '';
         let ucid = '';
         let skill = '';
@@ -116,7 +151,7 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
         let urlPath = '';
 
         // check the interaction whether its voice or generic
-        if (this.interaction as IncomingCallEvent) {
+        if (this.interaction?.EventName === 'IncomingCallEvent') {
             const interaction = this.interaction as IncomingCallEvent;
             if (interaction.SubType.toLowerCase() === 'camp') {
                 // get the subtype data
@@ -126,19 +161,25 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
                 ucid = interaction.UCID;
                 skill = interaction.Queue;
             }
-        } else if (this.interaction as GenericInteractionEvent) {
+        } else if (this.interaction?.EventName === 'GenericInteractionEvent') {
             const interaction = this.interaction as GenericInteractionEvent;
 
-            phone = interaction.Item.PhoneNumber;
+            phone = this.phoneNumber = interaction.Item.PhoneNumber;
             skill = interaction.Item.Skill;
             contactId = interaction.Item.ID;
+
+            // TODO:: only notify that callback request is assigned if it was assigned the first time and not if the UI is reloaded or re-login
+            // if (!this.interaction?.RecoveryEvent) {
+            //     // call TCM to notify assigned
+            //     this.notifyTcmAssigned(phone, interaction.Item.Type);
+            // }
+
+            this.notifyTcmAssigned(phone, interaction.Item.Type);
         }
 
-        const { agentId, deviceId } = SDKClient.getAgentData();
-
         let requestArgs = {
-            agentID: agentId,
-            extension: deviceId,
+            agentID: this.user.agentId,
+            extension: this.user.deviceId,
             ucid: ucid,
             skill: skill
         } as any;
@@ -157,7 +198,7 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
                 ...requestArgs,
                 phone
             };
-        } else if (fromAddr && this.interaction.InteractionID) {
+        } else if (fromAddr && this.interaction?.InteractionID) {
             // to get customer contact data by fromAddr and interaction id
             urlPath = '/GetCustomerContactInteractionData';
             requestArgs = {
@@ -174,16 +215,7 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
             };
         }
 
-        const result: IResponse = await TUtils.HttpClient.sendRequest({
-            urls: [tcmClientUrl + urlPath],
-            requestArgs,
-            header: {
-                'Content-Type': 'application/json'
-            },
-            responseType: 'json',
-            method: 'POST',
-            log: true
-        });
+        const result = await this.restCall(urlPath, requestArgs);
 
         this.contactData.loading = false;
 
@@ -195,6 +227,17 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
 
         // store the data
         this.contactData.data = result.response.d ? JSON.parse(result.response.d) : null;
+
+        // emit custom event
+        this._tmacEventService.emitSDKEvent({
+            event: {
+                EventName: 'CustomerContactInfoReceivedEvent',
+                InteractionID: this.interaction?.InteractionID ?? '0',
+                ...this.contactData.data
+            },
+            isInteractionEvent: true,
+            log: true
+        });
 
         this.processCustomerDetails({
             EventName: 'ContactData',
@@ -209,11 +252,6 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
         // call the wrapper destroy method
         this.destroyWrapper();
     }
-
-    /**
-     * To do rest call to TCM
-     */
-    restCall(): void {}
 
     /**
      * IUIEvent Handelr
@@ -250,7 +288,7 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
                         // get the property by taking string between ) and last
                         const prop = valueSource.substring(valueSource.lastIndexOf(')') + 2, valueSource.length);
 
-                        item.Value = JSON.parse(jsonStr)[prop] ?? '';
+                        item.Value = maskDataLocal(JSON.parse(jsonStr)[prop] ?? '', item.MaskData);
                     }
                 }
             } else {
@@ -261,10 +299,117 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
                 }
 
                 // get the value from path or default value
-                item.Value = getValueFromJson(valueSourceSplit, evt, item.DefaultValue);
+                item.Value = maskDataLocal(getValueFromJson(valueSourceSplit, evt, item.DefaultValue), item.MaskData);
             }
         });
     };
+
+    /**
+     * To notify TCM about item assignment
+     *
+     * @param {String }phone
+     * @param {String }type
+     */
+    private async notifyTcmAssigned(phone: string, type: string): Promise<void> {
+        try {
+            const result = await this.restCall('/OnDacNotificationEvent', {
+                fromAddr: phone,
+                response: 'assigned',
+                agentID: this.user.agentId,
+                extension: this.user.deviceId,
+                scheduletime: '',
+                interactionId: this.interaction?.InteractionID ?? '0'
+            });
+
+            // check the response
+            if (result.response.d === 1) {
+                if (type.toLowerCase() === 'tcmvoicewq') {
+                    this.showMakeCall = true;
+                }
+            } else {
+                this._appUIService.showSnackbar('Failed to assign the direct agent item to campaign manager', 'failure');
+            }
+        } catch (error) {
+            this._appUIService.showSnackbar('Error in assigning the direct agent item to campaign manager', 'failure');
+        }
+    }
+
+    /**
+     * To make rest call
+     *
+     * @param {String} method
+     * @param {Any} requestArgs
+     */
+    private async restCall(method: string, requestArgs: any): Promise<IResponse> {
+        return await TUtils.HttpClient.sendRequest<IResponse>({
+            urls: [this.tcmClientUrl + method],
+            requestArgs,
+            header: {
+                'Content-Type': 'application/json'
+            },
+            responseType: 'json',
+            method: 'POST',
+            log: true
+        });
+    }
+
+    /**
+     * To confirm make call
+     */
+    confirmMakeCall(btn: MatButton): void {
+        btn.disabled = true;
+        this.dialogRef = this._appUIService.showAppConfirmDialog('generic', 'Confirm Make Call', `Are you sure to make call to ${this.phoneNumber}`);
+        this.dialogRef.afterClosed().subscribe((res) => {
+            if (res) {
+                // send end chat to server
+                this.makeCallToCustomer(btn);
+            } else {
+                btn.disabled = false;
+            }
+        });
+    }
+
+    /**
+     * To make call to customer
+     */
+    makeCallToCustomer(btn: MatButton): void {
+        // signal TCM that the callback request has been accepted
+        this.restCall('/OnAgentResponseToDacRequest', {
+            fromAddr: this.phoneNumber,
+            response: 'accept',
+            agentID: this.user.agentId,
+            extension: this.user.deviceId,
+            scheduletime: ''
+        });
+
+        // make call to the provided number and complete the reminder
+        SDKClient.makeCall({
+            interactionId: this.interaction.InteractionID.toString(),
+            number: this.phoneNumber,
+            source: '',
+            sourceId: ''
+        })
+            .then((dt) => {
+                if (dt.response.ResultCode === 0) {
+                    this._appUIService.showSnackbar(`Make call to ${this.phoneNumber} successful`);
+                } else {
+                    this._appUIService.showSnackbar(`Make call failed, ${dt.response.ResultMessage}`, 'failure');
+                    btn.disabled = false;
+                }
+            })
+            .catch((err) => {
+                this._appUIService.showSnackbar('Make call error', 'failure');
+                TUtils.Logger.error('Error in TwCampaignContactComponent.makeCallToCustomer', err);
+                btn.disabled = false;
+            });
+    }
+}
+
+interface WidgetData {
+    /**
+     * Customer info config
+     */
+    CustomerInfo: CustomerInfo[];
 }
 
 /**
@@ -284,11 +429,15 @@ interface CustomerInfo {
      */
     Value?: string;
     /**
-     * Unit
-     */
-    Unit: string;
-    /**
      * Default Value
      */
     DefaultValue: string;
+    /**
+     * Width of column
+     */
+    Width?: string;
+    /**
+     * To mask value
+     */
+    MaskData?: IMaskData | boolean;
 }

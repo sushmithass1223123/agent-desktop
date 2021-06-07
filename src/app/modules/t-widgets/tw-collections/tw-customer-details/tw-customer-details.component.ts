@@ -2,8 +2,9 @@ import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewEncapsul
 import { TMACEventService } from '@services/tmac-event.service';
 import { IUIEvent, TUtils } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
+import { IMaskData } from 'app/interfaces';
+import { getValueFromJson, maskDataLocal } from 'app/utils';
 import { takeUntil } from 'rxjs/operators';
-import { getValueFromJson } from 'app/utils';
 
 /**
  * Custommer details widget
@@ -134,7 +135,7 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
                         // get the property by taking string between ) and last
                         const prop = valueSource.substring(valueSource.lastIndexOf(')') + 2, valueSource.length);
 
-                        item.Value = JSON.parse(jsonStr)[prop] ?? '';
+                        item.Value = maskDataLocal(JSON.parse(jsonStr)[prop] ?? '', item.MaskData);
                     }
                 }
             } else {
@@ -145,7 +146,7 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
                 }
 
                 // get the value from path or default value
-                item.Value = getValueFromJson(valueSourceSplit, evt, item.DefaultValue);
+                item.Value = maskDataLocal(getValueFromJson(valueSourceSplit, evt, item.DefaultValue), item.MaskData);
             }
         });
     };
@@ -175,4 +176,12 @@ interface CustomerInfo {
      * Default Value
      */
     DefaultValue: string;
+    /**
+     * Width of column
+     */
+    Width?: string;
+    /**
+     * To mask value
+     */
+    MaskData?: IMaskData | boolean;
 }

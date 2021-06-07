@@ -455,7 +455,6 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.configLoaded(config);
         this.getData();
         this.checkQueryParams();
-        this._appDataService.setTheme();
     }
 
     /**
@@ -523,9 +522,6 @@ export class LoginComponent implements OnInit, OnDestroy {
             // Set validators for form
             if (this.domainListEnabled) {
                 this.loginForm.controls.domain.setValidators(Validators.required);
-            }
-            if (this.stationEnabled) {
-                this.loginForm.controls.station.setValidators(Validators.required);
             }
             if (this.stationEnabled) {
                 this.loginForm.controls.station.setValidators(Validators.required);
@@ -927,12 +923,11 @@ export class LoginComponent implements OnInit, OnDestroy {
      * To check for number only
      * @param event input event
      */
-    public numberOnly(event: any): boolean {
-        const charCode = event.which ? event.which : event.keyCode;
-        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-            return false;
+    public numberOnly(event: KeyboardEvent): boolean {
+        if (!isNaN(Number(event.key)) || event.key === 'Enter') {
+            return true;
         }
-        return true;
+        return false;
     }
 
     /**

@@ -12,9 +12,8 @@ import { FuseSplashScreenService } from '@fuse/services/splash-screen.service';
     styleUrls: ['./resource-not-found.component.scss']
 })
 export class ResourceNotFoundComponent implements OnInit {
-
     /**
-     * Subtitle 
+     * Subtitle
      */
     subtitle: string;
     /**
@@ -29,12 +28,12 @@ export class ResourceNotFoundComponent implements OnInit {
      * Login flag
      */
     login = true;
+    /**
+     * To retry same path
+     */
+    route = '';
 
-    constructor(
-        private _router: Router,
-        private _titleService: Title,
-        private fuseSplashService: FuseSplashScreenService
-    ) { }
+    constructor(private _router: Router, private _titleService: Title, private fuseSplashService: FuseSplashScreenService) {}
 
     /**
      * Lifecycles Hook
@@ -44,17 +43,17 @@ export class ResourceNotFoundComponent implements OnInit {
         this.subtitle = history.state.subtitle || '';
         this.title = history.state.title || '';
         this.description = history.state.description || '';
-        this.login = history.state.login || true;
+        this.login = history.state.login ?? true;
+        this.route = history.state.route ?? '';
         const title = this._titleService.getTitle();
         this._titleService.setTitle(title.split('-')[0].trim());
     }
 
     /**
-     * Route to login
+     * Route back to path
      */
-    routeToLogin(): void {
+    routeBack(): void {
         // we will route to login page
-        this._router.navigate(['login'], { queryParamsHandling: 'preserve' });
+        this._router.navigate([this.route ?? 'login'], { queryParamsHandling: 'preserve' });
     }
-
 }

@@ -1,7 +1,4 @@
 tw-ad-callbacks {
-    .callbacks {
-        padding: 10px;
-    }
     .callback-total {
         & > * {
             min-width: 210px;
@@ -11,6 +8,9 @@ tw-ad-callbacks {
             margin-bottom: 8px;
             &:last-child {
                 margin-bottom: 0px;
+            }
+            &.selected {
+                box-shadow: none;
             }
         }
         &.maximized {

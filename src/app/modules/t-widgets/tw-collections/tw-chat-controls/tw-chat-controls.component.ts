@@ -30,6 +30,7 @@ import {
     TextChatAgentDisconnectedEvent,
     TextChatAgentMessageReceivedEvent,
     TextChatDisconnectedEvent,
+    TextChatIncomingEvent,
     TextChatMessageReceivedEvent,
     TextChatMessageSentEvent,
     TextChatMessageTemplateSentEvent,
@@ -71,7 +72,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * To hold all the data related to this widget from the config
      */
-    @Input() data: IWidget;
+    @Input() data: IWidget<TextChatIncomingEvent | TextChatRemoteUserConnectedEvent>;
     /**
      * Media Channels
      */
@@ -364,7 +365,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * Agent action features
      */
-     agentFeatures: {
+    agentFeatures: {
         /**
          * Audio escalate
          */
@@ -477,38 +478,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // set the interaction id from data
         this.interactionId = this.data.InteractionDetails?.InteractionID;
 
-        // listen to TMAC events
-        this._tmacEventService
-            .getInteractionEvents(
-                [
-                    'TextChatRemoteUserConnectedEvent',
-                    'TextChatSelfServiceDestinationEvent',
-                    'TextChatAgentConnectedEvent',
-                    'TextChatTranscriptForTransferEvent',
-                    'TextChatMessageSentEvent',
-                    'TextChatMessageTemplateSentEvent',
-                    'TextChatUserMessageWaitTimerEvent',
-                    'TextChatTypingStateChangedEvent',
-                    'TextChatMessageReceivedEvent',
-                    'TextChatAgentMessageReceivedEvent',
-                    'AVControlMessageReceivedEvent',
-                    'TextChatDisconnectedEvent',
-                    'TextChatAgentDisconnectedEvent',
-                    'CannedResposeEvent',
-                    'TextChatTransferSuccessEvent',
-                    'TextChatTransferFailedEvent',
-                    'TextChatTransferRejectEvent',
-                    'ActionMessageReceivedEvent',
-                    'InteractionDataEvent',
-                    'CallHoldEvent',
-                    'CallHoldReconnectEvent',
-                    'HoldTimerEvent',
-                    'CCLDataEvent'
-                ],
-                this.interactionId
-            )
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
+        this.registerToEvents();
 
         this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
             this.appConfig = config;
@@ -572,13 +542,13 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.status = 'incoming';
 
         // set the start time
-        this.startTime = new Date(Date.parse(this.data.InteractionDetails.CreatedTime)) || new Date();
+        this.startTime = new Date(Date.parse(this.data.InteractionDetails.CreatedTime as string)) || new Date();
 
         // get the file upload Url
         this.fileUploadUrl = this.appConfig.Main.Urls?.FileServerUrl || null;
 
         // update the line Id
-        this.lineId = this.data.InteractionDetails?.RecoveryData?.lineid || '';
+        this.lineId = (this.data.InteractionDetails as TextChatIncomingEvent)?.RecoveryData?.lineid || '';
 
         // check if this chat is init by supervisor
         this.supervisorInit = this.lineId === 'bargein';
@@ -649,6 +619,44 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     // -----------------------------------------------------------------------------------------------------
     // @ Private methods
     // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * Register to events
+     */
+    private registerToEvents(): void {
+        // listen to TMAC events
+        this._tmacEventService
+            .getInteractionEvents(
+                [
+                    'TextChatRemoteUserConnectedEvent',
+                    'TextChatSelfServiceDestinationEvent',
+                    'TextChatAgentConnectedEvent',
+                    'TextChatTranscriptForTransferEvent',
+                    'TextChatMessageSentEvent',
+                    'TextChatMessageTemplateSentEvent',
+                    'TextChatUserMessageWaitTimerEvent',
+                    'TextChatTypingStateChangedEvent',
+                    'TextChatMessageReceivedEvent',
+                    'TextChatAgentMessageReceivedEvent',
+                    'AVControlMessageReceivedEvent',
+                    'TextChatDisconnectedEvent',
+                    'TextChatAgentDisconnectedEvent',
+                    'CannedResposeEvent',
+                    'TextChatTransferSuccessEvent',
+                    'TextChatTransferFailedEvent',
+                    'TextChatTransferRejectEvent',
+                    'ActionMessageReceivedEvent',
+                    'InteractionDataEvent',
+                    'CallHoldEvent',
+                    'CallHoldReconnectEvent',
+                    'HoldTimerEvent',
+                    'CCLDataEvent'
+                ],
+                this.interactionId
+            )
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
+    }
 
     /**
      * To check agent features for One Way Video
@@ -1123,7 +1131,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         widget.Data.Config = this.data.Data;
         widget.Data.Opener = this;
         widget.Data.InteractionID = this.data.InteractionDetails?.InteractionID;
-        widget.Data.SessionID = this.data.InteractionDetails?.TextChatSessionID;
+        widget.Data.SessionID = (this.data.InteractionDetails as TextChatRemoteUserConnectedEvent)?.TextChatSessionID;
         widget.Data.CallType = param;
 
         // open call widget

@@ -39,7 +39,7 @@
                     </div>
                     <div fxFlex="85" fxLayout fxLayoutAlign="space-between center" class="step-details px-16">
                         <div fxLayout fxFlex="85" fxLayoutAlign="start center">
-                            <div mat-card-avatar [ngSwitch]="s.Channel | lowercase" class="w-32 h-32 border-sm-primary">
+                            <div mat-card-avatar [ngSwitch]="s.Channel | lowercase" class="w-32 h-32 border-sm-primary" [matTooltip]="s.Channel">
                                 <ng-container *ngSwitchCase="'textchat'">
                                     <ng-container *ngTemplateOutlet="interactionBrandType; context: s"></ng-container>
                                 </ng-container>
@@ -56,7 +56,7 @@
                                 <mat-icon color="primary" *ngSwitchCase="'sms'"> textsms </mat-icon>
                                 <mat-icon color="primary" *ngSwitchCase="'email'"> email </mat-icon>
                                 <mat-icon color="primary" *ngSwitchCase="'fax'"> print </mat-icon>
-                                <mat-icon color="primary" *ngSwitchDefault> link_off </mat-icon>
+                                <mat-icon color="primary" *ngSwitchDefault> feed </mat-icon>
                             </div>
                             <span class="ml-8" [ngSwitch]="s.Channel | lowercase">
                                 <ng-container *ngSwitchCase="'voice'"> Voice with </ng-container>
@@ -69,7 +69,7 @@
                                 <ng-container *ngSwitchCase="'fax'"> Fax with </ng-container>
                                 <ng-container *ngSwitchCase="'line'"> Line chat with </ng-container>
                                 <ng-container *ngSwitchCase="'services'"> Serviced by </ng-container>
-                                <ng-container *ngSwitchDefault> Chat with </ng-container>
+                                <ng-container *ngSwitchDefault> {{ s.Channel }} with </ng-container>
                                 {{ s.LastServicedAgentName || s.AgentName }}
                             </span>
                         </div>
@@ -103,14 +103,14 @@
                             <mat-header-cell fxFlex="15" *matHeaderCellDef class="d-flex w-100-p">
                                 <span mat-sort-header> Received At </span>
                             </mat-header-cell>
-                            <mat-cell fxFlex="15" *matCellDef="let element">{{ element.InteractionDate || 'NA' }}</mat-cell>
+                            <mat-cell fxFlex="15" *matCellDef="let element">{{ element.InteractionDate || 'NA' }} </mat-cell>
                         </ng-container>
 
                         <ng-container matColumnDef="Channel">
                             <mat-header-cell *matHeaderCellDef fxFlex="10">
                                 <span mat-sort-header> Channel </span>
                             </mat-header-cell>
-                            <mat-cell *matCellDef="let element" fxFlex="10" [ngSwitch]="element.Channel | lowercase">
+                            <mat-cell *matCellDef="let element" fxFlex="10" [ngSwitch]="element.Channel | lowercase" [matTooltip]="element.Channel">
                                 <ng-container *ngSwitchCase="'textchat'">
                                     <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>
                                 </ng-container>
@@ -127,7 +127,7 @@
                                 <mat-icon color="primary" *ngSwitchCase="'sms'"> textsms </mat-icon>
                                 <mat-icon color="primary" *ngSwitchCase="'email'"> email </mat-icon>
                                 <mat-icon color="primary" *ngSwitchCase="'fax'"> print </mat-icon>
-                                <mat-icon color="primary" *ngSwitchDefault> link_off </mat-icon>
+                                <mat-icon color="primary" *ngSwitchDefault> feed </mat-icon>
                             </mat-cell>
                         </ng-container>
 
@@ -356,18 +356,18 @@
                 <ng-container *ngIf="mode === 'Comments'">
                     <ng-container *ngIf="interactionNotesReq.data | async as iNotes">
                         <div class="custom-scroll-adjust px-12 pb-12" *ngIf="!interactionNotesReq.error && !interactionNotesReq.loading">
-                            <p *ngIf="!iNotes.length" class="text-center mat-headline mt-20">No notes available</p>
+                            <p *ngIf="!iNotes.length" class="text-center mat-headline mt-20">No Comments Available</p>
                             <div
-                                class="step m-8 px-8 py-8 mat-elevation-z1 border-radius-20"
+                                class="step m-8 px-8 py-8 mat-elevation-z1 border-radius-20 font-size-16 font-weight-600"
                                 *ngFor="let note of iNotes"
-                                [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
+                                [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
                             >
                                 {{ note }}
                             </div>
                         </div>
                     </ng-container>
-                    <p class="text-center" *ngIf="interactionNotesReq.loading">Loading ...</p>
-                    <p class="text-center" *ngIf="interactionNotesReq.error">Some error occured</p>
+                    <p class="text-center mat-headline mt-20" *ngIf="interactionNotesReq.loading">Loading...</p>
+                    <p class="text-center mat-headline mt-20" *ngIf="interactionNotesReq.error">Some Error Occured</p>
                 </ng-container>
 
                 <ng-container *ngIf="mode === 'Actions'">
@@ -377,11 +377,11 @@
                         <div
                             *ngFor="let action of sessionActions.data"
                             fxLayout="row-wrap"
-                            class="step mb-4 p-4 mat-elevation-z1"
-                            [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
+                            class="step mb-4 p-4 mat-elevation-z1 font-size-16 font-weight-600"
+                            [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
                         >
                             <div fxFlex="20" fxLayout fxLayoutAlign="center center" class="step-time p-8">
-                                {{ action.ActionTime | date: 'short' }}
+                                {{ action.ActionTime | date: 'MM/dd/yyyy, hh:mm a' }}
                             </div>
                             <div fxFlex="75" fxLayout fxLayoutAlign="space-between center" class="step-details px-16 p-8">
                                 {{ action.Action }}
@@ -501,7 +501,7 @@
                 <ng-container *ngIf="mode === 'Email Preview'">
                     <div *ngIf="emailThreadReq.data as emailInfo" class="twd-flex-1 twd-h-full twd-z-10 twd-relative">
                         <div class="twd-absolute twd-w-full twd-h-full twd-top-0 twd-left-0 twd-overflow-hidden twd-flex twd-flex-col">
-                            <div class="twd-max-h-1/2 twd-overflow-y-auto twd-overflow-x-hidden twd-pb-3 twd-z-10 twd-shadow-md twd-px-4">
+                            <div class="twd-max-h-6/12 twd-overflow-y-auto twd-overflow-x-hidden twd-pb-3 twd-z-10 twd-shadow-md twd-px-4">
                                 <div id="subject" class="twd-text-xl twd-mb-2 twd-truncate" [innerHtml]="emailInfo.Subject"></div>
                                 <div fxLayout fxLayoutAlign="space-between">
                                     <div fxFlex="80" class="twd-flex">

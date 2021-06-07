@@ -1,29 +1,29 @@
 <!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
 <!-- implement following events in your component to access widget wrapper action events -->
 <!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
-<tw-wrapper [data]="data" (maximizeEvent)="maximizeEvent($event)">
+<tw-wrapper [data]="data" (maximizeEvent)="this.maximized = $event">
     <!-- your code goes here -->
     <div
         *ngIf="!getDashboardDataRes.loading && !getDashboardDataRes.error"
-        fxFlex
-        fxFill
-        fxLayout="row"
-        fxLayoutAlign="space-between"
-        class="w-100-p h-100-p p-4"
+        class="w-100-p h-100-p p-4 twd-flex twd-flex-1 twd-flex-row twd-justify-around"
     >
-        <div fxFlex="55">
-            <div class="h-100-p custom-scroll-adjust callbacks">
-                <div *ngFor="let cb of getDashboardDataRes.data.callbacks" class="callback mb-20" fxLayout fxLayoutAlign="space-between center">
-                    <div fxFlex="65" fxLayout fxLayoutAlign="start center" fxLayoutGap="20px">
-                        <div mat-card-avatar class="border-info">
+        <div fxFlex="60" class="twd-flex-1 twd-max-w-7/12">
+            <div class="h-100-p custom-scroll-adjust twd-p-2">
+                <div
+                    *ngFor="let cb of getDashboardDataRes.data.callbacks"
+                    class="twd-p-2 border-radius-20 twd-flex twd-justify-between twd-items-center twd-gap-1"
+                >
+                    <div class="twd-flex-1 twd-max-w-8/12 twd-flex twd-justify-start twd-items-center twd-gap-3">
+                        <div mat-card-avatar class="border-info" [ngClass]="'bg-' + cb.uiState" [matTooltip]="cb.status">
                             <mat-icon> phone_callback </mat-icon>
                         </div>
                         <span class="font-weight-600"> Callback with {{ cb.contact.name }} </span>
                     </div>
-                    <small fxFlex="30" class="font-weight-600">
-                        {{ cb.contact.directAgentScheduleTime }}
+                    <small class="twd-flex-1 twd-max-w-4/12 font-weight-600 twd-text-center">
+                        {{ cb.contact.scheduleTime }}
                     </small>
                 </div>
+
                 <div *ngIf="!getDashboardDataRes.data.callbacks.length" class="w-100-p h-100-p">
                     <img
                         src="assets/images/vectors/no-data-4.svg"
@@ -34,54 +34,69 @@
                 </div>
             </div>
         </div>
+
         <div
             fxFlex="40"
-            fxLayout="column"
-            class="callback-total"
+            class="callback-total twd-flex-1 twd-max-w-5/12 twd-flex twd-flex-col {{
+                maximized ? 'twd-justify-start twd-items-stretch' : 'twd-justify-center twd-items-center'
+            }}"
             [ngClass]="{ maximized: maximized }"
-            fxLayoutAlign="{{ maximized ? 'start stretch' : 'center center' }}"
         >
-            <div class="handled p-10 mat-elevation-z2" fxLayout fxLayoutGap="15" fxLayoutAlign="space-between center">
-                <span fxFlex="20">
+            <div
+                class="handled p-10 mat-elevation-z2 twd-flex twd-justify-between twd-items-center twd-cursor-pointer"
+                [ngClass]="{ 'selected': currentFilter === 'handled' }"
+                (click)="filterCallbacks('handled')"
+            >
+                <span class="twd-flex-1 twd-max-w-4/12">
                     <div mat-card-avatar class="bg-success">
                         <mat-icon>done_all</mat-icon>
                     </div>
                 </span>
-                <strong fxFlex="50" class="ml-20">
+                <strong class="twd-flex-1 twd-max-w-6/12">
                     <span> Handled </span>
                 </strong>
-                <strong fxFlex="30" class="text-center"> {{ getDashboardDataRes.data.handled }} </strong>
+                <strong class="text-center twd-flex-1 twd-max-w-2/12"> {{ getDashboardDataRes.data.handled }} </strong>
             </div>
-            <div class="handled p-10 mat-elevation-z2" fxLayout fxLayoutGap="15" fxLayoutAlign="space-between center">
-                <span fxFlex="20">
+
+            <div
+                class="handled p-10 mat-elevation-z2 twd-flex twd-justify-between twd-items-center twd-cursor-pointer"
+                [ngClass]="{ 'selected': currentFilter === 'missed' }"
+                (click)="filterCallbacks('missed')"
+            >
+                <span class="twd-flex-1 twd-max-w-4/12">
                     <div mat-card-avatar class="bg-danger">
                         <mat-icon>call_missed</mat-icon>
                     </div>
                 </span>
-                <strong fxFlex="50" class="ml-20">
+                <strong class="twd-flex-1 twd-max-w-6/12">
                     <span> Missed </span>
                 </strong>
-                <strong fxFlex="30" class="text-center"> {{ getDashboardDataRes.data.missed }} </strong>
+                <strong class="text-center twd-flex-1 twd-max-w-2/12"> {{ getDashboardDataRes.data.missed }} </strong>
             </div>
-            <div class="missed p-10 mat-elevation-z2" fxLayout fxLayoutGap="15" fxLayoutAlign="space-between center">
-                <span fxFlex="20">
+
+            <div
+                class="missed p-10 mat-elevation-z2 twd-flex twd-justify-between twd-items-center twd-cursor-pointer"
+                [ngClass]="{ 'selected': currentFilter === 'pending' }"
+                (click)="filterCallbacks('pending')"
+            >
+                <span class="twd-flex-1 twd-max-w-4/12">
                     <div mat-card-avatar class="bg-warning">
                         <mat-icon>pending_actions</mat-icon>
                     </div>
                 </span>
-                <strong fxFlex="50" class="ml-20">
+                <strong class="twd-flex-1 twd-max-w-6/12">
                     <span> Pending </span>
                 </strong>
-                <strong fxFlex="30" class="text-center"> {{ getDashboardDataRes.data.pending }} </strong>
+                <strong class="text-center twd-flex-1 twd-max-w-2/12"> {{ getDashboardDataRes.data.pending }} </strong>
             </div>
         </div>
     </div>
 
-    <div *ngIf="getDashboardDataRes.loading" class="w-100-p h-100-p" fxLayout fxLayoutAlign="center center">
+    <div *ngIf="getDashboardDataRes.loading" class="w-100-p h-100-p twd-flex twd-justify-center twd-items-center">
         <mat-spinner></mat-spinner>
     </div>
 
-    <div *ngIf="getDashboardDataRes.error" class="w-100-p h-100-p text-center" fxLayout="column" fxLayoutAlign="center center">
+    <div *ngIf="getDashboardDataRes.error" class="w-100-p h-100-p text-center twd-flex twd-flex-col twd-justify-center twd-items-center">
         <p>
             {{ getDashboardDataRes.msg }}
         </p>

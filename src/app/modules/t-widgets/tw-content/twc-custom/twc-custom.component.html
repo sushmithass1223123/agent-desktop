@@ -17,7 +17,8 @@
         <iframe
             *ngIf="url; else noURL"
             [src]="url"
-            [id]="'twc_frame_' + data.ID"
+            [id]="idName"
+            [name]="idName"
             class="frame"
             [ngClass]="{
                 'border-radius-0': (customFuse$ | async).flatTheme

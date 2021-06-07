@@ -92,8 +92,7 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
             case 'auxstatus':
                 if (this.widgetData.Role === 'agent') {
                     eventName = 'AgentStatusDetailsEvent';
-                }
-                else if (this.widgetData.Role === 'supervisor') {
+                } else if (this.widgetData.Role === 'supervisor') {
                     eventName = 'TeamActiveStatusDetailsEvent';
                 }
                 break;
@@ -109,8 +108,7 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
             case 'totalinteractions':
                 if (this.widgetData.Role === 'agent') {
                     eventName = 'AgentChannelListEvent';
-                }
-                else if (this.widgetData.Role === 'supervisor') {
+                } else if (this.widgetData.Role === 'supervisor') {
                     eventName = 'TeamChannelListEvent';
                 }
                 break;
@@ -123,11 +121,10 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
         // if event name register to it
         if (eventName) {
             this._tmacEventService
-                .getEvents([eventName])
+                .getNonInteractionEvents([eventName])
                 .pipe(takeUntil(this.unsubscribeAll))
-                .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
-        }
-        else {
+                .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
+        } else {
             TUtils.Logger.warn(`TwPieChartComponent: unable to get event name to regiser, Source=${this.widgetData.Source}`);
         }
     }
@@ -146,11 +143,11 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
 
     /**
      * To reduce config data limit of restore view
-     * 
-     * @param datasets 
-     * @param labels 
+     *
+     * @param datasets
+     * @param labels
      */
-    private showData(datasets: { [x: string]: any; }, labels: any[]): void {
+    private showData(datasets: { [x: string]: any }, labels: any[]): void {
         const limit = this.widgetData.Limit;
 
         if (!limit) {
@@ -259,12 +256,13 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
         // });
         // this.chart.labels = labels;
 
-        datasets['Calls In Queue'] = Object.keys(datasets).map((d) => {
-            if (datasets[d].every((x: number) => x === 0)) {
-                datasets[d] = [];
-            }
-            return datasets[d];
-        })[0] || [];
+        datasets['Calls In Queue'] =
+            Object.keys(datasets).map((d) => {
+                if (datasets[d].every((x: number) => x === 0)) {
+                    datasets[d] = [];
+                }
+                return datasets[d];
+            })[0] || [];
 
         this.showData(datasets, labels);
     }
@@ -338,12 +336,13 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
         //     });
         // this.chart.labels = labels;
 
-        datasets.Count = Object.keys(datasets)
-            .map(d => datasets[d])
-            .filter((x) => {
-                const sum = x && x.length ? x.reduce((a: number, b: number) => a + b) : null;
-                return !!sum;
-            })[0] || [];
+        datasets.Count =
+            Object.keys(datasets)
+                .map((d) => datasets[d])
+                .filter((x) => {
+                    const sum = x && x.length ? x.reduce((a: number, b: number) => a + b) : null;
+                    return !!sum;
+                })[0] || [];
 
         this.showData(datasets, labels);
     }
@@ -391,4 +390,3 @@ interface WidgetData {
      */
     Limit: number;
 }
-

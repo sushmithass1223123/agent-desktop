@@ -14,7 +14,7 @@
 // @import '@tmac/notebook/styles/default.scss';
 
 body {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Muli';
 
     &.wf-muli {
         font-family: 'Muli';
@@ -55,7 +55,7 @@ img {
 
 .slim-scroll {
     overflow: auto;
-    
+
     ::-webkit-scrollbar {
         width: 4px !important;
         height: 4px !important;
