@@ -2,8 +2,7 @@ import { NestedTreeControl } from '@angular/cdk/tree';
 import { APP_BASE_HREF } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, Inject, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormArray, FormControl, FormGroup } from '@angular/forms';
-import { MatCheckboxChange } from '@angular/material/checkbox';
+import { FormArray, FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBarRef } from '@angular/material/snack-bar';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
@@ -15,7 +14,7 @@ import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { SDKClient, TUtils } from '@tmac/sdk';
-import { COMMON_ERR_MESSAGE, DRAFT_REASONS, INBOX_REASONS, OUTBOX_REASONS, SENT_REASONS } from 'app/constants';
+import { DRAFT_REASONS, INBOX_REASONS, OUTBOX_REASONS, SENT_REASONS } from 'app/constants';
 import { AgentSkillListData, IWidget, ResData } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { formatJsonData, maticonByExtension } from 'app/utils';
@@ -1354,7 +1353,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             case 'emails/failure':
                 this.emailSearchRes.loading = false;
                 this.emailSearchRes.error = true;
-                this.emailSearchRes.msg = COMMON_ERR_MESSAGE;
+                this.emailSearchRes.msg = 'Error occured while fetching emails';
                 break;
 
             case 'emails/failure/custom-message':

@@ -142,3 +142,17 @@ export const maskDataLocal = (value: string, config: IMaskData | boolean): strin
     // return input for error/default scenario
     return value;
 };
+
+/**
+ * ADError custom error class
+ */
+export class ADError extends Error {
+    constructor(msg: string) {
+        super(msg);
+        this.name = ADError.name;
+    }
+}
+
+export const throwADError = (msg: string) => {
+    throw new ADError(msg);
+};

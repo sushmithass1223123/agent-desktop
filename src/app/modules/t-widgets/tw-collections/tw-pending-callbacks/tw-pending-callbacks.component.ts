@@ -3,7 +3,6 @@ import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular
 import { MatTableDataSource } from '@angular/material/table';
 import { AppUiService } from '@services/app-ui.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { IWidget, ResData } from 'app/interfaces';
 import * as moment from 'moment';
 
@@ -130,12 +129,12 @@ export class TwPendingCallbacksComponent extends TWidgetWrapper implements OnIni
                 },
                 error: (err) => {
                     console.error({ err });
-                    this.getPendingCallbacksReq = { loading: false, error: true, msg: COMMON_ERR_MESSAGE, data: false };
+                    this.getPendingCallbacksReq = { loading: false, error: true, msg: 'Unable to fetch pending callbacks', data: false };
                 }
             });
         } catch (err) {
             console.error({ err });
-            this.getPendingCallbacksReq = { loading: false, error: true, msg: COMMON_ERR_MESSAGE, data: false };
+            this.getPendingCallbacksReq = { loading: false, error: true, msg: 'Unable to fetch pending callbacks', data: false };
         }
     }
 
@@ -167,14 +166,14 @@ export class TwPendingCallbacksComponent extends TWidgetWrapper implements OnIni
                     },
                     error: (err) => {
                         console.error({ err });
-                        this.changeContactStatusReq = { loading: false, error: true, msg: COMMON_ERR_MESSAGE };
-                        this.appUiService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
+                        this.changeContactStatusReq = { loading: false, error: true, msg: 'Unable to close callback' };
+                        this.appUiService.showSnackbar('Unable to close callback', 'failure');
                     }
                 });
         } catch (err) {
             console.error({ err });
-            this.changeContactStatusReq = { loading: false, error: true, msg: COMMON_ERR_MESSAGE };
-            this.appUiService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
+            this.changeContactStatusReq = { loading: false, error: true, msg: 'Unable to close callback' };
+            this.appUiService.showSnackbar('Unable to close callback', 'failure');
         }
     }
 }

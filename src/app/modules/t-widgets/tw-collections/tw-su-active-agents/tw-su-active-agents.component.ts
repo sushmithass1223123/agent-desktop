@@ -19,7 +19,7 @@ import {
     TUtils
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AGENT_FEATURES, AGENT_FEATURES_MAP, COMMON_ERR_MESSAGE } from 'app/constants';
+import { AGENT_FEATURES, AGENT_FEATURES_MAP } from 'app/constants';
 import { CustomSDKEvent, IWidget, QuizEventJsonData } from 'app/interfaces';
 import { InstantMessagingService } from 'app/layout/components/instant-messaging/instant-messaging.service';
 import { TwWidgetModel } from 'app/models';
@@ -405,7 +405,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                         });
                     })
                     .catch((error: string) => {
-                        this._appUIService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
+                        this._appUIService.showSnackbar('Unable to get agent activity', 'failure');
                         // log the error to server for troubleshooting purpose
                         TUtils.Logger.error('Exception in performAgentAction.AgentSnapShotEvent', error);
                     });

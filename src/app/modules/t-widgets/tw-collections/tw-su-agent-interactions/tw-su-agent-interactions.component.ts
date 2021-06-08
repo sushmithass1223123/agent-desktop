@@ -8,7 +8,7 @@ import { DashboardService } from '@services/dashboard.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { AgentFeatures, IAgentData, InteractionDataModel, IResponse, SDKClient, SuAgentModel } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AGENT_FEATURES, AGENT_FEATURES_MAP, COMMON_ERR_MESSAGE } from 'app/constants';
+import { AGENT_FEATURES, AGENT_FEATURES_MAP } from 'app/constants';
 import { CustomSDKEvent, IWidget } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
 
@@ -187,7 +187,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
                 }
             })
             .catch(() => {
-                this._appUIService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
+                this._appUIService.showSnackbar('Failed to barge-in', 'failure');
             });
     }
 

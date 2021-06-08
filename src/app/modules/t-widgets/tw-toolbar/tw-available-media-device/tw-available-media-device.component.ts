@@ -2,6 +2,7 @@ import { Component, ElementRef, OnInit, TemplateRef, ViewChild, ViewEncapsulatio
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { IWrsUtils, TUtils } from '@tmac/sdk';
+import { COMMON_ERR_MESSAGE } from 'app/constants';
 
 type AvailableDevices = {
     /**
@@ -52,9 +53,9 @@ export class TwAvailableMediaDeviceComponent implements OnInit {
          */
         loading: string;
     } = {
-            error: '',
-            loading: ''
-        };
+        error: '',
+        loading: ''
+    };
 
     /**
      * Audio / Video streams
@@ -76,7 +77,7 @@ export class TwAvailableMediaDeviceComponent implements OnInit {
     @ViewChild('videoElm')
     videoElm: ElementRef<HTMLMediaElement>;
 
-    constructor(private matDialog: MatDialog) { }
+    constructor(private matDialog: MatDialog) {}
 
     /**
      * Lifecycle hook
@@ -110,11 +111,10 @@ export class TwAvailableMediaDeviceComponent implements OnInit {
                 })
                 .beforeClosed()
                 .subscribe(() => {
-                    this.stream?.getTracks()
-                        .forEach(track => {
-                            track.stop();
-                            this.stream.removeTrack(track);
-                        });
+                    this.stream?.getTracks().forEach((track) => {
+                        track.stop();
+                        this.stream.removeTrack(track);
+                    });
                 });
         } catch (e) {
             console.error(e);
@@ -127,7 +127,12 @@ export class TwAvailableMediaDeviceComponent implements OnInit {
     async setAvailableDevices(): Promise<void> {
         try {
             if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
-                TUtils.Logger.console('error', 'Error in TwAvailableMediaDeviceComponent.setAvailableDevices', null, 'enumerateDevices() not supported');
+                TUtils.Logger.console(
+                    'error',
+                    'Error in TwAvailableMediaDeviceComponent.setAvailableDevices',
+                    null,
+                    'enumerateDevices() not supported'
+                );
                 return;
             }
             this.setComponentState('availableDevices/fetching');
@@ -157,7 +162,7 @@ export class TwAvailableMediaDeviceComponent implements OnInit {
             this.setComponentState('availableDevices/loaded');
         } catch (e) {
             console.error(e);
-            this.setComponentState('availableDevices/error');
+            this.setComponentState('availableDevices/error', 'Unable to load availabloe devices');
         }
     }
 
@@ -202,23 +207,17 @@ export class TwAvailableMediaDeviceComponent implements OnInit {
         const wrsUtils = TUtils.Generic.wrsUtils<IWrsUtils>();
         if (wrsUtils) {
             this.stream = await wrsUtils.getUserMedia(constraints, null);
-            this?.stream
-                .getVideoTracks()
-                .forEach((track) => {
-                    Object.entries(this.mediaDeviceInfo.devices).forEach((deviceGroup) => {
-                        deviceGroup[1].forEach((device) => {
-                            if (
-                                device.deviceId === track.getCapabilities().deviceId &&
-                                !this.mediaSelectFormGroup.get(deviceGroup[0]).value
-                            ) {
-                                this.mediaSelectFormGroup.patchValue({ [deviceGroup[0]]: device.deviceId });
-                            }
-                        });
+            this?.stream.getVideoTracks().forEach((track) => {
+                Object.entries(this.mediaDeviceInfo.devices).forEach((deviceGroup) => {
+                    deviceGroup[1].forEach((device) => {
+                        if (device.deviceId === track.getCapabilities().deviceId && !this.mediaSelectFormGroup.get(deviceGroup[0]).value) {
+                            this.mediaSelectFormGroup.patchValue({ [deviceGroup[0]]: device.deviceId });
+                        }
                     });
                 });
-        }
-        else {
-            this.setComponentState('availableDevices/error');
+            });
+        } else {
+            this.setComponentState('availableDevices/error', 'Error occured while starting the video');
         }
     }
 
@@ -227,10 +226,16 @@ export class TwAvailableMediaDeviceComponent implements OnInit {
      * @param error
      * @param loading
      */
-    setComponentState(state: 'availableDevices/fetching' | 'availableDevices/retrying' | 'availableDevices/error' | 'availableDevices/loaded'): void {
+    setComponentState(
+        state: 'availableDevices/fetching' | 'availableDevices/retrying' | 'availableDevices/error' | 'availableDevices/loaded',
+        msg?: string
+    ): void {
         switch (state) {
             case 'availableDevices/error':
-                this.mediaDeviceInfo.error = 'Something went wrong';
+                if (!msg) {
+                    msg = COMMON_ERR_MESSAGE;
+                }
+                this.mediaDeviceInfo.error = msg;
                 this.mediaDeviceInfo.loading = '';
                 break;
             case 'availableDevices/fetching':
