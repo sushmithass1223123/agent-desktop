@@ -367,7 +367,7 @@
                                 </ng-container>
                                 <div *ngIf="getInboxMessageReq.error" class="twd-text-center">
                                     <p class="twd-font-bold twd-mb-3 twd-text-lg">{{ getInboxMessageReq.msg }}</p>
-                                    <button mat-raised-button class="twd-mx-auto" color="primary" (click)="setEmailBody()">Retry</button>
+                                    <button mat-raised-button class="twd-mx-auto" color="primary" (click)="setEmailDetails(true)">Retry</button>
                                 </div>
                             </div>
                         </div>

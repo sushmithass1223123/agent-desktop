@@ -2994,7 +2994,7 @@
                                     "Name": "Campaign Contact",
                                     "Description": "",
                                     "Key": "CampaignManager",
-                                    "Type": "tw-custom",
+                                    "Type": "tw-campaign-contact",
                                     "Config": {
                                         "Enabled": true,
                                         "Hidden": false,

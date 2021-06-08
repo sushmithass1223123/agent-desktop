@@ -5,7 +5,6 @@ import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { IAction, IWidget, ResData, ResGamification, ResGamificationBadge } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { sortBy } from 'lodash';
@@ -92,7 +91,7 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
     dashboardState = {
         loading: false,
         error: false,
-        msg: COMMON_ERR_MESSAGE
+        msg: ''
     };
 
     /**
@@ -312,13 +311,13 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
                     } catch (e) {
                         console.error(e);
                         this.leaderBoardRes = { loading: false, error: true };
-                        this.dashboardState.msg = COMMON_ERR_MESSAGE;
+                        this.dashboardState.msg = 'Unable to fetch leaderboard details';
                     }
                 },
                 (err) => {
                     console.error(err);
                     this.leaderBoardRes = { loading: false, error: true };
-                    this.dashboardState.msg = COMMON_ERR_MESSAGE;
+                    this.dashboardState.msg = 'Unable to fetch leaderboard details';
                 }
             );
     }
@@ -356,13 +355,13 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
                         // this.setCurrenAgentLevel();
                     } catch (e) {
                         this.getAgentProgressRes = { loading: false, error: true };
-                        this.dashboardState.msg = COMMON_ERR_MESSAGE;
+                        this.dashboardState.msg = `Unable to fetch agent's progress`;
                     }
                 },
                 (err) => {
                     console.error(err);
                     this.getAgentProgressRes = { loading: false, error: true };
-                    this.dashboardState.msg = COMMON_ERR_MESSAGE;
+                    this.dashboardState.msg = `Unable to fetch agent's progress`;
                 }
             );
     }
@@ -394,13 +393,13 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
                     } catch (e) {
                         console.error(e);
                         this.getAgentLevelsRes = { loading: false, error: true };
-                        this.dashboardState.msg = COMMON_ERR_MESSAGE;
+                        this.dashboardState.msg = `Unable to get Agent levels`;
                     }
                 },
                 (err) => {
                     console.error(err);
                     this.getAgentLevelsRes = { loading: false, error: true };
-                    this.dashboardState.msg = COMMON_ERR_MESSAGE;
+                    this.dashboardState.msg = `Unable to get Agent levels`;
                 }
             );
     }
@@ -428,13 +427,13 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
                     } catch (e) {
                         console.error(e);
                         this.getQuizInfoRes = { loading: false, error: true };
-                        this.dashboardState.msg = COMMON_ERR_MESSAGE;
+                        this.dashboardState.msg = 'Unable to fetch quiz info';
                     }
                 },
                 (err) => {
                     console.error(err);
                     this.getQuizInfoRes = { loading: false, error: true };
-                    this.dashboardState.msg = COMMON_ERR_MESSAGE;
+                    this.dashboardState.msg = 'Unable to fetch quiz info';
                 }
             );
     }
@@ -446,7 +445,7 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
     OnLoadMetricsToAgent = (evt: any): void => {
         // const JsonData = JSON.parse(evt.JsonData);
         // console.log({ ...evt, JsonData: { ...JsonData, eventdata: JSON.parse(JsonData.eventdata) } });
-    }
+    };
 
     /**
      * Assign points events
@@ -455,7 +454,7 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
     OnAssignPointsToAgent = (evt: any): void => {
         const JsonData = JSON.parse(evt.JsonData);
         this._appUIService.addNotification({ message: JsonData.totalPointsAssigned, status: 'new' });
-    }
+    };
 
     /**
      * Set current agent level

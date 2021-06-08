@@ -520,7 +520,7 @@ export class TMACEventService {
                                 }
                             })
                             .catch(() => {
-                                this._appUIService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
+                                this._appUIService.showSnackbar('Error in chat silent barge-in', 'failure');
                             });
                     }
                 });

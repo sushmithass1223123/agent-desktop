@@ -100,7 +100,7 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
             this.getDashboardDataRes = {
                 error: true,
                 loading: false,
-                msg: COMMON_ERR_MESSAGE
+                msg: 'TCMProxyUrl is missing from config'
             };
             return;
         }

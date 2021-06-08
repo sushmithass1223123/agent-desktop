@@ -7,7 +7,6 @@ import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { SDKClient, WorkCode, WorkCodeAddedEvent } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { CustomSDKEvent, IWidget, ResData } from 'app/interfaces';
 import { groupBy, orderBy, uniqBy } from 'lodash';
 import { Observable } from 'rxjs';
@@ -166,7 +165,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         } catch (e) {
             this.loadWorkCodesReq.error = true;
             this.loadWorkCodesReq.loading = false;
-            this.loadWorkCodesReq.msg = COMMON_ERR_MESSAGE;
+            this.loadWorkCodesReq.msg = 'Unable to get workcodes';
         }
     }
 
@@ -277,7 +276,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
                 this.workCodeCtrl.setValue('');
             })
             .catch(() => {
-                this._appUiService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
+                this._appUiService.showSnackbar('Unable to set workcode', 'failure');
             });
     }
 
@@ -310,7 +309,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
                 this._appUiService.showSnackbar('Work code removed successfully', 'success');
             })
             .catch((ex) => {
-                this._appUiService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
+                this._appUiService.showSnackbar('Unable to remove workcode', 'failure');
                 console.error(ex);
             });
     }

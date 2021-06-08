@@ -22,7 +22,6 @@ import {
     SDKClient
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { ChatTranscripts, IWidget, ResData } from 'app/interfaces';
 import { maticonByExtension } from 'app/utils';
 import { orderBy, sortBy } from 'lodash';
@@ -606,7 +605,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 data: res.response.map((x) => ({ ...x, ActionTime: new Date(parseInt(x.ActionTime.toString().split('(')[1].split(')')[0], 10)) }))
             };
         } catch (e) {
-            this.sessionActions = { loading: false, error: true, msg: COMMON_ERR_MESSAGE };
+            this.sessionActions = { loading: false, error: true, msg: 'Unable to fetch session actions' };
             console.error(e);
         }
     }
