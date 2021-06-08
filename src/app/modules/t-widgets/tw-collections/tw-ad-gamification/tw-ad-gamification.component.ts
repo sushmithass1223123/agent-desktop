@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { ResData } from 'app/interfaces';
 import { interval, Subscription } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
-import { SDKClient } from '@tmac/sdk';
 
 /**
  * Agent dashboard gamification widget
@@ -86,7 +86,7 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
             this.pollingSubscription.unsubscribe();
         }
         this.pollingSubscription = interval(10000).pipe(takeUntil(this.unsubscribeAll)).subscribe(this.setBadges);
-    }
+    };
 
     /**
      * Set Badges
@@ -109,45 +109,45 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
                 map((x) => JSON.parse(x.d)),
                 takeUntil(this.unsubscribeAll)
             )
-            .subscribe(
-                (res) => {
+            .subscribe({
+                next: (res) => {
                     const currentAgentData = (res || []).find((x) => x.AgentId === agentId);
                     this.gamificationReqStatus = {
                         loading: false,
                         error: false,
                         data: currentAgentData
                             ? {
-                                ...currentAgentData,
-                                TotalBadges: [
-                                    {
-                                        BadgeName: 'Novice',
-                                        BadgeId: 0,
-                                        BadgeUrl: currentAgentData.NoviceBadgeUrl,
-                                        BadgePoints: currentAgentData.NoviceBadges
-                                    },
-                                    {
-                                        BadgeName: 'Influencer',
-                                        BadgeId: 1,
-                                        BadgeUrl: currentAgentData.InfluencerBadgeUrl,
-                                        BadgePoints: currentAgentData.InfluencerBadges
-                                    },
-                                    {
-                                        BadgeName: 'Master',
-                                        BadgeId: 2,
-                                        BadgeUrl: currentAgentData.MasterBadgeUrl,
-                                        BadgePoints: currentAgentData.MasterBadges
-                                    }
-                                ]
-                            }
+                                  ...currentAgentData,
+                                  TotalBadges: [
+                                      {
+                                          BadgeName: 'Novice',
+                                          BadgeId: 0,
+                                          BadgeUrl: currentAgentData.NoviceBadgeUrl,
+                                          BadgePoints: currentAgentData.NoviceBadges
+                                      },
+                                      {
+                                          BadgeName: 'Influencer',
+                                          BadgeId: 1,
+                                          BadgeUrl: currentAgentData.InfluencerBadgeUrl,
+                                          BadgePoints: currentAgentData.InfluencerBadges
+                                      },
+                                      {
+                                          BadgeName: 'Master',
+                                          BadgeId: 2,
+                                          BadgeUrl: currentAgentData.MasterBadgeUrl,
+                                          BadgePoints: currentAgentData.MasterBadges
+                                      }
+                                  ]
+                              }
                             : { GoldCoins: 0, SilverCoins: 0, BronzeCoins: 0, TotalBadges: [] }
                     };
                 },
-                (err) => {
+                error: (err) => {
                     console.error(err);
-                    this.gamificationReqStatus = { msg: 'Something went wrong', error: true, loading: false };
+                    this.gamificationReqStatus = { msg: 'Unable to fetch leaderboard details', error: true, loading: false };
                 }
-            );
-    }
+            });
+    };
 
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods

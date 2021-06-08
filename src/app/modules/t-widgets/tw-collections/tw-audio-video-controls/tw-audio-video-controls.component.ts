@@ -22,7 +22,7 @@ import {
     WrcCallTypes
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AGENT_FEATURES, AV_ERRORS, COMMON_ERR_MESSAGE } from 'app/constants';
+import { AGENT_FEATURES, AV_ERRORS } from 'app/constants';
 import { IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { map } from 'lodash';
@@ -208,15 +208,12 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         // check agent features
         this.checkAgentFeatures();
 
-        this._agentFeaturesService
-            .features
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((change: boolean) => {
-                if (change) {
-                    // check agent features
-                    this.checkAgentFeatures();
-                }
-            });
+        this._agentFeaturesService.features.pipe(takeUntil(this.unsubscribeAll)).subscribe((change: boolean) => {
+            if (change) {
+                // check agent features
+                this.checkAgentFeatures();
+            }
+        });
 
         // assign the start time
         this.startTime = new Date();
@@ -297,7 +294,9 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
      */
     private checkAgentFeatures(): void {
         // check if the agent has IsOneWayVideoEnabled feature enabled
-        this.oneWayVideo = SDKClient.getAgentData().featuresList.filter((f) => f.Feature.toLowerCase() === AGENT_FEATURES.IsOneWayVideoEnabled)?.[0]?.IsEnabled;
+        this.oneWayVideo = SDKClient.getAgentData().featuresList.filter(
+            (f) => f.Feature.toLowerCase() === AGENT_FEATURES.IsOneWayVideoEnabled
+        )?.[0]?.IsEnabled;
     }
 
     /**
@@ -397,7 +396,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                 TUtils.Logger.info('TwVideoControlsComponent.onAVEvent.onTrace: ' + evt.data);
                 break;
             case 'onError':
-                let error = evt.data?.error || 'Something went wrong';
+                let error = evt.data?.error || 'Error occured in AV connection';
                 if (evt.data?.code in AV_ERRORS) {
                     error = AV_ERRORS[evt.data.code];
                 }
@@ -708,7 +707,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                                     }
                                 })
                                 .catch(() => {
-                                    this._appUIService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
+                                    this._appUIService.showSnackbar('Snapshot save failed', 'failure');
                                 });
                         }
                     });
@@ -733,7 +732,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                             id: TUtils.Generic.uuid()
                         })
                     });
-                } catch (error) { }
+                } catch (error) {}
 
                 matRef.dismiss();
             } catch (e) {
