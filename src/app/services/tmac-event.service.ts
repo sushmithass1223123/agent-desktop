@@ -16,7 +16,6 @@ import {
     TCMDirectAgentNotifyTimeoutEvent,
     TextChatTransferNotificationEvent,
     TMACEventTypes,
-    TmacServerConnectionAborted,
     TmacServerConnectionSuccess,
     TUtils
 } from '@tmac/sdk';
@@ -754,7 +753,7 @@ export class TMACEventService {
      *
      * @param {MessageEvent} evt
      */
-    private postMessageReceived(evt: MessageEvent): void {
+    private postMessageReceived = (evt: MessageEvent) => {
         // if event data is null then return
         if (!evt.data) {
             return;
@@ -781,7 +780,7 @@ export class TMACEventService {
                     event: {
                         ...message.data
                     },
-                    isInteractionEvent: message.data.InteractionID !== undefined,
+                    isInteractionEvent: !!message.data.InteractionID,
                     log: true
                 });
             } else if (fn.endsWith('event')) {
@@ -791,7 +790,7 @@ export class TMACEventService {
                         EventName: message.function,
                         ...message.data
                     },
-                    isInteractionEvent: message.data.InteractionID !== undefined,
+                    isInteractionEvent: !!message.data.InteractionID,
                     log: true
                 });
             }
@@ -810,7 +809,7 @@ export class TMACEventService {
             // notify the observers
             this._postMessage$.next(data);
         }
-    }
+    };
 
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods

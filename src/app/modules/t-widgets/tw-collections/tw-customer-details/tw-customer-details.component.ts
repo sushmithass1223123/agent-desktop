@@ -134,7 +134,6 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
                     if (jsonStr) {
                         // get the property by taking string between ) and last
                         const prop = valueSource.substring(valueSource.lastIndexOf(')') + 2, valueSource.length);
-
                         item.Value = maskDataLocal(JSON.parse(jsonStr)[prop] ?? '', item.MaskData);
                     }
                 }
@@ -144,7 +143,6 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
                 if (valueSourceSplit[0] !== evt.EventName) {
                     return;
                 }
-
                 // get the value from path or default value
                 item.Value = maskDataLocal(getValueFromJson(valueSourceSplit, evt, item.DefaultValue), item.MaskData);
             }

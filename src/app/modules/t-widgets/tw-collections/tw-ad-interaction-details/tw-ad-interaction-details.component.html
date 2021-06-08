@@ -107,36 +107,46 @@
 
             <ng-container matColumnDef="User">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>User</mat-header-cell>
-                <mat-cell *matCellDef="let element" class="text-truncate px-8" [matTooltip]="element.User">
-                    {{ element.User || 'NA' }}
+                <mat-cell *matCellDef="let element" class="px-8" [matTooltip]="element.User">
+                    <div class="text-truncate">
+                        {{ element.User || 'NA' }}
+                    </div>
                 </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="Dnis">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>DNIS</mat-header-cell>
-                <mat-cell *matCellDef="let element" class="text-truncate px-8" [matTooltip]="element.Dnis">
-                    {{ element.Dnis || 'NA' }}
+                <mat-cell *matCellDef="let element" class="px-8" [matTooltip]="element.Dnis">
+                    <div class="text-truncate">
+                        {{ element.Dnis || 'NA' }}
+                    </div>
                 </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="Intent">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Intent</mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    {{ element.Intent || 'NA' }}
+                <mat-cell *matCellDef="let element" class="px-8" [matTooltip]="element.Intent">
+                    <div class="text-truncate">
+                        {{ element.Intent || 'NA' }}
+                    </div>
                 </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="CreatedDateTime">
                 <mat-header-cell *matHeaderCellDef mat-sort-header class="px-8">Created Time</mat-header-cell>
-                <mat-cell *matCellDef="let element" class="text-truncate px-8" [matTooltip]="element.CreatedDateTime | date: 'd/M/yy, hh:mm a'">
-                    {{ element.CreatedDateTime | date: 'd/M/yy, hh:mm a' }}
+                <mat-cell *matCellDef="let element" class="px-8" [matTooltip]="element.CreatedDateTime | date: 'd/M/yy, hh:mm a'">
+                    <div class="text-truncate">
+                        {{ element.CreatedDateTime | date: 'd/M/yy, hh:mm a' }}
+                    </div>
                 </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="ClosedDateTime">
                 <mat-header-cell *matHeaderCellDef mat-sort-header class="px-8">Closed Time</mat-header-cell>
-                <mat-cell *matCellDef="let element" class="text-truncate px-8" [matTooltip]="element.ClosedDateTime | date: 'd/M/yy, hh:mm a'">
-                    {{ element.ClosedDateTime | date: 'd/M/yy, hh:mm a' }}
+                <mat-cell *matCellDef="let element" class="px-8" [matTooltip]="element.ClosedDateTime | date: 'd/M/yy, hh:mm a'">
+                    <div class="text-truncate">
+                        {{ element.ClosedDateTime | date: 'd/M/yy, hh:mm a' }}
+                    </div>
                 </mat-cell>
             </ng-container>
 
@@ -149,7 +159,7 @@
 
             <ng-container matColumnDef="AgentComment">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Comments</mat-header-cell>
-                <mat-cell *matCellDef="let element" class="px-8 text-truncate" [matTooltip]="element.AgentComment">
+                <mat-cell *matCellDef="let element" class="px-8" [matTooltip]="element.AgentComment">
                     {{ element.AgentComment ? '' : 'NA' }}
                     <button *ngIf="element.AgentComment" mat-icon-button (click)="showNotes(element.AgentComment)">
                         <mat-icon> notes </mat-icon>

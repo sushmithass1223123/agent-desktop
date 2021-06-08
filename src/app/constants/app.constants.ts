@@ -68,7 +68,7 @@ export const ACTIVE_CALL_STATUSES = ['agentconnected', 'dacaccepted'];
 /**
  * Failed callback statuses
  */
-export const FAILED_CALL_STATUSES = ['dacnotificationfailed', 'deleted'];
+export const FAILED_CALL_STATUSES = ['dacnotificationfailed', 'deleted', 'queuetimeout'];
 
 /**
  * Pending callback statuses
@@ -225,6 +225,7 @@ export const AGENT_FEATURES = {
     AllowSupervisorToSendNotification: 'allowsupervisortosendnotification',
     AllowSupervisorToSilentMonitor: 'allowsupervisortosilentmonitor',
     AllowSupervisorToViewEmailDetails: 'allowsupervisortoviewemaildetails',
+    IsSetBroadcastEnabled: 'issetbroadcastenabled',
     IsCameraCaptureEnabled: 'iscameracaptureenabled',
     IsScreenCaptureEnabled: 'isscreencaptureenabled',
     IsLocationEnabled: 'islocationenabled',

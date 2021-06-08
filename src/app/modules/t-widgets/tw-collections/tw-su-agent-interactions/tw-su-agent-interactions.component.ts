@@ -1,5 +1,4 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { AOTWidgetService } from '@services/aot-widget.service';
@@ -33,11 +32,6 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
     @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     /**
-     * Mat paginator for mat table
-     */
-    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-
-    /**
      * Config data
      */
     configData: SuAgentModel;
@@ -55,7 +49,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
     /**
      * Mat table minimized displayed columns
      */
-    mindisplayedColumns = ['InteractionID', 'Channel', 'LastStatus', 'User', 'ActiveTime', 'HoldTime', 'Actions'];
+    mindisplayedColumns = ['Channel', 'SubChannel', 'LastStatus', 'User', 'ActiveTime', 'HoldTime', 'Actions'];
 
     /**
      * Agent feature map
@@ -126,35 +120,6 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
         this._dashboardService.triggerAgentInteractions(this.configData?.AgentLoginID, false);
     }
 
-    // -----------------------------------------------------------------------------------------------------
-    // @  Private Methods
-    // -----------------------------------------------------------------------------------------------------
-
-    /**
-     * To process TeamAgentInteractionDetailsEvent
-     *
-     * @param {CustomSDKEvent} evt
-     */
-    private TeamAgentInteractionDetailsEvent = (evt: CustomSDKEvent) => {
-        // if the list is empty the return
-        if (evt.Data.length === 0) {
-            return;
-        }
-
-        // filter for the agent
-        if (evt.Data[0].AgentLoginID !== this.configData?.AgentLoginID) {
-            return;
-        }
-
-        // assign the interaction details
-        this.interactionList = evt.Data[0].Interactions;
-
-        this.interactionDetailsTable.loaded = true;
-        this.interactionDetailsTable.source = new MatTableDataSource(this.interactionList);
-        this.interactionDetailsTable.source.sort = this.sort;
-        this.interactionDetailsTable.source.paginator = this.paginator;
-    };
-
     /**
      * To perform chat bargeIn
      * @param {'silent' | 'whisper' | 'conf'} type Type of barge-In
@@ -191,9 +156,29 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
             });
     }
 
-    // -----------------------------------------------------------------------------------------------------
-    // @  Public Methods
-    // -----------------------------------------------------------------------------------------------------
+    /**
+     * To process TeamAgentInteractionDetailsEvent
+     *
+     * @param {CustomSDKEvent} evt
+     */
+    TeamAgentInteractionDetailsEvent(evt: CustomSDKEvent): void {
+        // if the list is empty the return
+        if (evt.Data.length === 0) {
+            return;
+        }
+
+        // filter for the agent
+        if (evt.Data[0].AgentLoginID !== this.configData?.AgentLoginID) {
+            return;
+        }
+
+        // assign the interaction details
+        this.interactionList = evt.Data[0].Interactions;
+
+        this.interactionDetailsTable.loaded = true;
+        this.interactionDetailsTable.source = new MatTableDataSource(this.interactionList);
+        this.interactionDetailsTable.source.sort = this.sort;
+    }
 
     /**
      * On widget maximized event
