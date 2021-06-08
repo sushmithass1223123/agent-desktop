@@ -3,7 +3,7 @@ import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular
 import { TMACEventService } from '@services/tmac-event.service';
 import { SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { ACTIVE_CALL_STATUSES, FAILED_CALL_STATUSES, PENDING_CALL_STATUSES } from 'app/constants';
+import { ACTIVE_CALL_STATUSES, COMMON_ERR_MESSAGE, FAILED_CALL_STATUSES, PENDING_CALL_STATUSES } from 'app/constants';
 import { CustomSDKEvent, IWidget, ResData } from 'app/interfaces';
 import { format, isBefore, isMatch, parse } from 'date-fns';
 import { sortBy } from 'lodash';
@@ -100,7 +100,7 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
             this.getDashboardDataRes = {
                 error: true,
                 loading: false,
-                msg: 'TCMProxyUrl Missing from Config'
+                msg: 'TCMProxyUrl is missing from config'
             };
             return;
         }
@@ -114,7 +114,7 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
                 this.getDashboardDataRes = {
                     error: true,
                     loading: false,
-                    msg: 'Unable to fetch Contact session'
+                    msg: COMMON_ERR_MESSAGE
                 };
             }
         });
@@ -156,10 +156,20 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
      */
     CallbackDataReceivedForAgent = (evt: CustomSDKEvent) => {
         const callback = JSON.parse(evt.Data);
+        callback.contact.id = callback.contact.Id;
         callback.contact.status = callback.contact.Status;
         callback.contact.name = callback.contact.Name;
         callback.contact.directAgentScheduleTime = callback.contact.ScheduleTime;
-        this.addNewCallbacks([callback]);
+
+        let add = false;
+        // check if this contact is already in list, then update else add
+        const i = this.getDashboardDataRes.data.complete.findIndex((c) => c.contact.id === callback.contact.id);
+        if (i > -1) {
+            this.getDashboardDataRes.data.complete[i] = callback;
+        } else {
+            add = true;
+        }
+        this.addNewCallbacks([callback], add);
     };
 
     /**
@@ -167,15 +177,18 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
      *
      * @method addNewCallbacks
      * @param {any[]} calls
+     * @param {Boolean} add
      */
-    addNewCallbacks = (calls: any[]): void => {
+    addNewCallbacks = (calls: any[], add: boolean = true): void => {
         let handled = 0;
         let missed = 0;
         let pending = 0;
         let active = 0;
-
         // add and sort
-        const callbacksList = sortBy([...this.getDashboardDataRes.data.complete, ...(calls || [])], 'contact.directAgentScheduleTime');
+        const callbacksList = sortBy(
+            [...this.getDashboardDataRes.data.complete, ...(add && calls?.length ? calls : [])],
+            'contact.directAgentScheduleTime'
+        );
         const callbacksReversed = callbacksList.reverse();
         const callbacks = callbacksReversed.map((x) => {
             let uiState = 'success';
@@ -226,7 +239,7 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
             };
         });
 
-        handled = callbacks.length - (pending - (active > 0 ? 1 : 0)) - missed;
+        handled = callbacks.length - pending - missed;
 
         this.getDashboardDataRes = {
             error: false,

@@ -80,7 +80,21 @@ export class AgentFeaturesService {
      */
     private _featureUpdatedSubject: Subject<boolean>;
 
-    constructor(private _appUIService: AppUiService) {}
+    constructor(private _appUIService: AppUiService) {
+        this._featureUpdatedSubject = new Subject();
+        this._agentFeatureInfo = {
+            permissions: {
+                camera: false,
+                display: false,
+                location: false
+            },
+            data: {
+                cameraStream: null,
+                displayStream: null,
+                location: null
+            }
+        };
+    }
 
     /**
      * Get agent features

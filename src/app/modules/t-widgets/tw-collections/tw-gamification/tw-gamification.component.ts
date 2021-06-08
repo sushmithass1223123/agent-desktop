@@ -427,13 +427,13 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
                     } catch (e) {
                         console.error(e);
                         this.getQuizInfoRes = { loading: false, error: true };
-                        this.dashboardState.msg = 'Unable to fetch Quiz info';
+                        this.dashboardState.msg = 'Unable to fetch quiz info';
                     }
                 },
                 (err) => {
                     console.error(err);
                     this.getQuizInfoRes = { loading: false, error: true };
-                    this.dashboardState.msg = 'Unable to fetch Quiz info';
+                    this.dashboardState.msg = 'Unable to fetch quiz info';
                 }
             );
     }

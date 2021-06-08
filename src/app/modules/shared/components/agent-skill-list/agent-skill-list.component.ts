@@ -123,7 +123,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         /**
          * List of all favourite skills
          */
-        allFavouriteSkills: SkillType[];
+        skillList: SkillType[];
         /**
          *  Mat table data
          */
@@ -273,7 +273,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         };
 
         this.skillListTable = {
-            allFavouriteSkills: [],
+            skillList: [],
             tableData: {
                 columns: ['Name', 'VDN', 'ID', 'Stf', 'Avl', 'CIQ'],
                 selection: new SelectionModel<any>(false, []),
@@ -451,12 +451,12 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                     // check if key not empty to apply the filter
                     if (key) {
                         // for skill only apply searchkey filter
-                        this.skillListTable.tableData.source.data = this.skillListTable.allFavouriteSkills.filter((x) =>
+                        this.skillListTable.tableData.source.data = this.skillListTable.skillList.filter((x) =>
                             // stringify and lowercase for .includes string search
                             JSON.stringify(x).toLowerCase().includes(key.toLowerCase())
                         );
                     } else {
-                        this.skillListTable.tableData.source.data = this.skillListTable.allFavouriteSkills;
+                        this.skillListTable.tableData.source.data = this.skillListTable.skillList;
                     }
                 } else if (this.activeSwitcher === 'dynamicList') {
                     // check if key not empty to apply the filter
@@ -972,7 +972,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                     // Filtering skills based on
                     // 1. The prefix passed in Config
                     // 2. Operating hours
-                    this.skillListTable.allFavouriteSkills = (dt.response as SkillType[]).reduce((acc, skill) => {
+                    this.skillListTable.skillList = (dt.response as SkillType[]).reduce((acc, skill) => {
                         const valid = { prefix: false, opHours: false };
                         // Filter 1 : The prefix passed in Config
                         if (channelPrefix.length > 0) {
@@ -1026,7 +1026,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                         return acc;
                     }, []);
 
-                    this.skillListTable.tableData.source.data = this.skillListTable.allFavouriteSkills;
+                    this.skillListTable.tableData.source.data = this.skillListTable.skillList;
                     this.skillListTable.tableData.source.sort = this.sort;
                 }
             })

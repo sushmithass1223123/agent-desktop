@@ -11,7 +11,16 @@ import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TMACEventService } from '@services/tmac-event.service';
-import { IGetInteractionHistory, InteractionAction, InteractionHistory, InteractionHistoryReadyEvent, SDKClient } from '@tmac/sdk';
+import {
+    IGetInteractionHistory,
+    InteractionAction,
+    InteractionHistory,
+    InteractionHistoryEvent,
+    InteractionHistoryOnDemandEvent,
+    InteractionHistoryReadyEvent,
+    InteractionHistoryReLoadEvent,
+    SDKClient
+} from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { ChatTranscripts, IWidget, ResData } from 'app/interfaces';
 import { maticonByExtension } from 'app/utils';
@@ -39,15 +48,6 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      */
     @Input() data: IWidget;
 
-    /**
-     * Fuse confi
-     */
-    // fuseConfig: FuseConfig;
-
-    /**
-     * common fuse background
-     */
-    // customFuse: { content: string; body: string };
     /**
      * Fuse custom config
      */
@@ -311,25 +311,6 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         const noOfRecords = this.data.Data.NoOfRecords;
         this.customerJourneyTable.tableData.pageSizes = [0, 5, 10].map((r) => r + noOfRecords);
 
-        // subscribe to fuse
-        // this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-        //     // config = config;
-        //     this.customFuse = {
-        //         content:
-        //             config.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor
-        //                 ? config.layout.anchorWidget.contentBackground
-        //                 : config.layout.widget.customBackgroundColor === true
-        //                     ? config.layout.widget.contentBackground
-        //                     : '',
-        //         body:
-        //             config.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor
-        //                 ? config.layout.anchorWidget.bodyBackground
-        //                 : config.layout.widget.customBackgroundColor === true
-        //                     ? config.layout.widget.bodyBackground
-        //                     : ''
-        //     };
-        // });
-
         this.historyParams = {
             cif: '',
             email: '',
@@ -340,7 +321,10 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         };
 
         this._tmacEventService
-            .getInteractionEvents(['InteractionHistoryReadyEvent'], this.interactionId)
+            .getInteractionEvents(
+                ['InteractionHistoryReadyEvent', 'InteractionHistoryEvent', 'InteractionHistoryOnDemandEvent', 'InteractionHistoryReLoadEvent'],
+                this.interactionId
+            )
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
 
@@ -438,28 +422,6 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     }
 
     /**
-     * Handler for InteractionHistoryReadyEvent
-     */
-    InteractionHistoryReadyEvent = (evt: InteractionHistoryReadyEvent): void => {
-        // check for the interaction
-        if (this.interactionId !== evt.InteractionID) {
-            return;
-        }
-        const noOfRecords = this.customerJourneyTable.tableData.source.paginator?.pageSize.toString() || this.data.Data.NoOfRecords;
-        // assign the history params
-        this.historyParams = {
-            cif: evt.HistoryParameters.CIF,
-            email: evt.HistoryParameters.EmailID,
-            nric: evt.HistoryParameters.NRIC,
-            phone: evt.HistoryParameters.PhoneNumber,
-            noOfRecords,
-            lastId: '0'
-        };
-        // get history
-        this.getInteractionHistory();
-    };
-
-    /**
      * Gets interaction history and sets to table
      */
     private getInteractionHistory(): void {
@@ -478,78 +440,140 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                     throw new Error('Invalid response from server');
                 }
                 if (res.response.length) {
-                    const tableData = {};
-                    let transcripts: Record<string, ChatTranscripts[]> = {};
-                    let sortedTabledata = [];
-                    sortedTabledata = sortBy(this.customerJourneyTable.tableData.source.data.concat(res.response), 'ItemID').reverse();
-                    sortedTabledata.forEach((data) => {
-                        if (!tableData[data.SessionID]) {
-                            tableData[data.SessionID] = {
-                                InteractionDate: data.InteractionDate,
-                                Channel: data.Channel,
-                                Intent: data.Intent,
-                                AgentName: data.AgentName,
-                                CIF: data.CIF,
-                                NRIC: data.NRIC,
-                                PhoneNumber: data.PhoneNumber,
-                                OverallSentiment: data.OverallSentiment,
-                                ItemID: data.ItemID,
-                                SubType: data.SubType,
-                                SessionID: data.SessionID,
-                                Direction: data.Direction,
-                                ID: data.ID,
-                                GroupID: data.GroupID
-                            };
-                            // tableData[data.SessionID] = data;
-                            transcripts[data.SessionID] = [];
-                        }
-                        let message: any;
-                        try {
-                            message = JSON.parse(data.InteractionText);
-                        } catch (e) {
-                            message = {
-                                type: 'text',
-                                message: data.InteractionText
-                            };
-                        }
-                        transcripts[data.SessionID].push({
-                            who: data.Direction === 'Out' ? data.AgentName : this.defaultCustomerName,
-                            isAgent: data.Direction === 'Out',
-                            message,
-                            time: data.InteractionDate,
-                            type: data.SubType,
-                            messageId: data.ItemID
-                        });
-                    });
-                    transcripts = Object.entries(transcripts).reduce((acc, curr) => {
-                        const [key, val] = curr;
-                        acc[key] = sortBy(val, 'messageId');
-                        return acc;
-                    }, {});
-                    // assign the transcripts
-                    this.interactionTranscripts = transcripts;
-                    // order table data by received date
-                    if (!this.customerJourneyTable.tableData.source.data) {
-                        this.customerJourneyTable.tableData.source.data = [];
-                    }
-                    const newRecords = orderBy(Object.values(tableData), ['InteractionDate'], ['desc']) as InteractionHistory[];
-                    this.customerJourneyTable.tableData.source.data = newRecords;
-                    const lastEl = res.response.slice(-1);
-                    this.customerJourneyTable.lastId = lastEl[0].LastID?.toString();
-                    this.customerJourneyTable.loading = false;
-                    // console.log('#### newRecords ####', newRecords);
+                    this.processHistoryData(res.response, true);
                 }
             })
             .catch((err) => {
                 console.error(err);
+            })
+            .finally(() => {
                 this.customerJourneyTable.loading = false;
             });
     }
 
     /**
+     * To process history data
+     *
+     * @param {InteractionHistory[]} historyData
+     * @param {Boolean} update
+     */
+    processHistoryData(historyData: InteractionHistory[], update: boolean): void {
+        const tableData = {};
+        let transcripts: Record<string, ChatTranscripts[]> = {};
+        let sortedTabledata = [];
+        if (update) {
+            sortedTabledata = sortBy(this.customerJourneyTable.tableData.source.data.concat(historyData), 'ItemID').reverse();
+        } else {
+            sortedTabledata = sortBy(historyData, 'ItemID').reverse();
+        }
+        sortedTabledata.forEach((data) => {
+            if (!tableData[data.SessionID]) {
+                tableData[data.SessionID] = {
+                    InteractionDate: data.InteractionDate,
+                    Channel: data.Channel,
+                    Intent: data.Intent,
+                    AgentName: data.AgentName,
+                    CIF: data.CIF,
+                    NRIC: data.NRIC,
+                    PhoneNumber: data.PhoneNumber,
+                    OverallSentiment: data.OverallSentiment,
+                    ItemID: data.ItemID,
+                    SubType: data.SubType,
+                    SessionID: data.SessionID,
+                    Direction: data.Direction,
+                    ID: data.ID,
+                    GroupID: data.GroupID
+                };
+                transcripts[data.SessionID] = [];
+            }
+            let message: any;
+            try {
+                message = JSON.parse(data.InteractionText);
+            } catch (e) {
+                message = {
+                    type: 'text',
+                    message: data.InteractionText
+                };
+            }
+            transcripts[data.SessionID].push({
+                who: data.Direction === 'Out' ? data.AgentName : this.defaultCustomerName,
+                isAgent: data.Direction === 'Out',
+                message,
+                time: data.InteractionDate,
+                type: data.SubType,
+                messageId: data.ItemID
+            });
+        });
+        transcripts = Object.entries(transcripts).reduce((acc, curr) => {
+            const [key, val] = curr;
+            acc[key] = sortBy(val, 'messageId');
+            return acc;
+        }, {});
+        // assign the transcripts
+        this.interactionTranscripts = transcripts;
+        // order table data by received date
+        if (!this.customerJourneyTable.tableData.source.data) {
+            this.customerJourneyTable.tableData.source.data = [];
+        }
+        const newRecords = orderBy(Object.values(tableData), ['InteractionDate'], ['desc']) as InteractionHistory[];
+        this.customerJourneyTable.tableData.source.data = newRecords;
+        const lastEl = historyData.slice(-1);
+        this.customerJourneyTable.lastId = lastEl[0].LastID?.toString();
+        this.customerJourneyTable.loading = false;
+        // console.log('#### newRecords ####', newRecords);
+    }
+
+    /**
+     * Handler for InteractionHistoryReadyEvent
+     */
+    InteractionHistoryReadyEvent(evt: InteractionHistoryReadyEvent): void {
+        // check for the interaction
+        if (this.interactionId !== evt.InteractionID) {
+            return;
+        }
+        const noOfRecords = this.customerJourneyTable.tableData.source.paginator?.pageSize.toString() || this.data.Data.NoOfRecords;
+        // assign the history params
+        this.historyParams = {
+            cif: evt.HistoryParameters.CIF,
+            email: evt.HistoryParameters.EmailID,
+            nric: evt.HistoryParameters.NRIC,
+            phone: evt.HistoryParameters.PhoneNumber,
+            noOfRecords,
+            lastId: '0'
+        };
+        // get history
+        this.getInteractionHistory();
+    }
+
+    /**
+     * To process InteractionHistoryEvent
+     *
+     * @param {InteractionHistoryEvent} evt
+     */
+    InteractionHistoryEvent(evt: InteractionHistoryEvent): void {
+        this.processHistoryData(evt.History, false);
+    }
+
+    /**
+     * To process InteractionHistoryOnDemandEvent
+     *
+     * @param {InteractionHistoryOnDemandEvent} evt
+     */
+    InteractionHistoryOnDemandEvent(evt: InteractionHistoryOnDemandEvent): void {}
+
+    /**
+     * To process InteractionHistoryReLoadEvent
+     *
+     * @param {InteractionHistoryReLoadEvent} evt
+     */
+    InteractionHistoryReLoadEvent(evt: InteractionHistoryReLoadEvent): void {
+        this.processHistoryData(evt.History, false);
+    }
+
+    /**
      * Sets iframe for selected session
      */
-    public setIframe(row: InteractionHistory): void {
+    setIframe(row: InteractionHistory): void {
         if (!this.maximized) {
             this.maximized = true;
             this.wrapperComponent.maximize();
@@ -561,7 +585,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     /**
      * Material table pagination event
      */
-    public pageEvent(_evt: any): void {
+    pageEvent(_evt: any): void {
         if (!this.customerJourneyTable.tableData.source.paginator.hasNextPage()) {
             this.getInteractionHistory();
         }
@@ -571,7 +595,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      * Get actions of selected sessionId
      * @param {String} sessionId selected Session Id
      */
-    public async getSessionActions(sessionId: string): Promise<void> {
+    async getSessionActions(sessionId: string): Promise<void> {
         try {
             this.sessionActions = { loading: true, error: false };
             const res = await SDKClient.getInteractionActions(sessionId);
@@ -581,7 +605,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 data: res.response.map((x) => ({ ...x, ActionTime: new Date(parseInt(x.ActionTime.toString().split('(')[1].split(')')[0], 10)) }))
             };
         } catch (e) {
-            this.sessionActions = { loading: false, error: true, msg: 'Unable to fetch Session Actions' };
+            this.sessionActions = { loading: false, error: true, msg: 'Unable to fetch session actions' };
             console.error(e);
         }
     }
@@ -591,7 +615,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      *
      * @param sessionId
      */
-    public openSentimentDashboard(sessionId: string): void {
+    openSentimentDashboard(sessionId: string): void {
         let url = this.data.Data.SentimentDashboardUrl;
 
         // verify the url
@@ -614,7 +638,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     /**
      * On widget maximized
      */
-    public onMaximized(max: boolean): void {
+    onMaximized(max: boolean): void {
         this.maximized = max;
         this.maximizeEvent.emit(max);
     }
@@ -623,7 +647,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      * Fetches interaction data and assings to this.interactionNotesReq.data
      * @param {InteractionHistory} record
      */
-    public async showInteractionData(record: InteractionHistory): Promise<void> {
+    async showInteractionData(record: InteractionHistory): Promise<void> {
         this.interactionNotesReq.loading = true;
         this.interactionNotesReq.data = from(
             SDKClient.getInteractionData({
@@ -650,7 +674,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      * Shows email thread for the session
      * @param record
      */
-    public async showEmailThread(interaction?: InteractionHistory): Promise<void> {
+    async showEmailThread(interaction?: InteractionHistory): Promise<void> {
         if (!interaction) {
             interaction = this.customerJourneyTable.tableData.selection.selected[0];
         }
@@ -709,7 +733,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      * Switches Maximized View
      * @param {Mode} mode
      */
-    public switchMaximizedViewMode(mode: Mode, row: InteractionHistory): void {
+    switchMaximizedViewMode(mode: Mode, row: InteractionHistory): void {
         this.mode = mode;
         if (!this.maximized) {
             this.maximized = true;
@@ -751,7 +775,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     /**
      * Closes the bottom action window
      */
-    public closeActionWindow(): void {
+    closeActionWindow(): void {
         this.mode = null;
         this.customerJourneyTable.tableData.selection.clear();
         // this.interactionTranscripts = JSON.stringify(this.interactionTranscripts);

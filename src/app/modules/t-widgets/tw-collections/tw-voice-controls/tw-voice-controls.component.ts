@@ -12,6 +12,7 @@ import { InteractionManagerService } from '@services/interaction-manager.service
 import { TMACEventService } from '@services/tmac-event.service';
 import {
     AgentInteractionTemplate,
+    AVApiConfig,
     AVChannel,
     AVEvent,
     CallConferenceCompletedEvent,
@@ -77,6 +78,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
         widget$: this._fuseFacadeService.widgetBgClasses$
     };
+    /**
+     * To store av api configs
+     */
+    avConfig: AVApiConfig;
     /**
      * Interaction ref
      */
@@ -321,12 +326,15 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      * Lifecycle hook
      * @method OnInit
      */
-    ngOnInit(): void {
+    async ngOnInit(): Promise<void> {
         // call the wrapper init method
         this.initWrapper(this.data);
 
         // get the user info
         this.user = SDKClient.getAgentData() || null;
+
+        const config = await firstValueFrom(this._appDataService.getConfig({ AV: 'AppConfigs.AV' }).pipe(takeUntil(this.unsubscribeAll)));
+        this.avConfig = config.AV ?? {};
 
         // subscribe to interaction manager service
         this._interactionManagerService.interactions.pipe(takeUntil(this.unsubscribeAll)).subscribe((interactions: InteractionRef[]) => {
@@ -433,512 +441,27 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     // -----------------------------------------------------------------------------------------------------
 
     /**
-     * OutgoingCallEvent handler
-     * @param {OutgoingCallEvent} evt
-     */
-    private OutgoingCallEvent = (evt: OutgoingCallEvent) => {
-        // stop duration timer
-        this.duration = 0;
-
-        // set direction
-        this.direction = 'Out';
-
-        // set status
-        this.status = 'outgoing';
-
-        // update the interaction status and user
-        this._interactionManagerService.updateInteraction(evt.InteractionID, {
-            status: 'outgoing',
-            user: this.callerID
-        });
-    };
-
-    /**
-     * CallConnectedEvent handler
-     * @param {CallConnectedEvent} evt
-     */
-    private CallConnectedEvent = (evt: CallConnectedEvent) => {
-        // stop duration timer
-        this.stopTimer.next(null);
-
-        // subscribe to the timer
-        timer(1000, 1000)
-            .pipe(takeUntil(this.stopTimer))
-            .subscribe((val) => {
-                this.duration = (val + 1) * 1000;
-            });
-
-        // set the status
-        this.status = 'connected';
-
-        // update the interaction status and user
-        this._interactionManagerService.updateInteraction(evt.InteractionID, {
-            status: 'connected',
-            user: this.callerID,
-            otherData: {
-                isMSCall: this.isMSCall
-            }
-        });
-    };
-
-    /**
-     * CallDisconnectedEvent handler
-     * @param {CallDisconnectedEvent} evt
-     */
-    private CallDisconnectedEvent = (evt: CallDisconnectedEvent) => {
-        // clear audio if any
-        this._appUIService.clearAudio();
-
-        // set the status
-        this.status = 'disconnected';
-
-        // update the interaction status and user
-        this._interactionManagerService.updateInteraction(evt.InteractionID, {
-            status: 'disconnected'
-        });
-
-        // stop duration timer
-        this.stopTimer.next(null);
-
-        // clear confirm
-        this.tempCallRef = null;
-
-        // destroy the transfer/conf widget
-        if (this.tranfConfWidget) {
-            this._aotWidgetService.destroyWidget(this.tranfConfWidget.ID);
-            this.tranfConfWidget = null;
-        }
-
-        // close all confirm dialogs
-        this.dialogRef?.close();
-    };
-
-    /**
-     * CallHoldEvent Handler
-     * @param {CallHoldEvent} evt
-     */
-    private CallHoldEvent = (evt: CallHoldEvent) => {
-        // set the status
-        this.status = 'hold';
-        // update the interaction status
-        this._interactionManagerService.updateInteraction(evt.InteractionID, {
-            status: 'hold'
-        });
-
-        // hide the progress bar
-        this._fuseProgressBarService.hide();
-    };
-
-    /**
-     * CallHoldReconnectEvent handler
-     * @param {CallHoldReconnectEvent} evt
-     */
-    private CallHoldReconnectEvent = (evt: CallHoldReconnectEvent) => {
-        // set the status
-        this.status = 'connected';
-
-        // update the interaction status
-        this._interactionManagerService.updateInteraction(evt.InteractionID, {
-            status: 'connected'
-        });
-
-        // hide the progress bar
-        this._fuseProgressBarService.hide();
-    };
-
-    /**
-     * CallTransferInitiatedEvent handler
-     * @param {CallTransferInitiatedEvent} evt
-     */
-    private CallTransferInitiatedEvent = (evt: CallTransferInitiatedEvent) => {
-        // show confirm/cancel buttons
-        this.tempCallRef = {
-            ...this.tempCallRef,
-            status: 'init',
-            type: 'transfer'
-        };
-
-        // for blind transfer to agent, we need to call transfer complete manually
-        if (!this.tempCallRef?.isConsult && this.tempCallRef?.source === 'agent') {
-            this.confirmCallFn(true, null);
-        }
-    };
-
-    /**
-     * CallTransferRemoteConnectedEvent Handler
-     * @param {CallTransferRemoteConnectedEvent} evt
-     */
-    private CallTransferRemoteConnectedEvent = (evt: CallTransferRemoteConnectedEvent) => {
-        // show confirm/cancel buttons
-        this.tempCallRef = {
-            ...this.tempCallRef,
-            status: 'connected',
-            type: 'transfer'
-        };
-
-        // update the interaction status and user
-        this._interactionManagerService.updateInteraction(this.interaction.InteractionID, {
-            otherData: {
-                tempCallRef: this.tempCallRef
-            }
-        });
-    };
-
-    /**
-     * CallTransferLineDisconnectEvent handler
-     * @param {CallTransferLineDisconnectEvent} evt
-     */
-    private CallTransferLineDisconnectEvent = (evt: CallTransferLineDisconnectEvent) => {
-        this.tempCallRef = null;
-
-        // update the interaction status and user
-        this._interactionManagerService.updateInteraction(this.interaction.InteractionID, {
-            otherData: {
-                tempCallRef: this.tempCallRef
-            }
-        });
-    };
-
-    /**
-     * CallConferenceInitiatedEvent Handler
-     * @param {CallConferenceInitiatedEvent} evt
-     */
-    private CallConferenceInitiatedEvent = (evt: CallConferenceInitiatedEvent) => {
-        // show confirm/cancel buttons
-        this.tempCallRef = {
-            ...this.tempCallRef,
-            status: 'init',
-            type: 'conference'
-        };
-    };
-
-    /**
-     * CallConferenceRemoteConnectedEvent Handler
-     * @param {CallConferenceRemoteConnectedEvent} evt
-     */
-    private CallConferenceRemoteConnectedEvent = (evt: CallConferenceRemoteConnectedEvent) => {
-        // show confirm/cancel buttons
-        this.tempCallRef = {
-            ...this.tempCallRef,
-            status: 'connected',
-            type: 'conference'
-        };
-
-        // for MS call and blind conference, do complete when conference line connected
-        if (this.isMSCall && !this.tempCallRef?.isConsult) {
-            this.confirmCallFn(true, null);
-        }
-    };
-
-    /**
-     * CallConferenceLineDisconnectEvent Handler
-     * @param {CallConferenceLineDisconnectEvent} evt
-     */
-    private CallConferenceLineDisconnectEvent = (evt: CallConferenceLineDisconnectEvent) => {
-        // remove the temp call reference
-        this.tempCallRef = null;
-
-        // for ms we need to change to connected state
-        // and for mainline disconnect we need to change to connected sate
-        if (this.isMSCall || evt.IsMainLine) {
-            // since conference is handled in UI for MS calls, we cannot hold the call and unhold as it will cause state issue in UI
-            // so we use mute/unmute instead
-
-            // check if muted then unmute
-            if (this.muted) {
-                // get the connection
-                const connection: AVChannel = this.avConns[this.callLines[0]];
-                // un mute the call
-                connection.unMute(true, false);
-                // change the mute flag
-                this.muted = false;
-            }
-            // set the status
-            this.status = 'connected';
-            // update the interaction status
-            this._interactionManagerService.updateInteraction(evt.InteractionID, {
-                status: 'connected'
-            });
-        }
-    };
-
-    /**
-     * CallConferenceCompletedEvent Handler
-     * @param {CallConferenceCompletedEvent} evt
-     */
-    private CallConferenceCompletedEvent = (evt: CallConferenceCompletedEvent) => {
-        // for ms call
-        if (this.isMSCall) {
-            // get the connection variable for main line
-            // since conference is handled in UI for MS calls, we cannot hold the call and unhold as it will cause state issue in UI
-            // so we use mute/unmute instead
-
-            // check if muted then unmute
-            if (this.muted) {
-                // so we use mute/unmute instead
-                const connection: AVChannel = this.avConns[this.callLines[0]];
-                // un mute the call
-                connection.unMute(true, false);
-                // change the mute flag
-                this.muted = false;
-            }
-            // // do conference mixing
-            this.handleConferenceMixer();
-        }
-        // else {
-        // set the status
-        this.status = 'connected';
-
-        // update the interaction status
-        this._interactionManagerService.updateInteraction(evt.InteractionID, {
-            status: 'connected'
-        });
-        // }
-
-        // set the temp call reference to null
-        this.tempCallRef = null;
-    };
-
-    /**
-     * MediaServerEvent Handler
-     * @param {MediaServerEvent} evt
-     */
-    private MediaServerEvent = async (evt: MediaServerEvent) => {
-        try {
-            // check the interaction
-            if (evt.InteractionID !== this.interaction.InteractionID) {
-                return;
-            }
-
-            // init the connection variable
-            let connection: AVChannel = null;
-
-            // switch the type and process
-            switch (evt.Type) {
-                case 'call-received':
-                    // create WebRTC peer connection
-                    connection = await this.createAVConnection(evt.SessionID, 'in');
-                    connection?.directCall(TEnums.WrcCallTypes.Audio, 'in');
-                    // play incoming call sound
-                    this._appUIService.playAudio('incoming-call', 0.5, true);
-                    break;
-                case 'call-connecting':
-                    // create WebRTC peer connection
-                    connection = await this.createAVConnection(evt.SessionID, 'out');
-                    connection?.directCall(TEnums.WrcCallTypes.Audio);
-                    // play incoming call sound
-                    this._appUIService.playAudio('ringing', 0.5, true);
-                    break;
-                case 'call-connected':
-                    // clear tone of once call connected
-                    this._appUIService.clearAudio();
-                    break;
-                case 'eventav':
-                    // process event av
-                    this.processEventAV(evt.SessionID, JSON.parse(evt.Message));
-                    break;
-                default:
-            }
-
-            // get the connection based on session id
-            connection = this.avConns[evt.SessionID];
-
-            // check if the connection is added
-            if (connection) {
-                // check if the messages can be processed by WebRTC API, if not add to the reference and process after answer call
-                if (this.processMediaMessages) {
-                    // send the message to webclient api to process the av messages
-                    connection.onMessage(evt.Message);
-                } else {
-                    this.mediaServerMessages.push(evt.Message);
-                }
-            }
-        } catch (error) {
-            TUtils.Logger.error('Exception in TwVoiceControlsComponent.MediaServerEvent', error);
-        }
-    };
-
-    /**
-     * VoiceCannedResponseEvent Handler
-     * @param {VoiceCannedResponseEvent} evt
-     */
-    private VoiceCannedResponseEvent = (evt: {
-        /**
-         * Audio buffer from template
-         */
-        AudioBuffer: ArrayBuffer;
-        /**
-         * Interaction ID
-         */
-        InteractionID: number;
-        /**
-         * Agent interaction template ref
-         */
-        Item: AgentInteractionTemplate;
-    }) => {
-        // check if audio is playing already
-        this.audioPlayer?.stop();
-
-        // check the status of call
-        if (this.status !== 'connected') {
-            this._appUIService.showSnackbar(`Cannot play canned audio in ${this.status} state`, 'failure');
-            return;
-        }
-
-        // get the connection based on session id and play the buffer
-        this.audioPlayer = this.avConns[this.sessionID]?.playAudio(evt.AudioBuffer);
-
-        // check if played
-        if (!this.audioPlayer) {
-            this._appUIService.showSnackbar(`Error in playing canned audio '${evt.Item.Name}'`, 'failure');
-            return;
-        }
-
-        // append the name to audio player
-        this.audioPlayer.fileName = evt.Item.Name;
-
-        // set the state to playing
-        this.audioPlayer._adpState = 'playing';
-
-        // listen to onEnd
-        this.audioPlayer.onEnd = () => {
-            this.audioPlayer = null;
-        };
-
-        // show a success alert
-        this._appUIService.showSnackbar(`Canned audio '${evt.Item.Name}' started playing`);
-
-        // create custom event and send
-        // SDKClient.events.emit('VoiceCannedResponseAckEvent', {
-        //     SAudioPlayer: this.audioPlayer,
-        //     Item: evt.Item
-        // });
-    };
-
-    /**
-     * CallerIntentEvent Handler
-     * @param {CallerIntentEvent} evt
-     */
-    private CallerIntentEvent = (evt: CallerIntentEvent) => {
-        // assign the intent name
-        this.intent = evt.IntentName;
-    };
-
-    /**
-     * IVRDataEvent Handler
-     * @param {IVRDataEvent} evt
-     */
-    private IVRDataEvent = (evt: IVRDataEvent) => {
-        this.last4IVR = [evt.LastMenu_4, evt.LastMenu_3, evt.LastMenu_2, evt.LastMenu];
-    };
-
-    /**
-     * To handle InteractionDataEvent
-     *
-     * @param {InteractionDataEvent} evt
-     */
-    private InteractionDataEvent(evt: InteractionDataEvent): void {
-        // check the channel
-        if (evt.Channel !== 'Voice') {
-            return;
-        }
-        // check if interaction comments available
-        if (evt.InteractionComments && evt.InteractionComments.length > 0) {
-            evt.InteractionComments.forEach((c) => {
-                const dt = JSON.parse(c);
-                this.savedComments.push({
-                    Message: dt.Comment,
-                    Time: dt.Time,
-                    User: dt.User
-                });
-            });
-        }
-    }
-
-    /**
-     * To handle UUIDataEvent
-     *
-     * @param {UUIDataEvent} evt
-     */
-    private UUIDataEvent(evt: UUIDataEvent): void {
-        // check if language is provided
-        if (evt.Language) {
-            // check for english
-            if (['1', 'e'].includes(evt.Language.toLowerCase())) {
-                this.language = 'English';
-            } else {
-                this.language = 'Mandarin';
-            }
-        }
-
-        const authType = evt.AuthType;
-        // let verificationIcon = 'error';
-        // let verificationIconType = 'danger';
-        let verificationText = 'N/A';
-        let verificationType = 'N/A';
-
-        // check for auth type
-        if (authType) {
-            const isIdentified = authType.IsIdentified;
-            const isVerified = authType.IsVerified;
-            verificationType = authType.VerificationType;
-
-            // verificationIcon = isVerified ? 'verified_user' : 'error';
-            // verificationIconType = isVerified ? 'success' : 'danger';
-
-            if (isVerified && isIdentified) {
-                verificationText = 'Verified | Identified';
-            } else if (!isVerified && isIdentified) {
-                verificationText = 'Not Verified | Identified';
-            } else if (!isVerified && !isIdentified) {
-                verificationText = 'Not Verified | Not identified';
-            }
-
-            // if verified, then hide all not verifed menus from Ivr transfer
-            if (isVerified) {
-                this.ivrMenus = this.ivrMenus.filter((i) => i.Type === 'nv');
-            }
-        }
-    }
-
-    /**
-     * To handle HoldTimerEvent
-     *
-     * @param {HoldTimerEvent} evt
-     */
-    private HoldTimerEvent(evt: HoldTimerEvent): void {
-        this._appUIService.showAppSnackbar({
-            message: `Interaction ${this.interaction.InteractionID} with [${this.callerID}] and Session ID [${this.sessionID}] is on hold for ${evt.HoldTimeString}`,
-            state: evt.ColorCode,
-            onClick: () => {
-                const interaction = this.interactionList.filter((i) => i.interactionId === evt.InteractionID)[0];
-                if (interaction) {
-                    this.selectInteraction(interaction);
-                }
-            }
-        });
-    }
-
-    /**
      * Create AV connection
      * @method createAVConnection
      *
      * @param {string} sessionId
      * @param {string} direction
      */
-    private async createAVConnection(sessionId: string, direction: string): Promise<AVChannel> {
+    private createAVConnection(sessionId: string, direction: string): AVChannel {
         try {
             // set MS call to true
             this.isMSCall = true;
 
-            // get the av config
-            const config = await firstValueFrom(this._appDataService.getConfig({ AV: 'AppConfigs.AV' }).pipe(takeUntil(this.unsubscribeAll)));
-
-            // Set AV Config
-            const AV = config?.AV ?? {};
-
             // create a AV channel connection
-            const connection = new AVChannel(SDKClient, this.interaction.InteractionID.toString(), this.user.agentId, '', sessionId, 'voice', AV);
+            const connection = new AVChannel(
+                SDKClient,
+                this.interaction.InteractionID.toString(),
+                this.user.agentId,
+                '',
+                sessionId,
+                'voice',
+                this.avConfig
+            );
 
             if (!connection) {
                 TUtils.Logger.warn(`TwVoiceControlsComponent: Error in creating AVChannel for MS call: ${sessionId}`);
@@ -1182,6 +705,493 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * OutgoingCallEvent handler
+     * @param {OutgoingCallEvent} evt
+     */
+    OutgoingCallEvent(evt: OutgoingCallEvent): void {
+        // stop duration timer
+        this.duration = 0;
+
+        // set direction
+        this.direction = 'Out';
+
+        // set status
+        this.status = 'outgoing';
+
+        // update the interaction status and user
+        this._interactionManagerService.updateInteraction(evt.InteractionID, {
+            status: 'outgoing',
+            user: this.callerID
+        });
+    }
+
+    /**
+     * CallConnectedEvent handler
+     * @param {CallConnectedEvent} evt
+     */
+    CallConnectedEvent(evt: CallConnectedEvent): void {
+        // stop duration timer
+        this.stopTimer.next(null);
+
+        // subscribe to the timer
+        timer(1000, 1000)
+            .pipe(takeUntil(this.stopTimer))
+            .subscribe((val) => {
+                this.duration = (val + 1) * 1000;
+            });
+
+        // set the status
+        this.status = 'connected';
+
+        // update the interaction status and user
+        this._interactionManagerService.updateInteraction(evt.InteractionID, {
+            status: 'connected',
+            user: this.callerID,
+            otherData: {
+                isMSCall: this.isMSCall
+            }
+        });
+    }
+
+    /**
+     * CallDisconnectedEvent handler
+     * @param {CallDisconnectedEvent} evt
+     */
+    CallDisconnectedEvent(evt: CallDisconnectedEvent): void {
+        // clear audio if any
+        this._appUIService.clearAudio();
+
+        // set the status
+        this.status = 'disconnected';
+
+        // update the interaction status and user
+        this._interactionManagerService.updateInteraction(evt.InteractionID, {
+            status: 'disconnected'
+        });
+
+        // stop duration timer
+        this.stopTimer.next(null);
+
+        // clear confirm
+        this.tempCallRef = null;
+
+        // destroy the transfer/conf widget
+        if (this.tranfConfWidget) {
+            this._aotWidgetService.destroyWidget(this.tranfConfWidget.ID);
+            this.tranfConfWidget = null;
+        }
+
+        // close all confirm dialogs
+        this.dialogRef?.close();
+    }
+
+    /**
+     * CallHoldEvent Handler
+     * @param {CallHoldEvent} evt
+     */
+    CallHoldEvent(evt: CallHoldEvent): void {
+        // set the status
+        this.status = 'hold';
+        // update the interaction status
+        this._interactionManagerService.updateInteraction(evt.InteractionID, {
+            status: 'hold'
+        });
+
+        // hide the progress bar
+        this._fuseProgressBarService.hide();
+    }
+
+    /**
+     * CallHoldReconnectEvent handler
+     * @param {CallHoldReconnectEvent} evt
+     */
+    CallHoldReconnectEvent(evt: CallHoldReconnectEvent): void {
+        // set the status
+        this.status = 'connected';
+
+        // update the interaction status
+        this._interactionManagerService.updateInteraction(evt.InteractionID, {
+            status: 'connected'
+        });
+
+        // hide the progress bar
+        this._fuseProgressBarService.hide();
+    }
+
+    /**
+     * CallTransferInitiatedEvent handler
+     * @param {CallTransferInitiatedEvent} evt
+     */
+    CallTransferInitiatedEvent(evt: CallTransferInitiatedEvent): void {
+        // show confirm/cancel buttons
+        this.tempCallRef = {
+            ...this.tempCallRef,
+            status: 'init',
+            type: 'transfer'
+        };
+
+        // for blind transfer to agent, we need to call transfer complete manually
+        if (!this.tempCallRef?.isConsult && this.tempCallRef?.source === 'agent') {
+            this.confirmCallFn(true, null);
+        }
+    }
+
+    /**
+     * CallTransferRemoteConnectedEvent Handler
+     * @param {CallTransferRemoteConnectedEvent} evt
+     */
+    CallTransferRemoteConnectedEvent(evt: CallTransferRemoteConnectedEvent): void {
+        // show confirm/cancel buttons
+        this.tempCallRef = {
+            ...this.tempCallRef,
+            status: 'connected',
+            type: 'transfer'
+        };
+
+        // update the interaction status and user
+        this._interactionManagerService.updateInteraction(this.interaction.InteractionID, {
+            otherData: {
+                tempCallRef: this.tempCallRef
+            }
+        });
+    }
+
+    /**
+     * CallTransferLineDisconnectEvent handler
+     * @param {CallTransferLineDisconnectEvent} evt
+     */
+    CallTransferLineDisconnectEvent(evt: CallTransferLineDisconnectEvent): void {
+        this.tempCallRef = null;
+
+        // update the interaction status and user
+        this._interactionManagerService.updateInteraction(this.interaction.InteractionID, {
+            otherData: {
+                tempCallRef: this.tempCallRef
+            }
+        });
+    }
+
+    /**
+     * CallConferenceInitiatedEvent Handler
+     * @param {CallConferenceInitiatedEvent} evt
+     */
+    CallConferenceInitiatedEvent(evt: CallConferenceInitiatedEvent): void {
+        // show confirm/cancel buttons
+        this.tempCallRef = {
+            ...this.tempCallRef,
+            status: 'init',
+            type: 'conference'
+        };
+    }
+
+    /**
+     * CallConferenceRemoteConnectedEvent Handler
+     * @param {CallConferenceRemoteConnectedEvent} evt
+     */
+    CallConferenceRemoteConnectedEvent(evt: CallConferenceRemoteConnectedEvent): void {
+        // show confirm/cancel buttons
+        this.tempCallRef = {
+            ...this.tempCallRef,
+            status: 'connected',
+            type: 'conference'
+        };
+
+        // for MS call and blind conference, do complete when conference line connected
+        if (this.isMSCall && !this.tempCallRef?.isConsult) {
+            this.confirmCallFn(true, null);
+        }
+    }
+
+    /**
+     * CallConferenceLineDisconnectEvent Handler
+     * @param {CallConferenceLineDisconnectEvent} evt
+     */
+    CallConferenceLineDisconnectEvent(evt: CallConferenceLineDisconnectEvent): void {
+        // remove the temp call reference
+        this.tempCallRef = null;
+
+        // for ms we need to change to connected state
+        // and for mainline disconnect we need to change to connected sate
+        if (this.isMSCall || evt.IsMainLine) {
+            // since conference is handled in UI for MS calls, we cannot hold the call and unhold as it will cause state issue in UI
+            // so we use mute/unmute instead
+
+            // check if muted then unmute
+            if (this.muted) {
+                // get the connection
+                const connection: AVChannel = this.avConns[this.callLines[0]];
+                // un mute the call
+                connection.unMute(true, false);
+                // change the mute flag
+                this.muted = false;
+            }
+            // set the status
+            this.status = 'connected';
+            // update the interaction status
+            this._interactionManagerService.updateInteraction(evt.InteractionID, {
+                status: 'connected'
+            });
+        }
+    }
+
+    /**
+     * CallConferenceCompletedEvent Handler
+     * @param {CallConferenceCompletedEvent} evt
+     */
+    CallConferenceCompletedEvent(evt: CallConferenceCompletedEvent): void {
+        // for ms call
+        if (this.isMSCall) {
+            // get the connection variable for main line
+            // since conference is handled in UI for MS calls, we cannot hold the call and unhold as it will cause state issue in UI
+            // so we use mute/unmute instead
+
+            // check if muted then unmute
+            if (this.muted) {
+                // so we use mute/unmute instead
+                const connection: AVChannel = this.avConns[this.callLines[0]];
+                // un mute the call
+                connection.unMute(true, false);
+                // change the mute flag
+                this.muted = false;
+            }
+            // // do conference mixing
+            this.handleConferenceMixer();
+        }
+        // else {
+        // set the status
+        this.status = 'connected';
+
+        // update the interaction status
+        this._interactionManagerService.updateInteraction(evt.InteractionID, {
+            status: 'connected'
+        });
+        // }
+
+        // set the temp call reference to null
+        this.tempCallRef = null;
+    }
+
+    /**
+     * MediaServerEvent Handler
+     * @param {MediaServerEvent} evt
+     */
+    MediaServerEvent(evt: MediaServerEvent): void {
+        try {
+            // check the interaction
+            if (evt.InteractionID !== this.interaction.InteractionID) {
+                return;
+            }
+
+            // init the connection variable
+            let connection: AVChannel = null;
+
+            // switch the type and process
+            switch (evt.Type) {
+                case 'call-received':
+                    // create WebRTC peer connection
+                    connection = this.createAVConnection(evt.SessionID, 'in');
+                    connection?.directCall(TEnums.WrcCallTypes.Audio, 'in');
+                    // play incoming call sound
+                    this._appUIService.playAudio('incoming-call', 0.5, true);
+                    break;
+                case 'call-connecting':
+                    // create WebRTC peer connection
+                    connection = this.createAVConnection(evt.SessionID, 'out');
+                    connection?.directCall(TEnums.WrcCallTypes.Audio);
+                    // play incoming call sound
+                    this._appUIService.playAudio('ringing', 0.5, true);
+                    break;
+                case 'call-connected':
+                    // clear tone of once call connected
+                    this._appUIService.clearAudio();
+                    break;
+                case 'eventav':
+                    // process event av
+                    this.processEventAV(evt.SessionID, JSON.parse(evt.Message));
+                    break;
+                default:
+            }
+
+            // get the connection based on session id
+            connection = this.avConns[evt.SessionID];
+
+            // check if the connection is added
+            if (connection) {
+                // check if the messages can be processed by WebRTC API, if not add to the reference and process after answer call
+                if (this.processMediaMessages) {
+                    // send the message to webclient api to process the av messages
+                    connection.onMessage(evt.Message);
+                } else {
+                    this.mediaServerMessages.push(evt.Message);
+                }
+            }
+        } catch (error) {
+            TUtils.Logger.error('Exception in TwVoiceControlsComponent.MediaServerEvent', error);
+        }
+    }
+
+    /**
+     * VoiceCannedResponseEvent Handler
+     * @param {VoiceCannedResponseEvent} evt
+     */
+    VoiceCannedResponseEvent(evt: {
+        /**
+         * Audio buffer from template
+         */
+        AudioBuffer: ArrayBuffer;
+        /**
+         * Interaction ID
+         */
+        InteractionID: number;
+        /**
+         * Agent interaction template ref
+         */
+        Item: AgentInteractionTemplate;
+    }): void {
+        // check if audio is playing already
+        this.audioPlayer?.stop();
+
+        // check the status of call
+        if (this.status !== 'connected') {
+            this._appUIService.showSnackbar(`Cannot play canned audio in ${this.status} state`, 'failure');
+            return;
+        }
+
+        // get the connection based on session id and play the buffer
+        this.audioPlayer = this.avConns[this.sessionID]?.playAudio(evt.AudioBuffer);
+
+        // check if played
+        if (!this.audioPlayer) {
+            this._appUIService.showSnackbar(`Error in playing canned audio '${evt.Item.Name}'`, 'failure');
+            return;
+        }
+
+        // append the name to audio player
+        this.audioPlayer.fileName = evt.Item.Name;
+
+        // set the state to playing
+        this.audioPlayer._adpState = 'playing';
+
+        // listen to onEnd
+        this.audioPlayer.onEnd = () => {
+            this.audioPlayer = null;
+        };
+
+        // show a success alert
+        this._appUIService.showSnackbar(`Canned audio '${evt.Item.Name}' started playing`);
+
+        // create custom event and send
+        // SDKClient.events.emit('VoiceCannedResponseAckEvent', {
+        //     SAudioPlayer: this.audioPlayer,
+        //     Item: evt.Item
+        // });
+    }
+
+    /**
+     * CallerIntentEvent Handler
+     * @param {CallerIntentEvent} evt
+     */
+    CallerIntentEvent(evt: CallerIntentEvent): void {
+        // assign the intent name
+        this.intent = evt.IntentName;
+    }
+
+    /**
+     * IVRDataEvent Handler
+     * @param {IVRDataEvent} evt
+     */
+    IVRDataEvent(evt: IVRDataEvent): void {
+        this.last4IVR = [evt.LastMenu_4, evt.LastMenu_3, evt.LastMenu_2, evt.LastMenu];
+    }
+
+    /**
+     * To handle InteractionDataEvent
+     *
+     * @param {InteractionDataEvent} evt
+     */
+    InteractionDataEvent(evt: InteractionDataEvent): void {
+        // check the channel
+        if (evt.Channel !== 'Voice') {
+            return;
+        }
+        // check if interaction comments available
+        if (evt.InteractionComments && evt.InteractionComments.length > 0) {
+            evt.InteractionComments.forEach((c) => {
+                const dt = JSON.parse(c);
+                this.savedComments.push({
+                    Message: dt.Comment,
+                    Time: dt.Time,
+                    User: dt.User
+                });
+            });
+        }
+    }
+
+    /**
+     * To handle UUIDataEvent
+     *
+     * @param {UUIDataEvent} evt
+     */
+    UUIDataEvent(evt: UUIDataEvent): void {
+        // check if language is provided
+        if (evt.Language) {
+            // check for english
+            if (['1', 'e'].includes(evt.Language.toLowerCase())) {
+                this.language = 'English';
+            } else {
+                this.language = 'Mandarin';
+            }
+        }
+
+        const authType = evt.AuthType;
+        // let verificationIcon = 'error';
+        // let verificationIconType = 'danger';
+        let verificationText = 'N/A';
+        let verificationType = 'N/A';
+
+        // check for auth type
+        if (authType) {
+            const isIdentified = authType.IsIdentified;
+            const isVerified = authType.IsVerified;
+            verificationType = authType.VerificationType;
+
+            // verificationIcon = isVerified ? 'verified_user' : 'error';
+            // verificationIconType = isVerified ? 'success' : 'danger';
+
+            if (isVerified && isIdentified) {
+                verificationText = 'Verified | Identified';
+            } else if (!isVerified && isIdentified) {
+                verificationText = 'Not Verified | Identified';
+            } else if (!isVerified && !isIdentified) {
+                verificationText = 'Not Verified | Not identified';
+            }
+
+            // if verified, then hide all not verifed menus from Ivr transfer
+            if (isVerified) {
+                this.ivrMenus = this.ivrMenus.filter((i) => i.Type === 'nv');
+            }
+        }
+    }
+
+    /**
+     * To handle HoldTimerEvent
+     *
+     * @param {HoldTimerEvent} evt
+     */
+    HoldTimerEvent(evt: HoldTimerEvent): void {
+        this._appUIService.showAppSnackbar({
+            message: `Interaction ${this.interaction.InteractionID} with [${this.callerID}] and Session ID [${this.sessionID}] is on hold for ${evt.HoldTimeString}`,
+            state: evt.ColorCode,
+            onClick: () => {
+                const interaction = this.interactionList.filter((i) => i.interactionId === evt.InteractionID)[0];
+                if (interaction) {
+                    this.selectInteraction(interaction);
+                }
+            }
+        });
+    }
 
     /**
      * Select Interaction

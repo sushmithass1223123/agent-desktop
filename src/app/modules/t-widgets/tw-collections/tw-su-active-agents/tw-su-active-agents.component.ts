@@ -100,7 +100,6 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
      * Reload agent data flag
      */
     reload: boolean;
-
     /**
      * Available quiz intents
      */
@@ -109,11 +108,10 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         { name: 'Product Quiz', intent: 'CallCenterQuiz' },
         { name: 'Training Quiz', intent: 'CallCenterQuiz' }
     ];
-
     /**
-     * Is Agent a supervisor
+     * To allow broadcast
      */
-    isAgentSupervisor: boolean;
+    allowBroadcast: boolean;
 
     /**
      * Constructor
@@ -146,12 +144,10 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-        this.isAgentSupervisor = SDKClient.getAgentData().agentProfile === 'S';
-
-        // this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-        //     this.fuseConfig = config;
-        // });
-
+        const checkFeature = SDKClient.getAgentData().featuresList.filter(
+            (f) => f.Feature === AGENT_FEATURES.IsSetBroadcastEnabled && f.IsEnabled
+        )?.[0];
+        this.allowBroadcast = (SDKClient.getAgentData().agentProfile === 'S' && checkFeature?.IsEnabled) ?? false;
         this.sortBy = this.data.Data.SortBy ?? 'AgentName';
         this.sortType = this.data.Data.SortType ?? 'asc';
 
@@ -161,7 +157,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
 
         // get agent aux codes
-        SDKClient.loadAUXCodes(false, null).then((result: IResponse) => {
+        SDKClient.loadAUXCodes(false).then((result: IResponse) => {
             // check if the data is null
             if (result.response && result.response.length > 0) {
                 // filter and assign the aux codes
@@ -177,61 +173,6 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         // call the wrapper destroy method
         this.destroyWrapper();
     }
-
-    // -----------------------------------------------------------------------------------------------------
-    // @  Private Methods
-    // -----------------------------------------------------------------------------------------------------
-
-    /**
-     * SupervisorAgentListEvent handler
-     * @method SupervisorAgentListEvent
-     * @param {CustomSDKEvent} evt
-     */
-    private SupervisorAgentListEvent = (evt: CustomSDKEvent) => {
-        // filter for excpet me
-        this.agentList = this.filteredAgents = evt.Data || [];
-        // check any search term is there, then filter
-        if (this.searchTerm) {
-            this.filterAgents();
-        }
-
-        // sort agent list
-        this.sortAgentList();
-
-        if (this.reload) {
-            this.reload = false;
-            this._appUIService.showSnackbar('Agent data is reloaded');
-        }
-    };
-
-    /**
-     * TeamAgentListDataEvent Handler
-     * @method TeamAgentListDataEvent
-     * @param {CustomSDKEvent} evt
-     */
-    private TeamAgentListDataEvent = (evt: CustomSDKEvent) => {
-        if (this.agentList.length === 0) {
-            return;
-        }
-
-        this.agentList.forEach((item1: SuAgentModel, index1) => {
-            evt.Data.forEach((item2: SuAgentDataModel) => {
-                if (item2.AgentLoginID === item1.AgentLoginID) {
-                    this.agentList[index1] = { ...item1, ...item2 };
-                    this.agentList[index1].ChannelCount = orderBy(this.agentList[index1].ChannelCount, ['CurrentCount'], ['desc']);
-                }
-            });
-        });
-
-        this.filteredAgents = this.agentList;
-
-        if (this.searchTerm) {
-            this.filterAgents();
-        }
-
-        // sort agent list
-        this.sortAgentList();
-    };
 
     /**
      * createActivityWidget
@@ -254,9 +195,56 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         this.activityWidget = widget;
     }
 
-    // -----------------------------------------------------------------------------------------------------
-    // @  Public Methods
-    // -----------------------------------------------------------------------------------------------------
+    /**
+     * SupervisorAgentListEvent handler
+     * @method SupervisorAgentListEvent
+     * @param {CustomSDKEvent} evt
+     */
+    SupervisorAgentListEvent(evt: CustomSDKEvent): void {
+        // filter for excpet me
+        this.agentList = this.filteredAgents = evt.Data || [];
+        // check any search term is there, then filter
+        if (this.searchTerm) {
+            this.filterAgents();
+        }
+
+        // sort agent list
+        this.sortAgentList();
+
+        if (this.reload) {
+            this.reload = false;
+            this._appUIService.showSnackbar('Agent data is reloaded');
+        }
+    }
+
+    /**
+     * TeamAgentListDataEvent Handler
+     * @method TeamAgentListDataEvent
+     * @param {CustomSDKEvent} evt
+     */
+    TeamAgentListDataEvent(evt: CustomSDKEvent): void {
+        if (this.agentList.length === 0) {
+            return;
+        }
+
+        this.agentList.forEach((item1: SuAgentModel, index1) => {
+            evt.Data.forEach((item2: SuAgentDataModel) => {
+                if (item2.AgentLoginID === item1.AgentLoginID) {
+                    this.agentList[index1] = { ...item1, ...item2 };
+                    this.agentList[index1].ChannelCount = orderBy(this.agentList[index1].ChannelCount, ['CurrentCount'], ['desc']);
+                }
+            });
+        });
+
+        this.filteredAgents = this.agentList;
+
+        if (this.searchTerm) {
+            this.filterAgents();
+        }
+
+        // sort agent list
+        this.sortAgentList();
+    }
 
     /**
      * Filter Agents
@@ -590,7 +578,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
      */
     sendBroadcast(): void {
         const { agentId, teamId } = SDKClient.getAgentData();
-        if (this.isAgentSupervisor) {
+        if (this.allowBroadcast) {
             const dialogRef = this._appUIService.showCustomDialog(
                 'prompt',
                 'Write the message to be broadcasted below',

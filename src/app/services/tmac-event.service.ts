@@ -16,10 +16,10 @@ import {
     TCMDirectAgentNotifyTimeoutEvent,
     TextChatTransferNotificationEvent,
     TMACEventTypes,
-    TmacServerConnectionAborted,
     TmacServerConnectionSuccess,
     TUtils
 } from '@tmac/sdk';
+import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { CustomTMACEventTypes, IAction, IAppConfig, IPostMessage, IWidget, QuizEvent } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { upperFirst } from 'lodash';
@@ -520,7 +520,7 @@ export class TMACEventService {
                                 }
                             })
                             .catch(() => {
-                                this._appUIService.showSnackbar('Chat Silent Barge-in failed', 'failure');
+                                this._appUIService.showSnackbar('Error in chat silent barge-in', 'failure');
                             });
                     }
                 });
@@ -753,7 +753,7 @@ export class TMACEventService {
      *
      * @param {MessageEvent} evt
      */
-    private postMessageReceived(evt: MessageEvent): void {
+    private postMessageReceived = (evt: MessageEvent) => {
         // if event data is null then return
         if (!evt.data) {
             return;
@@ -780,7 +780,7 @@ export class TMACEventService {
                     event: {
                         ...message.data
                     },
-                    isInteractionEvent: message.data.InteractionID !== undefined,
+                    isInteractionEvent: !!message.data.InteractionID,
                     log: true
                 });
             } else if (fn.endsWith('event')) {
@@ -790,7 +790,7 @@ export class TMACEventService {
                         EventName: message.function,
                         ...message.data
                     },
-                    isInteractionEvent: message.data.InteractionID !== undefined,
+                    isInteractionEvent: !!message.data.InteractionID,
                     log: true
                 });
             }
@@ -809,7 +809,7 @@ export class TMACEventService {
             // notify the observers
             this._postMessage$.next(data);
         }
-    }
+    };
 
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods

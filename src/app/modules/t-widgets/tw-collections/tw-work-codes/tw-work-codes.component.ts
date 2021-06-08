@@ -165,7 +165,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         } catch (e) {
             this.loadWorkCodesReq.error = true;
             this.loadWorkCodesReq.loading = false;
-            this.loadWorkCodesReq.msg = 'Unable to get Workcodes';
+            this.loadWorkCodesReq.msg = 'Unable to get workcodes';
         }
     }
 
@@ -276,7 +276,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
                 this.workCodeCtrl.setValue('');
             })
             .catch(() => {
-                this._appUiService.showSnackbar('Unable to set Workcode', 'failure');
+                this._appUiService.showSnackbar('Unable to set workcode', 'failure');
             });
     }
 
