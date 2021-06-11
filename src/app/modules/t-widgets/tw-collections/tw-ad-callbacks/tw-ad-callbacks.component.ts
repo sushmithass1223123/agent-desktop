@@ -114,7 +114,7 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
                 this.getDashboardDataRes = {
                     error: true,
                     loading: false,
-                    msg: 'Unable to fetch Contact session'
+                    msg: 'Unable to fetch contact session'
                 };
             }
         });

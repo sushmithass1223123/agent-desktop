@@ -1,9 +1,9 @@
 [
     {
-        "Name": "Campaign Contact",
+        "Name": "Compose Messaging",
         "Description": "",
-        "Key": "CampaignContact",
-        "Type": "tw-campaign-contact",
+        "Key": "Messaging",
+        "Type": "tw-compose-messaging",
         "Config": {
             "Enabled": true,
             "Hidden": false,
@@ -11,7 +11,7 @@
             "Anchor": false,
             "AOT": false,
             "AutoOpen": false,
-            "Icon": "contact_page",
+            "Icon": "sms",
             "Class": "",
             "Position": {
                 "X": 2,
@@ -26,48 +26,8 @@
             "Pinned": false
         },
         "Data": {
-            "CustomerInfo": [
-                {
-                    "Title": "Name",
-                    "ValueSource": "ContactData.campaignContact.Name",
-                    "DefaultValue": ""
-                },
-                {
-                    "Title": "PhoneNumber",
-                    "ValueSource": "ContactData.campaignContact.PhoneNumber",
-                    "DefaultValue": ""
-                },
-                {
-                    "Title": "NRIC",
-                    "ValueSource": "ContactData.campaignContact.nric",
-                    "DefaultValue": ""
-                },
-                {
-                    "Title": "Gender",
-                    "ValueSource": "ContactData.campaignContact.Gender",
-                    "DefaultValue": ""
-                },
-                {
-                    "Title": "Age",
-                    "ValueSource": "ContactData.campaignContact.Age",
-                    "DefaultValue": ""
-                },
-                {
-                    "Title": "Language",
-                    "ValueSource": "ContactData.campaignContact.language",
-                    "DefaultValue": ""
-                },
-                {
-                    "Title": "Email",
-                    "ValueSource": "ContactData.campaignContact.Email",
-                    "DefaultValue": ""
-                },
-                {
-                    "Title": "Callback DateTime",
-                    "ValueSource": "ContactData.campaignContact.ScheduleTime",
-                    "DefaultValue": ""
-                }
-            ]
+            "Type": "sms",
+            "NumberTemplate": "CCLDataEvent.RegisteredPhone"
         }
     }
 ]

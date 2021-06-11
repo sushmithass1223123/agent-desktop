@@ -30,6 +30,7 @@ import {
 } from 'app/constants';
 import { AgentSkillListData, CreateEmailInput, CreateEmailOutput, InteractionComment, InteractionRef, IWidget, ResData } from 'app/interfaces';
 import { ADError, maticonByExtension, throwADError, urlify } from 'app/utils';
+import { format } from 'date-fns';
 import { firstValueFrom, interval, Subscription } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 
@@ -940,9 +941,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         // check the saved comments
         this.savedComments.forEach((item) => {
             message += `
-                 <div class="text-primary mat-body-2 m-0">${item.Message.replace(/(?:\r\n|\r|\n)/g, '<br>')}</div>
-                 <span class="time secondary-text mat-body-1">${item.User}</span>,
-                 <span class="time secondary-text mat-body-1">${new Date(item.Time).toLocaleString()}</span>
+                 <div class="text-primary mat-body-2">${item.Message.replace(/(?:\r\n|\r|\n)/g, '<br>')}</div>
+                 <span class="time muted-text mat-body-1">${item.User}</span>,
+                 <span class="time muted-text mat-body-1">${format(new Date(item.Time), 'dd/MM/yyyy hh:mm:ss a')}</span>
                  <br />
                  <br />
                  `;
@@ -952,7 +953,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         const dialogRef = this._appUIService.showCustomDialog(
             'prompt',
             message,
-            'Interaction Notes',
+            'Interaction Comments',
             { minRows: 4 },
             {
                 minWidth: '30%',

@@ -287,6 +287,37 @@ body.theme-teal-red {
     @include fuse-color-classes($palettes);
 }
 
+// Define the primary, accent and warn palettes
+$cyan-orange-primary-palette: mat-palette($mat-cyan);
+$cyan-orange-accent-palette: mat-palette($mat-orange, 400);
+$cyan-orange-warn-palette: mat-palette($mat-red);
+
+// Create the Material theme object
+$theme: mat-light-theme($cyan-orange-primary-palette, $cyan-orange-accent-palette, $cyan-orange-warn-palette);
+
+// Add ".theme-cyan-orange" class to the body to activate this theme.
+// Class name must start with "theme-" !!!
+body.theme-cyan-orange {
+    // Create an Angular Material theme from the $theme map
+    @include angular-material-theme($theme);
+
+    // Apply the theme to the Fuse Core
+    @include fuse-core-theme($theme);
+
+    // Apply the theme to the user components
+    @include app-core-theme($theme);
+
+    // Generate Fuse color classes for primary, accent and warn colors
+    $palettes: (
+        primary: $cyan-orange-primary-palette,
+        accent: $cyan-orange-accent-palette,
+        warn: $cyan-orange-warn-palette
+    );
+
+    @include tailwind-core-theme($palettes, 700);
+    @include fuse-color-classes($palettes);
+}
+
 // -----------------------------------------------------------------------------------------------------
 // @ Define a gray dark theme
 // -----------------------------------------------------------------------------------------------------

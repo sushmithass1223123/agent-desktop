@@ -193,7 +193,7 @@ export class TMACEventService {
             // }
 
             // get the type
-            const type = evt.Type?.toLowerCase() || '';
+            const type = evt.Type?.toLowerCase() ?? '';
 
             // handle alerts
             if (type === 'alert' && evt.Message) {

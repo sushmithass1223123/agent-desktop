@@ -6,8 +6,8 @@ import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { GenericInteractionEvent, IAgentData, IncomingCallEvent, IResponse, SDKClient, TUtils } from '@tmac/sdk';
-import { IAppConfig, IMaskData, IWidget } from 'app/interfaces';
-import { getValueFromJson, maskDataLocal } from 'app/utils';
+import { CustomerInfo, IAppConfig, IWidget } from 'app/interfaces';
+import { processCustomerDetails } from 'app/utils';
 import { firstValueFrom } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -123,7 +123,7 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
                 .pipe(takeUntil(this.unsubscribeAll))
                 .subscribe((evts) =>
                     evts.forEach((evt) => {
-                        this.processCustomerDetails(evt);
+                        processCustomerDetails(this.customerInfo, evt);
                     })
                 );
         }
@@ -239,7 +239,7 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
             log: true
         });
 
-        this.processCustomerDetails({
+        processCustomerDetails(this.customerInfo, {
             EventName: 'ContactData',
             ...this.contactData.data
         });
@@ -252,57 +252,6 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
         // call the wrapper destroy method
         this.destroyWrapper();
     }
-
-    /**
-     * IUIEvent Handelr
-     * @param {Any} data
-     */
-    private processCustomerDetails = (evt: any) => {
-        // check if customer info map is available in this event
-        this.customerInfo.forEach((item: CustomerInfo) => {
-            // check if value is added, then ignore
-            if (item.Value) {
-                return;
-            }
-            // get the value source
-            const valueSource = item.ValueSource;
-            let valueSourceSplit = [];
-            // check if we need to parse the json
-            if (valueSource.toLowerCase().includes('jsonparse')) {
-                // expected value = jsonparse(EventName.{...path}).getValue
-                // get the path by taking string between ()
-                const path = valueSource.substring(valueSource.lastIndexOf('(') + 1, valueSource.lastIndexOf(')'));
-
-                if (path) {
-                    // split the value source
-                    valueSourceSplit = path.split('.');
-                    // check if the value source event name matches with the current event
-                    if (valueSourceSplit[0] !== evt.EventName) {
-                        return;
-                    }
-
-                    // get the value from path
-                    const jsonStr = getValueFromJson(valueSourceSplit, evt, '');
-
-                    if (jsonStr) {
-                        // get the property by taking string between ) and last
-                        const prop = valueSource.substring(valueSource.lastIndexOf(')') + 2, valueSource.length);
-
-                        item.Value = maskDataLocal(JSON.parse(jsonStr)[prop] ?? '', item.MaskData);
-                    }
-                }
-            } else {
-                valueSourceSplit = item.ValueSource.split('.');
-                // check if the value source event name matches with the current event
-                if (valueSourceSplit[0] !== evt.EventName) {
-                    return;
-                }
-
-                // get the value from path or default value
-                item.Value = maskDataLocal(getValueFromJson(valueSourceSplit, evt, item.DefaultValue), item.MaskData);
-            }
-        });
-    };
 
     /**
      * To notify TCM about item assignment
@@ -410,34 +359,4 @@ interface WidgetData {
      * Customer info config
      */
     CustomerInfo: CustomerInfo[];
-}
-
-/**
- * Customer info Model
- */
-interface CustomerInfo {
-    /**
-     * Title
-     */
-    Title: string;
-    /**
-     * Value Source
-     */
-    ValueSource: string;
-    /**
-     * Value
-     */
-    Value?: string;
-    /**
-     * Default Value
-     */
-    DefaultValue: string;
-    /**
-     * Width of column
-     */
-    Width?: string;
-    /**
-     * To mask value
-     */
-    MaskData?: IMaskData | boolean;
 }

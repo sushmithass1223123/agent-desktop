@@ -24,6 +24,7 @@ import {
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { ChatTranscripts, IWidget, ResData } from 'app/interfaces';
 import { maticonByExtension } from 'app/utils';
+import { format } from 'date-fns';
 import { groupBy, orderBy, sortBy } from 'lodash';
 import * as moment from 'moment';
 import { from, Observable, of, Subscription } from 'rxjs';
@@ -272,6 +273,9 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      */
     groupCtrl = new FormControl('');
 
+    /**
+     * Reduced records
+     */
     reducedRecords: Record<string, InteractionHistory[]> = {};
 
     /**
@@ -322,6 +326,9 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         this.interactionId = this.data.InteractionDetails.InteractionID;
 
         const noOfRecords = this.data.Data.NoOfRecords;
+        if (this.data.Data.Columns) {
+            this.customerJourneyTable.tableData.columns = this.data.Data.Columns;
+        }
         this.customerJourneyTable.tableData.pageSizes = [0, 5, 10].map((r) => r + noOfRecords);
 
         this.historyParams = {
@@ -681,7 +688,36 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 agentId: record.AgentID
             })
         ).pipe(
-            map((res) => res.response.filter((ih) => ih.AgentComment).map((ihF) => ihF.AgentComment)),
+            map((res) =>
+                res.response
+                    .filter((ih) => ih.AgentComment)
+                    .map((ihF) => {
+                        let message = `
+                        <div class='twd-whitespace-pre-line'>
+                        ${ihF.AgentComment}
+                        </div>
+                        `;
+                        try {
+                            const jsonMessage = JSON.parse(ihF.AgentComment);
+                            message = '';
+                            jsonMessage.forEach((item: any, index: number, array: []) => {
+                                message += `
+                             <div class="text-primary mat-body-2">${item.Comment.replace(/(?:\r\n|\r|\n)/g, '<br>')}</div>
+                             <span class="time muted-text mat-body-1">${item.User}</span>,
+                             <span class="time muted-text mat-body-1">${format(new Date(item.Time), 'dd/MM/yyyy hh:mm:ss a')}</span>
+                             `;
+                                // add space if there are multiple items
+                                if (index > array.length - 1) {
+                                    message += `
+                                    <br />
+                                    <br />
+                                    `;
+                                }
+                            });
+                        } catch (error) {}
+                        return message;
+                    })
+            ),
             tap(() => (this.interactionNotesReq.loading = false)),
             catchError((err) => {
                 console.error(err);

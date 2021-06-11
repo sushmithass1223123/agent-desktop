@@ -205,6 +205,10 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
      */
     destroy(): void {
         this.destroyEvent.emit();
+        // if destroy method is defined
+        if (typeof this.data.destroy === 'function') {
+            this.data.destroy();
+        }
     }
 
     // -----------------------------------------------------------------------------------------------------

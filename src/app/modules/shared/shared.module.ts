@@ -12,16 +12,15 @@ import {
     AppSnackbarComponent,
     AvatarComponent,
     CreateEmailComponent,
-    CreateMessagingComponent,
     CustomDialogComponent,
+    EmailTemplateSelectorComponent,
+    MailboxSettingsComponent,
     NoDataAvailableComponent,
     ReminderTaskDialogComponent,
     ResourceNotFoundComponent,
     SharedWrapperComponent,
     SnackbarComponent,
-    WidgetFabComponent,
-    EmailTemplateSelectorComponent,
-    MailboxSettingsComponent
+    WidgetFabComponent
 } from './components';
 import { TWChartDirective } from './directives';
 import { MaterialModule } from './material.module';
@@ -60,7 +59,6 @@ const sharedComponents = [
     ReminderTaskDialogComponent,
     AppConfirmDialogComponent,
     AppSnackbarComponent,
-    CreateMessagingComponent,
     NoDataAvailableComponent,
     TWChartDirective,
     CreateEmailComponent,

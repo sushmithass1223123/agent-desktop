@@ -1,9 +1,12 @@
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { tileLayer, latLng } from 'leaflet';
-import { TwWidgetModel } from 'app/models';
 import { IWidget } from 'app/interfaces';
+import { TwWidgetModel } from 'app/models';
+import { latLng, tileLayer } from 'leaflet';
 
+/**
+ * Supervisor Agent Activity Details Component
+ */
 @Component({
     selector: 'tw-su-agent-activity-details',
     templateUrl: './tw-su-agent-activity-details.component.html',
@@ -11,23 +14,27 @@ import { IWidget } from 'app/interfaces';
     encapsulation: ViewEncapsulation.None
 })
 export class TwSuAgentActivityDetailsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-    // holds all the data related to this widget from the config
+    /**
+     * holds all the data related to this widget from the config
+     */
     @Input() data: any;
 
-    @Output() destroyEvent = new EventEmitter();
-
+    /**
+     * Activity widget ref list
+     */
     activityWidgets: IWidget[] = [];
 
+    /**
+     * Location options
+     */
     options = {
-        layers: [
-            tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '...' })
-        ],
+        layers: [tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '...' })],
         zoom: 5,
         center: latLng(46.879966, -121.726909)
     };
 
     /**
-     * Constructor 
+     * Constructor
      */
     constructor() {
         super();
@@ -61,6 +68,12 @@ export class TwSuAgentActivityDetailsComponent extends TWidgetWrapper implements
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * To create widgets
+     *
+     * @param item
+     * @returns
+     */
     private createWidgets(item: any): void {
         // check the item
         if (!item) {
@@ -85,9 +98,7 @@ export class TwSuAgentActivityDetailsComponent extends TWidgetWrapper implements
         // check if the location is received
         if (item.location) {
             locationWidget.Data.Location = {
-                layers: [
-                    tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '...' })
-                ],
+                layers: [tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '...' })],
                 zoom: 5,
                 center: latLng(item.location.latitude, item.location.longitude)
             };

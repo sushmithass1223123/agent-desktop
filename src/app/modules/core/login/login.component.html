@@ -1,11 +1,11 @@
 <div id="login" class="inner-scroll" fxLayout="row" fxLayoutAlign="start">
     <div id="login-intro" fxFlex fxHide fxShow.gt-xs class="animate__animated animate__fadeIn">
-        <div class="title" [@animate]="{ value: '*', params: { delay: '500ms', y: '25px' } }">
+        <div class="title" [@animate]="{ value: '*', params: { delay: '500ms', y: '-25px' } }">
             Welcome to <span [matTooltip]="uiVersion">Agent Desktop</span>!
         </div>
     </div>
 
-    <div id="login-form-wrapper" class="custom-scroll-adjust position-relative" [@animate]="{ value: '*', params: { delay: '300ms', x: '100%' } }">
+    <div id="login-form-wrapper" class="custom-scroll-adjust position-relative">
         <div class="overlay" *ngIf="loading">
             <mat-spinner></mat-spinner>
         </div>
@@ -39,7 +39,7 @@
         </div>
 
         <div id="login-form" class="{{ loading ? 'blur' : null }}">
-            <div class="logo" [@animate]="{ value: '*', params: { scale: '0.5' } }">
+            <div class="logo" [@animate]="{ value: '*', params: { delay: '400ms', y: '-25px' } }">
                 <img
                     [src]="appCustomerLogo?.Large.Src || 'assets/images/logos/tetherfi.png'"
                     [alt]="appCustomerLogo?.Alt || 'Tetherfi'"
@@ -53,7 +53,7 @@
                 <span class="face-shape"></span>
             </div>
 
-            <form name="loginForm" [formGroup]="loginForm" novalidate>
+            <form name="loginForm" [formGroup]="loginForm" [@animate]="{ value: '*', params: { delay: '300ms', x: '-25px' } }" novalidate>
                 <ng-container *ngIf="showOtp">
                     <mat-form-field class="form-field custom" appearance="outline">
                         <input class="login-input" matInput required placeholder="OTP" formControlName="otp" #otp />
@@ -88,7 +88,7 @@
                     </mat-form-field>
 
                     <mat-form-field class="form-field custom" appearance="outline" *ngIf="agentIdEnabled">
-                        <input class="login-input" matInput required placeholder="Agent ID" formControlName="agentId" />
+                        <input class="login-input" matInput required placeholder="Agent ID" formControlName="agentId" #agentId />
                         <button
                             mat-button
                             color="primary"
@@ -167,6 +167,7 @@
                             placeholder="Station ID"
                             (keypress)="numberOnly($event)"
                             formControlName="station"
+                            #stationId
                         />
                         <button
                             *ngIf="loginForm.get('station').value"
@@ -211,6 +212,7 @@
                 </ng-container>
                 <p class="text-center text-danger text-bold">{{ errorMessage || ' ' }}</p>
                 <button
+                    [@animate]="{ value: '*', params: { delay: '300ms', y: '25px' } }"
                     mat-raised-button
                     color="primary"
                     class="submit-button"
@@ -230,7 +232,7 @@
 
     <img
         class="brand-logo animate__animated animate__pulse animate__infinite animate__slow"
-        [@animate]="{ value: '*', params: { scale: '0.2' } }"
+        [@animate]="{ value: '*', params: { delay: '600ms', y: '25px' } }"
         [src]="brandLogo?.Small.Src || 'assets/images/logos/tetherfi-logo-round.png'"
         [alt]="brandLogo?.Alt || 'Tetherfi'"
         [width]="brandLogo?.Small.Width || 50"

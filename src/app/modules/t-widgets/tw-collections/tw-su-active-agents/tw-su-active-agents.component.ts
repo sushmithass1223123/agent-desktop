@@ -190,6 +190,9 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         widget.Config.Position.Y = 4;
         widget.Config.Class = 'mx-cover no-restore inherit-header';
         widget.Data.ActivityDetails = item;
+        widget.destroy = () => {
+            this.activityWidget = null;
+        };
 
         // push the widget to list
         this.activityWidget = widget;

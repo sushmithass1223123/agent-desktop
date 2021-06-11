@@ -36,16 +36,19 @@
             <mat-icon
                 *ngIf="connectivityStatus?.Status > -1"
                 class="connectivityStatus"
-                matTooltip="SDK Connection Info"
-                (click)="getSDKConnectionData()"
+                matTooltip="App Information"
+                (click)="showAppInfo()"
                 [ngClass]="{
                     'text-warning': connectivityStatus?.Status === 0,
                     'text-alt-success': connectivityStatus?.Status === 1,
-                    'text-danger': connectivityStatus?.Status === 2
+                    'text-danger': connectivityStatus?.Status === 2,
+                    spin: infoLoading
                 }"
             >
                 {{
-                    connectivityStatus?.EventMode === 'webSockets'
+                    infoLoading
+                        ? 'loop'
+                        : connectivityStatus?.EventMode === 'webSockets'
                         ? 'wifi_tethering'
                         : connectivityStatus?.EventMode === 'eventPolling'
                         ? 'wifi'

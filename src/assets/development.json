@@ -1258,8 +1258,7 @@
                                                         }
                                                     },
                                                     "DialpadAllowed": true,
-                                                    "InteractionCommentAllowed": true,
-                                                    "MakeCallAllowed": true
+                                                    "InteractionCommentAllowed": true
                                                 }
                                             },
                                             {
@@ -1369,7 +1368,18 @@
                                                 "Data": {
                                                     "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
                                                     "NoOfRecords": 10,
-                                                    "SentimentDashboardUrl": "https://dice.tetherfi.cloud/SentimentDashboard"
+                                                    "SentimentDashboardUrl": "https://dice.tetherfi.cloud/SentimentDashboard",
+                                                    "Columns": [
+                                                        "InteractionDate",
+                                                        "Channel",
+                                                        "Intent",
+                                                        "AgentName",
+                                                        "CIF",
+                                                        "NRIC",
+                                                        "PhoneNumber",
+                                                        "OverallSentiment",
+                                                        "Actions"
+                                                    ]
                                                 }
                                             }
                                         ]
@@ -2037,7 +2047,18 @@
                                                 "Data": {
                                                     "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
                                                     "NoOfRecords": 10,
-                                                    "SentimentDashboardUrl": "https://dice.tetherfi.cloud/SentimentDashboard"
+                                                    "SentimentDashboardUrl": "https://dice.tetherfi.cloud/SentimentDashboard",
+                                                    "Columns": [
+                                                        "InteractionDate",
+                                                        "Channel",
+                                                        "Intent",
+                                                        "AgentName",
+                                                        "CIF",
+                                                        "NRIC",
+                                                        "PhoneNumber",
+                                                        "OverallSentiment",
+                                                        "Actions"
+                                                    ]
                                                 }
                                             }
                                         ]
@@ -2305,6 +2326,38 @@
                                             }
                                         }
                                     }
+                                },
+                                {
+                                    "Name": "Compose Messaging",
+                                    "Description": "",
+                                    "Key": "Messaging",
+                                    "Type": "tw-compose-messaging",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "sms",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 2,
+                                            "W": 500,
+                                            "H": 350
+                                        },
+                                        "Actions": [
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "Type": "sms",
+                                        "Number": "CCLDataEvent.RegisteredPhone"
+                                    }
                                 }
                             ]
                         }
@@ -2437,7 +2490,18 @@
                                                 "Data": {
                                                     "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
                                                     "NoOfRecords": 10,
-                                                    "SentimentDashboardUrl": "https://dice.tetherfi.cloud/SentimentDashboard"
+                                                    "SentimentDashboardUrl": "https://dice.tetherfi.cloud/SentimentDashboard",
+                                                    "Columns": [
+                                                        "InteractionDate",
+                                                        "Channel",
+                                                        "Intent",
+                                                        "AgentName",
+                                                        "CIF",
+                                                        "NRIC",
+                                                        "PhoneNumber",
+                                                        "OverallSentiment",
+                                                        "Actions"
+                                                    ]
                                                 }
                                             }
                                         ]
@@ -2839,7 +2903,18 @@
                                                 "Data": {
                                                     "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
                                                     "NoOfRecords": 10,
-                                                    "SentimentDashboardUrl": "https://dice.tetherfi.cloud/SentimentDashboard"
+                                                    "SentimentDashboardUrl": "https://dice.tetherfi.cloud/SentimentDashboard",
+                                                    "Columns": [
+                                                        "InteractionDate",
+                                                        "Channel",
+                                                        "Intent",
+                                                        "AgentName",
+                                                        "CIF",
+                                                        "NRIC",
+                                                        "PhoneNumber",
+                                                        "OverallSentiment",
+                                                        "Actions"
+                                                    ]
                                                 }
                                             }
                                         ]

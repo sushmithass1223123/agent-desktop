@@ -36,7 +36,9 @@
                 >
                     <div fxFlex fxLayout="column" fxLayoutAlign="start none">
                         <div fxLayout="row" fxLayoutAlign="space-between none">
-                            <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>alarm_on</mat-icon> {{ startTime }}</div>
+                            <div fxLayout="row" fxLayoutAlign=" center">
+                                <mat-icon>alarm_on</mat-icon> {{ startTime | date: 'dd/MM/yyyy hh:mm:ss a' }}
+                            </div>
                             <div fxLayout="row" fxLayoutAlign=" center">
                                 <mat-icon *ngIf="!callLines.length">construction</mat-icon>
                                 <mat-icon *ngIf="callLines.length" [matMenuTriggerFor]="sessionsMenu" class="cursor-pointer">construction</mat-icon>
@@ -58,6 +60,9 @@
                             </div>
                             <div fxLayout="row" fxLayoutAlign=" center">
                                 <mat-icon>directions</mat-icon> <span class="text-bold">{{ direction }}</span>
+                            </div>
+                            <div *ngIf="subType" fxLayout="row" fxLayoutAlign=" center">
+                                <mat-icon>{{ subType === 'camp' ? 'campaign' : '' }}</mat-icon>
                             </div>
                             <div fxLayout="row" fxLayoutAlign=" center">
                                 <mat-icon>grading</mat-icon> <span class="text-bold">{{ intent }}</span>
@@ -269,11 +274,37 @@
                             mat-mini-fab
                             color="default"
                             class="mat-elevation-z2"
-                            [ngClass]="customFuse.anchor?.body"
+                            [ngClass]="
+                                customFuse.anchor?.body + (commentsAdded ? ' animate__animated animate__flash animate__infinite animate__slow' : '')
+                            "
                             matTooltip="Interaction Comment"
-                            (click)="saveInteractionComments()"
+                            (click)="commentsAdded = false; saveInteractionComments()"
                         >
                             <mat-icon>comment</mat-icon>
+                        </button>
+
+                        <button
+                            *ngIf="data.Data?.MakeCallAllowed && status === 'disconnected'"
+                            mat-mini-fab
+                            class="mat-elevation-z2"
+                            [ngClass]="customFuse.anchor?.body"
+                            color="default"
+                            matTooltip="Make Call"
+                            (click)="makeCall()"
+                        >
+                            <mat-icon>call</mat-icon>
+                        </button>
+
+                        <button
+                            *ngIf="data.Data?.SendSMSAllowed"
+                            mat-mini-fab
+                            class="mat-elevation-z2"
+                            [ngClass]="customFuse.anchor?.body"
+                            color="default"
+                            matTooltip="Send SMS"
+                            (click)="sendSMS()"
+                        >
+                            <mat-icon>sms</mat-icon>
                         </button>
 
                         <button
@@ -286,17 +317,6 @@
                             matTooltip="Close Interaction"
                         >
                             Close
-                        </button>
-
-                        <button
-                            *ngIf="data.Data?.MakeCallAllowed && status === 'disconnected'"
-                            mat-mini-fab
-                            color="primary"
-                            #makeCallBtn
-                            matTooltip="Make Call"
-                            (click)="makeCall(makeCallBtn)"
-                        >
-                            <mat-icon>call</mat-icon>
                         </button>
 
                         <br />
