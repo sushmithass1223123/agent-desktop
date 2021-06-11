@@ -24,9 +24,9 @@ import {
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { ChatTranscripts, IWidget, ResData } from 'app/interfaces';
 import { maticonByExtension } from 'app/utils';
-import { orderBy, sortBy } from 'lodash';
+import { groupBy, orderBy, sortBy } from 'lodash';
 import * as moment from 'moment';
-import { from, Observable, of } from 'rxjs';
+import { from, Observable, of, Subscription } from 'rxjs';
 import { catchError, filter, map, share, takeUntil, tap } from 'rxjs/operators';
 
 type Mode = 'Session History' | 'Comments' | 'Actions' | 'Transcripts' | 'Email Preview' | null;
@@ -219,6 +219,10 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
              * Size of the pages in table
              */
             pageSizes: number[];
+            /**
+             * Flag to enable sort
+             */
+            sortDisabled: boolean;
         };
     };
 
@@ -262,6 +266,14 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      * Small email description falg
      */
     smallEmailDescription = true;
+
+    /**
+     * This is the input for how the table records should be grouped
+     */
+    groupCtrl = new FormControl('');
+
+    reducedRecords: Record<string, InteractionHistory[]> = {};
+
     /**
      *
      * @param _fuseFacadeService
@@ -289,7 +301,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 columns: ['InteractionDate', 'Channel', 'Intent', 'AgentName', 'CIF', 'NRIC', 'PhoneNumber', 'OverallSentiment', 'Actions'],
                 selection: new SelectionModel<InteractionHistory>(false, []),
                 source: new MatTableDataSource([]),
-                pageSizes: []
+                pageSizes: [],
+                sortDisabled: false
             }
         };
     }
@@ -457,7 +470,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      * @param {InteractionHistory[]} historyData
      * @param {Boolean} update
      */
-    processHistoryData(historyData: InteractionHistory[], update: boolean): void {
+    processHistoryData(historyData: InteractionHistory[], update?: boolean): void {
         const tableData = {};
         let transcripts: Record<string, ChatTranscripts[]> = {};
         let sortedTabledata = [];
@@ -641,6 +654,15 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     onMaximized(max: boolean): void {
         this.maximized = max;
         this.maximizeEvent.emit(max);
+        let groupingSub$: Subscription;
+        if (max) {
+            groupingSub$ = this.initGroupingService();
+            setTimeout(() => {
+                this.customerJourneyTable.tableData.source.sort.sort({ id: 'InteractionDate', start: 'desc', disableClear: true });
+            }, 0);
+        } else if (groupingSub$) {
+            groupingSub$.unsubscribe();
+        }
     }
 
     /**
@@ -703,7 +725,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             }
 
             if (res.response.Body) {
-                res.response.Body = res.response.Body.replaceAll('<a', '<a target="_blank"');
+                res.response.Body = this._appUIService.sanitizeEmailBody(res.response.Body);
             }
 
             this.emailThreadReq.data = res.response;
@@ -782,11 +804,6 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     }
 
     /**
-     * Opens advanced search form inside a modal window
-     */
-    openAdvancedSearchModal(): void {}
-
-    /**
      * Is row selected
      * @param row
      * @returns
@@ -802,5 +819,80 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      */
     openFile(fileUrl: string): void {
         window.open(fileUrl);
+    }
+
+    /**
+     * This method returns a boolean value for when directive in group header row
+     */
+    isGroup = (idx: any): boolean => {
+        const record = this.customerJourneyTable.tableData.source.data[idx];
+        if (record) {
+            return (record as any).isGroup;
+        }
+        return false;
+    };
+
+    /**
+     * This method groups the material table records
+     */
+    initGroupingService(): Subscription {
+        return this.groupCtrl.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe((val) => {
+            const data = this.customerJourneyTable.tableData.source.data.filter((x: any) => !x.isGroup);
+            if (val) {
+                this.customerJourneyTable.tableData.source.sort.sort({ id: null, start: 'desc', disableClear: true });
+                this.customerJourneyTable.tableData.sortDisabled = true;
+                const groupedRecords = groupBy(data, val);
+                this.customerJourneyTable.tableData.source.data = Object.entries(groupedRecords).reduce((acc, curr) => {
+                    const [key, records] = curr;
+                    acc.push(
+                        {
+                            isGroup: true,
+                            groupName: `${val} : ${key}`,
+                            expanded: true,
+                            value: key
+                        },
+                        ...records
+                    );
+                    return acc;
+                }, []);
+            } else {
+                this.customerJourneyTable.tableData.sortDisabled = false;
+                this.processHistoryData(data);
+                this.customerJourneyTable.tableData.source.sort.sort({ id: 'InteractionDate', start: 'desc', disableClear: true });
+            }
+        });
+    }
+
+    /**
+     * Toggles grouped node
+     * @param {any} row
+     * @param {number} idx
+     */
+    toggleGroupExpand(row: any, idx: number): void {
+        const record: any = this.customerJourneyTable.tableData.source.data[idx];
+        if (row.expanded) {
+            const { reduced, newRecords } = this.customerJourneyTable.tableData.source.data.reduce(
+                (acc, curr) => {
+                    if (row.groupName === (curr as any).groupName) {
+                        acc.newRecords.push({ ...curr, expanded: false });
+                    } else {
+                        if (curr[this.groupCtrl.value] === row.value) {
+                            acc.reduced.push(curr);
+                        } else {
+                            acc.newRecords.push(curr);
+                        }
+                    }
+                    return acc;
+                },
+                { reduced: [], newRecords: [] }
+            );
+            this.customerJourneyTable.tableData.source.data = newRecords;
+            this.reducedRecords[row.groupName] = reduced;
+        } else {
+            const data = this.customerJourneyTable.tableData.source.data;
+            data.splice(idx, 1, { ...record, expanded: true }, ...this.reducedRecords[row.groupName]);
+            this.customerJourneyTable.tableData.source.data = data;
+            this.reducedRecords[row.groupName] = [];
+        }
     }
 }

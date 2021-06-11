@@ -92,9 +92,8 @@
                     <mat-table
                         [dataSource]="customerJourneyTable.tableData.source"
                         matSort
-                        matSortActive="InteractionDate"
-                        matSortDirection="desc"
                         matSortDisableClear
+                        [matSortDisabled]="customerJourneyTable.tableData.sortDisabled"
                         [formGroup]="searchForm"
                     >
                         <!-- NA Note that these columns can be defined in any order.
@@ -246,6 +245,21 @@
                             </mat-cell>
                         </ng-container>
 
+                        <ng-container matColumnDef="groupHeader">
+                            <td colspan="999" mat-cell *matCellDef="let group">
+                                <strong>{{ group.groupName }}</strong>
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="groupReducer">
+                            <td colspan="1" mat-cell *matCellDef="let group">
+                                <div fxFill fxLayoutAlign="center center">
+                                    <mat-icon *ngIf="group.expanded">expand_less</mat-icon>
+                                    <mat-icon *ngIf="!group.expanded">expand_more</mat-icon>
+                                </div>
+                            </td>
+                        </ng-container>
+
                         <mat-header-row *matHeaderRowDef="customerJourneyTable.tableData.columns; sticky: true"></mat-header-row>
                         <mat-row
                             class="selectable"
@@ -253,81 +267,96 @@
                             [ngClass]="{ selected: isRowSelected(row) }"
                         >
                         </mat-row>
+                        <mat-row
+                            class="selectable group-header"
+                            *matRowDef="let row; columns: ['groupReducer', 'groupHeader']; when: isGroup; let i = index"
+                            (click)="toggleGroupExpand(row, i)"
+                        >
+                        </mat-row>
                     </mat-table>
-                    <div fxLayout fxLayoutAlign="space-between">
-                        <button (click)="advancedSearchModal.open()" mat-button color="primary">
-                            Search
-                            <mat-icon>search</mat-icon>
-                        </button>
-                        <ng-template #advancedSearchFormRef>
-                            <div class="mat-elevation-z1 twd-rounded-2xl twd-p-5" [ngClass]="customFuse.anchor?.body || customFuse.widget?.body">
-                                <form
-                                    fxLayout="row wrap"
-                                    fxLayoutAlign="space-between"
-                                    fxLayoutGap="20px"
-                                    [class]="(customFuse.anchor?.content || customFuse.widget?.content) + ' twd-p-5 twd-rounded-2xl'"
-                                    [formGroup]="searchForm"
-                                    (ngSubmit)="doAdvancedSearch(); advancedSearchModal.close()"
-                                    novalidate
-                                >
-                                    <mat-form-field fxFlex="45">
-                                        <mat-label>SessionID</mat-label>
-                                        <input matInput type="text" formControlName="SessionID" />
-                                    </mat-form-field>
+                    <div class="twd-flex twd-justify-between">
+                        <div class="twd-w-5/12">
+                            <button (click)="advancedSearchModal.open()" mat-button color="primary">
+                                Search
+                                <mat-icon>search</mat-icon>
+                            </button>
+                            <ng-template #advancedSearchFormRef>
+                                <div class="mat-elevation-z1 twd-rounded-2xl twd-p-5" [ngClass]="customFuse.anchor?.body || customFuse.widget?.body">
+                                    <form
+                                        fxLayout="row wrap"
+                                        fxLayoutAlign="space-between"
+                                        fxLayoutGap="20px"
+                                        [class]="(customFuse.anchor?.content || customFuse.widget?.content) + ' twd-p-5 twd-rounded-2xl'"
+                                        [formGroup]="searchForm"
+                                        (ngSubmit)="doAdvancedSearch(); advancedSearchModal.close()"
+                                        novalidate
+                                    >
+                                        <mat-form-field fxFlex="45">
+                                            <mat-label>SessionID</mat-label>
+                                            <input matInput type="text" formControlName="SessionID" />
+                                        </mat-form-field>
 
-                                    <mat-form-field fxFlex="45">
-                                        <mat-label>PhoneNumber</mat-label>
-                                        <input matInput type="text" formControlName="PhoneNumber" />
-                                    </mat-form-field>
+                                        <mat-form-field fxFlex="45">
+                                            <mat-label>PhoneNumber</mat-label>
+                                            <input matInput type="text" formControlName="PhoneNumber" />
+                                        </mat-form-field>
 
-                                    <mat-form-field fxFlex="45">
-                                        <mat-label>Channel</mat-label>
-                                        <input matInput type="text" formControlName="Channel" />
-                                    </mat-form-field>
+                                        <mat-form-field fxFlex="45">
+                                            <mat-label>Channel</mat-label>
+                                            <input matInput type="text" formControlName="Channel" />
+                                        </mat-form-field>
 
-                                    <mat-form-field fxFlex="45">
-                                        <mat-label>Agent</mat-label>
-                                        <input matInput type="text" formControlName="Agent" />
-                                    </mat-form-field>
+                                        <mat-form-field fxFlex="45">
+                                            <mat-label>Agent</mat-label>
+                                            <input matInput type="text" formControlName="Agent" />
+                                        </mat-form-field>
 
-                                    <mat-form-field fxFlex="45">
-                                        <mat-label>Intent</mat-label>
-                                        <input matInput type="text" formControlName="Intent" />
-                                    </mat-form-field>
+                                        <mat-form-field fxFlex="45">
+                                            <mat-label>Intent</mat-label>
+                                            <input matInput type="text" formControlName="Intent" />
+                                        </mat-form-field>
 
-                                    <mat-form-field fxFlex="45">
-                                        <mat-label>CIF</mat-label>
-                                        <input matInput type="text" formControlName="CIF" />
-                                    </mat-form-field>
+                                        <mat-form-field fxFlex="45">
+                                            <mat-label>CIF</mat-label>
+                                            <input matInput type="text" formControlName="CIF" />
+                                        </mat-form-field>
 
-                                    <mat-form-field fxFlex="45">
-                                        <mat-label>NRIC</mat-label>
-                                        <input matInput type="text" formControlName="NRIC" />
-                                    </mat-form-field>
+                                        <mat-form-field fxFlex="45">
+                                            <mat-label>NRIC</mat-label>
+                                            <input matInput type="text" formControlName="NRIC" />
+                                        </mat-form-field>
 
-                                    <mat-form-field fxFlex="45">
-                                        <mat-label>Interaction Date</mat-label>
-                                        <mat-date-range-input #dateRangePicker [rangePicker]="interactionDatePicker">
-                                            <input matStartDate placeholder="Start date" formControlName="InteractionDateStart" />
-                                            <input matEndDate placeholder="End date" formControlName="InteractionDateEnd" />
-                                        </mat-date-range-input>
-                                        <mat-datepicker-toggle matSuffix [for]="interactionDatePicker"></mat-datepicker-toggle>
-                                        <mat-date-range-picker #interactionDatePicker></mat-date-range-picker>
-                                    </mat-form-field>
+                                        <mat-form-field fxFlex="45">
+                                            <mat-label>Interaction Date</mat-label>
+                                            <mat-date-range-input #dateRangePicker [rangePicker]="interactionDatePicker">
+                                                <input matStartDate placeholder="Start date" formControlName="InteractionDateStart" />
+                                                <input matEndDate placeholder="End date" formControlName="InteractionDateEnd" />
+                                            </mat-date-range-input>
+                                            <mat-datepicker-toggle matSuffix [for]="interactionDatePicker"></mat-datepicker-toggle>
+                                            <mat-date-range-picker #interactionDatePicker></mat-date-range-picker>
+                                        </mat-form-field>
 
-                                    <mat-form-field fxFlex="45">
-                                        <mat-label>Overall Sentiment</mat-label>
-                                        <input matInput type="text" formControlName="OverallSentiment" />
-                                    </mat-form-field>
+                                        <mat-form-field fxFlex="45">
+                                            <mat-label>Overall Sentiment</mat-label>
+                                            <input matInput type="text" formControlName="OverallSentiment" />
+                                        </mat-form-field>
 
-                                    <div fxFlex="100" class="mt-12">
-                                        <div class="mx-auto w-40-p">
-                                            <button mat-raised-button class="w-100-p" color="primary">Search</button>
+                                        <div fxFlex="100" class="mt-12">
+                                            <div class="mx-auto w-40-p">
+                                                <button mat-raised-button class="w-100-p" color="primary">Search</button>
+                                            </div>
                                         </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </ng-template>
+                                    </form>
+                                </div>
+                            </ng-template>
+                            <!-- <mat-form-field appearance="outline">
+                                <mat-label>Group by</mat-label>
+                                <mat-select [formControl]="groupCtrl">
+                                    <mat-option value="">Select Group</mat-option>
+                                    <mat-option [value]="item" *ngFor="let item of customerJourneyTable.tableData.columns">{{ item }}</mat-option>
+                                </mat-select>
+                            </mat-form-field> -->
+                        </div>
 
                         <mat-paginator
                             *ngIf="customerJourneyTable.tableData.source.data.length"
@@ -338,7 +367,7 @@
                         </mat-paginator>
                     </div>
                 </ng-container>
-                <p *ngIf="!customerJourneyTable.tableData.source.data.length" class="text-center m-0 mat-title">No Data Available</p>
+                <p *ngIf="!customerJourneyTable.tableData.source.data.length" class="text-center twd-mt-40 twd-text-3xl">No Data Available</p>
             </div>
             <div
                 *ngIf="maximized && mode"
