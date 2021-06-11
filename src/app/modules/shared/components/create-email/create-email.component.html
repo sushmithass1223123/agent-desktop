@@ -8,30 +8,35 @@
                         {{ emailInfo.From }}
                     </div>
                 </div>
-                <div fxLayout fxLayoutAlign="space-between" fxLayoutGap="8px" class="twd-my-3">
-                    <label for="toField" class="font-weight-700">To : </label>
+                <div class="twd-my-2 twd-flex twd-justify-between twd-gap-2">
+                    <label for="toField" class="font-weight-700 twd-pt-1">To : </label>
                     <div class="twd-flex-1 twd-flex">
                         <ng-container *ngTemplateOutlet="recipientInputField; context: { key: 'To' }"></ng-container>
-                        <span class="twd-cursor-pointer twd-text-xs twd-font-bold" (click)="showCcBcc = !showCcBcc"> CC/BCC </span>
+                        <span class="twd-cursor-pointer twd-text-xs twd-font-bold twd-pt-1" (click)="showCcBcc = !showCcBcc"> CC/BCC </span>
                     </div>
                 </div>
                 <small *ngIf="emailRecipientFacade.controls.To.errors" class="twd-text-red-600"> To Email Address required </small>
 
                 <ng-container *ngIf="showCcBcc">
-                    <div fxLayout fxLayoutAlign="space-between" fxLayoutGap="8px" class="twd-my-3">
-                        <label for="ccField" class="font-weight-700">CC : </label>
+                    <div class="twd-my-2 twd-flex twd-justify-between twd-gap-2">
+                        <label for="ccField" class="font-weight-700 twd-pt-1">CC : </label>
                         <ng-container *ngTemplateOutlet="recipientInputField; context: { key: 'CC' }"></ng-container>
                     </div>
 
-                    <div fxLayout fxLayoutAlign="space-between" fxLayoutGap="8px" class="twd-my-3">
-                        <label for="bccField" class="font-weight-700">BCC : </label>
+                    <div class="twd-my-2 twd-flex twd-justify-between twd-gap-2">
+                        <label for="bccField" class="font-weight-700 twd-pt-1">BCC : </label>
                         <ng-container *ngTemplateOutlet="recipientInputField; context: { key: 'BCC' }"></ng-container>
                     </div>
                 </ng-container>
             </div>
 
-            <div fxLayout fxLayoutGap="8px" fxLayoutAlign="space-between" class="twd-my-3">
-                <label for="subjectField" class="font-weight-700">Subject : </label>
+            <div class="twd-my-2 twd-flex twd-justify-between">
+                <label for="subjectField" class="twd-pt-1">
+                    <span class="font-weight-700 twd-pr-2"> Subject : </span>
+                    <span class="twd-border-b twd-border-primary-default twd-pb-1">
+                        {{ replyTag }}
+                    </span>
+                </label>
                 <input id="subjectField" class="flex-1 my-2" matInput [(ngModel)]="email.Subject" name="Subject" />
             </div>
         </div>

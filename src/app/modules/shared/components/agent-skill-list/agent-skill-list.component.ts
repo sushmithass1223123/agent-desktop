@@ -976,11 +976,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                         const valid = { prefix: false, opHours: false };
                         // Filter 1 : The prefix passed in Config
                         if (channelPrefix.length > 0) {
-                            channelPrefix.forEach((prefix) => {
-                                if (skill.Name.toLowerCase().startsWith(prefix.toLowerCase())) {
-                                    valid.prefix = true;
-                                }
-                            });
+                            valid.prefix = channelPrefix.some((prefix) => skill.Name.toLowerCase().startsWith(prefix.toLowerCase()));
                         } else {
                             valid.prefix = true;
                         }

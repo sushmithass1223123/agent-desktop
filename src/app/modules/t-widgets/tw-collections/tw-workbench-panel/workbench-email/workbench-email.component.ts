@@ -1094,7 +1094,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     currentStatus: res.CurrentStatus,
                     closedBy: (res as any).ClosedBy,
                     ccList: res?.CCList,
-                    priority: (res as any).Priority
+                    priority: (res as any).Priority,
+                    From: res.From
                 };
             }
             this.emailSearchRes.data.selected = { ...email, ...this.emailBodies[requestedSession], currentTab: this.currentTab };
