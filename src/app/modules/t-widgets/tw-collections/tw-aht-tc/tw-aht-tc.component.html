@@ -8,31 +8,23 @@
                 <ng-container matColumnDef="Channel">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>Channel</mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-icon class="channel-icon" color="primary" [matTooltip]="element.Channel">
-                            {{
-                            element.Channel === 'Voice'
-                            ? 'phone'
-                            : element.Channel === 'TextChat'
-                            ? 'chat'
-                            : element.Channel === 'AudioChat'
-                            ? 'phone'
-                            : element.Channel === 'VideoChat'
-                            ? 'duo'
-                            : element.Channel.toLowerCase().includes('email')
-                            ? 'email'
-                            : 'feed'
-                            }}
-                        </mat-icon>
+                        <ng-container [ngSwitch]="element.Channel | lowercase">
+                            <mat-icon class="channel-icon" color="primary" *ngSwitchCase="'voice'" matTooltip="Voice">phone</mat-icon>
+                            <mat-icon class="channel-icon" color="primary" *ngSwitchCase="'textchat'" matTooltip="Chat">chat</mat-icon>
+                            <mat-icon class="channel-icon" color="primary" *ngSwitchCase="'audiochat'" matTooltip="Audio">wifi_calling_3</mat-icon>
+                            <mat-icon class="channel-icon" color="primary" *ngSwitchCase="'videochat'" matTooltip="Video">duo</mat-icon>
+                            <mat-icon class="channel-icon" color="primary" *ngSwitchCase="'sms'" matTooltip="SMS">sms</mat-icon>
+                            <mat-icon class="channel-icon" color="primary" *ngSwitchCase="'email'" matTooltip="Email">email</mat-icon>
+                            <mat-icon class="channel-icon" color="primary" *ngSwitchCase="'emc'" matTooltip="Email">email</mat-icon>
+                            <mat-icon color="primary" *ngSwitchDefault [matTooltip]="element.Channel"> feed </mat-icon>
+                        </ng-container>
                     </mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="AverageHandleTime">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>AHT</mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        {{
-                        ((element.AverageActiveTime + element.AverageHoldTime) * 1000 | date: 'HH:mm:ss':'UTC') ||
-                        '00:00:00'
-                        }}
+                        {{ ((element.AverageActiveTime + element.AverageHoldTime) * 1000 | date: 'HH:mm:ss':'UTC') || '00:00:00' }}
                     </mat-cell>
                 </ng-container>
 
@@ -53,30 +45,42 @@
                 <mat-row *matRowDef="let row; columns: interactionDetailsTable.columns"></mat-row>
             </mat-table>
 
-            <p *ngIf="interactionDetailsTable.source.data.length === 0" class="text-center m-0 mat-title">No Data
-                Available</p>
+            <p *ngIf="interactionDetailsTable.source.data.length === 0" class="text-center m-0 mat-title">No Data Available</p>
         </div>
-        <mat-paginator *ngIf="maximized" [pageSize]="20" [pageSizeOptions]="[20, 40, 60, 100]" showFirstLastButtons>
-        </mat-paginator>
+        <mat-paginator *ngIf="maximized" [pageSize]="20" [pageSizeOptions]="[20, 40, 60, 100]" showFirstLastButtons> </mat-paginator>
     </div>
 
     <div *ngIf="widgetData.Type === 'chart'" class="w-100-p h-100-p">
-        <div *ngIf="ahtChart.datasets.length >= 1 && ahtChart.datasets[0].data.length" fxLayout="column"
-            fxLayoutAlign="center center" class="w-100-p h-100-p animate__animated animate__zoomIn animate__faster">
+        <div
+            *ngIf="ahtChart.datasets.length >= 1 && ahtChart.datasets[0].data.length"
+            fxLayout="column"
+            fxLayoutAlign="center center"
+            class="w-100-p h-100-p animate__animated animate__zoomIn animate__faster"
+        >
             <div class="tw-chart w-100-p h-100-p p-8" #chartContainerRef>
-                <canvas baseChart class="box-shadow-3d" [colors]="ahtChart.colors" [datasets]="ahtChart.datasets"
-                    [options]="ahtChart.options" [labels]="ahtChart.labels" [legend]="ahtChart.legend"
-                    chartType="doughnut">
+                <canvas
+                    baseChart
+                    class="box-shadow-3d"
+                    [colors]="ahtChart.colors"
+                    [datasets]="ahtChart.datasets"
+                    [options]="ahtChart.options"
+                    [labels]="ahtChart.labels"
+                    [legend]="ahtChart.legend"
+                    chartType="doughnut"
+                >
                 </canvas>
                 <!-- <div class="t-pie-chart-value">{{ widget.data[1].value }}</div> -->
             </div>
         </div>
 
-        <div *ngIf="ahtChart.datasets.length === 0 || (ahtChart.datasets.length >= 1 && !ahtChart.datasets[0].data.length)"
-            class="w-100-p h-100-p text-center" fxLayout="column" fxLayoutAlign="center center">
+        <div
+            *ngIf="ahtChart.datasets.length === 0 || (ahtChart.datasets.length >= 1 && !ahtChart.datasets[0].data.length)"
+            class="w-100-p h-100-p text-center"
+            fxLayout="column"
+            fxLayoutAlign="center center"
+        >
             <img src="assets/images/vectors/no-data-1.svg" class="w-85-p h-85-p box-shadow-3d" />
-            <p class="text-center m-0" [ngClass]="{ 'mat-display-2': maximized, ' mat-title': !maximized }">No Data
-                Available</p>
+            <p class="text-center m-0" [ngClass]="{ 'mat-display-2': maximized, ' mat-title': !maximized }">No Data Available</p>
         </div>
     </div>
 </tw-wrapper>

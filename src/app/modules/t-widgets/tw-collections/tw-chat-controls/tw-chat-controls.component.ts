@@ -50,6 +50,7 @@ import { AGENT_FEATURES, INVALID_CHARS } from 'app/constants';
 import { AgentSkillListData, ChatTranscripts, CustomSDKEvent, InteractionComment, InteractionRef, IWidget, SnackbarStateTypes } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { urlify } from 'app/utils';
+import { format } from 'date-fns';
 import { map } from 'lodash';
 import * as moment from 'moment';
 import { from, Subject, timer } from 'rxjs';
@@ -309,6 +310,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     savedComments: InteractionComment[] = [];
     /**
+     * Flag to blink comments button when added from server
+     */
+    commentsAdded: boolean;
+    /**
      * Flag to allow screen share without prompting user for permission
      */
     allowCustomerScreenShare = true;
@@ -342,6 +347,19 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * User typing flag
      */
     userTyping: boolean;
+    /**
+     * Remote typing ref
+     */
+    remoteTyping: {
+        /**
+         * Name of user typing (conf agent/customer)
+         */
+        name: string;
+        /**
+         * Typing flag
+         */
+        typing: boolean;
+    };
     /**
      * Typing timer
      */
@@ -469,7 +487,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     // -----------------------------------------------------------------------------------------------------
 
     /**
-     * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
+     * On Init
      */
     ngOnInit(): void {
         // call the wrapper init method
@@ -542,7 +560,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.status = 'incoming';
 
         // set the start time
-        this.startTime = new Date(Date.parse(this.data.InteractionDetails.CreatedTime as string)) || new Date();
+        this.startTime = new Date(this.data.InteractionDetails.CreatedTime) ?? new Date();
 
         // get the file upload Url
         this.fileUploadUrl = this.appConfig.Main.Urls?.FileServerUrl || null;
@@ -607,8 +625,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     }
 
     /**
-     * A callback method that is invoked immediately after the default change detector has checked the directive's data-bound properties for the first time,
-     * and before any of the view or content children have been checked. It is invoked only once when the directive is instantiated.
+     * On Destroy
      */
     ngOnDestroy(): void {
         // call the wrapper destroy method
@@ -1052,6 +1069,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             });
         }
         this.replyingToMessage = null;
+
         // Update the server
         SDKClient.sendTextChat({
             interactionId: this.interactionId.toString(),
@@ -1085,6 +1103,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     }
                 });
             });
+
+        // send done typing
+        this.doneTyping();
 
         // Reset the reply form
         this.replyForm?.reset();
@@ -1205,6 +1226,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * Done typing
      */
     private doneTyping(): void {
+        if (!this.userTyping) {
+            return;
+        }
         // set typing to false
         this.userTyping = false;
         // send typing state
@@ -1609,10 +1633,28 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * @param evt TextChatTypingStateChangedEvent evt
      */
     TextChatTypingStateChangedEvent(evt: TextChatTypingStateChangedEvent): void {
-        // check the interaction
-        // if (evt.InteractionID !== this.interactionId) {
-        //     return;
-        // }
+        let user = 'User';
+        const status = evt.Status; // 0=start, 1=stop
+
+        if (evt.User === '0') {
+            // customer typing
+            user = this.customerName;
+        } else {
+            // other agent typing
+            const confAgent = this.conferenceAgentList.filter((c) => c.AgentId === evt.User)[0];
+            user = confAgent?.AgentName ?? 'User';
+        }
+
+        // in a conference scenario  check if any user stopped typing
+        // then verify if the same user is currently typing then only indicate as stop typing
+        if (status === 1 && this.remoteTyping?.name !== user) {
+            return;
+        }
+
+        this.remoteTyping = {
+            name: user,
+            typing: status === 0
+        };
     }
 
     /**
@@ -1708,6 +1750,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
         // check if interaction comments available
         if (evt.InteractionComments && evt.InteractionComments.length > 0) {
+            this.commentsAdded = true;
             evt.InteractionComments.forEach((c) => {
                 const dt = JSON.parse(c);
                 this.savedComments.push({
@@ -2237,9 +2280,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // check the saved comments
         this.savedComments.forEach((item) => {
             message += `
-                 <div class="text-primary m-0 mat-body-2">${item.Message.replace(/(?:\r\n|\r|\n)/g, '<br>')}</div>
-                 <span class="time secondary-text mat-body-1">${item.User}</span>,
-                 <span class="time secondary-text mat-body-1">${new Date(item.Time).toLocaleString()}</span>
+                 <div class="text-primary mat-body-2">${item.Message.replace(/(?:\r\n|\r|\n)/g, '<br>')}</div>
+                 <span class="time muted-text mat-body-1">${item.User}</span>,
+                 <span class="time muted-text mat-body-1">${format(new Date(item.Time), 'dd/MM/yyyy hh:mm:ss a')}</span>
                  <br />
                  <br />
                  `;
@@ -2249,7 +2292,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         const dialogRef = this._appUIService.showCustomDialog(
             'prompt',
             message,
-            'Interaction Notes',
+            'Interaction Comments',
             { minRows: 4 },
             {
                 minWidth: '30%',

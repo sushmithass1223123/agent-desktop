@@ -16,9 +16,8 @@
             <ng-container *ngFor="let channel of channels">
                 <button
                     mat-mini-fab
-                    color="secondary"
+                    color="default"
                     (click)="addInteraction(channel.Type, channel)"
-                    class="fab-secondary"
                     [disabled]="!checkAux(channel.EnableState)"
                     [matTooltip]="channel.Name"
                 >

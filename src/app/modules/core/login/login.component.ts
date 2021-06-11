@@ -279,7 +279,18 @@ export class LoginComponent implements OnInit, OnDestroy {
      * Flag for showing otp input
      */
     showOtp = false;
-
+    /**
+     * Lan Id input children ref
+     */
+    @ViewChild('lanId') lanIdField: ElementRef<HTMLInputElement>;
+    /**
+     * Station input children ref
+     */
+    @ViewChild('stationId') stationField: ElementRef<HTMLInputElement>;
+    /**
+     * Agent Id input children ref
+     */
+    @ViewChild('agentId') agentIdField: ElementRef<HTMLInputElement>;
     /**
      * Disable opening console / refreshing
      * @param {KeyboardEvent} event
@@ -321,7 +332,6 @@ export class LoginComponent implements OnInit, OnDestroy {
         private _appUIService: AppUiService,
         private _titleService: Title,
         private _activatedRoute: ActivatedRoute,
-        private route: ActivatedRoute,
         private fuseSplashService: FuseSplashScreenService
     ) {
         // Configure the layout
@@ -390,7 +400,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         /**
          * subscribes to Activated route
          */
-        this.route.queryParams
+        this._activatedRoute.queryParams
             .pipe(
                 takeUntil(this._unsubscribeAll),
                 // continue only if userId present
@@ -428,6 +438,8 @@ export class LoginComponent implements OnInit, OnDestroy {
                 this.fuseSplashService.show();
                 this.login(true);
             });
+
+        this.lanIdField.nativeElement.focus();
     }
 
     /**
@@ -723,6 +735,9 @@ export class LoginComponent implements OnInit, OnDestroy {
         // set form validation
         if (this.stationEnabled) {
             this.loginForm.controls.station.setValidators(Validators.required);
+            setTimeout(() => {
+                this.stationField.nativeElement.focus();
+            });
         } else {
             this.loginForm.controls.station.clearValidators();
         }
@@ -891,6 +906,9 @@ export class LoginComponent implements OnInit, OnDestroy {
                         this.agentIdEnabled = true;
                         this.loginForm.controls.agentId.setValidators(Validators.required);
                         this.loginForm.controls.agentId.updateValueAndValidity();
+                        setTimeout(() => {
+                            this.agentIdField.nativeElement.focus();
+                        });
                     } else {
                         // login failed, invalid lan Id
                         this.errorMessage = 'Login failed, Invalid LAN ID detected. Please contact administrator for TMAC access';

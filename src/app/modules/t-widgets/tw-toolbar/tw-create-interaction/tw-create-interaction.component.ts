@@ -1,11 +1,13 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { appAnimations } from '@modules/shared/animations/app.animation';
-import { AgentSkillListComponent, CreateMessagingComponent, MailboxSettingsComponent } from '@modules/shared/components';
+import { AgentSkillListComponent, MailboxSettingsComponent } from '@modules/shared/components';
+import { TwComposeMessagingComponent } from '@modules/t-widgets/tw-collections/tw-compose-messaging/tw-compose-messaging.component';
 import { AgentFeaturesService } from '@services/agent-features.service';
 import { IAUXCodes, SDKClient } from '@tmac/sdk';
 import { AGENT_FEATURES } from 'app/constants';
 import { IWidget } from 'app/interfaces';
+import { TwWidgetModel } from 'app/models';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -130,15 +132,28 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
      * @param channel
      * @param data
      */
-    addInteraction(channel: string, data: any): void {
+    addInteraction(channel: string, data: IChannel): void {
         this.openList = false;
         switch (channel.toLowerCase()) {
             case 'text':
-                this._matDialog.open(CreateMessagingComponent, {
+                const dialogRef = this._matDialog.open(TwComposeMessagingComponent, {
                     panelClass: 'create-messaging-dialog',
-                    data: data
+                    width: '500px',
+                    maxWidth: '100%',
+                    height: '350px',
+                    disableClose: true
                 });
+
+                const widget = new TwWidgetModel(data.Name, 'tw-compose-messaging', data.Icon);
+                widget.Config.Actions = ['destroy'];
+                widget.Data.Type = data.SubType;
+                widget.destroy = () => {
+                    dialogRef.close();
+                };
+
+                dialogRef.componentInstance.data = widget;
                 break;
+
             case 'voice':
                 this._matDialog.open(AgentSkillListComponent, {
                     data: {
@@ -165,6 +180,7 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
                     disableClose: true
                 });
                 break;
+
             case 'email':
                 const ref = this._matDialog.open(MailboxSettingsComponent, {
                     minWidth: '30%',

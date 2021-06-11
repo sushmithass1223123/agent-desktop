@@ -5,7 +5,8 @@ import { fuseAnimations } from '@fuse/animations';
 import { AppConfirmDialogComponent } from '@modules/shared/components';
 import { TWidgetWrapper } from '@modules/t-widgets/utils/widget-wrapper/tw-wrapper';
 import { AppUiService } from '@services/app-ui.service';
-import { AgentReminder, SDKClient } from '@tmac/sdk';
+import { TMACEventService } from '@services/tmac-event.service';
+import { AgentReminder, AgentReminderEvent, SDKClient } from '@tmac/sdk';
 import { CalendarEventTimesChangedEvent, CalendarMonthViewDay } from 'angular-calendar';
 import { IWidget } from 'app/interfaces';
 import { format, isBefore, isSameDay, isSameMonth } from 'date-fns';
@@ -70,7 +71,7 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
     /**
      * Constructor
      */
-    constructor(private _matDialog: MatDialog, private _appUIService: AppUiService) {
+    constructor(private _matDialog: MatDialog, private _appUIService: AppUiService, private _tmacEventService: TMACEventService) {
         super();
 
         // Set the defaults
@@ -108,11 +109,6 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
             }
         ];
         this.events = [];
-
-        /**
-         * Get events from service/server
-         */
-        this.setEvents();
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -125,6 +121,20 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
+        /**
+         * Get events from service/server
+         */
+        this.setEvents();
+
+        // since we get data from api as well as event
+        // use 'addTMACEventListener' from _tmacEventService
+        // instead of 'getNonInteractionEvents'
+        this._tmacEventService.addTMACEventListener([
+            {
+                label: 'AgentReminderEvent',
+                callback: this.AgentReminderEvent
+            }
+        ]);
     }
 
     /**
@@ -133,19 +143,36 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+
+        // since we get data from api as well as event
+        // use 'addTMACEventListener' from _tmacEventService
+        // instead of 'getNonInteractionEvents'
+        this._tmacEventService.removeTMACEventListener([
+            {
+                label: 'AgentReminderEvent',
+                callback: this.AgentReminderEvent
+            }
+        ]);
     }
+
+    /**
+     * To process AgentReminderEvent
+     *
+     * @param evt
+     */
+    AgentReminderEvent(evt: AgentReminderEvent): void {}
 
     /**
      * Before View Renderer
      *
-     * @param {any} header
      * @param {any} body
      */
-    beforeMonthViewRender({ header, body }): void {
+    beforeMonthViewRender({ body }: any): void {
         /**
          * Get the selected day
          */
-        const _selectedDay = body.find((_day) => {
+        // tslint:disable-next-line: completed-docs
+        const _selectedDay = body.find((_day: { date: { getTime: () => any } }) => {
             return _day.date.getTime() === this.selectedDay.date.getTime();
         });
 
@@ -260,7 +287,7 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
             //     item.actions = this.actions;
             //     return new CalendarEventModel(item);
             // });
-        } catch (error) { }
+        } catch (error) {}
     }
 
     /**

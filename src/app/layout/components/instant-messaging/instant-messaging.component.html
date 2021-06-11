@@ -49,9 +49,8 @@
                 <div fxLayout="column" fxLayoutGap="10px" class="mt-12 create-interaction-buttons" [@widgetStagger]="actions.length">
                     <button
                         mat-mini-fab
-                        color="secondary"
+                        color="default"
                         *ngFor="let action of actions"
-                        class="fab-secondary"
                         [matTooltip]="action.label"
                         (click)="makeCall(action.type)"
                         [disabled]="callWidget"

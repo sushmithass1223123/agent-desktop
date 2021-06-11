@@ -574,3 +574,30 @@ export interface IMaskData {
      */
     UnMaskedEndChars?: number;
 }
+
+export interface CustomerInfo {
+    /**
+     * Title
+     */
+    Title: string;
+    /**
+     * Value Source
+     */
+    ValueSource: string;
+    /**
+     * Value
+     */
+    Value?: string;
+    /**
+     * Default Value
+     */
+    DefaultValue: string;
+    /**
+     * Width of column
+     */
+    Width?: string;
+    /**
+     * To mask value
+     */
+    MaskData?: IMaskData | boolean;
+}

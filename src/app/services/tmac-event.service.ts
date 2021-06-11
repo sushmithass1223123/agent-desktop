@@ -19,7 +19,6 @@ import {
     TmacServerConnectionSuccess,
     TUtils
 } from '@tmac/sdk';
-import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { CustomTMACEventTypes, IAction, IAppConfig, IPostMessage, IWidget, QuizEvent } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { upperFirst } from 'lodash';
@@ -194,7 +193,7 @@ export class TMACEventService {
             // }
 
             // get the type
-            const type = evt.Type?.toLowerCase() || '';
+            const type = evt.Type?.toLowerCase() ?? '';
 
             // handle alerts
             if (type === 'alert' && evt.Message) {

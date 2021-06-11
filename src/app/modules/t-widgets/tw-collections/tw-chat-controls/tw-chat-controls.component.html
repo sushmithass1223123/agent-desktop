@@ -125,7 +125,7 @@
         <div class="w-100-p h-100-p chat-controls">
             <div class="w-100-p px-12 py-4 border-radius-20 interaction-details tw-flex twd-flex-col">
                 <div class="twd-flex twd-justify-between">
-                    <div class="twd-flex twd-items-center"><mat-icon>alarm_on</mat-icon> {{ startTime | date: 'medium' }}</div>
+                    <div class="twd-flex twd-items-center"><mat-icon>alarm_on</mat-icon> {{ startTime | date: 'dd/MM/yyyy hh:mm:ss a' }}</div>
                     <div class="twd-flex twd-items-center"><mat-icon>construction</mat-icon> {{ sessionID + '|' + interactionId }}</div>
                 </div>
                 <div class="twd-flex twd-justify-between">
@@ -134,7 +134,7 @@
                         <mat-icon [svgIcon]="'custom-' + channel"></mat-icon>
                         <span class="text-bold ml-4">{{ channel }}</span>
                     </div>
-                    <div fclass="twd-flex twd-items-center">
+                    <div class="twd-flex twd-items-center">
                         <mat-icon>grading</mat-icon> <span class="text-bold">{{ intent }}</span>
                     </div>
                 </div>
@@ -197,9 +197,8 @@
                                 <div class="mt-12 twd-flex twd-flex-col twd-gap-2" [@widgetStagger]="moreActions.length">
                                     <button
                                         mat-mini-fab
-                                        color="secondary"
+                                        color="default"
                                         *ngFor="let action of moreActions"
-                                        class="fab-secondary"
                                         [matTooltip]="action.label"
                                         #actionBtn
                                         (click)="executeAction(action, actionBtn)"
@@ -214,10 +213,13 @@
                         <button
                             *ngIf="agentFeatures.comment"
                             mat-mini-fab
-                            color="default"
-                            [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
+                            [ngClass]="
+                                customFuse.anchor?.body +
+                                (status === 'connected' ? ' mat-elevation-z2' : '') +
+                                (commentsAdded ? ' animate__animated animate__flash animate__infinite animate__slow' : '')
+                            "
                             matTooltip="Interaction Comment"
-                            (click)="saveInteractionComments()"
+                            (click)="commentsAdded = false; saveInteractionComments()"
                         >
                             <mat-icon>comment</mat-icon>
                         </button>
@@ -393,12 +395,10 @@
                                 ></div>
 
                                 <ng-container *ngIf="!message.serverMessage">
+                                    <!-- animate__animated animate__slideInUp animate__faster -->
                                     <div
                                         *ngIf="!message.divider"
-                                        [class]="
-                                            message.position +
-                                            ' bubble mat-elevation-z1 position-absolute animate__animated animate__slideInUp animate__faster'
-                                        "
+                                        [class]="message.position + ' bubble mat-elevation-z1'"
                                         [ngClass]="{ maximized: maximized }"
                                     >
                                         <ng-container
@@ -414,8 +414,8 @@
                                         ></ng-container>
                                     </div>
                                 </ng-container>
-
-                                <div *ngIf="message.divider" class="divider bg-secondary animate__animated animate__slideInUp animate__faster"></div>
+                                <!-- animate__animated animate__slideInUp animate__faster -->
+                                <div *ngIf="message.divider" class="divider bg-secondary"></div>
                             </div>
                             <!-- / MESSAGE -->
                         </div>
@@ -425,6 +425,14 @@
 
                     <!-- CHAT FOOTER -->
                     <div class="chat-footer" *ngIf="conferenceType !== 'silent' && agentFeatures.reply">
+                        <!-- CHAT TYPING -->
+                        <div
+                            *ngIf="remoteTyping && remoteTyping.typing"
+                            class="twd-absolute top--20 twd-text-center twd-w-full twd-text-primary-700 twd-font-semibold twd-italic"
+                        >
+                            {{ remoteTyping.name }} is typing...
+                        </div>
+                        <!-- CHAT TYPING -->
                         <!-- REPLY FORM -->
                         <div class="reply-form">
                             <button style="display: none" cdkOverlayOrigin #replyingMessageOverlay="cdkOverlayOrigin"></button>
@@ -531,8 +539,7 @@
                                             <button
                                                 *ngFor="let item of attachActions"
                                                 mat-mini-fab
-                                                color="secondary"
-                                                class="fab-secondary"
+                                                color="default"
                                                 [matTooltip]="item.label"
                                                 (click)="addAttachment(item.action)"
                                             >

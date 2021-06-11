@@ -89,9 +89,9 @@ export const getFuseConfigByTheme = (themeName: string, selector: boolean) => {
                     },
                     anchorWidget: {
                         customBackgroundColor: true,
-                        bodyBackground: 'teal-400',
+                        bodyBackground: 'red-200',
                         headerBackground: 'teal-900',
-                        contentBackground: 'teal-50'
+                        contentBackground: 'red-50'
                     },
                     widget: {
                         customBackgroundColor: true,
@@ -101,6 +101,41 @@ export const getFuseConfigByTheme = (themeName: string, selector: boolean) => {
                     },
                     footer: {
                         customBackgroundColor: true,
+                        background: 'grey-400'
+                    }
+                }
+            };
+            break;
+        }
+        case 'theme-cyan-orange': {
+            selectedTheme = {
+                layout: {
+                    navbar: {
+                        background: 'cyan-500',
+                        customBackgroundColor: true
+                    },
+                    toolbar: {
+                        customBackgroundColor: true,
+                        background: 'grey-50'
+                    },
+                    content: {
+                        customBackgroundColor: true,
+                        background: 'grey-50'
+                    },
+                    anchorWidget: {
+                        customBackgroundColor: true,
+                        bodyBackground: 'orange-400',
+                        headerBackground: 'cyan-600',
+                        contentBackground: 'orange-50'
+                    },
+                    widget: {
+                        customBackgroundColor: true,
+                        bodyBackground: 'cyan-100',
+                        headerBackground: 'cyan-500',
+                        contentBackground: 'grey-A100'
+                    },
+                    footer: {
+                        customBackgroundColor: false,
                         background: 'grey-400'
                     }
                 }

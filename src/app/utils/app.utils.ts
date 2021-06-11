@@ -1,5 +1,6 @@
 import { maskData } from '@tmac/operators';
-import { IMaskData } from 'app/interfaces';
+import { IUIEvent } from '@tmac/sdk';
+import { CustomerInfo, IMaskData } from 'app/interfaces';
 import { get, join, set } from 'lodash';
 
 type Generic = string | number;
@@ -99,13 +100,79 @@ export const maticonByExtension = (ext: string) => {
 };
 
 /**
+ * To process customer details based on TMAC events
+ *
+ * @param {CustomerInfo[]} customerInfo
+ * @param {IUIEvent} evt
+ *
+ * @returns {CustomerInfo[]}
+ */
+export const processCustomerDetails = (customerInfo: CustomerInfo[], evt: IUIEvent): void => {
+    // check if customer info map is available in this event
+    customerInfo.forEach((item: CustomerInfo) => {
+        // check if value is added, then ignore
+        if (item.Value) {
+            return;
+        }
+        // get value from event
+        getValueFromEvent(item, evt);
+    });
+};
+
+/**
+ * To fetch value from TMAC event based on json path
+ *
+ * @param item
+ * @param evt
+ * @returns
+ */
+export const getValueFromEvent = (item: CustomerInfo, evt: IUIEvent): string => {
+    // get the value source
+    const valueSource = item.ValueSource;
+    let valueSourceSplit = [];
+    // check if we need to parse the json
+    if (valueSource.toLowerCase().includes('jsonparse')) {
+        // expected value = jsonparse(EventName.{...path}).getValue
+        // get the path by taking string between ()
+        const path = valueSource.substring(valueSource.lastIndexOf('(') + 1, valueSource.lastIndexOf(')'));
+        if (path) {
+            // split the value source
+            valueSourceSplit = path.split('.');
+            // check if the value source event name matches with the current event
+            if (valueSourceSplit[0] !== evt.EventName) {
+                return;
+            }
+
+            // get the value from path
+            const jsonStr = getValueFromJson(valueSourceSplit, evt, '');
+            if (jsonStr) {
+                // get the property by taking string between ) and last
+                const prop = valueSource.substring(valueSource.lastIndexOf(')') + 2, valueSource.length);
+                item.Value = maskDataLocal(JSON.parse(jsonStr)[prop] ?? '', item.MaskData);
+            }
+        }
+    } else {
+        valueSourceSplit = item.ValueSource.split('.');
+        // check if the value source event name matches with the current event
+        if (valueSourceSplit[0] !== evt.EventName) {
+            return;
+        }
+        // get the value from path or default value
+        item.Value = maskDataLocal(getValueFromJson(valueSourceSplit, evt, item.DefaultValue), item.MaskData);
+    }
+
+    // return value
+    return item.Value;
+};
+
+/**
  * To get property value from event
  *
  * @param {String[]} valueSourceSplit
  * @param {Any} json
  * @param {String} defaultValue
  */
-export const getValueFromJson = (valueSourceSplit: string[], json: any, defaultValue: string) => {
+const getValueFromJson = (valueSourceSplit: string[], json: any, defaultValue: string) => {
     // remove the event name from the array
     valueSourceSplit.shift();
     // map the property and get the value from event property
@@ -120,7 +187,7 @@ export const getValueFromJson = (valueSourceSplit: string[], json: any, defaultV
  * @param {String} value
  * @param {IMaskData | boolean} config
  */
-export const maskDataLocal = (value: string, config: IMaskData | boolean): string => {
+const maskDataLocal = (value: string, config: IMaskData | boolean): string => {
     try {
         // check if value and config is defined
         if (value && config) {
@@ -153,6 +220,11 @@ export class ADError extends Error {
     }
 }
 
+/**
+ * To throw AD error
+ *
+ * @param msg
+ */
 export const throwADError = (msg: string) => {
     throw new ADError(msg);
 };

@@ -42,8 +42,10 @@ import {
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AgentSkillListData, InteractionComment, InteractionRef, IWidget } from 'app/interfaces';
+import { TwWidgetModel } from 'app/models';
 import { firstValueFrom, Subject, timer } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
+import { TwComposeMessagingComponent } from '../tw-compose-messaging/tw-compose-messaging.component';
 
 /**
  * Voice Controls Component
@@ -101,7 +103,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Interaction Start time
      */
-    startTime = '00:00:00';
+    startTime: Date;
     /**
      * Interaction session ID
      */
@@ -225,6 +227,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     savedComments: InteractionComment[] = [];
     /**
+     * Flag to blink comments button when added from server
+     */
+    commentsAdded: boolean;
+    /**
      * Dial pad numbers
      */
     dialpadNumbers = [
@@ -290,19 +296,14 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     language = '';
     /**
-     * Flag to check campaign call
+     * Sub type reference
      */
-    isCampCall: boolean;
+    subType: string;
     /**
      * Make call dialog
      */
     @ViewChild('makeCallDialog')
     MakeCallDialog: TemplateRef<any>;
-
-    /**
-     * Mat dialog ref for closing
-     */
-    makeCallDialogRef: MatDialogRef<any>;
 
     constructor(
         private _fuseFacadeService: FuseFacadeService,
@@ -346,7 +347,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
         if (this.data.InteractionDetails) {
             // set the start time
-            this.startTime = new Date(Date.parse(this.interaction.CreatedTime.toString())).toLocaleString();
+            this.startTime = new Date(this.data.InteractionDetails.CreatedTime) ?? new Date();
             // assign the caller id
             this.callerID = this.interaction.PhoneNumber || 'NA';
             // update the session ID
@@ -365,6 +366,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 // assign the last 4 IVR, if default is configured
                 this.last4IVR = this.data.Data.IVR?.DefaultMenu || [];
                 this._appUIService.showDesktopAlert('Incoming Call', `You have a new incoming call from ${this.interaction.PhoneNumber}`, false);
+                // add the subtype
+                this.subType = this.interaction.SubType?.toLowerCase();
             } else {
                 this.interaction = this.data.InteractionDetails as OutgoingCallEvent;
                 // set direction
@@ -1118,6 +1121,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         }
         // check if interaction comments available
         if (evt.InteractionComments && evt.InteractionComments.length > 0) {
+            this.commentsAdded = true;
             evt.InteractionComments.forEach((c) => {
                 const dt = JSON.parse(c);
                 this.savedComments.push({
@@ -1408,9 +1412,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         // check the saved comments
         this.savedComments.forEach((item) => {
             message += `
-                 <div class="text-primary m-0 mat-body-2">${item.Message.replace(/(?:\r\n|\r|\n)/g, '<br>')}</div>
-                 <span class="time secondary-text mat-body-1">${item.User}</span>,
-                 <span class="time secondary-text mat-body-1">${new Date(item.Time).toLocaleString()}</span>
+                 <div class="text-primary mat-body-2">${item.Message.replace(/(?:\r\n|\r|\n)/g, '<br>')}</div>
+                 <span class="time muted-text mat-body-1">${item.User}</span>,
+                 <span class="time muted-text mat-body-1">${new Date(item.Time).toLocaleString()}</span>
                  <br />
                  <br />
                  `;
@@ -1420,7 +1424,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         const dialogRef = this._appUIService.showCustomDialog(
             'prompt',
             message,
-            'Interaction Notes',
+            'Interaction Comments',
             { minRows: 4 },
             {
                 minWidth: '30%',
@@ -1755,18 +1759,16 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * To ppen make call dialog
      *
-     * @param {MatButton} btn
      */
-    makeCall(btn: MatButton): void {
-        this.makeCallDialogRef = this._matDialog.open(this.MakeCallDialog, {
+    makeCall(): void {
+        this.dialogRef = this._matDialog.open(this.MakeCallDialog, {
             panelClass: 'make-call-dialog',
             maxWidth: '450px',
             disableClose: true
         });
 
-        this.makeCallDialogRef.afterClosed().subscribe((res: boolean) => {
+        this.dialogRef.afterClosed().subscribe((res: boolean) => {
             if (res) {
-                btn.disabled = true;
                 // make call to the provided number and complete the reminder
                 SDKClient.makeCall({
                     interactionId: this.interaction.InteractionID.toString(),
@@ -1779,15 +1781,37 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                             this._appUIService.showSnackbar(`Make call to ${this.callerID} successful`);
                         } else {
                             this._appUIService.showSnackbar(`Make call failed, ${dt.response.ResultMessage}`, 'failure');
-                            btn.disabled = false;
                         }
                     })
                     .catch((err) => {
                         this._appUIService.showSnackbar('Make call error', 'failure');
                         TUtils.Logger.error('Error in TwVoiceControlsComponent.makeCall', err);
-                        btn.disabled = false;
                     });
             }
         });
+    }
+
+    /**
+     * To open SMS dialog
+     */
+    sendSMS(): void {
+        const dialogRef = this._matDialog.open(TwComposeMessagingComponent, {
+            panelClass: 'create-messaging-dialog',
+            width: '500px',
+            maxWidth: '100%',
+            height: '350px',
+            disableClose: true
+        });
+
+        const widget = new TwWidgetModel('Send SMS', 'tw-compose-messaging', 'sms');
+        widget.Config.Actions = ['destroy']; 
+        widget.Data.Type = 'sms';
+        widget.Data.Number = this.callerID;
+        widget.InteractionDetails = this.interaction;
+        widget.destroy = () => {
+            dialogRef.close();
+        };
+
+        dialogRef.componentInstance.data = widget;
     }
 }

@@ -49,7 +49,7 @@ tw-chat-controls {
                     button {
                         margin: 6px 6px 6px 0;
 
-                        &:not(.mat-warn) {
+                        &:not(.mat-primary, .mat-accent, .mat-warn) {
                             background: #bdbdbd;
                         }
                     }
@@ -150,7 +150,7 @@ tw-chat-controls {
 
                                 .message {
                                     // white-space: pre-wrap;
-                                    
+
                                     line-height: 1.4;
                                     font-size: 14px;
                                     margin-bottom: 12px;
@@ -339,6 +339,7 @@ tw-chat-controls {
                 }
 
                 .chat-footer {
+                    position: relative;
                     flex: 0 0 auto;
                     display: flex;
                     flex-direction: column;

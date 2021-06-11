@@ -8,6 +8,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CustomSDKEvent } from 'app/interfaces';
+import { format } from 'date-fns';
 import { orderBy } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 
@@ -292,17 +293,34 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
      * @param notes
      */
     showNotes(notes: string): void {
-        this._appUIService.showCustomDialog(
-            'alert',
-            notes,
-            'Comments',
-            {
-                messageClasses: 'twd-whitespace-pre-line'
-            },
-            {
-                minWidth: '30%',
-                maxWidth: '30%'
-            }
-        );
+        let message = notes;
+        let otherData = {
+            messageClasses: 'twd-whitespace-pre-line'
+        };
+        try {
+            const jsonMessage = JSON.parse(notes);
+            message = '';
+            otherData = null;
+            jsonMessage.forEach((item: any, index: number, array: []) => {
+                message += `
+                <div class="text-primary mat-body-2">${item.Comment.replace(/(?:\r\n|\r|\n)/g, '<br>')}</div>
+                <span class="time muted-text mat-body-1">${item.User}</span>,
+                <span class="time muted-text mat-body-1">${format(new Date(item.Time), 'dd/MM/yyyy hh:mm:ss a')}</span> 
+                `;
+                // add space if there are multiple items
+                if (index > array.length - 1) {
+                    message += `
+                       <br />
+                       <br />
+                       `;
+                }
+            });
+        } catch (error) {
+            message = notes;
+        }
+        this._appUIService.showCustomDialog('alert', message, 'Interaction Comments', otherData, {
+            minWidth: '30%',
+            maxWidth: '30%'
+        });
     }
 }

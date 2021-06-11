@@ -1,7 +1,7 @@
 <div class="fab-container">
     <button
         mat-fab
-        color="primary"
+        color="accent"
         class="fab-toggler"
         cdkOverlayOrigin
         #widgetList="cdkOverlayOrigin"
@@ -25,12 +25,13 @@
             <ng-container *ngFor="let btn of buttons">
                 <button
                     mat-mini-fab
-                    color="secondary"
+                    color="default"
                     *ngIf="btn.Config.Enabled && !btn.Config.Hidden"
-                    class="fab-secondary"
                     (click)="openAOTWidget(btn)"
+                    [matTooltip]="btn.Name || 'Widget'"
                 >
-                    <mat-icon [matTooltip]="btn.Name || 'Widget'">{{ btn.Config.Icon || 'widgets' }}</mat-icon>
+                    <mat-icon *ngIf="btn.Config.Icon.indexOf('custom') < 0">{{ btn.Config.Icon || 'widgets' }}</mat-icon>
+                    <mat-icon *ngIf="btn.Config.Icon.indexOf('custom') >= 0" [svgIcon]="btn.Config.Icon"></mat-icon>
                 </button>
             </ng-container>
         </div>
