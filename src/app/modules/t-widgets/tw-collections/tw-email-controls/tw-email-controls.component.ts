@@ -249,8 +249,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // -----------------------------------------------------------------------------------------------------
         if (this.currentInteraction.EventName === 'IncomingEmailEvent') {
-            // set the interaction id from data
-            // this.interactionId = this.data.InteractionDetails?.InteractionID;
+            // Set common session id keys for both incoming / outgoing email events
+            this.currentInteraction.InSessionId = this.currentInteraction.SessionId;
+            this.currentInteraction.OutSessionId = this.currentInteraction.OutSessionID;
 
             // set the intent
             this.intent = this.currentInteraction.Intent || 'NA';
@@ -369,10 +370,10 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         let requestedSession: string | null = null;
         if (this.emailInView === 'original') {
             this.emailInView = 'replied';
-            requestedSession = this.currentInteraction.OutSessionID;
+            requestedSession = this.currentInteraction.OutSessionId;
         } else {
             this.emailInView = 'original';
-            requestedSession = this.currentInteraction.SessionId;
+            requestedSession = this.currentInteraction.InSessionId;
         }
         if (this.emailBodies[requestedSession]) {
             this.currentInteraction = {
@@ -399,10 +400,10 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         let requestedSession;
 
         if (fetchFromOutbox) {
-            requestedSession = interaction.OutSessionID;
+            requestedSession = interaction.OutSessionId;
             apiCall = (session: string) => SDKClient.getOutboxEmail(session);
         } else {
-            requestedSession = interaction.SessionId;
+            requestedSession = interaction.InSessionId;
             apiCall = (session: string) => SDKClient.getInboxEmail(session);
         }
 
@@ -462,7 +463,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             }
             SDKClient.changeEmailStatus({
                 routeId: currentInteraction.RouteId,
-                sessionId: currentInteraction.SessionId,
+                sessionId: currentInteraction.InSessionId,
                 status: 'Close'
             })
                 .then(() => {
@@ -554,17 +555,6 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * @param {InteractionRef} item
      */
     public selectInteraction(item: InteractionRef): void {
-        // if (this.replyInfo && this.createEmailRef?.email) {
-        //     this.replyInfoMap[item.interactionId] = {
-        //         ...this.createEmailRef.email,
-        //         To: this.createEmailRef.email.To.join(','),
-        //         CC: this.createEmailRef.email.CC.join(','),
-        //         BCC: this.createEmailRef.email.BCC.join(',')
-        //     };
-        // }
-
-        // this.replyInfo = null;
-
         // if same interaction is seleted then return
         if (this.interactionId === item.interactionId) {
             return;
@@ -607,9 +597,10 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             Body: `
             ${preBody} 
             ${Body['changingThisBreaksApplicationSecurity']}`,
-            Subject: `RE: ${Subject}`,
+            Subject,
             Files: [],
-            From: this.currentInteraction.Mailbox
+            From: this.currentInteraction.Mailbox,
+            Replying: true
         };
         this.saveEmailAsDraft();
     }
@@ -643,9 +634,10 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             Body: `
                 ${preBody}
                 ${Body['changingThisBreaksApplicationSecurity']}`,
-            Subject: `RE: ${Subject}`,
+            Subject,
             Files: [],
-            From: this.currentInteraction.Mailbox
+            From: this.currentInteraction.Mailbox,
+            Replying: true
         };
         this.saveEmailAsDraft();
     }
@@ -686,7 +678,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     async sendEmailAsMaker(email?: CreateEmailOutput, btn?: MatButton): Promise<void> {
         try {
-            const { InSessionId, OutSessionID, SessionId, OutSessionId, EventName } = this.currentInteraction;
+            const { InSessionId, OutSessionId } = this.currentInteraction;
             const { BCC, CC, To, Subject, Files, Body } = email || this.createEmailRef.email;
 
             let confirmSend = true;
@@ -710,22 +702,15 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             this.sendingEmailAsMaker = true;
             this._fuseProgressBarService.show();
             const res = await SDKClient.sendEmail({
-                attachmentFileList: Files && Files.length ? JSON.stringify(Files.map((x) => ({ ...x, SessionID: SessionId }))) : '',
+                attachmentFileList: Files && Files.length ? JSON.stringify(Files.map((x) => ({ ...x, SessionID: InSessionId }))) : '',
                 bccList: BCC.join(','),
                 toList: To.join(','),
                 ccList: CC.join(','),
                 body: Body,
-                ...(EventName === 'OutgoingEmailEvent'
-                    ? {
-                          inboxSessionId: InSessionId,
-                          outboxSessionId: OutSessionId
-                      }
-                    : {
-                          inboxSessionId: SessionId,
-                          outboxSessionId: OutSessionID
-                      }),
+                inboxSessionId: InSessionId,
+                outboxSessionId: OutSessionId,
                 routeId: '',
-                subject: Subject.replace('RE:', ''),
+                subject: Subject,
                 typeOfResponse: ''
             });
             this._fuseProgressBarService.hide();
@@ -742,8 +727,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             if (!currentStatusMsg) {
                 throwADError('Unable to send email. Invalid Current Status');
             }
-            if (currentStatusMsg === 'success') {
-                throwADError(`Unable to send email. ${currentStatusMsg}.`);
+            if (reasonCodeMsg !== 'success') {
+                throwADError(`${reasonCodeMsg} [${res.response.SendStatus}]`);
             }
             if (btn) {
                 btn.disabled = false;
@@ -773,7 +758,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         let sendLoader;
         try {
             btn.disabled = true;
-            const { InSessionId, OutSessionID, SessionId, OutSessionId, EventName } = this.currentInteraction;
+            const { InSessionId, OutSessionId } = this.currentInteraction;
             const confirmDialogRef = this._appUIService.showAppConfirmDialog('generic', 'Confirm Approve', 'Are you sure to approve this email?');
             confirmDialogRef.afterClosed().subscribe(async (dialogResult: boolean) => {
                 if (dialogResult) {
@@ -786,26 +771,28 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                         bccList: '',
                         body: Body['changingThisBreaksApplicationSecurity'],
                         ccList: CC || '',
-                        ...(EventName === 'OutgoingEmailEvent'
-                            ? {
-                                  inboxSessionId: InSessionId,
-                                  outboxSessionId: OutSessionId
-                              }
-                            : {
-                                  inboxSessionId: SessionId,
-                                  outboxSessionId: OutSessionID
-                              }),
+                        inboxSessionId: InSessionId,
+                        outboxSessionId: OutSessionId,
                         routeId: '',
-                        subject: Subject.replace('RE:', ''),
+                        subject: Subject,
                         toList: From,
                         typeOfResponse: 'approve'
                     });
 
-                    const message = {
-                        SentToCustomer: 'to customer',
-                        SentToCheckerSession: 'to checker'
-                    };
-                    this._appUIService.showSnackbar(`Message sent ${message[res.response.CurrentStatus]}`, 'success');
+                    // Check if the request was sucessful by checking SendStatus,CurrentStatus in repsonse
+                    // Display the message in snackbar accordingly
+                    const reasonCodeMsg = EMAIL_REASONCODE_VALUES[res.response.SendStatus];
+                    const currentStatusMsg = EMAIL_CURRENTSTATUS_CODES[res.response.CurrentStatus];
+                    if (!reasonCodeMsg) {
+                        throwADError('Unable to send email. Invalid Reason Code');
+                    }
+                    if (!currentStatusMsg) {
+                        throwADError('Unable to send email. Invalid Current Status');
+                    }
+                    if (reasonCodeMsg !== 'success') {
+                        throwADError(`${reasonCodeMsg} [${res.response.SendStatus}]`);
+                    }
+                    this._appUIService.showSnackbar(`Message sent ${currentStatusMsg}`, 'success');
                     this.draftPolling?.unsubscribe();
                     sendLoader?.dismiss();
                     btn.disabled = false;
@@ -830,7 +817,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     saveEmailAsDraft(closeEmail = false, btn?: MatButton): void {
         // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
-        const { InSessionId, OutSessionID, SessionId, OutSessionId, EventName } = this.currentInteraction;
+        const { InSessionId, OutSessionId, EventName } = this.currentInteraction;
         const email = this.createEmailRef?.email;
         if (email) {
             // @TODO Files not sent as draft arg
@@ -839,15 +826,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 bccList: BCC.join(','),
                 body: Body.toString(),
                 ccList: CC.join(','),
-                ...(EventName === 'OutgoingEmailEvent'
-                    ? {
-                          inboxSessionId: InSessionId,
-                          outboxSessionId: OutSessionId
-                      }
-                    : {
-                          inboxSessionId: SessionId,
-                          outboxSessionId: OutSessionID
-                      }),
+                inboxSessionId: InSessionId,
+                outboxSessionId: OutSessionId,
                 routeId: '',
                 subject: Subject,
                 toList: To.join(','),
@@ -894,7 +874,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 SDKClient.rejectEmail({
                     reason: JSON.stringify({ comment, reasonTags }),
                     routeId: currentInteraction.RouteId,
-                    sessionId: currentInteraction.OutSessionID
+                    sessionId: currentInteraction.OutSessionId
                 })
                     .then((rejectEmailRes) => {
                         if (rejectEmailRes.response < 0) {
@@ -939,7 +919,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 SDKClient.markEmailAsSpam({
                     fromAddress: currentInteraction.From,
                     routeId: currentInteraction.RouteId,
-                    sessionId: currentInteraction.SessionId
+                    sessionId: currentInteraction.InSessionId
                 })
                     .then((res) => {
                         loader.dismiss();

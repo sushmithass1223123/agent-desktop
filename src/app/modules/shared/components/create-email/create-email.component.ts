@@ -118,12 +118,18 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     showAttachments = false;
 
+    /**
+     * This shows the RE: tag when doing an email reply
+     */
+    replyTag = '';
+
     constructor(private appUiService: AppUiService, @Inject(APP_BASE_HREF) private baseHref: string, private _fuseFacadeService: FuseFacadeService) {}
 
     /**
      * Lifecycle hook
      */
     ngOnInit(): void {
+        this.replyTag = this.emailInfo.Replying ? (this.emailInfo.Subject ? (this.emailInfo.Subject.startsWith('RE:') ? '' : 'RE:') : '') : '';
         if (this.emailInfo?.To) {
             this.email.To = this.emailInfo?.To.split(',').filter((x) => !!x);
         }

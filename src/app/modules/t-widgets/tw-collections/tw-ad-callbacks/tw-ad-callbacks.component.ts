@@ -3,7 +3,7 @@ import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular
 import { TMACEventService } from '@services/tmac-event.service';
 import { SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { ACTIVE_CALL_STATUSES, COMMON_ERR_MESSAGE, FAILED_CALL_STATUSES, PENDING_CALL_STATUSES } from 'app/constants';
+import { ACTIVE_CALL_STATUSES, FAILED_CALL_STATUSES, PENDING_CALL_STATUSES } from 'app/constants';
 import { CustomSDKEvent, IWidget, ResData } from 'app/interfaces';
 import { format, isBefore, isMatch, parse } from 'date-fns';
 import { sortBy } from 'lodash';
@@ -114,7 +114,7 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
                 this.getDashboardDataRes = {
                     error: true,
                     loading: false,
-                    msg: COMMON_ERR_MESSAGE
+                    msg: 'Unable to fetch contact session'
                 };
             }
         });
