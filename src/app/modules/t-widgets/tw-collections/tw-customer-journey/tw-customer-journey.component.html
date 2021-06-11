@@ -124,11 +124,11 @@
                                 <ng-container *ngSwitchCase="'services'">
                                     <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>
                                 </ng-container>
-                                <mat-icon color="primary" *ngSwitchCase="'voice'"> call </mat-icon>
-                                <mat-icon color="primary" *ngSwitchCase="'sms'"> textsms </mat-icon>
-                                <mat-icon color="primary" *ngSwitchCase="'email'"> email </mat-icon>
-                                <mat-icon color="primary" *ngSwitchCase="'fax'"> print </mat-icon>
-                                <mat-icon color="primary" *ngSwitchDefault> feed </mat-icon>
+                                <mat-icon color="primary" *ngSwitchCase="'voice'" matTooltip="Voice"> phone </mat-icon>
+                                <mat-icon color="primary" *ngSwitchCase="'sms'" matTooltip="SMS"> sms </mat-icon>
+                                <mat-icon color="primary" *ngSwitchCase="'email'" matTooltip="Email"> email </mat-icon>
+                                <mat-icon color="primary" *ngSwitchCase="'fax'" matTooltip="Fax"> print </mat-icon>
+                                <mat-icon color="primary" *ngSwitchDefault [matTooltip]="element.SubType"> feed </mat-icon>
                             </mat-cell>
                         </ng-container>
 
