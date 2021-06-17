@@ -73,7 +73,7 @@ export class TwWorkBenchService {
      */
     private readonly _internal$ = {
         email: {
-            initialized: false,
+            // initialized: false,
             searchParams,
             globalSearchKey: new FormControl(''),
             defaultEmail: new FormControl(''),
@@ -105,14 +105,14 @@ export class TwWorkBenchService {
                 throw new Error(`Invalid Server response ${JSON.stringify(res.response, null, 2)}`);
             }
             if (res.response.length) {
-                this._internal$.email.initialized = true;
+                // this._internal$.email.initialized = true;
                 const listOfMailboxes =
                     res.response.map((email) => {
                         const [mail] = email.split(',');
                         return mail;
                     }) || [];
                 this.globalEmailWorkbenchState$.searchParams.patchValue({ listOfMailboxes });
-                // this.globalEmailWorkbenchState$.defaultEmail.setValue(res.response[0]);
+                this.globalEmailWorkbenchState$.defaultEmail.setValue(res.response[0]);
                 this.globalEmailWorkbenchState$.availableMailboxes.setValue(res.response);
             }
         } catch (e) {

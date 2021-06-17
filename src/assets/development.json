@@ -3707,7 +3707,7 @@
                     "https://dice.tetherfi.cloud/TMACSDKProxyv5/TmacProxy.asmx"
                 ],
                 "Type": "soap",
-                "Timeout": 30
+                "Timeout": 60
             },
             "SignalRProxy": {
                 "Logging": true,

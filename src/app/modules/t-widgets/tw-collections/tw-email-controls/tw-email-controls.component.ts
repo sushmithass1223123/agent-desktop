@@ -817,7 +817,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     saveEmailAsDraft(closeEmail = false, btn?: MatButton): void {
         // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
-        const { InSessionId, OutSessionId, EventName } = this.currentInteraction;
+        const { InSessionId, OutSessionId } = this.currentInteraction;
         const email = this.createEmailRef?.email;
         if (email) {
             // @TODO Files not sent as draft arg
@@ -833,11 +833,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 toList: To.join(','),
                 typeOfResponse: ''
             }).then((x) => {
-                if (EventName === 'OutgoingEmailEvent') {
-                    this.currentInteraction.OutSessionId = x.response;
-                } else {
-                    this.currentInteraction.OutSessionID = x.response;
-                }
+                this.currentInteraction.OutSessionId = x.response;
                 if (closeEmail) {
                     this.closeInteraction(btn, true);
                 }

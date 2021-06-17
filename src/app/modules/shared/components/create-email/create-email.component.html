@@ -8,7 +8,7 @@
                         {{ emailInfo.From }}
                     </div>
                 </div>
-                <div class="twd-my-2 twd-flex twd-justify-between twd-gap-2">
+                <div class="twd-my-2 twd-flex twd-justify-between twd-gap-2" [hidden]="hiddenFields?.includes('To')">
                     <label for="toField" class="font-weight-700 twd-pt-1">To : </label>
                     <div class="twd-flex-1 twd-flex">
                         <ng-container *ngTemplateOutlet="recipientInputField; context: { key: 'To' }"></ng-container>
@@ -30,7 +30,7 @@
                 </ng-container>
             </div>
 
-            <div class="twd-my-2 twd-flex twd-justify-between">
+            <div class="twd-my-2 twd-flex twd-justify-between" [hidden]="hiddenFields?.includes('Subject')">
                 <label for="subjectField" class="twd-pt-1">
                     <span class="font-weight-700 twd-pr-2"> Subject : </span>
                     <span class="twd-border-b twd-border-primary-default twd-pb-1">

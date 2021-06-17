@@ -19,8 +19,8 @@ import { FuseFacadeService } from '@services/fuse-facade.service';
 import { SDKClient, TUtils } from '@tmac/sdk';
 import { CreateEmailInput, CreateEmailOutput } from 'app/interfaces';
 import { maticonByExtension } from 'app/utils';
-import { merge } from 'rxjs';
-import { debounceTime, map } from 'rxjs/operators';
+import { fromEvent, merge, Subject } from 'rxjs';
+import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import tinyMCE from 'tinymce';
 
 /**
@@ -87,6 +87,8 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     @Input() sendDisabled? = false;
 
+    @Input() hiddenFields?: Array<'To' | 'Subject'>;
+
     /**
      * Fuse custom background colors
      */
@@ -123,6 +125,11 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     replyTag = '';
 
+    /**
+     * Subject that is used as takeUntil limiter for unsubscribing all subsctiption on destroy
+     */
+    unsubscribeAll$: Subject<boolean> = new Subject<boolean>();
+
     constructor(private appUiService: AppUiService, @Inject(APP_BASE_HREF) private baseHref: string, private _fuseFacadeService: FuseFacadeService) {}
 
     /**
@@ -151,6 +158,7 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
             this.emailRecipientFacade.controls.BCC.valueChanges
         )
             .pipe(
+                takeUntil(this.unsubscribeAll$),
                 debounceTime(200),
                 map((val) => val.toLowerCase())
             )
@@ -200,9 +208,16 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
                         editor.on('init', () => {
                             this.editorState.loading = false;
                             editor.setContent(this.email.Body || '');
-                            editor.on('blur', () => {
-                                this.email.Body = editor.getContent();
-                            });
+                            fromEvent(editor, 'blur')
+                                .pipe(takeUntil(this.unsubscribeAll$), debounceTime(2000))
+                                .subscribe({
+                                    next: () => {
+                                        this.email.Body = editor.getContent();
+                                    }
+                                });
+                            // editor.on('blur', () => {
+                            //     this.email.Body = editor.getContent();
+                            // });
                         });
                     }
                 })
