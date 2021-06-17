@@ -37,7 +37,7 @@
                 >
                     <div fxFlex="15" fxLayout fxLayoutAlign="center center" class="step-time pr-8">
                         <small fxFlex="80" class="text-right">
-                            {{ s.InteractionDate }}
+                            {{ s.InteractionDate | date: 'd/M/yy, hh:mm:ss a' }}
                         </small>
                     </div>
                     <div fxFlex="85" fxLayout fxLayoutAlign="space-between center" class="step-details px-16">
@@ -89,193 +89,16 @@
                 fxLayout="column"
                 class="table custom-scroll-adjust"
                 [ngClass]="(customFuse.anchor?.content || customFuse.widget?.content) + (mode ? ' h-35-p' : ' h-100-p')"
+                [formGroup]="searchForm"
             >
                 <ng-container *ngIf="customerJourneyTable.tableData.source.data.length">
-                    <mat-table
-                        [dataSource]="customerJourneyTable.tableData.source"
-                        matSort
-                        matSortDisableClear
-                        [matSortDisabled]="customerJourneyTable.tableData.sortDisabled"
-                        [formGroup]="searchForm"
-                    >
-                        <!-- NA Note that these columns can be defined in any order.
-                             The actual rendered columns are set as a property on the row definition" -->
-                        <ng-container matColumnDef="InteractionDate">
-                            <mat-header-cell fxFlex="15" *matHeaderCellDef class="d-flex w-100-p">
-                                <span mat-sort-header> Received At </span>
-                            </mat-header-cell>
-                            <mat-cell fxFlex="15" *matCellDef="let element">{{ element.InteractionDate || 'NA' }} </mat-cell>
-                        </ng-container>
-
-                        <ng-container matColumnDef="Channel">
-                            <mat-header-cell *matHeaderCellDef fxFlex="10">
-                                <span mat-sort-header> Channel </span>
-                            </mat-header-cell>
-                            <mat-cell *matCellDef="let element" fxFlex="10" [ngSwitch]="element.Channel | lowercase">
-                                <ng-container *ngSwitchCase="'textchat'">
-                                    <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>
-                                </ng-container>
-                                <ng-container *ngSwitchCase="'audiochat'">
-                                    <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>
-                                </ng-container>
-                                <ng-container *ngSwitchCase="'videochat'">
-                                    <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>
-                                </ng-container>
-                                <ng-container *ngSwitchCase="'services'">
-                                    <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>
-                                </ng-container>
-                                <mat-icon color="primary" *ngSwitchCase="'voice'" matTooltip="Voice"> phone </mat-icon>
-                                <mat-icon color="primary" *ngSwitchCase="'sms'" matTooltip="SMS"> sms </mat-icon>
-                                <mat-icon color="primary" *ngSwitchCase="'email'" matTooltip="Email"> email </mat-icon>
-                                <mat-icon color="primary" *ngSwitchCase="'fax'" matTooltip="Fax"> print </mat-icon>
-                                <mat-icon color="primary" *ngSwitchDefault [matTooltip]="element.SubType"> feed </mat-icon>
-                            </mat-cell>
-                        </ng-container>
-
-                        <ng-container matColumnDef="CIF">
-                            <mat-header-cell *matHeaderCellDef>
-                                <span mat-sort-header> CIF </span>
-                            </mat-header-cell>
-                            <mat-cell *matCellDef="let element">{{ element.CIF || 'NA' }}</mat-cell>
-                        </ng-container>
-
-                        <ng-container matColumnDef="AgentName">
-                            <mat-header-cell *matHeaderCellDef>
-                                <span mat-sort-header> Agent </span>
-                            </mat-header-cell>
-                            <mat-cell *matCellDef="let element">{{ element.AgentName || 'NA' }}</mat-cell>
-                        </ng-container>
-
-                        <ng-container matColumnDef="Intent">
-                            <mat-header-cell *matHeaderCellDef>
-                                <span mat-sort-header> Intent </span>
-                            </mat-header-cell>
-                            <mat-cell *matCellDef="let element">{{ element.Intent || 'NA' }}</mat-cell>
-                        </ng-container>
-
-                        <ng-container matColumnDef="EmailID">
-                            <mat-header-cell *matHeaderCellDef>
-                                <span mat-sort-header> Email </span>
-                            </mat-header-cell>
-                            <mat-cell *matCellDef="let element">{{ element.EmailID || 'NA' }}</mat-cell>
-                        </ng-container>
-
-                        <ng-container matColumnDef="NRIC">
-                            <mat-header-cell *matHeaderCellDef>
-                                <span mat-sort-header> NRIC </span>
-                            </mat-header-cell>
-                            <mat-cell *matCellDef="let element">{{ element.NRIC || 'NA' }}</mat-cell>
-                        </ng-container>
-
-                        <ng-container matColumnDef="PhoneNumber">
-                            <mat-header-cell *matHeaderCellDef>
-                                <span mat-sort-header> Phone </span>
-                            </mat-header-cell>
-                            <mat-cell *matCellDef="let element">{{ element.PhoneNumber || 'NA' }}</mat-cell>
-                        </ng-container>
-
-                        <ng-container matColumnDef="OverallSentiment">
-                            <mat-header-cell *matHeaderCellDef>
-                                <span mat-sort-header> Sentiment </span>
-                            </mat-header-cell>
-                            <mat-cell *matCellDef="let element">
-                                <img
-                                    *ngIf="element.OverallSentiment === 'Positive'"
-                                    class="w-24"
-                                    src="assets/images/vectors/positive-score.svg"
-                                    alt="Positive"
-                                    matTooltip="Sentiment Dashboard"
-                                    (click)="openSentimentDashboard(element.SessionID)"
-                                />
-                                <img
-                                    *ngIf="element.OverallSentiment === 'Neutral'"
-                                    class="w-24"
-                                    src="assets/images/vectors/neutral-score.svg"
-                                    alt="Neutral"
-                                    matTooltip="Sentiment Dashboard"
-                                    (click)="openSentimentDashboard(element.SessionID)"
-                                />
-                                <img
-                                    *ngIf="element.OverallSentiment === 'Negative'"
-                                    class="w-24"
-                                    src="assets/images/vectors/negative-score.svg"
-                                    alt="Negative"
-                                    matTooltip="Sentiment Dashboard"
-                                    (click)="openSentimentDashboard(element.SessionID)"
-                                />
-                                <ng-container *ngIf="!element.OverallSentiment"> NA </ng-container>
-                            </mat-cell>
-                        </ng-container>
-
-                        <ng-container matColumnDef="Actions">
-                            <mat-header-cell *matHeaderCellDef fxFlex="15"> Actions </mat-header-cell>
-                            <mat-cell *matCellDef="let element; let i = index" fxFlex="15" (click)="$event.stopPropagation()">
-                                <div fxLayout fxLayoutAlign="start center" class="h-100-p w-100-p">
-                                    <button
-                                        class="w-32"
-                                        mat-icon-button
-                                        matTooltip="Session History"
-                                        (click)="switchMaximizedViewMode('Session History', element)"
-                                    >
-                                        <mat-icon> history </mat-icon>
-                                    </button>
-                                    <button class="w-32" mat-icon-button matTooltip="Actions" (click)="switchMaximizedViewMode('Actions', element)">
-                                        <mat-icon> list_alt </mat-icon>
-                                    </button>
-                                    <button class="w-32" mat-icon-button matTooltip="Comments" (click)="switchMaximizedViewMode('Comments', element)">
-                                        <mat-icon> notes </mat-icon>
-                                    </button>
-                                    <button
-                                        class="w-32"
-                                        *ngIf="(element.Channel || '' | lowercase).includes('chat')"
-                                        mat-icon-button
-                                        matTooltip="Transcripts"
-                                        (click)="switchMaximizedViewMode('Transcripts', element)"
-                                    >
-                                        <mat-icon> chat </mat-icon>
-                                    </button>
-                                    <button
-                                        class="w-32"
-                                        *ngIf="(element.Channel || '' | lowercase).includes('email')"
-                                        mat-icon-button
-                                        matTooltip="Show Email"
-                                        (click)="switchMaximizedViewMode('Email Preview', element)"
-                                    >
-                                        <mat-icon> email </mat-icon>
-                                    </button>
-                                </div>
-                            </mat-cell>
-                        </ng-container>
-
-                        <ng-container matColumnDef="groupHeader">
-                            <td colspan="999" mat-cell *matCellDef="let group">
-                                <strong>{{ group.groupName }}</strong>
-                            </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="groupReducer">
-                            <td colspan="1" mat-cell *matCellDef="let group">
-                                <div fxFill fxLayoutAlign="center center">
-                                    <mat-icon *ngIf="group.expanded">expand_less</mat-icon>
-                                    <mat-icon *ngIf="!group.expanded">expand_more</mat-icon>
-                                </div>
-                            </td>
-                        </ng-container>
-
-                        <mat-header-row *matHeaderRowDef="customerJourneyTable.tableData.columns; sticky: true"></mat-header-row>
-                        <mat-row
-                            class="selectable"
-                            *matRowDef="let row; columns: customerJourneyTable.tableData.columns"
-                            [ngClass]="{ selected: isRowSelected(row) }"
-                        >
-                        </mat-row>
-                        <mat-row
-                            class="selectable group-header"
-                            *matRowDef="let row; columns: ['groupReducer', 'groupHeader']; when: isGroup; let i = index"
-                            (click)="toggleGroupExpand(row, i)"
-                        >
-                        </mat-row>
-                    </mat-table>
+                    <ng-container
+                        [ngTemplateOutlet]="table"
+                        [ngTemplateOutletContext]="{
+                            dataSource: customerJourneyTable.tableData.source,
+                            sortDisabled: customerJourneyTable.tableData.sortDisabled
+                        }"
+                    ></ng-container>
                     <div class="twd-flex twd-justify-between">
                         <div class="twd-w-5/12">
                             <button (click)="advancedSearchModal.open()" mat-button color="primary">
@@ -351,13 +174,6 @@
                                     </form>
                                 </div>
                             </ng-template>
-                            <!-- <mat-form-field appearance="outline">
-                                <mat-label>Group by</mat-label>
-                                <mat-select [formControl]="groupCtrl">
-                                    <mat-option value="">Select Group</mat-option>
-                                    <mat-option [value]="item" *ngFor="let item of customerJourneyTable.tableData.columns">{{ item }}</mat-option>
-                                </mat-select>
-                            </mat-form-field> -->
                         </div>
 
                         <mat-paginator
@@ -443,10 +259,8 @@
                 </ng-container>
 
                 <ng-container *ngIf="mode === 'Transcripts'">
-                    <ng-container
-                        *ngIf="interactionTranscripts && customerJourneyTable.tableData.selection?.selected[0]?.SessionID as selectedSessionId"
-                    >
-                        <ng-container *ngIf="interactionTranscripts[selectedSessionId] as chatTranscripts">
+                    <ng-container *ngIf="interactionTranscripts && customerJourneyTable.tableData.selection?.selected[0] as selected">
+                        <ng-container *ngIf="interactionTranscripts[selected.GroupID] as chatTranscripts">
                             <div
                                 *ngIf="chatTranscripts.length"
                                 fxLayout="row"
@@ -487,7 +301,7 @@
                                                                     [src]="
                                                                         ((fileUploadUrl$ | async) || 'TmacProxy') +
                                                                         '/' +
-                                                                        selectedSessionId +
+                                                                        selected.SessionID +
                                                                         '/' +
                                                                         item.message.attachment.name
                                                                     "
@@ -636,6 +450,21 @@
                         </div>
                     </div>
                 </ng-container>
+                <ng-container *ngIf="mode === 'Grouped View'">
+                    <ng-container *ngIf="customerJourneyTable.tableData.selection?.selected[0] as selected">
+                        <div class="twd-h-full twd-overflow-y-auto">
+                            <ng-container
+                                *ngTemplateOutlet="
+                                    table;
+                                    context: {
+                                        dataSource: selected.Children,
+                                        sortDisabled: false
+                                    }
+                                "
+                            ></ng-container>
+                        </div>
+                    </ng-container>
+                </ng-container>
             </div>
             <!-- maximised view end - Table -->
         </div>
@@ -644,3 +473,186 @@
         </div>
     </ng-container>
 </tw-wrapper>
+
+<ng-template #table let-sortDisabled="sortDisabled" let-dataSource="dataSource">
+    <mat-table [dataSource]="dataSource" matSort matSortDisableClear [matSortDisabled]="sortDisabled" multiTemplateDataRows>
+        <!-- NA Note that these columns can be defined in any order.
+The actual rendered columns are set as a property on the row definition" -->
+        <ng-container matColumnDef="InteractionDate">
+            <mat-header-cell fxFlex="15" *matHeaderCellDef class="d-flex w-100-p">
+                <span mat-sort-header> Received At </span>
+            </mat-header-cell>
+            <mat-cell fxFlex="15" *matCellDef="let element">{{ (element.InteractionDate | date: 'd/M/yy, hh:mm:ss a') || 'NA' }} </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="Channel">
+            <mat-header-cell *matHeaderCellDef fxFlex="10">
+                <span mat-sort-header> Channel </span>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element" fxFlex="10" [ngSwitch]="element.Channel | lowercase" [matTooltip]="element.Channel">
+                <ng-container *ngSwitchCase="'textchat'">
+                    <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>
+                </ng-container>
+                <ng-container *ngSwitchCase="'audiochat'">
+                    <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>
+                </ng-container>
+                <ng-container *ngSwitchCase="'videochat'">
+                    <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>
+                </ng-container>
+                <ng-container *ngSwitchCase="'services'">
+                    <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>
+                </ng-container>
+                <mat-icon color="primary" *ngSwitchCase="'voice'"> call </mat-icon>
+                <mat-icon color="primary" *ngSwitchCase="'sms'"> textsms </mat-icon>
+                <mat-icon color="primary" *ngSwitchCase="'email'"> email </mat-icon>
+                <mat-icon color="primary" *ngSwitchCase="'fax'"> print </mat-icon>
+                <mat-icon color="primary" *ngSwitchDefault> feed </mat-icon>
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="CIF">
+            <mat-header-cell *matHeaderCellDef>
+                <span mat-sort-header> CIF </span>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">{{ element.CIF || 'NA' }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="AgentName">
+            <mat-header-cell *matHeaderCellDef>
+                <span mat-sort-header> Agent </span>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">{{ element.AgentName || 'NA' }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="Intent">
+            <mat-header-cell *matHeaderCellDef>
+                <span mat-sort-header> Intent </span>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">{{ element.Intent || 'NA' }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="EmailID">
+            <mat-header-cell *matHeaderCellDef>
+                <span mat-sort-header> Email </span>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">{{ element.EmailID || 'NA' }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="NRIC">
+            <mat-header-cell *matHeaderCellDef>
+                <span mat-sort-header> NRIC </span>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">{{ element.NRIC || 'NA' }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="PhoneNumber">
+            <mat-header-cell *matHeaderCellDef>
+                <span mat-sort-header> Phone </span>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">{{ element.PhoneNumber || 'NA' }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="OverallSentiment">
+            <mat-header-cell *matHeaderCellDef>
+                <span mat-sort-header> Sentiment </span>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <img
+                    *ngIf="element.OverallSentiment === 'Positive'"
+                    class="w-24"
+                    src="assets/images/vectors/positive-score.svg"
+                    alt="Positive"
+                    matTooltip="Sentiment Dashboard"
+                    (click)="openSentimentDashboard(element.SessionID)"
+                />
+                <img
+                    *ngIf="element.OverallSentiment === 'Neutral'"
+                    class="w-24"
+                    src="assets/images/vectors/neutral-score.svg"
+                    alt="Neutral"
+                    matTooltip="Sentiment Dashboard"
+                    (click)="openSentimentDashboard(element.SessionID)"
+                />
+                <img
+                    *ngIf="element.OverallSentiment === 'Negative'"
+                    class="w-24"
+                    src="assets/images/vectors/negative-score.svg"
+                    alt="Negative"
+                    matTooltip="Sentiment Dashboard"
+                    (click)="openSentimentDashboard(element.SessionID)"
+                />
+                <ng-container *ngIf="!element.OverallSentiment"> NA </ng-container>
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="Actions">
+            <mat-header-cell *matHeaderCellDef fxFlex="15"> Actions </mat-header-cell>
+            <mat-cell *matCellDef="let element; let i = index" fxFlex="15" (click)="$event.stopPropagation()">
+                <div fxLayout fxLayoutAlign="start center" class="h-100-p w-100-p">
+                    <button class="w-32" mat-icon-button matTooltip="Session History" (click)="switchMaximizedViewMode('Session History', element)">
+                        <mat-icon> history </mat-icon>
+                    </button>
+                    <button class="w-32" mat-icon-button matTooltip="Actions" (click)="switchMaximizedViewMode('Actions', element)">
+                        <mat-icon> list_alt </mat-icon>
+                    </button>
+                    <button class="w-32" mat-icon-button matTooltip="Comments" (click)="switchMaximizedViewMode('Comments', element)">
+                        <mat-icon> notes </mat-icon>
+                    </button>
+                    <button
+                        class="w-32"
+                        *ngIf="(element.Channel || '' | lowercase).includes('chat')"
+                        mat-icon-button
+                        matTooltip="Transcripts"
+                        (click)="switchMaximizedViewMode('Transcripts', element)"
+                    >
+                        <mat-icon> chat </mat-icon>
+                    </button>
+                    <button
+                        class="w-32"
+                        *ngIf="(element.Channel || '' | lowercase).includes('email')"
+                        mat-icon-button
+                        matTooltip="Show Email"
+                        (click)="switchMaximizedViewMode('Email Preview', element)"
+                    >
+                        <mat-icon> email </mat-icon>
+                    </button>
+                    <button
+                        class="w-32"
+                        mat-icon-button
+                        matTooltip="Show Group"
+                        *ngIf="element.Children && element.Children.length"
+                        (click)="element.expanded = !element.expanded"
+                    >
+                        <mat-icon> history </mat-icon>
+                    </button>
+                </div>
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="sessions">
+            <mat-cell [attr.colspan]="customerJourneyTable.tableData.columns.length" *matCellDef="let element">
+                <ng-container
+                    [ngTemplateOutlet]="table"
+                    [ngTemplateOutletContext]="{
+                        dataSource: element.Children,
+                        sortDisabled: true
+                    }"
+                ></ng-container>
+            </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="customerJourneyTable.tableData.columns; sticky: true"></mat-header-row>
+        <mat-row
+            class="selectable"
+            *matRowDef="let row; columns: customerJourneyTable.tableData.columns"
+            [ngClass]="{ selected: isRowSelected(row) }"
+        >
+        </mat-row>
+        <mat-row
+            class="selectable group-header twd-overflow-hidden"
+            *matRowDef="let row; columns: ['sessions']"
+            [ngClass]="{ 'twd-hidden': !row.expanded }"
+        >
+        </mat-row>
+    </mat-table>
+</ng-template>
