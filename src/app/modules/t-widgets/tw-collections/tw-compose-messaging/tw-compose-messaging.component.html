@@ -99,8 +99,9 @@
                     [disabled]="loading"
                 ></textarea>
                 <button
-                    mat-button
-                    class="select-btn bg-success border-radius-20 custom-btn mat-elevation-z1"
+                    mat-raised-button
+                    color="accent"
+                    class="border-radius-20"
                     [disabled]="!templateText || loading || !toNumber"
                     (click)="sendTemplate()"
                 >

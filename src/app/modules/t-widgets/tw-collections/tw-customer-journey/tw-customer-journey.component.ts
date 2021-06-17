@@ -47,7 +47,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     /**
      * Input data from app config json
      */
-    @Input() data: IWidget;
+    @Input() data: IWidget<any, WidgetData>;
 
     /**
      * Fuse custom config
@@ -302,7 +302,19 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             iframeUrl: '',
             lastId: '',
             tableData: {
-                columns: ['InteractionDate', 'Channel', 'Intent', 'AgentName', 'CIF', 'NRIC', 'PhoneNumber', 'OverallSentiment', 'Actions'],
+                columns: [
+                    'InteractionDate',
+                    'Channel',
+                    'InteractionText',
+                    'Direction',
+                    'Intent',
+                    'AgentName',
+                    'CIF',
+                    'NRIC',
+                    'PhoneNumber',
+                    'OverallSentiment',
+                    'Actions'
+                ],
                 selection: new SelectionModel<InteractionHistory>(false, []),
                 source: new MatTableDataSource([]),
                 pageSizes: [],
@@ -326,7 +338,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         this.interactionId = this.data.InteractionDetails.InteractionID;
 
         const noOfRecords = this.data.Data.NoOfRecords;
-        if (this.data.Data.Columns) {
+
+        if (this.data.Data.Columns && this.data.Data.Columns.length) {
             this.customerJourneyTable.tableData.columns = this.data.Data.Columns;
         }
         this.customerJourneyTable.tableData.pageSizes = [0, 5, 10].map((r) => r + noOfRecords);
@@ -336,7 +349,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             email: '',
             nric: '',
             phone: '',
-            noOfRecords: this.data.Data.NoOfRecords,
+            noOfRecords: this.data.Data.NoOfRecords.toString(),
             lastId: '0'
         };
 
@@ -597,7 +610,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             email: evt.HistoryParameters.EmailID,
             nric: evt.HistoryParameters.NRIC,
             phone: evt.HistoryParameters.PhoneNumber,
-            noOfRecords,
+            noOfRecords: noOfRecords.toString(),
             lastId: '0'
         };
         // get history
@@ -724,7 +737,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 interactionId: '',
                 sessionId: record.SessionID,
                 toDate: '',
-                agentId: record.AgentID
+                agentId: ''
             })
         ).pipe(
             map((res) =>
@@ -970,4 +983,23 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             this.reducedRecords[row.groupName] = [];
         }
     }
+}
+
+interface WidgetData {
+    /**
+     * Customer session journey url
+     */
+    IframeBaseUrl: string;
+    /**
+     * No of records to load
+     */
+    NoOfRecords: number;
+    /**
+     * Sentiment dashboard url
+     */
+    SentimentDashboardUrl: string;
+    /**
+     * Columns to show
+     */
+    Columns: string[];
 }

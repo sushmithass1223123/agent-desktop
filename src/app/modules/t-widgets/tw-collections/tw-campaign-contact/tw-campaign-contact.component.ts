@@ -1,6 +1,8 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef } from '@angular/material/dialog';
+import { MatSelectChange } from '@angular/material/select';
 import { TWidgetWrapper } from '@modules/t-widgets/utils/widget-wrapper/tw-wrapper';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
@@ -25,6 +27,11 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
      * holds all the data related to this widget from the config
      */
     @Input() data: IWidget<IncomingCallEvent | GenericInteractionEvent, WidgetData>;
+
+    /**
+     * Widget data
+     */
+    widgetData: WidgetData;
 
     /**
      * To store entire app config and get update
@@ -80,8 +87,40 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
      */
     maximized: boolean;
 
-    constructor(private _appDataService: AppDataService, private _appUIService: AppUiService, private _tmacEventService: TMACEventService) {
+    /**
+     * Campaign status list to update
+     */
+    statusList: StatusReasonCode[];
+
+    /**
+     * Reason list
+     */
+    reasonList: StatusReasonCode[];
+
+    /**
+     * Submit form
+     */
+    submitForm: FormGroup;
+
+    /**
+     * Flag to check whether call is made to customer
+     */
+    callMadeToCustomer: boolean;
+
+    /**
+     * To show progress
+     */
+    progress: boolean;
+
+    constructor(
+        private _appDataService: AppDataService,
+        private _appUIService: AppUiService,
+        private _tmacEventService: TMACEventService,
+        private _formBuilder: FormBuilder
+    ) {
         super();
+        this.showMakeCall = false;
+        this.callMadeToCustomer = false;
     }
 
     /**
@@ -91,7 +130,20 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
         // call the wrapper init method
         this.initWrapper(this.data);
 
+        this.widgetData = this.data.Data;
+
         this.user = SDKClient.getAgentData();
+
+        this.submitForm = this._formBuilder.group({
+            status: ['', Validators.required],
+            reason: [''],
+            comment: ['']
+        });
+
+        // Set validators for form
+        if (this.widgetData.ReasonEnabled) {
+            this.submitForm.controls.reason.setValidators(Validators.required);
+        }
 
         // get interaction id
         this.interaction = this.data.InteractionDetails;
@@ -243,6 +295,14 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
             EventName: 'ContactData',
             ...this.contactData.data
         });
+
+        // get the campaign status list
+        const statusResult = await this.restCall('/GetCampaignStatusCodes', {
+            campId: this.contactData.data.campaignContact.CampId,
+            id: ''
+        });
+
+        this.statusList = statusResult.response?.d ?? [];
     }
 
     /**
@@ -290,30 +350,33 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
      * @param {Any} requestArgs
      */
     private async restCall(method: string, requestArgs: any): Promise<IResponse> {
-        return await TUtils.HttpClient.sendRequest<IResponse>({
-            urls: [this.tcmClientUrl + method],
-            requestArgs,
-            header: {
-                'Content-Type': 'application/json'
-            },
-            responseType: 'json',
-            method: 'POST',
-            log: true
-        });
+        this.progress = true;
+        let response: IResponse | PromiseLike<IResponse>;
+        try {
+            response = await TUtils.HttpClient.sendRequest<IResponse>({
+                urls: [this.tcmClientUrl + method],
+                requestArgs,
+                header: {
+                    'Content-Type': 'application/json'
+                },
+                responseType: 'json',
+                method: 'POST',
+                log: true
+            });
+        } catch (error) {}
+        this.progress = false;
+        return response;
     }
 
     /**
      * To confirm make call
      */
-    confirmMakeCall(btn: MatButton): void {
-        btn.disabled = true;
+    confirmMakeCall(): void {
         this.dialogRef = this._appUIService.showAppConfirmDialog('generic', 'Confirm Make Call', `Are you sure to make call to ${this.phoneNumber}`);
         this.dialogRef.afterClosed().subscribe((res) => {
             if (res) {
                 // send end chat to server
-                this.makeCallToCustomer(btn);
-            } else {
-                btn.disabled = false;
+                this.makeCallToCustomer();
             }
         });
     }
@@ -321,7 +384,7 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
     /**
      * To make call to customer
      */
-    makeCallToCustomer(btn: MatButton): void {
+    makeCallToCustomer(): void {
         // signal TCM that the callback request has been accepted
         this.restCall('/OnAgentResponseToDacRequest', {
             fromAddr: this.phoneNumber,
@@ -343,14 +406,78 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
                     this._appUIService.showSnackbar(`Make call to ${this.phoneNumber} successful`);
                 } else {
                     this._appUIService.showSnackbar(`Make call failed, ${dt.response.ResultMessage}`, 'failure');
-                    btn.disabled = false;
                 }
             })
             .catch((err) => {
                 this._appUIService.showSnackbar('Make call error', 'failure');
                 TUtils.Logger.error('Error in TwCampaignContactComponent.makeCallToCustomer', err);
-                btn.disabled = false;
             });
+    }
+
+    /**
+     * On status change
+     *
+     * @param {MatSelectChange} data
+     */
+    async onStatusChange(data: MatSelectChange): Promise<void> {
+        this.reasonList = [];
+
+        if (!data.value) {
+            return;
+        }
+
+        // load reason list by status value
+        const statusResult = await this.restCall('/GetCampaignStatusCodeReasons', {
+            codeId: data.value,
+            id: ''
+        });
+        this.reasonList = statusResult.response?.d ?? [];
+    }
+
+    /**
+     * To check for submit button
+     *
+     * @returns {Boolean}
+     */
+    checkForSubmit(): boolean {
+        try {
+            const agentStatus = SDKClient.getAgentData().agentStatus.toLowerCase();
+            return (this.showMakeCall ? this.callMadeToCustomer : true) && this.submitForm.valid && !agentStatus.includes('on call');
+        } catch (error) {}
+        return false;
+    }
+
+    /**
+     * To submit a callback with status
+     */
+    submitCallback(btn: MatButton): void {
+        this.dialogRef = this._appUIService.showAppConfirmDialog('generic', 'Confirm Submit', `Are you sure to submit`);
+        this.dialogRef.afterClosed().subscribe(async (res) => {
+            if (res) {
+                btn.disabled = true;
+                try {
+                    const resp = await this.restCall('/UpdateRecordData', {
+                        rid: this.contactData.data.recordId,
+                        stat: this.submitForm.get('status').value,
+                        reason: this.submitForm.get('reason').value ?? '',
+                        comment: this.submitForm.get('comment').value ?? ''
+                    });
+
+                    if (resp.response?.d?.resultCode === 1) {
+                        this._appUIService.showSnackbar('Callback status updated successfully');
+                        if (this.interaction) {
+                            SDKClient.closeInteraction(this.interaction.InteractionID.toString());
+                        }
+                    } else {
+                        this._appUIService.showSnackbar('Failed to update callback status', 'failure');
+                        btn.disabled = false;
+                    }
+                } catch (error) {
+                    this._appUIService.showSnackbar('Error in updating callback status', 'failure');
+                    btn.disabled = false;
+                }
+            }
+        });
     }
 }
 
@@ -359,4 +486,23 @@ interface WidgetData {
      * Customer info config
      */
     CustomerInfo: CustomerInfo[];
+    /**
+     * Reason flag
+     */
+    ReasonEnabled: boolean;
+}
+
+interface StatusReasonCode {
+    /**
+     * Status
+     */
+    Status: number;
+    /**
+     * Text of status code
+     */
+    Text: string;
+    /**
+     * Value of status code
+     */
+    Value: string;
 }

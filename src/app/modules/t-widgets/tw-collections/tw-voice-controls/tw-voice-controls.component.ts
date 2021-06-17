@@ -43,7 +43,7 @@ import {
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AgentSkillListData, InteractionComment, InteractionRef, IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
-import { firstValueFrom, Subject, timer } from 'rxjs';
+import { Subject, timer } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { TwComposeMessagingComponent } from '../tw-compose-messaging/tw-compose-messaging.component';
 
@@ -327,15 +327,19 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      * Lifecycle hook
      * @method OnInit
      */
-    async ngOnInit(): Promise<void> {
+    ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
 
         // get the user info
         this.user = SDKClient.getAgentData() || null;
 
-        const config = await firstValueFrom(this._appDataService.getConfig({ AV: 'AppConfigs.AV' }).pipe(takeUntil(this.unsubscribeAll)));
-        this.avConfig = config.AV ?? {};
+        this._appDataService
+            .getConfig({ AV: 'AppConfigs.AV' })
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((config) => {
+                this.avConfig = config.AV ?? {};
+            });
 
         // subscribe to interaction manager service
         this._interactionManagerService.interactions.pipe(takeUntil(this.unsubscribeAll)).subscribe((interactions: InteractionRef[]) => {
@@ -419,11 +423,36 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      * @method
      */
     ngAfterViewInit(): void {
-        // check if the current page is textchat page
-        if (this._interactionManagerService.getInteractionCount().active <= 1 && this._contentPageService.getCurrentMode() !== this.data.Data.Path) {
-            setTimeout(() => {
-                this._contentPageService.mode = this.data.Data.Path;
-            }, 500);
+        // if route to page is enabled
+        let route = false;
+
+        // check if auto route is needed
+        if (this.interaction.EventName === 'OutgoingCallEvent') {
+            route = true;
+        }
+
+        // check if the current page is voice page
+        if (route || (this.data.Data.RouteOnInteraction && this._interactionManagerService.getInteractionCount().active <= 1)) {
+            setTimeout(
+                (r) => {
+                    let inPage = true;
+                    // navigate if not same page
+                    if (this._contentPageService.getCurrentMode() !== this.data.Data.Path) {
+                        inPage = false;
+                        this._contentPageService.mode = this.data.Data.Path;
+                    }
+
+                    // if we do outgoing/no active we need to select that particular interaction
+                    if (!inPage || r) {
+                        const interaction = this.interactionList.filter((i) => i.interactionId === this.interaction?.InteractionID)[0];
+                        if (interaction && !interaction?.isActive) {
+                            this.selectInteraction(interaction, true);
+                        }
+                    }
+                },
+                500,
+                route
+            );
         }
     }
 
@@ -1190,8 +1219,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             state: evt.ColorCode,
             onClick: () => {
                 const interaction = this.interactionList.filter((i) => i.interactionId === evt.InteractionID)[0];
-                if (interaction) {
-                    this.selectInteraction(interaction);
+                if (interaction && !interaction?.isActive) {
+                    this.selectInteraction(interaction, true);
                 }
             }
         });
@@ -1201,10 +1230,11 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      * Select Interaction
      * @method selectInteraction
      * @param {InteractionRef} item
+     * @param {Boolean} force
      */
-    selectInteraction(item: InteractionRef): void {
+    public selectInteraction(item: InteractionRef, force?: boolean): void {
         // if same interaction is seleted then return
-        if (this.interaction.InteractionID === item.interactionId) {
+        if (!force && this.interaction.InteractionID === item.interactionId) {
             return;
         }
         // update is active
@@ -1804,7 +1834,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         });
 
         const widget = new TwWidgetModel('Send SMS', 'tw-compose-messaging', 'sms');
-        widget.Config.Actions = ['destroy']; 
+        widget.Config.Actions = ['destroy'];
         widget.Data.Type = 'sms';
         widget.Data.Number = this.callerID;
         widget.InteractionDetails = this.interaction;

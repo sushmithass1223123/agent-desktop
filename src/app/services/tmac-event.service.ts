@@ -9,6 +9,7 @@ import {
     AgentReminder,
     AgentReminderEvent,
     AgentStatusChangeEvent,
+    AutoCloseTabEvent,
     CommandResultEvent,
     IResponse,
     IUIEvent,
@@ -27,7 +28,6 @@ import { filter, map, takeUntil } from 'rxjs/operators';
 import { AOTWidgetService } from './aot-widget.service';
 import { AppDataService } from './app-data.service';
 import { AppUiService } from './app-ui.service';
-import { InteractionManagerService } from './interaction-manager.service';
 
 /**
  *  Componentless Event service
@@ -107,13 +107,11 @@ export class TMACEventService {
     /**
      * Constructor
      * @param {AppDataService} _appDataService
-     * @param {InteractionManagerService} _interactionManagerService
      * @param {AppUiService} _appUIService
      * @param {AOTWidgetService} _aotWidgetService
      */
     constructor(
         private _appDataService: AppDataService,
-        private _interactionManagerService: InteractionManagerService,
         private _appUIService: AppUiService,
         private _aotWidgetService: AOTWidgetService,
         private _router: Router
@@ -153,10 +151,8 @@ export class TMACEventService {
         this._interactionEventArray.push(evt);
         // for dispose event remove the reference from array
         if (evt.IsInteractionDisposeEvent) {
-            // remove the events for the ID
+            // remove the events for the InteractionID
             this._interactionEventArray = this._interactionEventArray.filter((i) => i.InteractionID !== evt.InteractionID);
-            // remove the interaction reference
-            this._interactionManagerService.removeInteraction(evt.InteractionID);
         }
         // notify the observers
         this._interactionEvent$.next([evt]);
@@ -168,7 +164,7 @@ export class TMACEventService {
      * @param {IUIEvent} evt
      */
     private processNonInteractionEvents(evt: IUIEvent): void {
-        const i = this._nonInteractionEventArray.findIndex((item) => item.EventName === item.EventName);
+        const i = this._nonInteractionEventArray.findIndex((item) => item.EventName === evt.EventName);
         if (i > -1) {
             this._nonInteractionEventArray[i] = evt;
         } else {
@@ -748,6 +744,16 @@ export class TMACEventService {
     };
 
     /**
+     * To process AutoCloseTabEvent
+     *
+     * @param {AutoCloseTabEvent} evt
+     */
+    private AutoCloseTabEvent = (evt: AutoCloseTabEvent) => {
+        // remove the events for the InteractionID
+        this._interactionEventArray = this._interactionEventArray.filter((i) => i.InteractionID !== evt.InteractionID);
+    };
+
+    /**
      * Post message received event
      *
      * @param {MessageEvent} evt
@@ -892,11 +898,12 @@ export class TMACEventService {
             {
                 label: 'TmacServerConnectionAborted',
                 callback: this.TmacServerConnectionAborted
+            },
+            {
+                label: 'AutoCloseTabEvent',
+                callback: this.AutoCloseTabEvent
             }
         ]);
-
-        // subscribe to InteractionManagerService
-        this._interactionManagerService.subscribe();
     }
 
     /**
@@ -959,6 +966,10 @@ export class TMACEventService {
             {
                 label: 'TmacServerConnectionAborted',
                 callback: this.TmacServerConnectionAborted
+            },
+            {
+                label: 'AutoCloseTabEvent',
+                callback: this.AutoCloseTabEvent
             }
         ]);
 
@@ -982,9 +993,6 @@ export class TMACEventService {
             dacRequest: null,
             reminder: []
         };
-
-        // unsubscribe from InteractionManagerService
-        this._interactionManagerService.unsubscribe();
     }
 
     /**

@@ -21,7 +21,7 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
     /**
      * holds all the data related to this widget from the config
      */
-    @Input() data: IWidget;
+    @Input() data: IWidget<any, WidgetData>;
 
     /**
      * Interaction Id
@@ -58,7 +58,7 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
     /**
      * Type of response 'auto' or 'manual'
      */
-    responseMode = 'auto';
+    responseMode: 'auto' | 'manual';
     /**
      * Loading flag
      */
@@ -84,6 +84,8 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
+
+        this.responseMode = this.data.Data.ResponseMode ?? 'auto';
 
         // assign the interaction id
         this.interactionId = this.data.InteractionDetails?.InteractionID;
@@ -308,6 +310,17 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
         }
         this.clearAllData();
     }
+}
+
+interface WidgetData {
+    /**
+     * Template editable
+     */
+    EditAllowed: boolean;
+    /**
+     * Response mode for tempalate selection
+     */
+    ResponseMode: 'auto' | 'manual';
 }
 
 // for more info visit - https://angular.io/api/core

@@ -291,6 +291,10 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                     msg
                 };
             }
+
+            // play new email sound
+            this._appUIService.playAudio('new-email', 0.5, false);
+            this._appUIService.showDesktopAlert('Incoming Email', `You have a new incoming email from ${this.currentInteraction.From}`, false);
         } else {
             this.replyInfo = {
                 BCC: '',
@@ -307,10 +311,6 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         // set the user info
         this.user = SDKClient.getAgentData() || null;
 
-        // play new email sound
-        this._appUIService.playAudio('new-email', 0.5, false);
-        this._appUIService.showDesktopAlert('Incoming Email', `You have a new incoming email from ${this.currentInteraction.From}`, false);
-
         this._tmacEventService
             .getInteractionEvents(['InteractionDataEvent'], this.interactionId)
             .pipe(takeUntil(this.unsubscribeAll))
@@ -322,11 +322,34 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * @method
      */
     ngAfterViewInit(): void {
-        // check if the current page is textchat page
-        if (this._interactionManagerService.getInteractionCount().active <= 1 && this._contentPageService.getCurrentMode() !== this.data.Data.Path) {
-            setTimeout(() => {
-                this._contentPageService.mode = this.data.Data.Path;
-            }, 500);
+        // if route to page is enabled
+        let route = false;
+
+        // check if auto route is needed
+        if (this.currentInteraction?.RouteReason?.toLowerCase().includes('pull') || this.currentInteraction.EventName === 'OutgoingEmailEvent') {
+            route = true;
+        }
+
+        // check if the current page is email page
+        if (route || (this.data.Data.RouteOnInteraction && this._interactionManagerService.getInteractionCount().active <= 1)) {
+            setTimeout(
+                (r) => {
+                    // navigate if not same page
+                    if (this._contentPageService.getCurrentMode() !== this.data.Data.Path) {
+                        this._contentPageService.mode = this.data.Data.Path;
+                    }
+
+                    // if we pull/create a email then route to that particular email
+                    if (r) {
+                        const interaction = this.interactionList.filter((i) => i.interactionId === this.currentInteraction?.InteractionID)[0];
+                        if (interaction && !interaction?.isActive) {
+                            this.selectInteraction(interaction as InteractionRef, true);
+                        }
+                    }
+                },
+                500,
+                route
+            );
         }
     }
 
@@ -553,10 +576,11 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Select Interaction
      * @method selectInteraction
      * @param {InteractionRef} item
+     * @param {Boolean} force
      */
-    public selectInteraction(item: InteractionRef): void {
+    public selectInteraction(item: InteractionRef, force?: boolean): void {
         // if same interaction is seleted then return
-        if (this.interactionId === item.interactionId) {
+        if (!force && this.interactionId === item.interactionId) {
             return;
         }
         this.emailInView = 'replied';

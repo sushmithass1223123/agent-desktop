@@ -2,11 +2,13 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@an
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import {
+    AutoCloseTabEvent,
     FaxReceivedEvent,
     GenericInteractionEvent,
     IncomingCallEvent,
     IncomingEmailEvent,
     InteractionClosedEvent,
+    IUIEvent,
     OutgoingCallEvent,
     OutgoingEmailEvent,
     TextChatIncomingEvent,
@@ -44,11 +46,6 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
      * Type of content widget
      */
     type: string;
-
-    /**
-     * Is interaction flag
-     */
-    isInteraction: boolean;
 
     constructor(
         public hostElement: ElementRef,
@@ -109,9 +106,17 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
         if (eventNames.length) {
             // subscribe to interaction events observable
             this._tmacEventService
-                .getConstructDisposeEvents([...eventNames, 'InteractionClosedEvent'])
+                .getConstructDisposeEvents<IUIEvent>([...eventNames, 'InteractionClosedEvent', 'AutoCloseTabEvent'])
                 .pipe(takeUntil(this.unsubscribeAll))
-                .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
+                .subscribe((evts) =>
+                    evts.forEach((evt) => {
+                        if (evt.EventName === 'InteractionClosedEvent' || evt.EventName === 'AutoCloseTabEvent') {
+                            this.tabCloseEvent(evt);
+                        } else {
+                            this[evt.EventName](evt);
+                        }
+                    })
+                );
 
             // subscribe to active interaction observable
             this._interactionManagerService.interactions.pipe(takeUntil(this.unsubscribeAll)).subscribe((interactions: InteractionRef[]) => {
@@ -144,15 +149,19 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
         const dynamicWidgets = (environment.production && evt.WidgetConfigData && JSON.parse(evt.WidgetConfigData)) || widgets.Dynamic || [];
         const aotWidgets = widgets.AOT || [];
 
+        const routeOnInteraction = (forceActive || this.data.Data.RouteOnInteraction) ?? (['voice', 'textchat'].includes(this.type) ? true : false);
+
         // loop the widgets and add append interaction details
         staticWidgets.forEach((widget: IWidget) => {
             widget.InteractionDetails = evt;
             widget.Data.Path = this.data.Data.Path;
+            widget.Data.RouteOnInteraction = routeOnInteraction;
         });
 
         dynamicWidgets.forEach((widget: IWidget) => {
             widget.InteractionDetails = evt;
             widget.Data.Path = this.data.Data.Path;
+            widget.Data.RouteOnInteraction = routeOnInteraction;
         });
 
         aotWidgets.forEach((widget: IWidget) => {
@@ -179,7 +188,7 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
             interactionId: evt.InteractionID,
             type: this.type,
             status: status,
-            isActive: this.interactions.length === 1 || forceActive,
+            isActive: this.interactions.length === 1 ?? forceActive,
             user: user || 'Customer',
             path: this.data.Data.Path,
             otherData: otherData
@@ -248,9 +257,19 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
     }
 
     /**
-     * To process interaction closed event for voice
+     * To process interaction closed event
      */
-    InteractionClosedEvent(evt: InteractionClosedEvent): void {
+    tabCloseEvent(evt: InteractionClosedEvent | AutoCloseTabEvent): void {
+        // since we have this widget for all interaction
+        // check this interaction id belongs to this widget interaction list
+        const thisInteraction = this.interactions.filter((i) => i.interactionId === evt.InteractionID);
+        if (!thisInteraction.length) {
+            return;
+        }
+
+        // remove the interaction reference
+        this._interactionManagerService.removeInteraction(evt.InteractionID);
+
         // close all the AOTs
         this.interactions.forEach((i) => {
             if (i.interactionId === evt.InteractionID) {
@@ -260,14 +279,48 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
             }
         });
 
+        // get previous/next interaction index
+        const currentIndex = this.interactions.findIndex((i) => i.interactionId === evt.InteractionID);
+        const prevInteractionIndex = currentIndex - 1;
+        const nextInteractionIndex = currentIndex;
+
         // filter out the interaction
         this.interactions = this.interactions.filter((i: InteractionWidgets) => i.interactionId !== evt.InteractionID);
 
-        // if there are other item in the list auto select fist chat after closing current
+        // if there are other item in the list auto select fist interaction after closing current
         if (this.interactions.length > 0) {
-            this._interactionManagerService.updateInteraction(this.interactions[0].interactionId, {
+            // go to previous or next or first interaction
+            const routeInteraction = this.interactions[prevInteractionIndex] ?? this.interactions[nextInteractionIndex] ?? this.interactions[0];
+            this._interactionManagerService.updateInteraction(routeInteraction.interactionId, {
                 isActive: true
             });
+        } else {
+            this.activeInteraction = 0;
         }
     }
+
+    /**
+     * On page active callback
+     */
+    onActive = () => {
+        if (!this.activeInteraction) {
+            return;
+        }
+        // check if there is active interaction already
+        this._interactionManagerService.updateInteraction(this.activeInteraction, {
+            isActive: true
+        });
+    };
+
+    /**
+     * On page inactive callback
+     */
+    onInactive = () => {
+        if (!this.activeInteraction) {
+            return;
+        }
+        this._interactionManagerService.updateInteraction(this.activeInteraction, {
+            isActive: false
+        });
+    };
 }

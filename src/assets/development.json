@@ -1129,6 +1129,7 @@
                     },
                     "Data": {
                         "Path": "/voice",
+                        "RouteOnInteraction": true,
                         "Widgets": {
                             "Static": [
                                 {
@@ -1763,6 +1764,7 @@
                     },
                     "Data": {
                         "Path": "/textchat",
+                        "RouteOnInteraction": true,
                         "Widgets": {
                             "Static": [
                                 {
@@ -1922,7 +1924,7 @@
                                                         "Url": "",
                                                         "Limit": 50
                                                     },
-                                                    "ReplyAllowed": true
+                                                    "ReplyAllowed": false
                                                 }
                                             },
                                             {
@@ -2160,7 +2162,10 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": {}
+                                    "Data": {
+                                        "ResponseMode": "manual",
+                                        "EditAllowed": false
+                                    }
                                 },
                                 {
                                     "Name": "Realtime Customer Sentiment",
@@ -2377,6 +2382,7 @@
                     },
                     "Data": {
                         "Path": "/email",
+                        "RouteOnInteraction": true,
                         "Widgets": {
                             "Static": [
                                 {
@@ -2632,7 +2638,10 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": {}
+                                    "Data": {
+                                        "ResponseMode": "manual",
+                                        "EditAllowed": false
+                                    }
                                 },
                                 {
                                     "Name": "Work Codes",
@@ -2756,6 +2765,7 @@
                     },
                     "Data": {
                         "Path": "/generic",
+                        "RouteOnInteraction": true,
                         "Widgets": {
                             "Static": [
                                 {
@@ -3612,7 +3622,7 @@
     },
     "AppConfigs": {
         "TitleName": "Agent Desktop",
-        "Theme": "theme-default-3",
+        "Theme": "theme-cyan-orange",
         "Font": "wf-muli",
         "Logos": {
             "Favicon": "",
@@ -3703,7 +3713,6 @@
             "Proxy": {
                 "Urls": [
                     "https://dice.tetherfi.cloud/Dev_TMACSDKProxy/TmacProxy.asmx",
-                    "https://lab.singtel.tetherfi.cloud:56443/TMACSDKProxy/TmacProxy.asmx",
                     "https://dice.tetherfi.cloud/TMACSDKProxyv5/TmacProxy.asmx"
                 ],
                 "Type": "soap",

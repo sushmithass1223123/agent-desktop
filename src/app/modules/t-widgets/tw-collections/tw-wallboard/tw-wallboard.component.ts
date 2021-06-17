@@ -108,12 +108,14 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
      * Updates table data on event
      */
     private wallboardRefreshEvent = (evt: WallboardRefreshEvent) => {
+        // get skills to show
+        let skillsToShow = evt.Skills;
         // for team wallboard event filter staffed agents
         if (evt.EventName === 'TeamWallboardRefreshEvent') {
-            evt.Skills = evt.Skills.filter((s) => s.AgentsStaffed > 0);
+            skillsToShow = evt.Skills.filter((s) => s.AgentsStaffed > 0 || s.CallsInQueue > 0);
         } else if (evt.EventName === 'WallboardRefreshEvent') {
             // check for skill update
-            if (this.dataSource.data.length && this.dataSource.data.length !== evt.Skills.length) {
+            if (this.dataSource.data.length && this.dataSource.data.length !== skillsToShow.length) {
                 this._appUIService.showAppSnackbar({
                     message: 'Agent skills has been updated!',
                     state: 'success',
@@ -123,7 +125,7 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
         }
 
         // assign the data
-        this.dataSource = new MatTableDataSource(evt.Skills);
+        this.dataSource = new MatTableDataSource(skillsToShow);
         // sorting data accessor for nested object sorting
         // check if the SL is enabled, since we need custom sort for Service Level only!
         if (this.widgetData.SLEnabled) {

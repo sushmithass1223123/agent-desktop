@@ -65,10 +65,16 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
     };
 
     /**
+     * No data message
+     */
+    noDataMessage: string;
+
+    /**
      * Constructor
      */
     constructor(private _tmacEventService: TMACEventService) {
         super();
+        this.noDataMessage = 'No Data Available';
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -94,11 +100,13 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
                     eventName = 'AgentStatusDetailsEvent';
                 } else if (this.widgetData.Role === 'supervisor') {
                     eventName = 'TeamActiveStatusDetailsEvent';
+                    this.noDataMessage = 'No Active Agents';
                 }
                 break;
 
             case 'ciq':
                 eventName = 'TeamWallboardRefreshEvent';
+                this.noDataMessage = 'No Calls in Queue';
                 break;
 
             case 'intentlist':
@@ -115,6 +123,7 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
 
             case 'activechannels':
                 eventName = 'TeamActiveChannelListEvent';
+                this.noDataMessage = 'No Active Channels';
                 break;
         }
 
@@ -241,7 +250,10 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
     private TeamWallboardRefreshEvent(evt: WallboardRefreshEvent): void {
         const datasets = { 'Calls In Queue': [] };
         const labels = [];
-        sortBy(evt.Skills, 'CallsInQueue')
+        // filter only CIQ's greater than 0
+        const skills = evt.Skills.filter((s) => s.CallsInQueue > 0);
+
+        sortBy(skills, 'CallsInQueue')
             .reverse()
             .forEach((c) => {
                 datasets['Calls In Queue'].push(c.CallsInQueue);

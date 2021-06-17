@@ -510,6 +510,25 @@ The actual rendered columns are set as a property on the row definition" -->
             </mat-cell>
         </ng-container>
 
+        <ng-container matColumnDef="Direction">
+            <mat-header-cell *matHeaderCellDef>
+                <span mat-sort-header> Direction </span>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{ element.Direction | uppercase }}
+                <mat-icon class="channel-icon" color="accent">
+                    {{ element.Direction === 'In' ? 'south' : 'north' }}
+                </mat-icon>
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="InteractionText">
+            <mat-header-cell *matHeaderCellDef>
+                <span mat-sort-header> Interaction Text </span>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">{{ element.InteractionText || 'NA' }}</mat-cell>
+        </ng-container>
+
         <ng-container matColumnDef="CIF">
             <mat-header-cell *matHeaderCellDef>
                 <span mat-sort-header> CIF </span>

@@ -132,7 +132,7 @@ export const getFuseConfigByTheme = (themeName: string, selector: boolean) => {
                         customBackgroundColor: true,
                         bodyBackground: 'cyan-100',
                         headerBackground: 'cyan-500',
-                        contentBackground: 'grey-A100'
+                        contentBackground: 'grey-100'
                     },
                     footer: {
                         customBackgroundColor: false,

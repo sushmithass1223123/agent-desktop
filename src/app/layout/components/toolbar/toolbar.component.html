@@ -1,6 +1,6 @@
 <mat-toolbar class="pl-20 pr-32">
     <div fxFlex fxFill fxLayout="row" fxLayoutAlign="start center">
-        <div fxFlex="1 0 auto" fxLayout="row" fxLayoutAlign="start center">
+        <div fxLayout="row" fxLayoutAlign="start center" class="twd-flex twd-flex-1 twd-max-w-5/12 twd-h-full">
             <button
                 mat-icon-button
                 class="navbar-toggle-button"
@@ -11,10 +11,10 @@
                 <mat-icon class="primary-text">menu</mat-icon>
             </button>
 
-            <tw-active-interactions fxHide fxShow.gt-md [data]="activeInteractionWidget" *ngIf="activeInteractionWidget"> </tw-active-interactions>
+            <tw-active-interactions *ngIf="activeInteractionWidget" fxHide fxShow.gt-md [data]="activeInteractionWidget"> </tw-active-interactions>
         </div>
 
-        <div class="" fxFlex="0 1 auto" fxLayout="row" fxLayoutAlign="start center">
+        <div fxLayout="row" fxLayoutAlign="start center" class="twd-flex twd-flex-1">
             <tw-toolbar-menu [data]="toolbarMenuWidget" *ngIf="toolbarMenuWidget"></tw-toolbar-menu>
 
             <button mat-icon-button class="mr-8" (click)="toggleSidebarOpen('quickPanel')" aria-label="Toggle quick panel">
