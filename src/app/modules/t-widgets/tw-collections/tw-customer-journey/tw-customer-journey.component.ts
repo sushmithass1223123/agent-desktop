@@ -24,7 +24,7 @@ import {
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { ChatTranscripts, IWidget, ResData } from 'app/interfaces';
 import { maticonByExtension } from 'app/utils';
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 import { groupBy, orderBy, sortBy } from 'lodash';
 import * as moment from 'moment';
 import { from, Observable, of, Subscription } from 'rxjs';
@@ -305,6 +305,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 columns: [
                     'InteractionDate',
                     'Channel',
+                    'InteractionText',
                     'Direction',
                     'Intent',
                     'AgentName',
@@ -337,6 +338,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         this.interactionId = this.data.InteractionDetails.InteractionID;
 
         const noOfRecords = this.data.Data.NoOfRecords;
+
         if (this.data.Data.Columns && this.data.Data.Columns.length) {
             this.customerJourneyTable.tableData.columns = this.data.Data.Columns;
         }
@@ -455,7 +457,9 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     /**
      * Gets interaction history and sets to table
      */
-    private getInteractionHistory(): void {
+    private getInteractionHistory(
+        noOfRecords = (this.customerJourneyTable.tableData.source.paginator?.pageSize || parseInt(this.historyParams.noOfRecords, 10)).toString()
+    ): void {
         // // Interaction History Dummy data
         // SDKClient.getInteractionHistory(
         //     lastId ? { ...this.historyParams, lastId, phone: '96975347' } : { ...this.historyParams, phone: '96975347' },
@@ -465,7 +469,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         if (!lastId) {
             this.customerJourneyTable.loading = true;
         }
-        SDKClient.getInteractionHistory(lastId ? { ...this.historyParams, lastId } : this.historyParams, null)
+        SDKClient.getInteractionHistory(lastId ? { ...this.historyParams, lastId, noOfRecords } : { ...this.historyParams, noOfRecords }, null)
             .then((res) => {
                 if (!res.response) {
                     throw new Error('Invalid response from server');
@@ -498,8 +502,11 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             sortedTabledata = sortBy(historyData, 'ItemID').reverse();
         }
         sortedTabledata.forEach((data) => {
-            if (!tableData[data.SessionID]) {
-                tableData[data.SessionID] = {
+            if (!(data.InteractionDate instanceof Date)) {
+                data.InteractionDate = parse(data.InteractionDate, 'dd/M/yyyy HH:mm:ss', new Date());
+            }
+            if (!tableData[data.GroupID]) {
+                tableData[data.GroupID] = {
                     InteractionDate: data.InteractionDate,
                     Channel: data.Channel,
                     Intent: data.Intent,
@@ -513,9 +520,33 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                     SessionID: data.SessionID,
                     Direction: data.Direction,
                     ID: data.ID,
-                    GroupID: data.GroupID
+                    GroupID: data.GroupID,
+                    LastID: data.LastID,
+                    Children: [],
+                    expanded: false
                 };
-                transcripts[data.SessionID] = [];
+                transcripts[data.GroupID] = [];
+            } else {
+                const Children = tableData[data.GroupID].Children;
+                Children.push({ ...tableData[data.GroupID], Children: null });
+                tableData[data.GroupID] = {
+                    InteractionDate: data.InteractionDate,
+                    Channel: data.Channel,
+                    Intent: data.Intent,
+                    AgentName: data.AgentName,
+                    CIF: data.CIF,
+                    NRIC: data.NRIC,
+                    PhoneNumber: data.PhoneNumber,
+                    OverallSentiment: data.OverallSentiment,
+                    ItemID: data.ItemID,
+                    SubType: data.SubType,
+                    SessionID: data.SessionID,
+                    Direction: data.Direction,
+                    ID: data.ID,
+                    GroupID: data.GroupID,
+                    LastID: data.LastID,
+                    Children
+                };
             }
             let message: any;
             try {
@@ -526,7 +557,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                     message: data.InteractionText
                 };
             }
-            transcripts[data.SessionID].push({
+            transcripts[data.GroupID].push({
                 who: data.Direction === 'Out' ? data.AgentName : this.defaultCustomerName,
                 isAgent: data.Direction === 'Out',
                 message,
@@ -548,10 +579,20 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         }
         const newRecords = orderBy(Object.values(tableData), ['InteractionDate'], ['desc']) as InteractionHistory[];
         this.customerJourneyTable.tableData.source.data = newRecords;
-        const lastEl = historyData.slice(-1);
-        this.customerJourneyTable.lastId = lastEl[0].LastID?.toString();
+        const lastEl = sortedTabledata.slice(-1) || [];
+        this.customerJourneyTable.lastId = lastEl[0]?.LastID?.toString();
         this.customerJourneyTable.loading = false;
-        // console.log('#### newRecords ####', newRecords);
+        const pageOffset = newRecords.length % parseInt(this.historyParams.noOfRecords, 10);
+        const recordsIncompleteInFirstPage =
+            newRecords.length < this.customerJourneyTable.tableData.source.paginator?.pageSize
+                ? parseInt(this.historyParams.noOfRecords, 10) - pageOffset
+                : 0;
+        if (recordsIncompleteInFirstPage) {
+            this.getInteractionHistory((recordsIncompleteInFirstPage + 1).toString());
+        } else if (pageOffset === 0) {
+            this.getInteractionHistory('1');
+        }
+        console.log(newRecords.filter((x: any) => x.Children));
     }
 
     /**
@@ -562,7 +603,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         if (this.interactionId !== evt.InteractionID) {
             return;
         }
-        const noOfRecords = this.customerJourneyTable.tableData.source.paginator?.pageSize.toString() || this.data.Data.NoOfRecords;
+        const noOfRecords = this.data.Data.NoOfRecords;
         // assign the history params
         this.historyParams = {
             cif: evt.HistoryParameters.CIF,

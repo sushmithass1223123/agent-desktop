@@ -101,7 +101,13 @@
                                 </ng-template>
                             </mat-form-field>
                         </form>
-                        <button mat-icon-button (click)="doAdvancedSearch()" matTooltip="Refresh">
+                        <button
+                            mat-icon-button
+                            (click)="doAdvancedSearch()"
+                            [ngClass]="{ 'twd-animate-spin': polling.active }"
+                            [disabled]="polling.active"
+                            matTooltip="Refresh"
+                        >
                             <mat-icon>refresh</mat-icon>
                         </button>
                         <button
@@ -445,22 +451,30 @@
                         </button>
                     </div>
 
-                    <div id="sortControls" class="twd-flex twd-justify-between twd-items-center twd-px-2 twd-pt-2">
-                        <!-- <div>
-                                <mat-checkbox (change)="selectAllEmails($event.checked)"></mat-checkbox>
-                                <span>Select All</span>
-                        </div> -->
-                        <div class="twd-font-bold twd-text-sm">
-                            <mat-form-field class="custom with-border" appearance="outline">
-                                <mat-select [formControl]="sortControls.sortBy">
-                                    <mat-option value="default">Default</mat-option>
-                                    <mat-option value="Subject">Sort By Name</mat-option>
-                                    <mat-option value="addedTime">Sort By Time</mat-option>
-                                </mat-select>
-                            </mat-form-field>
+                    <div
+                        id="sortControls"
+                        class="twd-flex twd-items-center twd-px-2 twd-pt-2"
+                        [ngClass]="classes.hostClass"
+                        *ngIf="
+                            dataSource.data?.length
+                                ? { hostClass: 'twd-justify-between', selectClass: '' }
+                                : { hostClass: 'twd-justify-end', selectClass: 'twd-hidden' } as classes
+                        "
+                    >
+                        <div [ngClass]="classes.selectClass">
+                            <mat-checkbox id="selectAllCtrl" (change)="selectAllEmails($event.checked)"> Select All </mat-checkbox>
                         </div>
-                        <div>
-                            <ng-container
+                        <div class="twd-flex twd-items-center">
+                            <div class="twd-font-bold twd-text-sm">
+                                <mat-form-field class="custom with-border" appearance="outline">
+                                    <mat-select [formControl]="sortControls.sortBy">
+                                        <mat-option value="default">Default</mat-option>
+                                        <mat-option value="Subject">Sort By Name</mat-option>
+                                        <mat-option value="addedTime">Sort By Time</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                            <!-- <ng-container
                                 *ngIf="
                                     polling.allowed &&
                                     (polling.enabled
@@ -480,7 +494,7 @@
                                 >
                                     <mat-icon>sync</mat-icon>
                                 </button>
-                            </ng-container>
+                            </ng-container> -->
                             <ng-container
                                 *ngIf="
                                     sortControls.ascending
@@ -738,14 +752,20 @@
             >
                 <p class="twd-text-lg twd-font-bold twd-text-center">Loading editor ...</p>
             </div>
-            <textarea #replyEditor [id]="editorState.id"></textarea>
+            <create-email
+                [emailInfo]="replyInfo"
+                (sendEmail)="replyEditorModal.sendEmail($event)"
+                [sendDisabled]="replyEditorModal.sendingEmail"
+                [hiddenFields]="['To', 'Subject']"
+            ></create-email>
+            <!-- <textarea #replyEditor [id]="editorState.id"></textarea>
             <div *ngIf="!editorState.loading" class="twd-flex twd-gap-2 twd-justify-end twd-py-2 twd-px-3">
                 <email-template-selector (selectTemplate)="selectEmailTemplate($event)"></email-template-selector>
                 <button mat-raised-button (click)="replyEditorModal.sendEmail()" [disabled]="replyEditorModal.sendingEmail" color="primary">
                     Send
                 </button>
                 <button mat-raised-button (click)="replyEditorModal.close()" color="accent">Cancel</button>
-            </div>
+            </div> -->
         </div>
     </ng-template>
 

@@ -3713,11 +3713,10 @@
             "Proxy": {
                 "Urls": [
                     "https://dice.tetherfi.cloud/Dev_TMACSDKProxy/TmacProxy.asmx",
-                    "https://lab.singtel.tetherfi.cloud:56443/TMACSDKProxy/TmacProxy.asmx",
                     "https://dice.tetherfi.cloud/TMACSDKProxyv5/TmacProxy.asmx"
                 ],
                 "Type": "soap",
-                "Timeout": 30
+                "Timeout": 60
             },
             "SignalRProxy": {
                 "Logging": true,
