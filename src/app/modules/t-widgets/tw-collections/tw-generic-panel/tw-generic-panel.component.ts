@@ -29,7 +29,7 @@ export class TwGenericPanelComponent extends TWidgetWrapper implements OnInit, O
         {
             'tw-generic-controls': false,
             'tw-customer-details': false,
-            'tw-customer-journey': false,
+            'tw-customer-journey': false
         }
     ];
 
@@ -40,7 +40,7 @@ export class TwGenericPanelComponent extends TWidgetWrapper implements OnInit, O
         {
             'tw-generic-controls': false,
             'tw-customer-details': false,
-            'tw-customer-journey': false,
+            'tw-customer-journey': false
         }
     ];
 
@@ -51,7 +51,7 @@ export class TwGenericPanelComponent extends TWidgetWrapper implements OnInit, O
         {
             'tw-generic-controls': false,
             'tw-customer-details': false,
-            'tw-customer-journey': false,
+            'tw-customer-journey': false
         }
     ];
 
@@ -67,11 +67,12 @@ export class TwGenericPanelComponent extends TWidgetWrapper implements OnInit, O
         // call the wrapper init method
         this.initWrapper(this.data);
         // get the toolbar menu widgets
-        this.widgets = (this.data.Data.Widgets).filter((w: IWidget) => w.Config.Enabled);
+        this.widgets = this.data.Data.Widgets.filter((w: IWidget) => w.Config.Enabled);
         // loop through the widgets and pass the interaction details
         this.widgets.forEach((widget: IWidget) => {
             widget.InteractionDetails = this.data.InteractionDetails;
             widget.Data.Path = this.data.Data.Path;
+            widget.Data.RouteOnInteraction = this.data.Data.RouteOnInteraction ?? false;
         });
     }
 
@@ -86,8 +87,8 @@ export class TwGenericPanelComponent extends TWidgetWrapper implements OnInit, O
 
     /**
      * On maximised event handler
-     * @param {Boolean} ismaximized 
-     * @param {String} type 
+     * @param {Boolean} ismaximized
+     * @param {String} type
      */
     onmaximized(ismaximized: boolean, type: string): void {
         this.maximized[type] = ismaximized;
@@ -95,8 +96,8 @@ export class TwGenericPanelComponent extends TWidgetWrapper implements OnInit, O
 
     /**
      * On collapsed event handler
-     * @param {Boolean} isCollapsed 
-     * @param {String} type 
+     * @param {Boolean} isCollapsed
+     * @param {String} type
      */
     onCollapsed(isCollapsed: boolean, type: string): void {
         this.collapsed[type] = isCollapsed;
@@ -104,8 +105,8 @@ export class TwGenericPanelComponent extends TWidgetWrapper implements OnInit, O
 
     /**
      * On floating event handler
-     * @param {Boolean} isFloating 
-     * @param {String} type 
+     * @param {Boolean} isFloating
+     * @param {String} type
      */
     onFloating(isFloating: boolean, type: string): void {
         this.floating[type] = isFloating;

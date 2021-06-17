@@ -609,11 +609,22 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * Define an ngAfterViewInit() method to handle any additional initialization tasks.
      */
     ngAfterViewInit(): void {
-        // check if the current page is textchat page
-        if (this._interactionManagerService.getInteractionCount().active <= 1 && this._contentPageService.getCurrentMode() !== this.data.Data.Path) {
+        // check if the current page is email page
+        if (this.data.Data.RouteOnInteraction && this._interactionManagerService.getInteractionCount().active <= 1) {
             setTimeout(() => {
-                this._contentPageService.mode = this.data.Data.Path;
-            });
+                let inPage = true;
+                if (this._contentPageService.getCurrentMode() !== this.data.Data.Path) {
+                    inPage = false;
+                    this._contentPageService.mode = this.data.Data.Path;
+                }
+                // if no active we need to select that particular interaction
+                if (!inPage) {
+                    const interaction = this.interactionList.filter((i) => i.interactionId === this.interactionId)[0];
+                    if (interaction && !interaction?.isActive) {
+                        this.selectInteraction(interaction, true);
+                    }
+                }
+            }, 500);
         }
 
         // play new chat sound
@@ -1081,7 +1092,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             .then((res) => {
                 if (res.response > 0) {
                     // show freeze auto response button
-                    if (this.callWidget) {
+                    if (this.callWidget || !this.agentFeatures.reply) {
                         this.freezeAutoResponse(true);
                     } else {
                         this.showAutoFreeze = true;
@@ -1823,11 +1834,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             this.customerName = evt.CallerName;
             // update the interaction status and user
             this._interactionManagerService.updateInteraction(evt.InteractionID, {
-                status: 'connected',
-                user: this.customerName,
-                otherData: {
-                    icon: this.isSMM ? 'custom-' + this.channel : 'chat'
-                }
+                user: this.customerName
             });
         }
     }

@@ -176,7 +176,8 @@ export class InteractionManagerService {
             // try calc the count
             result = {
                 total: interactions.length || 0,
-                active: interactions.filter((i) => i.status === 'connected').length || 0
+                // active: interactions.filter((i) => i.status === 'connected').length || 0
+                active: interactions.filter((i) => i.isActive).length ?? 0
             };
         } catch (error) {}
         // return the result

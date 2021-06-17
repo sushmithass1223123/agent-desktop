@@ -19,9 +19,7 @@ import { AppRoutingModule } from './app-routing.module';
  */
 @NgModule({
     declarations: [AppComponent],
-    providers: [
-        AppDataService
-    ],
+    providers: [AppDataService],
     imports: [
         BrowserModule,
         BrowserAnimationsModule,
@@ -41,4 +39,4 @@ import { AppRoutingModule } from './app-routing.module';
     ],
     bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

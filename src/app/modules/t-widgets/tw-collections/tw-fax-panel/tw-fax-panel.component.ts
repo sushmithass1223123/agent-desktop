@@ -14,7 +14,6 @@ import { IWidget } from 'app/interfaces';
     encapsulation: ViewEncapsulation.None
 })
 export class TwFaxPanelComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-
     /**
      * Holds widget data
      */
@@ -67,11 +66,12 @@ export class TwFaxPanelComponent extends TWidgetWrapper implements OnInit, OnDes
         // call the wrapper init method
         this.initWrapper(this.data);
         // get the toolbar menu widgets
-        this.widgets = (this.data.Data.Widgets).filter((w: IWidget) => w.Config.Enabled);
+        this.widgets = this.data.Data.Widgets.filter((w: IWidget) => w.Config.Enabled);
         // loop through the widgets and pass the interaction details
         this.widgets.forEach((widget: IWidget) => {
             widget.InteractionDetails = this.data.InteractionDetails;
             widget.Data.Path = this.data.Data.Path;
+            widget.Data.RouteOnInteraction = this.data.Data.RouteOnInteraction ?? false;
         });
     }
 
@@ -85,5 +85,4 @@ export class TwFaxPanelComponent extends TWidgetWrapper implements OnInit, OnDes
         this.unsubscribeAll.next(null);
         this.unsubscribeAll.complete();
     }
-
 }

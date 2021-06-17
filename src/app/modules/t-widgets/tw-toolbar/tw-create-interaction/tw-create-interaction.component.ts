@@ -99,9 +99,6 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
                 }
             });
         });
-
-        // filter all enabled channels
-        this.channels = this.channels.filter((c) => c.Enabled);
     }
 
     /**

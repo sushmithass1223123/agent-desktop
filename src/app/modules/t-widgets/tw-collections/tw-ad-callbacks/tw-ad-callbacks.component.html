@@ -5,9 +5,9 @@
     <!-- your code goes here -->
     <div
         *ngIf="!getDashboardDataRes.loading && !getDashboardDataRes.error"
-        class="w-100-p h-100-p p-4 twd-flex twd-flex-1 twd-flex-row twd-justify-around"
+        class="w-100-p h-100-p p-8 twd-flex twd-flex-1 twd-flex-row twd-justify-around"
     >
-        <div fxFlex="60" class="twd-flex-1 twd-max-w-7/12">
+        <div class="twd-flex-1 twd-max-w-7/12">
             <div class="h-100-p custom-scroll-adjust twd-p-2">
                 <div
                     *ngFor="let cb of getDashboardDataRes.data.callbacks"
@@ -36,7 +36,6 @@
         </div>
 
         <div
-            fxFlex="40"
             class="callback-total twd-flex-1 twd-max-w-5/12 twd-flex twd-flex-col {{
                 maximized ? 'twd-justify-start twd-items-stretch' : 'twd-justify-center twd-items-center'
             }}"
@@ -44,7 +43,7 @@
         >
             <div
                 class="handled p-10 mat-elevation-z2 twd-flex twd-justify-between twd-items-center twd-cursor-pointer"
-                [ngClass]="{ 'selected': currentFilter === 'handled' }"
+                [ngClass]="{ selected: currentFilter === 'handled' }"
                 (click)="filterCallbacks('handled')"
             >
                 <span class="twd-flex-1 twd-max-w-4/12">
@@ -60,7 +59,7 @@
 
             <div
                 class="handled p-10 mat-elevation-z2 twd-flex twd-justify-between twd-items-center twd-cursor-pointer"
-                [ngClass]="{ 'selected': currentFilter === 'missed' }"
+                [ngClass]="{ selected: currentFilter === 'missed' }"
                 (click)="filterCallbacks('missed')"
             >
                 <span class="twd-flex-1 twd-max-w-4/12">
@@ -76,7 +75,7 @@
 
             <div
                 class="missed p-10 mat-elevation-z2 twd-flex twd-justify-between twd-items-center twd-cursor-pointer"
-                [ngClass]="{ 'selected': currentFilter === 'pending' }"
+                [ngClass]="{ selected: currentFilter === 'pending' }"
                 (click)="filterCallbacks('pending')"
             >
                 <span class="twd-flex-1 twd-max-w-4/12">

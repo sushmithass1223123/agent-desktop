@@ -132,6 +132,18 @@
                             </mat-cell>
                         </ng-container>
 
+                        <ng-container matColumnDef="Direction">
+                            <mat-header-cell *matHeaderCellDef>
+                                <span mat-sort-header> Direction </span>
+                            </mat-header-cell>
+                            <mat-cell *matCellDef="let element">
+                                {{ element.Direction | uppercase }}
+                                <mat-icon class="channel-icon" color="accent">
+                                    {{ element.Direction === 'In' ? 'south' : 'north' }}
+                                </mat-icon>
+                            </mat-cell>
+                        </ng-container>
+
                         <ng-container matColumnDef="CIF">
                             <mat-header-cell *matHeaderCellDef>
                                 <span mat-sort-header> CIF </span>

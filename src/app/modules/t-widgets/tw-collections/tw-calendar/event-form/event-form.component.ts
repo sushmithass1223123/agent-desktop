@@ -3,8 +3,8 @@ import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors,
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatColors } from '@fuse/mat-colors';
 import { AppUiService } from '@services/app-ui.service';
-import { format } from 'date-fns';
 import { IAUXCodes, SDKClient } from '@tmac/sdk';
+import { format } from 'date-fns';
 import { CustomCalendarEvent } from '../calendar.interface';
 import { CalendarEventModel } from '../calendar.model';
 
@@ -79,7 +79,7 @@ export class CalendarEventFormDialogComponent implements OnInit {
             });
         }
         this.auxCodes = SDKClient.getAgentData().auxCodes;
-        this.eventForm = this.createEventForm();
+
         // check the status of event
         // if (this.event.status.toLowerCase() === 'completed') {
         //     this.eventForm.disable();
@@ -90,6 +90,7 @@ export class CalendarEventFormDialogComponent implements OnInit {
      * Lifecycle Method
      */
     ngOnInit(): void {
+        this.eventForm = this.createEventForm();
         this.eventForm.controls.type.valueChanges.subscribe((type) => {
             const titleControl = this.eventForm.get('title');
             if (type === 'executetask') {
