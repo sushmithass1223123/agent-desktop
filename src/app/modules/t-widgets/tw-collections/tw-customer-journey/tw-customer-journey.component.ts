@@ -66,16 +66,18 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      * Search for record in table
      */
     searchForm = new FormGroup({
-        SessionID: new FormControl(''),
-        PhoneNumber: new FormControl(''),
-        Channel: new FormControl(''),
         InteractionDateStart: new FormControl(),
         InteractionDateEnd: new FormControl(),
+        Channel: new FormControl(''),
+        Direction: new FormControl(''),
+        InteractionText: new FormControl(''),
+        Intent: new FormControl(''),
+        AgentName: new FormControl(''),
         CIF: new FormControl(''),
         NRIC: new FormControl(''),
-        OverallSentiment: new FormControl(''),
-        Agent: new FormControl(''),
-        Intent: new FormControl('')
+        PhoneNumber: new FormControl(''),
+        EmailID: new FormControl(''),
+        OverallSentiment: new FormControl('')
     });
 
     /**
@@ -247,7 +249,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         open: () => {
             if (this.advancedSearchModal.ref) {
                 this.advancedSearchModal.openedRef = this.matDialog.open(this.advancedSearchModal.ref, {
-                    width: '50%',
+                    width: '40%',
                     panelClass: 'customer-journey-advanced-form'
                 });
             }
@@ -305,13 +307,14 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 columns: [
                     'InteractionDate',
                     'Channel',
-                    'InteractionText',
                     'Direction',
+                    'InteractionText',
                     'Intent',
                     'AgentName',
                     'CIF',
                     'NRIC',
                     'PhoneNumber',
+                    'EmailID',
                     'OverallSentiment',
                     'Actions'
                 ],
@@ -342,6 +345,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         if (this.data.Data.Columns && this.data.Data.Columns.length) {
             this.customerJourneyTable.tableData.columns = this.data.Data.Columns;
         }
+
         this.customerJourneyTable.tableData.pageSizes = [0, 5, 10].map((r) => r + noOfRecords);
 
         this.historyParams = {
@@ -512,6 +516,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                     Intent: data.Intent,
                     AgentName: data.AgentName,
                     CIF: data.CIF,
+                    EmailID: data.EmailID,
                     NRIC: data.NRIC,
                     PhoneNumber: data.PhoneNumber,
                     OverallSentiment: data.OverallSentiment,
@@ -522,6 +527,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                     ID: data.ID,
                     GroupID: data.GroupID,
                     LastID: data.LastID,
+                    InteractionText: data.InteractionText,
                     Children: [],
                     expanded: false
                 };
@@ -535,6 +541,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                     Intent: data.Intent,
                     AgentName: data.AgentName,
                     CIF: data.CIF,
+                    EmailID: data.EmailID,
                     NRIC: data.NRIC,
                     PhoneNumber: data.PhoneNumber,
                     OverallSentiment: data.OverallSentiment,
@@ -545,6 +552,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                     ID: data.ID,
                     GroupID: data.GroupID,
                     LastID: data.LastID,
+                    InteractionText: data.InteractionText,
                     Children
                 };
             }

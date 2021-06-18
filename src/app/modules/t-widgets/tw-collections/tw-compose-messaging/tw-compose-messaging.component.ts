@@ -3,7 +3,7 @@ import { fuseAnimations } from '@fuse/animations';
 import { TWidgetWrapper } from '@modules/t-widgets/utils/widget-wrapper/tw-wrapper';
 import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
-import { IResponse, IUIEvent, SDKClient } from '@tmac/sdk';
+import { IResponse, IUIEvent, SDKClient, TUtils } from '@tmac/sdk';
 import { IWidget } from 'app/interfaces';
 import { getValueFromEvent } from 'app/utils';
 import { sortBy } from 'lodash';
@@ -95,6 +95,14 @@ export class TwComposeMessagingComponent extends TWidgetWrapper implements OnIni
         SDKClient.getTextTemplateDepartments()
             .then((result) => {
                 this.departments = result.response.filter((d) => d.Channel.toLowerCase() === 'sms');
+            })
+            .catch((err) => {
+                this._appUIService.showSnackbar('Error in fetching SMS templates', 'failure');
+                TUtils.Logger.consoleLog({
+                    type: 'error',
+                    message: 'Error in fetching SMS templates',
+                    err
+                });
             })
             .finally(() => {
                 this.loading = false;

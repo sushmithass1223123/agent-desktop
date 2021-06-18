@@ -36,8 +36,8 @@
                     [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                 >
                     <div fxFlex="15" fxLayout fxLayoutAlign="center center" class="step-time pr-8">
-                        <small fxFlex="80" class="text-right">
-                            {{ s.InteractionDate | date: 'd/M/yy, hh:mm:ss a' }}
+                        <small class="text-right">
+                            {{ s.InteractionDate | date: 'dd/MM/yyyy, hh:mm:ss a' }}
                         </small>
                     </div>
                     <div fxFlex="85" fxLayout fxLayoutAlign="space-between center" class="step-details px-16">
@@ -100,59 +100,35 @@
                         }"
                     ></ng-container>
                     <div class="twd-flex twd-justify-between">
-                        <div class="twd-w-5/12">
-                            <button (click)="advancedSearchModal.open()" mat-button color="primary">
+                        <div class="twd-w-5/12 twd-flex twd-items-center">
+                            <button mat-button color="primary" class="border-radius-20" (click)="advancedSearchModal.open()">
                                 Search
                                 <mat-icon>search</mat-icon>
                             </button>
+                            <button
+                                mat-button
+                                color="warn"
+                                class="border-radius-20 twd-ml-2"
+                                (click)="searchForm.reset(); doAdvancedSearch()"
+                                [disabled]="!customerJourneyTable.tableData.source.filter"
+                            >
+                                Clear Search
+                                <mat-icon>close</mat-icon>
+                            </button>
                             <ng-template #advancedSearchFormRef>
-                                <div class="mat-elevation-z1 twd-rounded-2xl twd-p-5" [ngClass]="customFuse.anchor?.body || customFuse.widget?.body">
+                                <div class="mat-elevation-z1 twd-rounded-2xl twd-p-3" [ngClass]="customFuse.anchor?.body || customFuse.widget?.body">
                                     <form
-                                        fxLayout="row wrap"
-                                        fxLayoutAlign="space-between"
-                                        fxLayoutGap="20px"
-                                        [class]="(customFuse.anchor?.content || customFuse.widget?.content) + ' twd-p-5 twd-rounded-2xl'"
+                                        class="twd-flex twd-flex-row twd-flex-wrap twd-justify-center twd-gap-5 twd-p-4 border-radius-20"
+                                        [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                                         [formGroup]="searchForm"
                                         (ngSubmit)="doAdvancedSearch(); advancedSearchModal.close()"
                                         novalidate
                                     >
-                                        <mat-form-field fxFlex="45">
-                                            <mat-label>SessionID</mat-label>
-                                            <input matInput type="text" formControlName="SessionID" />
-                                        </mat-form-field>
-
-                                        <mat-form-field fxFlex="45">
-                                            <mat-label>PhoneNumber</mat-label>
-                                            <input matInput type="text" formControlName="PhoneNumber" />
-                                        </mat-form-field>
-
-                                        <mat-form-field fxFlex="45">
-                                            <mat-label>Channel</mat-label>
-                                            <input matInput type="text" formControlName="Channel" />
-                                        </mat-form-field>
-
-                                        <mat-form-field fxFlex="45">
-                                            <mat-label>Agent</mat-label>
-                                            <input matInput type="text" formControlName="Agent" />
-                                        </mat-form-field>
-
-                                        <mat-form-field fxFlex="45">
-                                            <mat-label>Intent</mat-label>
-                                            <input matInput type="text" formControlName="Intent" />
-                                        </mat-form-field>
-
-                                        <mat-form-field fxFlex="45">
-                                            <mat-label>CIF</mat-label>
-                                            <input matInput type="text" formControlName="CIF" />
-                                        </mat-form-field>
-
-                                        <mat-form-field fxFlex="45">
-                                            <mat-label>NRIC</mat-label>
-                                            <input matInput type="text" formControlName="NRIC" />
-                                        </mat-form-field>
-
-                                        <mat-form-field fxFlex="45">
-                                            <mat-label>Interaction Date</mat-label>
+                                        <mat-form-field
+                                            *ngIf="customerJourneyTable.tableData.columns.includes('InteractionDate')"
+                                            class="twd-flex-full twd-max-w-5/12"
+                                        >
+                                            <mat-label>Received At</mat-label>
                                             <mat-date-range-input #dateRangePicker [rangePicker]="interactionDatePicker">
                                                 <input matStartDate placeholder="Start date" formControlName="InteractionDateStart" />
                                                 <input matEndDate placeholder="End date" formControlName="InteractionDateEnd" />
@@ -161,14 +137,89 @@
                                             <mat-date-range-picker #interactionDatePicker></mat-date-range-picker>
                                         </mat-form-field>
 
-                                        <mat-form-field fxFlex="45">
+                                        <mat-form-field
+                                            *ngIf="customerJourneyTable.tableData.columns.includes('Channel')"
+                                            class="twd-flex-full twd-max-w-5/12"
+                                        >
+                                            <mat-label>Channel</mat-label>
+                                            <input matInput type="text" formControlName="Channel" />
+                                        </mat-form-field>
+
+                                        <mat-form-field
+                                            *ngIf="customerJourneyTable.tableData.columns.includes('Direction')"
+                                            class="twd-flex-full twd-max-w-5/12"
+                                        >
+                                            <mat-label>Direction</mat-label>
+                                            <input matInput type="text" formControlName="Direction" />
+                                        </mat-form-field>
+
+                                        <mat-form-field
+                                            *ngIf="customerJourneyTable.tableData.columns.includes('InteractionText')"
+                                            class="twd-flex-full twd-max-w-5/12"
+                                        >
+                                            <mat-label>Interaction Text</mat-label>
+                                            <input matInput type="text" formControlName="InteractionText" />
+                                        </mat-form-field>
+
+                                        <mat-form-field
+                                            *ngIf="customerJourneyTable.tableData.columns.includes('Intent')"
+                                            class="twd-flex-full twd-max-w-5/12"
+                                        >
+                                            <mat-label>Intent</mat-label>
+                                            <input matInput type="text" formControlName="Intent" />
+                                        </mat-form-field>
+
+                                        <mat-form-field
+                                            *ngIf="customerJourneyTable.tableData.columns.includes('AgentName')"
+                                            class="twd-flex-full twd-max-w-5/12"
+                                        >
+                                            <mat-label>Agent</mat-label>
+                                            <input matInput type="text" formControlName="AgentName" />
+                                        </mat-form-field>
+
+                                        <mat-form-field
+                                            *ngIf="customerJourneyTable.tableData.columns.includes('CIF')"
+                                            class="twd-flex-full twd-max-w-5/12"
+                                        >
+                                            <mat-label>CIF</mat-label>
+                                            <input matInput type="text" formControlName="CIF" />
+                                        </mat-form-field>
+
+                                        <mat-form-field
+                                            *ngIf="customerJourneyTable.tableData.columns.includes('NRIC')"
+                                            class="twd-flex-full twd-max-w-5/12"
+                                        >
+                                            <mat-label>NRIC</mat-label>
+                                            <input matInput type="text" formControlName="NRIC" />
+                                        </mat-form-field>
+
+                                        <mat-form-field
+                                            *ngIf="customerJourneyTable.tableData.columns.includes('PhoneNumber')"
+                                            class="twd-flex-full twd-max-w-5/12"
+                                        >
+                                            <mat-label>Phone Number</mat-label>
+                                            <input matInput type="text" formControlName="PhoneNumber" />
+                                        </mat-form-field>
+
+                                        <mat-form-field
+                                            *ngIf="customerJourneyTable.tableData.columns.includes('EmailID')"
+                                            class="twd-flex-full twd-max-w-5/12"
+                                        >
+                                            <mat-label>Email</mat-label>
+                                            <input matInput type="text" formControlName="EmailID" />
+                                        </mat-form-field>
+
+                                        <mat-form-field
+                                            *ngIf="customerJourneyTable.tableData.columns.includes('OverallSentiment')"
+                                            class="twd-flex-full twd-max-w-5/12"
+                                        >
                                             <mat-label>Overall Sentiment</mat-label>
                                             <input matInput type="text" formControlName="OverallSentiment" />
                                         </mat-form-field>
 
-                                        <div fxFlex="100" class="mt-12">
-                                            <div class="mx-auto w-40-p">
-                                                <button mat-raised-button class="w-100-p" color="primary">Search</button>
+                                        <div fxFlex="100" class="twd-mt-3 twd-flex-full twd-max-w-full">
+                                            <div class="twd-mx-auto w-40-p">
+                                                <button mat-raised-button class="twd-w-full border-radius-20" color="primary">Search</button>
                                             </div>
                                         </div>
                                     </form>
@@ -228,7 +279,7 @@
                             [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
                         >
                             <div fxFlex="20" fxLayout fxLayoutAlign="center center" class="step-time p-8">
-                                {{ action.ActionTime | date: 'MM/dd/yyyy, hh:mm a' }}
+                                {{ action.ActionTime | date: 'dd/MM/yyyy, hh:mm:ss a' }}
                             </div>
                             <div fxFlex="75" fxLayout fxLayoutAlign="space-between center" class="step-details px-16 p-8">
                                 {{ action.Action }}
@@ -479,17 +530,21 @@
         <!-- NA Note that these columns can be defined in any order.
 The actual rendered columns are set as a property on the row definition" -->
         <ng-container matColumnDef="InteractionDate">
-            <mat-header-cell fxFlex="15" *matHeaderCellDef class="d-flex w-100-p">
-                <span mat-sort-header> Received At </span>
-            </mat-header-cell>
-            <mat-cell fxFlex="15" *matCellDef="let element">{{ (element.InteractionDate | date: 'd/M/yy, hh:mm:ss a') || 'NA' }} </mat-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="twd-flex-full" style="max-width: 125px"> Received At </mat-header-cell>
+            <mat-cell *matCellDef="let element" class="twd-flex-full" style="max-width: 125px">
+                {{ (element.InteractionDate | date: 'd/M/yy, hh:mm:ss a') || 'NA' }}
+            </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="Channel">
-            <mat-header-cell *matHeaderCellDef fxFlex="10">
-                <span mat-sort-header> Channel </span>
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element" fxFlex="10" [ngSwitch]="element.Channel | lowercase" [matTooltip]="element.Channel">
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="twd-flex-full max-col"> Channel </mat-header-cell>
+            <mat-cell
+                *matCellDef="let element"
+                [ngSwitch]="element.Channel | lowercase"
+                [matTooltip]="element.Channel"
+                class="twd-flex-full"
+                style="max-width: 100px"
+            >
                 <ng-container *ngSwitchCase="'textchat'">
                     <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>
                 </ng-container>
@@ -511,10 +566,8 @@ The actual rendered columns are set as a property on the row definition" -->
         </ng-container>
 
         <ng-container matColumnDef="Direction">
-            <mat-header-cell *matHeaderCellDef>
-                <span mat-sort-header> Direction </span>
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element">
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="twd-flex-full max-col"> Direction </mat-header-cell>
+            <mat-cell *matCellDef="let element" [matTooltip]="element.Direction" class="twd-flex-full max-col">
                 {{ element.Direction | uppercase }}
                 <mat-icon class="channel-icon" color="accent">
                     {{ element.Direction === 'In' ? 'south' : 'north' }}
@@ -523,59 +576,69 @@ The actual rendered columns are set as a property on the row definition" -->
         </ng-container>
 
         <ng-container matColumnDef="InteractionText">
-            <mat-header-cell *matHeaderCellDef>
-                <span mat-sort-header> Interaction Text </span>
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element">{{ element.InteractionText || 'NA' }}</mat-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="CIF">
-            <mat-header-cell *matHeaderCellDef>
-                <span mat-sort-header> CIF </span>
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element">{{ element.CIF || 'NA' }}</mat-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="AgentName">
-            <mat-header-cell *matHeaderCellDef>
-                <span mat-sort-header> Agent </span>
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element">{{ element.AgentName || 'NA' }}</mat-cell>
+            <mat-header-cell *matHeaderCellDef class="twd-flex-full max-col"> Interaction Text </mat-header-cell>
+            <mat-cell *matCellDef="let element" [matTooltip]="element.InteractionText" class="twd-flex-full max-col">
+                {{ element.InteractionText || 'NA' }}
+            </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="Intent">
-            <mat-header-cell *matHeaderCellDef>
-                <span mat-sort-header> Intent </span>
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element">{{ element.Intent || 'NA' }}</mat-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="twd-flex-full max-col"> Intent </mat-header-cell>
+            <mat-cell *matCellDef="let element" [matTooltip]="element.Intent" class="twd-flex-full max-col">
+                <div class="text-truncate">
+                    {{ element.Intent || 'NA' }}
+                </div>
+            </mat-cell>
         </ng-container>
 
-        <ng-container matColumnDef="EmailID">
-            <mat-header-cell *matHeaderCellDef>
-                <span mat-sort-header> Email </span>
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element">{{ element.EmailID || 'NA' }}</mat-cell>
+        <ng-container matColumnDef="AgentName">
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="twd-flex-full max-col"> Agent </mat-header-cell>
+            <mat-cell *matCellDef="let element" [matTooltip]="element.AgentName" class="twd-flex-full max-col">
+                <div class="text-truncate">
+                    {{ element.AgentName || 'NA' }}
+                </div>
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="CIF">
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="twd-flex-full max-col"> CIF </mat-header-cell>
+            <mat-cell *matCellDef="let element" [matTooltip]="element.CIF" class="twd-flex-full max-col">
+                <div class="text-truncate">
+                    {{ element.CIF || 'NA' }}
+                </div>
+            </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="NRIC">
-            <mat-header-cell *matHeaderCellDef>
-                <span mat-sort-header> NRIC </span>
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element">{{ element.NRIC || 'NA' }}</mat-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="twd-flex-full max-col"> NRIC </mat-header-cell>
+            <mat-cell *matCellDef="let element" [matTooltip]="element.NRIC" class="twd-flex-full max-col">
+                <div class="text-truncate">
+                    {{ element.NRIC || 'NA' }}
+                </div>
+            </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="PhoneNumber">
-            <mat-header-cell *matHeaderCellDef>
-                <span mat-sort-header> Phone </span>
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element">{{ element.PhoneNumber || 'NA' }}</mat-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="twd-flex-full max-col"> Phone </mat-header-cell>
+            <mat-cell *matCellDef="let element" [matTooltip]="element.PhoneNumber" class="twd-flex-full max-col">
+                <div class="text-truncate">
+                    {{ element.PhoneNumber || 'NA' }}
+                </div>
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="EmailID">
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="twd-flex-full max-col"> Email </mat-header-cell>
+            <mat-cell *matCellDef="let element" [matTooltip]="element.EmailID" class="twd-flex-full max-col">
+                <div class="text-truncate">
+                    {{ element.EmailID || 'NA' }}
+                </div>
+            </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="OverallSentiment">
-            <mat-header-cell *matHeaderCellDef>
-                <span mat-sort-header> Sentiment </span>
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element">
+            <mat-header-cell *matHeaderCellDef class="twd-flex-full max-col"> Sentiment </mat-header-cell>
+            <mat-cell *matCellDef="let element" class="twd-flex-full max-col">
                 <img
                     *ngIf="element.OverallSentiment === 'Positive'"
                     class="w-24"
@@ -605,9 +668,62 @@ The actual rendered columns are set as a property on the row definition" -->
         </ng-container>
 
         <ng-container matColumnDef="Actions">
-            <mat-header-cell *matHeaderCellDef fxFlex="15"> Actions </mat-header-cell>
-            <mat-cell *matCellDef="let element; let i = index" fxFlex="15" (click)="$event.stopPropagation()">
-                <div fxLayout fxLayoutAlign="start center" class="h-100-p w-100-p">
+            <mat-header-cell *matHeaderCellDef class="twd-flex-full" style="max-width: 80px"></mat-header-cell>
+            <mat-cell *matCellDef="let element; let i = index" class="twd-flex-full" style="max-width: 80px" (click)="$event.stopPropagation()">
+                <button mat-icon-button class="w-32 h-32 twd-leading-none" matTooltip="Actions" [matMenuTriggerFor]="menu">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu class="custom" #menu="matMenu">
+                    <button
+                        *ngIf="data.Data.IframeBaseUrl"
+                        mat-menu-item
+                        matTooltip="Session History"
+                        (click)="switchMaximizedViewMode('Session History', element)"
+                    >
+                        <mat-icon> history </mat-icon>
+                        <span> Session History </span>
+                    </button>
+                    <button mat-menu-item matTooltip="Actions" (click)="switchMaximizedViewMode('Actions', element)">
+                        <mat-icon> list_alt </mat-icon>
+                        <span> Actions </span>
+                    </button>
+                    <button mat-menu-item matTooltip="Comments" (click)="switchMaximizedViewMode('Comments', element)">
+                        <mat-icon> notes </mat-icon>
+                        <span> Comments </span>
+                    </button>
+                    <button
+                        mat-menu-item
+                        *ngIf="(element.Channel || '' | lowercase).includes('chat')"
+                        matTooltip="Transcripts"
+                        (click)="switchMaximizedViewMode('Transcripts', element)"
+                    >
+                        <mat-icon> chat </mat-icon>
+                        <span> Transcripts </span>
+                    </button>
+                    <button
+                        mat-menu-item
+                        *ngIf="(element.Channel || '' | lowercase).includes('email')"
+                        matTooltip="Show Email"
+                        (click)="switchMaximizedViewMode('Email Preview', element)"
+                    >
+                        <mat-icon> email </mat-icon>
+                        <span> Show Email </span>
+                    </button>
+                </mat-menu>
+
+                <button
+                    mat-icon-button
+                    class="w-32 h-32 twd-leading-none"
+                    matTooltip="Show Group"
+                    *ngIf="element.Children && element.Children.length"
+                    (click)="element.expanded = !element.expanded"
+                >
+                    <mat-icon>
+                        {{ element.expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
+                    </mat-icon>
+                </button>
+
+                <!-- <div fxLayout fxLayoutAlign="start center" class="h-100-p w-100-p">
                     <button class="w-32" mat-icon-button matTooltip="Session History" (click)="switchMaximizedViewMode('Session History', element)">
                         <mat-icon> history </mat-icon>
                     </button>
@@ -644,7 +760,7 @@ The actual rendered columns are set as a property on the row definition" -->
                     >
                         <mat-icon> history </mat-icon>
                     </button>
-                </div>
+                </div> -->
             </mat-cell>
         </ng-container>
 

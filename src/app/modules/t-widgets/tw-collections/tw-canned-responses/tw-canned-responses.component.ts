@@ -1,7 +1,8 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
+import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
-import { CallerIntentEvent, IResponse, OnNLPDataEvent, SDKClient, WorkCodeAddedEvent } from '@tmac/sdk';
+import { CallerIntentEvent, IResponse, OnNLPDataEvent, SDKClient, TUtils, WorkCodeAddedEvent } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { sortBy, uniqBy } from 'lodash';
@@ -74,7 +75,7 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
     /**
      * Constructor
      */
-    constructor(private _tmacEventService: TMACEventService) {
+    constructor(private _tmacEventService: TMACEventService, private _appUIService: AppUiService) {
         super();
     }
 
@@ -94,6 +95,14 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
         SDKClient.getTextTemplateDepartments()
             .then((result) => {
                 this.departments = result.response.filter((d) => d.Channel.toLowerCase().includes('chat'));
+            })
+            .catch((err) => {
+                this._appUIService.showSnackbar('Error in fetching chat templates', 'failure');
+                TUtils.Logger.consoleLog({
+                    type: 'error',
+                    message: 'Error in fetching chat templates',
+                    err
+                });
             })
             .finally(() => {
                 this.loading = false;
