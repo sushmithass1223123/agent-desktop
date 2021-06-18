@@ -202,6 +202,9 @@ export class AppUiService {
         };
         this._matSnackBar.dismiss();
 
+        // add desktop alert
+        this.showDesktopAlert('You have a new notification', snackBarArgs.message, false);
+
         // add to the notifications
         this.addNotification({
             icon: 'notification_important',
@@ -235,6 +238,11 @@ export class AppUiService {
     public showAlertModal(message: string, type: AppAlertDialogTypes = 'success', heading?: string): MatDialogRef<AlertDialogComponent> {
         // play new chat sound
         this.playAudio('alert', 0.5, false);
+
+        // add desktop alert
+        this.showDesktopAlert('You have a new notification', message, false);
+
+        // show alert
         const dialogRef = this._matDialog.open(AlertDialogComponent, {
             data: {
                 message,

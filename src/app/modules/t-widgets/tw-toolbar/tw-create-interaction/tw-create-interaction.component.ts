@@ -33,9 +33,14 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
     private _unsubscribeAll: Subject<any>;
 
     /**
-     * All channel list
+     * Filter channel list
      */
     channels: IChannel[];
+
+    /**
+     * All channel list
+     */
+    originalChannels: IChannel[];
 
     /**
      * Open list flag
@@ -52,7 +57,7 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
      */
     ngOnInit(): void {
         // get the channels from config
-        this.channels = this.data.Data.Channels;
+        this.originalChannels = this.channels = this.data.Data.Channels;
 
         this._agentFeaturesService.features.pipe(takeUntil(this._unsubscribeAll)).subscribe((change: boolean) => {
             if (change) {
@@ -83,11 +88,9 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
         SDKClient.getAgentData().featuresList.forEach((f) => {
             // get the featue
             const feature = f.Feature.toLowerCase();
-
-            this.channels.forEach((c) => {
+            this.originalChannels.forEach((c) => {
                 // get the subtype
                 const subtype = c.SubType.toLowerCase();
-
                 if (feature === AGENT_FEATURES.IsFaxOutEnabled && subtype === 'fax') {
                     c.Enabled = f.IsEnabled;
                 } else if (feature === AGENT_FEATURES.IsSMSOutEnabled && subtype === 'sms') {
@@ -99,6 +102,7 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
                 }
             });
         });
+        this.channels = this.originalChannels.filter((c) => c.Enabled);
     }
 
     /**

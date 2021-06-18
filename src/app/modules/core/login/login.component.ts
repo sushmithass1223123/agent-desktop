@@ -463,6 +463,22 @@ export class LoginComponent implements OnInit, OnDestroy {
     async loadConfig(agentId?: string): Promise<void> {
         // load the config
         const config = await this._appDataService.getJsonConfig(agentId);
+
+        // if the json is not proper then route to not-found page
+        if (!config) {
+            // we will route to error page
+            this._router.navigate(['not-found'], {
+                state: {
+                    subtitle: 'Oops',
+                    title: '404',
+                    description: 'Unable to load the config for login, please contact the administrator.',
+                    login: false
+                },
+                queryParamsHandling: 'preserve'
+            });
+            return;
+        }
+
         this.appConfig = config;
         this.configLoaded(config);
         this.getData();
@@ -475,89 +491,72 @@ export class LoginComponent implements OnInit, OnDestroy {
      * @param config
      */
     private configLoaded(config: any): void {
-        // check if the config is not null
-        if (config !== null) {
-            this.loginConfig = config.Login;
-            this.appCustomerLogo = config.AppConfigs.Logos.Customer || null;
+        this.loginConfig = config.Login;
+        this.appCustomerLogo = config.AppConfigs.Logos.Customer || null;
 
-            this.faceAuthEnabled = config.Login.FaceAuth?.Enabled;
-            this.faceAuthServerUrl = config.Login.FaceAuth?.AuthServerUrl;
-            this.domainListEnabled = config.Login.DomainListEnabled;
-            this.stationEnabled = config.Login.StationEnabled;
-            this.loginModeEnabled = config.Login.Modes.Enabled;
-            this.promptAgentIdOnInvalidLanId = config.Login.PromptAgentIdOnInvalidLanId;
-            this.disableLanId = config.Login.DisableLanId ?? false;
-            this.brandLogo = config.AppConfigs.Logos.Default || null;
-            this.multiWindowMode = config.Login.MultiWindowMode || {
-                Enabled: false,
-                Width: 0,
-                Height: 0,
-                PixelDimension: false
-            };
-            this.password = config.Login.Password ?? {
-                Agent: config.Login.PasswordEnabled ?? false, // adding for backward compatibility
-                Station: config.Login.PasswordEnabled ?? false // adding for backward compatibility
-            };
+        this.faceAuthEnabled = config.Login.FaceAuth?.Enabled;
+        this.faceAuthServerUrl = config.Login.FaceAuth?.AuthServerUrl;
+        this.domainListEnabled = config.Login.DomainListEnabled;
+        this.stationEnabled = config.Login.StationEnabled;
+        this.loginModeEnabled = config.Login.Modes.Enabled;
+        this.promptAgentIdOnInvalidLanId = config.Login.PromptAgentIdOnInvalidLanId;
+        this.disableLanId = config.Login.DisableLanId ?? false;
+        this.brandLogo = config.AppConfigs.Logos.Default || null;
+        this.multiWindowMode = config.Login.MultiWindowMode || {
+            Enabled: false,
+            Width: 0,
+            Height: 0,
+            PixelDimension: false
+        };
+        this.password = config.Login.Password ?? {
+            Agent: config.Login.PasswordEnabled ?? false, // adding for backward compatibility
+            Station: config.Login.PasswordEnabled ?? false // adding for backward compatibility
+        };
 
-            // check if the login mode is enabled
-            if (this.loginModeEnabled) {
-                // check the login mode type
-                if (config.Login.Modes.Type === 'pbx') {
-                    // show station and check PBX
-                    this.stationEnabled = true;
-                    this.pbxChecked = true;
-                } else if (config.Login.Modes.Type === 'ms') {
-                    // show station and check MS
-                    this.stationEnabled = true;
-                    this.msChecked = true;
-                } else if (config.Login.Modes.Type === 'pbxms') {
-                    // show station and check PBX and MS
-                    this.stationEnabled = true;
-                    this.pbxChecked = true;
-                    this.msChecked = true;
-                } else {
-                    // hide station
-                    this.stationEnabled = false;
-                }
+        // check if the login mode is enabled
+        if (this.loginModeEnabled) {
+            // check the login mode type
+            if (config.Login.Modes.Type === 'pbx') {
+                // show station and check PBX
+                this.stationEnabled = true;
+                this.pbxChecked = true;
+            } else if (config.Login.Modes.Type === 'ms') {
+                // show station and check MS
+                this.stationEnabled = true;
+                this.msChecked = true;
+            } else if (config.Login.Modes.Type === 'pbxms') {
+                // show station and check PBX and MS
+                this.stationEnabled = true;
+                this.pbxChecked = true;
+                this.msChecked = true;
+            } else {
+                // hide station
+                this.stationEnabled = false;
             }
+        }
 
-            // open self view if face auth is enabled
-            if (this.faceAuthEnabled) {
-                this.startCamera();
-            }
+        // open self view if face auth is enabled
+        if (this.faceAuthEnabled) {
+            this.startCamera();
+        }
 
-            // check to disable lanId
-            if (this.disableLanId) {
-                this.loginForm.get('lanId').disable({ onlySelf: this.disableLanId });
-            }
+        // check to disable lanId
+        if (this.disableLanId) {
+            this.loginForm.get('lanId').disable({ onlySelf: this.disableLanId });
+        }
 
-            // Set validators for form
-            if (this.domainListEnabled) {
-                this.loginForm.controls.domain.setValidators(Validators.required);
-            }
-            if (this.stationEnabled) {
-                this.loginForm.controls.station.setValidators(Validators.required);
-            }
-            if (this.password.Agent) {
-                this.loginForm.controls.agentPassword.setValidators(Validators.required);
-            }
-            if (this.password.Station) {
-                this.loginForm.controls.stationPassword.setValidators(Validators.required);
-            }
-
-            // set loading flag
-            // this.loading = false;
-        } else {
-            // we will route to error page
-            this._router.navigate(['not-found'], {
-                state: {
-                    subtitle: 'Oops',
-                    title: '404',
-                    description: 'Unable to load the config, please contact the administrator.',
-                    login: false
-                },
-                queryParamsHandling: 'preserve'
-            });
+        // Set validators for form
+        if (this.domainListEnabled) {
+            this.loginForm.controls.domain.setValidators(Validators.required);
+        }
+        if (this.stationEnabled) {
+            this.loginForm.controls.station.setValidators(Validators.required);
+        }
+        if (this.password.Agent) {
+            this.loginForm.controls.agentPassword.setValidators(Validators.required);
+        }
+        if (this.password.Station) {
+            this.loginForm.controls.stationPassword.setValidators(Validators.required);
         }
     }
 
